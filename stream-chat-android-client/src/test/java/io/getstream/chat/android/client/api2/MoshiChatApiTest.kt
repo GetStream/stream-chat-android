@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
+import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
@@ -116,6 +117,7 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
@@ -3131,6 +3133,41 @@ internal class MoshiChatApiTest {
         )
     }
 
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#searchRolesInput")
+    fun testSearchRoles(call: RetrofitCall<SearchRolesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<RoleApi>()
+        whenever(
+            api.searchRoles(
+                query = any(),
+                limit = anyOrNull(),
+                roleType = anyOrNull(),
+                includeGlobalRoles = anyOrNull(),
+                nameGt = anyOrNull(),
+            ),
+        ).doReturn(call)
+        val sut = Fixture()
+            .withRoleApi(api)
+            .get()
+        // when
+        val query = randomString()
+        val limit = randomInt()
+        val roleType = randomString()
+        val includeGlobalRoles = randomBoolean()
+        val nameGt = randomString()
+        val result = sut.searchRoles(query, limit, roleType, includeGlobalRoles, nameGt).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).searchRoles(
+            query = query,
+            limit = limit,
+            roleType = roleType,
+            includeGlobalRoles = includeGlobalRoles,
+            nameGt = nameGt,
+        )
+    }
+
     private class Fixture {
 
         private var currentUserId: String = ""
@@ -3153,6 +3190,7 @@ internal class MoshiChatApiTest {
         private var remindersApi: RemindersApi = mock()
         private var pushPreferencesApi: PushPreferencesApi = mock()
         private var userGroupApi: UserGroupApi = mock()
+        private var roleApi: RoleApi = mock()
 
         private var fileUploader: FileUploader = mock()
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -3221,6 +3259,10 @@ internal class MoshiChatApiTest {
             this.userGroupApi = userGroupApi
         }
 
+        fun withRoleApi(roleApi: RoleApi) = apply {
+            this.roleApi = roleApi
+        }
+
         fun withFileUploader(fileUploader: FileUploader) = apply {
             this.fileUploader = fileUploader
         }
@@ -3257,6 +3299,7 @@ internal class MoshiChatApiTest {
                 remindersApi = remindersApi,
                 pushPreferencesApi = pushPreferencesApi,
                 userGroupApi = userGroupApi,
+                roleApi = roleApi,
                 userScope = UserScope(ClientScope()),
                 coroutineScope = testCoroutineExtension.scope,
             )

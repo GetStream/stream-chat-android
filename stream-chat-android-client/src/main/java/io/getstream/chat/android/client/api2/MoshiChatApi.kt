@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
+import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
@@ -149,6 +150,7 @@ import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -200,6 +202,7 @@ constructor(
     private val remindersApi: RemindersApi,
     private val pushPreferencesApi: PushPreferencesApi,
     private val userGroupApi: UserGroupApi,
+    private val roleApi: RoleApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -632,6 +635,26 @@ constructor(
 
     private fun RetrofitCall<UserGroupsResponse>.mapUserGroups() =
         map { response -> with(domainMapping) { response.user_groups.map { it.toDomain() } } }
+
+    override fun searchRoles(
+        query: String,
+        limit: Int?,
+        roleType: String?,
+        includeGlobalRoles: Boolean?,
+        nameGt: String?,
+    ): Call<List<Role>> {
+        return roleApi
+            .searchRoles(
+                query = query,
+                limit = limit,
+                roleType = roleType,
+                includeGlobalRoles = includeGlobalRoles,
+                nameGt = nameGt,
+            )
+            .map { response ->
+                with(domainMapping) { response.roles.map { it.toDomain() } }
+            }
+    }
 
     override fun muteCurrentUser(): Call<Mute> {
         return muteUser(

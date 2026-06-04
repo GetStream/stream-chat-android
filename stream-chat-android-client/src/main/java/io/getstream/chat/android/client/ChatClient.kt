@@ -211,6 +211,7 @@ import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -1879,6 +1880,34 @@ internal constructor(
             id = id,
             memberIds = memberIds,
             teamId = teamId,
+        )
+    }
+
+    /**
+     * Searches roles by name prefix.
+     *
+     * @param query Case-insensitive name prefix (1-255 chars).
+     * @param limit Max number of roles to return (1-25). Server default applies when null.
+     * @param roleType Optional filter: `"user"` for user-assignable roles, `"channel"` for
+     * channel-assignable roles. Both kinds are returned when null.
+     * @param includeGlobalRoles When `true`, include cross-team operator roles whose name starts
+     * with `global_`. Defaults to `false` server-side.
+     * @param nameGt Cursor: roles whose name sorts after this value.
+     */
+    @CheckResult
+    public fun searchRoles(
+        query: String,
+        limit: Int? = null,
+        roleType: String? = null,
+        includeGlobalRoles: Boolean? = null,
+        nameGt: String? = null,
+    ): Call<List<Role>> {
+        return api.searchRoles(
+            query = query,
+            limit = limit,
+            roleType = roleType,
+            includeGlobalRoles = includeGlobalRoles,
+            nameGt = nameGt,
         )
     }
 
