@@ -219,6 +219,7 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -1714,6 +1715,171 @@ internal constructor(
             .doOnResult(userScope) { result ->
                 plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
             }
+    }
+
+    /**
+     * Creates a user group.
+     *
+     * @param name Display name (1–255 chars), unique within app/team.
+     * @param id Group ID (max 255 chars). A UUID v7 is generated server-side when null.
+     * @param description Optional description (max 1024 chars).
+     * @param teamId Team to scope the group to. Required when multi-tenancy is enabled.
+     * @param memberIds Initial member user IDs (max 100).
+     */
+    @CheckResult
+    public fun createUserGroup(
+        name: String,
+        id: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+        memberIds: List<String>? = null,
+    ): Call<UserGroup> {
+        return api.createUserGroup(
+            name = name,
+            id = id,
+            description = description,
+            teamId = teamId,
+            memberIds = memberIds,
+        )
+    }
+
+    /**
+     * Lists user groups, ordered for cursor pagination.
+     *
+     * @param limit Max groups to return (1–100). Server default applies when null.
+     * @param idGt Cursor: groups whose ID sorts after this value.
+     * @param createdAtGt Cursor: groups created after this RFC3339 timestamp.
+     * @param teamId Restrict to a specific team.
+     */
+    @CheckResult
+    public fun queryUserGroups(
+        limit: Int? = null,
+        idGt: String? = null,
+        createdAtGt: String? = null,
+        teamId: String? = null,
+    ): Call<List<UserGroup>> {
+        return api.queryUserGroups(
+            limit = limit,
+            idGt = idGt,
+            createdAtGt = createdAtGt,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Searches user groups by name prefix.
+     *
+     * @param query Search term (1–255 chars).
+     * @param limit Maximum number of groups to return (1–25). Server default applies when null.
+     * @param teamId Restrict the search to a specific team. Required when multi-tenancy is enabled.
+     * @param nameGt Cursor: groups whose name sorts after this value.
+     * @param idGt Cursor: groups whose ID sorts after this value.
+     */
+    @CheckResult
+    public fun searchUserGroups(
+        query: String,
+        limit: Int? = null,
+        teamId: String? = null,
+        nameGt: String? = null,
+        idGt: String? = null,
+    ): Call<List<UserGroup>> {
+        return api.searchUserGroups(
+            query = query,
+            limit = limit,
+            teamId = teamId,
+            nameGt = nameGt,
+            idGt = idGt,
+        )
+    }
+
+    /**
+     * Fetches a user group by ID.
+     *
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun getUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.getUserGroup(id = id, teamId = teamId)
+    }
+
+    /**
+     * Updates a user group's metadata. Members are managed via [addUserGroupMembers] and
+     * [removeUserGroupMembers].
+     *
+     * @param name New display name (1–255 chars).
+     * @param description New description (max 1024 chars).
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun updateUserGroup(
+        id: String,
+        name: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.updateUserGroup(
+            id = id,
+            name = name,
+            description = description,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Deletes a user group.
+     *
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun deleteUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<Unit> {
+        return api.deleteUserGroup(id = id, teamId = teamId)
+    }
+
+    /**
+     * Adds members to a user group.
+     *
+     * @param memberIds User IDs to add (1–100).
+     * @param asAdmin Whether to add the members as group admins.
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun addUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        asAdmin: Boolean? = null,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.addUserGroupMembers(
+            id = id,
+            memberIds = memberIds,
+            asAdmin = asAdmin,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Removes members from a user group.
+     *
+     * @param memberIds User IDs to remove (1–100).
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun removeUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.removeUserGroupMembers(
+            id = id,
+            memberIds = memberIds,
+            teamId = teamId,
+        )
     }
 
     /**

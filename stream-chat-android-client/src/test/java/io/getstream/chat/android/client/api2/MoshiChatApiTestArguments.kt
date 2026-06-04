@@ -59,6 +59,8 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
@@ -881,4 +883,27 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
+
+    @JvmStatic
+    fun userGroupsResponseInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                UserGroupsResponse(user_groups = listOf(Mother.randomDownstreamUserGroupDto())),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<UserGroupsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun userGroupResponseInput() = listOf(
+        Arguments.of(
+            RetroSuccess(UserGroupResponse(user_group = Mother.randomDownstreamUserGroupDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<UserGroupResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun deleteUserGroupInput() = completableResponseArguments()
 }

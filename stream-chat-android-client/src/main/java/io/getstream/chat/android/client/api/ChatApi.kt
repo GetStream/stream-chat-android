@@ -65,6 +65,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
@@ -143,6 +144,67 @@ internal interface ChatApi {
 
     @CheckResult
     fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference>
+
+    @CheckResult
+    fun createUserGroup(
+        name: String,
+        id: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+        memberIds: List<String>? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun queryUserGroups(
+        limit: Int? = null,
+        idGt: String? = null,
+        createdAtGt: String? = null,
+        teamId: String? = null,
+    ): Call<List<UserGroup>>
+
+    @CheckResult
+    fun searchUserGroups(
+        query: String,
+        limit: Int? = null,
+        teamId: String? = null,
+        nameGt: String? = null,
+        idGt: String? = null,
+    ): Call<List<UserGroup>>
+
+    @CheckResult
+    fun getUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun updateUserGroup(
+        id: String,
+        name: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun deleteUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<Unit>
+
+    @CheckResult
+    fun addUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        asAdmin: Boolean? = null,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun removeUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        teamId: String? = null,
+    ): Call<UserGroup>
 
     @CheckResult
     fun searchMessages(
