@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
@@ -145,6 +146,7 @@ public data class MessageTheme(
                     true -> colors.ownMessageText
                     else -> colors.otherMessageText
                 },
+                textDirection = TextDirection.Content,
             )
             val backgroundColor = when (own) {
                 true -> colors.ownMessagesBackground
@@ -177,6 +179,7 @@ public data class MessageTheme(
                         true -> colors.ownMessageQuotedText
                         else -> colors.otherMessageQuotedText
                     },
+                    textDirection = TextDirection.Content,
                 ),
                 // Deprecated
                 quotedBackgroundColor = when (own) {
