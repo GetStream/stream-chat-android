@@ -48,7 +48,7 @@ jobs:
     env:
       ANDROID_API_LEVEL: ${{ matrix.android_api_level }}
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
       - uses: actions/download-artifact@v8.0.1
         continue-on-error: true
         with:
