@@ -18,21 +18,17 @@ package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,6 +48,7 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
@@ -63,6 +60,7 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePrevie
 import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
@@ -82,6 +80,7 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * @param onDismiss Callback invoked when the gallery should be dismissed.
  * @param modifier Optional modifier applied to the gallery surface.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MediaGalleryPhotosMenu(
     attachments: List<Attachment>,
@@ -90,35 +89,21 @@ internal fun MediaGalleryPhotosMenu(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(ChatTheme.colors.backgroundCoreScrim)
-            .clickable(
-                indication = null,
-                interactionSource = null,
-                onClick = onDismiss,
-            ),
+    StreamCardBottomSheet(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
     ) {
-        Surface(
-            modifier = modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .align(Alignment.BottomCenter),
-            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            color = ChatTheme.colors.backgroundCoreElevation1,
+        MediaGalleryPhotosMenuHeader(onDismiss)
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxWidth(),
+            columns = GridCells.Fixed(ColumnCount),
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                MediaGalleryPhotosMenuHeader(onDismiss)
-                LazyVerticalGrid(columns = GridCells.Fixed(ColumnCount)) {
-                    itemsIndexed(attachments) { index, attachment ->
-                        MediaGalleryPhotosMenuItem(
-                            attachment = attachment,
-                            user = user,
-                            onClick = { onClick(index) },
-                        )
-                    }
-                }
+            itemsIndexed(attachments) { index, attachment ->
+                MediaGalleryPhotosMenuItem(
+                    attachment = attachment,
+                    user = user,
+                    onClick = { onClick(index) },
+                )
             }
         }
     }
@@ -266,6 +251,18 @@ private fun ErrorIcon(modifier: Modifier) {
             contentDescription = stringResource(UiCommonR.string.stream_ui_message_list_attachment_load_failed),
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun MediaGalleryPhotosMenuSample() {
+    val message = PreviewMessageData.messageWithUserAndAttachment
+    MediaGalleryPhotosMenu(
+        attachments = message.attachments,
+        user = message.user,
+        onClick = {},
+        onDismiss = {},
+    )
 }
 
 /**

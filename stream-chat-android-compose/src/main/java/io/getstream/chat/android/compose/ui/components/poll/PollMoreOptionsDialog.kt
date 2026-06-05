@@ -17,26 +17,21 @@
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -44,8 +39,8 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.StreamScreenBottomSheet
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -67,7 +62,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param onDismissRequest Handler for dismissing the dialog.
  * @param onBackPressed Handler for pressing a back button.
  */
-@Suppress("LongMethod")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun PollMoreOptionsDialog(
     selectedPoll: SelectedPoll,
@@ -75,45 +70,25 @@ public fun PollMoreOptionsDialog(
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
-    val state = remember {
-        MutableTransitionState(false).apply {
-            // Start the animation immediately.
-            targetState = true
-        }
-    }
-    Popup(
-        alignment = Alignment.BottomCenter,
-        onDismissRequest = onDismissRequest,
-    ) {
-        AnimatedVisibility(
-            visibleState = state,
-            enter = fadeIn() + slideInVertically(
-                animationSpec = tween(400),
-                initialOffsetY = { fullHeight -> fullHeight / 2 },
-            ),
-            exit = fadeOut(animationSpec = tween(200)) +
-                slideOutVertically(animationSpec = tween(400)),
-            label = "poll more options dialog",
-        ) {
-            Content(
-                selectedPoll = selectedPoll,
-                onBackPressed = onBackPressed,
-                onCastVote = { option ->
-                    listViewModel.castVote(
-                        message = selectedPoll.message,
-                        poll = selectedPoll.poll,
-                        option = option,
-                    )
-                },
-                onRemoveVote = { vote ->
-                    listViewModel.removeVote(
-                        message = selectedPoll.message,
-                        poll = selectedPoll.poll,
-                        vote = vote,
-                    )
-                },
-            )
-        }
+    StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
+        Content(
+            selectedPoll = selectedPoll,
+            onBackPressed = onBackPressed,
+            onCastVote = { option ->
+                listViewModel.castVote(
+                    message = selectedPoll.message,
+                    poll = selectedPoll.poll,
+                    option = option,
+                )
+            },
+            onRemoveVote = { vote ->
+                listViewModel.removeVote(
+                    message = selectedPoll.message,
+                    poll = selectedPoll.poll,
+                    vote = vote,
+                )
+            },
+        )
     }
 }
 
@@ -130,6 +105,7 @@ private fun Content(
 
     Column(
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize()
             .background(ChatTheme.colors.backgroundCoreApp),
     ) {
@@ -272,17 +248,22 @@ private fun PollMoreOptionItem(
 @Composable
 private fun PollMoreOptionsDialogPreview() {
     ChatTheme {
-        PollMoreOptionsDialog()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollMoreOptionsDialog()
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollMoreOptionsDialog() {
-    Content(
-        selectedPoll = SelectedPoll(
-            poll = PreviewPollData.poll1,
-            message = PreviewMessageData.message1,
-            pollSelectionType = PollSelectionType.MoreOption,
-        ),
-    )
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(
+            selectedPoll = SelectedPoll(
+                poll = PreviewPollData.poll1,
+                message = PreviewMessageData.message1,
+                pollSelectionType = PollSelectionType.MoreOption,
+            ),
+        )
+    }
 }

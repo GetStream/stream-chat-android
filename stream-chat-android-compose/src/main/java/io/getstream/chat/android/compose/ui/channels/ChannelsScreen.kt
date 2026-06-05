@@ -17,13 +17,6 @@
 package io.getstream.chat.android.compose.ui.channels
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.AnimationConstants
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +31,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.paneTitle
@@ -194,17 +186,8 @@ public fun ChannelsScreen(
             }
         }
 
-        val isMenuVisible = selectedChannel != null
-        val lastChannel = remember { mutableStateOf(Channel()) }
         if (selectedChannel != null) {
-            lastChannel.value = selectedChannel!!
-        }
-        AnimatedVisibility(
-            visible = isMenuVisible,
-            enter = fadeIn(),
-            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
-        ) {
-            val channel = lastChannel.value
+            val channel = selectedChannel!!
             val channelActions = buildDefaultChannelActions(
                 selectedChannel = channel,
                 ownCapabilities = channel.ownCapabilities,
@@ -217,18 +200,6 @@ public fun ChannelsScreen(
 
             ChatTheme.componentFactory.ChannelMenu(
                 params = ChannelMenuParams(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .animateEnterExit(
-                            enter = slideInVertically(
-                                initialOffsetY = { height -> height },
-                                animationSpec = tween(),
-                            ),
-                            exit = slideOutVertically(
-                                targetOffsetY = { height -> height },
-                                animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
-                            ),
-                        ),
                     selectedChannel = channel,
                     currentUser = user,
                     channelActions = channelActions,

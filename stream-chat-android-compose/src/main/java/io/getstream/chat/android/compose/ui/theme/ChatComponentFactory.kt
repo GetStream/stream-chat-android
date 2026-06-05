@@ -63,8 +63,8 @@ import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttac
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
-import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannelMenuHeaderContent
-import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
+import io.getstream.chat.android.compose.ui.channels.info.ChannelActionsSheet
+import io.getstream.chat.android.compose.ui.channels.info.DefaultChannelMenuHeaderContent
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemCenterContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemLeadingContent
@@ -1802,19 +1802,19 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the full content of the SelectedChannelMenu.
+     * Factory method for creating the channel actions sheet shown on channel long-press.
      *
      * @param params Parameters for this component.
      */
     @Composable
     public fun ChannelMenu(params: ChannelMenuParams) {
-        SelectedChannelMenu(
-            modifier = params.modifier,
-            selectedChannel = params.selectedChannel,
-            currentUser = params.currentUser,
-            channelActions = params.channelActions,
-            onChannelOptionConfirm = params.onChannelOptionConfirm,
+        ChannelActionsSheet(
+            channel = params.selectedChannel,
+            actions = params.channelActions,
+            onActionClick = params.onChannelOptionConfirm,
             onDismiss = params.onDismiss,
+            modifier = params.modifier,
+            currentUser = params.currentUser,
         )
     }
 
@@ -1825,9 +1825,10 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun ChannelMenuHeaderContent(params: ChannelMenuHeaderContentParams) {
-        DefaultSelectedChannelMenuHeaderContent(
+        DefaultChannelMenuHeaderContent(
             selectedChannel = params.selectedChannel,
             currentUser = params.currentUser,
+            modifier = params.modifier,
         )
     }
 

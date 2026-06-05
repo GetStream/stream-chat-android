@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages
+package io.getstream.chat.android.compose.ui.channel.attachments
 
-import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContentManyReactions
-import io.getstream.chat.android.compose.ui.components.messageactions.ReactionsMenuContentOneReaction
+import io.getstream.chat.android.models.ConnectionState
+import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
-internal class ReactionsMenuContentTest : PaparazziComposeTest {
+internal class ChannelMediaAttachmentsPreviewSheetTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
-    @Test
-    fun `one reaction`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            ReactionsMenuContentOneReaction()
-        }
+    @Before
+    fun prepare() {
+        whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
     }
 
     @Test
-    fun `many reactions`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            ReactionsMenuContentManyReactions()
-        }
+    fun `preview sheet`() = snapshot { ChannelMediaAttachmentsPreviewSheet() }
+
+    @Test
+    fun `preview sheet in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelMediaAttachmentsPreviewSheet()
     }
 }

@@ -16,45 +16,25 @@
 
 package io.getstream.chat.android.compose.ui.channels.info
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.extensions.isMutedFor
-import io.getstream.chat.android.client.extensions.isPinned
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
-import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
-import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuHeaderContentParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.dmCounterpartId
-import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Member
@@ -81,6 +61,14 @@ import java.util.Date
  * @param headerContent The content shown at the top of the dialog.
  * @param centerContent The content shown at the center of the dialog.
  */
+@Deprecated(
+    message = "Use ChannelActionsSheet. Will be removed in v8.",
+    replaceWith = ReplaceWith(
+        expression = "ChannelActionsSheet(selectedChannel, channelActions, onChannelOptionConfirm, " +
+            "onDismiss, modifier, currentUser)",
+    ),
+)
+@Suppress("DEPRECATION")
 @Composable
 public fun SelectedChannelMenu(
     selectedChannel: Channel,
@@ -97,6 +85,7 @@ public fun SelectedChannelMenu(
                 params = ChannelMenuHeaderContentParams(
                     selectedChannel = selectedChannel,
                     currentUser = currentUser,
+                    modifier = Modifier.padding(top = StreamTokens.spacingMd),
                 ),
             )
         }
@@ -119,125 +108,6 @@ public fun SelectedChannelMenu(
         onDismiss = onDismiss,
         headerContent = headerContent,
         centerContent = centerContent,
-    )
-}
-
-/**
- * Represents the default content shown at the top of [SelectedChannelMenu] dialog.
- *
- * Renders inline muted and pinned icons next to the channel name based on the channel's pin state
- * and the current user's mute settings. When [currentUser] is `null`, no state icons are rendered.
- *
- * @param selectedChannel The channel the user selected.
- * @param currentUser The currently logged-in user data.
- */
-@Composable
-internal fun DefaultSelectedChannelMenuHeaderContent(
-    selectedChannel: Channel,
-    currentUser: User?,
-) {
-    val showPinnedIcon = selectedChannel.isPinned()
-    val showMutedIcon = currentUser != null && isChannelOrCounterpartMuted(selectedChannel, currentUser)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                start = StreamTokens.spacingMd,
-                end = StreamTokens.spacingMd,
-                top = StreamTokens.spacingMd,
-                bottom = StreamTokens.spacingSm,
-            ),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ChatTheme.componentFactory.ChannelAvatar(
-            params = ChannelAvatarParams(
-                modifier = Modifier.size(AvatarSize.ExtraLarge),
-                channel = selectedChannel,
-                currentUser = currentUser,
-                showIndicator = true,
-            ),
-        )
-
-        Column(
-            modifier = Modifier
-                .padding(start = StreamTokens.spacingSm)
-                .weight(1f),
-        ) {
-            HeaderTitleRow(
-                selectedChannel = selectedChannel,
-                currentUser = currentUser,
-                showMutedIcon = showMutedIcon,
-                showPinnedIcon = showPinnedIcon,
-            )
-            Text(
-                text = selectedChannel.getMembersStatusText(
-                    context = LocalContext.current,
-                    currentUser = currentUser,
-                ),
-                style = ChatTheme.typography.captionDefault,
-                color = ChatTheme.colors.textSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}
-
-private fun isChannelOrCounterpartMuted(channel: Channel, currentUser: User): Boolean {
-    if (channel.isMutedFor(currentUser)) return true
-    val otherUserId = channel.dmCounterpartId(currentUser) ?: return false
-    return currentUser.mutes.any { it.target?.id == otherUserId }
-}
-
-@Composable
-private fun HeaderTitleRow(
-    selectedChannel: Channel,
-    currentUser: User?,
-    showMutedIcon: Boolean,
-    showPinnedIcon: Boolean,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
-    ) {
-        Text(
-            modifier = Modifier.weight(1f, fill = false),
-            text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-            style = ChatTheme.typography.headingSmall,
-            color = ChatTheme.colors.textPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        if (showMutedIcon) {
-            HeaderStateIcon(
-                iconRes = R.drawable.stream_design_ic_mute,
-                contentDescriptionRes = R.string.stream_compose_channel_item_muted,
-                testTag = "Stream_ChannelMenuHeaderMutedIcon",
-            )
-        }
-        if (showPinnedIcon) {
-            HeaderStateIcon(
-                iconRes = R.drawable.stream_design_ic_pin,
-                contentDescriptionRes = R.string.stream_compose_channel_item_pinned,
-                testTag = "Stream_ChannelMenuHeaderPinnedIcon",
-            )
-        }
-    }
-}
-
-@Composable
-private fun HeaderStateIcon(
-    @DrawableRes iconRes: Int,
-    @StringRes contentDescriptionRes: Int,
-    testTag: String,
-) {
-    Icon(
-        modifier = Modifier
-            .testTag(testTag)
-            .size(16.dp),
-        painter = painterResource(id = iconRes),
-        contentDescription = stringResource(contentDescriptionRes),
-        tint = ChatTheme.colors.textTertiary,
     )
 }
 
@@ -318,6 +188,7 @@ internal fun SelectedChannelMenuMutedPinned() {
  * @param currentUser The user used to resolve member status text and to derive the inline state
  * icons (muted, pinned) in the default header.
  */
+@Suppress("DEPRECATION")
 @Composable
 private fun SelectedChannelMenuSample(
     alignment: Alignment,

@@ -28,23 +28,24 @@ internal class PollAnswersTest : PaparazziComposeTest {
     override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun content() {
-        snapshotWithDarkMode {
-            PollAnswersContent()
-        }
+    fun content() = snapshot { PollAnswersContent() }
+
+    @Test
+    fun `content in dark mode`() = snapshot(isInDarkMode = true) { PollAnswersContent() }
+
+    @Test
+    fun `with current user answer`() = snapshot { PollAnswersWithCurrentUserContent() }
+
+    @Test
+    fun `with current user answer in dark mode`() = snapshot(isInDarkMode = true) {
+        PollAnswersWithCurrentUserContent()
     }
 
     @Test
-    fun `with current user answer`() {
-        snapshotWithDarkMode {
-            PollAnswersWithCurrentUserContent()
-        }
-    }
+    fun `closed anonymous`() = snapshot { PollAnswersClosedAnonymousContent() }
 
     @Test
-    fun `closed anonymous`() {
-        snapshotWithDarkMode {
-            PollAnswersClosedAnonymousContent()
-        }
+    fun `closed anonymous in dark mode`() = snapshot(isInDarkMode = true) {
+        PollAnswersClosedAnonymousContent()
     }
 }

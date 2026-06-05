@@ -50,30 +50,30 @@ internal class GroupChannelEditScreenTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `image picker with remove in light mode`() {
+    fun `image picker with remove`() {
         snapshot(backgroundColor = Color.Transparent) {
-            ImagePickerOptionsWithRemove()
+            ImagePickerSheetWithRemove()
         }
     }
 
     @Test
     fun `image picker with remove in dark mode`() {
         snapshot(backgroundColor = Color.Transparent, isInDarkMode = true) {
-            ImagePickerOptionsWithRemove()
+            ImagePickerSheetWithRemove()
         }
     }
 
     @Test
-    fun `image picker no remove in light mode`() {
+    fun `image picker no remove`() {
         snapshot(backgroundColor = Color.Transparent) {
-            ImagePickerOptionsNoRemove()
+            ImagePickerSheetNoRemove()
         }
     }
 
     @Test
     fun `image picker no remove in dark mode`() {
         snapshot(backgroundColor = Color.Transparent, isInDarkMode = true) {
-            ImagePickerOptionsNoRemove()
+            ImagePickerSheetNoRemove()
         }
     }
 }

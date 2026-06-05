@@ -18,10 +18,9 @@ package io.getstream.chat.android.compose.ui.components.reactionpicker
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionsPickerContentParams
@@ -46,11 +45,9 @@ public fun ReactionsPicker(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
 ) {
-    ModalBottomSheet(
-        modifier = modifier,
-        sheetState = rememberModalBottomSheetState(),
-        containerColor = ChatTheme.colors.backgroundCoreApp,
+    StreamCardBottomSheet(
         onDismissRequest = onDismiss,
+        modifier = modifier,
     ) {
         ChatTheme.componentFactory.MessageReactionsPickerContent(
             params = MessageReactionsPickerContentParams(

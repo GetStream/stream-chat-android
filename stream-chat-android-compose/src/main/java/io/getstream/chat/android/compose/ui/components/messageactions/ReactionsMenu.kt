@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui.components.messageactions
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,12 +31,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,6 +51,7 @@ import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuContentParams
@@ -92,14 +91,9 @@ public fun ReactionsMenu(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
 ) {
-    ModalBottomSheet(
-        modifier = modifier,
-        sheetState = rememberModalBottomSheetState(),
-        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        containerColor = ChatTheme.colors.backgroundCoreElevation1,
-        scrimColor = ChatTheme.colors.backgroundCoreScrim,
+    StreamCardBottomSheet(
         onDismissRequest = onDismiss,
-        dragHandle = { BottomSheetDefaults.DragHandle() },
+        modifier = modifier,
     ) {
         ChatTheme.componentFactory.ReactionsMenuContent(
             params = ReactionsMenuContentParams(
@@ -331,27 +325,29 @@ private fun buildUserReactionItems(
     }
 }
 
+@Preview
 @Composable
-private fun ReactionsMenuListPreview(message: Message) {
-    ReactionsMenuList(
-        reactionGroups = buildReactionGroups(message),
-        items = buildUserReactionItems(
-            reactions = message.latestReactions,
-            currentUser = PreviewUserData.user1,
-        ),
-        selectedReactionType = null,
-        isLoading = false,
-        isLoadingMore = false,
-        onReactionSelected = {},
-        onReactionOptionSelected = {},
-        onAddReactionClick = {},
-        onLoadMore = {},
-    )
+private fun ReactionsMenuOneReactionPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ReactionsMenuSampleOneReaction()
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ReactionsMenuManyReactionsPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ReactionsMenuSampleManyReactions()
+        }
+    }
 }
 
 @Composable
-internal fun ReactionsMenuContentOneReaction() {
-    ReactionsMenuListPreview(
+internal fun ReactionsMenuSampleOneReaction() {
+    ReactionsMenuSample(
         message = PreviewMessageData.message1.copy(
             latestReactions = PreviewReactionData.oneReaction,
             reactionGroups = PreviewReactionData.oneReactionGroup,
@@ -360,8 +356,8 @@ internal fun ReactionsMenuContentOneReaction() {
 }
 
 @Composable
-internal fun ReactionsMenuContentManyReactions() {
-    ReactionsMenuListPreview(
+internal fun ReactionsMenuSampleManyReactions() {
+    ReactionsMenuSample(
         message = PreviewMessageData.message1.copy(
             latestReactions = PreviewReactionData.manyReaction,
             reactionGroups = PreviewReactionData.manyReactionGroups,
@@ -369,18 +365,14 @@ internal fun ReactionsMenuContentManyReactions() {
     )
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun OneReactionMenuPreview() {
-    ChatTheme {
-        ReactionsMenuContentOneReaction()
-    }
-}
-
-@Preview
-@Composable
-private fun ManyReactionsMenuPreview() {
-    ChatTheme {
-        ReactionsMenuContentManyReactions()
-    }
+private fun ReactionsMenuSample(message: Message) {
+    ReactionsMenu(
+        message = message,
+        currentUser = PreviewUserData.user1,
+        ownCapabilities = setOf(ChannelCapabilities.SEND_REACTION),
+        onMessageAction = {},
+        onShowMoreReactionsSelected = {},
+    )
 }

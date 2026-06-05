@@ -16,14 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,10 +26,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -58,8 +52,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.StreamScreenBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
@@ -78,7 +72,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import java.util.Date
 
-@Suppress("LongMethod", "MagicNumber")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun PollAnswersDialog(
     selectedPoll: SelectedPoll,
@@ -88,12 +82,6 @@ public fun PollAnswersDialog(
 ) {
     val user by listViewModel.user.collectAsState()
     val currentUserAnswer = selectedPoll.poll.answers.firstOrNull { it.user?.id == user?.id }
-    val state = remember {
-        MutableTransitionState(false).apply {
-            // Start the animation immediately.
-            targetState = true
-        }
-    }
     var showAddAnswerDialog by remember { mutableStateOf(false) }
     if (showAddAnswerDialog) {
         AddAnswerDialog(
@@ -104,30 +92,13 @@ public fun PollAnswersDialog(
             },
         )
     }
-    Popup(
-        alignment = Alignment.BottomCenter,
-        onDismissRequest = onDismissRequest,
-    ) {
-        BackHandler(onBack = onBackPressed)
-
-        @Suppress("MagicNumber")
-        AnimatedVisibility(
-            visibleState = state,
-            enter = fadeIn() + slideInVertically(
-                animationSpec = tween(400),
-                initialOffsetY = { fullHeight -> fullHeight / 2 },
-            ),
-            exit = fadeOut(animationSpec = tween(200)) +
-                slideOutVertically(animationSpec = tween(400)),
-            label = "poll answers dialog",
-        ) {
-            Content(
-                poll = selectedPoll.poll,
-                currentUserAnswer = currentUserAnswer,
-                onBackPressed = onBackPressed,
-                onAddOrEditClick = { showAddAnswerDialog = true },
-            )
-        }
+    StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
+        Content(
+            poll = selectedPoll.poll,
+            currentUserAnswer = currentUserAnswer,
+            onBackPressed = onBackPressed,
+            onAddOrEditClick = { showAddAnswerDialog = true },
+        )
     }
 }
 
@@ -140,6 +111,7 @@ private fun Content(
 ) {
     Column(
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize()
             .background(ChatTheme.colors.backgroundCoreApp),
     ) {
@@ -347,46 +319,61 @@ private fun AddAnswerDialogInput(newOption: MutableState<String>, modifier: Modi
 @Composable
 private fun PollAnswersContentPreview() {
     ChatTheme {
-        PollAnswersContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollAnswersContent()
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollAnswersContent() {
-    Content(poll = previewPollWithAnswers())
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(poll = previewPollWithAnswers())
+    }
 }
 
 @Preview
 @Composable
 private fun PollAnswersWithCurrentUserContentPreview() {
     ChatTheme {
-        PollAnswersWithCurrentUserContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollAnswersWithCurrentUserContent()
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollAnswersWithCurrentUserContent() {
     val poll = previewPollWithAnswers()
     val currentUserAnswer = poll.answers.first { it.user?.id == PreviewUserData.user1.id }
-    Content(poll = poll, currentUserAnswer = currentUserAnswer)
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(poll = poll, currentUserAnswer = currentUserAnswer)
+    }
 }
 
 @Preview
 @Composable
 private fun PollAnswersClosedAnonymousContentPreview() {
     ChatTheme {
-        PollAnswersClosedAnonymousContent()
+        Box(modifier = Modifier.fillMaxSize()) {
+            PollAnswersClosedAnonymousContent()
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PollAnswersClosedAnonymousContent() {
-    Content(
-        poll = previewPollWithAnswers().copy(
-            closed = true,
-            votingVisibility = VotingVisibility.ANONYMOUS,
-        ),
-    )
+    StreamScreenBottomSheet(onDismissRequest = {}) {
+        Content(
+            poll = previewPollWithAnswers().copy(
+                closed = true,
+                votingVisibility = VotingVisibility.ANONYMOUS,
+            ),
+        )
+    }
 }
 
 private fun previewPollWithAnswers(): Poll {

@@ -22,11 +22,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,6 +51,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.GalleryPicke
 import io.getstream.chat.android.compose.state.messages.attachments.MediaType
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
+import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
@@ -191,7 +193,7 @@ internal fun AttachmentSystemPicker(
     }
     val commands = channel.config.commands
     if (showCommandsPickerDialog && commandPickerMode != null) {
-        ModalBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
+        StreamCardBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
             ChatTheme.componentFactory.AttachmentCommandPicker(
                 params = AttachmentCommandPickerParams(
                     pickerMode = commandPickerMode,
@@ -206,6 +208,26 @@ internal fun AttachmentSystemPicker(
                 ),
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun AttachmentCommandPickerSheet() {
+    StreamCardBottomSheet(onDismissRequest = {}) {
+        ChatTheme.componentFactory.AttachmentCommandPicker(
+            params = AttachmentCommandPickerParams(
+                pickerMode = CommandPickerMode,
+                commands = listOf(
+                    PreviewCommandData.command1,
+                    PreviewCommandData.command2,
+                    PreviewCommandData.command3,
+                    PreviewCommandData.command4,
+                    PreviewCommandData.command5,
+                ),
+                onCommandSelected = {},
+            ),
+        )
     }
 }
 
@@ -318,4 +340,14 @@ internal fun AttachmentSystemPickerWithCommands() {
         messageMode = MessageMode.Normal,
         attachments = emptyList(),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentCommandPickerSheetPreview() {
+    ChatPreviewTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AttachmentCommandPickerSheet()
+        }
+    }
 }

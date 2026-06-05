@@ -32,16 +32,8 @@ internal class PollMoreOptionsDialogTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `light mode`() {
-        snapshot(isInDarkMode = false) {
-            PollMoreOptionsDialog()
-        }
-    }
+    fun `more options`() = snapshot { PollMoreOptionsDialog() }
 
     @Test
-    fun `dark mode`() {
-        snapshot(isInDarkMode = true) {
-            PollMoreOptionsDialog()
-        }
-    }
+    fun `more options in dark mode`() = snapshot(isInDarkMode = true) { PollMoreOptionsDialog() }
 }
