@@ -30,6 +30,7 @@ io.getstream.chat.android.client.internal.file
 io.getstream.chat.android.client.internal.offline.plugin.factory
 io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 io.getstream.chat.android.client.internal.offline.repository.domain.message.internal
+io.getstream.chat.android.client.internal.state.plugin
 io.getstream.chat.android.client.internal.state.plugin.factory
 io.getstream.chat.android.client.internal.state.plugin.internal
 io.getstream.chat.android.client.logger
