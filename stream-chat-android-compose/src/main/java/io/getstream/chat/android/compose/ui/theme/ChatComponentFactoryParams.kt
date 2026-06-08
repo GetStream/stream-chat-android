@@ -160,6 +160,17 @@ public data class ChannelListLoadingIndicatorParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.ChannelListBanner].
+ *
+ * @param modifier Modifier for styling.
+ * @param onClick Action invoked when the banner is tapped to retry the failed load.
+ */
+public data class ChannelListBannerParams(
+    val modifier: Modifier = Modifier,
+    val onClick: () -> Unit = {},
+)
+
+/**
  * Parameters for [ChatComponentFactory.ChannelListEmptyContent].
  *
  * @param modifier Modifier for styling.

@@ -908,14 +908,18 @@ public class ChannelListViewModel internal constructor(
         }
         lastNextQuery = nextQuery
         logger.v { "[loadMoreQueryChannels] offset: ${nextQuery.offset}, limit: ${nextQuery.limit}" }
+        // Preserve loadingError until the outcome is known, so a failing retry doesn't clear and re-set it.
         channelsState = channelsState.copy(isLoadingMore = true)
         val result = chatClient.queryChannels(nextQuery).await()
         if (result.isSuccess) {
             logger.v { "[loadMoreQueryChannels] completed; channels.size: ${result.getOrNull()?.size}" }
+            channelsState = channelsState.copy(isLoadingMore = false, loadingError = false)
         } else {
             logger.e { "[loadMoreQueryChannels] failed: ${result.errorOrNull()}" }
+            // Clear the cached query so a retry re-issues this page instead of being rejected as a duplicate.
+            lastNextQuery = null
+            channelsState = channelsState.copy(isLoadingMore = false, loadingError = true)
         }
-        channelsState = channelsState.copy(isLoadingMore = false)
     }
 
     /**

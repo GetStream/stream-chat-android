@@ -50,6 +50,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.result.Error
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
@@ -335,6 +336,111 @@ internal class ChannelListViewModelTest {
             assertEquals(0, captor.firstValue.offset)
             assertEquals(30, captor.secondValue.offset)
         }
+
+    @Test
+    fun `Given loading more channels fails When loading more Should expose a loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.channelsState.loadingError)
+        assertFalse(viewModel.channelsState.isLoadingMore)
+    }
+
+    @Test
+    fun `Given a loading error When retrying successfully Should clear the loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+            listOf(channel1, channel2).asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+        assertTrue(viewModel.channelsState.loadingError)
+
+        // Tapping the banner retries the same page; the failed query is no longer rejected as a duplicate.
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.channelsState.loadingError)
+        verify(chatClient, times(3)).queryChannels(any())
+    }
+
+    @Test
+    fun `Given a loading error When retrying unsuccessfully Should keep the loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+            Error.GenericError("network error").asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+        assertTrue(viewModel.channelsState.loadingError)
+
+        // A failing retry keeps the banner up (no flicker); the error is only cleared on success.
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.channelsState.loadingError)
+        verify(chatClient, times(3)).queryChannels(any())
+    }
 
     @Test
     fun `Given channel list in content state and the current user is offline When loading more channels Should do nothing`() =

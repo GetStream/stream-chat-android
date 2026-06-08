@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.theme.ChannelListBannerParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListEmptyContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListEmptySearchContentParams
@@ -95,6 +96,8 @@ import kotlinx.coroutines.launch
  * @param onChannelLongClick Handler for a long item tap.
  * @param onSearchResultClick Handler for a single search result tap.
  * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
+ * @param onLoadingErrorClick Handler for the "Tap to retry" banner shown when loading the next page fails.
+ * Defaults to retrying the failed load.
  */
 @Composable
 public fun ChannelList(
@@ -114,6 +117,7 @@ public fun ChannelList(
     onChannelLongClick: (Channel) -> Unit = remember(viewModel) { { viewModel.selectChannel(it) } },
     onSearchResultClick: (Message) -> Unit = {},
     onStartChatClick: (() -> Unit)? = null,
+    onLoadingErrorClick: () -> Unit = remember(viewModel) { { viewModel.loadMore() } },
 ) {
     val user by viewModel.user.collectAsState()
     val selectedCid = viewModel.selectedChannel.value?.cid
@@ -161,6 +165,7 @@ public fun ChannelList(
             onChannelLongClick = onChannelLongClick,
             onSearchResultClick = onSearchResultClick,
             onStartChatClick = onStartChatClick,
+            onLoadingErrorClick = onLoadingErrorClick,
         )
     }
 }
@@ -188,6 +193,7 @@ public fun ChannelList(
  * @param onChannelLongClick Handler for a long item tap.
  * @param onSearchResultClick Handler for a single search result tap.
  * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
+ * @param onLoadingErrorClick Handler for the "Tap to retry" banner shown when loading the next page fails.
  */
 @Composable
 public fun ChannelList(
@@ -201,42 +207,50 @@ public fun ChannelList(
     onChannelLongClick: (Channel) -> Unit = {},
     onSearchResultClick: (Message) -> Unit = {},
     onStartChatClick: (() -> Unit)? = null,
+    onLoadingErrorClick: () -> Unit = {},
 ) {
     val (isLoading, _, _, channels, searchQuery) = channelsState
 
     when {
         channels.isNotEmpty() -> {
-            Channels(
-                modifier = modifier,
-                contentPadding = contentPadding,
-                channelsState = channelsState,
-                lazyListState = lazyListState,
-                onLastItemReached = onLastItemReached,
-                helperContent = {
+            Column(modifier = modifier) {
+                if (channelsState.loadingError) {
                     with(ChatTheme.componentFactory) {
-                        ChannelListHelperContent(params = ChannelListHelperContentParams())
+                        ChannelListBanner(params = ChannelListBannerParams(onClick = onLoadingErrorClick))
                     }
-                },
-                loadingMoreContent = {
-                    with(ChatTheme.componentFactory) {
-                        ChannelListLoadingMoreItemContent(params = ChannelListLoadingMoreItemContentParams())
-                    }
-                },
-                itemContent = { itemState ->
-                    WrapperItemContent(
-                        itemState = itemState,
-                        currentUser = currentUser,
-                        onChannelClick = onChannelClick,
-                        onChannelLongClick = onChannelLongClick,
-                        onSearchResultClick = onSearchResultClick,
-                    )
-                },
-                divider = {
-                    with(ChatTheme.componentFactory) {
-                        ChannelListDividerItem(params = ChannelListDividerItemParams())
-                    }
-                },
-            )
+                }
+                Channels(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = contentPadding,
+                    channelsState = channelsState,
+                    lazyListState = lazyListState,
+                    onLastItemReached = onLastItemReached,
+                    helperContent = {
+                        with(ChatTheme.componentFactory) {
+                            ChannelListHelperContent(params = ChannelListHelperContentParams())
+                        }
+                    },
+                    loadingMoreContent = {
+                        with(ChatTheme.componentFactory) {
+                            ChannelListLoadingMoreItemContent(params = ChannelListLoadingMoreItemContentParams())
+                        }
+                    },
+                    itemContent = { itemState ->
+                        WrapperItemContent(
+                            itemState = itemState,
+                            currentUser = currentUser,
+                            onChannelClick = onChannelClick,
+                            onChannelLongClick = onChannelLongClick,
+                            onSearchResultClick = onSearchResultClick,
+                        )
+                    },
+                    divider = {
+                        with(ChatTheme.componentFactory) {
+                            ChannelListDividerItem(params = ChannelListDividerItemParams())
+                        }
+                    },
+                )
+            }
         }
 
         isLoading -> ChatTheme.componentFactory.ChannelListLoadingIndicator(
