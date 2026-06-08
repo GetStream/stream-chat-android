@@ -70,8 +70,8 @@ internal fun ReactionToggle(
         val notSelectedStateDescription = stringResource(R.string.stream_compose_reactions_state_not_selected)
         val selectActionLabel = stringResource(R.string.stream_compose_reactions_action_select)
         val unselectActionLabel = stringResource(R.string.stream_compose_reactions_action_unselect)
-        val addedAnnouncement = stringResource(R.string.stream_compose_reactions_added, emoji)
-        val removedAnnouncement = stringResource(R.string.stream_compose_reactions_removed, emoji)
+        val selectedAnnouncement = stringResource(R.string.stream_compose_reactions_selected, emoji)
+        val unselectedAnnouncement = stringResource(R.string.stream_compose_reactions_unselected, emoji)
         val view = LocalView.current
         ChatTheme.componentFactory.ReactionIcon(
             params = ReactionIconParams(
@@ -85,7 +85,7 @@ internal fun ReactionToggle(
                     .ifNotNull(onCheckedChange) { onChange ->
                         val toggleAndAnnounce: (Boolean) -> Unit = { newChecked ->
                             view.announceForAccessibility(
-                                if (newChecked) addedAnnouncement else removedAnnouncement,
+                                if (newChecked) selectedAnnouncement else unselectedAnnouncement,
                             )
                             onChange(newChecked)
                         }

@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -39,7 +41,8 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  * Card-style Stream modal bottom sheet.
  *
  * Bakes the design-system tokens for a card sitting above the app:
- * 32dp top corners, elevated surface color, heavier scrim, and the M3 default drag handle.
+ * 32dp top corners, elevated surface color, heavier scrim, and the M3 default drag handle
+ * (hidden from the accessibility tree).
  * Use for menus and option pickers that appear on top of the underlying screen
  * (e.g. reactions, channel info member modal, attachment command picker).
  *
@@ -54,7 +57,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  * @param onDismissRequest Invoked when the user dismisses the sheet.
  * @param modifier Modifier applied to the sheet container.
  * @param sheetState State controlling the sheet's visibility and target value.
- * @param dragHandle Composable rendered as the sheet's drag handle. Defaults to the M3 default.
  * @param content Sheet body, laid out vertically in a [ColumnScope].
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +65,6 @@ internal fun StreamCardBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberStreamSheetState(initialValueInInspection = SheetValue.PartiallyExpanded),
-    dragHandle: @Composable () -> Unit = { BottomSheetDefaults.DragHandle() },
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
@@ -73,7 +74,11 @@ internal fun StreamCardBottomSheet(
         shape = StreamCardSheetShape,
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
-        dragHandle = dragHandle,
+        dragHandle = {
+            BottomSheetDefaults.DragHandle(
+                modifier = Modifier.semantics { hideFromAccessibility() },
+            )
+        },
         content = content,
     )
 }

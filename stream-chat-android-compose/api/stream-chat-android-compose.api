@@ -1087,7 +1087,7 @@ public final class io/getstream/chat/android/compose/ui/components/ComposableSin
 public final class io/getstream/chat/android/compose/ui/components/ComposableSingletons$StreamModalBottomSheetKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/ComposableSingletons$StreamModalBottomSheetKt;
 	public fun <init> ()V
-	public final fun getLambda$42975036$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$932570128$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/ComposerCancelIconKt {
@@ -1718,12 +1718,6 @@ public final class io/getstream/chat/android/compose/ui/components/reactionoptio
 	public final fun getLambda$857155321$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class io/getstream/chat/android/compose/ui/components/reactionpicker/ComposableSingletons$ReactionsPickerKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/reactionpicker/ComposableSingletons$ReactionsPickerKt;
-	public fun <init> ()V
-	public final fun getLambda$1237548717$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-}
-
 public final class io/getstream/chat/android/compose/ui/components/reactionpicker/ReactionsPickerKt {
 	public static final fun ReactionsPicker (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ReactionsPickerContent (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
@@ -1870,7 +1864,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/Com
 	public final fun getLambda$-2013272462$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-2042605497$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$12639049$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$1654106807$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$2047105752$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentTypePickerKt {

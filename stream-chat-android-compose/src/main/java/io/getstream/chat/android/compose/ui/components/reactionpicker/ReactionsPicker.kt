@@ -17,15 +17,12 @@
 package io.getstream.chat.android.compose.ui.components.reactionpicker
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.hideFromAccessibility
-import androidx.compose.ui.semantics.semantics
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
@@ -61,11 +58,6 @@ public fun ReactionsPicker(
     StreamCardBottomSheet(
         onDismissRequest = onDismiss,
         modifier = modifier,
-        dragHandle = {
-            BottomSheetDefaults.DragHandle(
-                modifier = Modifier.semantics { hideFromAccessibility() },
-            )
-        },
     ) {
         ChatTheme.componentFactory.MessageReactionsPickerContent(
             params = MessageReactionsPickerContentParams(

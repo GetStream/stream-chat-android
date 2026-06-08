@@ -160,8 +160,8 @@
     <string name="stream_compose_reactions_state_not_selected">Not selected</string>
     <string name="stream_compose_reactions_action_select">Select</string>
     <string name="stream_compose_reactions_action_unselect">Unselect</string>
-    <string name="stream_compose_reactions_added">%1$s reaction added</string>
-    <string name="stream_compose_reactions_removed">%1$s reaction removed</string>
+    <string name="stream_compose_reactions_selected">%1$s reaction selected</string>
+    <string name="stream_compose_reactions_unselected">%1$s reaction unselected</string>
 
     <!-- Reactions Picker -->
     <string name="stream_compose_show_more_reactions">Show more reactions</string>

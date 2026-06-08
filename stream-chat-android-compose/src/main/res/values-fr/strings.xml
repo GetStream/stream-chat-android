@@ -230,9 +230,9 @@
   <string name="stream_compose_reactions_action_select">"Sélectionner"</string>
   <string name="stream_compose_reactions_action_unselect">"Désélectionner"</string>
   <string name="stream_compose_reactions_add">"Ajouter une réaction"</string>
-  <string name="stream_compose_reactions_added">"Réaction %1$s ajoutée"</string>
   <string name="stream_compose_reactions_remove">"Appuyez pour supprimer"</string>
-  <string name="stream_compose_reactions_removed">"Réaction %1$s supprimée"</string>
+  <string name="stream_compose_reactions_selected">"Réaction %1$s sélectionnée"</string>
+  <string name="stream_compose_reactions_unselected">"Réaction %1$s désélectionnée"</string>
   <string name="stream_compose_reactions_state_not_selected">"Non sélectionné"</string>
   <string name="stream_compose_reactions_state_selected">"Sélectionné"</string>
   <string name="stream_compose_reactions_you">"Vous"</string>
