@@ -145,6 +145,7 @@
   <string name="stream_compose_dismiss">"Chiudi"</string>
   <string name="stream_compose_edit_answer">"Aggiorna il tuo commento"</string>
   <string name="stream_compose_edit_message">"Modifica messaggio"</string>
+  <string name="stream_compose_emoji_picker_title">"Selettore emoji"</string>
   <string name="stream_compose_file_preview">"File"</string>
   <string name="stream_compose_flag_message">"Segnala messaggio"</string>
   <string name="stream_compose_flag_message_text">"Vuoi mandare una copia di questo messaggio ad un moderatore?"</string>
@@ -195,6 +196,7 @@
   <string name="stream_compose_message_composer_attachments_open">"Apri allegati"</string>
   <string name="stream_compose_message_deleted">"Messaggio cancellato"</string>
   <string name="stream_compose_message_deleted_preview">"Messaggio cancellato"</string>
+  <string name="stream_compose_message_actions_menu_title">"Azioni del messaggio"</string>
   <string name="stream_compose_message_item_open_thread">"Apri thread"</string>
   <string name="stream_compose_message_item_options">"Mostra opzioni messaggio"</string>
   <string name="stream_compose_message_attachment_open">"Apri allegato"</string>
@@ -287,8 +289,14 @@
   <string name="stream_compose_quoted_message_reply_to">"Rispondi a %s"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"Rispondi a te stesso"</string>
   <string name="stream_compose_quoted_message_you">"Tu"</string>
+  <string name="stream_compose_reactions_action_select">"Seleziona"</string>
+  <string name="stream_compose_reactions_action_unselect">"Deseleziona"</string>
   <string name="stream_compose_reactions_add">"Aggiungi reazione"</string>
   <string name="stream_compose_reactions_remove">"Tocca per rimuovere"</string>
+  <string name="stream_compose_reactions_selected">"Reazione %1$s selezionata"</string>
+  <string name="stream_compose_reactions_unselected">"Reazione %1$s deselezionata"</string>
+  <string name="stream_compose_reactions_state_not_selected">"Non selezionato"</string>
+  <string name="stream_compose_reactions_state_selected">"Selezionato"</string>
   <string name="stream_compose_reactions_you">"Tu"</string>
   <string name="stream_compose_recent_files">"File recenti"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

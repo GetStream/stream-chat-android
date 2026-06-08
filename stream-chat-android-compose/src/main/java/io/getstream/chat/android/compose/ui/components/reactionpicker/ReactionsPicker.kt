@@ -19,7 +19,11 @@ package io.getstream.chat.android.compose.ui.components.reactionpicker
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -45,6 +49,12 @@ public fun ReactionsPicker(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
 ) {
+    val view = LocalView.current
+    val emojiPickerTitle = stringResource(R.string.stream_compose_emoji_picker_title)
+    // ModalBottomSheet swallows the standard `paneTitle` window-state-changed event, so
+    // announce the title programmatically. See PollDialogHeader for the same workaround.
+    LaunchedEffect(emojiPickerTitle) { view.announceForAccessibility(emojiPickerTitle) }
+
     StreamCardBottomSheet(
         onDismissRequest = onDismiss,
         modifier = modifier,

@@ -1084,6 +1084,12 @@ public final class io/getstream/chat/android/compose/ui/components/ComposableSin
 	public final fun getLambda$2132906032$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/compose/ui/components/ComposableSingletons$StreamModalBottomSheetKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/ComposableSingletons$StreamModalBottomSheetKt;
+	public fun <init> ()V
+	public final fun getLambda$932570128$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/ComposerCancelIconKt {
 	public static final fun ComposerCancelIcon (Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }

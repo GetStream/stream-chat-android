@@ -111,6 +111,7 @@
     <string name="stream_compose_message_item_options">Show message options</string>
     <string name="stream_compose_message_reactions_show">Show reactions</string>
     <string name="stream_compose_message_attachment_open">Open attachment</string>
+    <string name="stream_compose_message_actions_menu_title">Message actions</string>
 
     <!--  Quoted Message  -->
     <string name="stream_compose_quoted_message_audio_recording">Voice message (%s)</string>
@@ -157,9 +158,16 @@
     <string name="stream_compose_reactions_add">Add reaction</string>
     <string name="stream_compose_reactions_you">You</string>
     <string name="stream_compose_reactions_remove">Tap to remove</string>
+    <string name="stream_compose_reactions_state_selected">Selected</string>
+    <string name="stream_compose_reactions_state_not_selected">Not selected</string>
+    <string name="stream_compose_reactions_action_select">Select</string>
+    <string name="stream_compose_reactions_action_unselect">Unselect</string>
+    <string name="stream_compose_reactions_selected">%1$s reaction selected</string>
+    <string name="stream_compose_reactions_unselected">%1$s reaction unselected</string>
 
     <!-- Reactions Picker -->
     <string name="stream_compose_show_more_reactions">Show more reactions</string>
+    <string name="stream_compose_emoji_picker_title">Emoji picker</string>
 
     <!-- Message Action Prompts -->
     <string name="stream_compose_delete_message_title">Delete message</string>

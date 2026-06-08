@@ -85,6 +85,7 @@
   <string name="stream_compose_dismiss">"Descartar"</string>
   <string name="stream_compose_edit_answer">"Actualizar tu comentario"</string>
   <string name="stream_compose_edit_message">"Editar mensaje"</string>
+  <string name="stream_compose_emoji_picker_title">"Selector de emojis"</string>
   <string name="stream_compose_file_preview">"Archivo"</string>
   <string name="stream_compose_flag_message">"Marcar mensaje"</string>
   <string name="stream_compose_flag_message_text">"¿Quieres enviar una copia de este mensaje a un moderador para una investigación más detallada?"</string>
@@ -135,6 +136,7 @@
   <string name="stream_compose_message_composer_attachments_open">"Abrir archivos adjuntos"</string>
   <string name="stream_compose_message_deleted">"Mensaje eliminado"</string>
   <string name="stream_compose_message_deleted_preview">"Mensaje eliminado"</string>
+  <string name="stream_compose_message_actions_menu_title">"Acciones del mensaje"</string>
   <string name="stream_compose_message_item_open_thread">"Abrir hilo"</string>
   <string name="stream_compose_message_item_options">"Mostrar opciones del mensaje"</string>
   <string name="stream_compose_message_attachment_open">"Abrir archivo adjunto"</string>
@@ -227,8 +229,14 @@
   <string name="stream_compose_quoted_message_reply_to">"Responder a %s"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"Responder a ti"</string>
   <string name="stream_compose_quoted_message_you">"Tú"</string>
+  <string name="stream_compose_reactions_action_select">"Seleccionar"</string>
+  <string name="stream_compose_reactions_action_unselect">"Deseleccionar"</string>
   <string name="stream_compose_reactions_add">"Añadir reacción"</string>
   <string name="stream_compose_reactions_remove">"Toca para eliminar"</string>
+  <string name="stream_compose_reactions_selected">"Reacción %1$s seleccionada"</string>
+  <string name="stream_compose_reactions_unselected">"Reacción %1$s deseleccionada"</string>
+  <string name="stream_compose_reactions_state_not_selected">"No seleccionado"</string>
+  <string name="stream_compose_reactions_state_selected">"Seleccionado"</string>
   <string name="stream_compose_reactions_you">"Tú"</string>
   <string name="stream_compose_recent_files">"Archivos recientes"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
