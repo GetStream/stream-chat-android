@@ -437,7 +437,7 @@ private fun ChannelListForContentStatePreview() {
                     draftMessage = null,
                 ),
                 ItemState.ChannelItemState(
-                    channel = PreviewChannelData.channelWithOnlineUser,
+                    channel = PreviewChannelData.channelWithOneUser,
                     typingUsers = emptyList(),
                     draftMessage = PreviewMessageData.draftMessage,
                 ),
