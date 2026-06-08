@@ -698,6 +698,7 @@ internal class DomainMappingTest {
             messageRemindersEnabled = configDto.user_message_reminders ?: false,
             sharedLocationsEnabled = configDto.shared_locations ?: false,
             markMessagesPending = configDto.mark_messages_pending,
+            pushLevel = configDto.push_level,
         )
         assertEquals(expected, config)
     }

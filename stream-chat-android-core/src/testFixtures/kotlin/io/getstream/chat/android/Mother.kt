@@ -605,6 +605,7 @@ public fun randomConfig(
     blocklistBehavior: String = randomString(),
     commands: List<Command> = emptyList(),
     pollsEnabled: Boolean = randomBoolean(),
+    pushLevel: String? = randomString(),
 ): Config = Config(
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -628,6 +629,7 @@ public fun randomConfig(
     blocklistBehavior = blocklistBehavior,
     commands = commands,
     pollsEnabled = pollsEnabled,
+    pushLevel = pushLevel,
 )
 
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =

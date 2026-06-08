@@ -525,6 +525,7 @@ internal object Mother {
         user_message_reminders: Boolean? = randomBoolean(),
         shared_locations: Boolean = randomBoolean(),
         mark_messages_pending: Boolean = randomBoolean(),
+        push_level: String? = randomString(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -552,6 +553,7 @@ internal object Mother {
         user_message_reminders = user_message_reminders,
         shared_locations = shared_locations,
         mark_messages_pending = mark_messages_pending,
+        push_level = push_level,
     )
 
     /**
