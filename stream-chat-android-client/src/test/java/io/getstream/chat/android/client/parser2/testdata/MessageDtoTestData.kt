@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.parser2.testdata
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -38,6 +39,16 @@ internal object MessageDtoTestData {
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "latest_reactions": [${ReactionDtoTestData.downstreamJsonWithoutExtraData}],
           "mentioned_users": [${UserDtoTestData.downstreamJsonWithoutExtraData}],
+          "mentioned_here": true,
+          "mentioned_channel": true,
+          "mentioned_groups": [
+            {
+              "id": "g1",
+              "name": "platform",
+              "members": []
+            }
+          ],
+          "mentioned_roles": ["admin", "moderator"],
           "own_reactions": [],
           "reaction_counts": {"like":  2},
           "reaction_scores": {"like":  10},
@@ -151,6 +162,10 @@ internal object MessageDtoTestData {
         own_reactions = emptyList(),
         show_in_channel = false,
         mentioned_users = listOf(UserDtoTestData.downstreamUserWithoutExtraData),
+        mentioned_here = true,
+        mentioned_channel = true,
+        mentioned_groups = listOf(DownstreamUserGroupDto(id = "g1", name = "platform")),
+        mentioned_roles = listOf("admin", "moderator"),
         i18n = emptyMap(),
         thread_participants = emptyList(),
         attachments = listOf(AttachmentDtoTestData.attachment),
@@ -385,6 +400,10 @@ internal object MessageDtoTestData {
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "type": "regular",
           "mentioned_users": [],
+          "mentioned_here": false,
+          "mentioned_channel": false,
+          "mentioned_group_ids": [],
+          "mentioned_roles": [],
           "pinned": true,
           "shadowed": false,
           "show_in_channel": false,
@@ -456,6 +475,10 @@ internal object MessageDtoTestData {
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "type": "regular",
           "mentioned_users": [],
+          "mentioned_here": false,
+          "mentioned_channel": false,
+          "mentioned_group_ids": [],
+          "mentioned_roles": [],
           "pinned": false,
           "shadowed": false,
           "show_in_channel": false,

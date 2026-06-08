@@ -154,4 +154,10 @@ public data class Config(
      * If true, the messages sent in the channel will be marked as pending.
      */
     val markMessagesPending: Boolean = false,
+
+    /**
+     * The default push notification level for the channel type. One of `"all"`, `"all_mentions"`,
+     * `"direct_mentions"`, `"none"`, or deprecated `"mentions"`.
+     */
+    val pushLevel: String? = null,
 )

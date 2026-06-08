@@ -53,6 +53,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
@@ -290,6 +292,10 @@ internal object Mother {
         id: String = randomString(),
         latest_reactions: List<DownstreamReactionDto> = emptyList(),
         mentioned_users: List<DownstreamUserDto> = emptyList(),
+        mentioned_here: Boolean? = null,
+        mentioned_channel: Boolean? = null,
+        mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
+        mentioned_roles: List<String> = emptyList(),
         own_reactions: List<DownstreamReactionDto> = emptyList(),
         parent_id: String? = randomString(),
         pin_expires: Date? = randomDateOrNull(),
@@ -331,6 +337,10 @@ internal object Mother {
             id = id,
             latest_reactions = latest_reactions,
             mentioned_users = mentioned_users,
+            mentioned_here = mentioned_here,
+            mentioned_channel = mentioned_channel,
+            mentioned_groups = mentioned_groups,
+            mentioned_roles = mentioned_roles,
             own_reactions = own_reactions,
             parent_id = parent_id,
             pin_expires = pin_expires,
@@ -515,6 +525,7 @@ internal object Mother {
         user_message_reminders: Boolean? = randomBoolean(),
         shared_locations: Boolean = randomBoolean(),
         mark_messages_pending: Boolean = randomBoolean(),
+        push_level: String? = randomString(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -542,6 +553,7 @@ internal object Mother {
         user_message_reminders = user_message_reminders,
         shared_locations = shared_locations,
         mark_messages_pending = mark_messages_pending,
+        push_level = push_level,
     )
 
     /**
@@ -1373,6 +1385,26 @@ internal object Mother {
     ): DownstreamPushPreferenceDto = DownstreamPushPreferenceDto(
         chat_level = chatLevel,
         disabled_until = disabledUntil,
+    )
+
+    fun randomDownstreamUserGroupDto(
+        id: String = randomString(),
+        name: String = randomString(),
+        description: String? = randomString(),
+        teamId: String? = randomString(),
+        members: List<DownstreamUserGroupMemberDto> = emptyList(),
+        createdBy: String? = randomString(),
+        createdAt: Date? = randomDate(),
+        updatedAt: Date? = randomDate(),
+    ): DownstreamUserGroupDto = DownstreamUserGroupDto(
+        id = id,
+        name = name,
+        description = description,
+        team_id = teamId,
+        members = members,
+        created_by = createdBy,
+        created_at = createdAt,
+        updated_at = updatedAt,
     )
 }
 

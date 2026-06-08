@@ -38,6 +38,7 @@ import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
@@ -186,6 +187,10 @@ internal class DtoMappingTest {
             id = message.id,
             type = message.type,
             mentioned_users = message.mentionedUsersIds,
+            mentioned_here = message.mentionedHere,
+            mentioned_channel = message.mentionedChannel,
+            mentioned_roles = message.mentionedRoles,
+            mentioned_group_ids = message.mentionedGroups.map(UserGroup::id),
             parent_id = message.parentId,
             pin_expires = message.pinExpires,
             pinned = message.pinned,

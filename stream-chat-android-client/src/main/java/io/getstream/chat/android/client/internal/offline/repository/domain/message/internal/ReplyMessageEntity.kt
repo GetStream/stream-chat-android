@@ -24,6 +24,7 @@ import androidx.room.Relation
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.UserGroup
 import java.util.Date
 
 internal data class ReplyMessageEntity(
@@ -70,6 +71,14 @@ internal data class ReplyMessageInnerEntity(
     val remoteMentionedUserIds: List<String> = emptyList(),
     /** the users to be mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
+    /** whether this message includes an `@here` mention */
+    val mentionedHere: Boolean = false,
+    /** whether this message includes an `@channel` mention */
+    val mentionedChannel: Boolean = false,
+    /** the user groups mentioned in this message */
+    val mentionedGroups: List<UserGroup> = emptyList(),
+    /** the roles mentioned in this message */
+    val mentionedRoles: List<String> = emptyList(),
     /** parent id, used for threads */
     val parentId: String? = null,
     /** slash command like /giphy etc */
