@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -30,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -38,7 +41,8 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  * Card-style Stream modal bottom sheet.
  *
  * Bakes the design-system tokens for a card sitting above the app:
- * 32dp top corners, elevated surface color, heavier scrim, and the M3 default drag handle.
+ * 32dp top corners, elevated surface color, heavier scrim, and the M3 default drag handle
+ * (hidden from the accessibility tree).
  * Use for menus and option pickers that appear on top of the underlying screen
  * (e.g. reactions, channel info member modal, attachment command picker).
  *
@@ -70,6 +74,11 @@ internal fun StreamCardBottomSheet(
         shape = StreamCardSheetShape,
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
+        dragHandle = {
+            BottomSheetDefaults.DragHandle(
+                modifier = Modifier.semantics { hideFromAccessibility() },
+            )
+        },
         content = content,
     )
 }

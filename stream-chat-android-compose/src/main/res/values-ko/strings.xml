@@ -92,6 +92,7 @@
   <string name="stream_compose_dismiss">"닫기"</string>
   <string name="stream_compose_edit_answer">"댓글 수정"</string>
   <string name="stream_compose_edit_message">"메시지 수정"</string>
+  <string name="stream_compose_emoji_picker_title">"이모지 선택기"</string>
   <string name="stream_compose_file_preview">"파일"</string>
   <plurals name="stream_compose_files_preview">
     <item quantity="other">"%d개의 파일"</item>
@@ -147,6 +148,7 @@
   <string name="stream_compose_message_composer_attachments_open">"첨부파일 열기"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
+  <string name="stream_compose_message_actions_menu_title">"메시지 작업"</string>
   <string name="stream_compose_message_item_open_thread">"스레드 열기"</string>
   <string name="stream_compose_message_item_options">"메시지 옵션 표시"</string>
   <string name="stream_compose_message_attachment_open">"첨부파일 열기"</string>
@@ -261,8 +263,14 @@
     <item quantity="other">"%d개의 동영상"</item>
   </plurals>
   <string name="stream_compose_quoted_message_you">"나"</string>
+  <string name="stream_compose_reactions_action_select">"선택"</string>
+  <string name="stream_compose_reactions_action_unselect">"선택 해제"</string>
   <string name="stream_compose_reactions_add">"리액션 추가"</string>
   <string name="stream_compose_reactions_remove">"탭하여 삭제"</string>
+  <string name="stream_compose_reactions_selected">"%1$s 리액션 선택됨"</string>
+  <string name="stream_compose_reactions_unselected">"%1$s 리액션 선택 해제됨"</string>
+  <string name="stream_compose_reactions_state_not_selected">"선택되지 않음"</string>
+  <string name="stream_compose_reactions_state_selected">"선택됨"</string>
   <string name="stream_compose_reactions_you">"나"</string>
   <string name="stream_compose_recent_files">"최근 파일"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

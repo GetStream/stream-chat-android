@@ -92,6 +92,7 @@
   <string name="stream_compose_dismiss">"閉じる"</string>
   <string name="stream_compose_edit_answer">"コメントを更新"</string>
   <string name="stream_compose_edit_message">"メッセージを編集"</string>
+  <string name="stream_compose_emoji_picker_title">"絵文字ピッカー"</string>
   <string name="stream_compose_file_preview">"ファイル"</string>
   <plurals name="stream_compose_files_preview">
     <item quantity="other">"%dファイル"</item>
@@ -147,6 +148,7 @@
   <string name="stream_compose_message_composer_attachments_open">"添付ファイルを開く"</string>
   <string name="stream_compose_message_deleted">"メッセージは削除されました"</string>
   <string name="stream_compose_message_deleted_preview">"メッセージは削除されました"</string>
+  <string name="stream_compose_message_actions_menu_title">"メッセージのアクション"</string>
   <string name="stream_compose_message_item_open_thread">"スレッドを開く"</string>
   <string name="stream_compose_message_item_options">"メッセージのオプションを表示"</string>
   <string name="stream_compose_message_attachment_open">"添付ファイルを開く"</string>
@@ -261,8 +263,14 @@
     <item quantity="other">"%d本の動画"</item>
   </plurals>
   <string name="stream_compose_quoted_message_you">"あなた"</string>
+  <string name="stream_compose_reactions_action_select">"選択"</string>
+  <string name="stream_compose_reactions_action_unselect">"選択解除"</string>
   <string name="stream_compose_reactions_add">"リアクションを追加"</string>
   <string name="stream_compose_reactions_remove">"タップして削除"</string>
+  <string name="stream_compose_reactions_selected">"%1$s リアクションを選択しました"</string>
+  <string name="stream_compose_reactions_unselected">"%1$s リアクションの選択を解除しました"</string>
+  <string name="stream_compose_reactions_state_not_selected">"選択されていません"</string>
+  <string name="stream_compose_reactions_state_selected">"選択されています"</string>
   <string name="stream_compose_reactions_you">"あなた"</string>
   <string name="stream_compose_recent_files">"最近のファイル"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

@@ -145,6 +145,7 @@
   <string name="stream_compose_dismiss">"खारिज करें"</string>
   <string name="stream_compose_edit_answer">"अपनी टिप्पणी अपडेट करें"</string>
   <string name="stream_compose_edit_message">"मैसेज एडिट करें"</string>
+  <string name="stream_compose_emoji_picker_title">"इमोजी चयनकर्ता"</string>
   <string name="stream_compose_file_preview">"फ़ाइल"</string>
   <string name="stream_compose_flag_message">"मैसेज चिह्नित करें"</string>
   <string name="stream_compose_flag_message_text">"क्या आप आगे की जांच के लिए इस संदेश की एक कॉपी मॉडरेटर को भेजना चाहते हैं?"</string>
@@ -195,6 +196,7 @@
   <string name="stream_compose_message_composer_attachments_open">"अटैचमेंट खोलें"</string>
   <string name="stream_compose_message_deleted">"मैसेज मिटाया गया"</string>
   <string name="stream_compose_message_deleted_preview">"मैसेज हटा दिया गया"</string>
+  <string name="stream_compose_message_actions_menu_title">"संदेश की क्रियाएँ"</string>
   <string name="stream_compose_message_item_open_thread">"थ्रेड खोलें"</string>
   <string name="stream_compose_message_item_options">"संदेश के विकल्प दिखाएँ"</string>
   <string name="stream_compose_message_attachment_open">"अटैचमेंट खोलें"</string>
@@ -285,8 +287,14 @@
   <string name="stream_compose_quoted_message_reply_to">"%s को जवाब"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"स्वयं को जवाब"</string>
   <string name="stream_compose_quoted_message_you">"आप"</string>
+  <string name="stream_compose_reactions_action_select">"चुनें"</string>
+  <string name="stream_compose_reactions_action_unselect">"अचयन करें"</string>
   <string name="stream_compose_reactions_add">"प्रतिक्रिया जोड़ें"</string>
   <string name="stream_compose_reactions_remove">"हटाने के लिए टैप करें"</string>
+  <string name="stream_compose_reactions_selected">"%1$s प्रतिक्रिया चुनी गई"</string>
+  <string name="stream_compose_reactions_unselected">"%1$s प्रतिक्रिया का चयन हटाया गया"</string>
+  <string name="stream_compose_reactions_state_not_selected">"चयनित नहीं"</string>
+  <string name="stream_compose_reactions_state_selected">"चयनित"</string>
   <string name="stream_compose_reactions_you">"आप"</string>
   <string name="stream_compose_recent_files">"हाल ही की फाइलें"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>

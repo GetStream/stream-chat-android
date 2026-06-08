@@ -29,10 +29,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionIconParams
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
@@ -60,6 +66,13 @@ internal fun ReactionToggle(
 ) {
     emoji?.let {
         val containerSize = size.toContainerSize()
+        val selectedStateDescription = stringResource(R.string.stream_compose_reactions_state_selected)
+        val notSelectedStateDescription = stringResource(R.string.stream_compose_reactions_state_not_selected)
+        val selectActionLabel = stringResource(R.string.stream_compose_reactions_action_select)
+        val unselectActionLabel = stringResource(R.string.stream_compose_reactions_action_unselect)
+        val selectedAnnouncement = stringResource(R.string.stream_compose_reactions_selected, emoji)
+        val unselectedAnnouncement = stringResource(R.string.stream_compose_reactions_unselected, emoji)
+        val view = LocalView.current
         ChatTheme.componentFactory.ReactionIcon(
             params = ReactionIconParams(
                 type = type,
@@ -70,11 +83,31 @@ internal fun ReactionToggle(
                         background(ChatTheme.colors.backgroundUtilitySelected, CircleShape)
                     }
                     .ifNotNull(onCheckedChange) { onChange ->
-                        clip(CircleShape).toggleable(
-                            value = checked,
-                            role = Role.Checkbox,
-                            onValueChange = onChange,
-                        )
+                        val toggleAndAnnounce: (Boolean) -> Unit = { newChecked ->
+                            view.announceForAccessibility(
+                                if (newChecked) selectedAnnouncement else unselectedAnnouncement,
+                            )
+                            onChange(newChecked)
+                        }
+                        clip(CircleShape)
+                            .toggleable(
+                                value = checked,
+                                role = Role.Button,
+                                onValueChange = toggleAndAnnounce,
+                            )
+                            .semantics {
+                                stateDescription = if (checked) {
+                                    selectedStateDescription
+                                } else {
+                                    notSelectedStateDescription
+                                }
+                                onClick(
+                                    label = if (checked) unselectActionLabel else selectActionLabel,
+                                ) {
+                                    toggleAndAnnounce(!checked)
+                                    true
+                                }
+                            }
                     }
                     .defaultMinSize(minWidth = containerSize, minHeight = containerSize)
                     .wrapContentSize(),
