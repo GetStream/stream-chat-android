@@ -35,6 +35,19 @@
     <string name="stream_compose_channel_list_empty_channels">No conversations yet</string>
     <string name="stream_compose_channel_list_start_chat">Start a chat</string>
     <string name="stream_compose_channel_list_banner_error">Couldn\'t load new chats. Tap to retry</string>
+    <string name="stream_compose_channel_list_action_error_mute_channel">Error muting channel.</string>
+    <string name="stream_compose_channel_list_action_error_unmute_channel">Error unmuting channel.</string>
+    <string name="stream_compose_channel_list_action_error_pin_channel">Error pinning channel.</string>
+    <string name="stream_compose_channel_list_action_error_unpin_channel">Error unpinning channel.</string>
+    <string name="stream_compose_channel_list_action_error_archive_channel">Error archiving channel.</string>
+    <string name="stream_compose_channel_list_action_error_unarchive_channel">Error unarchiving channel.</string>
+    <string name="stream_compose_channel_list_action_error_delete_channel">Error deleting channel.</string>
+    <string name="stream_compose_channel_list_action_error_leave_group">Error leaving group.</string>
+    <string name="stream_compose_channel_list_action_error_mute_user">Error muting user.</string>
+    <string name="stream_compose_channel_list_action_error_unmute_user">Error unmuting user.</string>
+    <string name="stream_compose_channel_list_action_error_block_user">Error blocking user.</string>
+    <string name="stream_compose_channel_list_action_error_unblock_user">Error unblocking user.</string>
+    <string name="stream_compose_channel_list_channel_deleted">Chat deleted.</string>
 
     <!-- Channel List Swipe Actions -->
     <string name="stream_compose_swipe_action_mute">Mute</string>

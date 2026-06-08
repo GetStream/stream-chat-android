@@ -32,6 +32,8 @@ import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.compose.state.QueryConfig
+import io.getstream.chat.android.compose.state.channels.list.ChannelListAction
+import io.getstream.chat.android.compose.state.channels.list.ChannelListEvent
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
@@ -54,14 +56,19 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -267,6 +274,15 @@ public class ChannelListViewModel internal constructor(
     public var activeChannelAction: ChannelAction? by mutableStateOf(null)
         private set
 
+    // Buffer one emission so action callbacks aren't dropped if no collector is momentarily active.
+    private val _events = MutableSharedFlow<ChannelListEvent>(extraBufferCapacity = 1)
+
+    /**
+     * Emits [ChannelListEvent]s as channel actions complete. Hot flow with no replay; collect it while the screen is
+     * active to surface transient feedback such as a snackbar.
+     */
+    internal val events: SharedFlow<ChannelListEvent> = _events.asSharedFlow()
+
     /**
      * The state of our network connection - if we're online, connecting or offline.
      */
@@ -441,7 +457,8 @@ public class ChannelListViewModel internal constructor(
     public fun muteChannel(channel: Channel) {
         dismissChannelAction()
 
-        chatClient.muteChannel(channel.type, channel.id).enqueue()
+        chatClient.muteChannel(channel.type, channel.id)
+            .enqueueTrackingError(ChannelListAction.MuteChannel)
     }
 
     /**
@@ -451,7 +468,8 @@ public class ChannelListViewModel internal constructor(
      */
     public fun pinChannel(channel: Channel) {
         dismissChannelAction()
-        chatClient.pinChannel(channel.type, channel.id).enqueue()
+        chatClient.pinChannel(channel.type, channel.id)
+            .enqueueTrackingError(ChannelListAction.PinChannel)
     }
 
     /**
@@ -461,23 +479,20 @@ public class ChannelListViewModel internal constructor(
      */
     public fun unpinChannel(channel: Channel) {
         dismissChannelAction()
-        chatClient.unpinChannel(channel.type, channel.id).enqueue()
+        chatClient.unpinChannel(channel.type, channel.id)
+            .enqueueTrackingError(ChannelListAction.UnpinChannel)
     }
 
     public fun archiveChannel(channel: Channel) {
         dismissChannelAction()
-        chatClient.archiveChannel(
-            channel.type,
-            channel.id,
-        ).enqueue()
+        chatClient.archiveChannel(channel.type, channel.id)
+            .enqueueTrackingError(ChannelListAction.ArchiveChannel)
     }
 
     public fun unarchiveChannel(channel: Channel) {
         dismissChannelAction()
-        chatClient.unarchiveChannel(
-            channel.type,
-            channel.id,
-        ).enqueue()
+        chatClient.unarchiveChannel(channel.type, channel.id)
+            .enqueueTrackingError(ChannelListAction.UnarchiveChannel)
     }
 
     /**
@@ -488,7 +503,8 @@ public class ChannelListViewModel internal constructor(
     public fun unmuteChannel(channel: Channel) {
         dismissChannelAction()
 
-        chatClient.unmuteChannel(channel.type, channel.id).enqueue()
+        chatClient.unmuteChannel(channel.type, channel.id)
+            .enqueueTrackingError(ChannelListAction.UnmuteChannel)
     }
 
     /**
@@ -500,7 +516,14 @@ public class ChannelListViewModel internal constructor(
     public fun deleteConversation(channel: Channel) {
         dismissChannelAction()
 
-        chatClient.channel(channel.cid).delete().toUnitCall().enqueue()
+        chatClient.channel(channel.cid).delete().toUnitCall().enqueue { result ->
+            when (result) {
+                is Result.Success -> _events.tryEmit(ChannelListEvent.ChannelDeleted)
+                is Result.Failure -> _events.tryEmit(
+                    ChannelListEvent.ActionError(ChannelListAction.DeleteChannel, result.value),
+                )
+            }
+        }
     }
 
     /**
@@ -513,7 +536,9 @@ public class ChannelListViewModel internal constructor(
         dismissChannelAction()
 
         chatClient.clientState.user.value?.let { user ->
-            chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue()
+            chatClient.channel(channel.type, channel.id)
+                .removeMembers(listOf(user.id))
+                .enqueueTrackingError(ChannelListAction.LeaveGroup)
         }
     }
 
@@ -524,7 +549,8 @@ public class ChannelListViewModel internal constructor(
      */
     public fun muteUser(userId: String) {
         dismissChannelAction()
-        chatClient.muteUser(userId).enqueue()
+        chatClient.muteUser(userId)
+            .enqueueTrackingError(ChannelListAction.MuteUser)
     }
 
     /**
@@ -534,7 +560,8 @@ public class ChannelListViewModel internal constructor(
      */
     public fun unmuteUser(userId: String) {
         dismissChannelAction()
-        chatClient.unmuteUser(userId).enqueue()
+        chatClient.unmuteUser(userId)
+            .enqueueTrackingError(ChannelListAction.UnmuteUser)
     }
 
     /**
@@ -544,7 +571,8 @@ public class ChannelListViewModel internal constructor(
      */
     public fun blockUser(userId: String) {
         dismissChannelAction()
-        chatClient.blockUser(userId).enqueue()
+        chatClient.blockUser(userId)
+            .enqueueTrackingError(ChannelListAction.BlockUser)
     }
 
     /**
@@ -554,7 +582,19 @@ public class ChannelListViewModel internal constructor(
      */
     public fun unblockUser(userId: String) {
         dismissChannelAction()
-        chatClient.unblockUser(userId).enqueue()
+        chatClient.unblockUser(userId)
+            .enqueueTrackingError(ChannelListAction.UnblockUser)
+    }
+
+    /**
+     * Enqueues this call, emitting a [ChannelListEvent.ActionError] for [action] if it fails.
+     */
+    private fun <T : Any> Call<T>.enqueueTrackingError(action: ChannelListAction) {
+        enqueue { result ->
+            if (result is Result.Failure) {
+                _events.tryEmit(ChannelListEvent.ActionError(action, result.value))
+            }
+        }
     }
 
     /**
@@ -563,9 +603,7 @@ public class ChannelListViewModel internal constructor(
      * @param cid The CID of the channel that needs to be checked.
      * @return True if the channel is muted for the current user.
      */
-    public fun isChannelMuted(cid: String): Boolean {
-        return channelMutes.value.any { cid == it.channel?.cid }
-    }
+    public fun isChannelMuted(cid: String): Boolean = channelMutes.value.any { cid == it.channel?.cid }
 
     /**
      * Checks if a user is muted by the current user.
@@ -573,9 +611,7 @@ public class ChannelListViewModel internal constructor(
      * @param userId The ID of the user to check.
      * @return True if the user is muted.
      */
-    public fun isUserMuted(userId: String): Boolean {
-        return globalMuted.value.any { it.target?.id == userId }
-    }
+    public fun isUserMuted(userId: String): Boolean = globalMuted.value.any { it.target?.id == userId }
 
     /**
      * Checks if a user is blocked by the current user.
@@ -583,9 +619,7 @@ public class ChannelListViewModel internal constructor(
      * @param userId The ID of the user to check.
      * @return True if the user is blocked.
      */
-    public fun isUserBlocked(userId: String): Boolean {
-        return globalBlockedUserIds.value.contains(userId)
-    }
+    public fun isUserBlocked(userId: String): Boolean = globalBlockedUserIds.value.contains(userId)
 
     /**
      * Dismisses the [activeChannelAction] and removes it from the UI.
@@ -961,9 +995,8 @@ public class ChannelListViewModel internal constructor(
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
-    private fun defaultChannelsFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
-    }
+    private fun defaultChannelsFilter(): Flow<FilterObject> =
+        chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
 
     @Deprecated(
         message = "Avoid using this search query as `member.user.name` is an expensive operation. " +

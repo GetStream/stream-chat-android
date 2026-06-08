@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.channels
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -27,6 +28,8 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.state.channels.list.ChannelListAction
+import io.getstream.chat.android.compose.state.channels.list.ChannelListEvent
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.models.AndFilterObject
@@ -966,6 +969,73 @@ internal class ChannelListViewModelTest {
             sort = anyOrNull(),
         )
         assertEquals(queryFilter, channelFilterCaptor.firstValue)
+    }
+
+    @Test
+    fun `Given a channel action fails When muting Should emit an action error event`() = runTest {
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.muteChannel(any(), any(), eq(null)))
+            .doReturn(Error.GenericError("network error").asCall())
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .get(this)
+
+        viewModel.events.test {
+            viewModel.muteChannel(channel1)
+            val event = awaitItem()
+            assertInstanceOf(ChannelListEvent.ActionError::class.java, event)
+            assertEquals(ChannelListAction.MuteChannel, (event as ChannelListEvent.ActionError).action)
+        }
+    }
+
+    @Test
+    fun `Given delete succeeds When deleting a channel Should emit a channel deleted event`() = runTest {
+        val chatClient: ChatClient = mock()
+        val channelClient: ChannelClient = mock()
+        val viewModel = Fixture(chatClient, channelClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenDeleteChannel()
+            .get(this)
+
+        viewModel.events.test {
+            viewModel.deleteConversation(channel1)
+            assertEquals(ChannelListEvent.ChannelDeleted, awaitItem())
+        }
+    }
+
+    @Test
+    fun `Given delete fails When deleting a channel Should emit an action error event`() = runTest {
+        val chatClient: ChatClient = mock()
+        val channelClient: ChannelClient = mock()
+        whenever(channelClient.delete()).doReturn(Error.GenericError("network error").asCall())
+        val viewModel = Fixture(chatClient, channelClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .get(this)
+
+        viewModel.events.test {
+            viewModel.deleteConversation(channel1)
+            val event = awaitItem()
+            assertInstanceOf(ChannelListEvent.ActionError::class.java, event)
+            assertEquals(ChannelListAction.DeleteChannel, (event as ChannelListEvent.ActionError).action)
+        }
     }
 
     private class Fixture(
