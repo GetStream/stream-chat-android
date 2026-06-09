@@ -143,6 +143,8 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferenceToggle
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -152,8 +154,6 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.ChatPreferenceToggle
-import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.UnreadCounts

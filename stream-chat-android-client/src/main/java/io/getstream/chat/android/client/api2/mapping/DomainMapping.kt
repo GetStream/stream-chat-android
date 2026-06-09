@@ -28,8 +28,8 @@ import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto

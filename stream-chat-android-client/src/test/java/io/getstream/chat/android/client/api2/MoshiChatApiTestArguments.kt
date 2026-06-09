@@ -60,13 +60,13 @@ import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SearchRolesResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
