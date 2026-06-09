@@ -133,6 +133,8 @@
     <string name="stream_compose_quoted_message_media">%d media</string>
     <string name="stream_compose_quoted_message_reply_to">Reply to %s</string>
     <string name="stream_compose_quoted_message_reply_to_you">Reply to you</string>
+    <string name="stream_compose_quoted_message_replied_to_your_message">%1$s replied to your message</string>
+    <string name="stream_compose_quoted_message_replied_to_their_message">%1$s replied to %2$s\'s message</string>
     <string name="stream_compose_quoted_message_you">You</string>
 
     <plurals name="stream_compose_quoted_message_files">

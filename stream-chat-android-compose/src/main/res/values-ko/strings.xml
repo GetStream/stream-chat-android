@@ -271,6 +271,8 @@
     <item quantity="other">"%d장의 사진"</item>
   </plurals>
   <string name="stream_compose_quoted_message_media">"%d 미디어"</string>
+  <string name="stream_compose_quoted_message_replied_to_their_message">"%1$s님이 %2$s님의 메시지에 답장했습니다"</string>
+  <string name="stream_compose_quoted_message_replied_to_your_message">"%1$s님이 회원님의 메시지에 답장했습니다"</string>
   <string name="stream_compose_quoted_message_reply_to">"%s에게 답장"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"자신에게 답장"</string>
   <plurals name="stream_compose_quoted_message_videos">

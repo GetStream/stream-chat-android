@@ -238,6 +238,8 @@
   <string name="stream_compose_quoted_message_audio_recording">"Message vocal (%s)"</string>
   <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
   <string name="stream_compose_quoted_message_media">"%d média"</string>
+  <string name="stream_compose_quoted_message_replied_to_their_message">"%1$s a répondu au message de %2$s"</string>
+  <string name="stream_compose_quoted_message_replied_to_your_message">"%1$s a répondu à votre message"</string>
   <string name="stream_compose_quoted_message_reply_to">"Répondre à %s"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"Répondre à vous-même"</string>
   <string name="stream_compose_quoted_message_you">"Vous"</string>
