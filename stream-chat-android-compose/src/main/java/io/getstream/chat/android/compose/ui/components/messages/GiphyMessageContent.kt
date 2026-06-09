@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,12 +98,17 @@ public fun GiphyMessageContent(
 
     val isTouchExplorationEnabled = rememberIsTouchExplorationEnabled()
     val previewFocusRequester = remember { FocusRequester() }
-    LaunchedEffect(message.id) {
-        if (!isTouchExplorationEnabled) return@LaunchedEffect
+    // Track whether the preview has already requested focus so that a LazyColumn dispose +
+    // re-entry (the preview scrolling out of the viewport and back) does not re-steal
+    // TalkBack focus from wherever the user has moved it in the meantime.
+    var hasRequestedFocus by rememberSaveable(message.id) { mutableStateOf(false) }
+    LaunchedEffect(message.id, isTouchExplorationEnabled) {
+        if (!isTouchExplorationEnabled || hasRequestedFocus) return@LaunchedEffect
         // Let Compose layout + the accessibility tree settle before stealing TalkBack focus,
         // otherwise our request loses to the composer's post-command focus reshuffling.
         delay(PreviewFocusRequestDelayMs)
         previewFocusRequester.requestFocus()
+        hasRequestedFocus = true
     }
 
     Column(
