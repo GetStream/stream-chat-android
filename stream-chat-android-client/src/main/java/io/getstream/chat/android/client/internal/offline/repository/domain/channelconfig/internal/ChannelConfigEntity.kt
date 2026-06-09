@@ -50,6 +50,7 @@ internal data class ChannelConfigInnerEntity(
     val blocklistBehavior: String,
     val messageRemindersEnabled: Boolean,
     val markMessagesPending: Boolean,
+    val pushLevel: String? = null,
 )
 
 @Entity(

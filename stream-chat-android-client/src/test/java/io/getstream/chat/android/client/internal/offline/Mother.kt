@@ -42,6 +42,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.randomBoolean
@@ -52,6 +53,7 @@ import io.getstream.chat.android.randomDouble
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomStringOrNull
+import io.getstream.chat.android.randomUserGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import java.util.Date
@@ -133,6 +135,10 @@ internal fun randomMessageEntity(
     latestReactions: List<ReactionEntity> = emptyList(),
     ownReactions: List<ReactionEntity> = emptyList(),
     mentionedUsersId: List<String> = emptyList(),
+    mentionedHere: Boolean = randomBoolean(),
+    mentionedChannel: Boolean = randomBoolean(),
+    mentionedRoles: List<String> = listOf(randomString()),
+    mentionedGroups: List<UserGroup> = listOf(randomUserGroup()),
     reactionCounts: Map<String, Int> = emptyMap(),
     reactionScores: Map<String, Int> = emptyMap(),
     reactionGroups: Map<String, ReactionGroupEntity> = emptyMap(),
@@ -167,6 +173,10 @@ internal fun randomMessageEntity(
         updatedLocallyAt = updatedLocallyAt,
         deletedAt = deletedAt,
         mentionedUsersId = mentionedUsersId,
+        mentionedHere = mentionedHere,
+        mentionedChannel = mentionedChannel,
+        mentionedRoles = mentionedRoles,
+        mentionedGroups = mentionedGroups,
         reactionCounts = reactionCounts,
         reactionScores = reactionScores,
         reactionGroups = reactionGroups,

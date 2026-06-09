@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.models.Answer
@@ -108,6 +109,7 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
@@ -123,6 +125,7 @@ import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -170,6 +173,28 @@ internal class DomainMappingTest {
         }
 
         assertEquals(transformedMessage, result)
+    }
+
+    @Test
+    fun `Mention fields propagate from DownstreamMessageDto to Message`() {
+        val sut = Fixture().get()
+        val dto = randomDownstreamMessageDto(
+            mentioned_here = true,
+            mentioned_channel = true,
+            mentioned_groups = listOf(
+                DownstreamUserGroupDto(id = "g1", name = "platform"),
+                DownstreamUserGroupDto(id = "g2", name = "support"),
+            ),
+            mentioned_roles = listOf("admin", "moderator"),
+        )
+
+        val result = with(sut) { dto.toDomain() }
+
+        assertTrue(result.mentionedHere)
+        assertTrue(result.mentionedChannel)
+        assertEquals(listOf("admin", "moderator"), result.mentionedRoles)
+        assertEquals(listOf("g1", "g2"), result.mentionedGroups.map(UserGroup::id))
+        assertEquals(listOf("platform", "support"), result.mentionedGroups.map(UserGroup::name))
     }
 
     @Test
@@ -673,6 +698,7 @@ internal class DomainMappingTest {
             messageRemindersEnabled = configDto.user_message_reminders ?: false,
             sharedLocationsEnabled = configDto.shared_locations ?: false,
             markMessagesPending = configDto.mark_messages_pending,
+            pushLevel = configDto.push_level,
         )
         assertEquals(expected, config)
     }

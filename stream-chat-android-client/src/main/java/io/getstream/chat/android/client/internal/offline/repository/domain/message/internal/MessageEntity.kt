@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.UserGroup
 import java.util.Date
 
 internal data class MessageEntity(
@@ -77,6 +78,14 @@ internal data class MessageInnerEntity(
     val remoteMentionedUserIds: List<String> = emptyList(),
     /** the users to be mentioned in this message */
     val mentionedUsersId: List<String> = emptyList(),
+    /** whether this message includes an `@here` mention */
+    val mentionedHere: Boolean = false,
+    /** whether this message includes an `@channel` mention */
+    val mentionedChannel: Boolean = false,
+    /** the user groups mentioned in this message */
+    val mentionedGroups: List<UserGroup> = emptyList(),
+    /** the roles mentioned in this message */
+    val mentionedRoles: List<String> = emptyList(),
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
     val reactionCounts: Map<String, Int> = emptyMap(),
     /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */

@@ -274,6 +274,26 @@ public data class Message(
      */
     val deletedForMe: Boolean = false,
 
+    /**
+     * Whether the message includes an `@here` mention notifying online channel members.
+     */
+    val mentionedHere: Boolean = false,
+
+    /**
+     * Whether the message includes an `@channel` mention notifying all channel members.
+     */
+    val mentionedChannel: Boolean = false,
+
+    /**
+     * The user groups mentioned in the message.
+     */
+    val mentionedGroups: List<UserGroup> = emptyList(),
+
+    /**
+     * The roles mentioned in the message (e.g. `["admin", "moderator"]`).
+     */
+    val mentionedRoles: List<String> = emptyList(),
+
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         /**
@@ -394,6 +414,10 @@ public data class Message(
         if (poll != null) append(", poll=").append(poll)
         if (channelRole != null) append(", channelRole=").append(channelRole)
         append(", deletedForMe=").append(deletedForMe)
+        if (mentionedHere) append(", mentionedHere=true")
+        if (mentionedChannel) append(", mentionedChannel=true")
+        if (mentionedGroups.isNotEmpty()) append(", mentionedGroups=").append(mentionedGroups)
+        if (mentionedRoles.isNotEmpty()) append(", mentionedRoles=").append(mentionedRoles)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -452,6 +476,10 @@ public data class Message(
         private var sharedLocation: Location? = null
         private var channelRole: String? = null
         private var deletedForMe: Boolean = false
+        private var mentionedHere: Boolean = false
+        private var mentionedChannel: Boolean = false
+        private var mentionedGroups: List<UserGroup> = emptyList()
+        private var mentionedRoles: List<String> = emptyList()
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -502,6 +530,10 @@ public data class Message(
             sharedLocation = message.sharedLocation
             channelRole = message.channelRole
             deletedForMe = message.deletedForMe
+            mentionedHere = message.mentionedHere
+            mentionedChannel = message.mentionedChannel
+            mentionedGroups = message.mentionedGroups
+            mentionedRoles = message.mentionedRoles
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -584,6 +616,16 @@ public data class Message(
         }
         public fun withChannelRole(channelRole: String?): Builder = apply { this.channelRole = channelRole }
         public fun withDeletedForMe(deletedForMe: Boolean): Builder = apply { this.deletedForMe = deletedForMe }
+        public fun withMentionedHere(mentionedHere: Boolean): Builder = apply { this.mentionedHere = mentionedHere }
+        public fun withMentionedChannel(mentionedChannel: Boolean): Builder = apply {
+            this.mentionedChannel = mentionedChannel
+        }
+        public fun withMentionedGroups(mentionedGroups: List<UserGroup>): Builder = apply {
+            this.mentionedGroups = mentionedGroups
+        }
+        public fun withMentionedRoles(mentionedRoles: List<String>): Builder = apply {
+            this.mentionedRoles = mentionedRoles
+        }
 
         public fun build(): Message {
             return Message(
@@ -635,6 +677,10 @@ public data class Message(
                 sharedLocation = sharedLocation,
                 channelRole = channelRole,
                 deletedForMe = deletedForMe,
+                mentionedHere = mentionedHere,
+                mentionedChannel = mentionedChannel,
+                mentionedGroups = mentionedGroups,
+                mentionedRoles = mentionedRoles,
             )
         }
     }
