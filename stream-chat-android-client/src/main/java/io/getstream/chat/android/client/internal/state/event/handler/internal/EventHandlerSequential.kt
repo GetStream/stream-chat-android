@@ -496,15 +496,11 @@ internal class EventHandlerSequential(
         sortedEvents.find { it is UserPresenceChangedEvent }?.let { userPresenceChanged ->
             val event = userPresenceChanged as UserPresenceChangedEvent
 
-            stateRegistry.getActiveChannelStates()
-                .filter { channelState -> channelState.members.containsWithUserId(event.user.id) }
-                .forEach { channelState ->
-                    val channelLogic: ChannelLogic = logicRegistry.channel(
-                        channelType = channelState.channelType,
-                        channelId = channelState.channelId,
-                    )
-                    channelLogic.handleEvent(userPresenceChanged)
+            stateRegistry.getActiveChannelStates().forEach { (id, state) ->
+                if (state.members.containsWithUserId(event.user.id)) {
+                    logicRegistry.channel(id).handleEvent(userPresenceChanged)
                 }
+            }
         }
 
         // Handle `user.messages.deleted` event

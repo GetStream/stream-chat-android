@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -54,6 +55,10 @@ internal class StateRegistryTest {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
+
+    private val messaging123 = ChannelId.fromTypeAndId("messaging", "123")!!
+    private val messaging456 = ChannelId.fromTypeAndId("messaging", "456")!!
+    private val livestream789 = ChannelId.fromTypeAndId("livestream", "789")!!
 
     private lateinit var legacyStateRegistry: StateRegistry
     private lateinit var stateRegistry: StateRegistry
@@ -424,17 +429,17 @@ internal class StateRegistryTest {
         legacyStateRegistry.channel("messaging", "123")
 
         // Then
-        assertTrue(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(legacyStateRegistry.isActiveChannel(messaging123))
     }
 
     @Test
     fun `legacy isActiveChannel should return false for non-existent channel`() {
         // Then
-        assertFalse(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertFalse(legacyStateRegistry.isActiveChannel(messaging123))
     }
 
     @Test
-    fun `legacy getActiveChannelStates should return empty list initially`() {
+    fun `legacy getActiveChannelStates should return empty map initially`() {
         // When
         val activeStates = legacyStateRegistry.getActiveChannelStates()
 
@@ -454,9 +459,9 @@ internal class StateRegistryTest {
 
         // Then
         assertEquals(3, activeStates.size)
-        assertTrue(activeStates.contains(state1))
-        assertTrue(activeStates.contains(state2))
-        assertTrue(activeStates.contains(state3))
+        assertTrue(activeStates.containsValue(state1))
+        assertTrue(activeStates.containsValue(state2))
+        assertTrue(activeStates.containsValue(state3))
     }
 
     @Test
@@ -495,8 +500,8 @@ internal class StateRegistryTest {
 
         // Then
         assertTrue(legacyStateRegistry.getActiveChannelStates().isEmpty())
-        assertFalse(legacyStateRegistry.isActiveChannel("messaging", "123"))
-        assertFalse(legacyStateRegistry.isActiveChannel("messaging", "456"))
+        assertFalse(legacyStateRegistry.isActiveChannel(messaging123))
+        assertFalse(legacyStateRegistry.isActiveChannel(messaging456))
     }
 
     @Test
@@ -509,7 +514,7 @@ internal class StateRegistryTest {
         val newState = legacyStateRegistry.channel("messaging", "123")
 
         // Then
-        assertTrue(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(legacyStateRegistry.isActiveChannel(messaging123))
         assertEquals(1, legacyStateRegistry.getActiveChannelStates().size)
         assertEquals("messaging:123", newState.cid)
     }
@@ -518,7 +523,7 @@ internal class StateRegistryTest {
     fun `legacy handleBatchEvent with ChannelDeletedEvent should remove channel`() {
         // Given
         legacyStateRegistry.channel("messaging", "123")
-        assertTrue(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(legacyStateRegistry.isActiveChannel(messaging123))
 
         val event = ChannelDeletedEvent(
             type = "channel.deleted",
@@ -536,7 +541,7 @@ internal class StateRegistryTest {
         legacyStateRegistry.handleBatchEvent(batchEvent)
 
         // Then
-        assertFalse(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertFalse(legacyStateRegistry.isActiveChannel(messaging123))
         assertTrue(legacyStateRegistry.getActiveChannelStates().isEmpty())
     }
 
@@ -544,7 +549,7 @@ internal class StateRegistryTest {
     fun `legacy handleBatchEvent with NotificationChannelDeletedEvent should remove channel`() {
         // Given
         legacyStateRegistry.channel("messaging", "123")
-        assertTrue(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(legacyStateRegistry.isActiveChannel(messaging123))
 
         val event = NotificationChannelDeletedEvent(
             type = "notification.channel_deleted",
@@ -561,7 +566,7 @@ internal class StateRegistryTest {
         legacyStateRegistry.handleBatchEvent(batchEvent)
 
         // Then
-        assertFalse(legacyStateRegistry.isActiveChannel("messaging", "123"))
+        assertFalse(legacyStateRegistry.isActiveChannel(messaging123))
         assertTrue(legacyStateRegistry.getActiveChannelStates().isEmpty())
     }
 
@@ -598,9 +603,9 @@ internal class StateRegistryTest {
         legacyStateRegistry.handleBatchEvent(batchEvent)
 
         // Then
-        assertFalse(legacyStateRegistry.isActiveChannel("messaging", "123"))
-        assertTrue(legacyStateRegistry.isActiveChannel("messaging", "456"))
-        assertFalse(legacyStateRegistry.isActiveChannel("livestream", "789"))
+        assertFalse(legacyStateRegistry.isActiveChannel(messaging123))
+        assertTrue(legacyStateRegistry.isActiveChannel(messaging456))
+        assertFalse(legacyStateRegistry.isActiveChannel(livestream789))
         assertEquals(1, legacyStateRegistry.getActiveChannelStates().size)
     }
 
@@ -662,17 +667,17 @@ internal class StateRegistryTest {
         stateRegistry.channel("messaging", "123")
 
         // Then
-        assertTrue(stateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(stateRegistry.isActiveChannel(messaging123))
     }
 
     @Test
     fun `isActiveChannel should return false for non-existent channel`() {
         // Then
-        assertFalse(stateRegistry.isActiveChannel("messaging", "123"))
+        assertFalse(stateRegistry.isActiveChannel(messaging123))
     }
 
     @Test
-    fun `getActiveChannelStates should return empty list initially`() {
+    fun `getActiveChannelStates should return empty map initially`() {
         // When
         val activeStates = stateRegistry.getActiveChannelStates()
 
@@ -692,9 +697,9 @@ internal class StateRegistryTest {
 
         // Then
         assertEquals(3, activeStates.size)
-        assertTrue(activeStates.contains(state1))
-        assertTrue(activeStates.contains(state2))
-        assertTrue(activeStates.contains(state3))
+        assertTrue(activeStates.containsValue(state1))
+        assertTrue(activeStates.containsValue(state2))
+        assertTrue(activeStates.containsValue(state3))
     }
 
     @Test
@@ -733,15 +738,15 @@ internal class StateRegistryTest {
 
         // Then
         assertTrue(stateRegistry.getActiveChannelStates().isEmpty())
-        assertFalse(stateRegistry.isActiveChannel("messaging", "123"))
-        assertFalse(stateRegistry.isActiveChannel("messaging", "456"))
+        assertFalse(stateRegistry.isActiveChannel(messaging123))
+        assertFalse(stateRegistry.isActiveChannel(messaging456))
     }
 
     @Test
     fun `handleBatchEvent with ChannelDeletedEvent should remove channel`() {
         // Given
         stateRegistry.channel("messaging", "123")
-        assertTrue(stateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(stateRegistry.isActiveChannel(messaging123))
 
         val event = ChannelDeletedEvent(
             type = "channel.deleted",
@@ -759,7 +764,7 @@ internal class StateRegistryTest {
         stateRegistry.handleBatchEvent(batchEvent)
 
         // Then
-        assertFalse(stateRegistry.isActiveChannel("messaging", "123"))
+        assertFalse(stateRegistry.isActiveChannel(messaging123))
         assertTrue(stateRegistry.getActiveChannelStates().isEmpty())
     }
 
@@ -767,7 +772,7 @@ internal class StateRegistryTest {
     fun `handleBatchEvent with NotificationChannelDeletedEvent should remove channel`() {
         // Given
         stateRegistry.channel("messaging", "123")
-        assertTrue(stateRegistry.isActiveChannel("messaging", "123"))
+        assertTrue(stateRegistry.isActiveChannel(messaging123))
 
         val event = NotificationChannelDeletedEvent(
             type = "notification.channel_deleted",
@@ -784,7 +789,7 @@ internal class StateRegistryTest {
         stateRegistry.handleBatchEvent(batchEvent)
 
         // Then
-        assertFalse(stateRegistry.isActiveChannel("messaging", "123"))
+        assertFalse(stateRegistry.isActiveChannel(messaging123))
         assertTrue(stateRegistry.getActiveChannelStates().isEmpty())
     }
 
@@ -821,10 +826,51 @@ internal class StateRegistryTest {
         stateRegistry.handleBatchEvent(batchEvent)
 
         // Then
-        assertFalse(stateRegistry.isActiveChannel("messaging", "123"))
-        assertTrue(stateRegistry.isActiveChannel("messaging", "456"))
-        assertFalse(stateRegistry.isActiveChannel("livestream", "789"))
+        assertFalse(stateRegistry.isActiveChannel(messaging123))
+        assertTrue(stateRegistry.isActiveChannel(messaging456))
+        assertFalse(stateRegistry.isActiveChannel(livestream789))
         assertEquals(1, stateRegistry.getActiveChannelStates().size)
+    }
+
+    // endregion
+
+    // region Malformed cid handling
+
+    @Test
+    fun `channel with malformed cid returns a non-cached ChannelState`() {
+        val state = stateRegistry.channel("messaging", "")
+        assertEquals("messaging:", state.cid)
+        assertTrue(stateRegistry.getActiveChannelStates().isEmpty())
+    }
+
+    @Test
+    fun `legacy channel with malformed cid returns a non-cached ChannelState`() {
+        val state = legacyStateRegistry.channel("", "id")
+        assertEquals(":id", state.cid)
+        assertTrue(legacyStateRegistry.getActiveChannelStates().isEmpty())
+    }
+
+    @Test
+    fun `handleBatchEvent with malformed cid ChannelDeletedEvent is a no-op`() {
+        stateRegistry.channel("messaging", "123")
+        assertEquals(1, stateRegistry.getActiveChannelStates().size)
+
+        val event = ChannelDeletedEvent(
+            type = "channel.deleted",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            cid = ":id",
+            channelType = "",
+            channelId = "id",
+            channel = Channel(id = "id", type = ""),
+            user = null,
+        )
+        val batchEvent = BatchEvent(sortedEvents = listOf(event), isFromHistorySync = false)
+
+        stateRegistry.handleBatchEvent(batchEvent)
+
+        assertEquals(1, stateRegistry.getActiveChannelStates().size)
+        assertTrue(stateRegistry.isActiveChannel(messaging123))
     }
 
     // endregion

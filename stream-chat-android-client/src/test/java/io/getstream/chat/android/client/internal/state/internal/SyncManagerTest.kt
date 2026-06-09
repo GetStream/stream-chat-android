@@ -18,7 +18,10 @@ package io.getstream.chat.android.client.internal.state.internal
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -32,6 +35,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.test.randomConnectedEvent
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
@@ -67,7 +71,6 @@ import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -79,7 +82,6 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @ExperimentalCoroutinesApi
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class SyncManagerTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -191,7 +193,7 @@ internal class SyncManagerTest {
             _syncEvents.test {
                 syncManager.onEvent(connectingEvent)
 
-                assertEquals(listOf(mockedChatEvent), awaitItem())
+                expectNoEvents()
             }
         }
 
@@ -502,6 +504,60 @@ internal class SyncManagerTest {
 
             /* Then */
             verify(chatClient).getSyncHistory(any(), any<String>())
+        }
+
+    @Test
+    fun `on reconnect, recoverable active channels found by the server get updated and missing ones get watched`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val syncState = SyncState(
+                userId = user.id,
+                activeChannelIds = emptyList(),
+                lastSyncedAt = createdAt,
+                rawLastSyncedAt = rawCreatedAt,
+                markedAllReadAt = createdAt,
+            )
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn syncState
+            whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(Result.Success(emptyList()))
+            whenever(clientState.isOnline) doReturn true
+
+            val foundChannelId = ChannelId.fromTypeAndId("messaging", "found")!!
+            val missingChannelId = ChannelId.fromTypeAndId("messaging", "missing")!!
+            val foundChannelState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+            val missingChannelState: ChannelState = mock { on(it.recoveryNeeded) doReturn true }
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                foundChannelId to foundChannelState,
+                missingChannelId to missingChannelState,
+            )
+
+            val foundChannel = randomChannel(type = "messaging", id = "found")
+            whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = listOf(foundChannel), predefinedFilter = null)),
+            )
+
+            val foundLogic: ChannelLogic = mock()
+            val missingLogic: ChannelLogic = mock {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(foundChannel)
+            }
+            whenever(logicRegistry.channel(foundChannelId)) doReturn foundLogic
+            whenever(logicRegistry.channel(missingChannelId)) doReturn missingLogic
+
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = true)
+
+            syncManager.onEvent(
+                ConnectedEvent(
+                    type = "type",
+                    createdAt = createdAt,
+                    rawCreatedAt = rawCreatedAt,
+                    connectionId = randomString(),
+                    me = user,
+                ),
+            )
+
+            verify(foundLogic).updateDataForChannel(foundChannel, foundChannel.messages.size)
+            verify(repositoryFacade).storeStateForChannels(listOf(foundChannel))
+            verify(missingLogic).watch(userPresence = true)
         }
 
     @Test

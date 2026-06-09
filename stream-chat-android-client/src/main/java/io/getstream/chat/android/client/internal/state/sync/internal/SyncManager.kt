@@ -39,12 +39,14 @@ import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.sync.stringify
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -469,17 +471,16 @@ internal class SyncManager(
         logger.d {
             "[updateActiveChannels] recoverAll: $recoverAll, online: $online, cidsToExclude.size: ${cidsToExclude.size}"
         }
-        val missingCids: List<String> = stateRegistry.getActiveChannelStates()
-            .asSequence()
-            .filter { (it.recoveryNeeded || recoverAll) && !cidsToExclude.contains(it.cid) }
+        val missingChannelIds: List<ChannelId> = stateRegistry.getActiveChannelStates()
+            .filter { (id, state) -> (state.recoveryNeeded || recoverAll) && id.cid !in cidsToExclude }
+            .keys
             .take(n = 30)
-            .map { it.cid }
-            .toList()
 
-        logger.v { "[updateActiveChannels] missingCids.size: ${missingCids.size}" }
-        if (missingCids.isEmpty() || !online) {
+        logger.v { "[updateActiveChannels] missingCids.size: ${missingChannelIds.size}" }
+        if (missingChannelIds.isEmpty() || !online) {
             return
         }
+        val missingCids = missingChannelIds.map(ChannelId::cid)
         val filter = Filters.`in`("cid", missingCids)
         val request = QueryChannelsRequest(filter, offset = 0, limit = 30)
         logger.v { "[updateActiveChannels] request: $request" }
@@ -493,19 +494,18 @@ internal class SyncManager(
                 logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
 
                 foundChannels.forEach { channel ->
-                    val channelLogic = logicRegistry.channel(channel.type, channel.id)
-                    channelLogic.updateDataForChannel(channel, channel.messages.size)
+                    ChannelId.fromTypeAndId(channel.type, channel.id)
+                        ?.let(logicRegistry::channel)
+                        ?.updateDataForChannel(channel, channel.messages.size)
                 }
                 repos.storeStateForChannels(foundChannels)
-                val foundCids = foundChannels.map { it.cid }
-                val stillMissingCids = missingCids - foundCids.toSet()
-                logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingCids.size}" }
+                val foundCids = foundChannels.mapTo(mutableSetOf(), Channel::cid)
+                val stillMissingChannelIds = missingChannelIds.filterNot { it.cid in foundCids }
+                logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingChannelIds.size}" }
 
                 // create channels that are not present on the API
-                stillMissingCids.forEach { cid ->
-                    val (type, id) = cid.cidToTypeAndId()
-                    val channelLogic = logicRegistry.channel(type, id)
-                    channelLogic.watch(userPresence = userPresence)
+                stillMissingChannelIds.forEach { id ->
+                    logicRegistry.channel(id).watch(userPresence = userPresence)
                 }
             }
     }
@@ -572,6 +572,7 @@ internal class SyncManager(
                 message.isDeleted() && !message.deletedForMe -> {
                     retryDeletionOfMessageWithSyncedAttachments(id, message, channelClient)
                 }
+
                 message.deletedForMe -> retryDeleteMessageForMe(id)
                 message.updatedLocallyAt != null && message.createdAt != null -> {
                     retryUpdateOfMessageWithSyncedAttachments(id, message, channelClient)
