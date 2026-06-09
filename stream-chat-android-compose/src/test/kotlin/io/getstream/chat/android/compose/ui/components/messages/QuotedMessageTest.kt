@@ -60,4 +60,14 @@ internal class QuotedMessageTest : PaparazziComposeTest {
     fun `in composer`() {
         snapshotWithDarkModeRow { QuotedMessageInComposer() }
     }
+
+    @Test
+    fun `reply by me to other`() {
+        snapshotWithDarkModeRow { QuotedMessageReplyByMeToOther() }
+    }
+
+    @Test
+    fun `reply by other to me`() {
+        snapshotWithDarkModeRow { QuotedMessageReplyByOtherToMe() }
+    }
 }

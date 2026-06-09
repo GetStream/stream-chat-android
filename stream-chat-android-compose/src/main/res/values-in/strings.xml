@@ -224,6 +224,8 @@
   <string name="stream_compose_quoted_message_audio_recording">"Pesan suara (%s)"</string>
   <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
   <string name="stream_compose_quoted_message_media">"%d media"</string>
+  <string name="stream_compose_quoted_message_replied_to_their_message">"%1$s membalas pesan %2$s"</string>
+  <string name="stream_compose_quoted_message_replied_to_your_message">"%1$s membalas pesan Anda"</string>
   <string name="stream_compose_quoted_message_reply_to">"Balas ke %s"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"Balas ke diri sendiri"</string>
   <string name="stream_compose_quoted_message_you">"Anda"</string>

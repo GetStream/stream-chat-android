@@ -23,6 +23,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,6 +63,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onLongClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -177,15 +180,36 @@ public fun MessageContainer(
 
     val openThreadLabel = stringResource(R.string.stream_compose_message_item_open_thread)
     val messageOptionsLabel = stringResource(R.string.stream_compose_message_item_options)
-    val clickModifier = Modifier.combinedClickable(
-        interactionSource = remember(::MutableInteractionSource),
-        indication = null,
-        enabled = canOpenThread || canOpenActions,
-        onClick = { if (canOpenThread) onThreadClick(message) },
-        onLongClick = { if (canOpenActions) onLongItemClick(message) },
-        onClickLabel = openThreadLabel.takeIf { canOpenThread },
-        onLongClickLabel = messageOptionsLabel.takeIf { canOpenActions },
-    )
+    // The pointerInput lambda below is keyed on Unit, so it is launched once and survives
+    // recomposition. Read the latest message + handler through rememberUpdatedState so the
+    // long-press fires with the current state (e.g. after a reaction is added) instead of a
+    // stale capture from first composition.
+    val currentMessage by rememberUpdatedState(message)
+    val currentOnLongItemClick by rememberUpdatedState(onLongItemClick)
+    val clickModifier = when {
+        canOpenThread -> Modifier.combinedClickable(
+            interactionSource = remember(::MutableInteractionSource),
+            indication = null,
+            onClick = { onThreadClick(message) },
+            onLongClick = { if (canOpenActions) onLongItemClick(message) },
+            onClickLabel = openThreadLabel,
+            onLongClickLabel = messageOptionsLabel.takeIf { canOpenActions },
+        )
+        canOpenActions ->
+            Modifier
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = { currentOnLongItemClick(currentMessage) },
+                    )
+                }
+                .semantics(mergeDescendants = true) {
+                    onLongClick(label = messageOptionsLabel) {
+                        currentOnLongItemClick(currentMessage)
+                        true
+                    }
+                }
+        else -> Modifier.semantics(mergeDescendants = true) {}
+    }
 
     val highlightColor = ChatTheme.colors.backgroundCoreHighlight
     val backgroundColor = when {

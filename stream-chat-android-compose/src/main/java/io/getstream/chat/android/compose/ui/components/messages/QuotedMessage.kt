@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.annotation.DrawableRes
@@ -154,10 +156,26 @@ private fun QuotedMessageUserName(
         isComposerBanner -> stringResource(R.string.stream_compose_quoted_message_reply_to, message.user.name)
         else -> message.user.name
     }
-    val accessibilityName = if (isMine && isComposerBanner) {
-        stringResource(R.string.stream_compose_quoted_message_reply_to_you)
-    } else {
-        null
+    val accessibilityName = when {
+        replyMessage == null && isMine ->
+            stringResource(R.string.stream_compose_quoted_message_reply_to_you)
+        replyMessage != null -> {
+            val replierName = if (replyMessage.isMine(currentUser)) {
+                stringResource(R.string.stream_compose_quoted_message_you)
+            } else {
+                replyMessage.user.name
+            }
+            if (isMine) {
+                stringResource(R.string.stream_compose_quoted_message_replied_to_your_message, replierName)
+            } else {
+                stringResource(
+                    R.string.stream_compose_quoted_message_replied_to_their_message,
+                    replierName,
+                    message.user.name,
+                )
+            }
+        }
+        else -> null
     }
 
     Text(
@@ -287,6 +305,18 @@ private fun QuotedMessageInComposerPreview() {
     ChatTheme { QuotedMessageInComposer() }
 }
 
+@Preview
+@Composable
+private fun QuotedMessageReplyByMeToOtherPreview() {
+    ChatTheme { QuotedMessageReplyByMeToOther() }
+}
+
+@Preview
+@Composable
+private fun QuotedMessageReplyByOtherToMePreview() {
+    ChatTheme { QuotedMessageReplyByOtherToMe() }
+}
+
 @Composable
 internal fun QuotedMessageFromOtherUser() {
     QuotedMessage(
@@ -372,5 +402,39 @@ internal fun QuotedMessageInComposer() {
         ),
         currentUser = PreviewUserData.user1,
         onCancelClick = {},
+    )
+}
+
+@Composable
+internal fun QuotedMessageReplyByMeToOther() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-7",
+            text = "Original message from the other user",
+            user = PreviewUserData.user2,
+        ),
+        currentUser = PreviewUserData.user1,
+        replyMessage = Message(
+            id = "reply-7",
+            text = "On it.",
+            user = PreviewUserData.user1,
+        ),
+    )
+}
+
+@Composable
+internal fun QuotedMessageReplyByOtherToMe() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-8",
+            text = "Original message from me",
+            user = PreviewUserData.user1,
+        ),
+        currentUser = PreviewUserData.user1,
+        replyMessage = Message(
+            id = "reply-8",
+            text = "Got it, thanks!",
+            user = PreviewUserData.user2,
+        ),
     )
 }

@@ -284,6 +284,8 @@
   <string name="stream_compose_quoted_message_audio_recording">"वॉइस मैसेज (%s)"</string>
   <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
   <string name="stream_compose_quoted_message_media">"%d मीडिया"</string>
+  <string name="stream_compose_quoted_message_replied_to_their_message">"%1$s ने %2$s के संदेश का जवाब दिया"</string>
+  <string name="stream_compose_quoted_message_replied_to_your_message">"%1$s ने आपके संदेश का जवाब दिया"</string>
   <string name="stream_compose_quoted_message_reply_to">"%s को जवाब"</string>
   <string name="stream_compose_quoted_message_reply_to_you">"स्वयं को जवाब"</string>
   <string name="stream_compose_quoted_message_you">"आप"</string>
