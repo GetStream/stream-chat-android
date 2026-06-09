@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -40,12 +41,15 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
+import io.getstream.chat.android.compose.ui.messages.list.LocalMessageOnLongClick
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -81,6 +85,7 @@ import io.getstream.chat.android.models.VotingVisibility
  * @param onRemoveVote Invoked when the user removes their vote from this option.
  * @param modifier Modifier applied to the row container.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun PollOptionVotingRow(
@@ -105,18 +110,27 @@ internal fun PollOptionVotingRow(
             onRemoveVote()
         }
     }
+    // Forward long-press up to the message row's actions-menu handler. Without this, the
+    // toggle would consume the long-press as a tap and TalkBack's double-tap-and-hold would
+    // never open the actions menu over a poll option.
+    val onMessageLongClick = LocalMessageOnLongClick.current
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .applyIf(!poll.closed) {
-                toggleable(
-                    value = checked,
+                combinedClickable(
                     role = toggleRole,
-                    onValueChange = onToggle,
+                    onClick = { onToggle(!checked) },
+                    onLongClick = onMessageLongClick,
                 )
-            }
-            .semantics(mergeDescendants = true) {},
+                    // `combinedClickable` sets the role but not the toggle state — restore the
+                    // "checked" / "not checked" announce that the previous `toggleable` modifier
+                    // contributed so TalkBack still reads the current vote state on each option.
+                    .semantics {
+                        toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
+                    }
+            },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
