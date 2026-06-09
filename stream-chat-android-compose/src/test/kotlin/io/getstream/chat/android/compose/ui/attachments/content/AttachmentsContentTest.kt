@@ -21,6 +21,7 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import org.junit.Rule
 import org.junit.Test
 
@@ -67,6 +68,27 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     fun `giphy attachment content`() {
         snapshotWithDarkModeRow {
             GiphyAttachmentContent()
+        }
+    }
+
+    @Test
+    fun `giphy attachment content non-interactive`() {
+        snapshotWithDarkModeRow {
+            GiphyAttachmentContent(interactive = false)
+        }
+    }
+
+    @Test
+    fun `giphy attachment content blank title`() {
+        snapshotWithDarkModeRow {
+            GiphyAttachmentContent(title = "")
+        }
+    }
+
+    @Test
+    fun `giphy message content`() {
+        snapshotWithDarkModeRow {
+            GiphyMessageContent()
         }
     }
 

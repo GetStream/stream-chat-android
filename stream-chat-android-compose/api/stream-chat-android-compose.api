@@ -477,7 +477,6 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Comp
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$GiphyAttachmentContentKt;
 	public fun <init> ()V
 	public final fun getLambda$-573709398$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$271803750$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$LinkAttachmentContentKt {
@@ -525,7 +524,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Giph
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentContentKt {
-	public static final fun GiphyAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun GiphyAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;ZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/LinkAttachmentClickData {
@@ -1514,6 +1513,13 @@ public final class io/getstream/chat/android/compose/ui/components/messageoption
 public final class io/getstream/chat/android/compose/ui/components/messageoptions/MessageOptionsKt {
 	public static final fun MessageOptions (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun defaultMessageOptionsState (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;ZLio/getstream/chat/android/models/Channel;Landroidx/compose/runtime/Composer;I)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$GiphyMessageContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$GiphyMessageContentKt;
+	public fun <init> ()V
+	public final fun getLambda$-2094128661$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-223271185$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageAnnotationKt {
@@ -3932,13 +3938,15 @@ public final class io/getstream/chat/android/compose/ui/theme/FileAttachmentItem
 
 public final class io/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;
 	public final fun component2 ()Landroidx/compose/ui/Modifier;
-	public final fun copy (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams;
+	public final fun component3 ()Z
+	public final fun copy (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Z)Lio/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GiphyAttachmentContentParams;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInteractive ()Z
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getState ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;
 	public fun hashCode ()I

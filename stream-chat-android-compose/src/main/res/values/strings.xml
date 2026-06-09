@@ -88,6 +88,9 @@
     <string name="stream_compose_message_list_giphy_send">Send</string>
     <string name="stream_compose_message_list_giphy_cancel">Cancel</string>
     <string name="stream_compose_message_list_giphy_shuffle">Shuffle</string>
+    <string name="stream_compose_message_list_giphy_sent">Giphy sent</string>
+    <string name="stream_compose_message_list_giphy_cancelled">Giphy preview cancelled</string>
+    <string name="stream_compose_message_list_giphy_shuffled">Giphy shuffled</string>
     <string name="stream_compose_message_list_footnote_edited">Edited</string>
     <string name="stream_compose_message_list_thread_footnote_thread_reply">%d reply</string>
     <string name="stream_compose_message_list_thread_footnote_thread_replies">%d replies</string>
