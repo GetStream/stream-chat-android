@@ -22,6 +22,8 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.ChatPreferenceToggle
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.User
@@ -195,5 +197,45 @@ internal class ChatClientPushPreferencesApiTest : BaseChatClientTest() {
         // then
         verifyNetworkError(result, errorCode)
         verify(mockPlugin).onChannelPushNotificationsSnoozed(cid, until, result)
+    }
+
+    @Test
+    fun `setChannelChatPreferences success should return push preference and notify plugins`() = runTest {
+        // given
+        val cid = "messaging:${randomString()}"
+        val preferences = ChatPreferences(directMentions = ChatPreferenceToggle.all)
+        val pushPreference = PushPreference(level = null, disabledUntil = null, chatPreferences = preferences)
+        val mockPlugin = mock<Plugin>()
+        plugins.add(mockPlugin)
+
+        whenever(api.setChannelChatPreferences(cid, preferences))
+            .doReturn(RetroSuccess(pushPreference).toRetrofitCall())
+
+        // when
+        val result = chatClient.setChannelChatPreferences(cid, preferences).await()
+
+        // then
+        verifySuccess(result, pushPreference)
+        verify(mockPlugin).onChannelChatPreferencesSet(cid, preferences, Result.Success(pushPreference))
+    }
+
+    @Test
+    fun `setChannelChatPreferences error should return error and notify plugins`() = runTest {
+        // given
+        val cid = "messaging:${randomString()}"
+        val preferences = ChatPreferences(directMentions = ChatPreferenceToggle.all)
+        val errorCode = positiveRandomInt()
+        val mockPlugin = mock<Plugin>()
+        plugins.add(mockPlugin)
+
+        whenever(api.setChannelChatPreferences(cid, preferences))
+            .doReturn(RetroError<PushPreference>(errorCode).toRetrofitCall())
+
+        // when
+        val result = chatClient.setChannelChatPreferences(cid, preferences).await()
+
+        // then
+        verifyNetworkError(result, errorCode)
+        verify(mockPlugin).onChannelChatPreferencesSet(cid, preferences, result)
     }
 }

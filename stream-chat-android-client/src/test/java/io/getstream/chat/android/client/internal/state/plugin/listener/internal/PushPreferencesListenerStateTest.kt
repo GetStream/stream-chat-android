@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.models.ChatPreferenceToggle
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.result.Error
@@ -42,7 +44,7 @@ internal class PushPreferencesListenerStateTest {
     private val sut: PushPreferencesListenerState = PushPreferencesListenerState(logicRegistry)
 
     @Test
-    fun `onChannelPushPreferenceSet with success calls updateChannelData`() = runTest {
+    fun `onChannelPushPreferenceSet with success calls setPushPreference`() = runTest {
         // Given
         val cid = "messaging:channel123"
         val level = PushPreferenceLevel.all
@@ -57,7 +59,7 @@ internal class PushPreferencesListenerStateTest {
     }
 
     @Test
-    fun `onChannelPushPreferenceSet with failure does not call updateChannelData`() = runTest {
+    fun `onChannelPushPreferenceSet with failure does not call setPushPreference`() = runTest {
         // Given
         val cid = "messaging:channel123"
         val level = PushPreferenceLevel.all
@@ -70,7 +72,7 @@ internal class PushPreferencesListenerStateTest {
     }
 
     @Test
-    fun `onChannelPushNotificationsSnoozed with success calls updateChannelData`() = runTest {
+    fun `onChannelPushNotificationsSnoozed with success calls setPushPreference`() = runTest {
         // Given
         val cid = "messaging:channel456"
         val until = Date()
@@ -85,13 +87,41 @@ internal class PushPreferencesListenerStateTest {
     }
 
     @Test
-    fun `onChannelPushNotificationsSnoozed with failure does not call updateChannelData`() = runTest {
+    fun `onChannelPushNotificationsSnoozed with failure does not call setPushPreference`() = runTest {
         // Given
         val cid = "messaging:channel456"
         val until = Date()
 
         // When
         sut.onChannelPushNotificationsSnoozed(cid, until, Result.Failure(Error.GenericError("error")))
+
+        // Then
+        verify(channelLogic, times(0)).setPushPreference(any())
+    }
+
+    @Test
+    fun `onChannelChatPreferencesSet with success calls setPushPreference`() = runTest {
+        // Given
+        val cid = "messaging:channel789"
+        val preferences = ChatPreferences(directMentions = ChatPreferenceToggle.all)
+        val preference = PushPreference(level = null, disabledUntil = null, chatPreferences = preferences)
+        doNothing().whenever(channelLogic).setPushPreference(preference)
+
+        // When
+        sut.onChannelChatPreferencesSet(cid, preferences, Result.Success(preference))
+
+        // Then
+        verify(channelLogic, times(1)).setPushPreference(preference)
+    }
+
+    @Test
+    fun `onChannelChatPreferencesSet with failure does not call setPushPreference`() = runTest {
+        // Given
+        val cid = "messaging:channel789"
+        val preferences = ChatPreferences(directMentions = ChatPreferenceToggle.all)
+
+        // When
+        sut.onChannelChatPreferencesSet(cid, preferences, Result.Failure(Error.GenericError("error")))
 
         // Then
         verify(channelLogic, times(0)).setPushPreference(any())

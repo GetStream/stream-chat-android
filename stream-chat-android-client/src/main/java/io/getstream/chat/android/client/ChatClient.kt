@@ -1743,6 +1743,9 @@ internal constructor(
     @CheckResult
     public fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
         return api.setChannelChatPreferences(cid, preferences)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { it.onChannelChatPreferencesSet(cid, preferences, result) }
+            }
     }
 
     /**
