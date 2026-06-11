@@ -196,13 +196,17 @@ internal fun MessageComposerAudioRecordingLockedContent(
             modifier = RecordingBarModifier
                 .focusRequester(rowFocusRequester)
                 .focusable()
-                .semantics(mergeDescendants = true) { contentDescription = rowLabel },
+                // Merge the row into a single TalkBack stop. The label is owned by the leading icon
+                // leaf (below) rather than set here, so children announce in visual order
+                // (label, duration, progress) and a new child appends in its slot instead of
+                // silently shifting a parent-level description.
+                .semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_design_ic_voice),
-                    contentDescription = null,
+                    contentDescription = rowLabel,
                     tint = ChatTheme.colors.accentError,
                 )
             }
@@ -314,7 +318,10 @@ private fun RowScope.OverviewPlaybackRow(
             .fillMaxHeight()
             .focusRequester(focusRequester)
             .focusable()
-            .semantics(mergeDescendants = true) { contentDescription = rowLabel },
+            // Merge the row into a single TalkBack stop. The label is owned by the waveform leaf
+            // (below) rather than set here, so the announce is composed from the children instead
+            // of a parent description that would concatenate with any future child.
+            .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val playbackInMs = (currentProgress * state.durationInMs).toInt()
@@ -330,6 +337,7 @@ private fun RowScope.OverviewPlaybackRow(
         StaticWaveformSlider(
             modifier = Modifier
                 .fillMaxSize()
+                .semantics { contentDescription = rowLabel }
                 .padding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp),
             waveformData = state.waveform,
             progress = currentProgress,
