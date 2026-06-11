@@ -78,7 +78,7 @@ private const val TAG = "Chat:Client-StatePlugin"
  */
 public val ChatClient.state: StateRegistry
     @Throws(IllegalArgumentException::class)
-    get() = resolveDependency<StatePlugin, StateRegistry>()
+    get() = resolvePluginDependency<StatePlugin, StateRegistry>()
 
 /**
  * [GlobalState] instance that contains information about the current user, unreads, etc.
@@ -87,7 +87,7 @@ public val ChatClient.state: StateRegistry
  */
 public val ChatClient.globalState: GlobalState
     @Throws(IllegalArgumentException::class)
-    get() = resolveDependency<StatePlugin, GlobalState>()
+    get() = resolvePluginDependency<StatePlugin, GlobalState>()
 
 /**
  * Retrieves a [Flow] holding the [GlobalState] object, which emits only if the user is connected, and the [ChatClient]
@@ -109,7 +109,7 @@ public val ChatClient.globalStateFlow: Flow<GlobalState>
  * @throws IllegalArgumentException If the [ChatClientConfig] was not initialized yet.
  */
 private val ChatClient.chatClientConfig: ChatClientConfig
-    get() = resolveDependency<StreamStatePluginFactory, ChatClientConfig>()
+    get() = resolveFactoryDependency<StreamStatePluginFactory, ChatClientConfig>()
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.

@@ -135,7 +135,6 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
 import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
-import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.MessageDeliveredPluginFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
@@ -261,7 +260,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
-import kotlin.reflect.full.isSubclassOf
 import kotlin.time.Duration.Companion.days
 
 /**
@@ -366,30 +364,14 @@ internal constructor(
     public var plugins: List<Plugin> = emptyList()
 
     /**
-     * Resolves dependency [T] within the provided plugin [DR].
-     * This method can't be called before user is connected because plugins are added only after user
-     * connection is completed.
+     * Resolves dependency [T] from the [PluginFactory] of type [F].
      *
-     * @see [Plugin]
-     * @throws IllegalStateException if plugin was not added or dependency is not found.
+     * @throws IllegalStateException if the factory was not added or the dependency is not found.
      */
     @InternalStreamChatApi
     @Throws(IllegalStateException::class)
     @Suppress("ThrowsCount")
-    public inline fun <reified DR : DependencyResolver, reified T : Any> resolveDependency(): T {
-        StreamLog.d(TAG) { "[resolveDependency] DR: ${DR::class.simpleName}, T: ${T::class.simpleName}" }
-        return when {
-            DR::class.isSubclassOf(PluginFactory::class) -> resolveFactoryDependency<DR, T>()
-            DR::class.isSubclassOf(Plugin::class) -> resolvePluginDependency<DR, T>()
-            else -> error("Unsupported dependency resolver: ${DR::class}")
-        }
-    }
-
-    @PublishedApi
-    @InternalStreamChatApi
-    @Throws(IllegalStateException::class)
-    @Suppress("ThrowsCount")
-    internal inline fun <reified F : DependencyResolver, reified T : Any> resolveFactoryDependency(): T {
+    public inline fun <reified F : PluginFactory, reified T : Any> resolveFactoryDependency(): T {
         StreamLog.v(TAG) { "[resolveFactoryDependency] F: ${F::class.simpleName}, T: ${T::class.simpleName}" }
         val resolver = pluginFactories.find { plugin ->
             plugin is F
@@ -402,11 +384,17 @@ internal constructor(
             )
     }
 
-    @PublishedApi
+    /**
+     * Resolves dependency [T] from the [Plugin] of type [P].
+     * This method can't be called before user is connected because plugins are added only after user
+     * connection is completed.
+     *
+     * @throws IllegalStateException if the plugin was not added or the dependency is not found.
+     */
     @InternalStreamChatApi
     @Throws(IllegalStateException::class)
     @Suppress("ThrowsCount")
-    internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
+    public inline fun <reified P : Plugin, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
         // Snapshot plugins BEFORE checking initializationState to avoid a race with disconnect().
         // disconnect() sets initializationState to NOT_INITIALIZED before clearing plugins,
