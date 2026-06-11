@@ -152,6 +152,7 @@
   <string name="stream_compose_flag_message_title">"Segnala messaggio"</string>
   <string name="stream_compose_giphy_label">"GIPHY"</string>
   <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_giphy_preview_label">"Anteprima Giphy"</string>
   <string name="stream_compose_image_options">"Opzioni immagine"</string>
   <string name="stream_compose_image_order">"%1$d di %2$d"</string>
   <string name="stream_compose_image_preview_cancel_sharing">"Annulla condivisione"</string>

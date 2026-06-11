@@ -152,6 +152,7 @@
   <string name="stream_compose_flag_message_title">"मैसेज चिह्नित करें"</string>
   <string name="stream_compose_giphy_label">"GIPHY"</string>
   <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_giphy_preview_label">"Giphy पूर्वावलोकन"</string>
   <string name="stream_compose_image_options">"इमेज के विकल्प"</string>
   <string name="stream_compose_image_order">"%2$d में से %1$d"</string>
   <string name="stream_compose_image_preview_cancel_sharing">"शेयरिंग रद्द करें"</string>
