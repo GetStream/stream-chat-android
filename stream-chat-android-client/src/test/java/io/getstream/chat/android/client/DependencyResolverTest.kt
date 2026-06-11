@@ -59,13 +59,13 @@ public class DependencyResolverTest {
             .get()
 
         invoking {
-            client.resolveDependency<PluginDependency, SomeDependency>()
+            client.resolvePluginDependency<PluginDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("Plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency' was not found. Did you init it within ChatClient?")
 
         invoking {
-            client.resolveDependency<FactoryDependency, SomeDependency>()
+            client.resolveFactoryDependency<FactoryDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("Factory 'io.getstream.chat.android.client.DependencyResolverTest.FactoryDependency' was not found. Did you init it within ChatClient?")
@@ -80,13 +80,13 @@ public class DependencyResolverTest {
             .get()
 
         invoking {
-            client.resolveDependency<PluginDependency, SomeDependency>()
+            client.resolvePluginDependency<PluginDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency'")
 
         invoking {
-            client.resolveDependency<FactoryDependency, SomeDependency>()
+            client.resolveFactoryDependency<FactoryDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by factory 'io.getstream.chat.android.client.DependencyResolverTest.FactoryDependency'")
@@ -105,13 +105,13 @@ public class DependencyResolverTest {
             .get()
 
         invoking {
-            client.resolveDependency<PluginDependency, SomeDependency>()
+            client.resolvePluginDependency<PluginDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("ChatClient::connectUser() must be called before resolving any dependency")
 
         invoking {
-            client.resolveDependency<FactoryDependency, SomeDependency>()
+            client.resolveFactoryDependency<FactoryDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by factory 'io.getstream.chat.android.client.DependencyResolverTest.FactoryDependency'")
@@ -126,8 +126,8 @@ public class DependencyResolverTest {
             .with(FactoryDependency(mapOf(SomeDependency::class to expectedDependency)))
             .get()
 
-        val pResult = client.resolveDependency<PluginDependency, SomeDependency>()
-        val fResult = client.resolveDependency<FactoryDependency, SomeDependency>()
+        val pResult = client.resolvePluginDependency<PluginDependency, SomeDependency>()
+        val fResult = client.resolveFactoryDependency<FactoryDependency, SomeDependency>()
 
         pResult `should be` expectedDependency
         fResult `should be` expectedDependency
@@ -144,7 +144,7 @@ public class DependencyResolverTest {
         val racingFlow = DisconnectSimulatingStateFlow(client)
         whenever(fixture.mutableClientState.initializationState).thenReturn(racingFlow)
 
-        val result = client.resolveDependency<PluginDependency, SomeDependency>()
+        val result = client.resolvePluginDependency<PluginDependency, SomeDependency>()
 
         result `should be` expectedDependency
     }
