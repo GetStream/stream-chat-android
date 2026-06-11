@@ -368,10 +368,9 @@ internal constructor(
      *
      * @throws IllegalStateException if the factory was not added or the dependency is not found.
      */
-    @InternalStreamChatApi
     @Throws(IllegalStateException::class)
     @Suppress("ThrowsCount")
-    public inline fun <reified F : PluginFactory, reified T : Any> resolveFactoryDependency(): T {
+    internal inline fun <reified F : PluginFactory, reified T : Any> resolveFactoryDependency(): T {
         StreamLog.v(TAG) { "[resolveFactoryDependency] F: ${F::class.simpleName}, T: ${T::class.simpleName}" }
         val resolver = pluginFactories.find { plugin ->
             plugin is F
@@ -391,10 +390,9 @@ internal constructor(
      *
      * @throws IllegalStateException if the plugin was not added or the dependency is not found.
      */
-    @InternalStreamChatApi
     @Throws(IllegalStateException::class)
     @Suppress("ThrowsCount")
-    public inline fun <reified P : Plugin, reified T : Any> resolvePluginDependency(): T {
+    internal inline fun <reified P : Plugin, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
         // Snapshot plugins BEFORE checking initializationState to avoid a race with disconnect().
         // disconnect() sets initializationState to NOT_INITIALIZED before clearing plugins,
