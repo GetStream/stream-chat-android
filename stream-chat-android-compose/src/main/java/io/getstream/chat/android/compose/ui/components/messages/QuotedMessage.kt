@@ -129,6 +129,7 @@ internal fun MessageComposerQuotedMessage(
             message = message,
             currentUser = currentUser,
             replyMessage = null,
+            // No click handler on the composer quoted preview; merge so its sender + text announce as one stop.
             modifier = Modifier.semantics(mergeDescendants = true) {},
         )
 

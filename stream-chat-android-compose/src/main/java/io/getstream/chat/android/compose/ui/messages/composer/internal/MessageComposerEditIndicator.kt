@@ -85,6 +85,7 @@ private fun EditIndicatorCard(body: QuotedMessageBody) {
             )
             .padding(StreamTokens.spacingXs)
             .height(IntrinsicSize.Min)
+            // No click handler here; merge so the divider + quoted-message text announce as one stop.
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {

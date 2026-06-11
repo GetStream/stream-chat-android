@@ -179,8 +179,7 @@ private fun PollSwitchHeader(
                 value = enabled,
                 role = Role.Switch,
                 onValueChange = onCheckedChange,
-            )
-            .semantics(mergeDescendants = true) {},
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -230,8 +229,7 @@ private fun LimitVotesPerPerson(
                     value = enabled,
                     role = Role.Switch,
                     onValueChange = onCheckedChange,
-                )
-                .semantics(mergeDescendants = true) {},
+                ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(

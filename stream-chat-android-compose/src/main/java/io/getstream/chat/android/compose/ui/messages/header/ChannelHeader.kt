@@ -200,7 +200,6 @@ internal fun DefaultChannelHeaderCenterContent(
                     onClickLabel = onHeaderTitleClickLabel,
                     role = Role.Button,
                 ) { callback(channel) }
-                    .semantics(mergeDescendants = true) {}
             },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

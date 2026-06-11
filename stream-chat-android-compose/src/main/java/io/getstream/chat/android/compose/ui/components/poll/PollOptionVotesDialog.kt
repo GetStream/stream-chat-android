@@ -164,6 +164,7 @@ private fun Content(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            // No click handler; merge so the winner badge + vote count announce as one stop.
                             .semantics(mergeDescendants = true) {},
                         horizontalArrangement = Arrangement.End,
                     ) {
