@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.client.utils.internal
 
+import io.getstream.chat.android.client.utils.internal.ValidationKtTest.Companion.argumentsValidCidResult
+import io.getstream.chat.android.client.utils.internal.ValidationKtTest.Companion.argumentsValidateCid
+import io.getstream.chat.android.client.utils.internal.ValidationKtTest.Companion.argumentsValidateCidError
 import io.getstream.result.Error
 import io.getstream.result.Result
 import org.amshove.kluent.invoking
@@ -85,15 +88,17 @@ internal class ValidationKtTest {
         }
 
         private fun invalidCids(): List<Pair<String, Exception>> = listOf(
-            "" to IllegalArgumentException("cid can not be empty"),
-            "   " to IllegalArgumentException("cid can not be blank"),
+            "" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "   " to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
             "messaging 123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
             "messaging123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
             "messaging::123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
             "messaging:" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
             ":123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
-            "mess aging:123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
             ":" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "   :   " to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "messaging:   " to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
+            "   :123" to IllegalArgumentException("cid needs to be in the format channelType:channelId. For example, messaging:123"),
         )
 
         private fun validCids() = listOf(
@@ -101,6 +106,9 @@ internal class ValidationKtTest {
             "a:e",
             "messaging:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU",
             "!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU:!members-oNJ1lQqt2b9SKG6raDWRTn4wWLakkFkwvqlUn-EsatU",
+            "mess aging:123",
+            "messaging:id_with_underscore",
+            "messaging:id.with.dots",
         )
     }
 }
