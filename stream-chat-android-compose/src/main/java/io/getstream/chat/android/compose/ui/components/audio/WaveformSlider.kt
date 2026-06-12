@@ -139,7 +139,8 @@ private fun BoxScope.WaveformHandle(
             val parentWidth = parentWidthPx.toDp()
             val center = parentWidth * progress
             val left = center - (handleSize / 2)
-            left.coerceIn(-handleBorderSize, parentWidth - handleSize)
+            val maxOffset = (parentWidth - handleSize).coerceAtLeast(-handleBorderSize)
+            left.coerceIn(-handleBorderSize, maxOffset)
         }
 
         else -> 0.dp

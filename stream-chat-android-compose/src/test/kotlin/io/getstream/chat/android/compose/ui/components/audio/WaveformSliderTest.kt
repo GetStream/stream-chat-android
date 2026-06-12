@@ -16,9 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.components.audio
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
@@ -63,6 +68,16 @@ internal class WaveformSliderTest : PaparazziComposeTest {
     fun `slider playing midway rtl`() {
         snapshotWithDarkModeRow {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                StaticWaveformSliderMidway()
+            }
+        }
+    }
+
+    @Test
+    fun `slider renders at sub-handle width`() {
+        // Regression test for when the parent is narrower than handleSize
+        snapshotWithDarkModeRow {
+            Box(modifier = Modifier.width(3.dp).height(36.dp)) {
                 StaticWaveformSliderMidway()
             }
         }
