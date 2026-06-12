@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceD
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamRoleDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -1403,6 +1404,20 @@ internal object Mother {
         team_id = teamId,
         members = members,
         created_by = createdBy,
+        created_at = createdAt,
+        updated_at = updatedAt,
+    )
+
+    fun randomDownstreamRoleDto(
+        name: String = randomString(),
+        custom: Boolean = randomBoolean(),
+        scopes: List<String> = emptyList(),
+        createdAt: Date? = randomDate(),
+        updatedAt: Date? = randomDate(),
+    ): DownstreamRoleDto = DownstreamRoleDto(
+        name = name,
+        custom = custom,
+        scopes = scopes,
         created_at = createdAt,
         updated_at = updatedAt,
     )

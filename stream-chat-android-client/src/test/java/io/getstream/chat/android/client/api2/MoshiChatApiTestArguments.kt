@@ -59,11 +59,14 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -880,5 +883,39 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun userGroupsResponseInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                UserGroupsResponse(user_groups = listOf(Mother.randomDownstreamUserGroupDto())),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<UserGroupsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun userGroupResponseInput() = listOf(
+        Arguments.of(
+            RetroSuccess(UserGroupResponse(user_group = Mother.randomDownstreamUserGroupDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<UserGroupResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun deleteUserGroupInput() = completableResponseArguments()
+
+    @JvmStatic
+    fun searchRolesInput() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                SearchRolesResponse(roles = listOf(Mother.randomDownstreamRoleDto())),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<SearchRolesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 }

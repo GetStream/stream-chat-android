@@ -21,15 +21,14 @@ import java.util.Date
 /**
  * Represents the push notification preference for a specific user or channel.
  *
- * @param level The chat level preference for notifications. Possible values are:
- * - [PushPreferenceLevel.all]: Receive notifications for all messages.
- * - [PushPreferenceLevel.mentions]: Receive notifications only for mentions.
- * - [PushPreferenceLevel.none]: Do not receive any notifications.
+ * @param level Coarse chat level. Ignored when [chatPreferences] is set.
  * @param disabledUntil Timestamp until which notifications are disabled. If null, notifications are not disabled.
+ * @param chatPreferences Per-category toggles. Takes precedence over [level] when set.
  */
 public data class PushPreference(
     public val level: PushPreferenceLevel?,
     public val disabledUntil: Date?,
+    public val chatPreferences: ChatPreferences? = null,
 )
 
 /**

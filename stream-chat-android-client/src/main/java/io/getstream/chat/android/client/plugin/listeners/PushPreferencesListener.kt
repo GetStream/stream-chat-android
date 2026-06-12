@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.result.Result
@@ -53,6 +54,20 @@ public interface PushPreferencesListener {
     public suspend fun onChannelPushNotificationsSnoozed(
         cid: String,
         until: Date,
+        result: Result<PushPreference>,
+    )
+
+    /**
+     * Called when per-category chat preferences are set for a given channel.
+     *
+     * @param cid The full channel ID (e.g., "messaging:123").
+     * @param preferences The [ChatPreferences] applied to the channel.
+     * @param result The result of the update operation, containing the updated [PushPreference] on success or an error
+     * on failure.
+     */
+    public suspend fun onChannelChatPreferencesSet(
+        cid: String,
+        preferences: ChatPreferences,
         result: Result<PushPreference>,
     )
 }

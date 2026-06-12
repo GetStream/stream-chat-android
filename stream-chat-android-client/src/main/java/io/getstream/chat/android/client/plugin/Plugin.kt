@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
@@ -489,6 +490,14 @@ public interface Plugin :
     override suspend fun onChannelPushNotificationsSnoozed(
         cid: String,
         until: Date,
+        result: Result<PushPreference>,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onChannelChatPreferencesSet(
+        cid: String,
+        preferences: ChatPreferences,
         result: Result<PushPreference>,
     ) {
         /* No-Op */
