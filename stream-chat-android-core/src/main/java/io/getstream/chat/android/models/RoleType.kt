@@ -20,7 +20,7 @@ package io.getstream.chat.android.models
  * Whether a role is assignable to a user or to a channel member. Wraps the raw wire string so
  * unknown values round-trip without being lost.
  */
-public data class RoleType(public val value: String) {
+public data class RoleType internal constructor(public val value: String) {
 
     public companion object {
 
@@ -29,12 +29,5 @@ public data class RoleType(public val value: String) {
 
         /** Assignable to a channel member. */
         public val Channel: RoleType = RoleType(value = "channel")
-
-        public fun fromValue(value: String?): RoleType? = when (value) {
-            null, "" -> null
-            User.value -> User
-            Channel.value -> Channel
-            else -> RoleType(value)
-        }
     }
 }
