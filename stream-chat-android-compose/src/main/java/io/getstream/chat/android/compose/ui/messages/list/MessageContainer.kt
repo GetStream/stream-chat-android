@@ -208,6 +208,7 @@ public fun MessageContainer(
                         true
                     }
                 }
+        // No click handler on deleted/uploading messages; merge into one TalkBack stop.
         else -> Modifier.semantics(mergeDescendants = true) {}
     }
 

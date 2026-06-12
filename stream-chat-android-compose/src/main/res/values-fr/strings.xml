@@ -106,6 +106,7 @@
   <string name="stream_compose_flag_message_title">"Signaler le message"</string>
   <string name="stream_compose_giphy_label">"GIPHY"</string>
   <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_giphy_preview_label">"Aperçu Giphy"</string>
   <string name="stream_compose_image_options">"Options de l\'image"</string>
   <string name="stream_compose_image_order">"%1$d sur %2$d"</string>
   <string name="stream_compose_image_preview_cancel_sharing">"Annuler le partage"</string>
@@ -160,8 +161,11 @@
   <string name="stream_compose_message_list_error_cannot_open_link">"Aucune application pour ouvrir cette URL :\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"Modifié"</string>
   <string name="stream_compose_message_list_giphy_cancel">"Annuler"</string>
+  <string name="stream_compose_message_list_giphy_cancelled">"Aperçu Giphy annulé"</string>
   <string name="stream_compose_message_list_giphy_send">"Envoyer"</string>
+  <string name="stream_compose_message_list_giphy_sent">"Giphy envoyé"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Mélanger"</string>
+  <string name="stream_compose_message_list_giphy_shuffled">"Giphy mélangé"</string>
   <string name="stream_compose_message_list_remind_me">"Me rappeler"</string>
   <string name="stream_compose_message_list_saved_for_later">"Enregistré pour plus tard"</string>
   <string name="stream_compose_message_list_show_translation">"Afficher la traduction"</string>

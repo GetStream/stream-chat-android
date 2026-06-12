@@ -85,6 +85,7 @@ private fun EditIndicatorCard(body: QuotedMessageBody) {
             )
             .padding(StreamTokens.spacingXs)
             .height(IntrinsicSize.Min)
+            // No click handler; merge into one TalkBack stop.
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {

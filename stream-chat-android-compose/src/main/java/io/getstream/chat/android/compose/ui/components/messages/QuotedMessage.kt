@@ -129,6 +129,7 @@ internal fun MessageComposerQuotedMessage(
             message = message,
             currentUser = currentUser,
             replyMessage = null,
+            // No click handler on the composer quoted preview; merge into one TalkBack stop.
             modifier = Modifier.semantics(mergeDescendants = true) {},
         )
 

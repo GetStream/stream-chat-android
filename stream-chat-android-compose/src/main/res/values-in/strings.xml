@@ -106,6 +106,7 @@
   <string name="stream_compose_flag_message_title">"Tandai Pesan"</string>
   <string name="stream_compose_giphy_label">"GIPHY"</string>
   <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_giphy_preview_label">"Pratinjau Giphy"</string>
   <string name="stream_compose_image_options">"Opsi gambar"</string>
   <string name="stream_compose_image_order">"%1$d dari %2$d"</string>
   <string name="stream_compose_image_preview_cancel_sharing">"Batalkan Berbagi"</string>
@@ -160,8 +161,11 @@
   <string name="stream_compose_message_list_error_cannot_open_link">"Tidak ada aplikasi untuk membuka URL ini:\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"Diedit"</string>
   <string name="stream_compose_message_list_giphy_cancel">"Batal"</string>
+  <string name="stream_compose_message_list_giphy_cancelled">"Pratinjau Giphy dibatalkan"</string>
   <string name="stream_compose_message_list_giphy_send">"Kirim"</string>
+  <string name="stream_compose_message_list_giphy_sent">"Giphy terkirim"</string>
   <string name="stream_compose_message_list_giphy_shuffle">"Acak"</string>
+  <string name="stream_compose_message_list_giphy_shuffled">"Giphy diacak"</string>
   <string name="stream_compose_message_list_remind_me">"Ingatkan saya"</string>
   <string name="stream_compose_message_list_saved_for_later">"Disimpan untuk nanti"</string>
   <string name="stream_compose_message_list_show_translation">"Tampilkan terjemahan"</string>

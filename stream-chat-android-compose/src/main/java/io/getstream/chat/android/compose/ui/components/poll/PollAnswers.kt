@@ -178,6 +178,7 @@ internal fun PollAnswersItem(
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         Column(
+            // No click handler; merge into one TalkBack stop.
             modifier = Modifier.semantics(mergeDescendants = true) {},
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {

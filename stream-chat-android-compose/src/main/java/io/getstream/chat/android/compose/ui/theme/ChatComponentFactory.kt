@@ -2494,6 +2494,7 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent(
             state = params.state,
             modifier = params.modifier,
+            interactive = params.interactive,
         )
     }
 
