@@ -26,7 +26,7 @@ import kotlinx.coroutines.CoroutineScope
  * [LogicRegistry] instance that contains all objects responsible for handling logic in offline plugin.
  */
 internal val ChatClient.logic: LogicRegistry
-    get() = resolveDependency<StatePlugin, LogicRegistry>()
+    get() = resolvePluginDependency<StatePlugin, LogicRegistry>()
 
 /**
  * Intermediate class to request ChatClient class as states
