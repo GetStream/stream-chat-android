@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.compose.state.channels.list
 
-import io.getstream.result.Error
-
 /**
  * One-off events emitted by the channel list in response to user-triggered actions, used to drive transient feedback
  * such as a snackbar.
@@ -28,9 +26,8 @@ internal sealed interface ChannelListEvent {
      * A user-triggered channel action failed.
      *
      * @param action The action that failed, used to pick the feedback message.
-     * @param error The error that caused the failure.
      */
-    data class ActionError(val action: ChannelListAction, val error: Error) : ChannelListEvent
+    data class ActionError(val action: ChannelListAction) : ChannelListEvent
 
     /**
      * A channel was successfully deleted.

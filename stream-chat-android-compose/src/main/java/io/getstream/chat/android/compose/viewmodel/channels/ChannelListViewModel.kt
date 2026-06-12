@@ -519,9 +519,7 @@ public class ChannelListViewModel internal constructor(
         chatClient.channel(channel.cid).delete().toUnitCall().enqueue { result ->
             when (result) {
                 is Result.Success -> _events.tryEmit(ChannelListEvent.ChannelDeleted)
-                is Result.Failure -> _events.tryEmit(
-                    ChannelListEvent.ActionError(ChannelListAction.DeleteChannel, result.value),
-                )
+                is Result.Failure -> _events.tryEmit(ChannelListEvent.ActionError(ChannelListAction.DeleteChannel))
             }
         }
     }
@@ -592,7 +590,7 @@ public class ChannelListViewModel internal constructor(
     private fun <T : Any> Call<T>.enqueueTrackingError(action: ChannelListAction) {
         enqueue { result ->
             if (result is Result.Failure) {
-                _events.tryEmit(ChannelListEvent.ActionError(action, result.value))
+                _events.tryEmit(ChannelListEvent.ActionError(action))
             }
         }
     }
