@@ -17,8 +17,7 @@
 package io.getstream.chat.android.compose.ui.components.audio
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -75,9 +74,9 @@ internal class WaveformSliderTest : PaparazziComposeTest {
 
     @Test
     fun `slider renders at sub-handle width`() {
-        // Regression test for when the parent is narrower than handleSize
+        // Regression test for when the parent is narrower than the handle size
         snapshotWithDarkModeRow {
-            Box(modifier = Modifier.width(3.dp).height(36.dp)) {
+            Box(modifier = Modifier.size(3.dp, 36.dp)) {
                 StaticWaveformSliderMidway()
             }
         }
