@@ -156,6 +156,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
@@ -3242,7 +3243,7 @@ internal class MoshiChatApiTest {
         // when
         val query = randomString()
         val limit = randomInt()
-        val roleType = randomString()
+        val roleType = RoleType.User
         val includeGlobalRoles = randomBoolean()
         val nameGt = randomString()
         val result = sut.searchRoles(query, limit, roleType, includeGlobalRoles, nameGt).await()
@@ -3251,7 +3252,7 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).searchRoles(
             query = query,
             limit = limit,
-            roleType = roleType,
+            roleType = roleType.value,
             includeGlobalRoles = includeGlobalRoles,
             nameGt = nameGt,
         )

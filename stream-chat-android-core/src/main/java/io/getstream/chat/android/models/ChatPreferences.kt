@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Per-category push toggles. A null field means "use the server default". When set on a
  * [PushPreference], takes precedence over [PushPreference.level].
  */
+@Immutable
 public data class ChatPreferences(
     public val directMentions: ChatPreferenceToggle? = null,
     public val roleMentions: ChatPreferenceToggle? = null,
@@ -34,6 +37,7 @@ public data class ChatPreferences(
  * Per-category toggle for [ChatPreferences]. Wraps the raw wire string so unknown values
  * round-trip without being lost.
  */
+@Immutable
 public data class ChatPreferenceToggle(public val value: String) {
 
     public companion object {

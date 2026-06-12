@@ -60,6 +60,7 @@ import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -218,7 +219,7 @@ internal interface ChatApi {
     fun searchRoles(
         query: String,
         limit: Int? = null,
-        roleType: String? = null,
+        roleType: RoleType? = null,
         includeGlobalRoles: Boolean? = null,
         nameGt: String? = null,
     ): Call<List<Role>>

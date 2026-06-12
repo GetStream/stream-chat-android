@@ -152,6 +152,7 @@ import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -666,7 +667,7 @@ constructor(
     override fun searchRoles(
         query: String,
         limit: Int?,
-        roleType: String?,
+        roleType: RoleType?,
         includeGlobalRoles: Boolean?,
         nameGt: String?,
     ): Call<List<Role>> {
@@ -674,7 +675,7 @@ constructor(
             .searchRoles(
                 query = query,
                 limit = limit,
-                roleType = roleType,
+                roleType = roleType?.value,
                 includeGlobalRoles = includeGlobalRoles,
                 nameGt = nameGt,
             )

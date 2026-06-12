@@ -2154,6 +2154,24 @@ public final class io/getstream/chat/android/models/Role {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/RoleType {
+	public static final field Companion Lio/getstream/chat/android/models/RoleType$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/models/RoleType;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/RoleType;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/RoleType;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/RoleType$Companion {
+	public final fun fromValue (Ljava/lang/String;)Lio/getstream/chat/android/models/RoleType;
+	public final fun getChannel ()Lio/getstream/chat/android/models/RoleType;
+	public final fun getUser ()Lio/getstream/chat/android/models/RoleType;
+}
+
 public final class io/getstream/chat/android/models/SearchMessagesResult {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/SearchWarning;)V
