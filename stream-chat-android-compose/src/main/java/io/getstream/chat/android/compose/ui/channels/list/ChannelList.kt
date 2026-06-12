@@ -95,9 +95,9 @@ import kotlinx.coroutines.launch
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param onSearchResultClick Handler for a single search result tap.
- * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
  * @param onLoadingErrorClick Handler for the "Tap to retry" banner shown when loading the next page fails.
  * Defaults to retrying the failed load.
+ * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
  */
 @Composable
 public fun ChannelList(
@@ -116,8 +116,8 @@ public fun ChannelList(
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = remember(viewModel) { { viewModel.selectChannel(it) } },
     onSearchResultClick: (Message) -> Unit = {},
-    onStartChatClick: (() -> Unit)? = null,
     onLoadingErrorClick: () -> Unit = remember(viewModel) { { viewModel.loadMore() } },
+    onStartChatClick: (() -> Unit)? = null,
 ) {
     val user by viewModel.user.collectAsState()
     val selectedCid = viewModel.selectedChannel.value?.cid
@@ -164,8 +164,8 @@ public fun ChannelList(
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick,
             onSearchResultClick = onSearchResultClick,
-            onStartChatClick = onStartChatClick,
             onLoadingErrorClick = onLoadingErrorClick,
+            onStartChatClick = onStartChatClick,
         )
     }
 }
@@ -192,8 +192,8 @@ public fun ChannelList(
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param onSearchResultClick Handler for a single search result tap.
- * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
  * @param onLoadingErrorClick Handler for the "Tap to retry" banner shown when loading the next page fails.
+ * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
  */
 @Composable
 public fun ChannelList(
@@ -206,8 +206,8 @@ public fun ChannelList(
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
     onSearchResultClick: (Message) -> Unit = {},
-    onStartChatClick: (() -> Unit)? = null,
     onLoadingErrorClick: () -> Unit = {},
+    onStartChatClick: (() -> Unit)? = null,
 ) {
     val (isLoading, _, _, channels, searchQuery) = channelsState
 
