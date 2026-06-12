@@ -123,10 +123,7 @@ public fun GiphyMessageContent(
                 .applyIf(isTouchExplorationEnabled) {
                     focusRequester(previewFocusRequester).focusable()
                 }
-                // Announce the focused preview as a single TalkBack stop that leads with the
-                // "Giphy preview" label. mergeDescendants prepends it to the children's natural
-                // announcements (the only-visible banner, alt text, Giphy label), keeping their
-                // test tags and any integrator overrides intact.
+                // Lead the preview's merged TalkBack announcement with the "Giphy preview" label.
                 .semantics(mergeDescendants = true) { contentDescription = giphyPreviewLabel },
         ) {
             Row(

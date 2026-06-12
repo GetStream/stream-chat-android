@@ -44,7 +44,7 @@ internal fun PollVoteItem(
     val borderSize = 2.dp
 
     Row(
-        // No click handler; merge so the voter avatar + name announce as one TalkBack stop.
+        // No click handler; merge into one TalkBack stop.
         modifier = modifier.semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),

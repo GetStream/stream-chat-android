@@ -208,8 +208,7 @@ public fun MessageContainer(
                         true
                     }
                 }
-        // Deleted/uploading messages have no click handler; merge so the row's children
-        // (avatar, text, footer) announce as one TalkBack stop instead of separate ones.
+        // No click handler on deleted/uploading messages; merge into one TalkBack stop.
         else -> Modifier.semantics(mergeDescendants = true) {}
     }
 

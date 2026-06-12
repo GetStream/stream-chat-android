@@ -196,10 +196,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
             modifier = RecordingBarModifier
                 .focusRequester(rowFocusRequester)
                 .focusable()
-                // Merge the row into a single TalkBack stop. The label is owned by the leading icon
-                // leaf (below) rather than set here, so children announce in visual order
-                // (label, duration, progress) and a new child appends in its slot instead of
-                // silently shifting a parent-level description.
+                // Merge the row into one TalkBack stop; the leading icon owns the row label.
                 .semantics(mergeDescendants = true) {},
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -318,9 +315,7 @@ private fun RowScope.OverviewPlaybackRow(
             .fillMaxHeight()
             .focusRequester(focusRequester)
             .focusable()
-            // Merge the row into a single TalkBack stop. The label is owned by the waveform leaf
-            // (below) rather than set here, so the announce is composed from the children instead
-            // of a parent description that would concatenate with any future child.
+            // Merge the row into one TalkBack stop; the waveform owns the row label.
             .semantics(mergeDescendants = true) {},
         verticalAlignment = Alignment.CenterVertically,
     ) {

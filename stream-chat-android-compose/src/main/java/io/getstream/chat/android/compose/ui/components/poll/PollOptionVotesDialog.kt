@@ -164,7 +164,7 @@ private fun Content(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            // No click handler; merge so the winner badge + vote count announce as one stop.
+                            // No click handler; merge into one TalkBack stop.
                             .semantics(mergeDescendants = true) {},
                         horizontalArrangement = Arrangement.End,
                     ) {

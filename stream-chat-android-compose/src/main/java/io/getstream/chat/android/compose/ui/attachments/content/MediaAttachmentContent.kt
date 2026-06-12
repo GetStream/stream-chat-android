@@ -171,9 +171,7 @@ public fun MediaAttachmentContent(
                 modifier = Modifier
                     .semantics {
                         this.contentDescription = description
-                        // Keep the grid's tiles together and in order during TalkBack traversal
-                        // so a swipe walks every tile before leaving the grid, instead of letting
-                        // the surrounding list pull focus across rows mid-grid.
+                        // Group the grid so a TalkBack swipe walks every tile before leaving it.
                         isTraversalGroup = true
                     }
                     .padding(MessageStyling.messageSectionPadding),

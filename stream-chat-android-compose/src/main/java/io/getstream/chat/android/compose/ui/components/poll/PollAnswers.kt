@@ -178,7 +178,7 @@ internal fun PollAnswersItem(
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         Column(
-            // No click handler; merge so the answer text + author row announce as one TalkBack stop.
+            // No click handler; merge into one TalkBack stop.
             modifier = Modifier.semantics(mergeDescendants = true) {},
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
