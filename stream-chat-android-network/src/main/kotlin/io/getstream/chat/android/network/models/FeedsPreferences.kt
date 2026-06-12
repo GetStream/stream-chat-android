@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,9 +35,10 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 data class FeedsPreferences (
     @Json(name = "comment")
     val comment: Comment? = null,
@@ -64,7 +65,7 @@ data class FeedsPreferences (
     val customActivityTypes: kotlin.collections.Map<kotlin.String, kotlin.String>? = emptyMap()
 )
 {
-    
+
     /**
     * Comment Enum
     */
@@ -81,7 +82,7 @@ data class FeedsPreferences (
             object All : Comment("all")
             object None : Comment("none")
             data class Unknown(val unknownValue: kotlin.String) : Comment(unknownValue)
-        
+
 
         class CommentAdapter : JsonAdapter<Comment>() {
             @FromJson
@@ -112,7 +113,7 @@ data class FeedsPreferences (
             object All : CommentMention("all")
             object None : CommentMention("none")
             data class Unknown(val unknownValue: kotlin.String) : CommentMention(unknownValue)
-        
+
 
         class CommentMentionAdapter : JsonAdapter<CommentMention>() {
             @FromJson
@@ -143,7 +144,7 @@ data class FeedsPreferences (
             object All : CommentReaction("all")
             object None : CommentReaction("none")
             data class Unknown(val unknownValue: kotlin.String) : CommentReaction(unknownValue)
-        
+
 
         class CommentReactionAdapter : JsonAdapter<CommentReaction>() {
             @FromJson
@@ -174,7 +175,7 @@ data class FeedsPreferences (
             object All : CommentReply("all")
             object None : CommentReply("none")
             data class Unknown(val unknownValue: kotlin.String) : CommentReply(unknownValue)
-        
+
 
         class CommentReplyAdapter : JsonAdapter<CommentReply>() {
             @FromJson
@@ -205,7 +206,7 @@ data class FeedsPreferences (
             object All : Follow("all")
             object None : Follow("none")
             data class Unknown(val unknownValue: kotlin.String) : Follow(unknownValue)
-        
+
 
         class FollowAdapter : JsonAdapter<Follow>() {
             @FromJson
@@ -236,7 +237,7 @@ data class FeedsPreferences (
             object All : Mention("all")
             object None : Mention("none")
             data class Unknown(val unknownValue: kotlin.String) : Mention(unknownValue)
-        
+
 
         class MentionAdapter : JsonAdapter<Mention>() {
             @FromJson
@@ -267,7 +268,7 @@ data class FeedsPreferences (
             object All : Reaction("all")
             object None : Reaction("none")
             data class Unknown(val unknownValue: kotlin.String) : Reaction(unknownValue)
-        
+
 
         class ReactionAdapter : JsonAdapter<Reaction>() {
             @FromJson
@@ -281,5 +282,5 @@ data class FeedsPreferences (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

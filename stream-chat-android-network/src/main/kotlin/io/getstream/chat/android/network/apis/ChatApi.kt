@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
@@ -6,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +18,7 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.apis
@@ -40,8 +39,7 @@ interface ChatApi {
      * This Method returns the application settings
      */
     @GET("/api/v2/app")
-    suspend fun getApp(
-    ): io.getstream.chat.android.network.models.GetApplicationResponse
+    suspend fun getApp(): io.getstream.chat.android.network.models.GetApplicationResponse
 
     /**
      * List block lists
@@ -49,7 +47,7 @@ interface ChatApi {
      */
     @GET("/api/v2/blocklists")
     suspend fun listBlockLists(
-        @Query("team") team: kotlin.String? = null
+        @Query("team") team: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.ListBlockListResponse
 
     /**
@@ -58,7 +56,7 @@ interface ChatApi {
      */
     @POST("/api/v2/blocklists")
     suspend fun createBlockList(
-        @Body createBlockListRequest: io.getstream.chat.android.network.models.CreateBlockListRequest
+        @Body createBlockListRequest: io.getstream.chat.android.network.models.CreateBlockListRequest,
     ): io.getstream.chat.android.network.models.CreateBlockListResponse
 
     /**
@@ -68,7 +66,7 @@ interface ChatApi {
     @DELETE("/api/v2/blocklists/{name}")
     suspend fun deleteBlockList(
         @Path("name") name: kotlin.String,
-        @Query("team") team: kotlin.String? = null
+        @Query("team") team: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -77,8 +75,8 @@ interface ChatApi {
      */
     @PUT("/api/v2/blocklists/{name}")
     suspend fun updateBlockList(
-        @Path("name") name: kotlin.String ,
-        @Body updateBlockListRequest: io.getstream.chat.android.network.models.UpdateBlockListRequest
+        @Path("name") name: kotlin.String,
+        @Body updateBlockListRequest: io.getstream.chat.android.network.models.UpdateBlockListRequest,
     ): io.getstream.chat.android.network.models.UpdateBlockListResponse
 
     /**
@@ -87,7 +85,7 @@ interface ChatApi {
      */
     @PUT("/api/v2/blocklists/{name}")
     suspend fun updateBlockList(
-        @Path("name") name: kotlin.String
+        @Path("name") name: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateBlockListResponse
 
     /**
@@ -96,8 +94,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels")
     suspend fun queryChannels(
-        @Query("connection_id") connectionId: kotlin.String? = null ,
-        @Body queryChannelsRequest: io.getstream.chat.android.network.models.QueryChannelsRequest
+        @Query("connection_id") connectionId: kotlin.String? = null,
+        @Body queryChannelsRequest: io.getstream.chat.android.network.models.QueryChannelsRequest,
     ): io.getstream.chat.android.network.models.QueryChannelsResponse
 
     /**
@@ -106,7 +104,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels")
     suspend fun queryChannels(
-        @Query("connection_id") connectionId: kotlin.String? = null
+        @Query("connection_id") connectionId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.QueryChannelsResponse
 
     /**
@@ -115,7 +113,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels/delete")
     suspend fun deleteChannels(
-        @Body deleteChannelsRequest: io.getstream.chat.android.network.models.DeleteChannelsRequest
+        @Body deleteChannelsRequest: io.getstream.chat.android.network.models.DeleteChannelsRequest,
     ): io.getstream.chat.android.network.models.DeleteChannelsResponse
 
     /**
@@ -124,7 +122,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels/delivered")
     suspend fun markDelivered(
-        @Body markDeliveredRequest: io.getstream.chat.android.network.models.MarkDeliveredRequest
+        @Body markDeliveredRequest: io.getstream.chat.android.network.models.MarkDeliveredRequest,
     ): io.getstream.chat.android.network.models.MarkDeliveredResponse
 
     /**
@@ -132,8 +130,7 @@ interface ChatApi {
      * Mark the status of a channel message delivered.
      */
     @POST("/api/v2/chat/channels/delivered")
-    suspend fun markDelivered(
-    ): io.getstream.chat.android.network.models.MarkDeliveredResponse
+    suspend fun markDelivered(): io.getstream.chat.android.network.models.MarkDeliveredResponse
 
     /**
      * Grouped query channels
@@ -141,8 +138,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels/grouped")
     suspend fun groupedQueryChannels(
-        @Query("connection_id") connectionId: kotlin.String? = null ,
-        @Body groupedQueryChannelsRequest: io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
+        @Query("connection_id") connectionId: kotlin.String? = null,
+        @Body groupedQueryChannelsRequest: io.getstream.chat.android.network.models.GroupedQueryChannelsRequest,
     ): io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 
     /**
@@ -151,7 +148,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels/grouped")
     suspend fun groupedQueryChannels(
-        @Query("connection_id") connectionId: kotlin.String? = null
+        @Query("connection_id") connectionId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 
     /**
@@ -160,7 +157,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/channels/read")
     suspend fun markChannelsRead(
-        @Body markChannelsReadRequest: io.getstream.chat.android.network.models.MarkChannelsReadRequest
+        @Body markChannelsReadRequest: io.getstream.chat.android.network.models.MarkChannelsReadRequest,
     ): io.getstream.chat.android.network.models.MarkReadResponse
 
     /**
@@ -168,8 +165,7 @@ interface ChatApi {
      * Marks channels as read up to the specific message. If no channels is given, mark all channel as read
      */
     @POST("/api/v2/chat/channels/read")
-    suspend fun markChannelsRead(
-    ): io.getstream.chat.android.network.models.MarkReadResponse
+    suspend fun markChannelsRead(): io.getstream.chat.android.network.models.MarkReadResponse
 
     /**
      * Get or create channel
@@ -178,8 +174,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/query")
     suspend fun getOrCreateDistinctChannel(
         @Path("type") type: kotlin.String,
-        @Query("connection_id") connectionId: kotlin.String? = null ,
-        @Body channelGetOrCreateRequest: io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+        @Query("connection_id") connectionId: kotlin.String? = null,
+        @Body channelGetOrCreateRequest: io.getstream.chat.android.network.models.ChannelGetOrCreateRequest,
     ): io.getstream.chat.android.network.models.ChannelStateResponse
 
     /**
@@ -189,7 +185,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/query")
     suspend fun getOrCreateDistinctChannel(
         @Path("type") type: kotlin.String,
-        @Query("connection_id") connectionId: kotlin.String? = null
+        @Query("connection_id") connectionId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.ChannelStateResponse
 
     /**
@@ -200,7 +196,7 @@ interface ChatApi {
     suspend fun deleteChannel(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("hard_delete") hardDelete: kotlin.Boolean? = null
+        @Query("hard_delete") hardDelete: kotlin.Boolean? = null,
     ): io.getstream.chat.android.network.models.DeleteChannelResponse
 
     /**
@@ -210,8 +206,8 @@ interface ChatApi {
     @PATCH("/api/v2/chat/channels/{type}/{id}")
     suspend fun updateChannelPartial(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body updateChannelPartialRequest: io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+        @Path("id") id: kotlin.String,
+        @Body updateChannelPartialRequest: io.getstream.chat.android.network.models.UpdateChannelPartialRequest,
     ): io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 
     /**
@@ -221,7 +217,7 @@ interface ChatApi {
     @PATCH("/api/v2/chat/channels/{type}/{id}")
     suspend fun updateChannelPartial(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 
     /**
@@ -231,8 +227,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}")
     suspend fun updateChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body updateChannelRequest: io.getstream.chat.android.network.models.UpdateChannelRequest
+        @Path("id") id: kotlin.String,
+        @Body updateChannelRequest: io.getstream.chat.android.network.models.UpdateChannelRequest,
     ): io.getstream.chat.android.network.models.UpdateChannelResponse
 
     /**
@@ -242,7 +238,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}")
     suspend fun updateChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateChannelResponse
 
     /**
@@ -253,7 +249,7 @@ interface ChatApi {
     suspend fun deleteDraft(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("parent_id") parentId: kotlin.String? = null
+        @Query("parent_id") parentId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -264,7 +260,7 @@ interface ChatApi {
     suspend fun getDraft(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("parent_id") parentId: kotlin.String? = null
+        @Query("parent_id") parentId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.GetDraftResponse
 
     /**
@@ -274,8 +270,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/draft")
     suspend fun createDraft(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body createDraftRequest: io.getstream.chat.android.network.models.CreateDraftRequest
+        @Path("id") id: kotlin.String,
+        @Body createDraftRequest: io.getstream.chat.android.network.models.CreateDraftRequest,
     ): io.getstream.chat.android.network.models.CreateDraftResponse
 
     /**
@@ -285,8 +281,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/event")
     suspend fun sendEvent(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body sendEventRequest: io.getstream.chat.android.network.models.SendEventRequest
+        @Path("id") id: kotlin.String,
+        @Body sendEventRequest: io.getstream.chat.android.network.models.SendEventRequest,
     ): io.getstream.chat.android.network.models.EventResponse
 
     /**
@@ -297,7 +293,7 @@ interface ChatApi {
     suspend fun deleteChannelFile(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("url") url: kotlin.String? = null
+        @Query("url") url: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -307,8 +303,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/file")
     suspend fun uploadChannelFile(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body uploadChannelFileRequest: io.getstream.chat.android.network.models.UploadChannelFileRequest
+        @Path("id") id: kotlin.String,
+        @Body uploadChannelFileRequest: io.getstream.chat.android.network.models.UploadChannelFileRequest,
     ): io.getstream.chat.android.network.models.UploadChannelFileResponse
 
     /**
@@ -318,7 +314,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/file")
     suspend fun uploadChannelFile(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UploadChannelFileResponse
 
     /**
@@ -328,8 +324,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/hide")
     suspend fun hideChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body hideChannelRequest: io.getstream.chat.android.network.models.HideChannelRequest
+        @Path("id") id: kotlin.String,
+        @Body hideChannelRequest: io.getstream.chat.android.network.models.HideChannelRequest,
     ): io.getstream.chat.android.network.models.HideChannelResponse
 
     /**
@@ -339,7 +335,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/hide")
     suspend fun hideChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.HideChannelResponse
 
     /**
@@ -350,7 +346,7 @@ interface ChatApi {
     suspend fun deleteChannelImage(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("url") url: kotlin.String? = null
+        @Query("url") url: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -360,8 +356,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/image")
     suspend fun uploadChannelImage(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body uploadChannelRequest: io.getstream.chat.android.network.models.UploadChannelRequest
+        @Path("id") id: kotlin.String,
+        @Body uploadChannelRequest: io.getstream.chat.android.network.models.UploadChannelRequest,
     ): io.getstream.chat.android.network.models.UploadChannelResponse
 
     /**
@@ -371,7 +367,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/image")
     suspend fun uploadChannelImage(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UploadChannelResponse
 
     /**
@@ -381,8 +377,8 @@ interface ChatApi {
     @PATCH("/api/v2/chat/channels/{type}/{id}/member")
     suspend fun updateMemberPartial(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body updateMemberPartialRequest: io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+        @Path("id") id: kotlin.String,
+        @Body updateMemberPartialRequest: io.getstream.chat.android.network.models.UpdateMemberPartialRequest,
     ): io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 
     /**
@@ -392,7 +388,7 @@ interface ChatApi {
     @PATCH("/api/v2/chat/channels/{type}/{id}/member")
     suspend fun updateMemberPartial(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 
     /**
@@ -402,8 +398,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/message")
     suspend fun sendMessage(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body sendMessageRequest: io.getstream.chat.android.network.models.SendMessageRequest
+        @Path("id") id: kotlin.String,
+        @Body sendMessageRequest: io.getstream.chat.android.network.models.SendMessageRequest,
     ): io.getstream.chat.android.network.models.SendMessageResponse
 
     /**
@@ -414,7 +410,7 @@ interface ChatApi {
     suspend fun getManyMessages(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("ids") ids: kotlin.collections.List<kotlin.String>
+        @Query("ids") ids: kotlin.collections.List<kotlin.String>,
     ): io.getstream.chat.android.network.models.GetManyMessagesResponse
 
     /**
@@ -425,8 +421,8 @@ interface ChatApi {
     suspend fun getOrCreateChannel(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("connection_id") connectionId: kotlin.String? = null ,
-        @Body channelGetOrCreateRequest: io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+        @Query("connection_id") connectionId: kotlin.String? = null,
+        @Body channelGetOrCreateRequest: io.getstream.chat.android.network.models.ChannelGetOrCreateRequest,
     ): io.getstream.chat.android.network.models.ChannelStateResponse
 
     /**
@@ -437,7 +433,7 @@ interface ChatApi {
     suspend fun getOrCreateChannel(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("connection_id") connectionId: kotlin.String? = null
+        @Query("connection_id") connectionId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.ChannelStateResponse
 
     /**
@@ -447,8 +443,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/read")
     suspend fun markRead(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body markReadRequest: io.getstream.chat.android.network.models.MarkReadRequest
+        @Path("id") id: kotlin.String,
+        @Body markReadRequest: io.getstream.chat.android.network.models.MarkReadRequest,
     ): io.getstream.chat.android.network.models.MarkReadResponse
 
     /**
@@ -458,7 +454,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/read")
     suspend fun markRead(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.MarkReadResponse
 
     /**
@@ -468,7 +464,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/show")
     suspend fun showChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.ShowChannelResponse
 
     /**
@@ -479,7 +475,7 @@ interface ChatApi {
     suspend fun stopWatchingChannel(
         @Path("type") type: kotlin.String,
         @Path("id") id: kotlin.String,
-        @Query("connection_id") connectionId: kotlin.String? = null
+        @Query("connection_id") connectionId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -489,8 +485,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/truncate")
     suspend fun truncateChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body truncateChannelRequest: io.getstream.chat.android.network.models.TruncateChannelRequest
+        @Path("id") id: kotlin.String,
+        @Body truncateChannelRequest: io.getstream.chat.android.network.models.TruncateChannelRequest,
     ): io.getstream.chat.android.network.models.TruncateChannelResponse
 
     /**
@@ -500,7 +496,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/truncate")
     suspend fun truncateChannel(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.TruncateChannelResponse
 
     /**
@@ -510,8 +506,8 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/unread")
     suspend fun markUnread(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String ,
-        @Body markUnreadRequest: io.getstream.chat.android.network.models.MarkUnreadRequest
+        @Path("id") id: kotlin.String,
+        @Body markUnreadRequest: io.getstream.chat.android.network.models.MarkUnreadRequest,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -521,7 +517,7 @@ interface ChatApi {
     @POST("/api/v2/chat/channels/{type}/{id}/unread")
     suspend fun markUnread(
         @Path("type") type: kotlin.String,
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -530,7 +526,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/drafts/query")
     suspend fun queryDrafts(
-        @Body queryDraftsRequest: io.getstream.chat.android.network.models.QueryDraftsRequest
+        @Body queryDraftsRequest: io.getstream.chat.android.network.models.QueryDraftsRequest,
     ): io.getstream.chat.android.network.models.QueryDraftsResponse
 
     /**
@@ -538,8 +534,7 @@ interface ChatApi {
      * Queries draft messages for a user
      */
     @POST("/api/v2/chat/drafts/query")
-    suspend fun queryDrafts(
-    ): io.getstream.chat.android.network.models.QueryDraftsResponse
+    suspend fun queryDrafts(): io.getstream.chat.android.network.models.QueryDraftsResponse
 
     /**
      * Query members
@@ -547,7 +542,7 @@ interface ChatApi {
      */
     @GET("/api/v2/chat/members")
     suspend fun queryMembers(
-        @Query("payload") payload: io.getstream.chat.android.network.models.QueryMembersPayload? = null
+        @Query("payload") payload: io.getstream.chat.android.network.models.QueryMembersPayload? = null,
     ): io.getstream.chat.android.network.models.MembersResponse
 
     /**
@@ -559,7 +554,7 @@ interface ChatApi {
         @Path("id") id: kotlin.String,
         @Query("hard") hard: kotlin.Boolean? = null,
         @Query("deleted_by") deletedBy: kotlin.String? = null,
-        @Query("delete_for_me") deleteForMe: kotlin.Boolean? = null
+        @Query("delete_for_me") deleteForMe: kotlin.Boolean? = null,
     ): io.getstream.chat.android.network.models.DeleteMessageResponse
 
     /**
@@ -568,7 +563,7 @@ interface ChatApi {
      */
     @GET("/api/v2/chat/messages/{id}")
     suspend fun getMessage(
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.GetMessageResponse
 
     /**
@@ -577,8 +572,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{id}")
     suspend fun updateMessage(
-        @Path("id") id: kotlin.String ,
-        @Body updateMessageRequest: io.getstream.chat.android.network.models.UpdateMessageRequest
+        @Path("id") id: kotlin.String,
+        @Body updateMessageRequest: io.getstream.chat.android.network.models.UpdateMessageRequest,
     ): io.getstream.chat.android.network.models.UpdateMessageResponse
 
     /**
@@ -587,8 +582,8 @@ interface ChatApi {
      */
     @PUT("/api/v2/chat/messages/{id}")
     suspend fun updateMessagePartial(
-        @Path("id") id: kotlin.String ,
-        @Body updateMessagePartialRequest: io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+        @Path("id") id: kotlin.String,
+        @Body updateMessagePartialRequest: io.getstream.chat.android.network.models.UpdateMessagePartialRequest,
     ): io.getstream.chat.android.network.models.UpdateMessagePartialResponse
 
     /**
@@ -597,7 +592,7 @@ interface ChatApi {
      */
     @PUT("/api/v2/chat/messages/{id}")
     suspend fun updateMessagePartial(
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateMessagePartialResponse
 
     /**
@@ -606,8 +601,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{id}/action")
     suspend fun runMessageAction(
-        @Path("id") id: kotlin.String ,
-        @Body messageActionRequest: io.getstream.chat.android.network.models.MessageActionRequest
+        @Path("id") id: kotlin.String,
+        @Body messageActionRequest: io.getstream.chat.android.network.models.MessageActionRequest,
     ): io.getstream.chat.android.network.models.MessageActionResponse
 
     /**
@@ -616,8 +611,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{id}/reaction")
     suspend fun sendReaction(
-        @Path("id") id: kotlin.String ,
-        @Body sendReactionRequest: io.getstream.chat.android.network.models.SendReactionRequest
+        @Path("id") id: kotlin.String,
+        @Body sendReactionRequest: io.getstream.chat.android.network.models.SendReactionRequest,
     ): io.getstream.chat.android.network.models.SendReactionResponse
 
     /**
@@ -628,7 +623,7 @@ interface ChatApi {
     suspend fun deleteReaction(
         @Path("id") id: kotlin.String,
         @Path("type") type: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.DeleteReactionResponse
 
     /**
@@ -639,7 +634,7 @@ interface ChatApi {
     suspend fun getReactions(
         @Path("id") id: kotlin.String,
         @Query("limit") limit: kotlin.Int? = null,
-        @Query("offset") offset: kotlin.Int? = null
+        @Query("offset") offset: kotlin.Int? = null,
     ): io.getstream.chat.android.network.models.GetReactionsResponse
 
     /**
@@ -648,8 +643,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{id}/reactions")
     suspend fun queryReactions(
-        @Path("id") id: kotlin.String ,
-        @Body queryReactionsRequest: io.getstream.chat.android.network.models.QueryReactionsRequest
+        @Path("id") id: kotlin.String,
+        @Body queryReactionsRequest: io.getstream.chat.android.network.models.QueryReactionsRequest,
     ): io.getstream.chat.android.network.models.QueryReactionsResponse
 
     /**
@@ -658,7 +653,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{id}/reactions")
     suspend fun queryReactions(
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.QueryReactionsResponse
 
     /**
@@ -667,8 +662,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{id}/translate")
     suspend fun translateMessage(
-        @Path("id") id: kotlin.String ,
-        @Body translateMessageRequest: io.getstream.chat.android.network.models.TranslateMessageRequest
+        @Path("id") id: kotlin.String,
+        @Body translateMessageRequest: io.getstream.chat.android.network.models.TranslateMessageRequest,
     ): io.getstream.chat.android.network.models.MessageActionResponse
 
     /**
@@ -678,8 +673,8 @@ interface ChatApi {
     @POST("/api/v2/chat/messages/{message_id}/polls/{poll_id}/vote")
     suspend fun castPollVote(
         @Path("message_id") messageId: kotlin.String,
-        @Path("poll_id") pollId: kotlin.String ,
-        @Body castPollVoteRequest: io.getstream.chat.android.network.models.CastPollVoteRequest
+        @Path("poll_id") pollId: kotlin.String,
+        @Body castPollVoteRequest: io.getstream.chat.android.network.models.CastPollVoteRequest,
     ): io.getstream.chat.android.network.models.PollVoteResponse
 
     /**
@@ -689,7 +684,7 @@ interface ChatApi {
     @POST("/api/v2/chat/messages/{message_id}/polls/{poll_id}/vote")
     suspend fun castPollVote(
         @Path("message_id") messageId: kotlin.String,
-        @Path("poll_id") pollId: kotlin.String
+        @Path("poll_id") pollId: kotlin.String,
     ): io.getstream.chat.android.network.models.PollVoteResponse
 
     /**
@@ -701,7 +696,7 @@ interface ChatApi {
         @Path("message_id") messageId: kotlin.String,
         @Path("poll_id") pollId: kotlin.String,
         @Path("vote_id") voteId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.PollVoteResponse
 
     /**
@@ -710,7 +705,7 @@ interface ChatApi {
      */
     @DELETE("/api/v2/chat/messages/{message_id}/reminders")
     suspend fun deleteReminder(
-        @Path("message_id") messageId: kotlin.String
+        @Path("message_id") messageId: kotlin.String,
     ): io.getstream.chat.android.network.models.DeleteReminderResponse
 
     /**
@@ -719,8 +714,8 @@ interface ChatApi {
      */
     @PATCH("/api/v2/chat/messages/{message_id}/reminders")
     suspend fun updateReminder(
-        @Path("message_id") messageId: kotlin.String ,
-        @Body updateReminderRequest: io.getstream.chat.android.network.models.UpdateReminderRequest
+        @Path("message_id") messageId: kotlin.String,
+        @Body updateReminderRequest: io.getstream.chat.android.network.models.UpdateReminderRequest,
     ): io.getstream.chat.android.network.models.UpdateReminderResponse
 
     /**
@@ -729,7 +724,7 @@ interface ChatApi {
      */
     @PATCH("/api/v2/chat/messages/{message_id}/reminders")
     suspend fun updateReminder(
-        @Path("message_id") messageId: kotlin.String
+        @Path("message_id") messageId: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateReminderResponse
 
     /**
@@ -738,8 +733,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{message_id}/reminders")
     suspend fun createReminder(
-        @Path("message_id") messageId: kotlin.String ,
-        @Body createReminderRequest: io.getstream.chat.android.network.models.CreateReminderRequest
+        @Path("message_id") messageId: kotlin.String,
+        @Body createReminderRequest: io.getstream.chat.android.network.models.CreateReminderRequest,
     ): io.getstream.chat.android.network.models.ReminderResponseData
 
     /**
@@ -748,7 +743,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/messages/{message_id}/reminders")
     suspend fun createReminder(
-        @Path("message_id") messageId: kotlin.String
+        @Path("message_id") messageId: kotlin.String,
     ): io.getstream.chat.android.network.models.ReminderResponseData
 
     /**
@@ -764,7 +759,7 @@ interface ChatApi {
         @Query("id_lte") idLte: kotlin.String? = null,
         @Query("id_lt") idLt: kotlin.String? = null,
         @Query("id_around") idAround: kotlin.String? = null,
-        @Query("sort") sort: kotlin.collections.List<io.getstream.chat.android.network.models.SortParamRequest>? = null
+        @Query("sort") sort: kotlin.collections.List<io.getstream.chat.android.network.models.SortParamRequest>? = null,
     ): io.getstream.chat.android.network.models.GetRepliesResponse
 
     /**
@@ -773,7 +768,7 @@ interface ChatApi {
      */
     @GET("/api/v2/chat/moderation/flags/message")
     suspend fun queryMessageFlags(
-        @Query("payload") payload: io.getstream.chat.android.network.models.QueryMessageFlagsPayload? = null
+        @Query("payload") payload: io.getstream.chat.android.network.models.QueryMessageFlagsPayload? = null,
     ): io.getstream.chat.android.network.models.QueryMessageFlagsResponse
 
     /**
@@ -782,7 +777,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/moderation/mute/channel")
     suspend fun muteChannel(
-        @Body muteChannelRequest: io.getstream.chat.android.network.models.MuteChannelRequest
+        @Body muteChannelRequest: io.getstream.chat.android.network.models.MuteChannelRequest,
     ): io.getstream.chat.android.network.models.MuteChannelResponse
 
     /**
@@ -790,8 +785,7 @@ interface ChatApi {
      * Mutes channel for user
      */
     @POST("/api/v2/chat/moderation/mute/channel")
-    suspend fun muteChannel(
-    ): io.getstream.chat.android.network.models.MuteChannelResponse
+    suspend fun muteChannel(): io.getstream.chat.android.network.models.MuteChannelResponse
 
     /**
      * Unmute channel
@@ -799,7 +793,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/moderation/unmute/channel")
     suspend fun unmuteChannel(
-        @Body unmuteChannelRequest: io.getstream.chat.android.network.models.UnmuteChannelRequest
+        @Body unmuteChannelRequest: io.getstream.chat.android.network.models.UnmuteChannelRequest,
     ): io.getstream.chat.android.network.models.UnmuteResponse
 
     /**
@@ -807,8 +801,7 @@ interface ChatApi {
      * Unmutes channel for user
      */
     @POST("/api/v2/chat/moderation/unmute/channel")
-    suspend fun unmuteChannel(
-    ): io.getstream.chat.android.network.models.UnmuteResponse
+    suspend fun unmuteChannel(): io.getstream.chat.android.network.models.UnmuteResponse
 
     /**
      * Query Banned Users
@@ -816,7 +809,7 @@ interface ChatApi {
      */
     @GET("/api/v2/chat/query_banned_users")
     suspend fun queryBannedUsers(
-        @Query("payload") payload: io.getstream.chat.android.network.models.QueryBannedUsersPayload? = null
+        @Query("payload") payload: io.getstream.chat.android.network.models.QueryBannedUsersPayload? = null,
     ): io.getstream.chat.android.network.models.QueryBannedUsersResponse
 
     /**
@@ -825,7 +818,7 @@ interface ChatApi {
      */
     @GET("/api/v2/chat/query_future_channel_bans")
     suspend fun queryFutureChannelBans(
-        @Query("payload") payload: io.getstream.chat.android.network.models.QueryFutureChannelBansPayload? = null
+        @Query("payload") payload: io.getstream.chat.android.network.models.QueryFutureChannelBansPayload? = null,
     ): io.getstream.chat.android.network.models.QueryFutureChannelBansResponse
 
     /**
@@ -834,7 +827,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/reminders/query")
     suspend fun queryReminders(
-        @Body queryRemindersRequest: io.getstream.chat.android.network.models.QueryRemindersRequest
+        @Body queryRemindersRequest: io.getstream.chat.android.network.models.QueryRemindersRequest,
     ): io.getstream.chat.android.network.models.QueryRemindersResponse
 
     /**
@@ -842,8 +835,7 @@ interface ChatApi {
      * Queries reminders
      */
     @POST("/api/v2/chat/reminders/query")
-    suspend fun queryReminders(
-    ): io.getstream.chat.android.network.models.QueryRemindersResponse
+    suspend fun queryReminders(): io.getstream.chat.android.network.models.QueryRemindersResponse
 
     /**
      * Search messages
@@ -851,7 +843,7 @@ interface ChatApi {
      */
     @GET("/api/v2/chat/search")
     suspend fun search(
-        @Query("payload") payload: io.getstream.chat.android.network.models.SearchPayload? = null
+        @Query("payload") payload: io.getstream.chat.android.network.models.SearchPayload? = null,
     ): io.getstream.chat.android.network.models.SearchResponse
 
     /**
@@ -862,8 +854,8 @@ interface ChatApi {
     suspend fun sync(
         @Query("with_inaccessible_cids") withInaccessibleCids: kotlin.Boolean? = null,
         @Query("watch") watch: kotlin.Boolean? = null,
-        @Query("connection_id") connectionId: kotlin.String? = null ,
-        @Body syncRequest: io.getstream.chat.android.network.models.SyncRequest
+        @Query("connection_id") connectionId: kotlin.String? = null,
+        @Body syncRequest: io.getstream.chat.android.network.models.SyncRequest,
     ): io.getstream.chat.android.network.models.SyncResponse
 
     /**
@@ -872,8 +864,8 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/threads")
     suspend fun queryThreads(
-        @Query("connection_id") connectionId: kotlin.String? = null ,
-        @Body queryThreadsRequest: io.getstream.chat.android.network.models.QueryThreadsRequest
+        @Query("connection_id") connectionId: kotlin.String? = null,
+        @Body queryThreadsRequest: io.getstream.chat.android.network.models.QueryThreadsRequest,
     ): io.getstream.chat.android.network.models.QueryThreadsResponse
 
     /**
@@ -882,7 +874,7 @@ interface ChatApi {
      */
     @POST("/api/v2/chat/threads")
     suspend fun queryThreads(
-        @Query("connection_id") connectionId: kotlin.String? = null
+        @Query("connection_id") connectionId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.QueryThreadsResponse
 
     /**
@@ -896,7 +888,7 @@ interface ChatApi {
         @Query("connection_id") connectionId: kotlin.String? = null,
         @Query("reply_limit") replyLimit: kotlin.Int? = null,
         @Query("participant_limit") participantLimit: kotlin.Int? = null,
-        @Query("member_limit") memberLimit: kotlin.Int? = null
+        @Query("member_limit") memberLimit: kotlin.Int? = null,
     ): io.getstream.chat.android.network.models.GetThreadResponse
 
     /**
@@ -905,8 +897,8 @@ interface ChatApi {
      */
     @PATCH("/api/v2/chat/threads/{message_id}")
     suspend fun updateThreadPartial(
-        @Path("message_id") messageId: kotlin.String ,
-        @Body updateThreadPartialRequest: io.getstream.chat.android.network.models.UpdateThreadPartialRequest
+        @Path("message_id") messageId: kotlin.String,
+        @Body updateThreadPartialRequest: io.getstream.chat.android.network.models.UpdateThreadPartialRequest,
     ): io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 
     /**
@@ -915,7 +907,7 @@ interface ChatApi {
      */
     @PATCH("/api/v2/chat/threads/{message_id}")
     suspend fun updateThreadPartial(
-        @Path("message_id") messageId: kotlin.String
+        @Path("message_id") messageId: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 
     /**
@@ -923,8 +915,7 @@ interface ChatApi {
      * Fetch unread counts for a single user
      */
     @GET("/api/v2/chat/unread")
-    suspend fun unreadCounts(
-    ): io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
+    suspend fun unreadCounts(): io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 
     /**
      * Delete device
@@ -932,7 +923,7 @@ interface ChatApi {
      */
     @DELETE("/api/v2/devices")
     suspend fun deleteDevice(
-        @Query("id") id: kotlin.String
+        @Query("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -940,8 +931,7 @@ interface ChatApi {
      * Returns all available devices
      */
     @GET("/api/v2/devices")
-    suspend fun listDevices(
-    ): io.getstream.chat.android.network.models.ListDevicesResponse
+    suspend fun listDevices(): io.getstream.chat.android.network.models.ListDevicesResponse
 
     /**
      * Create device
@@ -949,7 +939,7 @@ interface ChatApi {
      */
     @POST("/api/v2/devices")
     suspend fun createDevice(
-        @Body createDeviceRequest: io.getstream.chat.android.network.models.CreateDeviceRequest
+        @Body createDeviceRequest: io.getstream.chat.android.network.models.CreateDeviceRequest,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -958,7 +948,7 @@ interface ChatApi {
      */
     @POST("/api/v2/guest")
     suspend fun createGuest(
-        @Body createGuestRequest: io.getstream.chat.android.network.models.CreateGuestRequest
+        @Body createGuestRequest: io.getstream.chat.android.network.models.CreateGuestRequest,
     ): io.getstream.chat.android.network.models.CreateGuestResponse
 
     /**
@@ -968,7 +958,7 @@ interface ChatApi {
     @GET("/api/v2/longpoll")
     suspend fun longPoll(
         @Query("connection_id") connectionId: kotlin.String? = null,
-        @Query("json") json: io.getstream.chat.android.network.models.WSAuthMessage? = null
+        @Query("json") json: io.getstream.chat.android.network.models.WSAuthMessage? = null,
     )
 
     /**
@@ -980,7 +970,7 @@ interface ChatApi {
         @Query("queue_type") queueType: kotlin.String? = null,
         @Query("entity_type") entityType: kotlin.String? = null,
         @Query("exclude_defaults") excludeDefaults: kotlin.Boolean? = null,
-        @Query("only_defaults") onlyDefaults: kotlin.Boolean? = null
+        @Query("only_defaults") onlyDefaults: kotlin.Boolean? = null,
     ): io.getstream.chat.android.network.models.GetActionConfigResponse
 
     /**
@@ -989,7 +979,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/action_config")
     suspend fun upsertActionConfig(
-        @Body upsertActionConfigRequest: io.getstream.chat.android.network.models.UpsertActionConfigRequest
+        @Body upsertActionConfigRequest: io.getstream.chat.android.network.models.UpsertActionConfigRequest,
     ): io.getstream.chat.android.network.models.UpsertActionConfigResponse
 
     /**
@@ -998,7 +988,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/action_config/bulk")
     suspend fun bulkUpsertActionConfig(
-        @Body bulkUpsertActionConfigRequest: io.getstream.chat.android.network.models.BulkUpsertActionConfigRequest
+        @Body bulkUpsertActionConfigRequest: io.getstream.chat.android.network.models.BulkUpsertActionConfigRequest,
     ): io.getstream.chat.android.network.models.BulkUpsertActionConfigResponse
 
     /**
@@ -1007,7 +997,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/action_config/bulk_delete")
     suspend fun bulkDeleteActionConfig(
-        @Body bulkDeleteActionConfigRequest: io.getstream.chat.android.network.models.BulkDeleteActionConfigRequest
+        @Body bulkDeleteActionConfigRequest: io.getstream.chat.android.network.models.BulkDeleteActionConfigRequest,
     ): io.getstream.chat.android.network.models.BulkDeleteActionConfigResponse
 
     /**
@@ -1016,7 +1006,7 @@ interface ChatApi {
      */
     @DELETE("/api/v2/moderation/action_config/{id}")
     suspend fun deleteActionConfig(
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.DeleteActionConfigResponse
 
     /**
@@ -1025,7 +1015,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/appeal")
     suspend fun appeal(
-        @Body appealRequest: io.getstream.chat.android.network.models.AppealRequest
+        @Body appealRequest: io.getstream.chat.android.network.models.AppealRequest,
     ): io.getstream.chat.android.network.models.AppealResponse
 
     /**
@@ -1034,7 +1024,7 @@ interface ChatApi {
      */
     @GET("/api/v2/moderation/appeal/{id}")
     suspend fun getAppeal(
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.GetAppealResponse
 
     /**
@@ -1043,7 +1033,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/appeals")
     suspend fun queryAppeals(
-        @Body queryAppealsRequest: io.getstream.chat.android.network.models.QueryAppealsRequest
+        @Body queryAppealsRequest: io.getstream.chat.android.network.models.QueryAppealsRequest,
     ): io.getstream.chat.android.network.models.QueryAppealsResponse
 
     /**
@@ -1051,8 +1041,7 @@ interface ChatApi {
      * Query Appeals
      */
     @POST("/api/v2/moderation/appeals")
-    suspend fun queryAppeals(
-    ): io.getstream.chat.android.network.models.QueryAppealsResponse
+    suspend fun queryAppeals(): io.getstream.chat.android.network.models.QueryAppealsResponse
 
     /**
      * Bulk action appeals
@@ -1060,7 +1049,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/appeals/bulk_action")
     suspend fun bulkActionAppeals(
-        @Body bulkActionAppealsRequest: io.getstream.chat.android.network.models.BulkActionAppealsRequest
+        @Body bulkActionAppealsRequest: io.getstream.chat.android.network.models.BulkActionAppealsRequest,
     ): io.getstream.chat.android.network.models.BulkActionAppealsResponse
 
     /**
@@ -1069,7 +1058,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/ban")
     suspend fun ban(
-        @Body banRequest: io.getstream.chat.android.network.models.BanRequest
+        @Body banRequest: io.getstream.chat.android.network.models.BanRequest,
     ): io.getstream.chat.android.network.models.BanResponse
 
     /**
@@ -1078,7 +1067,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/config")
     suspend fun upsertConfig(
-        @Body upsertConfigRequest: io.getstream.chat.android.network.models.UpsertConfigRequest
+        @Body upsertConfigRequest: io.getstream.chat.android.network.models.UpsertConfigRequest,
     ): io.getstream.chat.android.network.models.UpsertConfigResponse
 
     /**
@@ -1088,7 +1077,7 @@ interface ChatApi {
     @DELETE("/api/v2/moderation/config/{key}")
     suspend fun deleteConfig(
         @Path("key") key: kotlin.String,
-        @Query("team") team: kotlin.String? = null
+        @Query("team") team: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.DeleteModerationConfigResponse
 
     /**
@@ -1098,7 +1087,7 @@ interface ChatApi {
     @GET("/api/v2/moderation/config/{key}")
     suspend fun getConfig(
         @Path("key") key: kotlin.String,
-        @Query("team") team: kotlin.String? = null
+        @Query("team") team: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.GetConfigResponse
 
     /**
@@ -1107,7 +1096,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/configs")
     suspend fun queryModerationConfigs(
-        @Body queryModerationConfigsRequest: io.getstream.chat.android.network.models.QueryModerationConfigsRequest
+        @Body queryModerationConfigsRequest: io.getstream.chat.android.network.models.QueryModerationConfigsRequest,
     ): io.getstream.chat.android.network.models.QueryModerationConfigsResponse
 
     /**
@@ -1115,8 +1104,7 @@ interface ChatApi {
      * Search and filter moderation configurations across your application. This endpoint is designed for building moderation dashboards and managing multiple configuration sets.
      */
     @POST("/api/v2/moderation/configs")
-    suspend fun queryModerationConfigs(
-    ): io.getstream.chat.android.network.models.QueryModerationConfigsResponse
+    suspend fun queryModerationConfigs(): io.getstream.chat.android.network.models.QueryModerationConfigsResponse
 
     /**
      * Flag content for moderation
@@ -1124,7 +1112,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/flag")
     suspend fun flag(
-        @Body flagRequest: io.getstream.chat.android.network.models.FlagRequest
+        @Body flagRequest: io.getstream.chat.android.network.models.FlagRequest,
     ): io.getstream.chat.android.network.models.FlagResponse
 
     /**
@@ -1133,7 +1121,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/mute")
     suspend fun mute(
-        @Body muteRequest: io.getstream.chat.android.network.models.MuteRequest
+        @Body muteRequest: io.getstream.chat.android.network.models.MuteRequest,
     ): io.getstream.chat.android.network.models.MuteResponse
 
     /**
@@ -1142,7 +1130,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/review_queue")
     suspend fun queryReviewQueue(
-        @Body queryReviewQueueRequest: io.getstream.chat.android.network.models.QueryReviewQueueRequest
+        @Body queryReviewQueueRequest: io.getstream.chat.android.network.models.QueryReviewQueueRequest,
     ): io.getstream.chat.android.network.models.QueryReviewQueueResponse
 
     /**
@@ -1150,8 +1138,7 @@ interface ChatApi {
      * Query review queue items allows you to filter the review queue items. This is used for building a moderation dashboard.
      */
     @POST("/api/v2/moderation/review_queue")
-    suspend fun queryReviewQueue(
-    ): io.getstream.chat.android.network.models.QueryReviewQueueResponse
+    suspend fun queryReviewQueue(): io.getstream.chat.android.network.models.QueryReviewQueueResponse
 
     /**
      * Submit moderation action
@@ -1159,7 +1146,7 @@ interface ChatApi {
      */
     @POST("/api/v2/moderation/submit_action")
     suspend fun submitAction(
-        @Body submitActionRequest: io.getstream.chat.android.network.models.SubmitActionRequest
+        @Body submitActionRequest: io.getstream.chat.android.network.models.SubmitActionRequest,
     ): io.getstream.chat.android.network.models.SubmitActionResponse
 
     /**
@@ -1168,7 +1155,7 @@ interface ChatApi {
      */
     @GET("/api/v2/og")
     suspend fun getOG(
-        @Query("url") url: kotlin.String
+        @Query("url") url: kotlin.String,
     ): io.getstream.chat.android.network.models.GetOGResponse
 
     /**
@@ -1177,7 +1164,7 @@ interface ChatApi {
      */
     @POST("/api/v2/polls")
     suspend fun createPoll(
-        @Body createPollRequest: io.getstream.chat.android.network.models.CreatePollRequest
+        @Body createPollRequest: io.getstream.chat.android.network.models.CreatePollRequest,
     ): io.getstream.chat.android.network.models.PollResponse
 
     /**
@@ -1186,7 +1173,7 @@ interface ChatApi {
      */
     @PUT("/api/v2/polls")
     suspend fun updatePoll(
-        @Body updatePollRequest: io.getstream.chat.android.network.models.UpdatePollRequest
+        @Body updatePollRequest: io.getstream.chat.android.network.models.UpdatePollRequest,
     ): io.getstream.chat.android.network.models.PollResponse
 
     /**
@@ -1195,8 +1182,8 @@ interface ChatApi {
      */
     @POST("/api/v2/polls/query")
     suspend fun queryPolls(
-        @Query("user_id") userId: kotlin.String? = null ,
-        @Body queryPollsRequest: io.getstream.chat.android.network.models.QueryPollsRequest
+        @Query("user_id") userId: kotlin.String? = null,
+        @Body queryPollsRequest: io.getstream.chat.android.network.models.QueryPollsRequest,
     ): io.getstream.chat.android.network.models.QueryPollsResponse
 
     /**
@@ -1205,7 +1192,7 @@ interface ChatApi {
      */
     @POST("/api/v2/polls/query")
     suspend fun queryPolls(
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.QueryPollsResponse
 
     /**
@@ -1215,7 +1202,7 @@ interface ChatApi {
     @DELETE("/api/v2/polls/{poll_id}")
     suspend fun deletePoll(
         @Path("poll_id") pollId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -1225,7 +1212,7 @@ interface ChatApi {
     @GET("/api/v2/polls/{poll_id}")
     suspend fun getPoll(
         @Path("poll_id") pollId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.PollResponse
 
     /**
@@ -1234,8 +1221,8 @@ interface ChatApi {
      */
     @PATCH("/api/v2/polls/{poll_id}")
     suspend fun updatePollPartial(
-        @Path("poll_id") pollId: kotlin.String ,
-        @Body updatePollPartialRequest: io.getstream.chat.android.network.models.UpdatePollPartialRequest
+        @Path("poll_id") pollId: kotlin.String,
+        @Body updatePollPartialRequest: io.getstream.chat.android.network.models.UpdatePollPartialRequest,
     ): io.getstream.chat.android.network.models.PollResponse
 
     /**
@@ -1244,7 +1231,7 @@ interface ChatApi {
      */
     @PATCH("/api/v2/polls/{poll_id}")
     suspend fun updatePollPartial(
-        @Path("poll_id") pollId: kotlin.String
+        @Path("poll_id") pollId: kotlin.String,
     ): io.getstream.chat.android.network.models.PollResponse
 
     /**
@@ -1253,8 +1240,8 @@ interface ChatApi {
      */
     @POST("/api/v2/polls/{poll_id}/options")
     suspend fun createPollOption(
-        @Path("poll_id") pollId: kotlin.String ,
-        @Body createPollOptionRequest: io.getstream.chat.android.network.models.CreatePollOptionRequest
+        @Path("poll_id") pollId: kotlin.String,
+        @Body createPollOptionRequest: io.getstream.chat.android.network.models.CreatePollOptionRequest,
     ): io.getstream.chat.android.network.models.PollOptionResponse
 
     /**
@@ -1263,8 +1250,8 @@ interface ChatApi {
      */
     @PUT("/api/v2/polls/{poll_id}/options")
     suspend fun updatePollOption(
-        @Path("poll_id") pollId: kotlin.String ,
-        @Body updatePollOptionRequest: io.getstream.chat.android.network.models.UpdatePollOptionRequest
+        @Path("poll_id") pollId: kotlin.String,
+        @Body updatePollOptionRequest: io.getstream.chat.android.network.models.UpdatePollOptionRequest,
     ): io.getstream.chat.android.network.models.PollOptionResponse
 
     /**
@@ -1275,7 +1262,7 @@ interface ChatApi {
     suspend fun deletePollOption(
         @Path("poll_id") pollId: kotlin.String,
         @Path("option_id") optionId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -1286,7 +1273,7 @@ interface ChatApi {
     suspend fun getPollOption(
         @Path("poll_id") pollId: kotlin.String,
         @Path("option_id") optionId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.PollOptionResponse
 
     /**
@@ -1296,8 +1283,8 @@ interface ChatApi {
     @POST("/api/v2/polls/{poll_id}/votes")
     suspend fun queryPollVotes(
         @Path("poll_id") pollId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null ,
-        @Body queryPollVotesRequest: io.getstream.chat.android.network.models.QueryPollVotesRequest
+        @Query("user_id") userId: kotlin.String? = null,
+        @Body queryPollVotesRequest: io.getstream.chat.android.network.models.QueryPollVotesRequest,
     ): io.getstream.chat.android.network.models.PollVotesResponse
 
     /**
@@ -1307,7 +1294,7 @@ interface ChatApi {
     @POST("/api/v2/polls/{poll_id}/votes")
     suspend fun queryPollVotes(
         @Path("poll_id") pollId: kotlin.String,
-        @Query("user_id") userId: kotlin.String? = null
+        @Query("user_id") userId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.PollVotesResponse
 
     /**
@@ -1316,7 +1303,7 @@ interface ChatApi {
      */
     @POST("/api/v2/push_preferences")
     suspend fun updatePushNotificationPreferences(
-        @Body upsertPushPreferencesRequest: io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
+        @Body upsertPushPreferencesRequest: io.getstream.chat.android.network.models.UpsertPushPreferencesRequest,
     ): io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 
     /**
@@ -1329,7 +1316,7 @@ interface ChatApi {
         @Query("limit") limit: kotlin.Int? = null,
         @Query("name_gt") nameGt: kotlin.String? = null,
         @Query("role_type") roleType: kotlin.String? = null,
-        @Query("include_global_roles") includeGlobalRoles: kotlin.Boolean? = null
+        @Query("include_global_roles") includeGlobalRoles: kotlin.Boolean? = null,
     ): io.getstream.chat.android.network.models.SearchRolesResponse
 
     /**
@@ -1338,7 +1325,7 @@ interface ChatApi {
      */
     @DELETE("/api/v2/uploads/file")
     suspend fun deleteFile(
-        @Query("url") url: kotlin.String? = null
+        @Query("url") url: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -1347,7 +1334,7 @@ interface ChatApi {
      */
     @POST("/api/v2/uploads/file")
     suspend fun uploadFile(
-        @Body fileUploadRequest: io.getstream.chat.android.network.models.FileUploadRequest
+        @Body fileUploadRequest: io.getstream.chat.android.network.models.FileUploadRequest,
     ): io.getstream.chat.android.network.models.FileUploadResponse
 
     /**
@@ -1355,8 +1342,7 @@ interface ChatApi {
      * Uploads file
      */
     @POST("/api/v2/uploads/file")
-    suspend fun uploadFile(
-    ): io.getstream.chat.android.network.models.FileUploadResponse
+    suspend fun uploadFile(): io.getstream.chat.android.network.models.FileUploadResponse
 
     /**
      * Delete image
@@ -1364,7 +1350,7 @@ interface ChatApi {
      */
     @DELETE("/api/v2/uploads/image")
     suspend fun deleteImage(
-        @Query("url") url: kotlin.String? = null
+        @Query("url") url: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -1373,7 +1359,7 @@ interface ChatApi {
      */
     @POST("/api/v2/uploads/image")
     suspend fun uploadImage(
-        @Body imageUploadRequest: io.getstream.chat.android.network.models.ImageUploadRequest
+        @Body imageUploadRequest: io.getstream.chat.android.network.models.ImageUploadRequest,
     ): io.getstream.chat.android.network.models.ImageUploadResponse
 
     /**
@@ -1381,8 +1367,7 @@ interface ChatApi {
      * Uploads image
      */
     @POST("/api/v2/uploads/image")
-    suspend fun uploadImage(
-    ): io.getstream.chat.android.network.models.ImageUploadResponse
+    suspend fun uploadImage(): io.getstream.chat.android.network.models.ImageUploadResponse
 
     /**
      * List user groups
@@ -1393,7 +1378,7 @@ interface ChatApi {
         @Query("limit") limit: kotlin.Int? = null,
         @Query("id_gt") idGt: kotlin.String? = null,
         @Query("created_at_gt") createdAtGt: kotlin.String? = null,
-        @Query("team_id") teamId: kotlin.String? = null
+        @Query("team_id") teamId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.ListUserGroupsResponse
 
     /**
@@ -1402,7 +1387,7 @@ interface ChatApi {
      */
     @POST("/api/v2/usergroups")
     suspend fun createUserGroup(
-        @Body createUserGroupRequest: io.getstream.chat.android.network.models.CreateUserGroupRequest
+        @Body createUserGroupRequest: io.getstream.chat.android.network.models.CreateUserGroupRequest,
     ): io.getstream.chat.android.network.models.CreateUserGroupResponse
 
     /**
@@ -1415,7 +1400,7 @@ interface ChatApi {
         @Query("limit") limit: kotlin.Int? = null,
         @Query("name_gt") nameGt: kotlin.String? = null,
         @Query("id_gt") idGt: kotlin.String? = null,
-        @Query("team_id") teamId: kotlin.String? = null
+        @Query("team_id") teamId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.SearchUserGroupsResponse
 
     /**
@@ -1425,7 +1410,7 @@ interface ChatApi {
     @DELETE("/api/v2/usergroups/{id}")
     suspend fun deleteUserGroup(
         @Path("id") id: kotlin.String,
-        @Query("team_id") teamId: kotlin.String? = null
+        @Query("team_id") teamId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.Response
 
     /**
@@ -1435,7 +1420,7 @@ interface ChatApi {
     @GET("/api/v2/usergroups/{id}")
     suspend fun getUserGroup(
         @Path("id") id: kotlin.String,
-        @Query("team_id") teamId: kotlin.String? = null
+        @Query("team_id") teamId: kotlin.String? = null,
     ): io.getstream.chat.android.network.models.GetUserGroupResponse
 
     /**
@@ -1444,8 +1429,8 @@ interface ChatApi {
      */
     @PUT("/api/v2/usergroups/{id}")
     suspend fun updateUserGroup(
-        @Path("id") id: kotlin.String ,
-        @Body updateUserGroupRequest: io.getstream.chat.android.network.models.UpdateUserGroupRequest
+        @Path("id") id: kotlin.String,
+        @Body updateUserGroupRequest: io.getstream.chat.android.network.models.UpdateUserGroupRequest,
     ): io.getstream.chat.android.network.models.UpdateUserGroupResponse
 
     /**
@@ -1454,7 +1439,7 @@ interface ChatApi {
      */
     @PUT("/api/v2/usergroups/{id}")
     suspend fun updateUserGroup(
-        @Path("id") id: kotlin.String
+        @Path("id") id: kotlin.String,
     ): io.getstream.chat.android.network.models.UpdateUserGroupResponse
 
     /**
@@ -1463,8 +1448,8 @@ interface ChatApi {
      */
     @POST("/api/v2/usergroups/{id}/members")
     suspend fun addUserGroupMembers(
-        @Path("id") id: kotlin.String ,
-        @Body addUserGroupMembersRequest: io.getstream.chat.android.network.models.AddUserGroupMembersRequest
+        @Path("id") id: kotlin.String,
+        @Body addUserGroupMembersRequest: io.getstream.chat.android.network.models.AddUserGroupMembersRequest,
     ): io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 
     /**
@@ -1473,8 +1458,8 @@ interface ChatApi {
      */
     @POST("/api/v2/usergroups/{id}/members/delete")
     suspend fun removeUserGroupMembers(
-        @Path("id") id: kotlin.String ,
-        @Body removeUserGroupMembersRequest: io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
+        @Path("id") id: kotlin.String,
+        @Body removeUserGroupMembersRequest: io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest,
     ): io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 
     /**
@@ -1483,7 +1468,7 @@ interface ChatApi {
      */
     @GET("/api/v2/users")
     suspend fun queryUsers(
-        @Query("payload") payload: io.getstream.chat.android.network.models.QueryUsersPayload? = null
+        @Query("payload") payload: io.getstream.chat.android.network.models.QueryUsersPayload? = null,
     ): io.getstream.chat.android.network.models.QueryUsersResponse
 
     /**
@@ -1492,7 +1477,7 @@ interface ChatApi {
      */
     @PATCH("/api/v2/users")
     suspend fun updateUsersPartial(
-        @Body updateUsersPartialRequest: io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+        @Body updateUsersPartialRequest: io.getstream.chat.android.network.models.UpdateUsersPartialRequest,
     ): io.getstream.chat.android.network.models.UpdateUsersResponse
 
     /**
@@ -1501,7 +1486,7 @@ interface ChatApi {
      */
     @POST("/api/v2/users")
     suspend fun updateUsers(
-        @Body updateUsersRequest: io.getstream.chat.android.network.models.UpdateUsersRequest
+        @Body updateUsersRequest: io.getstream.chat.android.network.models.UpdateUsersRequest,
     ): io.getstream.chat.android.network.models.UpdateUsersResponse
 
     /**
@@ -1509,8 +1494,7 @@ interface ChatApi {
      * Get list of blocked Users
      */
     @GET("/api/v2/users/block")
-    suspend fun getBlockedUsers(
-    ): io.getstream.chat.android.network.models.GetBlockedUsersResponse
+    suspend fun getBlockedUsers(): io.getstream.chat.android.network.models.GetBlockedUsersResponse
 
     /**
      * Block user
@@ -1518,7 +1502,7 @@ interface ChatApi {
      */
     @POST("/api/v2/users/block")
     suspend fun blockUsers(
-        @Body blockUsersRequest: io.getstream.chat.android.network.models.BlockUsersRequest
+        @Body blockUsersRequest: io.getstream.chat.android.network.models.BlockUsersRequest,
     ): io.getstream.chat.android.network.models.BlockUsersResponse
 
     /**
@@ -1526,8 +1510,7 @@ interface ChatApi {
      * Retrieves all active live locations for a user
      */
     @GET("/api/v2/users/live_locations")
-    suspend fun getUserLiveLocations(
-    ): io.getstream.chat.android.network.models.SharedLocationsResponse
+    suspend fun getUserLiveLocations(): io.getstream.chat.android.network.models.SharedLocationsResponse
 
     /**
      * Update live location
@@ -1535,7 +1518,7 @@ interface ChatApi {
      */
     @PUT("/api/v2/users/live_locations")
     suspend fun updateLiveLocation(
-        @Body updateLiveLocationRequest: io.getstream.chat.android.network.models.UpdateLiveLocationRequest
+        @Body updateLiveLocationRequest: io.getstream.chat.android.network.models.UpdateLiveLocationRequest,
     ): io.getstream.chat.android.network.models.SharedLocationResponse
 
     /**
@@ -1544,7 +1527,6 @@ interface ChatApi {
      */
     @POST("/api/v2/users/unblock")
     suspend fun unblockUsers(
-        @Body unblockUsersRequest: io.getstream.chat.android.network.models.UnblockUsersRequest
+        @Body unblockUsersRequest: io.getstream.chat.android.network.models.UnblockUsersRequest,
     ): io.getstream.chat.android.network.models.UnblockUsersResponse
-
 }

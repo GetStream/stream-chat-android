@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,9 +35,10 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 data class PushPreferenceInput (
     @Json(name = "call_level")
     val callLevel: CallLevel? = null,
@@ -67,7 +68,7 @@ data class PushPreferenceInput (
     val feedsPreferences: io.getstream.chat.android.network.models.FeedsPreferences? = null
 )
 {
-    
+
     /**
     * CallLevel Enum
     */
@@ -86,7 +87,7 @@ data class PushPreferenceInput (
             object Default : CallLevel("default")
             object None : CallLevel("none")
             data class Unknown(val unknownValue: kotlin.String) : CallLevel(unknownValue)
-        
+
 
         class CallLevelAdapter : JsonAdapter<CallLevel>() {
             @FromJson
@@ -125,7 +126,7 @@ data class PushPreferenceInput (
             object Mentions : ChatLevel("mentions")
             object None : ChatLevel("none")
             data class Unknown(val unknownValue: kotlin.String) : ChatLevel(unknownValue)
-        
+
 
         class ChatLevelAdapter : JsonAdapter<ChatLevel>() {
             @FromJson
@@ -158,7 +159,7 @@ data class PushPreferenceInput (
             object Default : FeedsLevel("default")
             object None : FeedsLevel("none")
             data class Unknown(val unknownValue: kotlin.String) : FeedsLevel(unknownValue)
-        
+
 
         class FeedsLevelAdapter : JsonAdapter<FeedsLevel>() {
             @FromJson
@@ -172,5 +173,5 @@ data class PushPreferenceInput (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

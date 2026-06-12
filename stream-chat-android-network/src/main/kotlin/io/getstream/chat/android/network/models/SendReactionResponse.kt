@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,6 +38,7 @@ import com.squareup.moshi.ToJson
  * Basic response information
  */
 
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 data class SendReactionResponse (
     @Json(name = "duration")
     val duration: kotlin.String,
