@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.channels
+package io.getstream.chat.android.compose.state.channels.list
 
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channels.list.ChannelListAction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-internal class ChannelListActionMessagesTest {
+internal class ChannelListActionTest {
 
     @Test
     fun `Every channel action maps to its own error message`() {
@@ -41,7 +40,7 @@ internal class ChannelListActionMessagesTest {
         )
 
         ChannelListAction.entries.forEach { action ->
-            assertEquals(expected[action], action.errorMessageResId(), "Unexpected message for $action")
+            assertEquals(expected[action], action.errorMessageResId, "Unexpected message for $action")
         }
     }
 }

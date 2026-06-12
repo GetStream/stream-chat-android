@@ -270,7 +270,7 @@ private fun EventHandler(viewModel: ChannelListViewModel, snackbarHostState: Sna
         viewModel.events.collect { event ->
             when (event) {
                 is ChannelListEvent.ActionError ->
-                    showSnackbar(event.action.errorMessageResId(), StreamSnackbarVariant.Error)
+                    showSnackbar(event.action.errorMessageResId, StreamSnackbarVariant.Error)
 
                 is ChannelListEvent.ChannelDeleted ->
                     showSnackbar(R.string.stream_compose_channel_list_channel_deleted, StreamSnackbarVariant.Default)
