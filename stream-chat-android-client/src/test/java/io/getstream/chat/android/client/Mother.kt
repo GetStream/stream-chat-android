@@ -46,9 +46,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamRoleDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -122,7 +120,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.threeten.bp.OffsetDateTime
+import org.threeten.bp.ZoneOffset
 import java.util.Date
+import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.Role as RoleDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -308,7 +310,7 @@ internal object Mother {
         quoted_message_id: String? = randomString(),
         reaction_counts: Map<String, Int>? = emptyMap(),
         reaction_scores: Map<String, Int>? = emptyMap(),
-        reaction_groups: Map<String, DownstreamReactionGroupDto>? = emptyMap(),
+        reaction_groups: Map<String, ReactionGroupDto>? = emptyMap(),
         reply_count: Int = randomInt(),
         deleted_reply_count: Int = randomInt(),
         shadowed: Boolean = randomBoolean(),
@@ -702,13 +704,13 @@ internal object Mother {
     fun randomDownstreamReactionGroupDto(
         count: Int = randomInt(),
         sumScores: Int = randomInt(),
-        firstReactionAt: Date = randomDate(),
-        lastReactionAt: Date = randomDate(),
-    ): DownstreamReactionGroupDto = DownstreamReactionGroupDto(
+        firstReactionAt: OffsetDateTime = randomDate().toOffsetDateTime(),
+        lastReactionAt: OffsetDateTime = randomDate().toOffsetDateTime(),
+    ): ReactionGroupDto = ReactionGroupDto(
         count = count,
-        sum_scores = sumScores,
-        first_reaction_at = firstReactionAt,
-        last_reaction_at = lastReactionAt,
+        sumScores = sumScores,
+        firstReactionAt = firstReactionAt,
+        lastReactionAt = lastReactionAt,
     )
 
     fun randomDownstreamMemberDto(
@@ -1412,15 +1414,18 @@ internal object Mother {
         name: String = randomString(),
         custom: Boolean = randomBoolean(),
         scopes: List<String> = emptyList(),
-        createdAt: Date? = randomDate(),
-        updatedAt: Date? = randomDate(),
-    ): DownstreamRoleDto = DownstreamRoleDto(
+        createdAt: OffsetDateTime = randomDate().toOffsetDateTime(),
+        updatedAt: OffsetDateTime = randomDate().toOffsetDateTime(),
+    ): RoleDto = RoleDto(
         name = name,
         custom = custom,
         scopes = scopes,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
+
+    private fun Date.toOffsetDateTime(): OffsetDateTime =
+        OffsetDateTime.ofInstant(org.threeten.bp.Instant.ofEpochMilli(time), ZoneOffset.UTC)
 }
 
 internal fun randomPushMessage(

@@ -68,11 +68,3 @@ internal data class DownstreamReactionDto(
     val emoji_code: String?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamReactionGroupDto(
-    val count: Int,
-    val sum_scores: Int,
-    val first_reaction_at: Date,
-    val last_reaction_at: Date,
-)

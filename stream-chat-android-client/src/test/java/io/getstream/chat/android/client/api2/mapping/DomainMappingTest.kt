@@ -421,9 +421,9 @@ internal class DomainMappingTest {
         val expected = ReactionGroup(
             type = type,
             count = downstreamReactionGroupDto.count,
-            sumScore = downstreamReactionGroupDto.sum_scores,
-            firstReactionAt = downstreamReactionGroupDto.first_reaction_at,
-            lastReactionAt = downstreamReactionGroupDto.last_reaction_at,
+            sumScore = downstreamReactionGroupDto.sumScores,
+            firstReactionAt = Date(downstreamReactionGroupDto.firstReactionAt.toInstant().toEpochMilli()),
+            lastReactionAt = Date(downstreamReactionGroupDto.lastReactionAt.toInstant().toEpochMilli()),
         )
         assertEquals(expected, reactionGroup)
     }
@@ -956,8 +956,8 @@ internal class DomainMappingTest {
             name = dto.name,
             custom = dto.custom,
             scopes = dto.scopes,
-            createdAt = dto.created_at,
-            updatedAt = dto.updated_at,
+            createdAt = Date(dto.createdAt.toInstant().toEpochMilli()),
+            updatedAt = Date(dto.updatedAt.toInstant().toEpochMilli()),
         )
         assertEquals(expected, role)
     }

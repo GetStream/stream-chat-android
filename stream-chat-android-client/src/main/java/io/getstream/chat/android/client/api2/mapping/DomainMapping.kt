@@ -43,10 +43,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamRoleDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -138,6 +136,8 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
+import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.Role as RoleDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -379,15 +379,15 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms [DownstreamReactionGroupDto] to [ReactionGroup].
+     * Transforms [ReactionGroupDto] to [ReactionGroup].
      */
-    internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
+    internal fun ReactionGroupDto.toDomain(type: String): ReactionGroup =
         ReactionGroup(
             type = type,
             count = count,
-            sumScore = sum_scores,
-            firstReactionAt = first_reaction_at,
-            lastReactionAt = last_reaction_at,
+            sumScore = sumScores,
+            firstReactionAt = Date(firstReactionAt.toInstant().toEpochMilli()),
+            lastReactionAt = Date(lastReactionAt.toInstant().toEpochMilli()),
         )
 
     /**
@@ -973,12 +973,12 @@ internal class DomainMapping(
         createdAt = created_at,
     )
 
-    internal fun DownstreamRoleDto.toDomain(): Role = Role(
+    internal fun RoleDto.toDomain(): Role = Role(
         name = name,
         custom = custom,
         scopes = scopes,
-        createdAt = created_at,
-        updatedAt = updated_at,
+        createdAt = Date(createdAt.toInstant().toEpochMilli()),
+        updatedAt = Date(updatedAt.toInstant().toEpochMilli()),
     )
 
     private companion object {

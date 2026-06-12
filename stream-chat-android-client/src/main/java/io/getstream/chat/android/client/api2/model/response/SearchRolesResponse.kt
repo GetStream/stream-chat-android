@@ -17,10 +17,10 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamRoleDto
+import io.getstream.chat.android.network.models.Role as RoleDto
 
 @JsonClass(generateAdapter = true)
 internal data class SearchRolesResponse(
-    val roles: List<DownstreamRoleDto> = emptyList(),
+    val roles: List<RoleDto> = emptyList(),
     val duration: String? = null,
 )

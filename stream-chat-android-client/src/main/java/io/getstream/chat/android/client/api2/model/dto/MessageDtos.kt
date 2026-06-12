@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
+import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for
@@ -94,7 +95,7 @@ internal data class DownstreamMessageDto(
     val quoted_message_id: String?,
     val reaction_counts: Map<String, Int>?,
     val reaction_scores: Map<String, Int>?,
-    val reaction_groups: Map<String, DownstreamReactionGroupDto>?,
+    val reaction_groups: Map<String, ReactionGroupDto>?,
     val reply_count: Int,
     val deleted_reply_count: Int,
     val shadowed: Boolean = false,
