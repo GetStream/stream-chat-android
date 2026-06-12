@@ -180,6 +180,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.CreatePollParams
@@ -211,6 +212,8 @@ import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -219,6 +222,7 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -1714,6 +1718,228 @@ internal constructor(
             .doOnResult(userScope) { result ->
                 plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
             }
+    }
+
+    /**
+     * Sets per-category push toggles for the current user. Use this when
+     * [setUserPushPreference] is too coarse. Setting either clears the other server-side.
+     */
+    @CheckResult
+    public fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
+        return api.setUserChatPreferences(preferences)
+            .doOnResult(userScope) { result ->
+                if (result is Result.Success) {
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    val updatedUser = currentUser.copy(pushPreference = result.value)
+                    mutableClientState.setUser(updatedUser)
+                }
+            }
+    }
+
+    /**
+     * Per-channel version of [setUserChatPreferences].
+     *
+     * @param cid Full channel identifier (e.g. `messaging:123`).
+     */
+    @CheckResult
+    public fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
+        return api.setChannelChatPreferences(cid, preferences)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { it.onChannelChatPreferencesSet(cid, preferences, result) }
+            }
+    }
+
+    /**
+     * Creates a user group.
+     *
+     * @param name Display name (1–255 chars), unique within app/team.
+     * @param id Group ID (max 255 chars). A UUID v7 is generated server-side when null.
+     * @param description Optional description (max 1024 chars).
+     * @param teamId Team to scope the group to. Required when multi-tenancy is enabled.
+     * @param memberIds Initial member user IDs (max 100).
+     */
+    @CheckResult
+    public fun createUserGroup(
+        name: String,
+        id: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+        memberIds: List<String>? = null,
+    ): Call<UserGroup> {
+        return api.createUserGroup(
+            name = name,
+            id = id,
+            description = description,
+            teamId = teamId,
+            memberIds = memberIds,
+        )
+    }
+
+    /**
+     * Lists user groups, ordered for cursor pagination.
+     *
+     * @param limit Max groups to return (1–100). Server default applies when null.
+     * @param idGt Cursor: groups whose ID sorts after this value.
+     * @param createdAtGt Cursor: groups created after this RFC3339 timestamp.
+     * @param teamId Restrict to a specific team.
+     */
+    @CheckResult
+    public fun queryUserGroups(
+        limit: Int? = null,
+        idGt: String? = null,
+        createdAtGt: String? = null,
+        teamId: String? = null,
+    ): Call<List<UserGroup>> {
+        return api.queryUserGroups(
+            limit = limit,
+            idGt = idGt,
+            createdAtGt = createdAtGt,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Searches user groups by name prefix.
+     *
+     * @param query Search term (1–255 chars).
+     * @param limit Maximum number of groups to return (1–25). Server default applies when null.
+     * @param teamId Restrict the search to a specific team. Required when multi-tenancy is enabled.
+     * @param nameGt Cursor: groups whose name sorts after this value.
+     * @param idGt Cursor: groups whose ID sorts after this value.
+     */
+    @CheckResult
+    public fun searchUserGroups(
+        query: String,
+        limit: Int? = null,
+        teamId: String? = null,
+        nameGt: String? = null,
+        idGt: String? = null,
+    ): Call<List<UserGroup>> {
+        return api.searchUserGroups(
+            query = query,
+            limit = limit,
+            teamId = teamId,
+            nameGt = nameGt,
+            idGt = idGt,
+        )
+    }
+
+    /**
+     * Fetches a user group by ID.
+     *
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun getUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.getUserGroup(id = id, teamId = teamId)
+    }
+
+    /**
+     * Updates a user group's metadata. Members are managed via [addUserGroupMembers] and
+     * [removeUserGroupMembers].
+     *
+     * @param name New display name (1–255 chars).
+     * @param description New description (max 1024 chars).
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun updateUserGroup(
+        id: String,
+        name: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.updateUserGroup(
+            id = id,
+            name = name,
+            description = description,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Deletes a user group.
+     *
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun deleteUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<Unit> {
+        return api.deleteUserGroup(id = id, teamId = teamId)
+    }
+
+    /**
+     * Adds members to a user group.
+     *
+     * @param memberIds User IDs to add (1–100).
+     * @param asAdmin Whether to add the members as group admins.
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun addUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        asAdmin: Boolean? = null,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.addUserGroupMembers(
+            id = id,
+            memberIds = memberIds,
+            asAdmin = asAdmin,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Removes members from a user group.
+     *
+     * @param memberIds User IDs to remove (1–100).
+     * @param teamId Required when multi-tenancy is enabled.
+     */
+    @CheckResult
+    public fun removeUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        teamId: String? = null,
+    ): Call<UserGroup> {
+        return api.removeUserGroupMembers(
+            id = id,
+            memberIds = memberIds,
+            teamId = teamId,
+        )
+    }
+
+    /**
+     * Searches roles by name prefix.
+     *
+     * @param query Case-insensitive name prefix (1-255 chars).
+     * @param limit Max number of roles to return (1-25). Server default applies when null.
+     * @param roleType Optional filter by what the role can be assigned to. Both kinds are
+     * returned when null.
+     * @param includeGlobalRoles When `true`, include cross-team operator roles whose name starts
+     * with `global_`. Defaults to `false` server-side.
+     * @param nameGt Cursor: roles whose name sorts after this value.
+     */
+    @CheckResult
+    public fun searchRoles(
+        query: String,
+        limit: Int? = null,
+        roleType: RoleType? = null,
+        includeGlobalRoles: Boolean? = null,
+        nameGt: String? = null,
+    ): Call<List<Role>> {
+        return api.searchRoles(
+            query = query,
+            limit = limit,
+            roleType = roleType,
+            includeGlobalRoles = includeGlobalRoles,
+            nameGt = nameGt,
+        )
     }
 
     /**

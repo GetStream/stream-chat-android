@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.PushPreferencesListener
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.result.Result
@@ -42,6 +43,16 @@ internal class PushPreferencesListenerState(private val logic: LogicRegistry) : 
     }
 
     override suspend fun onChannelPushNotificationsSnoozed(cid: String, until: Date, result: Result<PushPreference>) {
+        result.onSuccess { pushPreference ->
+            updateChannelPushPreference(cid, pushPreference)
+        }
+    }
+
+    override suspend fun onChannelChatPreferencesSet(
+        cid: String,
+        preferences: ChatPreferences,
+        result: Result<PushPreference>,
+    ) {
         result.onSuccess { pushPreference ->
             updateChannelPushPreference(cid, pushPreference)
         }

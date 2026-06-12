@@ -39,8 +39,10 @@ import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
+import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
@@ -50,9 +52,11 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInp
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
+import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -81,6 +85,7 @@ import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -93,6 +98,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownReques
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
@@ -100,6 +106,8 @@ import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
+import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.getUserChannelPreference
 import io.getstream.chat.android.client.api2.model.response.getUserPreference
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -117,6 +125,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -142,6 +151,8 @@ import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -149,6 +160,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -191,6 +203,8 @@ constructor(
     private val pollsApi: PollsApi,
     private val remindersApi: RemindersApi,
     private val pushPreferencesApi: PushPreferencesApi,
+    private val userGroupApi: UserGroupApi,
+    private val roleApi: RoleApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -517,6 +531,157 @@ constructor(
         return pushPreferencesApi
             .upsertPushPreferences(request)
             .parseChannelPushPreferencesResponse(cid)
+    }
+
+    override fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = null,
+            chat_level = null,
+            disabled_until = null,
+            remove_disable = null,
+            chat_preferences = with(dtoMapping) { preferences.toDto() },
+        )
+        return pushPreferencesApi
+            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+            .parseUserPushPreferencesResponse()
+    }
+
+    override fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = cid,
+            chat_level = null,
+            disabled_until = null,
+            remove_disable = null,
+            chat_preferences = with(dtoMapping) { preferences.toDto() },
+        )
+        return pushPreferencesApi
+            .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
+            .parseChannelPushPreferencesResponse(cid)
+    }
+
+    override fun createUserGroup(
+        name: String,
+        id: String?,
+        description: String?,
+        teamId: String?,
+        memberIds: List<String>?,
+    ): Call<UserGroup> {
+        val body = CreateUserGroupRequest(
+            id = id,
+            name = name,
+            description = description,
+            team_id = teamId,
+            member_ids = memberIds,
+        )
+        return userGroupApi.createUserGroup(body).mapUserGroup()
+    }
+
+    override fun queryUserGroups(
+        limit: Int?,
+        idGt: String?,
+        createdAtGt: String?,
+        teamId: String?,
+    ): Call<List<UserGroup>> {
+        return userGroupApi
+            .queryUserGroups(
+                limit = limit,
+                idGt = idGt,
+                createdAtGt = createdAtGt,
+                teamId = teamId,
+            )
+            .mapUserGroups()
+    }
+
+    override fun searchUserGroups(
+        query: String,
+        limit: Int?,
+        teamId: String?,
+        nameGt: String?,
+        idGt: String?,
+    ): Call<List<UserGroup>> {
+        return userGroupApi
+            .searchUserGroups(
+                query = query,
+                limit = limit,
+                teamId = teamId,
+                nameGt = nameGt,
+                idGt = idGt,
+            )
+            .mapUserGroups()
+    }
+
+    override fun getUserGroup(id: String, teamId: String?): Call<UserGroup> {
+        return userGroupApi.getUserGroup(id = id, teamId = teamId).mapUserGroup()
+    }
+
+    override fun updateUserGroup(
+        id: String,
+        name: String?,
+        description: String?,
+        teamId: String?,
+    ): Call<UserGroup> {
+        val body = UpdateUserGroupRequest(
+            name = name,
+            description = description,
+            team_id = teamId,
+        )
+        return userGroupApi.updateUserGroup(id = id, body = body).mapUserGroup()
+    }
+
+    override fun deleteUserGroup(id: String, teamId: String?): Call<Unit> {
+        return userGroupApi.deleteUserGroup(id = id, teamId = teamId).toUnitCall()
+    }
+
+    override fun addUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        asAdmin: Boolean?,
+        teamId: String?,
+    ): Call<UserGroup> {
+        val body = AddUserGroupMembersRequest(
+            member_ids = memberIds,
+            as_admin = asAdmin,
+            team_id = teamId,
+        )
+        return userGroupApi.addUserGroupMembers(id = id, body = body).mapUserGroup()
+    }
+
+    override fun removeUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        teamId: String?,
+    ): Call<UserGroup> {
+        val body = RemoveUserGroupMembersRequest(
+            member_ids = memberIds,
+            team_id = teamId,
+        )
+        return userGroupApi.removeUserGroupMembers(id = id, body = body).mapUserGroup()
+    }
+
+    private fun RetrofitCall<UserGroupResponse>.mapUserGroup() =
+        map { response -> with(domainMapping) { response.user_group.toDomain() } }
+
+    private fun RetrofitCall<UserGroupsResponse>.mapUserGroups() =
+        map { response -> with(domainMapping) { response.user_groups.map { it.toDomain() } } }
+
+    override fun searchRoles(
+        query: String,
+        limit: Int?,
+        roleType: RoleType?,
+        includeGlobalRoles: Boolean?,
+        nameGt: String?,
+    ): Call<List<Role>> {
+        return roleApi
+            .searchRoles(
+                query = query,
+                limit = limit,
+                roleType = roleType?.value,
+                includeGlobalRoles = includeGlobalRoles,
+                nameGt = nameGt,
+            )
+            .map { response ->
+                with(domainMapping) { response.roles.map { it.toDomain() } }
+            }
     }
 
     override fun muteCurrentUser(): Call<Mute> {

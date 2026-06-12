@@ -51,8 +51,10 @@ import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
+import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
@@ -352,6 +354,8 @@ constructor(
             buildRetrofitApi<PollsApi>(),
             buildRetrofitApi<RemindersApi>(),
             buildRetrofitApi<PushPreferencesApi>(),
+            buildRetrofitApi<UserGroupApi>(),
+            buildRetrofitApi<RoleApi>(),
             userScope,
             userScope,
         ).let { originalApi ->

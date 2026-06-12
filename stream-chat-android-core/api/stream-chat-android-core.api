@@ -656,6 +656,49 @@ public final class io/getstream/chat/android/models/ChannelUserRead : io/getstre
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/ChatPreferenceToggle {
+	public static final field Companion Lio/getstream/chat/android/models/ChatPreferenceToggle$Companion;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChatPreferenceToggle;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/ChatPreferenceToggle$Companion {
+	public final fun fromValue (Ljava/lang/String;)Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getAll ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getNone ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+}
+
+public final class io/getstream/chat/android/models/ChatPreferences {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun component2 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun component3 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun component4 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun component5 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun component6 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun component7 ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun copy (Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;)Lio/getstream/chat/android/models/ChatPreferences;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChatPreferences;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;Lio/getstream/chat/android/models/ChatPreferenceToggle;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChatPreferences;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelMentions ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getDefaultPreference ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getDirectMentions ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getGroupMentions ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getHereMentions ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getRoleMentions ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public final fun getThreadReplies ()Lio/getstream/chat/android/models/ChatPreferenceToggle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/models/Command {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1827,12 +1870,15 @@ public final class io/getstream/chat/android/models/PushMessage {
 }
 
 public final class io/getstream/chat/android/models/PushPreference {
-	public fun <init> (Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;)V
+	public fun <init> (Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;Lio/getstream/chat/android/models/ChatPreferences;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;Lio/getstream/chat/android/models/ChatPreferences;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/PushPreferenceLevel;
 	public final fun component2 ()Ljava/util/Date;
-	public final fun copy (Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;)Lio/getstream/chat/android/models/PushPreference;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/PushPreference;Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/PushPreference;
+	public final fun component3 ()Lio/getstream/chat/android/models/ChatPreferences;
+	public final fun copy (Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;Lio/getstream/chat/android/models/ChatPreferences;)Lio/getstream/chat/android/models/PushPreference;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/PushPreference;Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/util/Date;Lio/getstream/chat/android/models/ChatPreferences;ILjava/lang/Object;)Lio/getstream/chat/android/models/PushPreference;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChatPreferences ()Lio/getstream/chat/android/models/ChatPreferences;
 	public final fun getDisabledUntil ()Ljava/util/Date;
 	public final fun getLevel ()Lio/getstream/chat/android/models/PushPreferenceLevel;
 	public fun hashCode ()I
@@ -2086,6 +2132,40 @@ public final class io/getstream/chat/android/models/ReactionSortingBySumScore : 
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/Role {
+	public fun <init> (Ljava/lang/String;ZLjava/util/List;Ljava/util/Date;Ljava/util/Date;)V
+	public synthetic fun <init> (Ljava/lang/String;ZLjava/util/List;Ljava/util/Date;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Z
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun component5 ()Ljava/util/Date;
+	public final fun copy (Ljava/lang/String;ZLjava/util/List;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/Role;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Role;Ljava/lang/String;ZLjava/util/List;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/Role;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getCustom ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getScopes ()Ljava/util/List;
+	public final fun getUpdatedAt ()Ljava/util/Date;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/RoleType {
+	public static final field Companion Lio/getstream/chat/android/models/RoleType$Companion;
+	public final fun component1 ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/RoleType$Companion {
+	public final fun getChannel ()Lio/getstream/chat/android/models/RoleType;
+	public final fun getUser ()Lio/getstream/chat/android/models/RoleType;
 }
 
 public final class io/getstream/chat/android/models/SearchMessagesResult {

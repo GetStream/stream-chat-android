@@ -45,11 +45,13 @@ import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
+import io.getstream.chat.android.client.Mother.randomDownstreamRoleDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
+import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
@@ -63,6 +65,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.models.Answer
@@ -101,6 +104,7 @@ import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
+import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -110,6 +114,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserGroup
+import io.getstream.chat.android.models.UserGroupMember
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
@@ -901,6 +906,60 @@ internal class DomainMappingTest {
             blockedAt = blockUserResponse.created_at,
         )
         assertEquals(expected, userBlock)
+    }
+
+    @Test
+    fun `DownstreamUserGroupDto is correctly mapped to UserGroup`() {
+        val memberDto = DownstreamUserGroupMemberDto(
+            group_id = randomString(),
+            user_id = randomString(),
+            is_admin = randomBoolean(),
+            created_at = randomDate(),
+        )
+        val dto = randomDownstreamUserGroupDto(members = listOf(memberDto))
+        val sut = Fixture().get()
+        val userGroup = with(sut) { dto.toDomain() }
+        val expected = UserGroup(
+            id = dto.id,
+            name = dto.name,
+            description = dto.description,
+            team = dto.team_id.orEmpty(),
+            members = listOf(
+                UserGroupMember(
+                    groupId = memberDto.group_id,
+                    userId = memberDto.user_id,
+                    isAdmin = memberDto.is_admin,
+                    createdAt = memberDto.created_at,
+                ),
+            ),
+            createdBy = dto.created_by,
+            createdAt = dto.created_at,
+            updatedAt = dto.updated_at,
+        )
+        assertEquals(expected, userGroup)
+    }
+
+    @Test
+    fun `DownstreamUserGroupDto with null team_id maps team to empty string`() {
+        val dto = randomDownstreamUserGroupDto(teamId = null)
+        val sut = Fixture().get()
+        val userGroup = with(sut) { dto.toDomain() }
+        assertEquals("", userGroup.team)
+    }
+
+    @Test
+    fun `DownstreamRoleDto is correctly mapped to Role`() {
+        val dto = randomDownstreamRoleDto()
+        val sut = Fixture().get()
+        val role = with(sut) { dto.toDomain() }
+        val expected = Role(
+            name = dto.name,
+            custom = dto.custom,
+            scopes = dto.scopes,
+            createdAt = dto.created_at,
+            updatedAt = dto.updated_at,
+        )
+        assertEquals(expected, role)
     }
 
     @Test

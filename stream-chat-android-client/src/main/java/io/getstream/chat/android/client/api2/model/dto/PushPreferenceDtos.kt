@@ -26,6 +26,7 @@ import java.util.Date
  * @param chat_level The chat level preference ("all", "default", "mentions" or "none").
  * @param disabled_until Timestamp until which notifications are disabled.
  * @param remove_disable Whether to remove any existing disable setting.
+ * @param chat_preferences Per-category toggles. Setting this clears [chat_level] server-side.
  */
 @JsonClass(generateAdapter = true)
 internal data class UpstreamPushPreferenceInputDto(
@@ -33,6 +34,7 @@ internal data class UpstreamPushPreferenceInputDto(
     val chat_level: String?,
     val disabled_until: Date?,
     val remove_disable: Boolean?,
+    val chat_preferences: UpstreamChatPreferencesDto? = null,
 )
 
 /**
@@ -40,9 +42,33 @@ internal data class UpstreamPushPreferenceInputDto(
  *
  * @param chat_level The chat level preference ("all", "default", "mentions" or "none").
  * @param disabled_until Timestamp until which notifications are disabled.
+ * @param chat_preferences Per-category toggles when set instead of [chat_level].
  */
 @JsonClass(generateAdapter = true)
 internal data class DownstreamPushPreferenceDto(
     val chat_level: String?,
     val disabled_until: Date?,
+    val chat_preferences: DownstreamChatPreferencesDto? = null,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class UpstreamChatPreferencesDto(
+    val direct_mentions: String? = null,
+    val role_mentions: String? = null,
+    val group_mentions: String? = null,
+    val here_mentions: String? = null,
+    val channel_mentions: String? = null,
+    val thread_replies: String? = null,
+    val default_preference: String? = null,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamChatPreferencesDto(
+    val direct_mentions: String? = null,
+    val role_mentions: String? = null,
+    val group_mentions: String? = null,
+    val here_mentions: String? = null,
+    val channel_mentions: String? = null,
+    val thread_replies: String? = null,
+    val default_preference: String? = null,
 )

@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -58,6 +59,8 @@ import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.Role
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
@@ -65,6 +68,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
@@ -143,6 +147,82 @@ internal interface ChatApi {
 
     @CheckResult
     fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference>
+
+    @CheckResult
+    fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference>
+
+    @CheckResult
+    fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference>
+
+    @CheckResult
+    fun createUserGroup(
+        name: String,
+        id: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+        memberIds: List<String>? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun queryUserGroups(
+        limit: Int? = null,
+        idGt: String? = null,
+        createdAtGt: String? = null,
+        teamId: String? = null,
+    ): Call<List<UserGroup>>
+
+    @CheckResult
+    fun searchUserGroups(
+        query: String,
+        limit: Int? = null,
+        teamId: String? = null,
+        nameGt: String? = null,
+        idGt: String? = null,
+    ): Call<List<UserGroup>>
+
+    @CheckResult
+    fun getUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun updateUserGroup(
+        id: String,
+        name: String? = null,
+        description: String? = null,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun deleteUserGroup(
+        id: String,
+        teamId: String? = null,
+    ): Call<Unit>
+
+    @CheckResult
+    fun addUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        asAdmin: Boolean? = null,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun removeUserGroupMembers(
+        id: String,
+        memberIds: List<String>,
+        teamId: String? = null,
+    ): Call<UserGroup>
+
+    @CheckResult
+    fun searchRoles(
+        query: String,
+        limit: Int? = null,
+        roleType: RoleType? = null,
+        includeGlobalRoles: Boolean? = null,
+        nameGt: String? = null,
+    ): Call<List<Role>>
 
     @CheckResult
     fun searchMessages(

@@ -31,22 +31,28 @@ import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
+import io.getstream.chat.android.client.api2.endpoint.RoleApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
+import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
+import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -70,6 +76,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryReactionsReques
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
+import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
@@ -78,6 +85,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownReques
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
+import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
@@ -111,6 +119,7 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
@@ -118,6 +127,8 @@ import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
+import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
@@ -132,6 +143,8 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChatPreferenceToggle
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -143,6 +156,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.RoleType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
@@ -2853,6 +2867,91 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).upsertPushPreferences(expectedRequest)
     }
 
+    @Test
+    fun testSetUserChatPreferences() = runTest {
+        val userId = randomString()
+        val prefs = ChatPreferences(
+            directMentions = ChatPreferenceToggle.all,
+            channelMentions = ChatPreferenceToggle.none,
+            defaultPreference = ChatPreferenceToggle.none,
+        )
+        val response = PushPreferencesResponse(
+            user_channel_preferences = emptyMap(),
+            user_preferences = mapOf(
+                userId to DownstreamPushPreferenceDto(
+                    chat_level = null,
+                    disabled_until = null,
+                    chat_preferences = DownstreamChatPreferencesDto(
+                        direct_mentions = "all",
+                        channel_mentions = "none",
+                        default_preference = "none",
+                    ),
+                ),
+            ),
+        )
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withCurrentUserId(userId).withPushPreferencesApi(api).get()
+
+        val result = sut.setUserChatPreferences(prefs).await()
+
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = null,
+                    chat_level = null,
+                    disabled_until = null,
+                    remove_disable = null,
+                    chat_preferences = UpstreamChatPreferencesDto(
+                        direct_mentions = "all",
+                        channel_mentions = "none",
+                        default_preference = "none",
+                    ),
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
+    @Test
+    fun testSetChannelChatPreferences() = runTest {
+        val userId = randomString()
+        val cid = randomCID()
+        val prefs = ChatPreferences(directMentions = ChatPreferenceToggle.all)
+        val response = PushPreferencesResponse(
+            user_channel_preferences = mapOf(
+                userId to mapOf(
+                    cid to DownstreamPushPreferenceDto(
+                        chat_level = null,
+                        disabled_until = null,
+                        chat_preferences = DownstreamChatPreferencesDto(direct_mentions = "all"),
+                    ),
+                ),
+            ),
+            user_preferences = emptyMap(),
+        )
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withCurrentUserId(userId).withPushPreferencesApi(api).get()
+
+        val result = sut.setChannelChatPreferences(cid, prefs).await()
+
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = cid,
+                    chat_level = null,
+                    disabled_until = null,
+                    remove_disable = null,
+                    chat_preferences = UpstreamChatPreferencesDto(direct_mentions = "all"),
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateLiveLocation")
     fun testUpdateLiveLocation(
@@ -2924,6 +3023,241 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).warmUp()
     }
 
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
+    fun testCreateUserGroup(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(api.createUserGroup(any())).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val name = randomString()
+        val id = randomString()
+        val description = randomString()
+        val teamId = randomString()
+        val memberIds = listOf(randomString(), randomString())
+        val result = sut.createUserGroup(
+            name = name,
+            id = id,
+            description = description,
+            teamId = teamId,
+            memberIds = memberIds,
+        ).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).createUserGroup(
+            CreateUserGroupRequest(
+                id = id,
+                name = name,
+                description = description,
+                team_id = teamId,
+                member_ids = memberIds,
+            ),
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupsResponseInput")
+    fun testListUserGroups(call: RetrofitCall<UserGroupsResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(
+            api.queryUserGroups(
+                limit = anyOrNull(),
+                idGt = anyOrNull(),
+                createdAtGt = anyOrNull(),
+                teamId = anyOrNull(),
+            ),
+        ).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val limit = randomInt()
+        val idGt = randomString()
+        val createdAtGt = randomString()
+        val teamId = randomString()
+        val result = sut.queryUserGroups(
+            limit = limit,
+            idGt = idGt,
+            createdAtGt = createdAtGt,
+            teamId = teamId,
+        ).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).queryUserGroups(
+            limit = limit,
+            idGt = idGt,
+            createdAtGt = createdAtGt,
+            teamId = teamId,
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupsResponseInput")
+    fun testSearchUserGroups(call: RetrofitCall<UserGroupsResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<UserGroupApi>()
+        whenever(
+            api.searchUserGroups(
+                query = any(),
+                limit = anyOrNull(),
+                teamId = anyOrNull(),
+                nameGt = anyOrNull(),
+                idGt = anyOrNull(),
+            ),
+        ).doReturn(call)
+        val sut = Fixture()
+            .withUserGroupApi(api)
+            .get()
+        // when
+        val query = randomString()
+        val limit = randomInt()
+        val teamId = randomString()
+        val nameGt = randomString()
+        val idGt = randomString()
+        val result = sut.searchUserGroups(query, limit, teamId, nameGt, idGt).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).searchUserGroups(
+            query = query,
+            limit = limit,
+            teamId = teamId,
+            nameGt = nameGt,
+            idGt = idGt,
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
+    fun testGetUserGroup(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(api.getUserGroup(id = any(), teamId = anyOrNull())).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val id = randomString()
+        val teamId = randomString()
+        val result = sut.getUserGroup(id = id, teamId = teamId).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).getUserGroup(id = id, teamId = teamId)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
+    fun testUpdateUserGroup(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(api.updateUserGroup(id = any(), body = any())).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val id = randomString()
+        val name = randomString()
+        val description = randomString()
+        val teamId = randomString()
+        val result = sut.updateUserGroup(
+            id = id,
+            name = name,
+            description = description,
+            teamId = teamId,
+        ).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).updateUserGroup(
+            id = id,
+            body = UpdateUserGroupRequest(name = name, description = description, team_id = teamId),
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteUserGroupInput")
+    fun testDeleteUserGroup(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(api.deleteUserGroup(id = any(), teamId = anyOrNull())).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val id = randomString()
+        val teamId = randomString()
+        val result = sut.deleteUserGroup(id = id, teamId = teamId).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).deleteUserGroup(id = id, teamId = teamId)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
+    fun testAddUserGroupMembers(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(api.addUserGroupMembers(id = any(), body = any())).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val id = randomString()
+        val memberIds = listOf(randomString(), randomString())
+        val asAdmin = randomBoolean()
+        val teamId = randomString()
+        val result = sut.addUserGroupMembers(
+            id = id,
+            memberIds = memberIds,
+            asAdmin = asAdmin,
+            teamId = teamId,
+        ).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).addUserGroupMembers(
+            id = id,
+            body = AddUserGroupMembersRequest(member_ids = memberIds, as_admin = asAdmin, team_id = teamId),
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
+    fun testRemoveUserGroupMembers(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+        val api = mock<UserGroupApi>()
+        whenever(api.removeUserGroupMembers(id = any(), body = any())).doReturn(call)
+        val sut = Fixture().withUserGroupApi(api).get()
+
+        val id = randomString()
+        val memberIds = listOf(randomString(), randomString())
+        val teamId = randomString()
+        val result = sut.removeUserGroupMembers(id = id, memberIds = memberIds, teamId = teamId).await()
+
+        result `should be instance of` expected
+        verify(api, times(1)).removeUserGroupMembers(
+            id = id,
+            body = RemoveUserGroupMembersRequest(member_ids = memberIds, team_id = teamId),
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#searchRolesInput")
+    fun testSearchRoles(call: RetrofitCall<SearchRolesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<RoleApi>()
+        whenever(
+            api.searchRoles(
+                query = any(),
+                limit = anyOrNull(),
+                roleType = anyOrNull(),
+                includeGlobalRoles = anyOrNull(),
+                nameGt = anyOrNull(),
+            ),
+        ).doReturn(call)
+        val sut = Fixture()
+            .withRoleApi(api)
+            .get()
+        // when
+        val query = randomString()
+        val limit = randomInt()
+        val roleType = RoleType.User
+        val includeGlobalRoles = randomBoolean()
+        val nameGt = randomString()
+        val result = sut.searchRoles(query, limit, roleType, includeGlobalRoles, nameGt).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).searchRoles(
+            query = query,
+            limit = limit,
+            roleType = roleType.value,
+            includeGlobalRoles = includeGlobalRoles,
+            nameGt = nameGt,
+        )
+    }
+
     private class Fixture {
 
         private var currentUserId: String = ""
@@ -2945,6 +3279,8 @@ internal class MoshiChatApiTest {
         private var pollsApi: PollsApi = mock()
         private var remindersApi: RemindersApi = mock()
         private var pushPreferencesApi: PushPreferencesApi = mock()
+        private var userGroupApi: UserGroupApi = mock()
+        private var roleApi: RoleApi = mock()
 
         private var fileUploader: FileUploader = mock()
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -3009,6 +3345,14 @@ internal class MoshiChatApiTest {
             this.pushPreferencesApi = pushPreferencesApi
         }
 
+        fun withUserGroupApi(userGroupApi: UserGroupApi) = apply {
+            this.userGroupApi = userGroupApi
+        }
+
+        fun withRoleApi(roleApi: RoleApi) = apply {
+            this.roleApi = roleApi
+        }
+
         fun withFileUploader(fileUploader: FileUploader) = apply {
             this.fileUploader = fileUploader
         }
@@ -3044,6 +3388,8 @@ internal class MoshiChatApiTest {
                 pollsApi = pollsApi,
                 remindersApi = remindersApi,
                 pushPreferencesApi = pushPreferencesApi,
+                userGroupApi = userGroupApi,
+                roleApi = roleApi,
                 userScope = UserScope(ClientScope()),
                 coroutineScope = testCoroutineExtension.scope,
             )
