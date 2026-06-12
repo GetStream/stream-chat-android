@@ -71,6 +71,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
 dependencies {
     api(project(":stream-chat-android-core"))
+    implementation(project(":stream-chat-android-network"))
 
     implementation(libs.kotlin.reflect)
     implementation(libs.androidx.core.ktx)
