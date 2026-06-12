@@ -102,6 +102,7 @@
   <string name="stream_compose_flag_message_title">"메시지 신고"</string>
   <string name="stream_compose_giphy_label">"GIPHY"</string>
   <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_giphy_preview_label">"Giphy 미리보기"</string>
   <string name="stream_compose_image_options">"이미지 옵션"</string>
   <string name="stream_compose_image_order">"%1$d / %2$d"</string>
   <string name="stream_compose_image_preview_cancel_sharing">"공유 취소"</string>

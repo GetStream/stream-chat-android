@@ -211,6 +211,7 @@
     <string name="stream_compose_video_preview">Video</string>
     <string name="stream_compose_file_preview">File</string>
     <string name="stream_compose_giphy_preview">Giphy</string>
+    <string name="stream_compose_giphy_preview_label">Giphy preview</string>
     <string name="stream_compose_link_preview">Link</string>
     <string name="stream_compose_message_deleted_preview">Message deleted</string>
     <string name="stream_compose_no_messages_yet">No messages yet</string>

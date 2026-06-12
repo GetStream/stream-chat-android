@@ -92,6 +92,7 @@
   <string name="stream_compose_flag_message_title">"Marcar mensaje"</string>
   <string name="stream_compose_giphy_label">"GIPHY"</string>
   <string name="stream_compose_giphy_preview">"Giphy"</string>
+  <string name="stream_compose_giphy_preview_label">"Vista previa de Giphy"</string>
   <string name="stream_compose_image_options">"Opciones de imagen"</string>
   <string name="stream_compose_image_order">"%1$d de %2$d"</string>
   <string name="stream_compose_image_preview_cancel_sharing">"Cancelar compartir"</string>

@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -96,6 +97,8 @@ public fun GiphyMessageContent(
     val cancelledAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_cancelled)
     val shuffledAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_shuffled)
 
+    val giphyPreviewLabel = stringResource(R.string.stream_compose_giphy_preview_label)
+
     val isTouchExplorationEnabled = rememberIsTouchExplorationEnabled()
     val previewFocusRequester = remember { FocusRequester() }
     // Track whether the preview has already requested focus so that a LazyColumn dispose +
@@ -120,7 +123,8 @@ public fun GiphyMessageContent(
                 .applyIf(isTouchExplorationEnabled) {
                     focusRequester(previewFocusRequester).focusable()
                 }
-                .semantics(mergeDescendants = true) {},
+                // Lead the preview's merged TalkBack announcement with the "Giphy preview" label.
+                .semantics(mergeDescendants = true) { contentDescription = giphyPreviewLabel },
         ) {
             Row(
                 modifier = Modifier

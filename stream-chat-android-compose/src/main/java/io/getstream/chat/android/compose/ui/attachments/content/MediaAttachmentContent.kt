@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -168,7 +169,11 @@ public fun MediaAttachmentContent(
                 stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
             Row(
                 modifier = Modifier
-                    .semantics { this.contentDescription = description }
+                    .semantics {
+                        this.contentDescription = description
+                        // Group the grid so a TalkBack swipe walks every tile before leaving it.
+                        isTraversalGroup = true
+                    }
                     .padding(MessageStyling.messageSectionPadding),
                 horizontalArrangement = Arrangement.spacedBy(gridSpacing),
             ) {
