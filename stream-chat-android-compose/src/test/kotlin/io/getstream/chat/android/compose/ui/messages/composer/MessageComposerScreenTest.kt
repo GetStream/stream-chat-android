@@ -17,13 +17,17 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import androidx.annotation.UiThread
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomFloat
@@ -100,6 +104,42 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Also send in Channel").assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `slow mode disables input and attachment button`() {
+        val capabilities = setOf(ChannelCapabilities.SEND_MESSAGE, ChannelCapabilities.UPLOAD_FILE)
+        whenever(mockViewModel.messageComposerState) doReturn
+            MutableStateFlow(MessageComposerState(ownCapabilities = capabilities, coolDownTime = 9))
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithText("9").assertExists()
+        composeTestRule.onNodeWithText("Slow mode, wait 9s…").assertExists()
+        composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertIsNotEnabled()
+        composeTestRule.onNodeWithTag("Stream_ComposerAttachmentsButton").assertIsNotEnabled()
+    }
+
+    @Test
+    @UiThread
+    fun `composer stays interactive without cooldown`() {
+        val capabilities = setOf(ChannelCapabilities.SEND_MESSAGE, ChannelCapabilities.UPLOAD_FILE)
+        whenever(mockViewModel.messageComposerState) doReturn
+            MutableStateFlow(MessageComposerState(ownCapabilities = capabilities, coolDownTime = 0))
+
+        composeTestRule.setContent {
+            ChatTheme {
+                MessageComposer(viewModel = mockViewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertIsEnabled()
+        composeTestRule.onNodeWithTag("Stream_ComposerAttachmentsButton").assertIsEnabled()
     }
 
     @Test

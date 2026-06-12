@@ -131,6 +131,7 @@
   <string name="stream_ui_message_composer_placeholder_command_unban">"\@username"</string>
   <string name="stream_ui_message_composer_placeholder_command_unmute">"\@username"</string>
   <string name="stream_ui_message_composer_placeholder_default">"Kirim pesan"</string>
+  <string name="stream_ui_message_composer_placeholder_slow_mode">"Mode lambat, tunggu %1$d dtk…"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Terjadi kesalahan. Berkas tidak dapat ditampilkan"</string>
   <string name="stream_ui_message_list_attachment_download_failed">"Gagal mengunduh file: %s"</string>
   <string name="stream_ui_message_list_attachment_downloading">"Mengunduh… %1$s / %2$s"</string>

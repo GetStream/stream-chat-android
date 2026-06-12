@@ -132,6 +132,7 @@
   <string name="stream_ui_message_composer_placeholder_command_unban">\@username</string>
   <string name="stream_ui_message_composer_placeholder_command_unmute">\@username</string>
   <string name="stream_ui_message_composer_placeholder_default">"संदेश भेजें"</string>
+  <string name="stream_ui_message_composer_placeholder_slow_mode">"धीमा मोड, %1$d सेकंड प्रतीक्षा करें…"</string>
   <string name="stream_ui_message_list_attachment_display_error">"त्रुटि। फ़ाइल प्रदर्शित नहीं की जा सकती"</string>
   <string name="stream_ui_message_list_attachment_download_failed">"फ़ाइल डाउनलोड करने में विफल: %s"</string>
   <string name="stream_ui_message_list_attachment_downloading">"डाउनलोड हो रहा है… %1$s / %2$s"</string>

@@ -28,6 +28,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFlo
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithCommandSuggestions
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithUserSuggestions
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithVisibleAttachmentPicker
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerSlowMode
 import org.junit.Rule
 import org.junit.Test
 
@@ -61,6 +62,13 @@ internal class MessageComposerTest : PaparazziComposeTest {
     fun `fixed style with command suggestions`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerFixedStyleWithCommandSuggestions()
+        }
+    }
+
+    @Test
+    fun `slow mode`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerSlowMode()
         }
     }
 

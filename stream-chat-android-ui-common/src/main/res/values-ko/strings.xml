@@ -131,6 +131,7 @@
   <string name="stream_ui_message_composer_placeholder_command_unban">\@username</string>
   <string name="stream_ui_message_composer_placeholder_command_unmute">\@username</string>
   <string name="stream_ui_message_composer_placeholder_default">"메시지 보내기"</string>
+  <string name="stream_ui_message_composer_placeholder_slow_mode">"슬로우 모드, %1$d초 기다리세요…"</string>
   <string name="stream_ui_message_list_attachment_display_error">"오류. 파일을 표시할 수 없습니다"</string>
   <string name="stream_ui_message_list_attachment_download_failed">"파일 다운로드에 실패했습니다: %s"</string>
   <string name="stream_ui_message_list_attachment_downloading">"다운로드 중… %1$s / %2$s"</string>

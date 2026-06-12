@@ -60,6 +60,9 @@ internal fun MessageComposerLeadingContent(
 
     val isCommandActive = messageInputState.activeCommand != null
 
+    // During slow mode the button stays visible but becomes non-interactive.
+    val isInCoolDown = messageInputState.coolDownTime > 0
+
     val showAttachmentButton = canSendMessage && !isRecording && canUploadFile && !isCommandActive
 
     AnimatedContent(
@@ -73,6 +76,7 @@ internal fun MessageComposerLeadingContent(
             AttachmentPickerButton(
                 isPickerVisible = isAttachmentPickerVisible,
                 iconRotation = iconRotation,
+                enabled = !isInCoolDown,
                 onClick = onAttachmentsClick,
                 onClickLabel = onAttachmentsClickLabel,
             )
@@ -84,6 +88,7 @@ internal fun MessageComposerLeadingContent(
 private fun AttachmentPickerButton(
     isPickerVisible: Boolean,
     iconRotation: Float,
+    enabled: Boolean = true,
     onClick: () -> Unit,
     onClickLabel: String? = null,
 ) {
@@ -106,7 +111,7 @@ private fun AttachmentPickerButton(
             .padding(end = 8.dp)
             .border(
                 width = 1.dp,
-                color = ChatTheme.colors.borderCoreDefault,
+                color = if (enabled) ChatTheme.colors.borderCoreDefault else ChatTheme.colors.borderUtilityDisabled,
                 shape = CircleShape,
             )
             .then(
@@ -120,11 +125,14 @@ private fun AttachmentPickerButton(
             .testTag("Stream_ComposerAttachmentsButton")
             .semantics {
                 stateDescription = pickerStateDescription
-                onClick(label = resolvedActionLabel) {
-                    onClick()
-                    true
+                if (enabled) {
+                    onClick(label = resolvedActionLabel) {
+                        onClick()
+                        true
+                    }
                 }
             },
+        enabled = enabled,
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.backgroundCoreElevation1,
             disabledContainerColor = ChatTheme.colors.backgroundCoreElevation1,
