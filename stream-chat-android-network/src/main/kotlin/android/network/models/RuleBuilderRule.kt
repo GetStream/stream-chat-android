@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport"
+)
+
+package io.getstream.chat.android.network.models
+
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.*
+import kotlin.io.*
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.ToJson
+
+/**
+ * 
+ */
+
+data class RuleBuilderRule (
+    @Json(name = "rule_type")
+    val ruleType: kotlin.String,
+
+    @Json(name = "cooldown_period")
+    val cooldownPeriod: kotlin.String? = null,
+
+    @Json(name = "id")
+    val id: kotlin.String? = null,
+
+    @Json(name = "logic")
+    val logic: kotlin.String? = null,
+
+    @Json(name = "action_sequences")
+    val actionSequences: kotlin.collections.List<io.getstream.chat.android.network.models.CallRuleActionSequence>? = emptyList(),
+
+    @Json(name = "conditions")
+    val conditions: kotlin.collections.List<io.getstream.chat.android.network.models.RuleBuilderCondition>? = emptyList(),
+
+    @Json(name = "groups")
+    val groups: kotlin.collections.List<io.getstream.chat.android.network.models.RuleBuilderConditionGroup>? = emptyList(),
+
+    @Json(name = "action")
+    val action: io.getstream.chat.android.network.models.RuleBuilderAction? = null
+)

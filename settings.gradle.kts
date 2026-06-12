@@ -62,6 +62,7 @@ include (
 		":stream-chat-android-compose",
 		":stream-chat-android-compose-sample",
 		":stream-chat-android-markdown-transformer",
+	    ":stream-chat-android-network",
 		":stream-chat-android-ui-uitests",
 		":stream-chat-android-benchmark",
 		":metrics:stream-chat-android-metrics",
