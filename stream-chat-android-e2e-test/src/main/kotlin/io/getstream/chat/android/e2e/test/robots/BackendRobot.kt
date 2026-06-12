@@ -56,6 +56,12 @@ public class BackendRobot(
         return this
     }
 
+    public fun setCooldown(enabled: Boolean, duration: Int): BackendRobot {
+        waitForMockServerToStart()
+        mockServer.postRequest("config/cooldown?enabled=$enabled&duration=$duration")
+        return this
+    }
+
     public fun revokeToken(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/revoke_token?duration=$duration")

@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.uiautomator.findObject
 import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.height
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
+import io.getstream.chat.android.compose.uiautomator.isEnabled
 import io.getstream.chat.android.compose.uiautomator.retryOnStaleObjectException
 import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.compose.uiautomator.wait
@@ -236,6 +237,23 @@ fun UserRobot.assertMentionWasApplied(): UserRobot {
 
 fun UserRobot.assertComposerText(expectedText: String): UserRobot {
     assertEquals(expectedText, Composer.inputField.waitForText(expectedText))
+    return this
+}
+
+fun UserRobot.assertCooldownIsShown(): UserRobot {
+    assertTrue(Composer.cooldownIndicator.waitToAppear().isDisplayed())
+    assertFalse(Composer.sendButton.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertCooldownIsNotShown(): UserRobot {
+    assertFalse(Composer.cooldownIndicator.waitToDisappear().isDisplayed())
+    return this
+}
+
+fun UserRobot.assertComposerIsDisabledInSlowMode(): UserRobot {
+    assertFalse(Composer.inputField.isEnabled())
+    assertFalse(Composer.attachmentsButton.isEnabled())
     return this
 }
 
