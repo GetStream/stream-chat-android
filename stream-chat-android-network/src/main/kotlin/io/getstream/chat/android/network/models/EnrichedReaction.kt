@@ -23,19 +23,10 @@
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
 data class EnrichedReaction (
@@ -61,7 +52,7 @@ data class EnrichedReaction (
     val childrenCounts: kotlin.collections.Map<kotlin.String, kotlin.Int>? = emptyMap(),
 
     @Json(name = "created_at")
-    val createdAt: io.getstream.chat.android.network.models.Time? = null,
+    val createdAt: org.threeten.bp.OffsetDateTime? = null,
 
     @Json(name = "data")
     val data: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
@@ -73,7 +64,7 @@ data class EnrichedReaction (
     val ownChildren: kotlin.collections.Map<kotlin.String, kotlin.collections.List<io.getstream.chat.android.network.models.EnrichedReaction>>? = emptyMap(),
 
     @Json(name = "updated_at")
-    val updatedAt: io.getstream.chat.android.network.models.Time? = null,
+    val updatedAt: org.threeten.bp.OffsetDateTime? = null,
 
     @Json(name = "user")
     val user: io.getstream.chat.android.network.models.Data? = null

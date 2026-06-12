@@ -23,10 +23,6 @@
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
@@ -103,7 +99,7 @@ data class MessageRequest (
     val sharedLocation: io.getstream.chat.android.network.models.SharedLocation? = null
 )
 {
-    
+
     /**
     * Type Enum
     */
@@ -112,17 +108,17 @@ data class MessageRequest (
 
             companion object {
                 fun fromString(s: kotlin.String): Type = when (s) {
-                    "''" -> ''
+                    "''" -> Empty
                     "regular" -> Regular
                     "system" -> System
                     else -> Unknown(s)
                 }
             }
-            object '' : Type("''")
+            object Empty : Type("''")
             object Regular : Type("regular")
             object System : Type("system")
             data class Unknown(val unknownValue: kotlin.String) : Type(unknownValue)
-        
+
 
         class TypeAdapter : JsonAdapter<Type>() {
             @FromJson
@@ -136,5 +132,5 @@ data class MessageRequest (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

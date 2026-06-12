@@ -23,19 +23,10 @@
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
 data class EnrichedActivity (
@@ -61,7 +52,7 @@ data class EnrichedActivity (
     val latestReactions: kotlin.collections.Map<kotlin.String, kotlin.collections.List<io.getstream.chat.android.network.models.EnrichedReaction>>? = emptyMap(),
 
     @Json(name = "object")
-    val object: io.getstream.chat.android.network.models.Data? = null,
+    val `object`: io.getstream.chat.android.network.models.Data? = null,
 
     @Json(name = "origin")
     val origin: io.getstream.chat.android.network.models.Data? = null,
