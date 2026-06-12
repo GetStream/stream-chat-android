@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.theme.ChannelListBannerParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListDividerItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListEmptyContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelListEmptySearchContentParams
@@ -94,6 +95,8 @@ import kotlinx.coroutines.launch
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param onSearchResultClick Handler for a single search result tap.
+ * @param onLoadingErrorClick Handler for the "Tap to retry" banner shown when loading the next page fails.
+ * Defaults to retrying the failed load.
  * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
  */
 @Composable
@@ -113,6 +116,7 @@ public fun ChannelList(
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = remember(viewModel) { { viewModel.selectChannel(it) } },
     onSearchResultClick: (Message) -> Unit = {},
+    onLoadingErrorClick: () -> Unit = remember(viewModel) { { viewModel.loadMore() } },
     onStartChatClick: (() -> Unit)? = null,
 ) {
     val user by viewModel.user.collectAsState()
@@ -160,6 +164,7 @@ public fun ChannelList(
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick,
             onSearchResultClick = onSearchResultClick,
+            onLoadingErrorClick = onLoadingErrorClick,
             onStartChatClick = onStartChatClick,
         )
     }
@@ -187,6 +192,7 @@ public fun ChannelList(
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
  * @param onSearchResultClick Handler for a single search result tap.
+ * @param onLoadingErrorClick Handler for the "Tap to retry" banner shown when loading the next page fails.
  * @param onStartChatClick Handler for the "Start a chat" button in the empty state. If null, the button is hidden.
  */
 @Composable
@@ -200,43 +206,51 @@ public fun ChannelList(
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
     onSearchResultClick: (Message) -> Unit = {},
+    onLoadingErrorClick: () -> Unit = {},
     onStartChatClick: (() -> Unit)? = null,
 ) {
     val (isLoading, _, _, channels, searchQuery) = channelsState
 
     when {
         channels.isNotEmpty() -> {
-            Channels(
-                modifier = modifier,
-                contentPadding = contentPadding,
-                channelsState = channelsState,
-                lazyListState = lazyListState,
-                onLastItemReached = onLastItemReached,
-                helperContent = {
+            Column(modifier = modifier) {
+                if (channelsState.loadingError) {
                     with(ChatTheme.componentFactory) {
-                        ChannelListHelperContent(params = ChannelListHelperContentParams())
+                        ChannelListBanner(params = ChannelListBannerParams(onClick = onLoadingErrorClick))
                     }
-                },
-                loadingMoreContent = {
-                    with(ChatTheme.componentFactory) {
-                        ChannelListLoadingMoreItemContent(params = ChannelListLoadingMoreItemContentParams())
-                    }
-                },
-                itemContent = { itemState ->
-                    WrapperItemContent(
-                        itemState = itemState,
-                        currentUser = currentUser,
-                        onChannelClick = onChannelClick,
-                        onChannelLongClick = onChannelLongClick,
-                        onSearchResultClick = onSearchResultClick,
-                    )
-                },
-                divider = {
-                    with(ChatTheme.componentFactory) {
-                        ChannelListDividerItem(params = ChannelListDividerItemParams())
-                    }
-                },
-            )
+                }
+                Channels(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = contentPadding,
+                    channelsState = channelsState,
+                    lazyListState = lazyListState,
+                    onLastItemReached = onLastItemReached,
+                    helperContent = {
+                        with(ChatTheme.componentFactory) {
+                            ChannelListHelperContent(params = ChannelListHelperContentParams())
+                        }
+                    },
+                    loadingMoreContent = {
+                        with(ChatTheme.componentFactory) {
+                            ChannelListLoadingMoreItemContent(params = ChannelListLoadingMoreItemContentParams())
+                        }
+                    },
+                    itemContent = { itemState ->
+                        WrapperItemContent(
+                            itemState = itemState,
+                            currentUser = currentUser,
+                            onChannelClick = onChannelClick,
+                            onChannelLongClick = onChannelLongClick,
+                            onSearchResultClick = onSearchResultClick,
+                        )
+                    },
+                    divider = {
+                        with(ChatTheme.componentFactory) {
+                            ChannelListDividerItem(params = ChannelListDividerItemParams())
+                        }
+                    },
+                )
+            }
         }
 
         isLoading -> ChatTheme.componentFactory.ChannelListLoadingIndicator(
@@ -423,7 +437,7 @@ private fun ChannelListForContentStatePreview() {
                     draftMessage = null,
                 ),
                 ItemState.ChannelItemState(
-                    channel = PreviewChannelData.channelWithOnlineUser,
+                    channel = PreviewChannelData.channelWithOneUser,
                     typingUsers = emptyList(),
                     draftMessage = PreviewMessageData.draftMessage,
                 ),

@@ -312,6 +312,20 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default channel list banner, pinned below the header when loading the next page of channels fails.
+     * Shows a "Tap to retry" prompt and retries the failed load when tapped.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ChannelListBanner(params: ChannelListBannerParams) {
+        io.getstream.chat.android.compose.ui.channels.list.ChannelListBanner(
+            modifier = params.modifier,
+            onClick = params.onClick,
+        )
+    }
+
+    /**
      * The default empty content of the channel list.
      *
      * @param params Parameters for this component.

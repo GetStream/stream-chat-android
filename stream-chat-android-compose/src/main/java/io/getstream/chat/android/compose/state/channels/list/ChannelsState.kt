@@ -24,6 +24,7 @@ package io.getstream.chat.android.compose.state.channels.list
  * @param endOfChannels If we've reached the end of channels, to stop triggering pagination.
  * @param channelItems The channel items to represent in the list.
  * @param searchQuery The current search query.
+ * @param loadingError If the last channel load failed. Cleared once a subsequent load succeeds.
  */
 public data class ChannelsState(
     val isLoading: Boolean = true,
@@ -31,4 +32,5 @@ public data class ChannelsState(
     val endOfChannels: Boolean = false,
     val channelItems: List<ItemState> = emptyList(),
     val searchQuery: SearchQuery = SearchQuery.Empty,
+    val loadingError: Boolean = false,
 )
