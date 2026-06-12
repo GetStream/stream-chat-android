@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
@@ -156,6 +157,55 @@ internal class MessageComposerControllerTest {
             .get()
         // then
         assertTrue(controller.state.value.pollsEnabled)
+    }
+
+    @Test
+    fun `slow mode cooldown activates without the slow-mode capability`() = runTest {
+        // given a channel with a cooldown but without the slow-mode own-capability
+        val channelData = MutableStateFlow(
+            ChannelData(id = CHANNEL_ID, type = CHANNEL_TYPE, cooldown = 10, ownCapabilities = emptySet()),
+        )
+        // when the current user has just sent a message
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenInheritedScope(testCoroutines.scope)
+            .givenChannelState(
+                channelDataState = channelData,
+                lastSentMessageDateState = MutableStateFlow(Date()),
+            )
+            .get()
+        // then slow mode is active even though the slow-mode capability is absent
+        assertTrue(controller.state.value.coolDownTime > 0)
+    }
+
+    @Test
+    fun `slow mode cooldown stays off when the user can skip slow mode`() = runTest {
+        // given a channel with a cooldown and the skip-slow-mode capability
+        val channelData = MutableStateFlow(
+            ChannelData(
+                id = CHANNEL_ID,
+                type = CHANNEL_TYPE,
+                cooldown = 10,
+                ownCapabilities = setOf(ChannelCapabilities.SKIP_SLOW_MODE),
+            ),
+        )
+        // when the current user has just sent a message
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenInheritedScope(testCoroutines.scope)
+            .givenChannelState(
+                channelDataState = channelData,
+                lastSentMessageDateState = MutableStateFlow(Date()),
+            )
+            .get()
+        // then slow mode is not active
+        assertEquals(0, controller.state.value.coolDownTime)
     }
 
     @Test
