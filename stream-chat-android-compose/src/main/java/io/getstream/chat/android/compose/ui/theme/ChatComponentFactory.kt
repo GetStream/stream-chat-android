@@ -1105,11 +1105,6 @@ public interface ChatComponentFactory {
     /**
      * The default Giphy message content.
      *
-     * For TalkBack, the focused preview is announced as a single merged node whose description is
-     * composed and owned here ("Giphy preview", alt text, "Only visible to you"). This clears the
-     * semantics of the inner [GiphyAttachmentContent], so to customize the preview's accessibility
-     * announcement, override this function rather than [GiphyAttachmentContent].
-     *
      * @param params Parameters for this component.
      */
     @Composable

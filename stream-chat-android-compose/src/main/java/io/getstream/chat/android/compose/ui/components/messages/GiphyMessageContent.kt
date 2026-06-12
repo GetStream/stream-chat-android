@@ -48,14 +48,13 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
-import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -98,19 +97,7 @@ public fun GiphyMessageContent(
     val cancelledAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_cancelled)
     val shuffledAnnouncement = stringResource(R.string.stream_compose_message_list_giphy_shuffled)
 
-    // The focused preview is announced as one TalkBack stop. The reading order intentionally leads
-    // with the Giphy context, which differs from the visual top-to-bottom order (the "only visible
-    // to you" banner sits on top). That order spans the banner and the overridable
-    // GiphyAttachmentContent, so no single leaf can own it: compose the description here and clear
-    // the children's semantics below. Alt text is sourced exactly as GiphyAttachmentContent does.
     val giphyPreviewLabel = stringResource(R.string.stream_compose_giphy_preview_label)
-    val onlyVisibleToYou = stringResource(R.string.stream_compose_only_visible_to_you)
-    val giphyAltText = message.attachments
-        .firstOrNull(Attachment::isGiphy)
-        ?.title
-        ?.takeIf(String::isNotBlank)
-    val previewDescription = listOfNotNull(giphyPreviewLabel, giphyAltText, onlyVisibleToYou)
-        .joinToString(separator = ", ")
 
     val isTouchExplorationEnabled = rememberIsTouchExplorationEnabled()
     val previewFocusRequester = remember { FocusRequester() }
@@ -136,7 +123,11 @@ public fun GiphyMessageContent(
                 .applyIf(isTouchExplorationEnabled) {
                     focusRequester(previewFocusRequester).focusable()
                 }
-                .clearAndSetSemantics { contentDescription = previewDescription },
+                // Announce the focused preview as a single TalkBack stop that leads with the
+                // "Giphy preview" label. mergeDescendants prepends it to the children's natural
+                // announcements (the only-visible banner, alt text, Giphy label), keeping their
+                // test tags and any integrator overrides intact.
+                .semantics(mergeDescendants = true) { contentDescription = giphyPreviewLabel },
         ) {
             Row(
                 modifier = Modifier
@@ -152,7 +143,7 @@ public fun GiphyMessageContent(
                     tint = colors.chatTextOutgoing,
                 )
                 Text(
-                    text = onlyVisibleToYou,
+                    text = stringResource(R.string.stream_compose_only_visible_to_you),
                     style = ChatTheme.typography.captionEmphasis,
                     color = colors.chatTextOutgoing,
                 )
