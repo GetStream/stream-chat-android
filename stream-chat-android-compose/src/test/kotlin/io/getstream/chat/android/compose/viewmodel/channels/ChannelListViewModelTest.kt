@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.channels
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -27,6 +28,8 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.state.channels.list.ChannelListAction
+import io.getstream.chat.android.compose.state.channels.list.ChannelListEvent
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.models.AndFilterObject
@@ -50,6 +53,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.result.Error
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
@@ -335,6 +339,144 @@ internal class ChannelListViewModelTest {
             assertEquals(0, captor.firstValue.offset)
             assertEquals(30, captor.secondValue.offset)
         }
+
+    @Test
+    fun `Given loading more channels fails When loading more Should expose a loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.channelsState.loadingError)
+        assertFalse(viewModel.channelsState.isLoadingMore)
+    }
+
+    @Test
+    fun `Given a loading error When the search query changes Should clear the loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+        assertTrue(viewModel.channelsState.loadingError)
+
+        viewModel.setSearchQuery(SearchQuery.Channels("query"))
+
+        assertFalse(viewModel.channelsState.loadingError)
+    }
+
+    @Test
+    fun `Given a loading error When retrying successfully Should clear the loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+            listOf(channel1, channel2).asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+        assertTrue(viewModel.channelsState.loadingError)
+
+        // Tapping the banner retries the same page; the failed query is no longer rejected as a duplicate.
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.channelsState.loadingError)
+        verify(chatClient, times(3)).queryChannels(any())
+    }
+
+    @Test
+    fun `Given a loading error When retrying unsuccessfully Should keep the loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+            Error.GenericError("network error").asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+        assertTrue(viewModel.channelsState.loadingError)
+
+        // A failing retry keeps the banner up (no flicker); the error is only cleared on success.
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.channelsState.loadingError)
+        verify(chatClient, times(3)).queryChannels(any())
+    }
 
     @Test
     fun `Given channel list in content state and the current user is offline When loading more channels Should do nothing`() =
@@ -860,6 +1002,174 @@ internal class ChannelListViewModelTest {
             sort = anyOrNull(),
         )
         assertEquals(queryFilter, channelFilterCaptor.firstValue)
+    }
+
+    @Test
+    fun `Given a channel action fails When muting Should emit an action error event`() = runTest {
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.muteChannel(any(), any(), eq(null)))
+            .doReturn(Error.GenericError("network error").asCall())
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .get(this)
+
+        viewModel.events.test {
+            viewModel.muteChannel(channel1)
+            val event = awaitItem()
+            assertInstanceOf(ChannelListEvent.ActionError::class.java, event)
+            assertEquals(ChannelListAction.MuteChannel, (event as ChannelListEvent.ActionError).action)
+        }
+    }
+
+    @Test
+    fun `Given delete succeeds When deleting a channel Should emit a channel deleted event`() = runTest {
+        val chatClient: ChatClient = mock()
+        val channelClient: ChannelClient = mock()
+        val viewModel = Fixture(chatClient, channelClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenDeleteChannel()
+            .get(this)
+
+        viewModel.events.test {
+            viewModel.deleteConversation(channel1)
+            assertEquals(ChannelListEvent.ChannelDeleted, awaitItem())
+        }
+    }
+
+    @Test
+    fun `Given delete fails When deleting a channel Should emit an action error event`() = runTest {
+        val chatClient: ChatClient = mock()
+        val channelClient: ChannelClient = mock()
+        whenever(channelClient.delete()).doReturn(Error.GenericError("network error").asCall())
+        val viewModel = Fixture(chatClient, channelClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .get(this)
+
+        viewModel.events.test {
+            viewModel.deleteConversation(channel1)
+            val event = awaitItem()
+            assertInstanceOf(ChannelListEvent.ActionError::class.java, event)
+            assertEquals(ChannelListAction.DeleteChannel, (event as ChannelListEvent.ActionError).action)
+        }
+    }
+
+    @Test
+    fun `Given pinning a channel fails Should emit a pin action error`() = runActionErrorTest(
+        expected = ChannelListAction.PinChannel,
+        stub = { chatClient, _ -> whenever(chatClient.pinChannel(any(), any())).doReturn(failedCall()) },
+        action = { it.pinChannel(channel1) },
+    )
+
+    @Test
+    fun `Given unpinning a channel fails Should emit an unpin action error`() = runActionErrorTest(
+        expected = ChannelListAction.UnpinChannel,
+        stub = { chatClient, _ -> whenever(chatClient.unpinChannel(any(), any())).doReturn(failedCall()) },
+        action = { it.unpinChannel(channel1) },
+    )
+
+    @Test
+    fun `Given archiving a channel fails Should emit an archive action error`() = runActionErrorTest(
+        expected = ChannelListAction.ArchiveChannel,
+        stub = { chatClient, _ -> whenever(chatClient.archiveChannel(any(), any())).doReturn(failedCall()) },
+        action = { it.archiveChannel(channel1) },
+    )
+
+    @Test
+    fun `Given unarchiving a channel fails Should emit an unarchive action error`() = runActionErrorTest(
+        expected = ChannelListAction.UnarchiveChannel,
+        stub = { chatClient, _ -> whenever(chatClient.unarchiveChannel(any(), any())).doReturn(failedCall()) },
+        action = { it.unarchiveChannel(channel1) },
+    )
+
+    @Test
+    fun `Given unmuting a channel fails Should emit an unmute action error`() = runActionErrorTest(
+        expected = ChannelListAction.UnmuteChannel,
+        stub = { chatClient, _ -> whenever(chatClient.unmuteChannel(any(), any())).doReturn(failedCall()) },
+        action = { it.unmuteChannel(channel1) },
+    )
+
+    @Test
+    fun `Given leaving a group fails Should emit a leave action error`() = runActionErrorTest(
+        expected = ChannelListAction.LeaveGroup,
+        stub = { _, channelClient ->
+            whenever(channelClient.removeMembers(any(), anyOrNull(), anyOrNull())).doReturn(failedCall())
+        },
+        action = { it.leaveGroup(channel1) },
+    )
+
+    @Test
+    fun `Given muting a user fails Should emit a mute user action error`() = runActionErrorTest(
+        expected = ChannelListAction.MuteUser,
+        stub = { chatClient, _ -> whenever(chatClient.muteUser(any(), anyOrNull())).doReturn(failedCall()) },
+        action = { it.muteUser("userId") },
+    )
+
+    @Test
+    fun `Given unmuting a user fails Should emit an unmute user action error`() = runActionErrorTest(
+        expected = ChannelListAction.UnmuteUser,
+        stub = { chatClient, _ -> whenever(chatClient.unmuteUser(any())).doReturn(failedCall()) },
+        action = { it.unmuteUser("userId") },
+    )
+
+    @Test
+    fun `Given blocking a user fails Should emit a block action error`() = runActionErrorTest(
+        expected = ChannelListAction.BlockUser,
+        stub = { chatClient, _ -> whenever(chatClient.blockUser(any())).doReturn(failedCall()) },
+        action = { it.blockUser("userId") },
+    )
+
+    @Test
+    fun `Given unblocking a user fails Should emit an unblock action error`() = runActionErrorTest(
+        expected = ChannelListAction.UnblockUser,
+        stub = { chatClient, _ -> whenever(chatClient.unblockUser(any())).doReturn(failedCall()) },
+        action = { it.unblockUser("userId") },
+    )
+
+    private fun <T : Any> failedCall(): io.getstream.result.call.Call<T> = Error.GenericError("network error").asCall()
+
+    private fun runActionErrorTest(
+        expected: ChannelListAction,
+        stub: (ChatClient, ChannelClient) -> Unit,
+        action: (ChannelListViewModel) -> Unit,
+    ) = runTest {
+        val chatClient: ChatClient = mock()
+        val channelClient: ChannelClient = mock()
+        stub(chatClient, channelClient)
+        val viewModel = Fixture(chatClient, channelClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.events.test {
+            action(viewModel)
+            val event = awaitItem()
+            assertInstanceOf(ChannelListEvent.ActionError::class.java, event)
+            assertEquals(expected, (event as ChannelListEvent.ActionError).action)
+        }
     }
 
     private class Fixture(

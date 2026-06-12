@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.channels
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,19 +25,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.channels.list.ChannelListEvent
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
@@ -46,12 +54,16 @@ import io.getstream.chat.android.compose.ui.theme.ChannelListSearchInputParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarVariant
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarVisuals
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
+import kotlinx.coroutines.launch
 
 /**
  * Default root Channel screen component, that provides the necessary ViewModel.
@@ -112,6 +124,9 @@ public fun ChannelsScreen(
 
     var searchQuery by rememberSaveable { mutableStateOf(listViewModel.searchQuery.query) }
 
+    val snackbarHostState = remember(::SnackbarHostState)
+    EventHandler(listViewModel, snackbarHostState)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -121,6 +136,7 @@ public fun ChannelsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .semantics { paneTitle = title },
+            snackbarHost = { StreamSnackbarHost(snackbarHostState) },
             topBar = {
                 if (isShowingHeader) {
                     ChatTheme.componentFactory.ChannelListHeader(
@@ -225,6 +241,40 @@ public fun ChannelsScreen(
                 onPositiveAction = remember(listViewModel) { { listViewModel.confirmPendingAction() } },
                 onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
             )
+        }
+    }
+}
+
+/**
+ * Collects [ChannelListViewModel.events] and surfaces them as a snackbar: an error pill for a failed channel action,
+ * and a confirmation pill when a channel is deleted.
+ */
+@Composable
+private fun EventHandler(viewModel: ChannelListViewModel, snackbarHostState: SnackbarHostState) {
+    val snackbarScope = rememberCoroutineScope()
+    val resources = LocalResources.current
+
+    fun showSnackbar(@StringRes resId: Int, variant: StreamSnackbarVariant) {
+        snackbarScope.launch {
+            snackbarHostState.showSnackbar(
+                StreamSnackbarVisuals(
+                    message = resources.getString(resId),
+                    variant = variant,
+                    duration = SnackbarDuration.Short,
+                ),
+            )
+        }
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is ChannelListEvent.ActionError ->
+                    showSnackbar(event.action.errorMessageResId, StreamSnackbarVariant.Error)
+
+                is ChannelListEvent.ChannelDeleted ->
+                    showSnackbar(R.string.stream_compose_channel_list_channel_deleted, StreamSnackbarVariant.Default)
+            }
         }
     }
 }
