@@ -17,17 +17,17 @@
 package io.getstream.chat.android.models
 
 /**
- * Discriminates roles by what they can be assigned to. Wraps the raw wire string so unknown
- * values round-trip without being lost.
+ * Whether a role is assignable to a user or to a channel member. Wraps the raw wire string so
+ * unknown values round-trip without being lost.
  */
 public data class RoleType(public val value: String) {
 
     public companion object {
 
-        /** User-assignable role. */
+        /** Assignable to a user. */
         public val User: RoleType = RoleType(value = "user")
 
-        /** Channel-assignable role. */
+        /** Assignable to a channel member. */
         public val Channel: RoleType = RoleType(value = "channel")
 
         public fun fromValue(value: String?): RoleType? = when (value) {
