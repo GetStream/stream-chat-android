@@ -372,6 +372,39 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Given a loading error When the search query changes Should clear the loading error`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+        val chatClient: ChatClient = mock()
+        whenever(chatClient.queryChannels(any())).doReturn(
+            listOf(channel1, channel2).asCall(),
+            Error.GenericError("network error").asCall(),
+        )
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
+            )
+            .givenChannelMutes()
+            .givenIsOffline(false)
+            .get(this)
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+        assertTrue(viewModel.channelsState.loadingError)
+
+        viewModel.setSearchQuery(SearchQuery.Channels("query"))
+
+        assertFalse(viewModel.channelsState.loadingError)
+    }
+
+    @Test
     fun `Given a loading error When retrying successfully Should clear the loading error`() = runTest {
         val nextPageRequest = QueryChannelsRequest(
             filter = queryFilter,

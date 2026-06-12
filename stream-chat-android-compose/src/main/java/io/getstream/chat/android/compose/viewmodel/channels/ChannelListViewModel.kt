@@ -368,6 +368,8 @@ public class ChannelListViewModel internal constructor(
      */
     public fun setSearchQuery(searchQuery: SearchQuery) {
         logger.d { "[setSearchQuery] searchQuery: $searchQuery" }
+        // Changing the query starts a fresh load, so any pending load-more error no longer applies.
+        channelsState = channelsState.copy(loadingError = false)
         this._searchQuery.value = searchQuery
     }
 
