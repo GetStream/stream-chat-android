@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -43,6 +44,7 @@ public fun CoolDownIndicator(
 ) {
     Box(
         modifier = modifier
+            .testTag("Stream_ComposerCooldownIndicator")
             .size(48.dp)
             .padding(8.dp)
             .background(shape = RoundedCornerShape(24.dp), color = ChatTheme.colors.textDisabled),

@@ -544,6 +544,24 @@ internal fun MessageComposerFixedStyleWithCommandSuggestions() {
     )
 }
 
+@Preview
+@Composable
+private fun MessageComposerSlowModePreview() {
+    ChatTheme {
+        MessageComposerSlowMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerSlowMode() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            coolDownTime = 9,
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingStylePreview() {

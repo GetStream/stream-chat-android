@@ -98,11 +98,18 @@ public fun MessageInput(
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     onActiveCommandDismiss: () -> Unit = {},
 ) {
+    // While slow mode is active the whole composer is locked, so the border uses the disabled colour.
+    val isInCoolDown = messageComposerState.coolDownTime > 0
+    val borderColor = if (isInCoolDown) {
+        ChatTheme.colors.borderUtilityDisabled
+    } else {
+        ChatTheme.colors.borderCoreDefault
+    }
     Column(
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = ChatTheme.colors.borderCoreDefault,
+                color = borderColor,
                 shape = MessageInputShape,
             )
             .then(
@@ -315,7 +322,6 @@ private fun MessageComposerInputSlowModePreview() {
 internal fun MessageComposerInputSlowMode() {
     MessageInput(
         messageComposerState = PreviewMessageComposerState.copy(
-            inputValue = "Slow mode, wait 9s",
             coolDownTime = 9,
         ),
     )

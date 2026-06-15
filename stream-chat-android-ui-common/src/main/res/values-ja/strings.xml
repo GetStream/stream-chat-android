@@ -131,6 +131,7 @@
   <string name="stream_ui_message_composer_placeholder_command_unban">\@username</string>
   <string name="stream_ui_message_composer_placeholder_command_unmute">\@username</string>
   <string name="stream_ui_message_composer_placeholder_default">"メッセージを送信"</string>
+  <string name="stream_ui_message_composer_placeholder_slow_mode">"スローモード、あと%1$d秒…"</string>
   <string name="stream_ui_message_list_attachment_display_error">"エラー。ファイルを表示できません"</string>
   <string name="stream_ui_message_list_attachment_download_failed">"ファイルのダウンロードに失敗しました：%s"</string>
   <string name="stream_ui_message_list_attachment_downloading">"ダウンロード中… %1$s / %2$s"</string>

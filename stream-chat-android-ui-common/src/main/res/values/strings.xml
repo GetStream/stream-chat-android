@@ -212,6 +212,7 @@
     <!-- Message Composer -->
     <string name="stream_ui_message_composer_placeholder_default">Send a message</string>
     <string name="stream_ui_message_composer_placeholder_cannot_send_messages">You can\'t send messages in this channel</string>
+    <string name="stream_ui_message_composer_placeholder_slow_mode">Slow mode, wait %1$ds…</string>
     <string name="stream_ui_message_composer_placeholder_command_giphy">Search GIFs</string>
     <string name="stream_ui_message_composer_placeholder_command_mute">\@username</string>
     <string name="stream_ui_message_composer_placeholder_command_unmute">\@username</string>

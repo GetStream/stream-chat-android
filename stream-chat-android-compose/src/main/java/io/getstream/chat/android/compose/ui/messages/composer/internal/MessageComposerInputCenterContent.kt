@@ -113,6 +113,7 @@ internal fun MessageComposerInputCenterContent(
                 if (value.isEmpty()) {
                     TextFieldPlaceholder(
                         canSendMessage = canSendMessage,
+                        coolDownTime = state.coolDownTime,
                         activeCommandDescriptionRes = state.activeCommand?.placeholderRes,
                     )
                 }
@@ -120,7 +121,7 @@ internal fun MessageComposerInputCenterContent(
         },
         maxLines = TextFieldMaxLines,
         singleLine = false,
-        enabled = canSendMessage,
+        enabled = canSendMessage && state.coolDownTime <= 0,
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     )
 }
@@ -128,12 +129,20 @@ internal fun MessageComposerInputCenterContent(
 @Composable
 private fun TextFieldPlaceholder(
     canSendMessage: Boolean,
+    coolDownTime: Int,
     @StringRes activeCommandDescriptionRes: Int?,
 ) {
-    val text = if (canSendMessage) {
-        stringResource(activeCommandDescriptionRes ?: UiCommonR.string.stream_ui_message_composer_placeholder_default)
-    } else {
-        stringResource(UiCommonR.string.stream_ui_message_composer_placeholder_cannot_send_messages)
+    val text = when {
+        coolDownTime > 0 ->
+            stringResource(UiCommonR.string.stream_ui_message_composer_placeholder_slow_mode, coolDownTime)
+
+        canSendMessage ->
+            stringResource(
+                activeCommandDescriptionRes ?: UiCommonR.string.stream_ui_message_composer_placeholder_default,
+            )
+
+        else ->
+            stringResource(UiCommonR.string.stream_ui_message_composer_placeholder_cannot_send_messages)
     }
     Text(
         text = text,

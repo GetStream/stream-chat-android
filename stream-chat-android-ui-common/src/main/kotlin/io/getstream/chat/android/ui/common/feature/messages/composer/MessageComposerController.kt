@@ -207,22 +207,6 @@ public class MessageComposerController(
         )
 
     /**
-     * Signals if the user needs to wait before sending the next message.
-     *
-     * Depending on roles & permissions setup in the dashboard, some user groups are allowed
-     * to send messages instantly even if the slow mode is enabled for the channel.
-     *
-     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
-     * ever read directly.
-     */
-    private val isSlowModeActive = ownCapabilities.map { it.contains(ChannelCapabilities.SLOW_MODE) }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.Eagerly,
-            initialValue = false,
-        )
-
-    /**
      * Signals whether slow-mode should be ignored (even if it's active).
      *
      * Some users can have an exceptions (e.g. moderators) and in this case we should ignore
@@ -1335,7 +1319,10 @@ public class MessageComposerController(
      * @param lastSentMessageDate The date of the last message.
      */
     private fun handleLastSentMessageDate(cooldownInterval: Int, lastSentMessageDate: Date?) {
-        val isSlowModeActive = cooldownInterval > 0 && isSlowModeActive.value && !isSlowModeDisabled.value
+        // Not gated on the SLOW_MODE capability on purpose: the backend grants it only when
+        // cooldown > 0 and the user cannot skip slow mode, so these two checks stay equivalent
+        // and keep working if the backend later changes how that capability is granted.
+        val isSlowModeActive = cooldownInterval > 0 && !isSlowModeDisabled.value
 
         if (isSlowModeActive && lastSentMessageDate != null && !isInEditMode) {
             // Time passed since the last message was successfully sent to the server

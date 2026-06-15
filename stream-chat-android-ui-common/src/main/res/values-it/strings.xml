@@ -132,6 +132,7 @@
   <string name="stream_ui_message_composer_placeholder_command_unban">\@username</string>
   <string name="stream_ui_message_composer_placeholder_command_unmute">\@username</string>
   <string name="stream_ui_message_composer_placeholder_default">"Invia un messaggio"</string>
+  <string name="stream_ui_message_composer_placeholder_slow_mode">"Modalità lenta, attendi %1$d s…"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Errore. Impossibile visualizzare il file"</string>
   <string name="stream_ui_message_list_attachment_download_failed">"Impossibile scaricare il file: %s"</string>
   <string name="stream_ui_message_list_attachment_downloading">"Download in corso… %1$s / %2$s"</string>
