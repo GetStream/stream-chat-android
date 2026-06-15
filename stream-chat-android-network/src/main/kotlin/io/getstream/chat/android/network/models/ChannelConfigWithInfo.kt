@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -53,7 +53,7 @@ data class ChannelConfigWithInfo (
     val countMessages: kotlin.Boolean,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "custom_events")
     val customEvents: kotlin.Boolean,
@@ -107,7 +107,7 @@ data class ChannelConfigWithInfo (
     val typingEvents: kotlin.Boolean,
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime,
+    val updatedAt: java.util.Date,
 
     @Json(name = "uploads")
     val uploads: kotlin.Boolean,
@@ -152,7 +152,7 @@ data class ChannelConfigWithInfo (
     val grants: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>? = emptyMap()
 )
 {
-
+    
     /**
     * Automod Enum
     */
@@ -171,7 +171,7 @@ data class ChannelConfigWithInfo (
             object Disabled : Automod("disabled")
             object Simple : Automod("simple")
             data class Unknown(val unknownValue: kotlin.String) : Automod(unknownValue)
-
+        
 
         class AutomodAdapter : JsonAdapter<Automod>() {
             @FromJson
@@ -204,7 +204,7 @@ data class ChannelConfigWithInfo (
             object Flag : AutomodBehavior("flag")
             object ShadowBlock : AutomodBehavior("shadow_block")
             data class Unknown(val unknownValue: kotlin.String) : AutomodBehavior(unknownValue)
-
+        
 
         class AutomodBehaviorAdapter : JsonAdapter<AutomodBehavior>() {
             @FromJson
@@ -237,7 +237,7 @@ data class ChannelConfigWithInfo (
             object Flag : BlocklistBehavior("flag")
             object ShadowBlock : BlocklistBehavior("shadow_block")
             data class Unknown(val unknownValue: kotlin.String) : BlocklistBehavior(unknownValue)
-
+        
 
         class BlocklistBehaviorAdapter : JsonAdapter<BlocklistBehavior>() {
             @FromJson
@@ -274,7 +274,7 @@ data class ChannelConfigWithInfo (
             object Mentions : PushLevel("mentions")
             object None : PushLevel("none")
             data class Unknown(val unknownValue: kotlin.String) : PushLevel(unknownValue)
-
+        
 
         class PushLevelAdapter : JsonAdapter<PushLevel>() {
             @FromJson
@@ -288,5 +288,5 @@ data class ChannelConfigWithInfo (
                 writer.value(value?.value)
             }
         }
-    }
+    }    
 }

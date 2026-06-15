@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -44,7 +44,7 @@ data class OwnUserResponse (
     val banned: kotlin.Boolean,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "id")
     val id: kotlin.String,
@@ -74,7 +74,7 @@ data class OwnUserResponse (
     val unreadThreads: kotlin.Int,
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime,
+    val updatedAt: java.util.Date,
 
     @Json(name = "channel_mutes")
     val channelMutes: kotlin.collections.List<io.getstream.chat.android.network.models.ChannelMute> = emptyList(),
@@ -95,22 +95,22 @@ data class OwnUserResponse (
     val avgResponseTime: kotlin.Int? = null,
 
     @Json(name = "deactivated_at")
-    val deactivatedAt: org.threeten.bp.OffsetDateTime? = null,
+    val deactivatedAt: java.util.Date? = null,
 
     @Json(name = "deleted_at")
-    val deletedAt: org.threeten.bp.OffsetDateTime? = null,
+    val deletedAt: java.util.Date? = null,
 
     @Json(name = "image")
     val image: kotlin.String? = null,
 
     @Json(name = "last_active")
-    val lastActive: org.threeten.bp.OffsetDateTime? = null,
+    val lastActive: java.util.Date? = null,
 
     @Json(name = "name")
     val name: kotlin.String? = null,
 
     @Json(name = "revoke_tokens_issued_before")
-    val revokeTokensIssuedBefore: org.threeten.bp.OffsetDateTime? = null,
+    val revokeTokensIssuedBefore: java.util.Date? = null,
 
     @Json(name = "blocked_user_ids")
     val blockedUserIds: kotlin.collections.List<kotlin.String>? = emptyList(),

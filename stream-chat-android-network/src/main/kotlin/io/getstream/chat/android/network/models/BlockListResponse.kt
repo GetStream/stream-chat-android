@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,7 +56,7 @@ data class BlockListResponse (
     val words: kotlin.collections.List<kotlin.String> = emptyList(),
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime? = null,
+    val createdAt: java.util.Date? = null,
 
     @Json(name = "id")
     val id: kotlin.String? = null,
@@ -65,5 +65,5 @@ data class BlockListResponse (
     val team: kotlin.String? = null,
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime? = null
+    val updatedAt: java.util.Date? = null
 )

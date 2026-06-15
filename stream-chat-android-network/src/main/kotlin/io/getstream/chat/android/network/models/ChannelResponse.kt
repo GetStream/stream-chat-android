@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,7 @@ data class ChannelResponse (
     val cid: kotlin.String,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "disabled")
     val disabled: kotlin.Boolean,
@@ -59,7 +59,7 @@ data class ChannelResponse (
     val type: kotlin.String,
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime,
+    val updatedAt: java.util.Date,
 
     @Json(name = "custom")
     val custom: kotlin.collections.Map<kotlin.String, Any?> = emptyMap(),
@@ -77,16 +77,16 @@ data class ChannelResponse (
     val cooldown: kotlin.Int? = null,
 
     @Json(name = "deleted_at")
-    val deletedAt: org.threeten.bp.OffsetDateTime? = null,
+    val deletedAt: java.util.Date? = null,
 
     @Json(name = "hidden")
     val hidden: kotlin.Boolean? = null,
 
     @Json(name = "hide_messages_before")
-    val hideMessagesBefore: org.threeten.bp.OffsetDateTime? = null,
+    val hideMessagesBefore: java.util.Date? = null,
 
     @Json(name = "last_message_at")
-    val lastMessageAt: org.threeten.bp.OffsetDateTime? = null,
+    val lastMessageAt: java.util.Date? = null,
 
     @Json(name = "member_count")
     val memberCount: kotlin.Int? = null,
@@ -95,7 +95,7 @@ data class ChannelResponse (
     val messageCount: kotlin.Int? = null,
 
     @Json(name = "mute_expires_at")
-    val muteExpiresAt: org.threeten.bp.OffsetDateTime? = null,
+    val muteExpiresAt: java.util.Date? = null,
 
     @Json(name = "muted")
     val muted: kotlin.Boolean? = null,
@@ -104,7 +104,7 @@ data class ChannelResponse (
     val team: kotlin.String? = null,
 
     @Json(name = "truncated_at")
-    val truncatedAt: org.threeten.bp.OffsetDateTime? = null,
+    val truncatedAt: java.util.Date? = null,
 
     @Json(name = "filter_tags")
     val filterTags: kotlin.collections.List<kotlin.String>? = emptyList(),

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,13 +56,13 @@ data class MessageRequest (
     val parentId: kotlin.String? = null,
 
     @Json(name = "pin_expires")
-    val pinExpires: org.threeten.bp.OffsetDateTime? = null,
+    val pinExpires: java.util.Date? = null,
 
     @Json(name = "pinned")
     val pinned: kotlin.Boolean? = null,
 
     @Json(name = "pinned_at")
-    val pinnedAt: org.threeten.bp.OffsetDateTime? = null,
+    val pinnedAt: java.util.Date? = null,
 
     @Json(name = "poll_id")
     val pollId: kotlin.String? = null,
@@ -104,7 +104,7 @@ data class MessageRequest (
     val sharedLocation: io.getstream.chat.android.network.models.SharedLocation? = null
 )
 {
-
+    
     /**
     * Type Enum
     */
@@ -123,7 +123,7 @@ data class MessageRequest (
             object Regular : Type("regular")
             object System : Type("system")
             data class Unknown(val unknownValue: kotlin.String) : Type(unknownValue)
-
+        
 
         class TypeAdapter : JsonAdapter<Type>() {
             @FromJson
@@ -137,5 +137,5 @@ data class MessageRequest (
                 writer.value(value?.value)
             }
         }
-    }
+    }    
 }

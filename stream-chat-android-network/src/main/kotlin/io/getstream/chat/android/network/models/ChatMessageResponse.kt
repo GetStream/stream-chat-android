@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -44,7 +44,7 @@ data class ChatMessageResponse (
     val cid: kotlin.String,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "deleted_reply_count")
     val deletedReplyCount: kotlin.Int,
@@ -80,7 +80,7 @@ data class ChatMessageResponse (
     val type: kotlin.String,
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime,
+    val updatedAt: java.util.Date,
 
     @Json(name = "attachments")
     val attachments: kotlin.collections.List<io.getstream.chat.android.network.models.Attachment> = emptyList(),
@@ -113,13 +113,13 @@ data class ChatMessageResponse (
     val command: kotlin.String? = null,
 
     @Json(name = "deleted_at")
-    val deletedAt: org.threeten.bp.OffsetDateTime? = null,
+    val deletedAt: java.util.Date? = null,
 
     @Json(name = "deleted_for_me")
     val deletedForMe: kotlin.Boolean? = null,
 
     @Json(name = "message_text_updated_at")
-    val messageTextUpdatedAt: org.threeten.bp.OffsetDateTime? = null,
+    val messageTextUpdatedAt: java.util.Date? = null,
 
     @Json(name = "mml")
     val mml: kotlin.String? = null,
@@ -128,10 +128,10 @@ data class ChatMessageResponse (
     val parentId: kotlin.String? = null,
 
     @Json(name = "pin_expires")
-    val pinExpires: org.threeten.bp.OffsetDateTime? = null,
+    val pinExpires: java.util.Date? = null,
 
     @Json(name = "pinned_at")
-    val pinnedAt: org.threeten.bp.OffsetDateTime? = null,
+    val pinnedAt: java.util.Date? = null,
 
     @Json(name = "poll_id")
     val pollId: kotlin.String? = null,

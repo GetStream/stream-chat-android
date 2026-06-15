@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -89,7 +89,7 @@ data class ConfigOverridesRequest (
     val grants: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>? = emptyMap()
 )
 {
-
+    
     /**
     * BlocklistBehavior Enum
     */
@@ -106,7 +106,7 @@ data class ConfigOverridesRequest (
             object Block : BlocklistBehavior("block")
             object Flag : BlocklistBehavior("flag")
             data class Unknown(val unknownValue: kotlin.String) : BlocklistBehavior(unknownValue)
-
+        
 
         class BlocklistBehaviorAdapter : JsonAdapter<BlocklistBehavior>() {
             @FromJson
@@ -143,7 +143,7 @@ data class ConfigOverridesRequest (
             object Mentions : PushLevel("mentions")
             object None : PushLevel("none")
             data class Unknown(val unknownValue: kotlin.String) : PushLevel(unknownValue)
-
+        
 
         class PushLevelAdapter : JsonAdapter<PushLevel>() {
             @FromJson
@@ -157,5 +157,5 @@ data class ConfigOverridesRequest (
                 writer.value(value?.value)
             }
         }
-    }
+    }    
 }

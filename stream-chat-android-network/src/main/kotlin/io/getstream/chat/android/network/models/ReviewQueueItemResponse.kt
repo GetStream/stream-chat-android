@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -44,7 +44,7 @@ data class ReviewQueueItemResponse (
     val aiTextSeverity: kotlin.String,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "entity_id")
     val entityId: kotlin.String,
@@ -77,7 +77,7 @@ data class ReviewQueueItemResponse (
     val status: kotlin.String,
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime,
+    val updatedAt: java.util.Date,
 
     @Json(name = "actions")
     val actions: kotlin.collections.List<io.getstream.chat.android.network.models.ActionLogResponse> = emptyList(),
@@ -92,7 +92,7 @@ data class ReviewQueueItemResponse (
     val languages: kotlin.collections.List<kotlin.String> = emptyList(),
 
     @Json(name = "completed_at")
-    val completedAt: org.threeten.bp.OffsetDateTime? = null,
+    val completedAt: java.util.Date? = null,
 
     @Json(name = "config_key")
     val configKey: kotlin.String? = null,
@@ -101,13 +101,13 @@ data class ReviewQueueItemResponse (
     val entityCreatorId: kotlin.String? = null,
 
     @Json(name = "escalated_at")
-    val escalatedAt: org.threeten.bp.OffsetDateTime? = null,
+    val escalatedAt: java.util.Date? = null,
 
     @Json(name = "escalated_by")
     val escalatedBy: kotlin.String? = null,
 
     @Json(name = "reviewed_at")
-    val reviewedAt: org.threeten.bp.OffsetDateTime? = null,
+    val reviewedAt: java.util.Date? = null,
 
     @Json(name = "teams")
     val teams: kotlin.collections.List<kotlin.String>? = emptyList(),

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,7 +44,7 @@ data class AIIndicatorUpdateEvent (
     val aiState: kotlin.String,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "message_id")
     val messageId: kotlin.String,
@@ -68,12 +68,12 @@ data class AIIndicatorUpdateEvent (
     val cid: kotlin.String? = null,
 
     @Json(name = "received_at")
-    val receivedAt: org.threeten.bp.OffsetDateTime? = null
+    val receivedAt: java.util.Date? = null
 )
 : io.getstream.chat.android.network.models.ChatEvent()
 {
-
+    
     override fun getEventType(): kotlin.String {
         return type
-    }
+    }    
 }

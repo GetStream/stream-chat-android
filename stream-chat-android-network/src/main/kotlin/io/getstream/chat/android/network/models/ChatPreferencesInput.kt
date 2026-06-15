@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -62,7 +62,7 @@ data class ChatPreferencesInput (
     val threadReplies: ThreadReplies? = null
 )
 {
-
+    
     /**
     * ChannelMentions Enum
     */
@@ -79,7 +79,7 @@ data class ChatPreferencesInput (
             object All : ChannelMentions("all")
             object None : ChannelMentions("none")
             data class Unknown(val unknownValue: kotlin.String) : ChannelMentions(unknownValue)
-
+        
 
         class ChannelMentionsAdapter : JsonAdapter<ChannelMentions>() {
             @FromJson
@@ -110,7 +110,7 @@ data class ChatPreferencesInput (
             object All : DefaultPreference("all")
             object None : DefaultPreference("none")
             data class Unknown(val unknownValue: kotlin.String) : DefaultPreference(unknownValue)
-
+        
 
         class DefaultPreferenceAdapter : JsonAdapter<DefaultPreference>() {
             @FromJson
@@ -141,7 +141,7 @@ data class ChatPreferencesInput (
             object All : DirectMentions("all")
             object None : DirectMentions("none")
             data class Unknown(val unknownValue: kotlin.String) : DirectMentions(unknownValue)
-
+        
 
         class DirectMentionsAdapter : JsonAdapter<DirectMentions>() {
             @FromJson
@@ -172,7 +172,7 @@ data class ChatPreferencesInput (
             object All : GroupMentions("all")
             object None : GroupMentions("none")
             data class Unknown(val unknownValue: kotlin.String) : GroupMentions(unknownValue)
-
+        
 
         class GroupMentionsAdapter : JsonAdapter<GroupMentions>() {
             @FromJson
@@ -203,7 +203,7 @@ data class ChatPreferencesInput (
             object All : HereMentions("all")
             object None : HereMentions("none")
             data class Unknown(val unknownValue: kotlin.String) : HereMentions(unknownValue)
-
+        
 
         class HereMentionsAdapter : JsonAdapter<HereMentions>() {
             @FromJson
@@ -234,7 +234,7 @@ data class ChatPreferencesInput (
             object All : RoleMentions("all")
             object None : RoleMentions("none")
             data class Unknown(val unknownValue: kotlin.String) : RoleMentions(unknownValue)
-
+        
 
         class RoleMentionsAdapter : JsonAdapter<RoleMentions>() {
             @FromJson
@@ -265,7 +265,7 @@ data class ChatPreferencesInput (
             object All : ThreadReplies("all")
             object None : ThreadReplies("none")
             data class Unknown(val unknownValue: kotlin.String) : ThreadReplies(unknownValue)
-
+        
 
         class ThreadRepliesAdapter : JsonAdapter<ThreadReplies>() {
             @FromJson
@@ -279,5 +279,5 @@ data class ChatPreferencesInput (
                 writer.value(value?.value)
             }
         }
-    }
+    }    
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -101,7 +101,7 @@ data class SubmitActionRequest (
     val unblock: io.getstream.chat.android.network.models.UnblockActionRequestPayload? = null
 )
 {
-
+    
     /**
     * ActionType Enum
     */
@@ -156,7 +156,7 @@ data class SubmitActionRequest (
             object Unblock : ActionType("unblock")
             object Unmask : ActionType("unmask")
             data class Unknown(val unknownValue: kotlin.String) : ActionType(unknownValue)
-
+        
 
         class ActionTypeAdapter : JsonAdapter<ActionType>() {
             @FromJson
@@ -170,5 +170,5 @@ data class SubmitActionRequest (
                 writer.value(value?.value)
             }
         }
-    }
+    }    
 }

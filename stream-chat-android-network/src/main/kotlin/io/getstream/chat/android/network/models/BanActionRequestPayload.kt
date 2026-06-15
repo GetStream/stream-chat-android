@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -68,7 +68,7 @@ data class BanActionRequestPayload (
     val timeout: kotlin.Int? = null
 )
 {
-
+    
     /**
     * DeleteMessages Enum
     */
@@ -87,7 +87,7 @@ data class BanActionRequestPayload (
             object Pruning : DeleteMessages("pruning")
             object Soft : DeleteMessages("soft")
             data class Unknown(val unknownValue: kotlin.String) : DeleteMessages(unknownValue)
-
+        
 
         class DeleteMessagesAdapter : JsonAdapter<DeleteMessages>() {
             @FromJson
@@ -101,5 +101,5 @@ data class BanActionRequestPayload (
                 writer.value(value?.value)
             }
         }
-    }
+    }    
 }

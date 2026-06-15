@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- *
+ * 
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -62,7 +62,7 @@ data class EnrichedReaction (
     val childrenCounts: kotlin.collections.Map<kotlin.String, kotlin.Int>? = emptyMap(),
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime? = null,
+    val createdAt: java.util.Date? = null,
 
     @Json(name = "data")
     val data: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
@@ -74,7 +74,7 @@ data class EnrichedReaction (
     val ownChildren: kotlin.collections.Map<kotlin.String, kotlin.collections.List<io.getstream.chat.android.network.models.EnrichedReaction>>? = emptyMap(),
 
     @Json(name = "updated_at")
-    val updatedAt: org.threeten.bp.OffsetDateTime? = null,
+    val updatedAt: java.util.Date? = null,
 
     @Json(name = "user")
     val user: io.getstream.chat.android.network.models.Data? = null

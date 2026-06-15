@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,19 +47,19 @@ data class ThreadParticipant (
     val channelCid: kotlin.String,
 
     @Json(name = "created_at")
-    val createdAt: org.threeten.bp.OffsetDateTime,
+    val createdAt: java.util.Date,
 
     @Json(name = "last_read_at")
-    val lastReadAt: org.threeten.bp.OffsetDateTime,
+    val lastReadAt: java.util.Date,
 
     @Json(name = "custom")
     val custom: kotlin.collections.Map<kotlin.String, Any?> = emptyMap(),
 
     @Json(name = "last_thread_message_at")
-    val lastThreadMessageAt: org.threeten.bp.OffsetDateTime? = null,
+    val lastThreadMessageAt: java.util.Date? = null,
 
     @Json(name = "left_thread_at")
-    val leftThreadAt: org.threeten.bp.OffsetDateTime? = null,
+    val leftThreadAt: java.util.Date? = null,
 
     @Json(name = "thread_id")
     val threadId: kotlin.String? = null,
