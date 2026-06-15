@@ -64,7 +64,7 @@ internal class MoshiChatParser(
 ) : ChatParser {
 
     private val moshi: Moshi by lazy {
-        Serializer.moshiBuilder
+        Serializer.moshi.newBuilder()
             .addAdapter(DateAdapter())
             .addAdapter(ExactDateAdapter())
             .add(EventAdapterFactory())
