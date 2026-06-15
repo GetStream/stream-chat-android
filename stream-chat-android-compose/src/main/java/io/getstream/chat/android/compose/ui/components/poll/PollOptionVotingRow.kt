@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
@@ -40,6 +41,8 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.toggleableState
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -80,7 +83,10 @@ import io.getstream.chat.android.models.VotingVisibility
  * @param onCastVote Invoked when the user casts a vote for this option.
  * @param onRemoveVote Invoked when the user removes their vote from this option.
  * @param modifier Modifier applied to the row container.
+ * @param onLongClick Invoked on long-press to open the message actions menu. `null` when the row
+ * is not hosted in a long-pressable message (e.g. the more-options bottom sheet).
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun PollOptionVotingRow(
@@ -95,6 +101,7 @@ internal fun PollOptionVotingRow(
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
     val onToggle: (Boolean) -> Unit = { enabled ->
@@ -105,18 +112,24 @@ internal fun PollOptionVotingRow(
             onRemoveVote()
         }
     }
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .applyIf(!poll.closed) {
-                toggleable(
-                    value = checked,
+                // The toggle's own gesture handling would otherwise consume the long-press as a
+                // tap, so forward it to the message's actions-menu handler.
+                combinedClickable(
                     role = toggleRole,
-                    onValueChange = onToggle,
+                    onClick = { onToggle(!checked) },
+                    onLongClick = onLongClick,
                 )
-            }
-            .semantics(mergeDescendants = true) {},
+                    // `combinedClickable` sets the role but not the toggle state — restore the
+                    // "checked" / "not checked" announce that the previous `toggleable` modifier
+                    // contributed so TalkBack still reads the current vote state on each option.
+                    .semantics {
+                        toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
+                    }
+            },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {

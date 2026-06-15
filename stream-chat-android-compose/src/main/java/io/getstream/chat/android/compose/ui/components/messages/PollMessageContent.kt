@@ -130,6 +130,7 @@ public fun PollMessageContent(
                         },
                         onClosePoll = onClosePoll,
                         onAddPollOption = onAddPollOption,
+                        onLongItemClick = onLongItemClick,
                     )
                 },
             ),
@@ -180,6 +181,7 @@ private fun PollMessageContent(
     onRemoveVote: (Vote) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onLongItemClick: (Message) -> Unit,
 ) {
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
@@ -253,6 +255,7 @@ private fun PollMessageContent(
                     poll.ownVotes.firstOrNull { it.optionId == option.id }
                         ?.let(onRemoveVote)
                 },
+                onLongClick = { onLongItemClick(message) },
             )
         }
 
