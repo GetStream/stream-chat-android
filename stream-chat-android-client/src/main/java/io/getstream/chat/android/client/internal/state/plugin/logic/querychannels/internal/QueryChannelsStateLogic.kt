@@ -34,7 +34,6 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 
 @Suppress("TooManyFunctions")
 internal class QueryChannelsStateLogic(
@@ -172,7 +171,7 @@ internal class QueryChannelsStateLogic(
                     isChannelsStateUpdate = true,
                 )
             }
-        }.awaitAll()
+        }.forEach { it.await() }
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel =
