@@ -292,7 +292,10 @@ author of the feeds branch ran into the same conversion-boilerplate problem we a
 
 Video pays the same tax as chat would. Feeds skips it.
 
-**Fix status:** Not fixed. Currently writing per-field conversions in mappers.
+**Fix status:** Locally fixed in the generator (not upstream). Inverted the default in
+`kotlin.go:644-654`: video keeps `OffsetDateTime`, every other product gets `Date`. Chat
+output regenerated, network module no longer depends on threetenbp, and the existing Role +
+ReactionGroup mappers dropped their `Date(it.toInstant().toEpochMilli())` conversions.
 
 **Suggested fix:** Invert the default - treat `Date` as the default, opt only video into
 `OffsetDateTime`:
