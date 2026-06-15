@@ -21,9 +21,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetai
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import org.intellij.lang.annotations.Language
-import org.threeten.bp.Instant
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
 import java.util.Date
 import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
 
@@ -157,8 +154,8 @@ internal object MessageDtoTestData {
                 ReactionGroupDto(
                     count = 2,
                     sumScores = 10,
-                    firstReactionAt = OffsetDateTime.ofInstant(Instant.ofEpochMilli(1591787071588), ZoneOffset.UTC),
-                    lastReactionAt = OffsetDateTime.ofInstant(Instant.ofEpochMilli(1591787071588), ZoneOffset.UTC),
+                    firstReactionAt = Date(1591787071588),
+                    lastReactionAt = Date(1591787071588),
                 ),
         ),
         latest_reactions = listOf(ReactionDtoTestData.downstreamReactionWithoutExtraData),

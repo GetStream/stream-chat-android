@@ -422,8 +422,8 @@ internal class DomainMappingTest {
             type = type,
             count = downstreamReactionGroupDto.count,
             sumScore = downstreamReactionGroupDto.sumScores,
-            firstReactionAt = Date(downstreamReactionGroupDto.firstReactionAt.toInstant().toEpochMilli()),
-            lastReactionAt = Date(downstreamReactionGroupDto.lastReactionAt.toInstant().toEpochMilli()),
+            firstReactionAt = downstreamReactionGroupDto.firstReactionAt,
+            lastReactionAt = downstreamReactionGroupDto.lastReactionAt,
         )
         assertEquals(expected, reactionGroup)
     }
@@ -956,8 +956,8 @@ internal class DomainMappingTest {
             name = dto.name,
             custom = dto.custom,
             scopes = dto.scopes,
-            createdAt = Date(dto.createdAt.toInstant().toEpochMilli()),
-            updatedAt = Date(dto.updatedAt.toInstant().toEpochMilli()),
+            createdAt = dto.createdAt,
+            updatedAt = dto.updatedAt,
         )
         assertEquals(expected, role)
     }

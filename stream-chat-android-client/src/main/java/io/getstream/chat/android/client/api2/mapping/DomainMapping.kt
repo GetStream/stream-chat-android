@@ -386,8 +386,8 @@ internal class DomainMapping(
             type = type,
             count = count,
             sumScore = sumScores,
-            firstReactionAt = Date(firstReactionAt.toInstant().toEpochMilli()),
-            lastReactionAt = Date(lastReactionAt.toInstant().toEpochMilli()),
+            firstReactionAt = firstReactionAt,
+            lastReactionAt = lastReactionAt,
         )
 
     /**
@@ -977,8 +977,8 @@ internal class DomainMapping(
         name = name,
         custom = custom,
         scopes = scopes,
-        createdAt = Date(createdAt.toInstant().toEpochMilli()),
-        updatedAt = Date(updatedAt.toInstant().toEpochMilli()),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     private companion object {

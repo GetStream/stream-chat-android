@@ -120,8 +120,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import org.threeten.bp.OffsetDateTime
-import org.threeten.bp.ZoneOffset
 import java.util.Date
 import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.Role as RoleDto
@@ -704,8 +702,8 @@ internal object Mother {
     fun randomDownstreamReactionGroupDto(
         count: Int = randomInt(),
         sumScores: Int = randomInt(),
-        firstReactionAt: OffsetDateTime = randomDate().toOffsetDateTime(),
-        lastReactionAt: OffsetDateTime = randomDate().toOffsetDateTime(),
+        firstReactionAt: Date = randomDate(),
+        lastReactionAt: Date = randomDate(),
     ): ReactionGroupDto = ReactionGroupDto(
         count = count,
         sumScores = sumScores,
@@ -1414,8 +1412,8 @@ internal object Mother {
         name: String = randomString(),
         custom: Boolean = randomBoolean(),
         scopes: List<String> = emptyList(),
-        createdAt: OffsetDateTime = randomDate().toOffsetDateTime(),
-        updatedAt: OffsetDateTime = randomDate().toOffsetDateTime(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
     ): RoleDto = RoleDto(
         name = name,
         custom = custom,
@@ -1423,9 +1421,6 @@ internal object Mother {
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
-
-    private fun Date.toOffsetDateTime(): OffsetDateTime =
-        OffsetDateTime.ofInstant(org.threeten.bp.Instant.ofEpochMilli(time), ZoneOffset.UTC)
 }
 
 internal fun randomPushMessage(
