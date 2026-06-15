@@ -49,7 +49,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
-import io.getstream.chat.android.compose.ui.messages.list.LocalMessageOnLongClick
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -84,6 +83,8 @@ import io.getstream.chat.android.models.VotingVisibility
  * @param onCastVote Invoked when the user casts a vote for this option.
  * @param onRemoveVote Invoked when the user removes their vote from this option.
  * @param modifier Modifier applied to the row container.
+ * @param onLongClick Invoked on long-press to open the message actions menu. `null` when the row
+ * is not hosted in a long-pressable message (e.g. the more-options bottom sheet).
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList", "LongMethod")
@@ -100,6 +101,7 @@ internal fun PollOptionVotingRow(
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
     val onToggle: (Boolean) -> Unit = { enabled ->
@@ -110,19 +112,16 @@ internal fun PollOptionVotingRow(
             onRemoveVote()
         }
     }
-    // Forward long-press up to the message row's actions-menu handler. Without this, the
-    // toggle would consume the long-press as a tap and TalkBack's double-tap-and-hold would
-    // never open the actions menu over a poll option.
-    val onMessageLongClick = LocalMessageOnLongClick.current
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .applyIf(!poll.closed) {
+                // The toggle's own gesture handling would otherwise consume the long-press as a
+                // tap, so forward it to the message's actions-menu handler.
                 combinedClickable(
                     role = toggleRole,
                     onClick = { onToggle(!checked) },
-                    onLongClick = onMessageLongClick,
+                    onLongClick = onLongClick,
                 )
                     // `combinedClickable` sets the role but not the toggle state — restore the
                     // "checked" / "not checked" announce that the previous `toggleable` modifier
