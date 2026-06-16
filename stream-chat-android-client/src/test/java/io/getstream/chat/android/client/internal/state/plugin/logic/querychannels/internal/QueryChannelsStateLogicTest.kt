@@ -18,11 +18,11 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.querychanne
 
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomCID
@@ -49,6 +49,7 @@ internal class QueryChannelsStateLogicTest {
     private val type = randomString()
     private val id = randomString()
     private val testCid = (type to id).toCid()
+    private val testChannelId = ChannelId.fromCid(testCid)!!
 
     private val queryChannelsSpec = QueryChannelsSpec(
         filter = Filters.neutral(),
@@ -63,6 +64,7 @@ internal class QueryChannelsStateLogicTest {
     private val stateRegistry: StateRegistry = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn mock()
+        on(it.channel(any<ChannelId>())) doReturn mock()
     }
 
     private val queryChannelsStateLogic =
@@ -75,10 +77,8 @@ internal class QueryChannelsStateLogicTest {
             on(it.toChannel()) doReturn channel
         }
 
-        val (channelType, channelId) = testCid.cidToTypeAndId()
-
-        whenever(stateRegistry.isActiveChannel(channelType, channelId)) doReturn true
-        whenever(stateRegistry.channel(channelType, channelId)) doReturn channelState
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
+        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
 
         queryChannelsStateLogic.refreshChannels(listOf(testCid))
 
@@ -92,11 +92,10 @@ internal class QueryChannelsStateLogicTest {
             on(it.toChannel()) doReturn channel
         }
 
-        val (channelType, channelId) = testCid.cidToTypeAndId()
         val cidOutsideSpecs = randomCID()
 
-        whenever(stateRegistry.isActiveChannel(channel.type, channel.id)) doReturn true
-        whenever(stateRegistry.channel(channelType, channelId)) doReturn channelState
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
+        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
 
         queryChannelsStateLogic.refreshChannels(listOf(cidOutsideSpecs))
 
@@ -111,10 +110,9 @@ internal class QueryChannelsStateLogicTest {
         }
 
         val cidOutsideSpecs = randomCID()
-        val (channelType, channelId) = testCid.cidToTypeAndId()
 
-        whenever(stateRegistry.isActiveChannel(channel.type, channel.id)) doReturn false
-        whenever(stateRegistry.channel(channelType, channelId)) doReturn channelState
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn false
+        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
 
         queryChannelsStateLogic.refreshChannels(listOf(cidOutsideSpecs))
 
@@ -142,8 +140,8 @@ internal class QueryChannelsStateLogicTest {
             on(it.toChannel()) doReturn channel
         }
 
-        whenever(stateRegistry.isActiveChannel(type, id)) doReturn true
-        whenever(stateRegistry.channel(type, id)) doReturn channelState
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
+        whenever(stateRegistry.channel(testChannelId)) doReturn channelState
 
         val result = queryChannelsStateLogic.getActiveChannelState(testCid)
 
@@ -152,10 +150,45 @@ internal class QueryChannelsStateLogicTest {
 
     @Test
     fun `getActiveChannelState should return null when channel is not active in state registry`() {
-        whenever(stateRegistry.isActiveChannel(type, id)) doReturn false
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn false
 
         val result = queryChannelsStateLogic.getActiveChannelState(testCid)
 
         assertNull(result)
+    }
+
+    @Test
+    fun `getActiveChannelState should return null when cid is malformed`() {
+        assertNull(queryChannelsStateLogic.getActiveChannelState("not-a-cid"))
+    }
+
+    @Test
+    fun `addChannelsState drops channels with malformed cid`() = runTest {
+        val valid = randomChannel(type = "messaging", id = "valid-${randomString()}")
+        val malformed = randomChannel(type = "", id = "x")
+        whenever(mutableState.queryChannelsSpec) doReturn queryChannelsSpec
+
+        queryChannelsStateLogic.addChannelsState(listOf(valid, malformed))
+
+        verify(mutableState).setCids(setOf(testCid, valid.cid))
+        verify(mutableState).setChannels(mapOf(valid.cid to valid))
+        verify(logicRegistry).channel(ChannelId.fromCid(valid.cid)!!)
+    }
+
+    @Test
+    fun `refreshChannels skips malformed cids in the spec intersection`() {
+        val malformedCid = "no-colon-cid"
+        val specWithMalformed = QueryChannelsSpec(
+            filter = Filters.neutral(),
+            querySort = QuerySortByField.descByName(""),
+            cids = setOf(testCid, malformedCid),
+        )
+        whenever(mutableState.queryChannelsSpec) doReturn specWithMalformed
+        whenever(mutableState.rawChannels) doReturn emptyMap()
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn false
+
+        queryChannelsStateLogic.refreshChannels(listOf(testCid, malformedCid))
+
+        verify(mutableState).setChannels(emptyMap())
     }
 }

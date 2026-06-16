@@ -22,12 +22,11 @@ import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
@@ -153,26 +152,26 @@ internal class QueryChannelsStateLogic(
      * @param channels List<Channel>.
      */
     internal suspend fun addChannelsState(channels: List<Channel>) {
-        mutableState.setCids(mutableState.queryChannelsSpec.cids + channels.map { it.cid })
-        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        val validated = channels.mapNotNull { channel ->
+            ChannelId.fromCid(channel.cid)?.let { it to channel }
+        }
+        mutableState.setCids(mutableState.queryChannelsSpec.cids + validated.map { (id, _) -> id.cid })
+        val existingChannels = mutableState.rawChannels.orEmpty()
         mutableState.setChannels(
-            existingChannels +
-                channels.map {
-                    it.cid to it.joinMessages(existingChannels[it.cid])
-                        .joinMembers(existingChannels[it.cid])
-                },
+            existingChannels + validated.associate { (id, channel) ->
+                id.cid to channel.joinMessages(existingChannels[id.cid])
+                    .joinMembers(existingChannels[id.cid])
+            },
         )
-        channels.map { channel ->
+        validated.map { (id, channel) ->
             coroutineScope.async {
-                logicRegistry.channel(channel.type, channel.id).updateDataForChannel(
+                logicRegistry.channel(id).updateDataForChannel(
                     channel = channel,
                     messageLimit = channel.messages.size,
                     isChannelsStateUpdate = true,
                 )
             }
-        }.map {
-            it.await()
-        }
+        }.forEach { it.await() }
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel =
@@ -237,19 +236,10 @@ internal class QueryChannelsStateLogic(
 
         val newChannels = existingChannels + mutableState.queryChannelsSpec.cids
             .intersect(cidList.toSet())
-            .map { cid -> cid.cidToTypeAndId() }
-            .filter { (channelType, channelId) ->
-                stateRegistry.isActiveChannel(
-                    channelType = channelType,
-                    channelId = channelId,
-                )
-            }
-            .associate { (channelType, channelId) ->
-                val cid = (channelType to channelId).toCid()
-                cid to stateRegistry.channel(
-                    channelType = channelType,
-                    channelId = channelId,
-                ).toChannel()
+            .mapNotNull(ChannelId::fromCid)
+            .filter(stateRegistry::isActiveChannel)
+            .associate { id ->
+                id.cid to stateRegistry.channel(id).toChannel()
             }
 
         mutableState.setChannels(newChannels)
@@ -260,9 +250,9 @@ internal class QueryChannelsStateLogic(
      * channel is active, or `null` otherwise.
      */
     internal fun getActiveChannelState(cid: String): Channel? {
-        val (type, id) = cid.cidToTypeAndId()
-        if (!stateRegistry.isActiveChannel(type, id)) return null
-        return stateRegistry.channel(type, id).toChannel()
+        val id = ChannelId.fromCid(cid) ?: return null
+        if (!stateRegistry.isActiveChannel(id)) return null
+        return stateRegistry.channel(id).toChannel()
     }
 
     /**

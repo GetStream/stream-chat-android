@@ -140,7 +140,7 @@ internal class LogicRegistryTest {
 
         // Stub new channel state (ChannelStateImpl mocks)
         channelStateMocks.clear()
-        whenever(stateRegistry.channelState(any(), any())).thenAnswer {
+        whenever(stateRegistry.channelState(any<String>(), any<String>())).thenAnswer {
             val type = it.getArgument<String>(0)
             val id = it.getArgument<String>(1)
             channelStateMocks.getOrPut(type to id) { mock() }
@@ -148,7 +148,7 @@ internal class LogicRegistryTest {
 
         // Stub legacy channel state (real ChannelStateLegacyImpl instances)
         legacyChannelStateMocks.clear()
-        whenever(stateRegistry.legacyChannelState(any(), any())).thenAnswer {
+        whenever(stateRegistry.legacyChannelState(any<String>(), any<String>())).thenAnswer {
             val type = it.getArgument<String>(0)
             val id = it.getArgument<String>(1)
             legacyChannelStateMocks.getOrPut(type to id) {
@@ -1200,6 +1200,49 @@ internal class LogicRegistryTest {
         Assertions.assertTrue(logicRegistry.getActiveChannelsLogic().isEmpty())
         Assertions.assertFalse(logicRegistry.isActiveChannel("messaging", "123"))
         Assertions.assertFalse(logicRegistry.isActiveChannel("messaging", "456"))
+    }
+
+    // endregion
+
+    // region Malformed cid handling
+
+    @Test
+    fun `channel with malformed cid returns a non-cached ChannelLogic`() {
+        val first = logicRegistry.channel("messaging", "")
+        val second = logicRegistry.channel("messaging", "")
+
+        Assertions.assertNotSame(first, second)
+        Assertions.assertTrue(logicRegistry.getActiveChannelsLogic().isEmpty())
+        Assertions.assertFalse(logicRegistry.isActiveChannel("messaging", ""))
+    }
+
+    @Test
+    fun `legacy channel with malformed cid returns a non-cached ChannelLogic`() {
+        val first = legacyLogicRegistry.channel("", "id")
+        val second = legacyLogicRegistry.channel("", "id")
+
+        Assertions.assertNotSame(first, second)
+        Assertions.assertTrue(legacyLogicRegistry.getActiveChannelsLogic().isEmpty())
+        Assertions.assertFalse(legacyLogicRegistry.isActiveChannel("", "id"))
+    }
+
+    @Test
+    fun `removeChannel with malformed cid is a no-op`() {
+        logicRegistry.channel("messaging", "123")
+        Assertions.assertEquals(1, logicRegistry.getActiveChannelsLogic().size)
+
+        logicRegistry.removeChannel("", "123")
+
+        Assertions.assertEquals(1, logicRegistry.getActiveChannelsLogic().size)
+    }
+
+    @Test
+    fun `channelFromMessage returns null when cid is malformed`() {
+        val message = Message(id = "msg1", cid = "not-a-cid", parentId = null)
+
+        val result = logicRegistry.channelFromMessage(message)
+
+        Assertions.assertNull(result)
     }
 
     // endregion

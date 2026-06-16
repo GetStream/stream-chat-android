@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
@@ -43,10 +42,12 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
@@ -71,9 +72,11 @@ internal class LogicRegistry internal constructor(
     private val useLegacyChannelLogic: Boolean,
 ) : ChannelStateLogicProvider {
 
+    private val logger by taggedLogger("Chat:LogicRegistry")
+
     private val queryChannels: ConcurrentHashMap<QueryChannelsIdentifier, QueryChannelsLogic> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<ChannelId, ChannelLogic> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>?>, QueryThreadsLogic> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
@@ -108,18 +111,37 @@ internal class LogicRegistry internal constructor(
     internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
         queryChannels(queryChannelsRequest.identifier)
 
-    /** Returns [ChannelLogic] by channelType and channelId combination. */
+    /**
+     * Returns [ChannelLogic] by channelType and channelId combination.
+     *
+     * A malformed cid yields a fresh, non-cached logic so callers still get a non-null object, but
+     * the registry won't track it and updates fed to it will be discarded.
+     */
     fun channel(channelType: String, channelId: String): ChannelLogic {
-        return if (useLegacyChannelLogic) {
-            legacyChannelLogic(channelType, channelId)
-        } else {
-            channelLogic(channelType, channelId)
+        val id = ChannelId.fromTypeAndId(channelType, channelId)
+        if (id == null) {
+            logger.w { "[channel] rejected malformed cid: $channelType:$channelId" }
+            return newChannelLogic(channelType, channelId)
         }
+        return channel(id)
+    }
+
+    /** Returns [ChannelLogic] for a validated [ChannelId], creating and caching it on first access. */
+    fun channel(channelId: ChannelId): ChannelLogic = channels.getOrPut(channelId) {
+        newChannelLogic(channelId.type, channelId.id)
     }
 
     internal fun removeChannel(channelType: String, channelId: String) {
-        channels.remove(channelType to channelId)
+        val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return
+        channels.remove(id)
     }
+
+    private fun newChannelLogic(type: String, id: String): ChannelLogic =
+        if (useLegacyChannelLogic) {
+            buildLegacyChannelLogic(type, id)
+        } else {
+            buildChannelLogic(type, id)
+        }
 
     fun channelFromMessageId(messageId: String): ChannelLogic? {
         return channels.values.find { channelLogic ->
@@ -159,8 +181,7 @@ internal class LogicRegistry internal constructor(
      */
     fun channelFromMessage(message: Message): ChannelLogic? {
         return if (message.parentId == null || message.showInChannel) {
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            channel(channelType, channelId)
+            ChannelId.fromCid(message.cid)?.let(::channel)
         } else {
             null
         }
@@ -252,8 +273,10 @@ internal class LogicRegistry internal constructor(
      *
      * @return True if the channel is active.
      */
-    fun isActiveChannel(channelType: String, channelId: String): Boolean =
-        channels.containsKey(channelType to channelId)
+    fun isActiveChannel(channelType: String, channelId: String): Boolean {
+        val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return false
+        return channels.containsKey(id)
+    }
 
     /**
      * Returns a list of [ChannelLogic] for all, active channel requests.
@@ -276,44 +299,39 @@ internal class LogicRegistry internal constructor(
         mutableGlobalState.destroy()
     }
 
-    private fun legacyChannelLogic(type: String, id: String): ChannelLogic {
-        return channels.getOrPut(type to id) {
-            val mutableState = stateRegistry.legacyChannelState(type, id)
-            val stateLogic = ChannelStateLogic(
-                clientState = clientState,
-                mutableState = mutableState,
-                globalMutableState = mutableGlobalState,
-                searchLogic = SearchLogic(mutableState),
-                now = now,
-                coroutineScope = coroutineScope,
-            )
-
-            ChannelLogicLegacyImpl(
-                repos = repos,
-                userPresence = userPresence,
-                stateLogic = stateLogic,
-                coroutineScope = coroutineScope,
-                getCurrentUserId = { clientState.user.value?.id },
-            )
-        }
+    private fun buildLegacyChannelLogic(type: String, id: String): ChannelLogic {
+        val mutableState = stateRegistry.legacyChannelState(type, id)
+        val stateLogic = ChannelStateLogic(
+            clientState = clientState,
+            mutableState = mutableState,
+            globalMutableState = mutableGlobalState,
+            searchLogic = SearchLogic(mutableState),
+            now = now,
+            coroutineScope = coroutineScope,
+        )
+        return ChannelLogicLegacyImpl(
+            repos = repos,
+            userPresence = userPresence,
+            stateLogic = stateLogic,
+            coroutineScope = coroutineScope,
+            getCurrentUserId = { clientState.user.value?.id },
+        )
     }
 
-    private fun channelLogic(type: String, id: String): ChannelLogic {
-        return channels.getOrPut(type to id) {
-            val state = stateRegistry.channelState(type, id)
-            val messagesUpdateLogic = ChannelMessagesUpdateLogicImpl(state)
-            ChannelLogicImpl(
-                cid = "$type:$id",
-                messagesUpdateLogic = messagesUpdateLogic,
-                repository = repos,
-                state = state,
-                mutableGlobalState = mutableGlobalState,
-                userPresence = userPresence,
-                coroutineScope = coroutineScope,
-                getCurrentUserId = { clientState.user.value?.id },
-                now = now,
-            )
-        }
+    private fun buildChannelLogic(type: String, id: String): ChannelLogic {
+        val state = stateRegistry.channelState(type, id)
+        val messagesUpdateLogic = ChannelMessagesUpdateLogicImpl(state)
+        return ChannelLogicImpl(
+            cid = "$type:$id",
+            messagesUpdateLogic = messagesUpdateLogic,
+            repository = repos,
+            state = state,
+            mutableGlobalState = mutableGlobalState,
+            userPresence = userPresence,
+            coroutineScope = coroutineScope,
+            getCurrentUserId = { clientState.user.value?.id },
+            now = now,
+        )
     }
 
     companion object {
