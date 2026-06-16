@@ -237,9 +237,48 @@ the generated module.
 3. **Curate the chat product surface.** Build the chat client-side spec from chat-only routes
    plus a curated set of moderation routes that don't reference cross-product types. Most
    correct, biggest blast radius.
+4. **Per-product API split, mirroring the TypeScript generator.** The TypeScript language plugin
+   already does this. In `lib/combined/openapi/generator/languages/typescript/typescript.go` it
+   iterates over the product set, filters operations via `spec.FilterByProduct(product)`, and
+   emits a separate `{Product}Api.ts` file per product - `ChatApi.ts` contains only chat-tagged
+   routes, `ModerationApi.ts` contains only the admin moderation routes, etc. The `Moderation`
+   API is its own file, so consumers (e.g. the chat SDK) can choose not to expose it. There's
+   also a `productToResourceClass` map (`chat` -> `channel`, `video` -> `call`, `feeds` -> `feed`)
+   that emits a focused sub-API file (e.g. `ChannelApi.ts`) for routes under
+   `/api/v2/{product}/{resource}/{type}/{id}`.
 
-Either (1) or a curated (3) is the right long-term answer. (2) is a stopgap if upstream changes
-are slow.
+   The Kotlin language plugin has no equivalent: it emits a single `ChatApi.kt` containing every
+   route in the spec. Adopting the TypeScript pattern would give us:
+
+   - `apis/ChatApi.kt` - only chat-tagged routes (~88 methods, was 155)
+   - `apis/ChannelApi.kt` - channel-scoped sub-API
+   - `apis/ModerationApi.kt` - admin moderation, kept separate and likely excluded from the chat
+     SDK's public surface
+   - No code for video / feeds products in a chat-only generation pass
+
+Either (1) or a curated (3) plus (4) is the right long-term answer. (2) is a stopgap if upstream
+changes are slow.
+
+## Cross-SDK state (as of 2026-06-15)
+
+Surveyed how other Stream SDKs handle the same generator output:
+
+| SDK | Uses OpenAPI generator? | Generated file count | Cross-product leak? | Notes |
+|---|---|---|---|---|
+| chat-android (this) | yes | 472 | yes | `EnrichedActivity`, `EnrichedReaction`, `Time`, 21 admin `/moderation/*` routes |
+| chat-swift (`feature/open-api-llc`, last commit 2026-06-09) | yes | 471 | yes (but `EnrichedReaction` has the `Time`-typed fields stripped) | Same generator output shape; somehow avoided the Time wrapper bug, worth syncing with the iOS team on how |
+| chat-js (`feat/integrate-open-api-generated-client`, last commit 2026-06-15) | yes - different shape | 7 aggregated files | partially avoided | Per-product `*Api.ts` files; admin moderation is `src/gen/moderation/ModerationApi.ts` and not pulled into the chat API surface by default |
+| chat-swift `main` / chat-js `main` | no - hand-written | n/a | n/a | Existing released SDKs predate the generator |
+| feeds-android, feeds-swift | yes | same leak | yes | Same generator, same leakage of cross-product types |
+
+Conclusions:
+
+- The cross-product leak is universal across teams that consume the Kotlin/Swift generator
+  output. No SDK has fixed it upstream.
+- The TypeScript generator already implements option (4) above - the per-product split. The
+  Kotlin and Swift generators have not adopted the same pattern.
+- The iOS team is roughly where we are. Coordinating on issues #3 and #5 with them avoids
+  divergent local fixes and is the path to an upstream solution.
 
 **Audit needed:** Before shipping, sweep `stream-chat-android-network/src/main/kotlin/.../models/`
 and identify which generated classes have no chat-domain meaning. Decide per-class whether to:
