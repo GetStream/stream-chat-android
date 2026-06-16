@@ -186,7 +186,12 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(result: OptionItem) {
-                binding.root.setOnClickListener { onOptionClick(result.option) }
+                binding.root.isEnabled = !result.readonly
+                if (result.readonly) {
+                    binding.root.setOnClickListener(null)
+                } else {
+                    binding.root.setOnClickListener { onOptionClick(result.option) }
+                }
                 binding.option.text = result.option.text
                 binding.votes.text = result.votes.toString()
                 binding.check.isEnabled = result.isVotedByUser
@@ -211,7 +216,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
         fun onOptionClick(option: Option) {
             coroutineScope.launch {
-                val poll = pollState.value ?: return@launch
+                val poll = pollState.value?.takeUnless(Poll::closed) ?: return@launch
                 val existingVote = poll.ownVotes.find { it.optionId == option.id }
                 if (existingVote != null) {
                     chatClient.removePollVote(messageId, poll.id, existingVote.id).await()
