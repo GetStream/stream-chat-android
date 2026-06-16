@@ -23,6 +23,15 @@ import io.getstream.chat.android.ui.common.R
 import kotlin.math.min
 
 /**
+ * Returns true if the current user can cast another vote on this poll.
+ */
+@InternalStreamChatApi
+public fun Poll.canCastVote(): Boolean {
+    val limit = maxVotesAllowed ?: return true
+    return ownVotes.size < limit
+}
+
+/**
  * Returns the subtitle for the poll based on the maximum number of votes allowed.
  */
 @InternalStreamChatApi

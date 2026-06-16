@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
+import io.getstream.chat.android.ui.common.utils.extensions.canCastVote
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollAddCommentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollAnswerBinding
@@ -110,6 +111,7 @@ internal class PollView : RecyclerView {
         )
 
         val winner = poll.getWinner()
+        val canCastVote = poll.canCastVote()
 
         pollItems.addAll(
             poll.options
@@ -123,6 +125,7 @@ internal class PollView : RecyclerView {
                         totalVotes = poll.voteCountsByOption.values.sum(),
                         closed = poll.closed,
                         isWinner = winner == option,
+                        canCastVote = canCastVote,
                     )
                 },
         )
@@ -267,6 +270,7 @@ private sealed class PollItem {
         val totalVotes: Int,
         val closed: Boolean,
         val isWinner: Boolean,
+        val canCastVote: Boolean,
     ) : PollItem()
 
     data object Close : PollItem()
@@ -301,6 +305,7 @@ private class AnswerViewHolder(
         binding.check.isVisible = !pollItem.closed
         if (!pollItem.closed) {
             binding.root.setOnClickListener {
+                if (!pollItem.isVotedByUser && !pollItem.canCastVote) return@setOnClickListener
                 val newVotes = pollItem.voteCount + pollItem.isVotedByUser.invertVoteCount()
                 drawVotes(newVotes, pollItem.totalVotes)
                 binding.check.isEnabled = !binding.check.isEnabled
