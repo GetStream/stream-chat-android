@@ -40,6 +40,9 @@ internal class MentionRegexTest {
         @JvmStatic
         @Suppress("LongMethod")
         fun provideMatchCases(): List<Arguments> = listOf(
+            // Empty display must never match a bare @.
+            Arguments.of("", "hello @ world", emptyList<IntRange>()),
+            Arguments.of("", "@", emptyList<IntRange>()),
             // Basic match preceded by space.
             Arguments.of("alice", "hello @alice!", listOf(6..11)),
             // Match at the start of the string.

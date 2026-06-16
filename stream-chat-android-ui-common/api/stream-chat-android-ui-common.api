@@ -755,6 +755,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention {
 	public abstract fun getDisplay ()Ljava/lang/String;
+	public fun getTokens ()Ljava/util/List;
 	public abstract fun getType ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/MentionType;
 }
 
@@ -762,7 +763,12 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention$Channel;
 	public fun getDisplay ()Ljava/lang/String;
+	public fun getTokens ()Ljava/util/List;
 	public fun getType ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/MentionType;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention$DefaultImpls {
+	public static fun getTokens (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention$Group : io/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention {
@@ -774,6 +780,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getDisplay ()Ljava/lang/String;
 	public final fun getGroup ()Lio/getstream/chat/android/models/UserGroup;
+	public fun getTokens ()Ljava/util/List;
 	public fun getType ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/MentionType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -783,6 +790,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention$Here;
 	public fun getDisplay ()Ljava/lang/String;
+	public fun getTokens ()Ljava/util/List;
 	public fun getType ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/MentionType;
 }
 
@@ -795,6 +803,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getDisplay ()Ljava/lang/String;
 	public final fun getRole ()Ljava/lang/String;
+	public fun getTokens ()Ljava/util/List;
 	public fun getType ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/MentionType;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -808,6 +817,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention$User;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention$User;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getDisplay ()Ljava/lang/String;
+	public fun getTokens ()Ljava/util/List;
 	public fun getType ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/MentionType;
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I

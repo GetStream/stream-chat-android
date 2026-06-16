@@ -88,14 +88,14 @@ public object Linkify {
         null,
     ) { it.makeUrlSpan(listOf("mailto:")) }
 
-    private fun mentionSpecs(spannable: Spannable, mention: Mention): List<SpanSpec> {
-        if (mention.display.isEmpty()) return emptyList()
-        return gatherSpanSpecs(
-            spannable,
-            mentionRegex(mention.display).toPattern(),
-            null,
-        ) { MentionSpan(mention) }
-    }
+    private fun mentionSpecs(spannable: Spannable, mention: Mention): List<SpanSpec> =
+        mention.tokens.flatMap { token ->
+            gatherSpanSpecs(
+                spannable,
+                mentionRegex(token).toPattern(),
+                null,
+            ) { MentionSpan(mention) }
+        }
 
     private fun addLinkMovementMethod(t: TextView) {
         val m = t.movementMethod

@@ -154,6 +154,23 @@ internal class TextUtilsKtTest {
     }
 
     @Test
+    fun `collectTextMentions emits name and id tokens for a group when they differ`() {
+        val message = randomMessage(
+            mentionedUsers = emptyList(),
+            mentionedChannel = false,
+            mentionedHere = false,
+            mentionedRoles = emptyList(),
+            mentionedGroups = listOf(randomUserGroup(id = "backendsupport", name = "Backend Support Team")),
+        )
+
+        val result = message.collectTextMentions(colors = StreamDesign.Colors.default())
+
+        assertEquals(2, result.size)
+        assertEquals(listOf("Backend Support Team", "backendsupport"), result.map { it.token })
+        assertEquals(List(2) { AnnotationTagGroupMention }, result.map { it.annotationTag })
+    }
+
+    @Test
     fun `collectTextMentions applies textColorOverride when specified`() {
         val message = randomMessage(mentionedChannel = true, mentionedHere = false, mentionedUsers = emptyList())
         val override = Color.Red
@@ -216,7 +233,7 @@ internal class TextUtilsKtTest {
                 Arguments.of(empty.copy(mentionedHere = true), "here", AnnotationTagHereMention),
                 Arguments.of(empty.copy(mentionedRoles = listOf("admin")), "admin", AnnotationTagRoleMention),
                 Arguments.of(
-                    empty.copy(mentionedGroups = listOf(randomUserGroup(name = "backend"))),
+                    empty.copy(mentionedGroups = listOf(randomUserGroup(id = "backend", name = "backend"))),
                     "backend",
                     AnnotationTagGroupMention,
                 ),

@@ -285,7 +285,7 @@ internal fun handleAnnotationClick(
         AnnotationTagHereMention -> onMentionClick(Mention.Here)
         AnnotationTagRoleMention -> onMentionClick(Mention.Role(annotation.item))
         AnnotationTagGroupMention -> {
-            message.mentionedGroups.find { it.name == annotation.item }
+            message.mentionedGroups.find { it.id == annotation.item || it.name == annotation.item }
                 ?.let { onMentionClick(Mention.Group(it)) }
         }
         AnnotationTagUrl, AnnotationTagEmail -> {

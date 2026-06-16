@@ -30,6 +30,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
 import java.util.regex.Pattern
 
@@ -107,7 +108,9 @@ internal fun Message.collectTextMentions(
     if (mentionedChannel) add("channel", AnnotationTagChannelMention)
     if (mentionedHere) add("here", AnnotationTagHereMention)
     mentionedRoles.forEach { role -> add(role, AnnotationTagRoleMention) }
-    mentionedGroups.forEach { group -> add(group.name, AnnotationTagGroupMention) }
+    mentionedGroups.forEach { group ->
+        Mention.Group(group).tokens.forEach { token -> add(token, AnnotationTagGroupMention) }
+    }
 }
 
 internal fun StreamDesign.Colors.mentionTextColorFor(tag: AnnotationTag): Color = when (tag) {

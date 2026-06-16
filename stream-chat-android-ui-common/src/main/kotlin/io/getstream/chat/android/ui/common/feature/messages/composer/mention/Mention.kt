@@ -73,11 +73,20 @@ public interface Mention {
     public val type: MentionType
 
     /**
-     * The display text of the mention. Implementations must guarantee a non-empty value so
-     * autocomplete and linkification produce a stable `@token` even when the underlying source
-     * lacks a human-readable name.
+     * The primary display text of the mention, used when inserting a token into the composer.
+     * Implementations must guarantee a non-empty value so autocomplete and linkification produce a
+     * stable `@token` even when the underlying source lacks a human-readable name.
      */
     public val display: String
+
+    /**
+     * All candidate `@<token>` forms that should match this mention in rendered message text.
+     *
+     * Defaults to `listOf(display)`. Override when more than one literal is valid (e.g. a group
+     * that can be referenced by either its id or its human-readable name).
+     */
+    public val tokens: List<String>
+        get() = listOf(display)
 
     /**
      * A user mention.
@@ -122,6 +131,10 @@ public interface Mention {
      */
     public data class Group(public val group: UserGroup) : Mention {
         override val type: MentionType = MentionType.group
-        override val display: String = group.name
+        override val display: String = group.name.ifEmpty { group.id }
+        override val tokens: List<String> = listOfNotNull(
+            group.name.takeIf(String::isNotEmpty),
+            group.id.takeIf { it.isNotEmpty() && it != group.name },
+        )
     }
 }

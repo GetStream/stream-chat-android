@@ -25,8 +25,16 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * recognize ASCII `[A-Za-z0-9_]`. The lookbehind `(?<![\p{L}\p{N}_])` also naturally handles the
  * start-of-string case.
  *
+ * An empty [display] returns a regex that never matches, to prevent a bare `@` regression.
+ *
  * @param display The literal display text of the mention (without the leading `@`).
  */
 @InternalStreamChatApi
 public fun mentionRegex(display: String): Regex =
-    Regex("(?<![\\p{L}\\p{N}_])@${Regex.escape(display)}(?![\\p{L}\\p{N}_])")
+    if (display.isEmpty()) {
+        NEVER_MATCH
+    } else {
+        Regex("(?<![\\p{L}\\p{N}_])@${Regex.escape(display)}(?![\\p{L}\\p{N}_])")
+    }
+
+private val NEVER_MATCH = Regex("(?!)")
