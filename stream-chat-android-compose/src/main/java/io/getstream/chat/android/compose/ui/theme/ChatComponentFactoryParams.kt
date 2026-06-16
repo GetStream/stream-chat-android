@@ -993,7 +993,6 @@ public class SwipeToReplyContentParams
  * @param recordingActions The actions to control the audio recording.
  * @param onLinkPreviewClick Action invoked when a link preview is clicked.
  * @param onCancelLinkPreviewClick Action invoked when the cancel link preview button is clicked.
- * @param onMentionSelected Action invoked when a [Mention] is selected.
  */
 public data class MessageComposerParams(
     val messageComposerState: MessageComposerState,
@@ -1008,11 +1007,6 @@ public data class MessageComposerParams(
     val onValueChange: (String) -> Unit = {},
     val onAttachmentRemoved: (Attachment) -> Unit = {},
     val onCancelAction: () -> Unit = {},
-    @Deprecated(
-        message = "Use onMentionSelected, which receives every mention type.",
-        replaceWith = ReplaceWith("onMentionSelected"),
-        level = DeprecationLevel.WARNING,
-    )
     val onUserSelected: (User) -> Unit = {},
     val onCommandSelected: (Command) -> Unit = {},
     val onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -1020,7 +1014,6 @@ public data class MessageComposerParams(
     val recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     val onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     val onCancelLinkPreviewClick: (() -> Unit)? = null,
-    val onMentionSelected: (Mention) -> Unit = {},
 )
 
 /**
