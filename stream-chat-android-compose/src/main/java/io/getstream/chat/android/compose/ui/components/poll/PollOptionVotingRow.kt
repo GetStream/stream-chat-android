@@ -57,6 +57,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.ui.common.utils.extensions.canCastVote
 
 /**
  * Renders a single poll option as a voting row: a leading radio / checkbox, the option text, a
@@ -76,8 +77,6 @@ import io.getstream.chat.android.models.VotingVisibility
  * @param voteCount Number of votes the option has received.
  * @param totalVoteCount Total votes across all options, used to compute the progress fill.
  * @param users Subset of users whose avatars are previewed when voting visibility is public.
- * @param checkedCount Number of options the current user has already voted for, used together
- * with [Poll.maxVotesAllowed] to decide whether another vote can be cast.
  * @param checked Whether the current user has voted for this option.
  * @param style Colours used for text, radio outline, progress fill and track.
  * @param onCastVote Invoked when the user casts a vote for this option.
@@ -95,7 +94,6 @@ internal fun PollOptionVotingRow(
     voteCount: Int,
     totalVoteCount: Int,
     users: List<User>,
-    checkedCount: Int,
     checked: Boolean,
     style: PollStyle,
     onCastVote: () -> Unit,
@@ -105,8 +103,7 @@ internal fun PollOptionVotingRow(
 ) {
     val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
     val onToggle: (Boolean) -> Unit = { enabled ->
-        val canVote = poll.maxVotesAllowed?.let { checkedCount < it } ?: true
-        if (enabled && canVote && !checked) {
+        if (enabled && poll.canCastVote() && !checked) {
             onCastVote()
         } else if (!enabled) {
             onRemoveVote()

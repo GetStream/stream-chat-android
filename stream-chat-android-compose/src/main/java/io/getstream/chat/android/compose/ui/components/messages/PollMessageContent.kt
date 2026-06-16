@@ -247,7 +247,6 @@ private fun PollMessageContent(
                 voteCount = voteCount,
                 users = remember(poll.votes, option) { poll.getVotes(option).mapNotNull(Vote::user) },
                 totalVoteCount = poll.voteCountsByOption.values.sum(),
-                checkedCount = poll.ownVotes.size,
                 checked = poll.ownVotes.any { it.optionId == option.id },
                 style = style,
                 onCastVote = { onCastVote.invoke(option) },
