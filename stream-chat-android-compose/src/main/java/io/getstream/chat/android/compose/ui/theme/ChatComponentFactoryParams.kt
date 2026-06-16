@@ -1052,50 +1052,6 @@ public data class MessageComposerUserSuggestionItemParams(
 )
 
 /**
- * Parameters for [ChatComponentFactory.MessageComposerSuggestionItem].
- *
- * @param mention The non-user [Mention] for which the suggestion is rendered.
- * @param onMentionSelected Action invoked when the mention is selected.
- */
-public data class MessageComposerSuggestionItemParams(
-    val mention: Mention,
-    val onMentionSelected: (Mention) -> Unit,
-)
-
-/**
- * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemLeadingContent].
- *
- * @param mention The mention for which the leading content is rendered.
- * @param modifier Modifier for styling.
- */
-public data class MessageComposerSuggestionItemLeadingContentParams(
-    val mention: Mention,
-    val modifier: Modifier = Modifier,
-)
-
-/**
- * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemCenterContent].
- *
- * @param mention The mention for which the center content is rendered.
- * @param modifier Modifier for styling.
- */
-public data class MessageComposerSuggestionItemCenterContentParams(
-    val mention: Mention,
-    val modifier: Modifier = Modifier,
-)
-
-/**
- * Parameters for [ChatComponentFactory.MessageComposerSuggestionItemTrailingContent].
- *
- * @param mention The mention for which the trailing content is rendered.
- * @param modifier Modifier for styling.
- */
-public data class MessageComposerSuggestionItemTrailingContentParams(
-    val mention: Mention,
-    val modifier: Modifier = Modifier,
-)
-
-/**
  * Parameters for [ChatComponentFactory.MessageComposerUserSuggestionItemLeadingContent].
  *
  * @param user The user for which the leading content is rendered.

@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
+import io.getstream.chat.android.models.UserGroup
+
 /**
  * Defines a type of a mention inside the message composer.
  *
@@ -118,7 +120,7 @@ public interface Mention {
      *
      * @param group The group being mentioned.
      */
-    public data class Group(public val group: io.getstream.chat.android.models.UserGroup) : Mention {
+    public data class Group(public val group: UserGroup) : Mention {
         override val type: MentionType = MentionType.group
         override val display: String = group.name
     }

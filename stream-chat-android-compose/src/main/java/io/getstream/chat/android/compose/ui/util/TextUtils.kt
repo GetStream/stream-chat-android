@@ -292,8 +292,8 @@ private fun AnnotatedString.Builder.linkify(
 }
 
 /**
- * Tags every word-bounded `@<token>` occurrence in [text] with [annotationTag] and styles it
- * with [mentionsColor].
+ * Tags every word-bounded `@<token>` occurrence in [text] with [mention]'s annotation tag and
+ * styles it with [mention]'s color.
  */
 private fun AnnotatedString.Builder.tagMention(
     text: String,

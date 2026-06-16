@@ -4960,65 +4960,6 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSna
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemCenterContentParams {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun component2 ()Landroidx/compose/ui/Modifier;
-	public final fun copy (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemCenterContentParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemCenterContentParams;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemCenterContentParams;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMention ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun getModifier ()Landroidx/compose/ui/Modifier;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemLeadingContentParams {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun component2 ()Landroidx/compose/ui/Modifier;
-	public final fun copy (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemLeadingContentParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemLeadingContentParams;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemLeadingContentParams;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMention ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun getModifier ()Landroidx/compose/ui/Modifier;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemParams {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Lkotlin/jvm/functions/Function1;)V
-	public final fun component1 ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun component2 ()Lkotlin/jvm/functions/Function1;
-	public final fun copy (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemParams;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemParams;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMention ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun getOnMentionSelected ()Lkotlin/jvm/functions/Function1;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemTrailingContentParams {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun component2 ()Landroidx/compose/ui/Modifier;
-	public final fun copy (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemTrailingContentParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemTrailingContentParams;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerSuggestionItemTrailingContentParams;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMention ()Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;
-	public final fun getModifier ()Landroidx/compose/ui/Modifier;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/compose/ui/theme/MessageComposerTrailingContentParams {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)V
