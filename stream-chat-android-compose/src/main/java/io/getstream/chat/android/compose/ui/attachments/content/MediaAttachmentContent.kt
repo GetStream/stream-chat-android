@@ -93,6 +93,7 @@ import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.compose.ui.util.ifNotNull
+import io.getstream.chat.android.compose.ui.util.senderAwareDescription
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -117,6 +118,7 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  * By default it is used to display a play button over video previews.
  */
 @OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
 @Composable
 public fun MediaAttachmentContent(
     state: AttachmentState,
@@ -153,20 +155,39 @@ public fun MediaAttachmentContent(
 
     Box(modifier = modifier) {
         if (attachments.size == 1) {
-            SingleMediaAttachment(
-                attachment = attachments.first(),
-                message = message,
-                modifier = Modifier,
-                onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
-                onLongItemClick = state.onLongItemClick,
-                skipEnrichUrl = skipEnrichUrl,
-                onContentItemClick = onItemClick,
-                overlayContent = itemOverlayContent,
+            val singleAttachment = attachments.first()
+            // Mirror the multi-attachment grid: a non-clickable wrapper carries the sender so the
+            // message row announces it, while the clickable preview stays individually focusable.
+            val singleLabel = stringResource(
+                if (singleAttachment.isVideo()) {
+                    UiCommonR.string.stream_ui_message_list_semantics_message_attachment_video
+                } else {
+                    UiCommonR.string.stream_ui_message_list_semantics_message_attachment_image
+                },
             )
+            val rowDescription = state.senderAwareDescription(singleLabel)
+            Box(
+                modifier = Modifier.semantics {
+                    contentDescription = rowDescription
+                    isTraversalGroup = true
+                },
+            ) {
+                SingleMediaAttachment(
+                    attachment = singleAttachment,
+                    message = message,
+                    modifier = Modifier,
+                    onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+                    onLongItemClick = state.onLongItemClick,
+                    skipEnrichUrl = skipEnrichUrl,
+                    onContentItemClick = onItemClick,
+                    overlayContent = itemOverlayContent,
+                )
+            }
         } else {
             val gridSpacing = StreamTokens.spacing2xs
-            val description =
+            val attachmentsLabel =
                 stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
+            val description = state.senderAwareDescription(attachmentsLabel)
             Row(
                 modifier = Modifier
                     .semantics {

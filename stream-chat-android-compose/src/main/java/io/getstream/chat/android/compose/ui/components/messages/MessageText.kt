@@ -36,6 +36,8 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -56,6 +58,7 @@ import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUserMention
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -114,11 +117,19 @@ public fun MessageText(
     val annotations = remember(styledText) {
         styledText.getStringAnnotations(0, styledText.length)
     }
+    // Announce the sender as part of the text so screen readers attribute every message (DS-035).
+    val senderAwareText = senderAwareContentDescription(
+        isMine = message.isMine(currentUser),
+        senderName = message.user.name,
+        content = styledText.text,
+        isReply = message.replyTo != null,
+    )
     if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {
         ClickableText(
             modifier = modifier
                 .padding(MessageStyling.textPadding)
-                .testTag("Stream_MessageClickableText"),
+                .testTag("Stream_MessageClickableText")
+                .semantics { contentDescription = senderAwareText },
             text = styledText,
             style = style,
             onLongPress = { onLongItemClick(message) },
@@ -141,7 +152,8 @@ public fun MessageText(
             modifier = modifier
                 .padding(MessageStyling.textPadding)
                 .clipToBounds()
-                .testTag("Stream_MessageText"),
+                .testTag("Stream_MessageText")
+                .semantics { contentDescription = senderAwareText },
             text = styledText,
             style = style,
         )

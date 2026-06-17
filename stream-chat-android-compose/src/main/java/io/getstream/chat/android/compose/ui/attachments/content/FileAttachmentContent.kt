@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -38,6 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,6 +63,7 @@ import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
+import io.getstream.chat.android.compose.ui.util.senderAwareDescription
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Attachment.UploadState
@@ -67,6 +72,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -92,40 +98,57 @@ public fun FileAttachmentContent(
 
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
 
-    Column(
-        modifier = modifier
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {},
-                onLongClick = { attachmentState.onLongItemClick(message) },
-            )
-            .testTag("Stream_MultipleFileAttachmentsColumn"),
+    val fileAttachments = message.attachments.filter { it.isFile() || it.isAudio() }
+    // Mirror the multi-attachment grid: a non-clickable wrapper carries the sender so the message
+    // row announces it, while the clickable file rows stay individually focusable.
+    val fileLabel = if (fileAttachments.size == 1) {
+        fileAttachments.first().getDisplayableName().orEmpty()
+    } else {
+        stringResource(UiCommonR.string.stream_ui_message_list_semantics_message_attachments, fileAttachments.size)
+    }
+    val rowDescription = attachmentState.senderAwareDescription(fileLabel)
+
+    Box(
+        modifier = Modifier.semantics {
+            contentDescription = rowDescription
+            isTraversalGroup = true
+        },
     ) {
-        val openAttachmentLabel = stringResource(R.string.stream_compose_message_attachment_open)
-        for (attachment in message.attachments) {
-            if (attachment.isFile() || attachment.isAudio()) {
-                ChatTheme.componentFactory.FileAttachmentItem(
-                    params = FileAttachmentItemParams(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .applyIf(!shouldBeFullSize) {
-                                val color = MessageStyling.attachmentBackgroundColor(attachmentState.isMine)
-                                padding(MessageStyling.messageSectionPadding)
-                                    .background(color, fileAttachmentShape)
-                            }
-                            .combinedClickable(
-                                indication = ripple(),
-                                interactionSource = remember { MutableInteractionSource() },
-                                onClickLabel = openAttachmentLabel,
-                                onClick = { onItemClick(previewHandlers, attachment) },
-                                onLongClick = { attachmentState.onLongItemClick(message) },
-                            ),
-                        attachment = attachment,
-                        isMine = attachmentState.isMine,
-                        showFileSize = showFileSize,
-                    ),
+        Column(
+            modifier = modifier
+                .combinedClickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = {},
+                    onLongClick = { attachmentState.onLongItemClick(message) },
                 )
+                .testTag("Stream_MultipleFileAttachmentsColumn"),
+        ) {
+            val openAttachmentLabel = stringResource(R.string.stream_compose_message_attachment_open)
+            for (attachment in message.attachments) {
+                if (attachment.isFile() || attachment.isAudio()) {
+                    ChatTheme.componentFactory.FileAttachmentItem(
+                        params = FileAttachmentItemParams(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .applyIf(!shouldBeFullSize) {
+                                    val color = MessageStyling.attachmentBackgroundColor(attachmentState.isMine)
+                                    padding(MessageStyling.messageSectionPadding)
+                                        .background(color, fileAttachmentShape)
+                                }
+                                .combinedClickable(
+                                    indication = ripple(),
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    onClickLabel = openAttachmentLabel,
+                                    onClick = { onItemClick(previewHandlers, attachment) },
+                                    onLongClick = { attachmentState.onLongItemClick(message) },
+                                ),
+                            attachment = attachment,
+                            isMine = attachmentState.isMine,
+                            showFileSize = showFileSize,
+                        ),
+                    )
+                }
             }
         }
     }

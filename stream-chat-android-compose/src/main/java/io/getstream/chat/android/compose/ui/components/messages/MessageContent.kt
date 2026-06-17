@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -65,6 +67,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageTextContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.passiveRipple
+import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -142,7 +145,11 @@ internal fun DefaultMessageDeletedContent(
     currentUser: User?,
     modifier: Modifier,
 ) {
-    val contentColor = MessageStyling.textColor(outgoing = currentUser?.id == message.user.id)
+    val isMine = currentUser?.id == message.user.id
+    val contentColor = MessageStyling.textColor(outgoing = isMine)
+    val deletedText = stringResource(id = R.string.stream_compose_message_deleted)
+    // Attribute the sender on deleted messages too, so every message announces who sent it (DS-035).
+    val deletedDescription = senderAwareContentDescription(isMine, message.user.name, deletedText)
     Row(
         modifier = modifier.padding(MessageStyling.contentPadding),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
@@ -155,8 +162,10 @@ internal fun DefaultMessageDeletedContent(
             modifier = Modifier.size(16.dp),
         )
         Text(
-            modifier = Modifier.testTag("Stream_MessageDeleted"),
-            text = stringResource(id = R.string.stream_compose_message_deleted),
+            modifier = Modifier
+                .testTag("Stream_MessageDeleted")
+                .semantics { contentDescription = deletedDescription },
+            text = deletedText,
             color = contentColor,
             style = ChatTheme.typography.bodyDefault,
         )
@@ -217,11 +226,21 @@ internal fun DefaultMessageRegularContent(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )
         val info = message.rememberMessageInfo()
+        // A text-less message announces its sender on the first attachment; messages with text
+        // carry it on the text leaf instead, so the sender is announced exactly once.
+        val senderAttachment = when {
+            message.text.isNotEmpty() -> null
+            info.hasMedia -> SenderAttachment.Media
+            info.hasGiphys -> SenderAttachment.Giphy
+            info.hasFiles -> SenderAttachment.File
+            info.hasRecordings -> SenderAttachment.Audio
+            else -> null
+        }
 
         if (info.hasMedia) {
             componentFactory.MediaAttachmentContent(
                 params = MediaAttachmentContentParams(
-                    state = attachmentState,
+                    state = attachmentState.copy(announceSender = senderAttachment == SenderAttachment.Media),
                 ),
             )
         }
@@ -229,7 +248,7 @@ internal fun DefaultMessageRegularContent(
         if (info.hasGiphys) {
             componentFactory.GiphyAttachmentContent(
                 params = GiphyAttachmentContentParams(
-                    state = attachmentState,
+                    state = attachmentState.copy(announceSender = senderAttachment == SenderAttachment.Giphy),
                 ),
             )
         }
@@ -245,7 +264,7 @@ internal fun DefaultMessageRegularContent(
         if (info.hasFiles) {
             componentFactory.FileAttachmentContent(
                 params = FileAttachmentContentParams(
-                    state = attachmentState,
+                    state = attachmentState.copy(announceSender = senderAttachment == SenderAttachment.File),
                 ),
             )
         }
@@ -253,7 +272,7 @@ internal fun DefaultMessageRegularContent(
         if (info.hasRecordings) {
             componentFactory.AudioRecordAttachmentContent(
                 params = AudioRecordAttachmentContentParams(
-                    state = attachmentState,
+                    state = attachmentState.copy(announceSender = senderAttachment == SenderAttachment.Audio),
                 ),
             )
         }
@@ -317,6 +336,8 @@ private fun Message.rememberMessageInfo(): MessageContentInfo {
         )
     }
 }
+
+private enum class SenderAttachment { Media, Giphy, File, Audio }
 
 private data class MessageContentInfo(
     val hasFiles: Boolean,

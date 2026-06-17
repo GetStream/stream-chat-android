@@ -27,10 +27,14 @@ import io.getstream.chat.android.models.Message
  * @param onLongItemClick Handler for a long click on the message item.
  * @param onMediaGalleryPreviewResult Handler used when the user selects an action to perform from
  * [io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewActivity].
+ * @param announceSender Whether this attachment should prefix its accessibility label with the
+ * sender. Set for the first attachment of a message that has no text, so screen readers attribute
+ * attachment-only messages without announcing the sender more than once.
  */
 public data class AttachmentState(
     val message: Message,
     val isMine: Boolean = false,
     val onLongItemClick: (Message) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    val announceSender: Boolean = false,
 )
