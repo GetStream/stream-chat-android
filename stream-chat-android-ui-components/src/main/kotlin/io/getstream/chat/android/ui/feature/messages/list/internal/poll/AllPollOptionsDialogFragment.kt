@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.utils.extensions.canCastVote
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAllPollOptionsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
@@ -185,7 +186,12 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(result: OptionItem) {
-                binding.root.setOnClickListener { onOptionClick(result.option) }
+                binding.root.isEnabled = !result.readonly
+                if (result.readonly) {
+                    binding.root.setOnClickListener(null)
+                } else {
+                    binding.root.setOnClickListener { onOptionClick(result.option) }
+                }
                 binding.option.text = result.option.text
                 binding.votes.text = result.votes.toString()
                 binding.check.isEnabled = result.isVotedByUser
@@ -210,12 +216,13 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
         fun onOptionClick(option: Option) {
             coroutineScope.launch {
-                pollState.value
-                    ?.let { poll ->
-                        poll.ownVotes.firstOrNull { it.optionId == option.id }
-                            ?.let { chatClient.removePollVote(messageId, poll.id, it.id) }
-                            ?: chatClient.castPollVote(messageId, poll.id, option.id)
-                    }?.await()
+                val poll = pollState.value?.takeUnless(Poll::closed) ?: return@launch
+                val existingVote = poll.ownVotes.find { it.optionId == option.id }
+                if (existingVote != null) {
+                    chatClient.removePollVote(messageId, poll.id, existingVote.id).await()
+                } else if (poll.canCastVote()) {
+                    chatClient.castPollVote(messageId, poll.id, option.id).await()
+                }
             }
         }
 

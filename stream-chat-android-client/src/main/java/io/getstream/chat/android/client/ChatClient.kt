@@ -2368,6 +2368,9 @@ internal constructor(
     /**
      * Cast a vote for a poll in a message.
      *
+     * Note: This function does not validate that the vote can be cast (e.g. that the poll is open or that
+     * the user is still within the [Poll.maxVotesAllowed] limit). Callers are responsible for these checks.
+     *
      * @param messageId The message id where the poll is.
      * @param pollId The poll id.
      * @param optionId The id of the option to vote for.

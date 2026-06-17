@@ -19,8 +19,11 @@ package io.getstream.chat.android.ui.common.utils.extensions
 import android.content.Context
 import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomVote
 import io.getstream.chat.android.ui.common.R
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -75,5 +78,26 @@ internal class PollExtensionsTest {
         val result = poll.getSubtitle(context)
 
         assertEquals("This poll is closed.", result)
+    }
+
+    @Test
+    fun `canCastVote should return true when maxVotesAllowed is null`() {
+        val poll = randomPoll(maxVotesAllowed = null, ownVotes = List(5) { randomVote() })
+
+        assertTrue(poll.canCastVote())
+    }
+
+    @Test
+    fun `canCastVote should return true when ownVotes size is below maxVotesAllowed`() {
+        val poll = randomPoll(maxVotesAllowed = 3, ownVotes = listOf(randomVote(), randomVote()))
+
+        assertTrue(poll.canCastVote())
+    }
+
+    @Test
+    fun `canCastVote should return false when ownVotes size has reached maxVotesAllowed`() {
+        val poll = randomPoll(maxVotesAllowed = 2, ownVotes = listOf(randomVote(), randomVote()))
+
+        assertFalse(poll.canCastVote())
     }
 }

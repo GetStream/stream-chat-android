@@ -201,7 +201,6 @@ private fun PollMoreOptionsItemList(
                 voteCount = voteCount,
                 totalVoteCount = totalVoteCount,
                 users = users,
-                checkedCount = poll.ownVotes.size,
                 checked = isVotedByMine,
                 onCastVote = { onCastVote(option) },
                 onRemoveVote = { poll.votes.find { it.optionId == option.id }?.let(onRemoveVote) },
@@ -218,7 +217,6 @@ private fun PollMoreOptionItem(
     voteCount: Int,
     totalVoteCount: Int,
     users: List<User>,
-    checkedCount: Int,
     checked: Boolean,
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
@@ -231,7 +229,6 @@ private fun PollMoreOptionItem(
         voteCount = voteCount,
         totalVoteCount = totalVoteCount,
         users = users,
-        checkedCount = checkedCount,
         checked = checked,
         style = PollStyle(
             textColor = colors.chatTextIncoming,
