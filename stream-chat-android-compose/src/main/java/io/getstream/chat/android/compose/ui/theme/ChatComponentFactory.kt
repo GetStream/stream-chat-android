@@ -844,6 +844,7 @@ public interface ChatComponentFactory {
             onUserAvatarClick = params.onUserAvatarClick,
             onLinkClick = params.onMessageLinkClick,
             onUserMentionClick = params.onUserMentionClick,
+            onMentionClick = params.onMentionClick,
             onAddAnswer = params.onAddAnswer,
             onReply = params.onReply,
         )
@@ -987,6 +988,7 @@ public interface ChatComponentFactory {
             onUserAvatarClick = params.onUserAvatarClick?.let { { it.invoke(params.messageItem.message.user) } },
             onLinkClick = params.onMessageLinkClick,
             onUserMentionClick = params.onUserMentionClick,
+            onMentionClick = params.onMentionClick,
             onAddAnswer = params.onAddAnswer,
             onReply = params.onReply,
         )
@@ -1077,6 +1079,7 @@ public interface ChatComponentFactory {
             onQuotedMessageClick = params.onQuotedMessageClick,
             onLinkClick = params.onLinkClick,
             onUserMentionClick = params.onUserMentionClick,
+            onMentionClick = params.onMentionClick,
             onMediaGalleryPreviewResult = params.onMediaGalleryPreviewResult,
             onPollUpdated = params.onPollUpdated,
             onCastVote = params.onCastVote,
@@ -1160,6 +1163,7 @@ public interface ChatComponentFactory {
             onQuotedMessageClick = params.onQuotedMessageClick,
             onUserMentionClick = params.onUserMentionClick,
             onLinkClick = params.onLinkClick,
+            onMentionClick = params.onMentionClick,
         )
     }
 
@@ -1178,6 +1182,7 @@ public interface ChatComponentFactory {
             onLongItemClick = params.onLongItemClick,
             onLinkClick = params.onLinkClick,
             onUserMentionClick = params.onUserMentionClick,
+            onMentionClick = params.onMentionClick,
         )
     }
 

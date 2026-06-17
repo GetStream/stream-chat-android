@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
+import io.getstream.chat.android.models.UserGroup
+
 /**
  * Defines a type of a mention inside the message composer.
  *
@@ -32,13 +34,33 @@ public data class MentionType(public val value: String) {
          * Predefined mention type for user mentions (ex. "@John Doe").
          */
         public val user: MentionType = MentionType("user")
+
+        /**
+         * Predefined mention type for `@channel` mentions, notifying every channel member.
+         */
+        public val channel: MentionType = MentionType("channel")
+
+        /**
+         * Predefined mention type for `@here` mentions, notifying online channel members.
+         */
+        public val here: MentionType = MentionType("here")
+
+        /**
+         * Predefined mention type for role mentions (e.g. `@admin`, `@moderator`).
+         */
+        public val role: MentionType = MentionType("role")
+
+        /**
+         * Predefined mention type for user-group mentions (e.g. `@backendsupport`).
+         */
+        public val group: MentionType = MentionType("group")
     }
 }
 
 /**
  * Represents a mention token inside the message composer.
  *
- * By default, only user mentions are supported.
+ * Built-in types are [User], [Channel], [Here], [Role], and [Group].
  * You can extend this interface to define custom mentions if needed.
  */
 public interface Mention {
@@ -51,19 +73,68 @@ public interface Mention {
     public val type: MentionType
 
     /**
-     * The display text of the mention. Implementations must guarantee a non-empty value so
-     * autocomplete and linkification produce a stable `@token` even when the underlying source
-     * lacks a human-readable name.
+     * The primary display text of the mention, used when inserting a token into the composer.
+     * Implementations must guarantee a non-empty value so autocomplete and linkification produce a
+     * stable `@token` even when the underlying source lacks a human-readable name.
      */
     public val display: String
 
     /**
-     * Represents a user mention inside the message composer.
+     * All candidate `@<token>` forms that should match this mention in rendered message text.
+     *
+     * Defaults to `listOf(display)`. Override when more than one literal is valid (e.g. a group
+     * that can be referenced by either its id or its human-readable name).
+     */
+    public val tokens: List<String>
+        get() = listOf(display)
+
+    /**
+     * A user mention.
      *
      * @param user The user being mentioned.
      */
     public data class User(public val user: io.getstream.chat.android.models.User) : Mention {
         override val type: MentionType = MentionType.user
         override val display: String = user.name.ifEmpty { user.id }
+    }
+
+    /**
+     * An `@channel` mention: notifies every channel member.
+     */
+    public object Channel : Mention {
+        override val type: MentionType = MentionType.channel
+        override val display: String = "channel"
+    }
+
+    /**
+     * An `@here` mention: notifies online channel members.
+     */
+    public object Here : Mention {
+        override val type: MentionType = MentionType.here
+        override val display: String = "here"
+    }
+
+    /**
+     * A role mention (e.g. `@admin`).
+     *
+     * @param role The role name.
+     */
+    public data class Role(public val role: String) : Mention {
+        override val type: MentionType = MentionType.role
+        override val display: String = role
+    }
+
+    /**
+     * A user-group mention.
+     *
+     * @param group The group being mentioned.
+     */
+    public data class Group(public val group: UserGroup) : Mention {
+        override val type: MentionType = MentionType.group
+        override val display: String = group.name.ifEmpty { group.id }
+        override val tokens: List<String> = listOfNotNull(
+            group.name.takeIf(String::isNotEmpty),
+            group.id.takeIf { it.isNotEmpty() && it != group.name },
+        )
     }
 }

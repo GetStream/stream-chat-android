@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
+import io.getstream.chat.android.models.UserGroup
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -41,5 +42,35 @@ internal class MentionTest {
         val mention = Mention.User(user)
 
         assertEquals("user1", mention.display)
+    }
+
+    @Test
+    fun `Given Group with name and id when accessing display then return name`() {
+        val mention = Mention.Group(UserGroup(id = "backendsupport", name = "Backend Support Team"))
+
+        assertEquals(MentionType.group, mention.type)
+        assertEquals("Backend Support Team", mention.display)
+    }
+
+    @Test
+    fun `Given Group with name and id when accessing tokens then return both`() {
+        val mention = Mention.Group(UserGroup(id = "backendsupport", name = "Backend Support Team"))
+
+        assertEquals(listOf("Backend Support Team", "backendsupport"), mention.tokens)
+    }
+
+    @Test
+    fun `Given Group whose name equals id when accessing tokens then return a single entry`() {
+        val mention = Mention.Group(UserGroup(id = "backendsupport", name = "backendsupport"))
+
+        assertEquals(listOf("backendsupport"), mention.tokens)
+    }
+
+    @Test
+    fun `Given Group with an empty name when accessing display then fall back to id`() {
+        val mention = Mention.Group(UserGroup(id = "backendsupport", name = ""))
+
+        assertEquals("backendsupport", mention.display)
+        assertEquals(listOf("backendsupport"), mention.tokens)
     }
 }

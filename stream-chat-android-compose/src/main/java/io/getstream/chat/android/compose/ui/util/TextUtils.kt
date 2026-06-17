@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.annotation.SuppressLint
 import android.text.util.Linkify
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -27,6 +28,10 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.core.util.PatternsCompat
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
 import java.util.regex.Pattern
 
 internal typealias AnnotationTag = String
@@ -42,9 +47,87 @@ internal const val AnnotationTagUrl: AnnotationTag = "URL"
 internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 
 /**
- * The tag used to annotate mentions in the message text.
+ * The tag used to annotate user mentions (`@<user>`) in the message text.
  */
-internal const val AnnotationTagMention: AnnotationTag = "MENTION"
+internal const val AnnotationTagUserMention: AnnotationTag = "MENTION"
+
+/**
+ * The tag used to annotate `@channel` mentions in the message text.
+ */
+internal const val AnnotationTagChannelMention: AnnotationTag = "CHANNEL_MENTION"
+
+/**
+ * The tag used to annotate `@here` mentions in the message text.
+ */
+internal const val AnnotationTagHereMention: AnnotationTag = "HERE_MENTION"
+
+/**
+ * The tag used to annotate role mentions (e.g. `@admin`) in the message text. The annotation
+ * value is the role name.
+ */
+internal const val AnnotationTagRoleMention: AnnotationTag = "ROLE_MENTION"
+
+/**
+ * The tag used to annotate user-group mentions (e.g. `@backendsupport`) in the message text. The
+ * annotation value is the group name.
+ */
+internal const val AnnotationTagGroupMention: AnnotationTag = "GROUP_MENTION"
+
+/**
+ * A single mention to highlight in a message's text.
+ *
+ * @property token The literal that follows the `@` in the text.
+ * @property annotationTag The annotation tag attached to every match.
+ */
+internal data class TextMention(
+    val token: String,
+    val annotationTag: AnnotationTag,
+    val color: Color,
+    val background: Color,
+)
+
+/**
+ * Builds the list of [TextMention]s to highlight for this message, each pre-populated with its
+ * per-type color and background from [colors] (overridden by [textColorOverride] when specified).
+ */
+internal fun Message.collectTextMentions(
+    colors: StreamDesign.Colors,
+    textColorOverride: Color = Color.Unspecified,
+): List<TextMention> = buildList {
+    fun add(token: String, tag: AnnotationTag) {
+        add(
+            TextMention(
+                token = token,
+                annotationTag = tag,
+                color = textColorOverride.takeOrElse { colors.mentionTextColorFor(tag) },
+                background = colors.mentionBackgroundFor(tag),
+            ),
+        )
+    }
+    mentionedUsers.forEach { user -> add(user.name.ifEmpty(user::id), AnnotationTagUserMention) }
+    if (mentionedChannel) add("channel", AnnotationTagChannelMention)
+    if (mentionedHere) add("here", AnnotationTagHereMention)
+    mentionedRoles.forEach { role -> add(role, AnnotationTagRoleMention) }
+    mentionedGroups.forEach { group ->
+        Mention.Group(group).tokens.forEach { token -> add(token, AnnotationTagGroupMention) }
+    }
+}
+
+internal fun StreamDesign.Colors.mentionTextColorFor(tag: AnnotationTag): Color = when (tag) {
+    AnnotationTagUserMention -> chatTextMentionUser
+    AnnotationTagChannelMention, AnnotationTagHereMention -> chatTextMentionBroadcast
+    AnnotationTagRoleMention -> chatTextMentionRole
+    AnnotationTagGroupMention -> chatTextMentionGroup
+    else -> chatTextMention
+}
+
+internal fun StreamDesign.Colors.mentionBackgroundFor(tag: AnnotationTag): Color = when (tag) {
+    AnnotationTagUserMention -> chatBgMentionUser
+    AnnotationTagChannelMention, AnnotationTagHereMention -> chatBgMentionBroadcast
+    AnnotationTagRoleMention -> chatBgMentionRole
+    AnnotationTagGroupMention -> chatBgMentionGroup
+    else -> Color.Transparent
+}
 
 /**
  * Builds an [AnnotatedString] from a given text, applying styles and annotations for links and mentions.
@@ -54,8 +137,7 @@ internal const val AnnotationTagMention: AnnotationTag = "MENTION"
  * @param textColor The color to be applied to the regular text.
  * @param textFontStyle The font style to be applied to the regular text.
  * @param linkStyle The text style to be applied to links within the text.
- * @param mentionsColor The color to be applied to mentions within the text.
- * @param mentionedUserNames A list of usernames that are mentioned in the text.
+ * @param mentions The list of mentions to highlight in the text.
  * @param builder An optional lambda to apply additional styles or annotations.
  */
 @SuppressLint("RestrictedApi")
@@ -64,8 +146,7 @@ internal fun buildAnnotatedMessageText(
     textColor: Color,
     textFontStyle: FontStyle?,
     linkStyle: TextStyle,
-    mentionsColor: Color,
-    mentionedUserNames: List<String> = emptyList(),
+    mentions: List<TextMention> = emptyList(),
     builder: (AnnotatedString.Builder).() -> Unit = {},
 ): AnnotatedString {
     return buildAnnotatedString {
@@ -97,11 +178,9 @@ internal fun buildAnnotatedMessageText(
             schemes = EMAIL_SCHEMES,
             textStyle = linkStyle,
         )
-        tagUser(
-            text = text,
-            mentionsColor = mentionsColor,
-            mentionedUserNames = mentionedUserNames,
-        )
+        mentions.forEach { mention ->
+            tagMention(text = text, mention = mention)
+        }
 
         // Finally, we apply any additional styling that was passed in.
         builder(this)
@@ -215,33 +294,27 @@ private fun AnnotatedString.Builder.linkify(
     }
 }
 
-private fun AnnotatedString.Builder.tagUser(
+/**
+ * Tags every word-bounded `@<token>` occurrence in [text] with [mention]'s annotation tag and
+ * styles it with [mention]'s color.
+ */
+private fun AnnotatedString.Builder.tagMention(
     text: String,
-    mentionsColor: Color,
-    mentionedUserNames: List<String>,
+    mention: TextMention,
 ) {
-    mentionedUserNames.forEach { userName ->
-        val start = text.indexOf(userName)
-        val end = start + userName.length
-
-        if (start < 0) return@forEach
-
-        // Backtrack one position to include the leading `@`. Clamp to 0 when the mention is at the
-        // start of the text and no `@` precedes it — otherwise the resulting -1 span start crashes
-        // TalkBack's spannable conversion with `setSpan (-1 ...) starts before 0`.
-        val styledStart = (start - 1).coerceAtLeast(0)
-
+    if (mention.token.isEmpty()) return
+    val pattern = mentionRegex(mention.token)
+    pattern.findAll(text).forEach { match ->
         addStyle(
-            style = SpanStyle(color = mentionsColor),
-            start = styledStart,
-            end = end,
+            style = SpanStyle(color = mention.color, background = mention.background),
+            start = match.range.first,
+            end = match.range.last + 1,
         )
-
         addStringAnnotation(
-            tag = AnnotationTagMention,
-            annotation = userName,
-            start = styledStart,
-            end = end,
+            tag = mention.annotationTag,
+            annotation = mention.token,
+            start = match.range.first,
+            end = match.range.last + 1,
         )
     }
 }

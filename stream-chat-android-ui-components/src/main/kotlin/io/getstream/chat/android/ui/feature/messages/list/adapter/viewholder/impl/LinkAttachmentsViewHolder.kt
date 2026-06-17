@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListLis
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
+import io.getstream.chat.android.ui.feature.messages.list.internal.dispatchMentionClick
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
@@ -135,7 +136,7 @@ public class LinkAttachmentsViewHolder internal constructor(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
                 onLinkClicked = container.linkClickListener::onLinkClick,
-                onMentionClicked = container.mentionClickListener::onMentionClick,
+                onMentionClicked = container::dispatchMentionClick,
             )
         }
     }

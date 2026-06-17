@@ -56,4 +56,9 @@ internal class MessageTextTest : PaparazziComposeTest {
     fun `text with url and mention`() {
         snapshotWithDarkModeRow { MessageTextWithUrlAndMention() }
     }
+
+    @Test
+    fun `text with all mention types`() {
+        snapshotWithDarkModeRow { MessageTextWithAllMentionTypes() }
+    }
 }

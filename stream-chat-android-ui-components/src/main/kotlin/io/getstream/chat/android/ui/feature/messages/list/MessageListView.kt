@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
@@ -577,6 +578,9 @@ public class MessageListView : ConstraintLayout {
         false
     }
     private val defaultMentionClickListener = OnMentionClickListener {
+        false
+    }
+    private val defaultMentionTokenClickListener = OnMentionTokenClickListener {
         false
     }
     private val defaultGiphySendListener =
@@ -1579,16 +1583,42 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Sets the mention click listener to be used by MessageListView.
+     * Sets the user-mention click listener used by [MessageListView].
+     *
+     * Kept for backward compatibility; only fires for user mention taps. New code should prefer
+     * [setOnMentionTokenClickListener], which also fires for other mention types.
      *
      * @param listener The listener to use. If null, the default will be used instead.
      */
+    @Deprecated(
+        message = "Use setOnMentionTokenClickListener; it also fires for other mention types.",
+        replaceWith = ReplaceWith("setOnMentionTokenClickListener"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun setOnMentionClickListener(listener: OnMentionClickListener?) {
         if (listener == null) {
             listenerContainer.mentionClickListener = defaultMentionClickListener
         } else {
             listenerContainer.mentionClickListener = OnMentionClickListener { user ->
                 listener.onMentionClick(user) || defaultMentionClickListener.onMentionClick(user)
+            }
+        }
+    }
+
+    /**
+     * Sets the mention-token click listener used by [MessageListView].
+     *
+     * Unlike [setOnMentionClickListener], this listener fires for every [Mention] subtype and is
+     * the canonical hook for handling mention taps in rendered message text.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnMentionTokenClickListener(listener: OnMentionTokenClickListener?) {
+        if (listener == null) {
+            listenerContainer.mentionTokenClickListener = defaultMentionTokenClickListener
+        } else {
+            listenerContainer.mentionTokenClickListener = OnMentionTokenClickListener { mention ->
+                listener.onMentionClick(mention) || defaultMentionTokenClickListener.onMentionClick(mention)
             }
         }
     }
@@ -2153,8 +2183,20 @@ public class MessageListView : ConstraintLayout {
         public fun onUserClick(user: User): Boolean
     }
 
+    @Deprecated(
+        message = "Use OnMentionTokenClickListener; it also fires for other mention types.",
+        replaceWith = ReplaceWith("OnMentionTokenClickListener"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun interface OnMentionClickListener {
         public fun onMentionClick(user: User): Boolean
+    }
+
+    /**
+     * Click listener invoked when any mention is tapped inside rendered message text.
+     */
+    public fun interface OnMentionTokenClickListener {
+        public fun onMentionClick(mention: Mention): Boolean
     }
 
     public fun interface OnReactionViewClickListener {

@@ -17,13 +17,19 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.ui.text.AnnotatedString
+import io.getstream.chat.android.compose.ui.util.AnnotationTagChannelMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
-import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
+import io.getstream.chat.android.compose.ui.util.AnnotationTagGroupMention
+import io.getstream.chat.android.compose.ui.util.AnnotationTagHereMention
+import io.getstream.chat.android.compose.ui.util.AnnotationTagRoleMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
+import io.getstream.chat.android.compose.ui.util.AnnotationTagUserMention
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.randomUserGroup
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -82,7 +88,7 @@ internal class MessageTextHelpersTest {
     @Test
     fun `hasInteractiveAt returns true for a mention annotation`() {
         val annotations = listOf(
-            AnnotatedString.Range(item = "user", start = 0, end = 5, tag = AnnotationTagMention),
+            AnnotatedString.Range(item = "user", start = 0, end = 5, tag = AnnotationTagUserMention),
         )
 
         annotations.hasInteractiveAt(offset = 2) `should be equal to` true
@@ -190,7 +196,7 @@ internal class MessageTextHelpersTest {
         val onLinkClick = mock<(Message, String) -> Unit>()
         val message = randomMessage(text = "@alice", mentionedUsers = listOf(mentioned))
         val annotations = listOf(
-            AnnotatedString.Range(item = "alice", start = 0, end = 6, tag = AnnotationTagMention),
+            AnnotatedString.Range(item = "alice", start = 0, end = 6, tag = AnnotationTagUserMention),
         )
 
         handleAnnotationClick(
@@ -206,12 +212,22 @@ internal class MessageTextHelpersTest {
         verify(onLinkClick, never()).invoke(any(), any())
     }
 
-    @Test
-    fun `handleAnnotationClick is a no-op when the mentioned user is not in the message`() {
+    @ParameterizedTest
+    @MethodSource("missingEntityCases")
+    fun `handleAnnotationClick is a no-op when the mentioned entity is missing from the message`(
+        message: Message,
+        annotationTag: String,
+        annotationItem: String,
+    ) {
+        val onMentionClick = mock<(Mention) -> Unit>()
         val onUserMentionClick = mock<(User) -> Unit>()
-        val message = randomMessage(text = "@bob", mentionedUsers = emptyList())
         val annotations = listOf(
-            AnnotatedString.Range(item = "bob", start = 0, end = 4, tag = AnnotationTagMention),
+            AnnotatedString.Range(
+                item = annotationItem,
+                start = 0,
+                end = annotationItem.length + 1,
+                tag = annotationTag,
+            ),
         )
 
         handleAnnotationClick(
@@ -221,9 +237,42 @@ internal class MessageTextHelpersTest {
             onLinkClick = null,
             onUserMentionClick = onUserMentionClick,
             fallback = {},
+            onMentionClick = onMentionClick,
         )
 
-        verify(onUserMentionClick, never()).invoke(any())
+        verify(onMentionClick, never())(any())
+        verify(onUserMentionClick, never())(any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("mentionDispatchCases")
+    fun `handleAnnotationClick fires onMentionClick with the right Mention for each kind`(
+        message: Message,
+        annotationTag: String,
+        annotationItem: String,
+        expectedMention: Mention,
+    ) {
+        val onMentionClick = mock<(Mention) -> Unit>()
+        val annotations = listOf(
+            AnnotatedString.Range(
+                item = annotationItem,
+                start = 0,
+                end = annotationItem.length + 1,
+                tag = annotationTag,
+            ),
+        )
+
+        handleAnnotationClick(
+            annotations = annotations,
+            position = 1,
+            message = message,
+            onLinkClick = null,
+            onUserMentionClick = {},
+            fallback = {},
+            onMentionClick = onMentionClick,
+        )
+
+        verify(onMentionClick)(expectedMention)
     }
 
     @Test
@@ -320,10 +369,43 @@ internal class MessageTextHelpersTest {
     companion object {
 
         @JvmStatic
+        fun mentionDispatchCases(): List<Arguments> {
+            val group = randomUserGroup(name = "backend")
+            val user = randomUser(name = "alice")
+            return listOf(
+                Arguments.of(
+                    randomMessage(mentionedUsers = listOf(user)),
+                    AnnotationTagUserMention,
+                    "alice",
+                    Mention.User(user),
+                ),
+                Arguments.of(randomMessage(), AnnotationTagChannelMention, "channel", Mention.Channel),
+                Arguments.of(randomMessage(), AnnotationTagHereMention, "here", Mention.Here),
+                Arguments.of(randomMessage(), AnnotationTagRoleMention, "admin", Mention.Role("admin")),
+                Arguments.of(
+                    randomMessage(mentionedGroups = listOf(group)),
+                    AnnotationTagGroupMention,
+                    "backend",
+                    Mention.Group(group),
+                ),
+            )
+        }
+
+        @JvmStatic
+        fun missingEntityCases(): List<Arguments> = listOf(
+            Arguments.of(randomMessage(mentionedUsers = emptyList()), AnnotationTagUserMention, "bob"),
+            Arguments.of(randomMessage(mentionedGroups = emptyList()), AnnotationTagGroupMention, "ghost"),
+        )
+
+        @JvmStatic
         fun interactiveTagCases(): List<Arguments> = listOf(
             Arguments.of(AnnotationTagUrl, true),
             Arguments.of(AnnotationTagEmail, true),
-            Arguments.of(AnnotationTagMention, true),
+            Arguments.of(AnnotationTagUserMention, true),
+            Arguments.of(AnnotationTagChannelMention, true),
+            Arguments.of(AnnotationTagHereMention, true),
+            Arguments.of(AnnotationTagRoleMention, true),
+            Arguments.of(AnnotationTagGroupMention, true),
             Arguments.of("STYLE", false),
             Arguments.of("UNKNOWN", false),
             Arguments.of("", false),

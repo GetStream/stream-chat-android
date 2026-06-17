@@ -21,7 +21,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.view.MotionEvent
 import android.widget.TextView
-import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 internal abstract class TextViewLinkHandler : LinkMovementMethod() {
     override fun onTouchEvent(
@@ -45,10 +45,10 @@ internal abstract class TextViewLinkHandler : LinkMovementMethod() {
         val off = layout.getOffsetForHorizontal(line, x.toFloat())
 
         buffer.getSpans(off, off, URLSpan::class.java).firstOrNull()?.let { onLinkClick(it.url) }
-        buffer.getSpans(off, off, UserSpan::class.java).firstOrNull()?.let { onUserClick(it.user) }
+        buffer.getSpans(off, off, MentionSpan::class.java).firstOrNull()?.let { onMentionClick(it.mention) }
         return true
     }
 
     abstract fun onLinkClick(url: String)
-    abstract fun onUserClick(user: User)
+    abstract fun onMentionClick(mention: Mention)
 }

@@ -27,12 +27,16 @@ import android.text.util.Linkify
 import android.widget.TextView
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
 import java.util.Locale
 import java.util.regex.Pattern
 
 /**
- * Linkify links the part of the text based on matching pattern.
+ * Utility for linkifying message text: scans a [TextView] for URLs, email addresses, and
+ * mention tokens (`@user`, `@channel`, `@here`, role mentions) referenced by a [Message], and
+ * applies clickable spans for each.
  *
  * This class is a simplified version of [Linkify] and differs only in one following way
  * It doesn't remove any existing URLSpan from the Spannable.
@@ -41,68 +45,57 @@ import java.util.regex.Pattern
 public object Linkify {
 
     /**
-     * Scans the provided TextView and turns all occurrences
-     * of the link types into clickable links.
-     * If matches are found the movement method for the TextView is set to
-     * LinkMovementMethod.
+     * Scans the provided TextView and turns URLs, email addresses and every mention token
+     * present in [message] into clickable links.
      *
      * NOTE: Because this implementation doesn't remove existing URLSpan,
      * make sure it is not repeatedly called on same text.
      *
-     * @param textView TextView whose text is to be marked-up with links.
-     * @param mentionableUsers List of users to be marked-up with links.
+     * @param textView TextView whose text will be scanned and marked up with clickable spans.
+     * @param message Message providing the mention tokens to linkify alongside URLs and email addresses.
      */
-    public fun addLinks(
-        textView: TextView,
-        mentionableUsers: List<User>,
-    ) {
-        val t: CharSequence = textView.text
-
-        if (t is Spannable) {
-            if (addLinks(t, mentionableUsers)) {
-                addLinkMovementMethod(textView)
-            }
-        } else {
-            val s = SpannableString.valueOf(t)
-            if (addLinks(s, mentionableUsers)) {
-                addLinkMovementMethod(textView)
-                textView.text = s
-            }
-        }
+    public fun addLinks(textView: TextView, message: Message) {
+        val original = textView.text
+        val spannable = original as? Spannable ?: SpannableString.valueOf(original)
+        val specs = gatherSpecs(spannable, message).pruneOverlaps(spannable)
+        if (specs.isEmpty()) return
+        specs.forEach { spannable.setSpan(it.span, it.start, it.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
+        addLinkMovementMethod(textView)
+        if (spannable !== original) textView.text = spannable
     }
 
-    /**
-     * Scans the provided spannable text and turns all occurrences
-     * of the link types into clickable links (Currently only support web urls).
-     *
-     * @param spannable Spannable whose text is to be marked-up with links.
-     * @return True if at least one link is found and applied.
-     */
+    private fun gatherSpecs(spannable: Spannable, message: Message): List<SpanSpec> = buildList {
+        addAll(urlSpecs(spannable))
+        addAll(emailSpecs(spannable))
+        message.mentionedUsers.forEach { addAll(mentionSpecs(spannable, Mention.User(it))) }
+        if (message.mentionedChannel) addAll(mentionSpecs(spannable, Mention.Channel))
+        if (message.mentionedHere) addAll(mentionSpecs(spannable, Mention.Here))
+        message.mentionedRoles.forEach { addAll(mentionSpecs(spannable, Mention.Role(it))) }
+        message.mentionedGroups.forEach { addAll(mentionSpecs(spannable, Mention.Group(it))) }
+    }
+
     @SuppressLint("RestrictedApi")
-    private fun addLinks(
-        spannable: Spannable,
-        mentionableUsers: List<User>,
-    ): Boolean =
-        (
+    private fun urlSpecs(spannable: Spannable): List<SpanSpec> = gatherSpanSpecs(
+        spannable,
+        PatternsCompat.AUTOLINK_WEB_URL,
+        Linkify.sUrlMatchFilter,
+    ) { it.makeUrlSpan(listOf("http://", "https://", "rtsp://")) }
+
+    @SuppressLint("RestrictedApi")
+    private fun emailSpecs(spannable: Spannable): List<SpanSpec> = gatherSpanSpecs(
+        spannable,
+        PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
+        null,
+    ) { it.makeUrlSpan(listOf("mailto:")) }
+
+    private fun mentionSpecs(spannable: Spannable, mention: Mention): List<SpanSpec> =
+        mention.tokens.flatMap { token ->
             gatherSpanSpecs(
                 spannable,
-                PatternsCompat.AUTOLINK_WEB_URL,
-                Linkify.sUrlMatchFilter,
-            ) { it.makeUrlSpan(listOf("http://", "https://", "rtsp://")) } + gatherSpanSpecs(
-                spannable,
-                PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
-
+                mentionRegex(token).toPattern(),
                 null,
-            ) { it.makeUrlSpan(listOf("mailto:")) } + mentionableUsers.flatMap { user ->
-                gatherSpanSpecs(
-                    spannable,
-                    Pattern.compile("((?:\\B|^)(@${user.name})(?:\\b|\$))"),
-                    null,
-                ) { UserSpan(user) }
-            }
-            ).pruneOverlaps(spannable)
-            .map { spannable.setSpan(it.span, it.start, it.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
-            .isNotEmpty()
+            ) { MentionSpan(mention) }
+        }
 
     private fun addLinkMovementMethod(t: TextView) {
         val m = t.movementMethod
@@ -165,17 +158,30 @@ public object Linkify {
         return specs
     }
 
-    private fun List<SpanSpec>.pruneOverlaps(text: Spannable): List<SpanSpec> =
-        this - text.getSpans(0, text.length, URLSpan::class.java).map {
-            SpanSpec(
-                span = it,
-                start = text.getSpanStart(it),
-                end = text.getSpanEnd(it),
-            )
-        }.flatMap { link ->
-            this.filter { it.start <= link.start && it.end >= link.end } +
-                this.filter { link.start <= it.start && link.end >= it.end }
-        }.toSet()
+    /**
+     * Drops any spec fully contained by, or fully containing, a URL span: either one already
+     * on the buffer or one gathered in this pass.
+     *
+     * E.g. prevents `@user` in `https://example.com/@user` from getting its own span.
+     */
+    private fun List<SpanSpec>.pruneOverlaps(text: Spannable): List<SpanSpec> {
+        val existingUrlSpans = text.getSpans(0, text.length, URLSpan::class.java).map {
+            SpanSpec(span = it, start = text.getSpanStart(it), end = text.getSpanEnd(it))
+        }
+        val newUrlSpecs = filter { it.span is URLSpan }
+        val dropped = mutableSetOf<SpanSpec>()
+        existingUrlSpans.forEach { link ->
+            filterTo(dropped) { it.contains(link) || link.contains(it) }
+        }
+        newUrlSpecs.forEach { link ->
+            // only drop non-URL specs, otherwise a URL spec would drop itself (self-containment)
+            filterTo(dropped) { it.span !is URLSpan && (it.contains(link) || link.contains(it)) }
+        }
+        return this - dropped
+    }
+
+    private fun SpanSpec.contains(other: SpanSpec): Boolean =
+        start <= other.start && end >= other.end
 
     private data class SpanSpec(
         val span: ClickableSpan,

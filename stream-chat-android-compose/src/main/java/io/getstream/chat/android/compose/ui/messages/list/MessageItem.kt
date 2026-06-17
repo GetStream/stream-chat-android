@@ -78,6 +78,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -129,6 +130,7 @@ public fun LazyItemScope.MessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
+    onMentionClick: (Mention) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
@@ -188,6 +190,7 @@ public fun LazyItemScope.MessageItem(
                         onUserAvatarClick = onUserAvatarClick,
                         onMessageLinkClick = onLinkClick,
                         onUserMentionClick = onUserMentionClick,
+                        onMentionClick = onMentionClick,
                         onAddAnswer = onAddAnswer,
                         onReply = onReply,
                     ),

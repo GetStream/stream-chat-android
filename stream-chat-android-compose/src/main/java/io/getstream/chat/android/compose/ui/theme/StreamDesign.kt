@@ -304,6 +304,33 @@ public object StreamDesign {
         /** Mention styling in chat messages. */
         internal val chatTextMention: Color = chatTextLink
 
+        /** User-mention text color (`@<user>`). */
+        internal val chatTextMentionUser: Color = chatTextMention
+
+        /** Broadcast-mention text color (`@channel`, `@here`). */
+        internal val chatTextMentionBroadcast: Color = chatTextMention
+
+        /** Role-mention text color (`@<role>`). */
+        internal val chatTextMentionRole: Color = chatTextMention
+
+        /** Group-mention text color (`@<group>`). */
+        internal val chatTextMentionGroup: Color = chatTextMention
+
+        /** Mention background fill. */
+        internal val chatBgMention: Color = Color.Transparent
+
+        /** User-mention background fill. */
+        internal val chatBgMentionUser: Color = chatBgMention
+
+        /** Broadcast-mention background fill. */
+        internal val chatBgMentionBroadcast: Color = chatBgMention
+
+        /** Role-mention background fill. */
+        internal val chatBgMentionRole: Color = chatBgMention
+
+        /** Group-mention background fill. */
+        internal val chatBgMentionGroup: Color = chatBgMention
+
         /** Reaction count text in chat. */
         internal val chatTextReaction: Color = textSecondary
 

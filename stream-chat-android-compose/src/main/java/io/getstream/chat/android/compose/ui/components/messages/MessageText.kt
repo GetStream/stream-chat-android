@@ -47,14 +47,20 @@ import androidx.compose.ui.util.fastForEach
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.AnnotationTagChannelMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
-import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
+import io.getstream.chat.android.compose.ui.util.AnnotationTagGroupMention
+import io.getstream.chat.android.compose.ui.util.AnnotationTagHereMention
+import io.getstream.chat.android.compose.ui.util.AnnotationTagRoleMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
+import io.getstream.chat.android.compose.ui.util.AnnotationTagUserMention
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserGroup
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
@@ -80,6 +86,7 @@ public fun MessageText(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
     onLinkClick: ((Message, String) -> Unit)? = null,
+    onMentionClick: (Mention) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -105,7 +112,7 @@ public fun MessageText(
     }
 
     val annotations = remember(styledText) {
-        styledText.getStringAnnotations(0, styledText.lastIndex)
+        styledText.getStringAnnotations(0, styledText.length)
     }
     if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {
         ClickableText(
@@ -122,6 +129,7 @@ public fun MessageText(
                 position = position,
                 message = message,
                 onLinkClick = onLinkClick,
+                onMentionClick = onMentionClick,
                 onUserMentionClick = onUserMentionClick,
                 fallback = { url ->
                     context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
@@ -228,8 +236,17 @@ private suspend fun AwaitPointerEventScope.consumeUntilUp() {
  * Whether this annotation range carries one of the interactive tags handled by [MessageText]:
  * URL, email, or mention.
  */
-internal fun AnnotatedString.Range<String>.isInteractiveTag(): Boolean =
-    tag == AnnotationTagUrl || tag == AnnotationTagEmail || tag == AnnotationTagMention
+internal fun AnnotatedString.Range<String>.isInteractiveTag(): Boolean = when (tag) {
+    AnnotationTagUrl,
+    AnnotationTagEmail,
+    AnnotationTagUserMention,
+    AnnotationTagChannelMention,
+    AnnotationTagHereMention,
+    AnnotationTagRoleMention,
+    AnnotationTagGroupMention,
+    -> true
+    else -> false
+}
 
 /**
  * Whether any annotation in the list both has an interactive tag and covers [offset]. Uses
@@ -240,10 +257,10 @@ internal fun List<AnnotatedString.Range<String>>.hasInteractiveAt(offset: Int): 
 
 /**
  * Resolves the interactive annotation at the given character [position] and dispatches the right
- * handler. Mention annotations route to [onUserMentionClick] after resolving the username against
- * [Message.mentionedUsers]; URL/email annotations route to [onLinkClick] when set, otherwise to
- * [fallback]. Annotations with empty items, non-interactive tags, or no match at [position] are
- * ignored.
+ * handler. Mention annotations route to [onMentionClick]; user mentions additionally fire
+ * [onUserMentionClick] for backward compatibility. URL/email annotations route to [onLinkClick]
+ * when set, otherwise to [fallback]. Annotations with empty items, non-interactive
+ * tags, or no match at [position] are ignored.
  */
 @Suppress("LongParameterList")
 internal fun handleAnnotationClick(
@@ -253,13 +270,23 @@ internal fun handleAnnotationClick(
     onLinkClick: ((Message, String) -> Unit)?,
     onUserMentionClick: (User) -> Unit,
     fallback: (String) -> Unit,
+    onMentionClick: (Mention) -> Unit = {},
 ) {
     val annotation = annotations.firstOrNull {
         it.isInteractiveTag() && position in it.start until it.end
     } ?: return
     when (annotation.tag) {
-        AnnotationTagMention -> {
-            message.mentionedUsers.getUserByNameOrId(annotation.item)?.let(onUserMentionClick)
+        AnnotationTagUserMention -> {
+            val user = message.mentionedUsers.getUserByNameOrId(annotation.item) ?: return
+            onMentionClick(Mention.User(user))
+            onUserMentionClick(user)
+        }
+        AnnotationTagChannelMention -> onMentionClick(Mention.Channel)
+        AnnotationTagHereMention -> onMentionClick(Mention.Here)
+        AnnotationTagRoleMention -> onMentionClick(Mention.Role(annotation.item))
+        AnnotationTagGroupMention -> {
+            message.mentionedGroups.find { it.id == annotation.item || it.name == annotation.item }
+                ?.let { onMentionClick(Mention.Group(it)) }
         }
         AnnotationTagUrl, AnnotationTagEmail -> {
             val url = annotation.item
@@ -321,6 +348,22 @@ internal fun MessageTextWithUrlAndMention() {
     )
 }
 
+@Composable
+internal fun MessageTextWithAllMentionTypes() {
+    MessageText(
+        message = Message(
+            text = "Hi @alice @channel @here @admin @platform",
+            mentionedUsers = listOf(User(id = "alice", name = "alice")),
+            mentionedChannel = true,
+            mentionedHere = true,
+            mentionedRoles = listOf("admin"),
+            mentionedGroups = listOf(UserGroup(id = "g1", name = "platform")),
+        ),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun MessageTextPlainPreview() {
@@ -349,4 +392,10 @@ private fun MessageTextWithMentionPreview() {
 @Composable
 private fun MessageTextWithUrlAndMentionPreview() {
     ChatTheme { MessageTextWithUrlAndMention() }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageTextWithAllMentionTypesPreview() {
+    ChatTheme { MessageTextWithAllMentionTypes() }
 }
