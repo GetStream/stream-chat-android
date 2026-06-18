@@ -55,14 +55,14 @@ data class EnrichedActivity (
     @Json(name = "to")
     val to: kotlin.collections.List<kotlin.String>? = emptyList(),
 
+    @Json(name = "object")
+    val `object`: io.getstream.chat.android.network.models.Data? = null,
+
     @Json(name = "actor")
     val actor: io.getstream.chat.android.network.models.Data? = null,
 
     @Json(name = "latest_reactions")
     val latestReactions: kotlin.collections.Map<kotlin.String, kotlin.collections.List<io.getstream.chat.android.network.models.EnrichedReaction>>? = emptyMap(),
-
-    @Json(name = "object")
-    val `object`: io.getstream.chat.android.network.models.Data? = null,
 
     @Json(name = "origin")
     val origin: io.getstream.chat.android.network.models.Data? = null,
