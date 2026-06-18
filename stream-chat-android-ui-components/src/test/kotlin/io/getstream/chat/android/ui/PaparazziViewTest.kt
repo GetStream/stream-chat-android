@@ -47,7 +47,7 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
     @get:Rule
     val instantAnimations = InstantAnimationsRule()
 
-    open val baseDeviceConfig: DeviceConfig = DeviceConfig.PIXEL_4A
+    abstract val deviceConfig: DeviceConfig
 
     @Before
     fun prepare() {
@@ -82,6 +82,7 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
         applyNightMode(true)
         val darkView = viewFactory(paparazzi.context)
 
+        // Reset to light so the container and final snapshot render in light mode
         applyNightMode(false)
 
         val container = LinearLayout(paparazzi.context).apply {
@@ -108,7 +109,7 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
 
     private fun applyNightMode(isDark: Boolean) {
         paparazzi.unsafeUpdateConfig(
-            deviceConfig = baseDeviceConfig.copy(
+            deviceConfig = deviceConfig.copy(
                 nightMode = if (isDark) NightMode.NIGHT else NightMode.NOTNIGHT,
             ),
         )
