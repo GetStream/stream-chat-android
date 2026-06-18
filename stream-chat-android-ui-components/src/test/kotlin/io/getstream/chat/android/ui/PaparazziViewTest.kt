@@ -110,7 +110,7 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
         paparazzi.unsafeUpdateConfig(
             deviceConfig = baseDeviceConfig.copy(
                 nightMode = if (isDark) NightMode.NIGHT else NightMode.NOTNIGHT,
-            )
+            ),
         )
     }
 }
