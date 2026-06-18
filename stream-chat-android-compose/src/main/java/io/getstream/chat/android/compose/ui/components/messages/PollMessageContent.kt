@@ -218,11 +218,12 @@ private fun PollMessageContent(
         )
     }
 
-    // Announce the sender on the poll name so screen readers attribute every message (DS-035).
+    // Announce the sender on the poll name so screen readers attribute every message.
     val senderAwareName = senderAwareContentDescription(
         isMine = isMine,
         senderName = message.user.name,
         content = poll.name,
+        isReply = message.replyTo != null,
     )
     Column(
         modifier = Modifier

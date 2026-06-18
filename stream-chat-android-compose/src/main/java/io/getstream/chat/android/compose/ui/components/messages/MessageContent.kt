@@ -148,8 +148,13 @@ internal fun DefaultMessageDeletedContent(
     val isMine = currentUser?.id == message.user.id
     val contentColor = MessageStyling.textColor(outgoing = isMine)
     val deletedText = stringResource(id = R.string.stream_compose_message_deleted)
-    // Attribute the sender on deleted messages too, so every message announces who sent it (DS-035).
-    val deletedDescription = senderAwareContentDescription(isMine, message.user.name, deletedText)
+    // Attribute the sender on deleted messages too, so every message announces who sent it.
+    val deletedDescription = senderAwareContentDescription(
+        isMine = isMine,
+        senderName = message.user.name,
+        content = deletedText,
+        isReply = message.replyTo != null,
+    )
     Row(
         modifier = modifier.padding(MessageStyling.contentPadding),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),

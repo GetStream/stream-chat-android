@@ -117,7 +117,7 @@ public fun MessageText(
     val annotations = remember(styledText) {
         styledText.getStringAnnotations(0, styledText.length)
     }
-    // Announce the sender as part of the text so screen readers attribute every message (DS-035).
+    // Announce the sender as part of the text so screen readers attribute every message.
     val senderAwareText = senderAwareContentDescription(
         isMine = message.isMine(currentUser),
         senderName = message.user.name,
