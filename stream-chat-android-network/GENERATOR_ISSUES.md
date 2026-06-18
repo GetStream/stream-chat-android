@@ -288,6 +288,37 @@ and identify which generated classes have no chat-domain meaning. Decide per-cla
 - Keep as public if the symbol genuinely needs to round-trip (e.g. moderation reviewers do see
   feeds activities in cross-product orgs).
 
+### Product tags scope and the path to model trimming
+
+Concrete observation from the upstream generator source
+(`lib/combined/openapi/generator/types/types.go`):
+
+- `Operation` has a `Product string` field (line 684). Endpoints are product-tagged.
+- `Model` has no equivalent. Models are universal across products.
+- `FilterByProduct` (line 1125) filters only operations.
+
+This means option 4 (per-product **API** split) is straightforward to implement. **Model**
+trimming - emitting only the models actually referenced by the kept operations - is a separate
+problem because models have no product tag.
+
+The generator already has a reachability traversal at `Context.ResponseModels()` (lines
+1185-1212): seeds from each kept operation's `ResponseModel`, walks model fields, resolves
+referenced model names via `GetModel`, expands until fixed point. The TypeScript plugin calls it
+for date-decoder selection (`typescript.go:85`), but **no language plugin currently uses it to
+trim the emitted model set** - every plugin still emits all of `spec.Models`.
+
+A reachability-based model trim would need two changes:
+
+1. Extend the seed set to also include request bodies and parameter types (currently only
+   `ResponseModel`).
+2. Apply it at model emission time in each language plugin: replace
+   `for _, model := range spec.Models` with iteration over the reachable closure of the
+   filtered operations.
+
+Both changes live in shared (generic) generator code, not in any one language plugin. **Touching
+that code should be coordinated with the iOS / TS / feeds-android maintainers** rather than
+landed as a local fork.
+
 ---
 
 ## 6. Chat datetime fields generated as `OffsetDateTime` instead of `Date`
