@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -79,6 +80,13 @@ internal class ChannelStateLegacyImpl(
     private var messageLimit: Int? = baseMessageLimit
 
     private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
+
+    /**
+     * Tracks the creation date of the current user's most recent thread-only reply. Thread-only
+     * replies are excluded from the visible [messages] list, so the cooldown derivation tracks them
+     * here separately.
+     */
+    private val _lastSentThreadReplyDate = MutableStateFlow<Date?>(null)
     private var _pinnedMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _typing: MutableStateFlow<TypingEvent>? = MutableStateFlow(TypingEvent(channelId, emptyList()))
     private var _rawReads: MutableStateFlow<Map<String, ChannelUserRead>>? = MutableStateFlow(emptyMap())
@@ -252,7 +260,7 @@ internal class ChannelStateLegacyImpl(
 
     override val insideSearch: StateFlow<Boolean> = _insideSearch!!
 
-    override val lastSentMessageDate: StateFlow<Date?> = combineStates(
+    private val lastSentChannelMessageDate: StateFlow<Date?> = combineStates(
         userFlow,
         channelConfig,
         messages,
@@ -263,6 +271,9 @@ internal class ChannelStateLegacyImpl(
                 .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
         }
     }
+
+    override val lastSentMessageDate: StateFlow<Date?> =
+        combineStates(lastSentChannelMessageDate, _lastSentThreadReplyDate, ::latestOf)
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
@@ -609,7 +620,18 @@ internal class ChannelStateLegacyImpl(
         setPinned { pinned -> pinned.filter { it.value.wasCreatedAfter(date) } }
     }
 
+    /** Advances [_lastSentThreadReplyDate] with [date], never moving it backwards. */
+    private fun advanceLastSentThreadReplyDate(date: Date?) {
+        date ?: return
+        _lastSentThreadReplyDate.update { current -> latestOf(current, date) }
+    }
+
+    private fun trackOwnThreadReply(messages: Collection<Message>) {
+        advanceLastSentThreadReplyDate(messages.latestOwnThreadReplyDate(userFlow.value?.id))
+    }
+
     fun upsertMessages(updatedMessages: Collection<Message>) {
+        trackOwnThreadReply(updatedMessages)
         _messages?.apply {
             val newMessageList = (value + (updatedMessages.associateBy(Message::id) - deletedMessagesIds)).values
             value = applyMessageLimitIfNeeded(newMessageList).associateBy(Message::id)
@@ -624,6 +646,7 @@ internal class ChannelStateLegacyImpl(
     }
 
     fun setMessages(messages: List<Message>) {
+        trackOwnThreadReply(messages)
         _messages?.value = applyMessageLimitIfNeeded(messages).associateBy(Message::id)
     }
 
