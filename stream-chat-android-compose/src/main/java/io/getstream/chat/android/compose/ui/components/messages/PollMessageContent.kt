@@ -41,6 +41,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -59,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.passiveRipple
+import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -215,12 +218,20 @@ private fun PollMessageContent(
         )
     }
 
+    // Announce the sender on the poll name so screen readers attribute every message.
+    val senderAwareName = senderAwareContentDescription(
+        isMine = isMine,
+        senderName = message.user.name,
+        content = poll.name,
+        isReply = message.replyTo != null,
+    )
     Column(
         modifier = Modifier
             .passiveRipple()
             .padding(StreamTokens.spacingMd),
     ) {
         Text(
+            modifier = Modifier.semantics { contentDescription = senderAwareName },
             text = poll.name,
             style = typography.bodyEmphasis,
             color = style.textColor,

@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -41,6 +42,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -66,6 +70,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.senderAwareDescription
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
@@ -99,26 +104,38 @@ public fun AudioRecordAttachmentContent(
     val playerState by viewModel.state.collectAsStateWithLifecycle()
 
     val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
-    Column(
-        modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) },
-        verticalArrangement = Arrangement.spacedBy(MessageStyling.sectionsDistance),
+    // Mirror the multi-attachment grid: a non-clickable wrapper carries the "Voice message" label
+    // (and the sender when this is the sender-bearing attachment) so the message row announces it,
+    // while the playback controls stay individually focusable.
+    val voiceMessageLabel = stringResource(R.string.stream_compose_audio_recording_preview)
+    val rowDescription = attachmentState.senderAwareDescription(voiceMessageLabel)
+    Box(
+        modifier = Modifier.semantics {
+            contentDescription = rowDescription
+            isTraversalGroup = true
+        },
     ) {
-        audioRecordings.forEach { audioRecording ->
-            AudioRecordAttachmentContentItem(
-                modifier = Modifier.applyIf(!shouldBeFullSize) {
-                    background(
-                        MessageStyling.attachmentBackgroundColor(attachmentState.isMine),
-                        RoundedCornerShape(StreamTokens.radiusLg),
-                    )
-                },
-                attachment = audioRecording,
-                playerState = playerState,
-                isMine = attachmentState.isMine,
-                onPlayToggleClick = viewModel::playOrPause,
-                onPlaySpeedClick = viewModel::changeSpeed,
-                onThumbDragStart = viewModel::startSeek,
-                onThumbDragStop = viewModel::seekTo,
-            )
+        Column(
+            modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) },
+            verticalArrangement = Arrangement.spacedBy(MessageStyling.sectionsDistance),
+        ) {
+            audioRecordings.forEach { audioRecording ->
+                AudioRecordAttachmentContentItem(
+                    modifier = Modifier.applyIf(!shouldBeFullSize) {
+                        background(
+                            MessageStyling.attachmentBackgroundColor(attachmentState.isMine),
+                            RoundedCornerShape(StreamTokens.radiusLg),
+                        )
+                    },
+                    attachment = audioRecording,
+                    playerState = playerState,
+                    isMine = attachmentState.isMine,
+                    onPlayToggleClick = viewModel::playOrPause,
+                    onPlaySpeedClick = viewModel::changeSpeed,
+                    onThumbDragStart = viewModel::startSeek,
+                    onThumbDragStop = viewModel::seekTo,
+                )
+            }
         }
     }
 

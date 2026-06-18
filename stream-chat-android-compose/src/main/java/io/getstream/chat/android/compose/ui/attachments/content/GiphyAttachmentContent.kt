@@ -45,6 +45,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -60,6 +63,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.senderAwareDescription
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -118,51 +122,66 @@ public fun GiphyAttachmentContent(
     val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode)
 
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
+    val giphyTitle = attachment.title?.takeIf(String::isNotBlank)
+    // Mirror the card's announcement (title + the Giphy badge) so the row identifies it as a giphy.
+    val giphyContent = listOfNotNull(giphyTitle, stringResource(R.string.stream_compose_giphy_label))
+        .joinToString(separator = ", ")
+    val giphyRowDescription = state.senderAwareDescription(giphyContent)
     val interactionSource = remember { MutableInteractionSource() }
+    // Mirror the multi-attachment grid: a non-clickable wrapper carries the content (and the sender
+    // when this is the sender-bearing attachment) so the message row announces it, while the
+    // clickable giphy stays individually focusable.
     Box(
-        modifier = modifier
-            .testTag("Stream_GiphyContent")
-            .size(giphyDimensions)
-            .applyIf(!shouldBeFullSize) {
-                padding(MessageStyling.messageSectionPadding)
-                    .clip(RoundedCornerShape(StreamTokens.radiusLg))
-            }
-            // Workaround: `interactive` gates `combinedClickable` so the ephemeral preview path
-            // can disable the clickable (its inner click and long-click are no-ops there) and let
-            // the surrounding bubble announce as a single TalkBack focus. The proper fix is to
-            // make `onItemClick` (and `AttachmentState.onLongItemClick`) nullable and gate on
-            // `!= null`, but that is a binary-breaking type change on a published API. Revisit in
-            // v8 and drop `interactive` once the handlers are nullable.
-            .applyIf(interactive) {
-                combinedClickable(
-                    indication = ripple(),
-                    interactionSource = interactionSource,
-                    onClick = {
-                        onItemClick(
-                            GiphyAttachmentClickData(
-                                context = context,
-                                url = previewUrl,
-                                attachment = attachment,
-                                message = message,
-                            ),
-                        )
-                    },
-                    onLongClick = { state.onLongItemClick(message) },
-                )
-            },
+        modifier = modifier.semantics {
+            contentDescription = giphyRowDescription
+            isTraversalGroup = true
+        },
     ) {
-        StreamAsyncImage(
-            data = giphyInfo?.url,
-            modifier = Modifier.fillMaxSize(),
-            contentDescription = attachment.title?.takeIf(String::isNotBlank),
-            contentScale = contentScale,
-        )
+        Box(
+            modifier = Modifier
+                .testTag("Stream_GiphyContent")
+                .size(giphyDimensions)
+                .applyIf(!shouldBeFullSize) {
+                    padding(MessageStyling.messageSectionPadding)
+                        .clip(RoundedCornerShape(StreamTokens.radiusLg))
+                }
+                // Workaround: `interactive` gates `combinedClickable` so the ephemeral preview path
+                // can disable the clickable (its inner click and long-click are no-ops there) and
+                // let the surrounding bubble announce as a single TalkBack focus. The proper fix is
+                // to make `onItemClick` (and `AttachmentState.onLongItemClick`) nullable and gate on
+                // `!= null`, but that is a binary-breaking type change on a published API. Revisit
+                // in v8 and drop `interactive` once the handlers are nullable.
+                .applyIf(interactive) {
+                    combinedClickable(
+                        indication = ripple(),
+                        interactionSource = interactionSource,
+                        onClick = {
+                            onItemClick(
+                                GiphyAttachmentClickData(
+                                    context = context,
+                                    url = previewUrl,
+                                    attachment = attachment,
+                                    message = message,
+                                ),
+                            )
+                        },
+                        onLongClick = { state.onLongItemClick(message) },
+                    )
+                },
+        ) {
+            StreamAsyncImage(
+                data = giphyInfo?.url,
+                modifier = Modifier.fillMaxSize(),
+                contentDescription = giphyTitle,
+                contentScale = contentScale,
+            )
 
-        GiphyLabel(
-            Modifier
-                .align(Alignment.BottomStart)
-                .padding(StreamTokens.spacingXs),
-        )
+            GiphyLabel(
+                Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(StreamTokens.spacingXs),
+            )
+        }
     }
 }
 

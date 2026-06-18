@@ -162,6 +162,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"확장됨"</string>
   <string name="stream_compose_message_composer_attachments_open">"첨부파일 열기"</string>
   <string name="stream_compose_message_deleted">"메시지가 삭제되었습니다"</string>
+  <string name="stream_compose_message_sender_self">"내 메시지: %1$s"</string>
+  <string name="stream_compose_message_sender_other">"%1$s님의 메시지: %2$s"</string>
+  <string name="stream_compose_message_sender_self_reply">"내 답장: %1$s"</string>
+  <string name="stream_compose_message_sender_other_reply">"%1$s님의 답장: %2$s"</string>
   <string name="stream_compose_message_deleted_preview">"메시지가 삭제되었습니다"</string>
   <string name="stream_compose_message_actions_menu_title">"메시지 작업"</string>
   <string name="stream_compose_message_item_open_thread">"스레드 열기"</string>

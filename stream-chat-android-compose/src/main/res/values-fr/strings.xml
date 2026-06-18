@@ -150,6 +150,10 @@
   <string name="stream_compose_message_composer_attachments_expanded">"développé"</string>
   <string name="stream_compose_message_composer_attachments_open">"Ouvrir les pièces jointes"</string>
   <string name="stream_compose_message_deleted">"Message supprimé"</string>
+  <string name="stream_compose_message_sender_self">"Vous avez dit, %1$s"</string>
+  <string name="stream_compose_message_sender_other">"%1$s a dit, %2$s"</string>
+  <string name="stream_compose_message_sender_self_reply">"Vous avez répondu, %1$s"</string>
+  <string name="stream_compose_message_sender_other_reply">"%1$s a répondu, %2$s"</string>
   <string name="stream_compose_message_deleted_preview">"Message supprimé"</string>
   <string name="stream_compose_message_actions_menu_title">"Actions du message"</string>
   <string name="stream_compose_message_item_open_thread">"Ouvrir le fil"</string>
