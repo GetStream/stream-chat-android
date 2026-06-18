@@ -61,9 +61,11 @@ val object: io.getstream.chat.android.network.models.Data? = null,
 `lib/combined/openapi/generator/languages/kotlin/kotlin.go`) lowercases / camel-cases the JSON
 field name but has no list of Kotlin reserved words to escape.
 
-**Fix status:** Not fixed. Likely affects any other reserved word that appears as a field name in
-the future (`class`, `fun`, `interface`, `package`, `val`, `var`, `is`, `in`, `out`, `when`,
-`object`, `typeof`, ...).
+**Fix status:** Locally fixed in the generator (not upstream). `kotlin.go` now has a
+`kotlinHardKeywords` table and an `escapeIfKeyword` helper applied by `ParamName`. The helper
+backticks the name only when it's already a dex-safe identifier (`[A-Za-z_$][A-Za-z0-9_$]*`),
+preserving Android compatibility. Future regens auto-emit `` val `object`: ... `` without
+manual patching.
 
 **Suggested fix:** In the param-name converter, wrap identifiers that collide with Kotlin hard
 keywords in backticks (`` `object` ``). The full hard-keyword list is documented at
