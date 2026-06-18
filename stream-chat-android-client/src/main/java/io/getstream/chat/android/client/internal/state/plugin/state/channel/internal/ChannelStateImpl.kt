@@ -1528,6 +1528,7 @@ internal class ChannelStateImpl(
         _repliedMessage.value = null
         _quotedMessagesMap.value = emptyMap()
         _messages.value = emptyList()
+        _lastSentThreadReplyDate.value = null
         _pendingMessages.value = emptyList()
         _pendingEnabled.value = false
         _cachedLatestMessages.value = emptyList()

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -94,5 +95,15 @@ internal class ChannelStateImplLastSentMessageDateTest : ChannelStateImplTestBas
         channelState.setMessages(createMessages(count = 2, startIndex = 1))
 
         assertEquals(threadReply.createdAt, channelState.lastSentMessageDate.value)
+    }
+
+    @Test
+    fun `destroy clears the thread-reply contribution to lastSentMessageDate`() = runTest {
+        channelState.upsertMessage(createMessage(1, parentId = "parent1", showInChannel = false))
+        assertNotNull(channelState.lastSentMessageDate.value)
+
+        channelState.destroy()
+
+        assertNull(channelState.lastSentMessageDate.value)
     }
 }
