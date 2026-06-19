@@ -30,6 +30,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -130,6 +131,57 @@ internal class ChannelStateLegacyImplTest {
         assertEquals(newWatcherCount, channelState.watcherCount.value)
         assertEquals(newWatcherCount, channelState.watchers.value.size)
         assertEquals(listOf(currentUser), channelState.watchers.value)
+    }
+
+    @Test
+    fun `a thread-only reply by the current user updates lastSentMessageDate`() = runTest {
+        val threadReply = ownMessage(index = 1, parentId = "parent1", showInChannel = false)
+
+        channelState.upsertMessage(threadReply)
+
+        // the reply is excluded from the visible message list, but still drives the cooldown
+        assertTrue(channelState.messages.value.isEmpty())
+        assertEquals(threadReply.createdAt, channelState.lastSentMessageDate.value)
+    }
+
+    @Test
+    fun `a thread-only reply from another user does not update lastSentMessageDate`() = runTest {
+        val otherUserReply = ownMessage(index = 1, parentId = "parent1", showInChannel = false, user = randomUser())
+
+        channelState.upsertMessage(otherUserReply)
+
+        assertNull(channelState.lastSentMessageDate.value)
+    }
+
+    @Test
+    fun `a channel message by the current user still updates lastSentMessageDate`() = runTest {
+        val channelMessage = ownMessage(index = 1)
+
+        channelState.upsertMessage(channelMessage)
+
+        assertEquals(channelMessage.createdAt, channelState.lastSentMessageDate.value)
+    }
+
+    @Test
+    fun `a newer thread reply wins over an older channel message`() = runTest {
+        val olderChannelMessage = ownMessage(index = 1)
+        val newerThreadReply = ownMessage(index = 5, parentId = "parent1", showInChannel = false)
+
+        channelState.upsertMessage(olderChannelMessage)
+        channelState.upsertMessage(newerThreadReply)
+
+        assertEquals(newerThreadReply.createdAt, channelState.lastSentMessageDate.value)
+    }
+
+    @Test
+    fun `the thread reply date survives a later refresh that omits it`() = runTest {
+        val threadReply = ownMessage(index = 5, parentId = "parent1", showInChannel = false)
+        channelState.upsertMessage(threadReply)
+
+        // a server refresh replaces the message list with channel messages only (no thread replies)
+        channelState.setMessages(listOf(ownMessage(index = 1), ownMessage(index = 2)))
+
+        assertEquals(threadReply.createdAt, channelState.lastSentMessageDate.value)
     }
 
     @Test
@@ -755,6 +807,23 @@ internal class ChannelStateLegacyImplTest {
     /**
      * Helper function to create a list of messages with sequential timestamps.
      */
+    private fun ownMessage(
+        index: Int,
+        parentId: String? = null,
+        showInChannel: Boolean = true,
+        user: User = currentUser,
+    ): Message = randomMessage(
+        id = "message_$index",
+        cid = CID,
+        user = user,
+        createdAt = Date(currentTime() + index * 1000L),
+        createdLocallyAt = null,
+        parentId = parentId,
+        showInChannel = showInChannel,
+        shadowed = false,
+        deletedAt = null,
+    )
+
     private fun createMessages(count: Int): List<Message> {
         val now = currentTime()
         return (1..count).map { i ->

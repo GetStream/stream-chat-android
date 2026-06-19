@@ -99,6 +99,12 @@ internal class ChannelStateImpl(
     private val _quotedMessagesMap = MutableStateFlow<Map<String, Set<String>>>(emptyMap())
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
     private val localOnlyMessages = MutableStateFlow<List<Message>>(emptyList())
+
+    /**
+     * Tracks the creation date of the current user's most recent thread-only reply. Thread-only
+     * replies are excluded from [_messages], so the cooldown derivation tracks them here separately.
+     */
+    private val _lastSentThreadReplyDate = MutableStateFlow<Date?>(null)
     private val _pendingEnabled = MutableStateFlow(false)
     private val _pendingMessages = MutableStateFlow<List<Message>>(emptyList())
 
@@ -262,11 +268,15 @@ internal class ChannelStateImpl(
 
     override val insideSearch: StateFlow<Boolean> = _insideSearch.asStateFlow()
 
-    override val lastSentMessageDate: StateFlow<Date?> = combineStates(channelConfig, messages) { config, messages ->
-        messages
-            .filter { it.user.id == currentUser.value?.id }
-            .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
-    }
+    private val lastSentChannelMessageDate: StateFlow<Date?> =
+        combineStates(channelConfig, messages) { config, messages ->
+            messages
+                .filter { it.user.id == currentUser.value?.id }
+                .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
+        }
+
+    override val lastSentMessageDate: StateFlow<Date?> =
+        combineStates(lastSentChannelMessageDate, _lastSentThreadReplyDate, ::latestOf)
 
     override val activeLiveLocations: StateFlow<List<Location>> = liveLocations.mapState { locations ->
         // Filter locations to only include those for this channel
@@ -305,12 +315,28 @@ internal class ChannelStateImpl(
 
     // region Messages
 
+    /** Advances [_lastSentThreadReplyDate] with [date], never moving it backwards. */
+    private fun advanceLastSentThreadReplyDate(date: Date?) {
+        date ?: return
+        _lastSentThreadReplyDate.update { current -> latestOf(current, date) }
+    }
+
+    private fun trackOwnThreadReply(message: Message) {
+        val currentUserId = currentUser.value?.id ?: return
+        advanceLastSentThreadReplyDate(message.ownThreadReplyDate(currentUserId))
+    }
+
+    private fun trackOwnThreadReply(messages: Collection<Message>) {
+        advanceLastSentThreadReplyDate(messages.latestOwnThreadReplyDate(currentUser.value?.id))
+    }
+
     /**
      * Sets the list of messages (overriding the current one).
      *
      * @param messages The list of messages to set.
      */
     fun setMessages(messages: List<Message>) {
+        trackOwnThreadReply(messages)
         val messagesToSet = messages.filterNot { shouldIgnoreUpsertion(it) }
         for (message in messagesToSet) {
             message.replyTo?.let { addQuotedMessage(it.id, message.id) }
@@ -329,6 +355,7 @@ internal class ChannelStateImpl(
      * @param message The message to upsert.
      */
     fun upsertMessage(message: Message) {
+        trackOwnThreadReply(message)
         if (shouldIgnoreUpsertion(message)) return
         message.replyTo?.let { addQuotedMessage(it.id, message.id) }
         message.replyMessageId?.let { addQuotedMessage(it, message.id) }
@@ -367,6 +394,7 @@ internal class ChannelStateImpl(
      * for pagination performance; set to `true` for reconnection/sync paths where messages may overlap.
      */
     fun upsertMessages(messages: List<Message>, preserveAttachmentUrls: Boolean = false) {
+        trackOwnThreadReply(messages)
         val messagesToUpsert = messages.filterNot { shouldIgnoreUpsertion(it) }
         if (messagesToUpsert.isEmpty()) return
         for (message in messagesToUpsert) {
@@ -1500,6 +1528,7 @@ internal class ChannelStateImpl(
         _repliedMessage.value = null
         _quotedMessagesMap.value = emptyMap()
         _messages.value = emptyList()
+        _lastSentThreadReplyDate.value = null
         _pendingMessages.value = emptyList()
         _pendingEnabled.value = false
         _cachedLatestMessages.value = emptyList()
