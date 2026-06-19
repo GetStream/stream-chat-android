@@ -427,6 +427,7 @@ internal class MessageComposerViewModelTest {
             .givenChannelState(channelData = channelDataWith(capability))
             .givenRoleSearchResult(roles)
             .givenGroupSearchResult(groups)
+            .givenNoMemberQueryResult()
             .get()
 
         viewModel.setMessageInput(query)
@@ -560,6 +561,11 @@ internal class MessageComposerViewModelTest {
         fun givenGroupSearchResult(groups: List<UserGroup>) = apply {
             whenever(chatClient.searchUserGroups(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
                 .doReturn(groups.asCall())
+        }
+
+        fun givenNoMemberQueryResult() = apply {
+            whenever(chatClient.queryMembers(any(), any(), any(), any(), any(), any(), any()))
+                .doReturn(emptyList<Member>().asCall())
         }
 
         fun get(): MessageComposerViewModel {
