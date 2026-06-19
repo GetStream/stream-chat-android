@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/gradle-cache@main

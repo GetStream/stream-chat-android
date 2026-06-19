@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Build
         run: ./gradlew assembleDebug
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Build
         run: ./gradlew assembleRelease
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 0 # fetch all history for sonar analysis
       - uses: GetStream/android-ci-actions/actions/setup-java@main
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: build demo debug
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: build debug
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
