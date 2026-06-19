@@ -168,15 +168,19 @@ sealed class Type(val value: String) {
 companion-object match arm and the `object` declaration. `''` is interpreted as an empty `Char`
 literal at the value site and as an invalid identifier at the declaration site.
 
-**Fix status:** Not fixed.
+**Fix status:** Locally fixed in the generator (not upstream). `kotlin.go` now has a small
+`buildEnumClassName` helper used at the enum emission site (line ~336). It calls
+`templates.PascalCase`, which already strips non-alphanumeric chars, and falls back to `Empty`
+when the resulting identifier would be empty. Mirrors Swift's `ConstantName` shape.
+
+The collision case (multiple values sanitizing to the same identifier, e.g. both `""` and `''`
+in the same enum) is not handled - the Go map silently overwrites, matching what every other
+language generator does. If a real spec hits this, we'll add disambiguation then.
 
 **Suggested fix:** Two angles:
 
 - Spec-side: drop the empty-string value from the enum if it isn't a real allowed wire value.
-- Generator-side: when an enum value is the empty string (or otherwise isn't a valid Kotlin
-  identifier), generate a sanitized object name (e.g. `Empty`) and a properly-quoted string
-  literal (`""`) for the value. Sanitization should also handle non-alphanumeric leading
-  characters and Kotlin keywords (related to issue #2).
+- Generator-side: implemented as above.
 
 ---
 
