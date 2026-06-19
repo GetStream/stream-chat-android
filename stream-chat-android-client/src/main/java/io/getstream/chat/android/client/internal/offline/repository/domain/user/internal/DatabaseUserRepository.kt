@@ -59,6 +59,9 @@ internal class DatabaseUserRepository(
     override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
         val usersToInsert = users
+            // Use associateBy instead of distinctBy to keep the *last* occurrence of each user
+            .associateBy(User::id)
+            .values
             .filter { it != userCache[it.id] }
             .map { it.toEntity() }
         cacheUsers(users)
