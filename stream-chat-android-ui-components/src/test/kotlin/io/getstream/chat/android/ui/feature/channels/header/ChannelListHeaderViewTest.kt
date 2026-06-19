@@ -24,7 +24,9 @@ import org.junit.Test
 
 internal class ChannelListHeaderViewTest : PaparazziViewTest() {
 
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val deviceConfig = DeviceConfig.PIXEL_2
+
+    override val paparazzi = Paparazzi(deviceConfig = deviceConfig)
 
     @Test
     fun `connected, no user`() {
