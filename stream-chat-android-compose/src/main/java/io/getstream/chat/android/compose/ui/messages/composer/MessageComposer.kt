@@ -102,7 +102,9 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onUserSelected Legacy handler that fires only when the user taps a user suggestion item.
  * Kept for backward compatibility; new callers should use [onMentionSelected], which receives every
- * mention type including users.
+ * mention type including users. Note both callbacks fire on a user tap: a custom [onUserSelected]
+ * runs in addition to [onMentionSelected], so the default [onMentionSelected] still inserts the
+ * mention. To replace the default selection behavior, override [onMentionSelected].
  * @param onCommandSelected Handler for every tap on a command suggestion item, including taps on
  * disabled items. The default emits [MessageComposerViewEvent.CommandUnavailable] on
  * [MessageComposerViewModel.events] when the command is not available for the current action;
@@ -244,7 +246,9 @@ internal val LocalMessageComposerSnackbarHostState =
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onUserSelected Legacy handler that fires only when the user taps a user suggestion item.
  * Kept for backward compatibility; new callers should use [onMentionSelected], which receives every
- * mention type including users.
+ * mention type including users. Note both callbacks fire on a user tap: a custom [onUserSelected]
+ * runs in addition to [onMentionSelected], so the default [onMentionSelected] still inserts the
+ * mention. To replace the default selection behavior, override [onMentionSelected].
  * @param onCommandSelected Handler when the user taps on a command suggestion item, including taps
  * on disabled items.
  * @param onMentionSelected Handler when the user taps any mention suggestion item. Canonical

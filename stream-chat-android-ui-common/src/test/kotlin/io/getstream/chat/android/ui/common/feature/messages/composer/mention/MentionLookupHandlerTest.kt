@@ -84,32 +84,20 @@ internal class MentionLookupHandlerTest {
     }
 
     @Test
-    fun `Mention types without the matching capability are skipped`() = runTest {
+    fun `Non-user mentions without the matching capability are skipped`() = runTest {
+        val user = User(id = "u1", name = "Alice")
         val fixture = Fixture()
             .withGroupSearchResult(listOf(UserGroup(id = "g1", name = "platform")))
             .withRoleSearchResult(listOf(Role(name = "admin")))
-            .withUserLookupResult(listOf(User(id = "u1", name = "Alice")))
+            .withUserLookupResult(listOf(user))
             .withOwnCapabilities(emptySet())
             .build()
 
         val result = fixture.handler.handleMentionLookup(query = "a")
 
-        assertEquals(emptyList<Mention>(), result)
+        assertEquals(listOf(Mention.User(user)), result)
         verify(fixture.chatClient, never()).searchUserGroups(any(), any(), any(), any(), any())
         verify(fixture.chatClient, never()).searchRoles(any(), any(), any(), any(), any())
-    }
-
-    @Test
-    fun `User mentions need the create-mention capability`() = runTest {
-        val user = User(id = "u1", name = "Alice")
-        val fixture = Fixture()
-            .withUserLookupResult(listOf(user))
-            .withOwnCapabilities(setOf(ChannelCapabilities.NOTIFY_CHANNEL))
-            .build()
-
-        val result = fixture.handler.handleMentionLookup(query = "a")
-
-        assertEquals(emptyList<Mention>(), result)
     }
 
     @Test

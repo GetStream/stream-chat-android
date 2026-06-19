@@ -28,9 +28,8 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * Aggregates every source the composer needs for mention suggestions into a single ordered [List] of [Mention].
  *
- * Each mention type is gated on a matching channel capability (e.g.
- * [ChannelCapabilities.NOTIFY_CHANNEL]); types without the capability are skipped entirely
- * (no API call, no result).
+ * Non-user mentions are gated on a matching channel capability (e.g. [ChannelCapabilities.NOTIFY_CHANNEL]);
+ * types without the capability are skipped entirely (no API call, no result). User mentions are always looked up.
  */
 internal class MentionLookupHandler(
     private val chatClient: ChatClient,
@@ -48,13 +47,9 @@ internal class MentionLookupHandler(
         val getGroups = async {
             if (ChannelCapabilities.NOTIFY_GROUP in capabilities) searchGroups(query) else emptyList()
         }
-        val getUsers = async {
-            if (ChannelCapabilities.CREATE_MENTION in capabilities) {
-                userLookupHandler.handleUserLookup(query)
-            } else {
-                emptyList()
-            }
-        }
+        // User suggestions are intentionally not gated on CREATE_MENTION: on Permissions V1 regular members lack
+        // that capability, yet user mentions still work since the server only enforces it on send under V2.
+        val getUsers = async { userLookupHandler.handleUserLookup(query) }
         val getRoles = async {
             if (ChannelCapabilities.NOTIFY_ROLE in capabilities) searchRoles(query) else emptyList()
         }
@@ -95,7 +90,7 @@ internal class MentionLookupHandler(
             chatClient.searchRoles(query = query).await()
                 .getOrNull()
                 .orEmpty()
-                .map(Role::name)
+                .mapTo(mutableSetOf(), Role::name)
                 .sortedWith(String.CASE_INSENSITIVE_ORDER)
         }
 
