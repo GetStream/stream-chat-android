@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
+import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.InstantAnimationsRule
 import app.cash.paparazzi.Paparazzi
 import coil3.ComponentRegistry
@@ -29,6 +30,7 @@ import coil3.request.Disposable
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.ImageResult
+import com.android.resources.NightMode
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil
@@ -42,22 +44,10 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
     @get:Rule
     abstract val paparazzi: Paparazzi
 
-    // Light mode context
-    private val lightContext get() = paparazzi.context
-    // TODO Figure out how to properly support dark/light modes in a single paparazzi snapshot instance.
-    /*.createConfigurationContext(Configuration().apply {
-        uiMode = Configuration.UI_MODE_NIGHT_NO
-    })*/
-
-    // Dark mode context
-    private val darkContext get() = paparazzi.context
-    // TODO Figure out how to properly support dark/light modes in a single paparazzi snapshot instance.
-    /*.createConfigurationContext(Configuration().apply {
-        uiMode = Configuration.UI_MODE_NIGHT_YES
-    })*/
-
     @get:Rule
     val instantAnimations = InstantAnimationsRule()
+
+    abstract val deviceConfig: DeviceConfig
 
     @Before
     fun prepare() {
@@ -70,8 +60,8 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
         isInDarkMode: Boolean = false,
         viewFactory: (context: Context) -> View,
     ) {
-        val context = if (isInDarkMode) darkContext else lightContext
-        paparazzi.snapshot(view = viewFactory(context))
+        applyNightMode(isInDarkMode)
+        paparazzi.snapshot(view = viewFactory(paparazzi.context))
     }
 
     fun snapshotColumn(view: (context: Context) -> View) {
@@ -86,9 +76,14 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
         orientation: Int,
         viewFactory: (Context) -> View,
     ) {
-        val lightView = viewFactory(lightContext)
-        // TODO Figure out how to properly support dark/light modes in a single paparazzi snapshot instance.
-        // val darkView = viewFactory(darkContext)
+        applyNightMode(false)
+        val lightView = viewFactory(paparazzi.context)
+
+        applyNightMode(true)
+        val darkView = viewFactory(paparazzi.context)
+
+        // Reset to light so the container and final snapshot render in light mode
+        applyNightMode(false)
 
         val container = LinearLayout(paparazzi.context).apply {
             this.orientation = orientation
@@ -106,11 +101,18 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
                 )
             }
             addView(lightView, layoutParams)
-            // TODO Figure out how to properly support dark/light modes in a single paparazzi snapshot instance.
-            // addView(darkView, layoutParams)
+            addView(darkView, layoutParams)
         }
 
         paparazzi.snapshot(container)
+    }
+
+    private fun applyNightMode(isDark: Boolean) {
+        paparazzi.unsafeUpdateConfig(
+            deviceConfig = deviceConfig.copy(
+                nightMode = if (isDark) NightMode.NIGHT else NightMode.NOTNIGHT,
+            ),
+        )
     }
 }
 

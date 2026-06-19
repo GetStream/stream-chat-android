@@ -30,7 +30,9 @@ import org.junit.Test
 
 internal class ChannelListViewTest : PaparazziViewTest() {
 
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val deviceConfig = DeviceConfig.PIXEL_4A
+
+    override val paparazzi = Paparazzi(deviceConfig = deviceConfig)
 
     @Before
     fun setUp() {
