@@ -26,14 +26,12 @@ import io.getstream.chat.android.ui.PaparazziViewTest
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.helper.CurrentUserProvider
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 internal class ChannelListViewTest : PaparazziViewTest() {
 
     override val deviceConfig = DeviceConfig.PIXEL_4A
 
-    @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = deviceConfig)
 
     @Before
