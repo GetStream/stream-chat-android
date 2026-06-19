@@ -48,11 +48,15 @@ internal class DatabaseChannelConfigRepository(
      * Writes many [ChannelConfig]
      */
     override suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
+        // Channel configs are keyed by type, so a page of same-type channels yields many configs
+        // that collapse to one row. Dedup by type to avoid the redundant per-row writes.
+        val configsByType = configs.associateBy(ChannelConfig::type)
+
         // update the local configs
-        channelConfigs += configs.associateBy(ChannelConfig::type)
+        channelConfigs += configsByType
 
         // insert into room db
-        channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
+        channelConfigDao.insert(configsByType.values.map(ChannelConfig::toEntity))
     }
 
     /**
