@@ -18,7 +18,7 @@ jobs:
     name: ${{ inputs.app }} apks
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
