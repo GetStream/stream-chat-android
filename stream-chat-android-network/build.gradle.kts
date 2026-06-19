@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(libs.moshi)
+    api(libs.moshi.kotlin)
     api(libs.retrofit)
     ksp(libs.moshi.codegen)
 

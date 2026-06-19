@@ -15426,8 +15426,8 @@ public final class io/getstream/chat/android/network/models/TranslateMessageRequ
 	public static final field INSTANCE Lio/getstream/chat/android/network/models/TranslateMessageRequest$Language$Hu;
 }
 
-public final class io/getstream/chat/android/network/models/TranslateMessageRequest$Language$Id : io/getstream/chat/android/network/models/TranslateMessageRequest$Language {
-	public static final field INSTANCE Lio/getstream/chat/android/network/models/TranslateMessageRequest$Language$Id;
+public final class io/getstream/chat/android/network/models/TranslateMessageRequest$Language$ID : io/getstream/chat/android/network/models/TranslateMessageRequest$Language {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/TranslateMessageRequest$Language$ID;
 }
 
 public final class io/getstream/chat/android/network/models/TranslateMessageRequest$Language$It : io/getstream/chat/android/network/models/TranslateMessageRequest$Language {

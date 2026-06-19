@@ -79,7 +79,7 @@ data class TranslateMessageRequest (
                     "hr" -> Hr
                     "ht" -> Ht
                     "hu" -> Hu
-                    "id" -> Id
+                    "id" -> ID
                     "it" -> It
                     "ja" -> Ja
                     "ka" -> Ka
@@ -139,7 +139,7 @@ data class TranslateMessageRequest (
             object Hr : Language("hr")
             object Ht : Language("ht")
             object Hu : Language("hu")
-            object Id : Language("id")
+            object ID : Language("id")
             object It : Language("it")
             object Ja : Language("ja")
             object Ka : Language("ka")
