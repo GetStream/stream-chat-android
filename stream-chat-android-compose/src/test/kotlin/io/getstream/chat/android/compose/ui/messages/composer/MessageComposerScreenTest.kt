@@ -121,7 +121,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
         composeTestRule.onNodeWithText("9").assertExists()
         composeTestRule.onNodeWithText("Slow mode, wait 9s…").assertExists()
-        composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertIsNotEnabled()
+        composeTestRule.onNodeWithTag(ComposerInputTestTag).assertIsNotEnabled()
         composeTestRule.onNodeWithTag("Stream_ComposerAttachmentsButton").assertIsNotEnabled()
     }
 
@@ -138,7 +138,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("Stream_ComposerInputField").assertIsEnabled()
+        composeTestRule.onNodeWithTag(ComposerInputTestTag).assertIsEnabled()
         composeTestRule.onNodeWithTag("Stream_ComposerAttachmentsButton").assertIsEnabled()
     }
 

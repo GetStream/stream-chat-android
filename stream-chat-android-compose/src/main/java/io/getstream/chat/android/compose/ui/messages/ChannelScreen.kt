@@ -43,9 +43,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -59,6 +62,7 @@ import io.getstream.chat.android.compose.ui.components.moderatedmessage.Moderate
 import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
+import io.getstream.chat.android.compose.ui.messages.composer.ComposerInputTestTag
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -70,7 +74,9 @@ import io.getstream.chat.android.compose.ui.theme.MessageActionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageReactionPickerParams
 import io.getstream.chat.android.compose.ui.theme.ReactionsMenuParams
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
+import io.getstream.chat.android.compose.ui.util.rememberIsTouchExplorationEnabled
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
+import io.getstream.chat.android.compose.ui.util.requestAccessibilityFocusForTestTag
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -96,6 +102,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageSt
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -193,6 +200,8 @@ public fun ChannelScreen(
 
     BackHandler(enabled = true, onBack = backAction)
 
+    ComposerScreenReaderEntryFocus(listViewModel)
+
     ChannelScreenContentBox {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -274,6 +283,43 @@ public fun ChannelScreen(
         PollDialogs(listViewModel = listViewModel)
     }
 }
+
+/**
+ * When a screen reader is active, moves the reading cursor onto the message composer input as a
+ * message view opens, without moving input focus, so the keyboard stays closed and the user
+ * double-taps to type. A thread is also a message view, so this re-arms when the view switches
+ * between the channel and a thread.
+ *
+ * The message list loads asynchronously and the screen reader re-asserts its own initial focus when
+ * content appears, so the cursor is re-applied while the list settles (keyed on the item count) and
+ * for a short window, then it stops so later incoming messages do not pull focus back.
+ *
+ * @param listViewModel The [MessageListViewModel] whose loading state drives the re-apply.
+ */
+@Composable
+private fun ComposerScreenReaderEntryFocus(listViewModel: MessageListViewModel) {
+    val isTouchExplorationEnabled = rememberIsTouchExplorationEnabled()
+    if (!isTouchExplorationEnabled) return
+
+    val view = LocalView.current
+    val messagesState by listViewModel.currentMessagesState
+    // Null in the channel, the parent message id in a thread; switching either way is a new entry.
+    val viewKey = messagesState.parentMessageId
+    var entryFocusSettled by rememberSaveable(viewKey) { mutableStateOf(false) }
+
+    LaunchedEffect(viewKey, messagesState.messageItems.size) {
+        if (entryFocusSettled) return@LaunchedEffect
+        // Defer a frame so the composer is laid out before moving the cursor onto it.
+        withFrameNanos {}
+        view.requestAccessibilityFocusForTestTag(ComposerInputTestTag)
+    }
+    LaunchedEffect(viewKey) {
+        delay(ComposerEntryFocusWindowMs)
+        entryFocusSettled = true
+    }
+}
+
+private const val ComposerEntryFocusWindowMs = 2000L
 
 @Composable
 private fun ChannelScreenContentBox(content: @Composable BoxScope.() -> Unit) {
