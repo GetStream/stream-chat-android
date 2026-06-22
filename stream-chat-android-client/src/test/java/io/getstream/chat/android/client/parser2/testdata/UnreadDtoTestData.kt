@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
+import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
 import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 import java.util.Date
@@ -37,38 +37,38 @@ internal object UnreadDtoTestData {
         "channels": [
             {
                 "channel_id": "channel1",
-                "unread_count": 4,
-                "last_read": "$LastReadString"
+                "last_read": "$LastReadString",
+                "unread_count": 4
             },
             {
                 "channel_id": "channel2",
-                "unread_count": 3,
-                "last_read": "$LastReadString"
+                "last_read": "$LastReadString",
+                "unread_count": 3
             }
         ],
         "threads": [
             {
-                "parent_message_id": "message1",
-                "unread_count": 7,
                 "last_read": "$LastReadString",
-                "last_read_message_id": "message1"
+                "last_read_message_id": "message1",
+                "parent_message_id": "message1",
+                "unread_count": 7
             },
             {
-                "parent_message_id": "message2",
-                "unread_count": 8,
                 "last_read": "$LastReadString",
-                "last_read_message_id": "message2"
+                "last_read_message_id": "message2",
+                "parent_message_id": "message2",
+                "unread_count": 8
             }
         ],
         "channel_type": [
             {
-                "channel_type": "messaging",
                 "channel_count": 9,
+                "channel_type": "messaging",
                 "unread_count": 10
             },
             {
-                "channel_type": "livestream",
                 "channel_count": 11,
+                "channel_type": "livestream",
                 "unread_count": 12
             }
         ]
@@ -80,40 +80,40 @@ internal object UnreadDtoTestData {
         total_unread_count_by_team = mapOf("team1" to 3, "team2" to 4),
         channels = listOf(
             UnreadChannelDto(
-                channel_id = "channel1",
-                unread_count = 4,
-                last_read = LastReadDate,
+                channelId = "channel1",
+                unreadCount = 4,
+                lastRead = LastReadDate,
             ),
             UnreadChannelDto(
-                channel_id = "channel2",
-                unread_count = 3,
-                last_read = LastReadDate,
+                channelId = "channel2",
+                unreadCount = 3,
+                lastRead = LastReadDate,
             ),
         ),
         threads = listOf(
             UnreadThreadDto(
-                parent_message_id = "message1",
-                unread_count = 7,
-                last_read = LastReadDate,
-                last_read_message_id = "message1",
+                parentMessageId = "message1",
+                unreadCount = 7,
+                lastRead = LastReadDate,
+                lastReadMessageId = "message1",
             ),
             UnreadThreadDto(
-                parent_message_id = "message2",
-                unread_count = 8,
-                last_read = LastReadDate,
-                last_read_message_id = "message2",
+                parentMessageId = "message2",
+                unreadCount = 8,
+                lastRead = LastReadDate,
+                lastReadMessageId = "message2",
             ),
         ),
         channel_type = listOf(
             UnreadChannelByTypeDto(
-                channel_type = "messaging",
-                channel_count = 9,
-                unread_count = 10,
+                channelType = "messaging",
+                channelCount = 9,
+                unreadCount = 10,
             ),
             UnreadChannelByTypeDto(
-                channel_type = "livestream",
-                channel_count = 11,
-                unread_count = 12,
+                channelType = "livestream",
+                channelCount = 11,
+                unreadCount = 12,
             ),
         ),
     )

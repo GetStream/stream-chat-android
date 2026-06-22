@@ -17,7 +17,9 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import java.util.Date
+import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
+import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
 
 @JsonClass(generateAdapter = true)
 internal data class UnreadDto(
@@ -27,26 +29,4 @@ internal data class UnreadDto(
     val channels: List<UnreadChannelDto> = emptyList(),
     val threads: List<UnreadThreadDto> = emptyList(),
     val channel_type: List<UnreadChannelByTypeDto> = emptyList(),
-)
-
-@JsonClass(generateAdapter = true)
-internal data class UnreadChannelDto(
-    val channel_id: String,
-    val unread_count: Int,
-    val last_read: Date,
-)
-
-@JsonClass(generateAdapter = true)
-internal data class UnreadThreadDto(
-    val parent_message_id: String,
-    val unread_count: Int,
-    val last_read: Date,
-    val last_read_message_id: String,
-)
-
-@JsonClass(generateAdapter = true)
-internal data class UnreadChannelByTypeDto(
-    val channel_type: String,
-    val channel_count: Int,
-    val unread_count: Int,
 )

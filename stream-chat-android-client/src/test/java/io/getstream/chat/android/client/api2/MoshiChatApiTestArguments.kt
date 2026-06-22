@@ -680,24 +680,24 @@ internal object MoshiChatApiTestArguments {
                 messagesCountByTeam = dto.total_unread_count_by_team!!,
                 channels = dto.channels.map { dto ->
                     UnreadChannel(
-                        cid = dto.channel_id,
-                        messagesCount = dto.unread_count,
-                        lastRead = dto.last_read,
+                        cid = dto.channelId,
+                        messagesCount = dto.unreadCount,
+                        lastRead = dto.lastRead,
                     )
                 },
                 threads = dto.threads.map { dto ->
                     UnreadThread(
-                        parentMessageId = dto.parent_message_id,
-                        messagesCount = dto.unread_count,
-                        lastRead = dto.last_read,
-                        lastReadMessageId = dto.last_read_message_id,
+                        parentMessageId = dto.parentMessageId,
+                        messagesCount = dto.unreadCount,
+                        lastRead = dto.lastRead,
+                        lastReadMessageId = dto.lastReadMessageId,
                     )
                 },
                 channelsByType = dto.channel_type.map { dto ->
                     UnreadChannelByType(
-                        channelType = dto.channel_type,
-                        channelsCount = dto.channel_count,
-                        messagesCount = dto.unread_count,
+                        channelType = dto.channelType,
+                        channelsCount = dto.channelCount,
+                        messagesCount = dto.unreadCount,
                     )
                 },
             )

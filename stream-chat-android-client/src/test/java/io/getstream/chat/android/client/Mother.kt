@@ -61,10 +61,10 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
+import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
+import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -1353,9 +1353,9 @@ internal object Mother {
         unreadCount: Int = randomInt(),
         lastRead: Date = randomDate(),
     ): UnreadChannelDto = UnreadChannelDto(
-        channel_id = channelId,
-        unread_count = unreadCount,
-        last_read = lastRead,
+        channelId = channelId,
+        unreadCount = unreadCount,
+        lastRead = lastRead,
     )
 
     fun randomUnreadThreadDto(
@@ -1364,10 +1364,10 @@ internal object Mother {
         lastRead: Date = randomDate(),
         lastReadMessageId: String = randomString(),
     ): UnreadThreadDto = UnreadThreadDto(
-        parent_message_id = parentMessageId,
-        unread_count = unreadCount,
-        last_read = lastRead,
-        last_read_message_id = lastReadMessageId,
+        parentMessageId = parentMessageId,
+        unreadCount = unreadCount,
+        lastRead = lastRead,
+        lastReadMessageId = lastReadMessageId,
     )
 
     fun randomUnreadChannelByTypeDto(
@@ -1375,9 +1375,9 @@ internal object Mother {
         channelCount: Int = randomInt(),
         unreadCount: Int = randomInt(),
     ): UnreadChannelByTypeDto = UnreadChannelByTypeDto(
-        channel_type = channelType,
-        channel_count = channelCount,
-        unread_count = unreadCount,
+        channelType = channelType,
+        channelCount = channelCount,
+        unreadCount = unreadCount,
     )
 
     fun randomDownstreamPushPreferenceDto(

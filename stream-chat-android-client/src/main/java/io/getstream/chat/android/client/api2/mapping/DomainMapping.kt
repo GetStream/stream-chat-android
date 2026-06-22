@@ -57,10 +57,10 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
+import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -898,22 +898,22 @@ internal class DomainMapping(
     )
 
     internal fun UnreadChannelDto.toDomain(): UnreadChannel = UnreadChannel(
-        cid = channel_id,
-        messagesCount = unread_count,
-        lastRead = last_read,
+        cid = channelId,
+        messagesCount = unreadCount,
+        lastRead = lastRead,
     )
 
     internal fun UnreadThreadDto.toDomain(): UnreadThread = UnreadThread(
-        parentMessageId = parent_message_id,
-        messagesCount = unread_count,
-        lastRead = last_read,
-        lastReadMessageId = last_read_message_id,
+        parentMessageId = parentMessageId,
+        messagesCount = unreadCount,
+        lastRead = lastRead,
+        lastReadMessageId = lastReadMessageId,
     )
 
     internal fun UnreadChannelByTypeDto.toDomain(): UnreadChannelByType = UnreadChannelByType(
-        channelType = channel_type,
-        channelsCount = channel_count,
-        messagesCount = unread_count,
+        channelType = channelType,
+        channelsCount = channelCount,
+        messagesCount = unreadCount,
     )
 
     internal fun DownstreamPushPreferenceDto.toDomain(): PushPreference = PushPreference(
