@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
@@ -317,7 +318,10 @@ internal class MessageComposerViewModelTest {
             val viewModel = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+                .givenChannelState(
+                    channelData = channelDataWith(ChannelCapabilities.CREATE_MENTION),
+                    members = listOf(Member(user = user1), Member(user = user2)),
+                )
                 .get()
 
             // Handling mentions on input changes is debounced so we advance time until idle to make sure
@@ -334,7 +338,10 @@ internal class MessageComposerViewModelTest {
             val viewModel = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+                .givenChannelState(
+                    channelData = channelDataWith(ChannelCapabilities.CREATE_MENTION),
+                    members = listOf(Member(user = user1), Member(user = user2)),
+                )
                 .get()
 
             // Handling mentions on input changes is debounced so we advance time until idle to make sure
@@ -443,6 +450,12 @@ internal class MessageComposerViewModelTest {
     }
 
     companion object {
+
+        private fun channelDataWith(vararg capabilities: String) = ChannelData(
+            type = "messaging",
+            id = "123",
+            ownCapabilities = capabilities.toSet(),
+        )
 
         val user1 = User(
             id = "Jc",

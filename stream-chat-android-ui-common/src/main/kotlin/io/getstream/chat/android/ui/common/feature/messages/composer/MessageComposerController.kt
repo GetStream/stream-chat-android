@@ -34,8 +34,11 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.mentionRegex
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
@@ -90,7 +93,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -274,10 +276,11 @@ public class MessageComposerController(
     /** UI state of the current composer input. */
     public val messageInput: StateFlow<MessageInput> = _messageInput.asStateFlow()
 
-    /**
-     * Represents the list of users in the channel.
-     */
-    private var users: List<User> = emptyList()
+    private val mentionLookupHandler = MentionLookupHandler(
+        chatClient = chatClient,
+        channelState = channelState,
+        userLookupHandler = userLookupHandler,
+    )
 
     /**
      * Represents the list of available commands in the channel.
@@ -293,6 +296,11 @@ public class MessageComposerController(
      * Represents the coroutine [Job] resolving link previews for the current input.
      */
     private var linkPreviewJob: Job? = null
+
+    /**
+     * Represents the coroutine [Job] resolving mention suggestions for the current input.
+     */
+    private var mentionSuggestionJob: Job? = null
 
     /**
      * The URL whose link preview the user explicitly dismissed via [cancelLinkPreview].
@@ -373,12 +381,6 @@ public class MessageComposerController(
 
         channelState
             .filterNotNull()
-            .flatMapLatest { it.members }.onEach { members ->
-                users = members.map { it.user }
-            }.launchIn(scope)
-
-        channelState
-            .filterNotNull()
             .flatMapLatest { combine(it.channelData, it.lastSentMessageDate, ::Pair) }
             .distinctUntilChangedBy { (_, lastSentMessageDate) -> lastSentMessageDate }
             .onEach { (channelData, lastSentMessageDate) ->
@@ -406,7 +408,7 @@ public class MessageComposerController(
             handleCommandSuggestions()
             handleValidationErrors()
         }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
-            scope.launch { handleMentionSuggestions() }
+            handleMentionSuggestions()
             linkPreviewJob?.cancel()
             linkPreviewJob = scope.launch { handleLinkPreview() }
         }.launchIn(scope)
@@ -596,6 +598,7 @@ public class MessageComposerController(
         old is MessageMode.Normal && new is MessageMode.Normal -> true
         old is MessageMode.MessageThread && new is MessageMode.MessageThread ->
             old.parentMessage.id == new.parentMessage.id
+
         else -> false
     }
 
@@ -692,9 +695,11 @@ public class MessageComposerController(
             _selectedAttachments.value.containsKey(key) -> {
                 _selectedAttachments.update { LinkedHashMap(it).also { map -> map.remove(key) } }
             }
+
             _editModeAttachments.value.any(attachment::equals) -> {
                 _editModeAttachments.update { it.filterNot(attachment::equals) }
             }
+
             _recordingAttachment.value == attachment -> {
                 _recordingAttachment.value = null
             }
@@ -892,7 +897,11 @@ public class MessageComposerController(
             activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
-                mentionedUsersIds = mentions,
+                mentionedUsersIds = mentions.userIds,
+                mentionedChannel = mentions.channel,
+                mentionedHere = mentions.here,
+                mentionedRoles = mentions.roles,
+                mentionedGroups = mentions.groups,
             )
         } else {
             Message(
@@ -902,31 +911,54 @@ public class MessageComposerController(
                 replyMessageId = replyMessage?.id,
                 replyTo = replyMessage,
                 attachments = attachments.toMutableList(),
-                mentionedUsersIds = mentions,
+                mentionedUsersIds = mentions.userIds,
+                mentionedChannel = mentions.channel,
+                mentionedHere = mentions.here,
+                mentionedRoles = mentions.roles,
+                mentionedGroups = mentions.groups,
             )
         }
     }
 
     /**
-     * Filters the current input and the mentions the user selected from the suggestion list. Removes any mentions which
-     * are selected but no longer present in the input.
-     *
-     * @param selectedMentions The set of selected users from the suggestion list.
-     * @param message The current message input.
-     *
-     * @return [MutableList] of user IDs of mentioned users.
+     * Drops any selected mention whose `@<token>` is no longer present in [message] and returns
+     * the metadata to attach to the outgoing message.
      */
-    private fun filterMentions(selectedMentions: Set<Mention>, message: String): MutableList<String> {
-        // Ignore custom, non-user mentions (for now)
-        val userMentions = selectedMentions.filterIsInstance<Mention.User>()
-        val text = message.lowercase()
-        val remainingMentions = userMentions.filter {
-            text.contains("@${it.display.lowercase()}")
-        }.map { it.user.id }
+    private fun filterMentions(selectedMentions: Set<Mention>, message: String): FilteredMentions {
+        val userIds = mutableListOf<String>()
+        val roles = mutableSetOf<String>()
+        val groups = mutableMapOf<String, UserGroup>()
+        var channel = false
+        var here = false
+        for (mention in selectedMentions) {
+            if (mention.tokens.none { mentionRegex(it).containsMatchIn(message) }) continue
+            when (mention) {
+                is Mention.User -> userIds += mention.user.id
+                Mention.Channel -> channel = true
+                Mention.Here -> here = true
+                is Mention.Role -> roles += mention.role
+                is Mention.Group -> groups[mention.group.id] = mention.group
+                else -> Unit // ignore custom mentions
+            }
+        }
         this.selectedMentions.clear()
         _state.update { it.copy(selectedMentions = emptySet()) }
-        return remainingMentions.toMutableList()
+        return FilteredMentions(
+            userIds = userIds,
+            channel = channel,
+            here = here,
+            roles = roles.toList(),
+            groups = groups.values.toList(),
+        )
     }
+
+    private data class FilteredMentions(
+        val userIds: List<String>,
+        val channel: Boolean,
+        val here: Boolean,
+        val roles: List<String>,
+        val groups: List<UserGroup>,
+    )
 
     /**
      * Updates the UI state when leaving the thread, to switch back to the [MessageMode.Normal], by
@@ -984,8 +1016,8 @@ public class MessageComposerController(
     /**
      * Autocompletes the current text input with the mention from the selected mention.
      *
-     * IMPORTANT: The SDK supports only user mentions (see [Mention.User]). Custom mentions are purely visual, and will
-     * not be submitted to the server.
+     * Built-in [Mention] subclasses are submitted to the server on send via the corresponding
+     * fields on [io.getstream.chat.android.models.Message].
      *
      * @param mention The mention that is used for the autocomplete.
      */
@@ -1215,26 +1247,29 @@ public class MessageComposerController(
     }
 
     /**
-     * Shows the mention suggestion list popup if necessary.
+     * Shows the mention suggestion list popup if necessary. Populates both
+     * [MessageComposerState.mentionSuggestions] (users only, legacy) and
+     * [MessageComposerState.suggestedMentions] (all mention types).
      */
     private fun handleMentionSuggestions() {
         val currentInput = _messageInput.value
+        mentionSuggestionJob?.cancel()
         if (currentInput.source == MessageInput.Source.MentionSelected) {
             logger.v { "[handleMentionSuggestions] rejected (messageInput came from mention selection)" }
-            _state.update { it.copy(mentionSuggestions = emptyList()) }
+            _state.update { it.copy(mentionSuggestions = emptyList(), suggestedMentions = emptyList()) }
             return
         }
-        val inputText = currentInput.text
-        scope.launch(DispatcherProvider.IO) {
-            val suggestion = mentionSuggester.typingSuggestion(inputText)
+        mentionSuggestionJob = scope.launch(DispatcherProvider.IO) {
+            val suggestion = mentionSuggester.typingSuggestion(currentInput.text)
             logger.v { "[handleMentionSuggestions] suggestion: $suggestion" }
-            val result = if (suggestion != null) {
-                userLookupHandler.handleUserLookup(suggestion.text)
-            } else {
-                emptyList()
-            }
-            withContext(DispatcherProvider.Main) {
-                _state.update { it.copy(mentionSuggestions = result) }
+
+            val mentions = suggestion?.let { mentionLookupHandler.handleMentionLookup(it.text) }.orEmpty()
+            val users = mentions.mapNotNull { (it as? Mention.User)?.user }
+            _state.update {
+                it.copy(
+                    mentionSuggestions = users,
+                    suggestedMentions = mentions,
+                )
             }
         }
     }

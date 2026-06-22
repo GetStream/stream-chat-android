@@ -64,6 +64,9 @@
   <string name="stream_compose_cancel">"Annuler"</string>
   <string name="stream_compose_channel_item_muted">"en sourdine"</string>
   <string name="stream_compose_channel_item_pinned">"épinglé"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_channel_subtitle">"Notifier tout le monde dans cette conversation"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_here_subtitle">"Notifier tous les membres en ligne dans cette conversation"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_role_subtitle">"Notifier tous les membres %1$s"</string>
   <string name="stream_compose_channel_item_open">"Ouvrir la conversation"</string>
   <string name="stream_compose_channel_item_options">"Ouvrir les options de conversation"</string>
   <string name="stream_compose_cd_play_button">"Bouton de lecture"</string>

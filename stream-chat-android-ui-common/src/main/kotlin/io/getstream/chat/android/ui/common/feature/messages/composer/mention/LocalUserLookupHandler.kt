@@ -19,10 +19,12 @@ package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.QueryFilter
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.withContext
 
 /**
  * Local user lookup handler. It uses the local state to search for users.
@@ -39,14 +41,14 @@ internal class LocalUserLookupHandler(
 
     private val logger by taggedLogger("Chat:UserLookupLocal")
 
-    override suspend fun handleUserLookup(query: String): List<User> {
+    override suspend fun handleUserLookup(query: String): List<User> = withContext(DispatcherProvider.IO) {
         try {
             if (DEBUG) logger.d { "[handleUserLookup] query: \"$query\"" }
             val (channelType, channelId) = channelCid.cidToTypeAndId()
             val channelState = chatClient.state.channel(channelType, channelId)
             val localUsers = channelState.members.value.map { it.user }
             val membersCount = channelState.membersCount.value
-            return when (membersCount == localUsers.size) {
+            when (membersCount == localUsers.size) {
                 true -> filter.filter(localUsers, query).also {
                     if (DEBUG) logger.v { "[handleUserLookup] found ${it.size} users" }
                 }
@@ -57,7 +59,7 @@ internal class LocalUserLookupHandler(
             }
         } catch (e: Exception) {
             logger.e(e) { "[handleUserLookup] failed: $e" }
-            return emptyList()
+            emptyList()
         }
     }
 

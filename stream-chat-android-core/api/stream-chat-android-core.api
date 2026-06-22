@@ -482,6 +482,7 @@ public final class io/getstream/chat/android/models/ChannelCapabilities {
 	public static final field CAST_POLL_VOTE Ljava/lang/String;
 	public static final field CONNECT_EVENTS Ljava/lang/String;
 	public static final field CREATE_CALL Ljava/lang/String;
+	public static final field CREATE_MENTION Ljava/lang/String;
 	public static final field DELETE_ANY_MESSAGE Ljava/lang/String;
 	public static final field DELETE_CHANNEL Ljava/lang/String;
 	public static final field DELETE_OWN_MESSAGE Ljava/lang/String;
@@ -493,6 +494,10 @@ public final class io/getstream/chat/android/models/ChannelCapabilities {
 	public static final field JOIN_CHANNEL Ljava/lang/String;
 	public static final field LEAVE_CHANNEL Ljava/lang/String;
 	public static final field MUTE_CHANNEL Ljava/lang/String;
+	public static final field NOTIFY_CHANNEL Ljava/lang/String;
+	public static final field NOTIFY_GROUP Ljava/lang/String;
+	public static final field NOTIFY_HERE Ljava/lang/String;
+	public static final field NOTIFY_ROLE Ljava/lang/String;
 	public static final field PIN_MESSAGE Ljava/lang/String;
 	public static final field QUOTE_MESSAGE Ljava/lang/String;
 	public static final field READ_EVENTS Ljava/lang/String;

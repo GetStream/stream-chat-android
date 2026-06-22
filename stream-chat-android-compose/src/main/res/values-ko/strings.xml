@@ -64,6 +64,9 @@
   <string name="stream_compose_cancel">"취소"</string>
   <string name="stream_compose_channel_item_muted">"음소거됨"</string>
   <string name="stream_compose_channel_item_pinned">"고정됨"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_channel_subtitle">"이 대화의 모든 사람에게 알립니다"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_here_subtitle">"이 대화의 모든 온라인 멤버에게 알립니다"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_role_subtitle">"모든 %1$s 멤버에게 알립니다"</string>
   <string name="stream_compose_channel_item_open">"대화 열기"</string>
   <string name="stream_compose_channel_item_options">"대화 옵션 열기"</string>
   <string name="stream_compose_cd_play_button">"재생 버튼"</string>

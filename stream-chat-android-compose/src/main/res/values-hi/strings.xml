@@ -124,6 +124,9 @@
   <string name="stream_compose_cancel">"रद्द करें"</string>
   <string name="stream_compose_channel_item_muted">"म्यूट किया गया"</string>
   <string name="stream_compose_channel_item_pinned">"पिन किया गया"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_channel_subtitle">"इस बातचीत में सभी को सूचित करें"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_here_subtitle">"इस बातचीत के सभी ऑनलाइन सदस्यों को सूचित करें"</string>
+  <string name="stream_compose_message_composer_mention_suggestion_role_subtitle">"सभी %1$s सदस्यों को सूचित करें"</string>
   <string name="stream_compose_channel_item_open">"बातचीत खोलें"</string>
   <string name="stream_compose_channel_item_options">"बातचीत के विकल्प खोलें"</string>
   <string name="stream_compose_cd_play_button">"चलाएँ बटन"</string>

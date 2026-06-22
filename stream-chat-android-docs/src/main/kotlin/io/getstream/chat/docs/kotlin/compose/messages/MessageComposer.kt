@@ -118,7 +118,7 @@ private object MessageComposerHandlingActionsSnippet {
                         onValueChange = viewModel::setMessageInput,
                         onAttachmentRemoved = viewModel::removeAttachment,
                         onCancelAction = viewModel::dismissMessageActions,
-                        onUserSelected = viewModel::selectMention,
+                        onMentionSelected = viewModel::selectMention,
                         onCommandSelected = viewModel::selectCommand,
                         onAlsoSendToChannelChange = viewModel::setAlsoSendToChannel,
                     )

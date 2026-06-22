@@ -20,10 +20,12 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import org.junit.Rule
 import org.junit.Test
 
-internal class UserSuggestionListTest : PaparazziComposeTest {
+internal class MentionSuggestionListTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
@@ -32,9 +34,18 @@ internal class UserSuggestionListTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `user suggestion list`() {
+    fun `mention suggestion list`() {
         snapshotWithDarkModeRow {
-            UserSuggestionList()
+            MentionSuggestionList(
+                mentions = listOf(
+                    Mention.Channel,
+                    Mention.Here,
+                    Mention.User(PreviewUserData.user1),
+                    Mention.User(PreviewUserData.user2),
+                    Mention.User(PreviewUserData.user3),
+                    Mention.Role("admin"),
+                ),
+            )
         }
     }
 }

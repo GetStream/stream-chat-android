@@ -36,8 +36,10 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomCommand
 import io.getstream.chat.android.randomMessage
@@ -75,6 +77,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -1679,6 +1682,60 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given mentions of every type When buildNewMessage called Then message carries each mention field`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "u1", name = "Alice")
+        val group = UserGroup(id = "g1", name = "platform")
+        controller.selectMention(Mention.User(user))
+        controller.selectMention(Mention.Channel)
+        controller.selectMention(Mention.Here)
+        controller.selectMention(Mention.Role("admin"))
+        controller.selectMention(Mention.Group(group))
+
+        // When
+        val message = controller.buildNewMessage("@Alice @channel @here @admin @platform hi")
+
+        // Then
+        assertEquals(listOf("u1"), message.mentionedUsersIds)
+        assertTrue(message.mentionedChannel)
+        assertTrue(message.mentionedHere)
+        assertEquals(listOf("admin"), message.mentionedRoles)
+        assertEquals(listOf(group), message.mentionedGroups)
+    }
+
+    @Test
+    fun `Given mention tokens removed from text When buildNewMessage called Then those mention fields are cleared`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        controller.selectMention(Mention.Channel)
+        controller.selectMention(Mention.Here)
+        controller.selectMention(Mention.Role("admin"))
+        controller.selectMention(Mention.Group(UserGroup(id = "g1", name = "platform")))
+
+        // When — only @here survives in the final text
+        val message = controller.buildNewMessage("just @here")
+
+        // Then
+        assertFalse(message.mentionedChannel)
+        assertTrue(message.mentionedHere)
+        assertTrue(message.mentionedRoles.isEmpty())
+        assertTrue(message.mentionedGroups.isEmpty())
+    }
+
+    @Test
     fun `Given an active command When clearData called Then activeCommand is null`() = runTest {
         // Given
         val command = randomCommand()
@@ -2814,6 +2871,10 @@ internal class MessageComposerControllerTest {
 
         fun get(): MessageComposerController {
             whenever(chatClient.inheritScope(any())) doReturn inheritedScope
+            whenever(chatClient.searchUserGroups(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())) doReturn
+                emptyList<UserGroup>().asCall()
+            whenever(chatClient.searchRoles(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())) doReturn
+                emptyList<Role>().asCall()
 
             return MessageComposerController(
                 channelCid = cid,

@@ -49,8 +49,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.CommandSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.SuggestionsMenu
-import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions.UserSuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
@@ -73,6 +73,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -99,7 +100,11 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
- * @param onUserSelected Handler when the user taps on a user suggestion item.
+ * @param onUserSelected Legacy handler that fires only when the user taps a user suggestion item.
+ * Kept for backward compatibility; new callers should use [onMentionSelected], which receives every
+ * mention type including users. Note both callbacks fire on a user tap: a custom [onUserSelected]
+ * runs in addition to [onMentionSelected], so the default [onMentionSelected] still inserts the
+ * mention. To replace the default selection behavior, override [onMentionSelected].
  * @param onCommandSelected Handler for every tap on a command suggestion item, including taps on
  * disabled items. The default emits [MessageComposerViewEvent.CommandUnavailable] on
  * [MessageComposerViewModel.events] when the command is not available for the current action;
@@ -107,6 +112,8 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
+ * @param onMentionSelected Handler when the user taps any mention suggestion item. This is the
+ * canonical callback for all mention selections.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  */
 @Composable
@@ -124,7 +131,7 @@ public fun MessageComposer(
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
-    onUserSelected: (User) -> Unit = { viewModel.selectMention(it) },
+    onUserSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = viewModel::selectCommand,
     onAlsoSendToChannelChange: (Boolean) -> Unit = viewModel::setAlsoSendToChannel,
     onActiveCommandDismiss: () -> Unit = viewModel::clearActiveCommand,
@@ -132,6 +139,7 @@ public fun MessageComposer(
         viewModel = viewModel,
         sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
+    onMentionSelected: (Mention) -> Unit = viewModel::selectMention,
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         val inputFocusRequester = remember { FocusRequester() }
         LaunchedEffect(Unit) {
@@ -189,6 +197,7 @@ public fun MessageComposer(
                     onSendMessage(messageWithData)
                 },
                 onUserSelected = onUserSelected,
+                onMentionSelected = onMentionSelected,
                 onCommandSelected = onCommandSelected,
                 onAlsoSendToChannelSelected = onAlsoSendToChannelChange,
                 onActiveCommandDismiss = onActiveCommandDismiss,
@@ -235,9 +244,16 @@ internal val LocalMessageComposerSnackbarHostState =
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
- * @param onUserSelected Handler when the user taps on a user suggestion item.
+ * @param onUserSelected Legacy handler that fires only when the user taps a user suggestion item.
+ * Kept for backward compatibility; new callers should use [onMentionSelected], which receives every
+ * mention type including users. Note both callbacks fire on a user tap: a custom [onUserSelected]
+ * runs in addition to [onMentionSelected], so the default [onMentionSelected] still inserts the
+ * mention. To replace the default selection behavior, override [onMentionSelected].
  * @param onCommandSelected Handler when the user taps on a command suggestion item, including taps
  * on disabled items.
+ * @param onMentionSelected Handler when the user taps any mention suggestion item. Canonical
+ * callback for all mention selections. Must be wired when any non-user mention kind is enabled —
+ * otherwise non-user mentions silently no-op on tap.
  * @param onAlsoSendToChannelChange Handler when the "Also send to channel" checkbox is changed.
  * @param onActiveCommandDismiss Called when the user taps the dismiss button on the active command chip.
  * @param recordingActions The actions that can be performed on an audio recording.
@@ -264,6 +280,7 @@ public fun MessageComposer(
     onAlsoSendToChannelChange: (Boolean) -> Unit = {},
     onActiveCommandDismiss: () -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
+    onMentionSelected: (Mention) -> Unit = {},
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         ChatTheme.componentFactory.MessageComposerInput(
             params = MessageComposerInputParams(
@@ -285,7 +302,13 @@ public fun MessageComposer(
     },
 ) {
     val validationErrors = messageComposerState.validationErrors
-    val userSuggestions = messageComposerState.mentionSuggestions
+    // Prefer the list with all mentions but fall back to the legacy user-only field for
+    // callers that construct MessageComposerState directly without going through the controller.
+    val suggestedMentions = messageComposerState.suggestedMentions
+    val legacyMentionSuggestions = messageComposerState.mentionSuggestions
+    val mentionSuggestions = remember(suggestedMentions, legacyMentionSuggestions) {
+        suggestedMentions.ifEmpty { legacyMentionSuggestions.map(Mention::User) }
+    }
     val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = LocalMessageComposerSnackbarHostState.current ?: remember { SnackbarHostState() }
 
@@ -295,12 +318,13 @@ public fun MessageComposer(
     )
 
     MessageComposerSurface(modifier = modifier) {
-        if (userSuggestions.isNotEmpty()) {
-            SuggestionsMenu(contentMaxHeight = UserSuggestionsMaxHeight) {
-                UserSuggestionList(
-                    users = userSuggestions,
+        if (mentionSuggestions.isNotEmpty()) {
+            SuggestionsMenu(contentMaxHeight = MentionSuggestionsMaxHeight) {
+                MentionSuggestionList(
+                    mentions = mentionSuggestions,
                     currentUser = messageComposerState.currentUser,
                     onUserSelected = onUserSelected,
+                    onMentionSelected = onMentionSelected,
                 )
             }
         }
@@ -358,7 +382,7 @@ public fun MessageComposer(
     }
 }
 
-private val UserSuggestionsMaxHeight = 176.dp
+private val MentionSuggestionsMaxHeight = 176.dp
 private val CommandSuggestionsMaxHeight = 208.dp
 
 @StringRes
@@ -368,11 +392,13 @@ private fun MessageComposerViewEvent.messageResOrNull(): Int? = when (this) {
         is Reply -> R.string.stream_compose_message_composer_command_unavailable_in_reply
         else -> null
     }
+
     is MessageComposerViewEvent.CancelCommandRequired -> when (action) {
         is Edit -> R.string.stream_compose_message_composer_cancel_command_to_edit
         is Reply -> R.string.stream_compose_message_composer_cancel_command_to_reply
         else -> null
     }
+
     else -> null
 }
 
@@ -380,6 +406,7 @@ private fun MessageComposerViewEvent.snackbarVariant(): StreamSnackbarVariant = 
     is MessageComposerViewEvent.CommandUnavailable,
     is MessageComposerViewEvent.CancelCommandRequired,
     -> StreamSnackbarVariant.Error
+
     else -> StreamSnackbarVariant.Default
 }
 
@@ -516,6 +543,14 @@ internal fun MessageComposerFixedStyleWithUserSuggestions() {
                 PreviewUserData.user1,
                 PreviewUserData.user5,
             ),
+            suggestedMentions = listOf(
+                Mention.Channel,
+                Mention.Here,
+                Mention.User(PreviewUserData.userWithOnlineStatus),
+                Mention.User(PreviewUserData.user1),
+                Mention.User(PreviewUserData.user5),
+                Mention.Role("admin"),
+            ),
         ),
         onSendMessage = { _, _ -> },
     )
@@ -621,6 +656,14 @@ internal fun MessageComposerFloatingStyleWithUserSuggestions() {
                     PreviewUserData.userWithOnlineStatus,
                     PreviewUserData.user1,
                     PreviewUserData.user5,
+                ),
+                suggestedMentions = listOf(
+                    Mention.Channel,
+                    Mention.Here,
+                    Mention.User(PreviewUserData.userWithOnlineStatus),
+                    Mention.User(PreviewUserData.user1),
+                    Mention.User(PreviewUserData.user5),
+                    Mention.Role("admin"),
                 ),
             ),
             onSendMessage = { _, _ -> },
