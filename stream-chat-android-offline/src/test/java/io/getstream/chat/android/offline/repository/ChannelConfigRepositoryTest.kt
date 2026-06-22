@@ -100,6 +100,25 @@ internal class ChannelConfigRepositoryTest {
     }
 
     @Test
+    fun `When insert configs with duplicate types Should dedup keeping the last per type`() = runTest {
+        val first = randomChannelConfig(type = "messaging", config = randomConfig(name = "first"))
+        val last = randomChannelConfig(type = "messaging", config = randomConfig(name = "last"))
+        val other = randomChannelConfig(type = "livestream", config = randomConfig(name = "other"))
+
+        sut.insertChannelConfigs(listOf(first, other, last))
+
+        verify(dao).insert(
+            argThat<List<ChannelConfigEntity>> {
+                size == 2 &&
+                    single { it.channelConfigInnerEntity.channelType == "messaging" }
+                        .channelConfigInnerEntity.name == "last" &&
+                    single { it.channelConfigInnerEntity.channelType == "livestream" }
+                        .channelConfigInnerEntity.name == "other"
+            },
+        )
+    }
+
+    @Test
     fun `Given config in cache When select Should return config`() = runTest {
         val config = randomChannelConfig(type = "messaging", config = randomConfig(name = "configName"))
         sut.insertChannelConfig(config)
