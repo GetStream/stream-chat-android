@@ -61,14 +61,14 @@ data class UserMutedEvent (
     @Json(name = "target_user")
     val targetUser: io.getstream.chat.android.network.models.UserResponseCommonFields? = null
 )
-: io.getstream.chat.android.network.models.WSEvent, io.getstream.chat.android.network.models.WSClientEvent
+: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
 {
     
-    override fun getWSEventType(): kotlin.String {
+    override fun getWSClientEventType(): kotlin.String {
         return type
     }
 
-    override fun getWSClientEventType(): kotlin.String {
+    override fun getWSEventType(): kotlin.String {
         return type
     }    
 }
