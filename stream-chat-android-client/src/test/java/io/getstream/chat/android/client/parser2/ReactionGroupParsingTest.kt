@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.Date
-import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 
 internal class ReactionGroupParsingTest {
 

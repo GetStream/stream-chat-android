@@ -121,7 +121,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
-import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 
 @Suppress("LargeClass")

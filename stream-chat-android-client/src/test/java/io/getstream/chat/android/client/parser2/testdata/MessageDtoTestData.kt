@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
-import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 
 internal object MessageDtoTestData {
 

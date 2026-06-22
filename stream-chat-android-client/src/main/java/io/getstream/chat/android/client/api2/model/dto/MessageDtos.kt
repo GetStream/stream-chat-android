@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
-import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for

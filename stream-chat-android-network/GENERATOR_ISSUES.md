@@ -226,8 +226,13 @@ shapes are pulled in.
 This is a product/spec concern more than a generator bug, but it surfaces as generator output and
 becomes an SDK API problem the moment we ship.
 
-**Fix status:** Not fixed. Currently working around it by accepting the cross-product types in
-the generated module.
+**Fix status:** Fixed by dropping the `moderation` product from the chat spec build.
+`generate-kotlin-chat-client.sh` now invokes `chat-manager openapi generate-spec -products
+chat,common` directly instead of using the bundled spec (which is built with
+`chat,common,moderation`). Chat-scoped moderation routes (`/api/v2/chat/moderation/*`) are
+tagged with the `chat` product and survive; the 21 standalone `/api/v2/moderation/*` admin
+routes and the cross-product types (`EnrichedActivity`, `EnrichedReaction`, `ReviewQueueItem`,
+`Time`) are gone. Module shrank from 472 to 324 generated model files.
 
 **Suggested fix:** Several angles, listed by ambition:
 

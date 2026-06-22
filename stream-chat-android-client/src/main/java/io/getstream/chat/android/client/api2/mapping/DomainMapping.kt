@@ -136,7 +136,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
-import io.getstream.chat.android.network.models.ChatReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 
 @Suppress("TooManyFunctions", "LargeClass")

@@ -94,9 +94,6 @@ class ChatEventAdapter : JsonAdapter<ChatEvent>() {
             "message.read" -> io.getstream.chat.android.network.models.MessageReadEvent::class.java
             "message.undeleted" -> io.getstream.chat.android.network.models.MessageUndeletedEvent::class.java
             "message.updated" -> io.getstream.chat.android.network.models.MessageUpdatedEvent::class.java
-            "moderation.custom_action" -> io.getstream.chat.android.network.models.ModerationCustomActionEvent::class.java
-            "moderation.flagged" -> io.getstream.chat.android.network.models.ModerationFlaggedEvent::class.java
-            "moderation.mark_reviewed" -> io.getstream.chat.android.network.models.ModerationMarkReviewedEvent::class.java
             "notification.added_to_channel" -> io.getstream.chat.android.network.models.NotificationAddedToChannelEvent::class.java
             "notification.channel_deleted" -> io.getstream.chat.android.network.models.NotificationChannelDeletedEvent::class.java
             "notification.channel_mutes_updated" -> io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent::class.java
