@@ -58,12 +58,16 @@ internal class DatabaseUserRepository(
      */
     override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
-        val usersToInsert = users
+        // Use associateBy instead of distinctBy to keep the *last* occurrence of each user
+        val uniqueUsers = users.associateBy(User::id).values
+        val usersToInsert = uniqueUsers
             .filter { it != userCache[it.id] }
             .map { it.toEntity() }
-        cacheUsers(users)
+        cacheUsers(uniqueUsers)
         scope.launchWithMutex(dbMutex) {
-            logger.v { "[insertUsers] inserting ${usersToInsert.size} entities on DB, updated ${users.size} on cache" }
+            logger.v {
+                "[insertUsers] inserting ${usersToInsert.size} entities in DB, updated ${uniqueUsers.size} in cache"
+            }
             usersToInsert
                 .takeUnless { it.isEmpty() }
                 ?.let { userDao.insertMany(it) }

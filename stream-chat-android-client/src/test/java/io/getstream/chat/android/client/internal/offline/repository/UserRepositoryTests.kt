@@ -51,6 +51,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -129,6 +130,21 @@ internal class UserRepositoryTests {
         sut.insertUsers(emptyList())
 
         verify(userDao, never()).insertMany(any())
+    }
+
+    @Test
+    fun `When insert users with duplicate ids Should insert each user only once keeping the last`() = runTest {
+        val id = randomString()
+        val firstCopy = randomUser(id = id, name = "first")
+        val lastCopy = firstCopy.copy(name = "last")
+        val other = randomUser()
+
+        sut.insertUsers(listOf(firstCopy, other, lastCopy))
+
+        val captor = argumentCaptor<List<UserEntity>>()
+        verify(userDao).insertMany(captor.capture())
+        captor.firstValue.map(UserEntity::id) shouldBeEqualTo listOf(id, other.id)
+        captor.firstValue.first { it.id == id }.name shouldBeEqualTo "last"
     }
 
     @Test
