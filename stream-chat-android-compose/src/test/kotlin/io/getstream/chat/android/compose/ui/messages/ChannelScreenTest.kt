@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.messages
 
+import android.content.Context
+import android.view.accessibility.AccessibilityManager
 import androidx.annotation.UiThread
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.core.content.getSystemService
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
@@ -35,6 +38,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -62,7 +66,31 @@ internal class ChannelScreenTest : MockedChatClientTest {
         composeTestRule.onNodeWithText("Channel without name").assertExists()
         composeTestRule.onNodeWithText("0 Members").assertExists()
     }
+
+    @Test
+    @UiThread
+    fun `renders when a screen reader moves entry focus to the composer`() {
+        setTouchExplorationEnabled(true)
+
+        composeTestRule.setContent {
+            ChatTheme {
+                ChannelScreen()
+            }
+        }
+        // Advance past the entry-focus window so the re-apply loop settles.
+        composeTestRule.mainClock.advanceTimeBy(EntryFocusWindowElapsedMs)
+
+        composeTestRule.onNodeWithText("Channel without name").assertExists()
+    }
+
+    private fun setTouchExplorationEnabled(enabled: Boolean) {
+        val manager = ApplicationProvider.getApplicationContext<Context>()
+            .getSystemService<AccessibilityManager>()!!
+        Shadows.shadowOf(manager).setTouchExplorationEnabled(enabled)
+    }
 }
+
+private const val EntryFocusWindowElapsedMs = 2_100L
 
 @Composable
 private fun ChannelScreen() {

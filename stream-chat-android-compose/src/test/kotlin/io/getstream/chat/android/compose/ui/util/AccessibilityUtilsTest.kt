@@ -100,6 +100,33 @@ internal class AccessibilityUtilsTest {
         val plainView = View(ApplicationProvider.getApplicationContext())
         assertFalse(plainView.requestAccessibilityFocusForTestTag("present"))
     }
+
+    @Test
+    fun `requestAccessibilityFocusForTestTag resolves and dispatches for a present tag`() {
+        lateinit var view: View
+        composeTestRule.setContent {
+            view = LocalView.current
+            TaggedNode(tag = "present")
+        }
+        composeTestRule.runOnIdle {
+            // The node resolves, so the action is dispatched to the provider (the host's shadow does
+            // not actually move focus, so the dispatched result is not asserted here).
+            assertNotNull(view.semanticsNodeIdForTestTag("present"))
+            view.requestAccessibilityFocusForTestTag("present")
+        }
+    }
+
+    @Test
+    fun `requestAccessibilityFocusForTestTag fails safe for an absent tag`() {
+        lateinit var view: View
+        composeTestRule.setContent {
+            view = LocalView.current
+            TaggedNode(tag = "present")
+        }
+        composeTestRule.runOnIdle {
+            assertFalse(view.requestAccessibilityFocusForTestTag("absent"))
+        }
+    }
 }
 
 @Composable
