@@ -74,6 +74,9 @@
   <string name="stream_ui_message_composer_files_allow_audio_access">"Autoriser l\'accès aux fichiers audio"</string>
   <string name="stream_ui_message_composer_files_allow_more_visual_media">"Autoriser l\'accès à plus de médias visuels"</string>
   <string name="stream_ui_message_composer_files_allow_visual_media_access">"Autoriser l\'accès aux médias visuels"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">"Notifier tout le monde dans cette conversation"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">"Notifier tous les membres en ligne dans cette conversation"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">"Notifier tous les membres %1$s"</string>
   <string name="stream_ui_message_composer_gallery_access">"Autoriser l\'accès à votre galerie"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"Vous ne pouvez pas envoyer de messages dans ce canal"</string>
   <string name="stream_ui_message_composer_hint_normal">"Écrivez quelque chose ici"</string>

@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.attachmentRemovalListener
@@ -46,6 +47,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelD
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.mentionSelectionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.pollSubmissionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.sendMessageButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.suggestedMentionSelectionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.textInputChangeListener
 import kotlinx.coroutines.launch
 
@@ -109,6 +111,7 @@ public fun MessageComposerViewModel.bindView(
     ),
     audioSliderDragStartListener: (Float) -> Unit = this.audioSliderDragStartListener,
     audioSliderDragStopListener: (Float) -> Unit = this.audioSliderDragStopListener,
+    suggestedMentionSelectionListener: (Mention) -> Unit = this.suggestedMentionSelectionListener,
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(messageBuilder()) }
     view.textInputChangeListener = textInputChangeListener
@@ -116,6 +119,7 @@ public fun MessageComposerViewModel.bindView(
     view.attachmentRemovalListener = attachmentRemovalListener
     view.pollSubmissionListener = pollSubmissionListener
     view.mentionSelectionListener = mentionSelectionListener
+    view.suggestedMentionSelectionListener = suggestedMentionSelectionListener
     view.commandSelectionListener = commandSelectionListener
     view.alsoSendToChannelSelectionListener = alsoSendToChannelSelectionListener
     view.dismissActionClickListener = dismissActionClickListener
@@ -194,6 +198,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     audioCompleteButtonClickListener: (() -> Unit)? = null,
     audioSliderDragStartListener: ((Float) -> Unit)? = null,
     audioSliderDragStopListener: ((Float) -> Unit)? = null,
+    suggestedMentionSelectionListener: ((Mention) -> Unit)? = null,
 ) {
     val sendOnComplete = view.composerStyle.audioRecordingSendOnComplete
     bindView(
@@ -223,6 +228,8 @@ public fun MessageComposerViewModel.bindViewDefaults(
             audioCompleteButtonClickListener,
         audioSliderDragStartListener = this.audioSliderDragStartListener and audioSliderDragStartListener,
         audioSliderDragStopListener = this.audioSliderDragStopListener and audioSliderDragStopListener,
+        suggestedMentionSelectionListener =
+        this.suggestedMentionSelectionListener and suggestedMentionSelectionListener,
     )
 }
 
@@ -253,6 +260,7 @@ internal object MessageComposerViewModelDefaults {
     val MessageComposerViewModel.pollSubmissionListener: (CreatePollParams) -> Unit get() = { createPoll(it) }
     val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = ::removeAttachment
     val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
+    val MessageComposerViewModel.suggestedMentionSelectionListener: (Mention) -> Unit get() = { selectMention(it) }
     val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }
     val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }
     val MessageComposerViewModel.dismissActionClickListener: () -> Unit get() = { dismissMessageActions() }

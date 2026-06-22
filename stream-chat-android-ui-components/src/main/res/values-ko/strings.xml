@@ -62,6 +62,9 @@
   <string name="stream_ui_message_composer_files_allow_audio_access">"오디오 파일 액세스 허용"</string>
   <string name="stream_ui_message_composer_files_allow_more_visual_media">"더 많은 시각적 미디어에 대한 액세스 허용"</string>
   <string name="stream_ui_message_composer_files_allow_visual_media_access">"시각적 미디어에 대한 액세스 허용"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">"이 대화의 모든 사람에게 알립니다"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">"이 대화의 모든 온라인 멤버에게 알립니다"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">"모든 %1$s 멤버에게 알립니다"</string>
   <string name="stream_ui_message_composer_gallery_access">"갤러리 액세스를 허용"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"이 채널에서는 메시지를 보낼 수 없습니다"</string>
   <string name="stream_ui_message_composer_hint_normal">"메시지 입력"</string>

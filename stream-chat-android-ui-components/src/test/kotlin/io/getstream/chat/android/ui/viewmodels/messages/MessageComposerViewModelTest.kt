@@ -36,13 +36,16 @@ import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Role
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -57,7 +60,11 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -356,6 +363,31 @@ internal class MessageComposerViewModelTest {
             viewModel.messageInput.value.text `should be equal to` "@Jc Miñarro "
         }
 
+    @ParameterizedTest
+    @MethodSource("nonUserMentionCases")
+    fun `Given message composer When typing mention query Should surface the matching non-user Mention`(
+        capability: String,
+        query: String,
+        expectedMention: Mention,
+        roles: List<Role>,
+        groups: List<UserGroup>,
+    ) = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(channelData = channelDataWith(capability))
+            .givenNoMemberQueryResult()
+            .givenRoleSearchResult(roles)
+            .givenGroupSearchResult(groups)
+            .get()
+
+        viewModel.setMessageInput(query)
+        advanceUntilIdle()
+
+        viewModel.messageComposerState.value.suggestedMentions `should be equal to` listOf(expectedMention)
+        viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
@@ -431,6 +463,21 @@ internal class MessageComposerViewModelTest {
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
+        fun givenRoleSearchResult(roles: List<Role>) = apply {
+            whenever(chatClient.searchRoles(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
+                .doReturn(roles.asCall())
+        }
+
+        fun givenGroupSearchResult(groups: List<UserGroup>) = apply {
+            whenever(chatClient.searchUserGroups(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
+                .doReturn(groups.asCall())
+        }
+
+        fun givenNoMemberQueryResult() = apply {
+            whenever(chatClient.queryMembers(any(), any(), any(), any(), any(), any(), any()))
+                .doReturn(emptyList<Member>().asCall())
+        }
+
         fun get(): MessageComposerViewModel {
             return MessageComposerViewModel(
                 MessageComposerController(
@@ -456,6 +503,32 @@ internal class MessageComposerViewModelTest {
             id = "123",
             ownCapabilities = capabilities.toSet(),
         )
+
+        @JvmStatic
+        fun nonUserMentionCases(): List<Arguments> {
+            val role = Role(name = "admin")
+            val group = UserGroup(id = "g1", name = "platform")
+            val noRoles = emptyList<Role>()
+            val noGroups = emptyList<UserGroup>()
+            return listOf(
+                Arguments.of(ChannelCapabilities.NOTIFY_CHANNEL, "@", Mention.Channel, noRoles, noGroups),
+                Arguments.of(ChannelCapabilities.NOTIFY_HERE, "@", Mention.Here, noRoles, noGroups),
+                Arguments.of(
+                    ChannelCapabilities.NOTIFY_ROLE,
+                    "@admin",
+                    Mention.Role(role.name),
+                    listOf(role),
+                    noGroups,
+                ),
+                Arguments.of(
+                    ChannelCapabilities.NOTIFY_GROUP,
+                    "@plat",
+                    Mention.Group(group),
+                    noRoles,
+                    listOf(group),
+                ),
+            )
+        }
 
         val user1 = User(
             id = "Jc",

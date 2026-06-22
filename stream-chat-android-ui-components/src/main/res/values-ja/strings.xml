@@ -62,6 +62,9 @@
   <string name="stream_ui_message_composer_files_allow_audio_access">"オーディオファイルへのアクセスを許可する"</string>
   <string name="stream_ui_message_composer_files_allow_more_visual_media">"より多くのビジュアルメディアへのアクセスを許可する"</string>
   <string name="stream_ui_message_composer_files_allow_visual_media_access">"ビジュアルメディアへのアクセスを許可する"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_channel_subtitle">"この会話の全員に通知します"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_here_subtitle">"この会話のオンラインメンバー全員に通知します"</string>
+  <string name="stream_ui_message_composer_mention_suggestion_role_subtitle">"%1$s メンバー全員に通知します"</string>
   <string name="stream_ui_message_composer_gallery_access">"ギャラリーへのアクセスを許可する"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"このチャンネルではメッセージを送信できません"</string>
   <string name="stream_ui_message_composer_hint_normal">"ここに何か書く"</string>

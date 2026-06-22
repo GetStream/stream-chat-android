@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CreatePollParams
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
@@ -116,9 +117,25 @@ public class MessageComposerView : ConstraintLayout {
     public var attachmentRemovalListener: (Attachment) -> Unit = {}
 
     /**
-     * Selection listener invoked when a mention suggestion item is selected.
+     * Selection listener invoked when a user mention suggestion item is selected.
+     *
+     * Kept for backward compatibility; only fires for [Mention.User] rows. New code should
+     * prefer [suggestedMentionSelectionListener], which fires for every mention type. Note both
+     * listeners fire on a user tap: a custom [mentionSelectionListener] runs in addition to
+     * [suggestedMentionSelectionListener], so the default selection still inserts the mention. To
+     * replace the default selection behavior, override [suggestedMentionSelectionListener].
      */
+    @Deprecated(
+        message = "Use suggestedMentionSelectionListener; it also fires for other mention types.",
+        replaceWith = ReplaceWith("suggestedMentionSelectionListener"),
+        level = DeprecationLevel.WARNING,
+    )
     public var mentionSelectionListener: (User) -> Unit = {}
+
+    /**
+     * Selection listener invoked when any mention suggestion item is selected.
+     */
+    public var suggestedMentionSelectionListener: (Mention) -> Unit = {}
 
     /**
      * Selection listener invoked when a command suggestion item is selected.
@@ -256,7 +273,7 @@ public class MessageComposerView : ConstraintLayout {
     /**
      * The current list of mention suggestions.
      */
-    private var mentionSuggestions: List<User>? = null
+    private var mentionSuggestions: List<Mention>? = null
 
     /**
      * Default implementation of [mentionSuggestionsContent].
@@ -264,6 +281,7 @@ public class MessageComposerView : ConstraintLayout {
     private val defaultMentionSuggestionsView: View by lazy {
         DefaultMessageComposerMentionSuggestionsContent(context).also {
             it.mentionSelectionListener = { user -> mentionSelectionListener(user) }
+            it.suggestedMentionSelectionListener = { mention -> suggestedMentionSelectionListener(mention) }
         }.attachContext()
     }
 
@@ -606,6 +624,9 @@ public class MessageComposerView : ConstraintLayout {
             if (contentView.mentionSelectionListener == null) {
                 contentView.mentionSelectionListener = { mentionSelectionListener(it) }
             }
+            if (contentView.suggestedMentionSelectionListener == null) {
+                contentView.suggestedMentionSelectionListener = { suggestedMentionSelectionListener(it) }
+            }
         }
     }
 
@@ -643,12 +664,12 @@ public class MessageComposerView : ConstraintLayout {
      */
     private fun renderSuggestion(state: MessageComposerState) {
         when {
-            state.mentionSuggestions.isNotEmpty() -> renderMentionSuggestions(state)
+            state.suggestedMentions.isNotEmpty() -> renderMentionSuggestions(state)
             state.commandSuggestions.isNotEmpty() -> renderCommandsSuggestions(state)
             else -> suggestionsPopup?.dismiss()
         }
         this.commandSuggestions = state.commandSuggestions
-        this.mentionSuggestions = state.mentionSuggestions
+        this.mentionSuggestions = state.suggestedMentions
     }
 
     /**
@@ -683,7 +704,7 @@ public class MessageComposerView : ConstraintLayout {
      */
     private fun renderMentionSuggestions(state: MessageComposerState) {
         // Do not do anything if the list hasn't changed
-        if (this.mentionSuggestions == state.mentionSuggestions) return
+        if (this.mentionSuggestions == state.suggestedMentions) return
         if (!messageComposerContext.style.messageInputMentionsHandlingEnabled) return
 
         (mentionSuggestionsContent as? MessageComposerContent)?.renderState(state)
