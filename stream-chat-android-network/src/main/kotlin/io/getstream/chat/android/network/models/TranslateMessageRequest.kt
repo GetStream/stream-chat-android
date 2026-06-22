@@ -23,10 +23,6 @@
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
@@ -35,7 +31,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
@@ -44,7 +40,7 @@ data class TranslateMessageRequest (
     val language: Language
 )
 {
-    
+
     /**
     * Language Enum
     */
@@ -79,7 +75,7 @@ data class TranslateMessageRequest (
                     "hr" -> Hr
                     "ht" -> Ht
                     "hu" -> Hu
-                    "id" -> ID
+                    "id" -> Id
                     "it" -> It
                     "ja" -> Ja
                     "ka" -> Ka
@@ -139,7 +135,7 @@ data class TranslateMessageRequest (
             object Hr : Language("hr")
             object Ht : Language("ht")
             object Hu : Language("hu")
-            object ID : Language("id")
+            object Id : Language("id")
             object It : Language("it")
             object Ja : Language("ja")
             object Ka : Language("ka")
@@ -171,7 +167,7 @@ data class TranslateMessageRequest (
             object Zh : Language("zh")
             object ZhTW : Language("zh-TW")
             data class Unknown(val unknownValue: kotlin.String) : Language(unknownValue)
-        
+
 
         class LanguageAdapter : JsonAdapter<Language>() {
             @FromJson
@@ -185,5 +181,5 @@ data class TranslateMessageRequest (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }
