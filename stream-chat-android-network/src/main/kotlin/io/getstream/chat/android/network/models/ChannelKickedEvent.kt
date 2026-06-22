@@ -73,10 +73,14 @@ data class ChannelKickedEvent (
     @Json(name = "channel_custom")
     val channelCustom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap()
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSEvent, io.getstream.chat.android.network.models.WSClientEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSClientEventType(): kotlin.String {
         return type
     }    
 }

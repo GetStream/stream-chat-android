@@ -67,10 +67,14 @@ data class TypingStopEvent (
     @Json(name = "user")
     val user: io.getstream.chat.android.network.models.UserResponseCommonFields? = null
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSEvent, io.getstream.chat.android.network.models.WSClientEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSClientEventType(): kotlin.String {
         return type
     }    
 }

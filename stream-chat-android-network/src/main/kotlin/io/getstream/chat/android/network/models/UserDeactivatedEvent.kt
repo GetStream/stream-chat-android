@@ -58,10 +58,14 @@ data class UserDeactivatedEvent (
     @Json(name = "created_by")
     val createdBy: io.getstream.chat.android.network.models.UserResponseCommonFields? = null
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSClientEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSEventType(): kotlin.String {
         return type
     }    
 }

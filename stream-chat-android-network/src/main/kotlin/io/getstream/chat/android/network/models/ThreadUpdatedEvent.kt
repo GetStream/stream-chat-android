@@ -64,10 +64,14 @@ data class ThreadUpdatedEvent (
     @Json(name = "thread")
     val thread: io.getstream.chat.android.network.models.ThreadResponse? = null
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSClientEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSEventType(): kotlin.String {
         return type
     }    
 }

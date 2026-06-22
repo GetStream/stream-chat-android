@@ -103,10 +103,14 @@ data class NotificationNewMessageEvent (
     @Json(name = "grouped_unread_channels")
     val groupedUnreadChannels: kotlin.collections.Map<kotlin.String, kotlin.Int>? = emptyMap()
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSClientEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSEventType(): kotlin.String {
         return type
     }    
 }

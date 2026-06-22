@@ -66,6 +66,7 @@ object Serializer {
         .add(io.getstream.chat.android.network.infrastructure.ByteArrayAdapter())
         .add(io.getstream.chat.android.network.infrastructure.URIAdapter())
         .add(io.getstream.chat.android.network.infrastructure.UUIDAdapter())
+        .add(io.getstream.chat.android.network.infrastructure.IsoDateAdapter())
         .addLast(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
     
     @JvmStatic

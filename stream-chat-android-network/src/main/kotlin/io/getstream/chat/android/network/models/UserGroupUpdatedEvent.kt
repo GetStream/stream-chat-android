@@ -58,10 +58,14 @@ data class UserGroupUpdatedEvent (
     @Json(name = "user_group")
     val userGroup: io.getstream.chat.android.network.models.UserGroup? = null
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSEvent, io.getstream.chat.android.network.models.WSClientEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSClientEventType(): kotlin.String {
         return type
     }    
 }

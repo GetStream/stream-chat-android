@@ -82,10 +82,14 @@ data class NotificationInviteAcceptedEvent (
     @Json(name = "user")
     val user: io.getstream.chat.android.network.models.UserResponseCommonFields? = null
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSClientEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSEventType(): kotlin.String {
         return type
     }    
 }

@@ -250,6 +250,12 @@ public final class io/getstream/chat/android/network/infrastructure/ByteArrayAda
 	public final fun toJson ([B)Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/network/infrastructure/IsoDateAdapter {
+	public fun <init> ()V
+	public final fun fromJson (Ljava/lang/String;)Ljava/util/Date;
+	public final fun toJson (Ljava/util/Date;)Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/network/infrastructure/Serializer {
 	public static final field INSTANCE Lio/getstream/chat/android/network/infrastructure/Serializer;
 	public static final fun getMoshi ()Lcom/squareup/moshi/Moshi;
@@ -268,7 +274,7 @@ public final class io/getstream/chat/android/network/infrastructure/UUIDAdapter 
 	public final fun toJson (Ljava/util/UUID;)Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/AIIndicatorClearEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/AIIndicatorClearEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -286,9 +292,10 @@ public final class io/getstream/chat/android/network/models/AIIndicatorClearEven
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -302,7 +309,7 @@ public final class io/getstream/chat/android/network/models/AIIndicatorClearEven
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/AIIndicatorStopEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/AIIndicatorStopEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -320,9 +327,10 @@ public final class io/getstream/chat/android/network/models/AIIndicatorStopEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -336,7 +344,7 @@ public final class io/getstream/chat/android/network/models/AIIndicatorStopEvent
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/AIIndicatorUpdateEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/AIIndicatorUpdateEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -359,10 +367,11 @@ public final class io/getstream/chat/android/network/models/AIIndicatorUpdateEve
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -550,7 +559,7 @@ public final class io/getstream/chat/android/network/models/AppResponseFieldsJso
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/AppUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/AppUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/AppEventResponse;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/AppEventResponse;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -564,9 +573,10 @@ public final class io/getstream/chat/android/network/models/AppUpdatedEvent : io
 	public final fun getApp ()Lio/getstream/chat/android/network/models/AppEventResponse;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1313,7 +1323,7 @@ public final class io/getstream/chat/android/network/models/ChannelConfigWithInf
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelCreatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelCreatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -1341,11 +1351,12 @@ public final class io/getstream/chat/android/network/models/ChannelCreatedEvent 
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1359,7 +1370,7 @@ public final class io/getstream/chat/android/network/models/ChannelCreatedEventJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -1387,11 +1398,12 @@ public final class io/getstream/chat/android/network/models/ChannelDeletedEvent 
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1405,7 +1417,7 @@ public final class io/getstream/chat/android/network/models/ChannelDeletedEventJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelFrozenEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelFrozenEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -1423,9 +1435,10 @@ public final class io/getstream/chat/android/network/models/ChannelFrozenEvent :
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1477,7 +1490,7 @@ public final class io/getstream/chat/android/network/models/ChannelGetOrCreateRe
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelHiddenEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelHiddenEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (ZLjava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (ZLjava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
@@ -1507,11 +1520,12 @@ public final class io/getstream/chat/android/network/models/ChannelHiddenEvent :
 	public final fun getClearHistory ()Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1611,7 +1625,7 @@ public final class io/getstream/chat/android/network/models/ChannelInputRequestJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelKickedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelKickedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -1636,10 +1650,11 @@ public final class io/getstream/chat/android/network/models/ChannelKickedEvent :
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2109,7 +2124,7 @@ public final class io/getstream/chat/android/network/models/ChannelStateResponse
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelTruncatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelTruncatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -2139,13 +2154,14 @@ public final class io/getstream/chat/android/network/models/ChannelTruncatedEven
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2159,7 +2175,7 @@ public final class io/getstream/chat/android/network/models/ChannelTruncatedEven
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelUnFrozenEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelUnFrozenEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -2177,9 +2193,10 @@ public final class io/getstream/chat/android/network/models/ChannelUnFrozenEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2193,7 +2210,7 @@ public final class io/getstream/chat/android/network/models/ChannelUnFrozenEvent
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -2223,13 +2240,14 @@ public final class io/getstream/chat/android/network/models/ChannelUpdatedEvent 
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2243,7 +2261,7 @@ public final class io/getstream/chat/android/network/models/ChannelUpdatedEventJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ChannelVisibleEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ChannelVisibleEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -2271,11 +2289,12 @@ public final class io/getstream/chat/android/network/models/ChannelVisibleEvent 
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2287,19 +2306,6 @@ public final class io/getstream/chat/android/network/models/ChannelVisibleEventJ
 	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/ChannelVisibleEvent;)V
 	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
 	public fun toString ()Ljava/lang/String;
-}
-
-public abstract class io/getstream/chat/android/network/models/ChatEvent {
-	public fun <init> ()V
-	public abstract fun getEventType ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/network/models/ChatEventAdapter : com/squareup/moshi/JsonAdapter {
-	public fun <init> ()V
-	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/network/models/ChatEvent;
-	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/ChatEvent;)V
-	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/network/models/ChatPreferences {
@@ -3319,7 +3325,7 @@ public final class io/getstream/chat/android/network/models/CreateUserGroupRespo
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/CustomEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/CustomEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -3331,9 +3337,10 @@ public final class io/getstream/chat/android/network/models/CustomEvent : io/get
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -3589,7 +3596,7 @@ public final class io/getstream/chat/android/network/models/DeviceResponseJsonAd
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/DraftDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/DraftDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/DraftResponse;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/DraftResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -3606,10 +3613,11 @@ public final class io/getstream/chat/android/network/models/DraftDeletedEvent : 
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
 	public final fun getDraft ()Lio/getstream/chat/android/network/models/DraftResponse;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -3701,7 +3709,7 @@ public final class io/getstream/chat/android/network/models/DraftResponseJsonAda
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/DraftUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/DraftUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/DraftResponse;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/DraftResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -3718,10 +3726,11 @@ public final class io/getstream/chat/android/network/models/DraftUpdatedEvent : 
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
 	public final fun getDraft ()Lio/getstream/chat/android/network/models/DraftResponse;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -4784,7 +4793,7 @@ public final class io/getstream/chat/android/network/models/GroupedQueryChannels
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/HealthCheckEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/HealthCheckEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/OwnUserResponse;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/OwnUserResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -4801,10 +4810,11 @@ public final class io/getstream/chat/android/network/models/HealthCheckEvent : i
 	public final fun getConnectionId ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMe ()Lio/getstream/chat/android/network/models/OwnUserResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5297,7 +5307,7 @@ public final class io/getstream/chat/android/network/models/MarkUnreadRequestJso
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MaxStreakChangedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MaxStreakChangedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5309,9 +5319,10 @@ public final class io/getstream/chat/android/network/models/MaxStreakChangedEven
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5325,7 +5336,7 @@ public final class io/getstream/chat/android/network/models/MaxStreakChangedEven
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MemberAddedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MemberAddedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5354,12 +5365,13 @@ public final class io/getstream/chat/android/network/models/MemberAddedEvent : i
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5373,7 +5385,7 @@ public final class io/getstream/chat/android/network/models/MemberAddedEventJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MemberRemovedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MemberRemovedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5402,12 +5414,13 @@ public final class io/getstream/chat/android/network/models/MemberRemovedEvent :
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5421,7 +5434,7 @@ public final class io/getstream/chat/android/network/models/MemberRemovedEventJs
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MemberUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MemberUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5450,12 +5463,13 @@ public final class io/getstream/chat/android/network/models/MemberUpdatedEvent :
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5573,7 +5587,7 @@ public final class io/getstream/chat/android/network/models/MessageChangeSetJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MessageDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MessageDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;ZLjava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;ZLjava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5604,7 +5618,6 @@ public final class io/getstream/chat/android/network/models/MessageDeletedEvent 
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
 	public final fun getDeletedForMe ()Ljava/lang/Boolean;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getHardDelete ()Z
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
@@ -5612,6 +5625,8 @@ public final class io/getstream/chat/android/network/models/MessageDeletedEvent 
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5625,7 +5640,7 @@ public final class io/getstream/chat/android/network/models/MessageDeletedEventJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MessageDeliveredEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MessageDeliveredEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5655,13 +5670,14 @@ public final class io/getstream/chat/android/network/models/MessageDeliveredEven
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getLastDeliveredAt ()Ljava/lang/String;
 	public final fun getLastDeliveredMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -5763,7 +5779,7 @@ public final class io/getstream/chat/android/network/models/MessageModerationRes
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MessageNewEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MessageNewEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;ILjava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;ILjava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5800,7 +5816,6 @@ public final class io/getstream/chat/android/network/models/MessageNewEvent : io
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
@@ -5813,6 +5828,8 @@ public final class io/getstream/chat/android/network/models/MessageNewEvent : io
 	public final fun getUnreadChannels ()Ljava/lang/Integer;
 	public final fun getUnreadCount ()Ljava/lang/Integer;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public final fun getWatcherCount ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -5891,7 +5908,7 @@ public final class io/getstream/chat/android/network/models/MessagePaginationPar
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MessageReadEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MessageReadEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -5921,13 +5938,14 @@ public final class io/getstream/chat/android/network/models/MessageReadEvent : i
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getLastReadMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getThread ()Lio/getstream/chat/android/network/models/ThreadResponse;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6162,7 +6180,7 @@ public final class io/getstream/chat/android/network/models/MessageResponseJsonA
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MessageUndeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MessageUndeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6189,12 +6207,13 @@ public final class io/getstream/chat/android/network/models/MessageUndeletedEven
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6232,7 +6251,7 @@ public final class io/getstream/chat/android/network/models/MessageUpdateJsonAda
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/MessageUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/MessageUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageUpdate;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageUpdate;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6261,7 +6280,6 @@ public final class io/getstream/chat/android/network/models/MessageUpdatedEvent 
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getMessageUpdate ()Lio/getstream/chat/android/network/models/MessageUpdate;
@@ -6269,6 +6287,8 @@ public final class io/getstream/chat/android/network/models/MessageUpdatedEvent 
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6513,7 +6533,7 @@ public final class io/getstream/chat/android/network/models/MuteChannelResponseJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationAddedToChannelEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationAddedToChannelEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6541,11 +6561,12 @@ public final class io/getstream/chat/android/network/models/NotificationAddedToC
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6559,7 +6580,7 @@ public final class io/getstream/chat/android/network/models/NotificationAddedToC
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationChannelDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationChannelDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6590,7 +6611,6 @@ public final class io/getstream/chat/android/network/models/NotificationChannelD
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
@@ -6598,6 +6618,8 @@ public final class io/getstream/chat/android/network/models/NotificationChannelD
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUnreadChannels ()Ljava/lang/Integer;
 	public final fun getUnreadCount ()Ljava/lang/Integer;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6611,7 +6633,7 @@ public final class io/getstream/chat/android/network/models/NotificationChannelD
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationChannelMutesUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationChannelMutesUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/OwnUserResponse;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/OwnUserResponse;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6624,10 +6646,11 @@ public final class io/getstream/chat/android/network/models/NotificationChannelM
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMe ()Lio/getstream/chat/android/network/models/OwnUserResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6641,7 +6664,7 @@ public final class io/getstream/chat/android/network/models/NotificationChannelM
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationChannelTruncatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationChannelTruncatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6674,7 +6697,6 @@ public final class io/getstream/chat/android/network/models/NotificationChannelT
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
@@ -6684,6 +6706,8 @@ public final class io/getstream/chat/android/network/models/NotificationChannelT
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUnreadChannels ()Ljava/lang/Integer;
 	public final fun getUnreadCount ()Ljava/lang/Integer;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6697,7 +6721,7 @@ public final class io/getstream/chat/android/network/models/NotificationChannelT
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationInviteAcceptedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationInviteAcceptedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6726,12 +6750,13 @@ public final class io/getstream/chat/android/network/models/NotificationInviteAc
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6745,7 +6770,7 @@ public final class io/getstream/chat/android/network/models/NotificationInviteAc
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationInviteRejectedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationInviteRejectedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6774,12 +6799,13 @@ public final class io/getstream/chat/android/network/models/NotificationInviteRe
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6793,7 +6819,7 @@ public final class io/getstream/chat/android/network/models/NotificationInviteRe
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationInvitedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationInvitedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6822,12 +6848,13 @@ public final class io/getstream/chat/android/network/models/NotificationInvitedE
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6841,7 +6868,7 @@ public final class io/getstream/chat/android/network/models/NotificationInvitedE
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationMarkReadEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationMarkReadEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;IIILjava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;IIILjava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6878,7 +6905,6 @@ public final class io/getstream/chat/android/network/models/NotificationMarkRead
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public final fun getLastReadMessageId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
@@ -6892,6 +6918,8 @@ public final class io/getstream/chat/android/network/models/NotificationMarkRead
 	public final fun getUnreadThreadMessages ()Ljava/lang/Integer;
 	public final fun getUnreadThreads ()Ljava/lang/Integer;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6905,7 +6933,7 @@ public final class io/getstream/chat/android/network/models/NotificationMarkRead
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationMarkUnreadEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationMarkUnreadEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6944,7 +6972,6 @@ public final class io/getstream/chat/android/network/models/NotificationMarkUnre
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getFirstUnreadMessageId ()Ljava/lang/String;
 	public final fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public final fun getLastReadAt ()Ljava/util/Date;
@@ -6960,6 +6987,8 @@ public final class io/getstream/chat/android/network/models/NotificationMarkUnre
 	public final fun getUnreadThreadMessages ()Ljava/lang/Integer;
 	public final fun getUnreadThreads ()Ljava/lang/Integer;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -6973,7 +7002,7 @@ public final class io/getstream/chat/android/network/models/NotificationMarkUnre
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationMutesUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationMutesUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/OwnUserResponse;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/OwnUserResponse;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -6986,10 +7015,11 @@ public final class io/getstream/chat/android/network/models/NotificationMutesUpd
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMe ()Lio/getstream/chat/android/network/models/OwnUserResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7003,7 +7033,7 @@ public final class io/getstream/chat/android/network/models/NotificationMutesUpd
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationNewMessageEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationNewMessageEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;ILio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;ILio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;Ljava/util/Map;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7039,7 +7069,6 @@ public final class io/getstream/chat/android/network/models/NotificationNewMessa
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getGroupedUnreadChannels ()Ljava/util/Map;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
@@ -7051,6 +7080,8 @@ public final class io/getstream/chat/android/network/models/NotificationNewMessa
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUnreadChannels ()Ljava/lang/Integer;
 	public final fun getUnreadCount ()Ljava/lang/Integer;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public final fun getWatcherCount ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -7065,7 +7096,7 @@ public final class io/getstream/chat/android/network/models/NotificationNewMessa
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationRemovedFromChannelEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationRemovedFromChannelEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7094,12 +7125,13 @@ public final class io/getstream/chat/android/network/models/NotificationRemovedF
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7113,7 +7145,7 @@ public final class io/getstream/chat/android/network/models/NotificationRemovedF
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/NotificationThreadMessageNewEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/NotificationThreadMessageNewEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/List;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7148,7 +7180,6 @@ public final class io/getstream/chat/android/network/models/NotificationThreadMe
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getParentAuthor ()Ljava/lang/String;
@@ -7159,6 +7190,8 @@ public final class io/getstream/chat/android/network/models/NotificationThreadMe
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUnreadThreadMessages ()Ljava/lang/Integer;
 	public final fun getUnreadThreads ()Ljava/lang/Integer;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public final fun getWatcherCount ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -7319,7 +7352,7 @@ public final class io/getstream/chat/android/network/models/ParsedPredefinedFilt
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PendingMessageEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PendingMessageEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponse;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7337,13 +7370,14 @@ public final class io/getstream/chat/android/network/models/PendingMessageEvent 
 	public final fun getChannel ()Lio/getstream/chat/android/network/models/ChannelResponse;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMetadata ()Ljava/util/Map;
 	public final fun getMethod ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponse;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7385,7 +7419,7 @@ public final class io/getstream/chat/android/network/models/PendingMessageRespon
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PollClosedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PollClosedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7403,11 +7437,12 @@ public final class io/getstream/chat/android/network/models/PollClosedEvent : io
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7421,7 +7456,7 @@ public final class io/getstream/chat/android/network/models/PollClosedEventJsonA
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PollDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PollDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7439,11 +7474,12 @@ public final class io/getstream/chat/android/network/models/PollDeletedEvent : i
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7636,7 +7672,7 @@ public final class io/getstream/chat/android/network/models/PollResponseJsonAdap
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PollUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PollUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7654,11 +7690,12 @@ public final class io/getstream/chat/android/network/models/PollUpdatedEvent : i
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7672,7 +7709,7 @@ public final class io/getstream/chat/android/network/models/PollUpdatedEventJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PollVoteCastedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PollVoteCastedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7691,12 +7728,13 @@ public final class io/getstream/chat/android/network/models/PollVoteCastedEvent 
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
 	public final fun getPollVote ()Lio/getstream/chat/android/network/models/PollVoteResponseData;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7710,7 +7748,7 @@ public final class io/getstream/chat/android/network/models/PollVoteCastedEventJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PollVoteChangedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PollVoteChangedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7729,12 +7767,13 @@ public final class io/getstream/chat/android/network/models/PollVoteChangedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
 	public final fun getPollVote ()Lio/getstream/chat/android/network/models/PollVoteResponseData;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -7748,7 +7787,7 @@ public final class io/getstream/chat/android/network/models/PollVoteChangedEvent
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/PollVoteRemovedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/PollVoteRemovedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -7767,12 +7806,13 @@ public final class io/getstream/chat/android/network/models/PollVoteRemovedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
 	public final fun getPollVote ()Lio/getstream/chat/android/network/models/PollVoteResponseData;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -8746,7 +8786,7 @@ public final class io/getstream/chat/android/network/models/QueryUsersResponseJs
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReactionDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReactionDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -8778,7 +8818,6 @@ public final class io/getstream/chat/android/network/models/ReactionDeletedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReaction ()Lio/getstream/chat/android/network/models/ReactionResponse;
@@ -8787,6 +8826,8 @@ public final class io/getstream/chat/android/network/models/ReactionDeletedEvent
 	public final fun getThreadParticipants ()Ljava/util/List;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -8854,7 +8895,7 @@ public final class io/getstream/chat/android/network/models/ReactionGroupUserRes
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReactionNewEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReactionNewEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -8886,7 +8927,6 @@ public final class io/getstream/chat/android/network/models/ReactionNewEvent : i
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReaction ()Lio/getstream/chat/android/network/models/ReactionResponse;
@@ -8895,6 +8935,8 @@ public final class io/getstream/chat/android/network/models/ReactionNewEvent : i
 	public final fun getThreadParticipants ()Ljava/util/List;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -8972,7 +9014,7 @@ public final class io/getstream/chat/android/network/models/ReactionResponseJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReactionUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReactionUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelResponse;Ljava/util/Map;Lio/getstream/chat/android/network/models/MessageResponse;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -9003,7 +9045,6 @@ public final class io/getstream/chat/android/network/models/ReactionUpdatedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getReaction ()Lio/getstream/chat/android/network/models/ReactionResponse;
@@ -9011,6 +9052,8 @@ public final class io/getstream/chat/android/network/models/ReactionUpdatedEvent
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -9075,7 +9118,7 @@ public final class io/getstream/chat/android/network/models/ReadStateResponseJso
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReminderCreatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReminderCreatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -9093,13 +9136,14 @@ public final class io/getstream/chat/android/network/models/ReminderCreatedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getReminder ()Lio/getstream/chat/android/network/models/ReminderResponseData;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -9113,7 +9157,7 @@ public final class io/getstream/chat/android/network/models/ReminderCreatedEvent
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReminderDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReminderDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -9131,13 +9175,14 @@ public final class io/getstream/chat/android/network/models/ReminderDeletedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getReminder ()Lio/getstream/chat/android/network/models/ReminderResponseData;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -9151,7 +9196,7 @@ public final class io/getstream/chat/android/network/models/ReminderDeletedEvent
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReminderNotificationEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReminderNotificationEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -9169,13 +9214,14 @@ public final class io/getstream/chat/android/network/models/ReminderNotification
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getReminder ()Lio/getstream/chat/android/network/models/ReminderResponseData;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -9226,7 +9272,7 @@ public final class io/getstream/chat/android/network/models/ReminderResponseData
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ReminderUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ReminderUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ReminderResponseData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -9244,13 +9290,14 @@ public final class io/getstream/chat/android/network/models/ReminderUpdatedEvent
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getReminder ()Lio/getstream/chat/android/network/models/ReminderResponseData;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -10139,7 +10186,7 @@ public final class io/getstream/chat/android/network/models/ThreadStateResponseJ
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/ThreadUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/ThreadUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ThreadResponse;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/ThreadResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -10158,10 +10205,11 @@ public final class io/getstream/chat/android/network/models/ThreadUpdatedEvent :
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getThread ()Lio/getstream/chat/android/network/models/ThreadResponse;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -10554,7 +10602,7 @@ public final class io/getstream/chat/android/network/models/TypingIndicatorsResp
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/TypingStartEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/TypingStartEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -10574,11 +10622,12 @@ public final class io/getstream/chat/android/network/models/TypingStartEvent : i
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -10592,7 +10641,7 @@ public final class io/getstream/chat/android/network/models/TypingStartEventJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/TypingStopEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/TypingStopEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -10612,11 +10661,12 @@ public final class io/getstream/chat/android/network/models/TypingStopEvent : io
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getParentId ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -10791,13 +10841,13 @@ public final class io/getstream/chat/android/network/models/UnreadCountsThreadJs
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UnsupportedChatEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UnsupportedWSEvent : io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/lang/String;)V
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UnsupportedChatEventException : java/lang/Exception {
+public final class io/getstream/chat/android/network/models/UnsupportedWSEventException : java/lang/Exception {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getType ()Ljava/lang/String;
 }
@@ -11672,7 +11722,7 @@ public final class io/getstream/chat/android/network/models/UpsertPushPreference
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserBannedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserBannedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/Integer;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11704,7 +11754,6 @@ public final class io/getstream/chat/android/network/models/UserBannedEvent : io
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCreatedBy ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getExpiration ()Ljava/util/Date;
 	public final fun getReason ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
@@ -11713,6 +11762,8 @@ public final class io/getstream/chat/android/network/models/UserBannedEvent : io
 	public final fun getTotalBans ()Ljava/lang/Integer;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -11726,7 +11777,7 @@ public final class io/getstream/chat/android/network/models/UserBannedEventJsonA
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserDeactivatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserDeactivatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11741,10 +11792,11 @@ public final class io/getstream/chat/android/network/models/UserDeactivatedEvent
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCreatedBy ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -11758,7 +11810,7 @@ public final class io/getstream/chat/android/network/models/UserDeactivatedEvent
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;ZZLjava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;ZZLjava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11781,12 +11833,13 @@ public final class io/getstream/chat/android/network/models/UserDeletedEvent : i
 	public final fun getDeleteConversationChannels ()Z
 	public final fun getDeleteMessages ()Ljava/lang/String;
 	public final fun getDeleteUser ()Ljava/lang/String;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getHardDelete ()Z
 	public final fun getMarkMessagesDeleted ()Z
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -11828,7 +11881,7 @@ public final class io/getstream/chat/android/network/models/UserGroup {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserGroupCreatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserGroupCreatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11842,11 +11895,12 @@ public final class io/getstream/chat/android/network/models/UserGroupCreatedEven
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getUserGroup ()Lio/getstream/chat/android/network/models/UserGroup;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -11860,7 +11914,7 @@ public final class io/getstream/chat/android/network/models/UserGroupCreatedEven
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserGroupDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserGroupDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11874,11 +11928,12 @@ public final class io/getstream/chat/android/network/models/UserGroupDeletedEven
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getUserGroup ()Lio/getstream/chat/android/network/models/UserGroup;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -11920,7 +11975,7 @@ public final class io/getstream/chat/android/network/models/UserGroupMember {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserGroupMemberAddedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserGroupMemberAddedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11935,12 +11990,13 @@ public final class io/getstream/chat/android/network/models/UserGroupMemberAdded
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMembers ()Ljava/util/List;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getUserGroup ()Lio/getstream/chat/android/network/models/UserGroup;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -11963,7 +12019,7 @@ public final class io/getstream/chat/android/network/models/UserGroupMemberJsonA
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserGroupMemberRemovedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserGroupMemberRemovedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/List;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -11978,12 +12034,13 @@ public final class io/getstream/chat/android/network/models/UserGroupMemberRemov
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getMembers ()Ljava/util/List;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getUserGroup ()Lio/getstream/chat/android/network/models/UserGroup;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12030,7 +12087,7 @@ public final class io/getstream/chat/android/network/models/UserGroupResponseJso
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserGroupUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserGroupUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Lio/getstream/chat/android/network/models/UserGroup;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12044,11 +12101,12 @@ public final class io/getstream/chat/android/network/models/UserGroupUpdatedEven
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getUserGroup ()Lio/getstream/chat/android/network/models/UserGroup;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12062,7 +12120,7 @@ public final class io/getstream/chat/android/network/models/UserGroupUpdatedEven
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserMessagesDeletedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserMessagesDeletedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12089,12 +12147,13 @@ public final class io/getstream/chat/android/network/models/UserMessagesDeletedE
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getHardDelete ()Ljava/lang/Boolean;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12137,7 +12196,7 @@ public final class io/getstream/chat/android/network/models/UserMuteResponseJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserMutedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserMutedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;Ljava/util/List;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;Ljava/util/List;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12152,12 +12211,13 @@ public final class io/getstream/chat/android/network/models/UserMutedEvent : io/
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getTargetUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getTargetUsers ()Ljava/util/List;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12171,7 +12231,7 @@ public final class io/getstream/chat/android/network/models/UserMutedEventJsonAd
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserPresenceChangedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserPresenceChangedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12184,10 +12244,11 @@ public final class io/getstream/chat/android/network/models/UserPresenceChangedE
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12201,7 +12262,7 @@ public final class io/getstream/chat/android/network/models/UserPresenceChangedE
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserReactivatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserReactivatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12216,10 +12277,11 @@ public final class io/getstream/chat/android/network/models/UserReactivatedEvent
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCreatedBy ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12431,7 +12493,7 @@ public final class io/getstream/chat/android/network/models/UserResponsePrivacyF
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserUnbannedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserUnbannedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12460,12 +12522,13 @@ public final class io/getstream/chat/android/network/models/UserUnbannedEvent : 
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCreatedBy ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getShadow ()Ljava/lang/Boolean;
 	public final fun getTeam ()Ljava/lang/String;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12479,7 +12542,7 @@ public final class io/getstream/chat/android/network/models/UserUnbannedEventJso
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserUpdatedEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserUpdatedEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponsePrivacyFields;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Map;Lio/getstream/chat/android/network/models/UserResponsePrivacyFields;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12492,10 +12555,11 @@ public final class io/getstream/chat/android/network/models/UserUpdatedEvent : i
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponsePrivacyFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -12509,7 +12573,7 @@ public final class io/getstream/chat/android/network/models/UserUpdatedEventJson
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserWatchingStartEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserWatchingStartEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;ILjava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;ILjava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12529,10 +12593,11 @@ public final class io/getstream/chat/android/network/models/UserWatchingStartEve
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public final fun getWatcherCount ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -12547,7 +12612,7 @@ public final class io/getstream/chat/android/network/models/UserWatchingStartEve
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/UserWatchingStopEvent : io/getstream/chat/android/network/models/ChatEvent {
+public final class io/getstream/chat/android/network/models/UserWatchingStopEvent : io/getstream/chat/android/network/models/WSClientEvent, io/getstream/chat/android/network/models/WSEvent {
 	public fun <init> (Ljava/util/Date;ILjava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
 	public synthetic fun <init> (Ljava/util/Date;ILjava/util/Map;Lio/getstream/chat/android/network/models/UserResponseCommonFields;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
@@ -12567,10 +12632,11 @@ public final class io/getstream/chat/android/network/models/UserWatchingStopEven
 	public final fun getCid ()Ljava/lang/String;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustom ()Ljava/util/Map;
-	public fun getEventType ()Ljava/lang/String;
 	public final fun getReceivedAt ()Ljava/util/Date;
 	public final fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponseCommonFields;
+	public fun getWSClientEventType ()Ljava/lang/String;
+	public fun getWSEventType ()Ljava/lang/String;
 	public final fun getWatcherCount ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -12638,77 +12704,20 @@ public abstract interface class io/getstream/chat/android/network/models/WSCallE
 	public abstract fun getCallCID ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/WSEvent {
-	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ModerationResponse;Lio/getstream/chat/android/network/models/ChannelResponse;Lio/getstream/chat/android/network/models/UserResponse;Lio/getstream/chat/android/network/models/OwnUserResponse;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/MessageUpdate;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponse;)V
-	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ModerationResponse;Lio/getstream/chat/android/network/models/ChannelResponse;Lio/getstream/chat/android/network/models/UserResponse;Lio/getstream/chat/android/network/models/OwnUserResponse;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/MessageUpdate;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/util/Date;
-	public final fun component10 ()Ljava/lang/String;
-	public final fun component11 ()Ljava/lang/String;
-	public final fun component12 ()Ljava/lang/String;
-	public final fun component13 ()Ljava/lang/String;
-	public final fun component14 ()Ljava/lang/String;
-	public final fun component15 ()Ljava/lang/Integer;
-	public final fun component16 ()Lio/getstream/chat/android/network/models/ModerationResponse;
-	public final fun component17 ()Lio/getstream/chat/android/network/models/ChannelResponse;
-	public final fun component18 ()Lio/getstream/chat/android/network/models/UserResponse;
-	public final fun component19 ()Lio/getstream/chat/android/network/models/OwnUserResponse;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component20 ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
-	public final fun component21 ()Lio/getstream/chat/android/network/models/MessageResponse;
-	public final fun component22 ()Lio/getstream/chat/android/network/models/MessageUpdate;
-	public final fun component23 ()Lio/getstream/chat/android/network/models/PollResponseData;
-	public final fun component24 ()Lio/getstream/chat/android/network/models/PollVoteResponseData;
-	public final fun component25 ()Lio/getstream/chat/android/network/models/ReactionResponse;
-	public final fun component26 ()Lio/getstream/chat/android/network/models/ThreadResponse;
-	public final fun component27 ()Lio/getstream/chat/android/network/models/UserResponse;
-	public final fun component3 ()Ljava/util/Map;
-	public final fun component4 ()Ljava/lang/Boolean;
-	public final fun component5 ()Ljava/lang/String;
-	public final fun component6 ()Ljava/util/Date;
-	public final fun component7 ()Ljava/lang/String;
-	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ModerationResponse;Lio/getstream/chat/android/network/models/ChannelResponse;Lio/getstream/chat/android/network/models/UserResponse;Lio/getstream/chat/android/network/models/OwnUserResponse;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/MessageUpdate;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponse;)Lio/getstream/chat/android/network/models/WSEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/WSEvent;Ljava/util/Date;Ljava/lang/String;Ljava/util/Map;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ModerationResponse;Lio/getstream/chat/android/network/models/ChannelResponse;Lio/getstream/chat/android/network/models/UserResponse;Lio/getstream/chat/android/network/models/OwnUserResponse;Lio/getstream/chat/android/network/models/ChannelMemberResponse;Lio/getstream/chat/android/network/models/MessageResponse;Lio/getstream/chat/android/network/models/MessageUpdate;Lio/getstream/chat/android/network/models/PollResponseData;Lio/getstream/chat/android/network/models/PollVoteResponseData;Lio/getstream/chat/android/network/models/ReactionResponse;Lio/getstream/chat/android/network/models/ThreadResponse;Lio/getstream/chat/android/network/models/UserResponse;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/WSEvent;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAutomoderation ()Ljava/lang/Boolean;
-	public final fun getAutomoderationScores ()Lio/getstream/chat/android/network/models/ModerationResponse;
-	public final fun getChannel ()Lio/getstream/chat/android/network/models/ChannelResponse;
-	public final fun getChannelId ()Ljava/lang/String;
-	public final fun getChannelLastMessageAt ()Ljava/util/Date;
-	public final fun getChannelType ()Ljava/lang/String;
-	public final fun getCid ()Ljava/lang/String;
-	public final fun getConnectionId ()Ljava/lang/String;
-	public final fun getCreatedAt ()Ljava/util/Date;
-	public final fun getCreatedBy ()Lio/getstream/chat/android/network/models/UserResponse;
-	public final fun getCustom ()Ljava/util/Map;
-	public final fun getMe ()Lio/getstream/chat/android/network/models/OwnUserResponse;
-	public final fun getMember ()Lio/getstream/chat/android/network/models/ChannelMemberResponse;
-	public final fun getMessage ()Lio/getstream/chat/android/network/models/MessageResponse;
-	public final fun getMessageUpdate ()Lio/getstream/chat/android/network/models/MessageUpdate;
-	public final fun getParentId ()Ljava/lang/String;
-	public final fun getPoll ()Lio/getstream/chat/android/network/models/PollResponseData;
-	public final fun getPollVote ()Lio/getstream/chat/android/network/models/PollVoteResponseData;
-	public final fun getReaction ()Lio/getstream/chat/android/network/models/ReactionResponse;
-	public final fun getReason ()Ljava/lang/String;
-	public final fun getTeam ()Ljava/lang/String;
-	public final fun getThread ()Lio/getstream/chat/android/network/models/ThreadResponse;
-	public final fun getThreadId ()Ljava/lang/String;
-	public final fun getType ()Ljava/lang/String;
-	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponse;
-	public final fun getUserId ()Ljava/lang/String;
-	public final fun getWatcherCount ()Ljava/lang/Integer;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+public abstract interface class io/getstream/chat/android/network/models/WSClientEvent {
+	public abstract fun getWSClientEventType ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/network/models/WSEventJsonAdapter : com/squareup/moshi/JsonAdapter {
-	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+public abstract interface class io/getstream/chat/android/network/models/WSEvent {
+	public abstract fun getWSEventType ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/network/models/WSEventAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> ()V
 	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/network/models/WSEvent;
 	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/WSEvent;)V
 	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/network/models/WrappedUnreadCountsResponse {

@@ -67,10 +67,14 @@ data class ReminderNotificationEvent (
     @Json(name = "reminder")
     val reminder: io.getstream.chat.android.network.models.ReminderResponseData? = null
 )
-: io.getstream.chat.android.network.models.ChatEvent()
+: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
 {
     
-    override fun getEventType(): kotlin.String {
+    override fun getWSClientEventType(): kotlin.String {
+        return type
+    }
+
+    override fun getWSEventType(): kotlin.String {
         return type
     }    
 }
