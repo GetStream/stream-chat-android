@@ -23,7 +23,6 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
@@ -47,6 +46,7 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
+import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
@@ -110,8 +110,10 @@ internal class DtoMapping(
      * Maps the domain [MemberData] model to a network [UpstreamMemberDataDto] model.
      */
     internal fun MemberData.toDto(): UpstreamMemberDataDto = UpstreamMemberDataDto(
-        user_id = userId,
-        extraData = extraData,
+        userId = userId,
+        channelRole = null,
+        user = null,
+        custom = extraData,
     )
 
     /**

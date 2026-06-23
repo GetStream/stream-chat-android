@@ -21,14 +21,17 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
+import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 
 /**
  * JSON adapter for [UpstreamMemberDataDto].
- * Handles the proper serialization of the [extraData] field.
+ * Handles the proper serialization of the `custom` overflow field.
  */
 internal object UpstreamMemberDataDtoAdapter :
-    CustomObjectDtoAdapter<UpstreamMemberDataDto>(UpstreamMemberDataDto::class) {
+    CustomObjectDtoAdapter<UpstreamMemberDataDto>(
+        kClass = UpstreamMemberDataDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     @Suppress("UNUSED_PARAMETER")

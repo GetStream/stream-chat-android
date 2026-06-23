@@ -24,7 +24,7 @@ import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import java.util.Date
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
+import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
@@ -114,8 +114,10 @@ internal class DtoMappingTest {
         val mapping = Fixture().get()
         val dto = with(mapping) { memberData.toDto() }
         val expected = UpstreamMemberDataDto(
-            user_id = memberData.userId,
-            extraData = memberData.extraData,
+            userId = memberData.userId,
+            channelRole = null,
+            user = null,
+            custom = memberData.extraData,
         )
         dto shouldBeEqualTo expected
     }
