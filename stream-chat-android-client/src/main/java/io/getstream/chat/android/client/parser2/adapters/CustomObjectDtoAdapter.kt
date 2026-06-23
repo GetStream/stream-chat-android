@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.client.parser2.adapters
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.primaryConstructor
 
 /**
  * Base class for implementing Moshi adapters that support our API's dynamic
@@ -32,12 +35,17 @@ internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KCla
     }
 
     /**
-     * Names of the declared properties that are inside the [Value] type being
-     * handled. These will not be copied into extraData when parsing with
-     * [parseWithExtraData].
+     * Wire-format names of the declared properties on [Value]. These will not be copied into
+     * extraData when parsing with [parseWithExtraData]. Reads `@Json(name = ...)` first so
+     * camelCase Kotlin properties on generated DTOs map to their snake_case wire names; falls
+     * back to the Kotlin parameter name for hand-written DTOs that omit `@Json`.
      */
     private val memberNames: List<String> by lazy {
-        kClass.members.map { member -> member.name }.minus(EXTRA_DATA)
+        val params = kClass.primaryConstructor?.parameters.orEmpty()
+        params.mapNotNull { param ->
+            val name = param.findAnnotation<Json>()?.name ?: param.name
+            name?.takeIf { it != EXTRA_DATA }
+        }
     }
 
     /**

@@ -458,6 +458,70 @@ fix lands will need its alias revisited.
 
 ---
 
+## 8. Generated DTOs are incompatible with `CustomObjectDtoAdapter` extra-data routing
+
+**Symptom:** Cannot migrate the chat root DTOs (`AttachmentDto`, `MessageDto`, `ChannelDto`,
+`UserDto`, `MemberDto`, `ReactionDto`, `PollDto`, `PollOptionDto`, `ThreadDto`,
+`ThreadInfoDto`, `UpstreamMemberDataDto`) to their generated counterparts. These DTOs go
+through `stream-chat-android-client/.../parser2/adapters/CustomObjectDtoAdapter` which
+round-trips an open-schema `extraData: Map<String, Any>` field — the wire allows arbitrary
+unknown keys, the client persists them, and round-trips them on serialization. Substituting
+the generated DTO breaks both directions silently.
+
+**Root cause:** The adapter is built on Kotlin reflection over the DTO class:
+
+```kotlin
+private val memberNames: List<String> by lazy {
+    kClass.members.map { member -> member.name }.minus(EXTRA_DATA)
+}
+```
+
+It then walks the parsed JSON map and buckets any key not in `memberNames` into the
+`extraData` sub-map. Two assumptions hard-coded into this:
+
+1. **Kotlin property names equal JSON wire names.** Manual DTOs declare snake_case
+   properties (`val message_text: String`) so the reflection-derived name matches the wire
+   key. Generated DTOs declare camelCase + `@Json(name = "message_text")` -
+   reflection returns `messageText`, the wire key is `message_text`, the membership check
+   fails, and **every declared field gets bucketed as extra data**.
+2. **The DTO has an `extraData: Map<String, Any>` property.** Manual DTOs declare one
+   explicitly. Generated DTOs never have it - the OpenAPI spec doesn't currently model
+   `additionalProperties` for these schemas, so the generator has nothing to emit. With no
+   `extraData` field, the post-extraction map can't be deserialized.
+
+`@StreamHandsOff` annotations on the affected manual DTOs encode exactly this hazard.
+
+**Fix status:** Not fixed. Blocks ~10 leaf migrations and effectively gates the entire
+root-DTO portion of the migration.
+
+**Suggested fix:** Two changes that must land together.
+
+- **Client-side**: rewrite `CustomObjectDtoAdapter.memberNames` to read `@Json(name = ...)`
+  values via reflection (Kotlin property → wire name) instead of the Kotlin property names.
+  After the change, both manual and generated DTOs work uniformly - members are identified
+  by what they look like on the wire. Hand-validated DTOs without `@Json` annotations
+  continue to work via property-name fallback.
+- **Generator-side**: every chat DTO that goes through the open-schema adapter needs an
+  `extraData: Map<String, Any>` field. Cleanest path is to mark the affected schemas in the
+  OpenAPI spec as `additionalProperties: {}` (or a chat-specific extension tag) and have the
+  Kotlin generator emit a `extraData: Map<String, Any> = emptyMap()` property whenever the
+  schema is so marked. Alternative: a chat-only generator branch that adds the field to a
+  hard-coded set of schema names. Spec-side is cleaner; generator-side is a faster stopgap.
+
+Once both ship:
+
+- `AttachmentDto`, `MessageDto`, `ChannelDto`, `UserDto`, `MemberDto`, `ReactionDto`,
+  `PollDto`, `PollOptionDto`, `ThreadDto`, `ThreadInfoDto`, `UpstreamMemberDataDto` become
+  mechanical alias-style migrations.
+- The `@StreamHandsOff` annotations on the manual DTOs can come off (or stay as warning
+  signal until the manual DTOs are fully retired).
+
+**Migration timing:** Required before any of the root DTOs can move. All leaf migrations
+that depend on these root types (mutes, channel reads, reminders, flags) are blocked until
+then.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec
