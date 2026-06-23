@@ -132,10 +132,13 @@ internal class HttpLoggingInterceptor : Interceptor {
                 return response
             }
 
+            // TODO [G.] temp, remove response body logging
+            val charset: Charset = responseBody.contentType()?.charset(StandardCharsets.UTF_8) ?: StandardCharsets.UTF_8
+            logger.i { buffer.clone().readString(charset) }
             if (gzippedLength != null) {
-                logger.i { "<-- END HTTP (${buffer.size}-byte, $gzippedLength-gzipped-byte body omitted)" }
+                logger.i { "<-- END HTTP (${buffer.size}-byte, $gzippedLength-gzipped-byte body)" }
             } else {
-                logger.i { "<-- END HTTP (${buffer.size}-byte body omitted)" }
+                logger.i { "<-- END HTTP (${buffer.size}-byte body)" }
             }
         }
 
