@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.testdata.DeviceTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer

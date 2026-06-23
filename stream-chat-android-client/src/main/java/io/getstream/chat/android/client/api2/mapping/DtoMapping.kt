@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
@@ -46,8 +45,10 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
@@ -96,9 +97,13 @@ internal class DtoMapping(
      * Converts [Device] to [DeviceDto].
      */
     internal fun Device.toDto(): DeviceDto = DeviceDto(
+        // createdAt and userId are required by generated DeviceResponse but absent from domain Device;
+        // server ignores them on upstream payloads — placeholders are fine.
+        createdAt = Date(0),
         id = token,
-        push_provider = pushProvider.key,
-        push_provider_name = providerName,
+        pushProvider = pushProvider.key,
+        userId = "",
+        pushProviderName = providerName,
     )
 
     /**

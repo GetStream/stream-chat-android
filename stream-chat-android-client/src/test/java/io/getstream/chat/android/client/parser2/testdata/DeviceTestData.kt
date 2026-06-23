@@ -22,21 +22,26 @@ import org.intellij.lang.annotations.Language
 
 internal object DeviceTestData {
 
+    // `created_at` and `user_id` are required by the generated DeviceResponse; included in every
+    // JSON below except where the test deliberately omits a different field.
+    private const val CREATED_AT = "\"created_at\":\"2020-06-10T11:04:31.000Z\""
+    private const val USER_ID = "\"user_id\":\"userId\""
+
     @Language("JSON")
     val jsonAllFields =
-        """{"id":"token1","push_provider":"firebase","push_provider_name":"myProvider"}"""
+        """{"id":"token1","push_provider":"firebase","push_provider_name":"myProvider",$CREATED_AT,$USER_ID}"""
 
     @Language("JSON")
     val jsonOptionalFieldMissing =
-        """{"id":"token1","push_provider":"firebase"}"""
+        """{"id":"token1","push_provider":"firebase",$CREATED_AT,$USER_ID}"""
 
     @Language("JSON")
     val jsonMissingId =
-        """{"push_provider":"firebase","push_provider_name":"myProvider"}"""
+        """{"push_provider":"firebase","push_provider_name":"myProvider",$CREATED_AT,$USER_ID}"""
 
     @Language("JSON")
     val jsonMissingPushProvider =
-        """{"id":"token1","push_provider_name":"myProvider"}"""
+        """{"id":"token1","push_provider_name":"myProvider",$CREATED_AT,$USER_ID}"""
 
     val expectedDeviceAllFields = Device(
         token = "token1",
@@ -52,7 +57,7 @@ internal object DeviceTestData {
 
     @Language("JSON")
     val jsonWithExplicitNulls =
-        """{"id":"token1","push_provider":"firebase","push_provider_name":null}"""
+        """{"id":"token1","push_provider":"firebase","push_provider_name":null,$CREATED_AT,$USER_ID}"""
 
     val expectedWithExplicitNulls = Device(
         token = "token1",

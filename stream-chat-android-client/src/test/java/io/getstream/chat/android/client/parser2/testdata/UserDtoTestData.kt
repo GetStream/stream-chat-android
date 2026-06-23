@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
@@ -158,7 +158,9 @@ internal object UserDtoTestData {
              {
               "id": "deviceId",
               "push_provider": "provider",
-              "push_provider_name": "provider_name"
+              "push_provider_name": "provider_name",
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "user_id": "userId"
              }
             ],
             "online": true,
@@ -212,7 +214,13 @@ internal object UserDtoTestData {
             language = "language",
             role = "owner",
             devices = listOf(
-                DeviceDto(id = "deviceId", push_provider = "provider", push_provider_name = "provider_name"),
+                DeviceDto(
+                    id = "deviceId",
+                    pushProvider = "provider",
+                    pushProviderName = "provider_name",
+                    createdAt = Date(1591787071000),
+                    userId = "userId",
+                ),
             ),
             online = true,
             updated_at = Date(1591787071588),
@@ -300,7 +308,9 @@ internal object UserDtoTestData {
              {
               "id": "deviceId",
               "push_provider": "provider",
-              "push_provider_name": "provider_name"
+              "push_provider_name": "provider_name",
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "user_id": "userId"
              }
             ],
             "teams": [ "team1", "team2"],
@@ -326,7 +336,13 @@ internal object UserDtoTestData {
             ),
         ),
         banned = false,
-        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", push_provider_name = "provider_name")),
+        devices = listOf(DeviceDto(
+                    id = "deviceId",
+                    pushProvider = "provider",
+                    pushProviderName = "provider_name",
+                    createdAt = Date(1591787071000),
+                    userId = "userId",
+                )),
         teams = listOf("team1", "team2"),
         teams_role = mapOf(
             "team1" to "owner",

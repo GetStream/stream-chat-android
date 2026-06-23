@@ -21,7 +21,8 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
+import java.util.Date
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
@@ -98,9 +99,11 @@ internal class DtoMappingTest {
         val mapping = Fixture().get()
         val dto = with(mapping) { device.toDto() }
         val expected = DeviceDto(
+            createdAt = Date(0),
             id = device.token,
-            push_provider = device.pushProvider.key,
-            push_provider_name = device.providerName,
+            pushProvider = device.pushProvider.key,
+            userId = "",
+            pushProviderName = device.providerName,
         )
         dto shouldBeEqualTo expected
     }

@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -129,6 +128,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
@@ -703,8 +703,8 @@ internal class DomainMapping(
      */
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
-        pushProvider = PushProvider.fromKey(push_provider),
-        providerName = push_provider_name,
+        pushProvider = PushProvider.fromKey(pushProvider),
+        providerName = pushProviderName,
     )
 
     /**

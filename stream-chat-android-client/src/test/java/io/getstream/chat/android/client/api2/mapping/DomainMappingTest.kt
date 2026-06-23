@@ -723,8 +723,8 @@ internal class DomainMappingTest {
         val device = with(sut) { deviceDto.toDomain() }
         val expected = Device(
             token = deviceDto.id,
-            pushProvider = PushProvider.fromKey(deviceDto.id),
-            providerName = deviceDto.push_provider_name,
+            pushProvider = PushProvider.fromKey(deviceDto.pushProvider),
+            providerName = deviceDto.pushProviderName,
         )
         assertEquals(expected, device)
     }

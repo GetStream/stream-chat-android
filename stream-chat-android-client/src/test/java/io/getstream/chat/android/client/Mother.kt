@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -115,6 +114,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.Command as CommandDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
@@ -843,10 +843,14 @@ internal object Mother {
         id: String = randomString(),
         pushProvider: String = randomString(),
         pushProviderName: String = randomString(),
+        createdAt: Date = randomDate(),
+        userId: String = randomString(),
     ): DeviceDto = DeviceDto(
+        createdAt = createdAt,
         id = id,
-        push_provider = pushProvider,
-        push_provider_name = pushProviderName,
+        pushProvider = pushProvider,
+        userId = userId,
+        pushProviderName = pushProviderName,
     )
 
     fun randomDownstreamFlagDto(
