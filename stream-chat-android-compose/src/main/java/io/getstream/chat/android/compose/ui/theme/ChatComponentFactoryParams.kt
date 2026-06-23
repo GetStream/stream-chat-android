@@ -1984,9 +1984,11 @@ public data class DirectChannelInfoTopBarParams(
  * Parameters for [ChatComponentFactory.DirectChannelInfoAvatarContainer].
  *
  * @param user The user whose avatar is displayed.
+ * @param isMuted Whether the chat is muted. When true, a mute icon is shown after the name.
  */
 public data class DirectChannelInfoAvatarContainerParams(
     val user: User,
+    val isMuted: Boolean = false,
 )
 
 /**
@@ -1995,11 +1997,13 @@ public data class DirectChannelInfoAvatarContainerParams(
  * @param channel The channel to display the avatar for.
  * @param currentUser The currently logged in user.
  * @param members The members list of the channel.
+ * @param isMuted Whether the channel is muted. When true, a mute icon is shown after the name.
  */
 public data class GroupChannelInfoAvatarContainerParams(
     val channel: Channel,
     val currentUser: User?,
     val members: ExpandableList<Member>,
+    val isMuted: Boolean = false,
 )
 
 /**

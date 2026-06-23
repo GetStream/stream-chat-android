@@ -1607,6 +1607,7 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public final fun getOptions ()Ljava/util/List;
 	public final fun getOwner ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I
+	public final fun isMuted ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

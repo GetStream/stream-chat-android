@@ -814,8 +814,10 @@ public final class io/getstream/chat/android/compose/ui/channel/info/ComposableS
 public final class io/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$DirectChannelInfoScreenKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channel/info/ComposableSingletons$DirectChannelInfoScreenKt;
 	public fun <init> ()V
+	public final fun getLambda$-1460320525$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-663281631$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1098276523$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$2061160744$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$621085431$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -3921,13 +3923,16 @@ public final class io/getstream/chat/android/compose/ui/theme/CustomAttachmentCo
 
 public final class io/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/User;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
-	public final fun copy (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams;
+	public final fun component2 ()Z
+	public final fun copy (Lio/getstream/chat/android/models/User;Z)Lio/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams;Lio/getstream/chat/android/models/User;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/DirectChannelInfoAvatarContainerParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I
+	public final fun isMuted ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4012,17 +4017,20 @@ public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoAd
 
 public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;)V
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
 	public final fun component2 ()Lio/getstream/chat/android/models/User;
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
-	public final fun copy (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;
+	public final fun component4 ()Z
+	public final fun copy (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;Z)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/utils/ExpandableList;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
 	public final fun getMembers ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
 	public fun hashCode ()I
+	public final fun isMuted ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
