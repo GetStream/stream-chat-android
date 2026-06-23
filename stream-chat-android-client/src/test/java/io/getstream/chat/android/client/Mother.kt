@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetai
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
@@ -116,6 +115,7 @@ import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
@@ -1146,7 +1146,7 @@ internal object Mother {
     ): DownstreamPollOptionDto = DownstreamPollOptionDto(
         id = id,
         text = text,
-        extraData = extraData,
+        custom = extraData,
     )
 
     fun randomDownstreamVoteDto(

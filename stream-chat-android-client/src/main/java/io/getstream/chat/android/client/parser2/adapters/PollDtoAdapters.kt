@@ -22,9 +22,9 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 
 /**
  * Deserializer for [DownstreamPollDto] that handles the [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto]
@@ -48,7 +48,10 @@ internal object DownstreamPollDtoAdapter : CustomObjectDtoAdapter<DownstreamPoll
  * [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto] implementation.
  */
 internal object DownstreamPollOptionDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamPollOptionDto>(DownstreamPollOptionDto::class) {
+    CustomObjectDtoAdapter<DownstreamPollOptionDto>(
+        kClass = DownstreamPollOptionDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     fun fromJson(

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import org.intellij.lang.annotations.Language
@@ -42,7 +42,7 @@ internal object PollDtoTestData {
     val downstreamPollOption = DownstreamPollOptionDto(
         id = "option1",
         text = "Option 1",
-        extraData = mapOf(
+        custom = mapOf(
             "extraData" to mapOf(
                 "key1" to "value1",
                 "key2" to true,
@@ -61,7 +61,7 @@ internal object PollDtoTestData {
     val downstreamPollOptionWithoutExtraData = DownstreamPollOptionDto(
         id = "option2",
         text = "Option 2",
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 
     // DownstreamPollDto Test Data
@@ -121,7 +121,7 @@ internal object PollDtoTestData {
             DownstreamPollOptionDto(
                 id = "option1",
                 text = "Option 1",
-                extraData = emptyMap(),
+                custom = emptyMap(),
             ),
         ),
         own_votes = emptyList(),

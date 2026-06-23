@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.parser2.testdata.PollDtoTestData
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

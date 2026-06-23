@@ -480,8 +480,8 @@ internal class DomainMappingTest {
             id = pollDto.id,
             name = pollDto.name,
             description = pollDto.description,
-            options = options.map {
-                Option(it.id, it.text, it.extraData ?: emptyMap())
+            options = options.map { option ->
+                Option(option.id, option.text, option.custom.filterValues { it != null }.mapValues { it.value!! })
             },
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = pollDto.enforce_unique_vote,

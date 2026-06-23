@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetai
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
@@ -129,6 +128,7 @@ import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
@@ -503,7 +503,7 @@ internal class DomainMapping(
     internal fun DownstreamPollOptionDto.toDomain(): Option = Option(
         id = id,
         text = text,
-        extraData = extraData ?: emptyMap(),
+        extraData = custom.filterNonNullValues(),
     )
 
     /**
@@ -513,7 +513,7 @@ internal class DomainMapping(
     internal fun DownstreamPollOptionDto.toPollOption(): PollOption = PollOption(
         id = id,
         text = text,
-        extraData = extraData ?: emptyMap(),
+        extraData = custom.filterNonNullValues(),
     )
 
     /**
@@ -995,4 +995,15 @@ internal class DomainMapping(
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
         private const val FIELD_LAST_UPDATED = "last_updated"
     }
+}
+
+/**
+ * Filters out null values to fit a `Map<String, Any>` (the domain `extraData` shape).
+ * Generated open-schema overflow maps are `Map<String, Any?>`; this drops the nulls so callers
+ * can hand the result to a non-null `extraData` field.
+ */
+private fun Map<String, Any?>.filterNonNullValues(): Map<String, Any> {
+    val out = mutableMapOf<String, Any>()
+    for ((k, v) in this) if (v != null) out[k] = v
+    return out
 }
