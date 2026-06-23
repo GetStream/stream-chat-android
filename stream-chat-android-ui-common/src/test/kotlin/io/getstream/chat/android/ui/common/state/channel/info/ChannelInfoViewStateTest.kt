@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class ChannelInfoViewStateTest {
 
-    @ParameterizedTest(name = "isMuted is {1} when {0}")
+    @ParameterizedTest(name = "{0}")
     @MethodSource("isMutedArguments")
     fun `Content isMuted reflects the mute options`(testData: IsMutedTestData) {
         Content(options = testData.options).isMuted `should be equal to` testData.expected
@@ -36,7 +36,7 @@ internal class ChannelInfoViewStateTest {
         val options: List<Option>,
         val expected: Boolean,
     ) {
-        override fun toString(): String = description
+        override fun toString(): String = "isMuted is $expected when $description"
     }
 
     private companion object {
