@@ -591,25 +591,33 @@ internal class DomainMappingTest {
         val attachment = with(sut) {
             attachmentDto.toDomain()
         }
+        val custom = attachmentDto.custom.toMutableMap()
+        val fileSize = (custom.remove("file_size") as? Number)?.toInt() ?: 0
+        val image = custom.remove("image") as? String
+        val mimeType = custom.remove("mime_type") as? String
+        val name = custom.remove("name") as? String
+        val expectedExtra = mutableMapOf<String, Any>().apply {
+            for ((k, v) in custom) if (v != null) put(k, v)
+        }
         val expected = Attachment(
-            assetUrl = attachmentDto.asset_url,
-            authorName = attachmentDto.author_name,
-            authorLink = attachmentDto.author_link,
+            assetUrl = attachmentDto.assetUrl,
+            authorName = attachmentDto.authorName,
+            authorLink = attachmentDto.authorLink,
             fallback = attachmentDto.fallback,
-            fileSize = attachmentDto.file_size ?: 0,
-            image = attachmentDto.image,
-            imageUrl = attachmentDto.image_url,
-            mimeType = attachmentDto.mime_type,
-            name = attachmentDto.name,
-            ogUrl = attachmentDto.og_scrape_url,
+            fileSize = fileSize,
+            image = image,
+            imageUrl = attachmentDto.imageUrl,
+            mimeType = mimeType,
+            name = name,
+            ogUrl = attachmentDto.ogScrapeUrl,
             text = attachmentDto.text,
-            thumbUrl = attachmentDto.thumb_url,
+            thumbUrl = attachmentDto.thumbUrl,
             title = attachmentDto.title,
-            titleLink = attachmentDto.title_link,
+            titleLink = attachmentDto.titleLink,
             type = attachmentDto.type,
-            originalHeight = attachmentDto.original_height,
-            originalWidth = attachmentDto.original_width,
-            extraData = attachmentDto.extraData.toMutableMap(),
+            originalHeight = attachmentDto.originalHeight,
+            originalWidth = attachmentDto.originalWidth,
+            extraData = expectedExtra,
         )
         assertEquals(expected, attachment)
     }

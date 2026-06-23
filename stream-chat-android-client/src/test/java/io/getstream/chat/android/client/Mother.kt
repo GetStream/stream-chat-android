@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -114,6 +113,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
@@ -783,26 +783,31 @@ internal object Mother {
         originalHeight: Int? = positiveRandomInt(),
         originalWidth: Int? = positiveRandomInt(),
         extraData: Map<String, Any> = emptyMap(),
-    ): AttachmentDto = AttachmentDto(
-        asset_url = assetUrl,
-        author_name = authorName,
-        author_link = authorLink,
-        fallback = fallback,
-        file_size = fileSize,
-        image = image,
-        image_url = imageUrl,
-        mime_type = mimeType,
-        name = name,
-        og_scrape_url = ogScrapeUrl,
-        text = text,
-        thumb_url = thumbUrl,
-        title = title,
-        title_link = titleLink,
-        type = type,
-        original_height = originalHeight,
-        original_width = originalWidth,
-        extraData = extraData,
-    )
+    ): AttachmentDto {
+        val custom = extraData.toMutableMap()
+        image?.let { custom["image"] = it }
+        name?.let { custom["name"] = it }
+        mimeType?.let { custom["mime_type"] = it }
+        fileSize?.let { custom["file_size"] = it }
+        return AttachmentDto(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            authorLink = authorLink,
+            fallback = fallback,
+            imageUrl = imageUrl,
+            ogScrapeUrl = ogScrapeUrl,
+            text = text,
+            thumbUrl = thumbUrl,
+            title = title,
+            titleLink = titleLink,
+            type = type,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            actions = null,
+            fields = null,
+            custom = custom,
+        )
+    }
 
     fun randomBannedUserResponse(
         user: DownstreamUserDto = randomDownstreamUserDto(),

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 

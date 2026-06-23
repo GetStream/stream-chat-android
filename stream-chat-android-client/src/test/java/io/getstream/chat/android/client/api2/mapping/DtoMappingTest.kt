@@ -20,7 +20,7 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
@@ -65,25 +65,29 @@ internal class DtoMappingTest {
         val attachment = randomAttachment()
         val mapping = Fixture().get()
         val dto = with(mapping) { attachment.toDto() }
+        val expectedCustom = attachment.extraData.toMutableMap().apply {
+            attachment.image?.let { this["image"] = it }
+            attachment.name?.let { this["name"] = it }
+            attachment.mimeType?.let { this["mime_type"] = it }
+            this["file_size"] = attachment.fileSize
+        }
         val expected = AttachmentDto(
-            asset_url = attachment.assetUrl,
-            author_name = attachment.authorName,
+            assetUrl = attachment.assetUrl,
+            authorName = attachment.authorName,
             fallback = attachment.fallback,
-            file_size = attachment.fileSize,
-            image = attachment.image,
-            image_url = attachment.imageUrl,
-            mime_type = attachment.mimeType,
-            name = attachment.name,
-            og_scrape_url = attachment.ogUrl,
+            imageUrl = attachment.imageUrl,
+            ogScrapeUrl = attachment.ogUrl,
             text = attachment.text,
-            thumb_url = attachment.thumbUrl,
+            thumbUrl = attachment.thumbUrl,
             title = attachment.title,
-            title_link = attachment.titleLink,
-            author_link = attachment.authorLink,
+            titleLink = attachment.titleLink,
+            authorLink = attachment.authorLink,
             type = attachment.type,
-            original_height = attachment.originalHeight,
-            original_width = attachment.originalWidth,
-            extraData = attachment.extraData,
+            originalHeight = attachment.originalHeight,
+            originalWidth = attachment.originalWidth,
+            actions = null,
+            fields = null,
+            custom = expectedCustom,
         )
         dto shouldBeEqualTo expected
     }

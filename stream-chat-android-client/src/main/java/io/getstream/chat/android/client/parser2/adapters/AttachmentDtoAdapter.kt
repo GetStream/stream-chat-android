@@ -21,9 +21,12 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 
-internal object AttachmentDtoAdapter : CustomObjectDtoAdapter<AttachmentDto>(AttachmentDto::class) {
+internal object AttachmentDtoAdapter : CustomObjectDtoAdapter<AttachmentDto>(
+    kClass = AttachmentDto::class,
+    extraDataPropertyName = "custom",
+) {
 
     @FromJson
     fun fromJson(

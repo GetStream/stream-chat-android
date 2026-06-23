@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto

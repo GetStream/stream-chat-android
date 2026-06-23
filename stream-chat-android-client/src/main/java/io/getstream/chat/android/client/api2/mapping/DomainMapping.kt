@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -78,6 +77,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
@@ -595,27 +595,37 @@ internal class DomainMapping(
     /**
      * Transforms [AttachmentDto] to [Attachment].
      */
-    internal fun AttachmentDto.toDomain(): Attachment =
-        Attachment(
-            assetUrl = asset_url,
-            authorName = author_name,
-            authorLink = author_link,
+    internal fun AttachmentDto.toDomain(): Attachment {
+        // OpenAPI spec doesn't declare file_size/image/mime_type/name; wire ships them at root
+        // and our adapter sweeps them into `custom` (see GENERATOR_ISSUES.md #9).
+        val extras = custom.toMutableMap()
+        val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
+        val image = extras.remove("image") as? String
+        val mimeType = extras.remove("mime_type") as? String
+        val name = extras.remove("name") as? String
+        val extraData = mutableMapOf<String, Any>()
+        for ((k, v) in extras) if (v != null) extraData[k] = v
+        return Attachment(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            authorLink = authorLink,
             fallback = fallback,
-            fileSize = file_size ?: 0,
+            fileSize = fileSize,
             image = image,
-            imageUrl = image_url,
-            mimeType = mime_type,
+            imageUrl = imageUrl,
+            mimeType = mimeType,
             name = name,
-            ogUrl = og_scrape_url,
+            ogUrl = ogScrapeUrl,
             text = text,
-            thumbUrl = thumb_url,
+            thumbUrl = thumbUrl,
             title = title,
-            titleLink = title_link,
+            titleLink = titleLink,
             type = type,
-            originalHeight = original_height,
-            originalWidth = original_width,
-            extraData = extraData.toMutableMap(),
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            extraData = extraData,
         )
+    }
 
     /**
      * Transforms [BannedUserResponse] to [BannedUser].

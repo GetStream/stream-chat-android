@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.testdata.AttachmentTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer

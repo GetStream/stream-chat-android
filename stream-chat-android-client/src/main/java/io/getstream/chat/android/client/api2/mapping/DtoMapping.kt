@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
@@ -47,6 +46,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
@@ -62,26 +62,35 @@ internal class DtoMapping(
     /**
      * Converts [Attachment] to [AttachmentDto].
      */
-    internal fun Attachment.toDto(): AttachmentDto = AttachmentDto(
-        asset_url = assetUrl,
-        author_name = authorName,
-        fallback = fallback,
-        file_size = fileSize,
-        image = image,
-        image_url = imageUrl,
-        mime_type = mimeType,
-        name = name,
-        og_scrape_url = ogUrl,
-        text = text,
-        thumb_url = thumbUrl,
-        title = title,
-        title_link = titleLink,
-        author_link = authorLink,
-        type = type,
-        original_height = originalHeight,
-        original_width = originalWidth,
-        extraData = extraData,
-    )
+    internal fun Attachment.toDto(): AttachmentDto {
+        // OpenAPI spec doesn't declare file_size/image/mime_type/name on Attachment; fold them
+        // back into `custom` so the open-schema adapter flattens them to root on serialize
+        // TODO [G.] remove this reference to the file and all similar ones
+        // (see GENERATOR_ISSUES.md #9).
+        val custom = extraData.toMutableMap()
+        image?.let { custom["image"] = it }
+        name?.let { custom["name"] = it }
+        mimeType?.let { custom["mime_type"] = it }
+        custom["file_size"] = fileSize
+        return AttachmentDto(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            fallback = fallback,
+            imageUrl = imageUrl,
+            ogScrapeUrl = ogUrl,
+            text = text,
+            thumbUrl = thumbUrl,
+            title = title,
+            titleLink = titleLink,
+            authorLink = authorLink,
+            type = type,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            custom = custom,
+            actions = null,
+            fields = null,
+        )
+    }
 
     /**
      * Converts [Device] to [DeviceDto].

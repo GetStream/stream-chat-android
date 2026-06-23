@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
