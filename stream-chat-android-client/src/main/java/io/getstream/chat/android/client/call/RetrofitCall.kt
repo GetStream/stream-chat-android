@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -41,6 +42,8 @@ internal class RetrofitCall<T : Any>(
     scope: CoroutineScope,
 ) : Call<T> {
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
+    // TODO [G.] tmp, remove logging
+    private val logger by taggedLogger("Chat:RetrofitCall")
 
     override fun cancel() {
         call.cancel()
@@ -84,6 +87,7 @@ internal class RetrofitCall<T : Any>(
         try {
             awaitResponse().getResult()
         } catch (t: Throwable) {
+            logger.e(t) { "[getResult] call failed: ${request().url}" }
             t.toFailedResult()
         }
     }
@@ -94,6 +98,7 @@ internal class RetrofitCall<T : Any>(
             try {
                 Result.Success(body()!!)
             } catch (t: Throwable) {
+                logger.e(t) { "[getResult] response body failed: ${raw().request.url}" }
                 t.toFailedResult()
             }
         } else {
