@@ -16,10 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -27,13 +31,13 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.semantics.hideFromAccessibility
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -41,18 +45,13 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
  * Card-style Stream modal bottom sheet.
  *
  * Bakes the design-system tokens for a card sitting above the app:
- * 32dp top corners, elevated surface color, heavier scrim, and the M3 default drag handle
- * (hidden from the accessibility tree).
+ * rounded top corners, an elevated surface color, the standard scrim, and the Stream grabber.
  * Use for menus and option pickers that appear on top of the underlying screen
  * (e.g. reactions, channel info member modal, attachment command picker).
  *
  * Preview note: when rendering this sheet under `@Preview`, wrap the call in
  * `Box(modifier = Modifier.fillMaxSize())` so the underlying Dialog has bounds to compute sheet
- * anchors against; otherwise the sheet stays blank. Android Studio's preview pane also needs a
- * manual refresh after switching tabs — a known tooling bug with Dialog-hosted previews
- * (issuetracker.google.com/issues/286371387). Paparazzi captures a single frame, so the default
- * [sheetState] swaps to a pre-expanded [SheetState] under [LocalInspectionMode] to skip M3's
- * internal show animation, which Paparazzi doesn't tick.
+ * anchors against; otherwise the sheet stays blank.
  *
  * @param onDismissRequest Invoked when the user dismisses the sheet.
  * @param modifier Modifier applied to the sheet container.
@@ -74,13 +73,36 @@ internal fun StreamCardBottomSheet(
         shape = StreamCardSheetShape,
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
         scrimColor = ChatTheme.colors.backgroundCoreScrim,
-        dragHandle = {
-            BottomSheetDefaults.DragHandle(
-                modifier = Modifier.semantics { hideFromAccessibility() },
-            )
-        },
+        dragHandle = { StreamSheetDragHandle() },
         content = content,
     )
+}
+
+/**
+ * Design-system sheet grabber.
+ *
+ * Renders the "Android / Sheet Header / Grabber" component: a [DragHandleWidth] by
+ * [DragHandleHeight] pill in the neutral accent color, wrapped in [StreamTokens.spacingMd] padding
+ * on all sides. It is decorative and declares no semantics, so screen readers skip it; the sheet is
+ * dismissed via its own content controls and the scrim.
+ */
+@Composable
+private fun StreamSheetDragHandle() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(StreamTokens.spacingMd),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = DragHandleWidth, height = DragHandleHeight)
+                .background(
+                    color = ChatTheme.colors.accentNeutral,
+                    shape = RoundedCornerShape(percent = 50),
+                ),
+        )
+    }
 }
 
 /**
@@ -93,11 +115,7 @@ internal fun StreamCardBottomSheet(
  *
  * Preview note: when rendering this sheet under `@Preview`, wrap the call in
  * `Box(modifier = Modifier.fillMaxSize())` so the underlying Dialog has bounds to compute sheet
- * anchors against; otherwise the sheet stays blank. Android Studio's preview pane also needs a
- * manual refresh after switching tabs — a known tooling bug with Dialog-hosted previews
- * (issuetracker.google.com/issues/286371387). Paparazzi captures a single frame, so the default
- * [sheetState] swaps to a pre-expanded [SheetState] under [LocalInspectionMode] to skip M3's
- * internal show animation, which Paparazzi doesn't tick.
+ * anchors against; otherwise the sheet stays blank.
  *
  * @param onDismissRequest Invoked when the user dismisses the sheet.
  * @param modifier Modifier applied to the sheet container.
@@ -185,3 +203,6 @@ private val StreamCardSheetShape = RoundedCornerShape(
     bottomStart = CornerSize(0),
     bottomEnd = CornerSize(0),
 )
+
+private val DragHandleWidth = 32.dp
+private val DragHandleHeight = 4.dp
