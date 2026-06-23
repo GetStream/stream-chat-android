@@ -522,6 +522,60 @@ then.
 
 ---
 
+## 9. Spec generator emits `custom: object` for `jsonextra.ExtraFields` fields, but the wire flattens them to root
+
+**Symptom:** Every generated Kotlin (and Swift/TS) DTO that corresponds to a backend struct
+containing `Custom jsonextra.ExtraFields \`json:"custom"\`` gets a typed
+`@Json(name = "custom") val custom: Map<String, Any?>` property. The wire produced by the
+backend does not contain a literal `"custom"` key - `jsonextra.ExtraFields` flattens map
+contents to the root of the enclosing object on encode and pulls unknown root-level keys
+into the map on decode (see `kit/v3/jsonextra/JSONEXTRA_SPEC.md`, section 5). Plugging the
+generated DTO into stock Moshi yields:
+
+- `custom` always parses as `emptyMap()` because the wire has no `"custom"` key.
+- Real custom keys at the root (e.g. `birthland`, `team_name`, `jcTest`) get silently
+  dropped because Moshi defaults to ignoring unknown JSON fields.
+
+**Root cause:** `lib/combined/openapi/spec/spec.go` walks struct fields generically and
+reflects through them. There is no recognition of `jsonextra.ExtraFields` - the type is
+`map[string]interface{}` under the hood, and the `json:"custom"` tag is read literally. The
+spec emits `custom: type: object` as a normal nested property. The `jsonextra` runtime
+flatten-on-encode / sweep-on-decode semantics live entirely outside the spec generator's
+field walker.
+
+This affects every chat schema that has an `ExtraFields` field - chat-android observed on
+`UserResponseCommonFields`, and the same pattern lives on Channel, Message, Attachment,
+Member, Reaction, Thread, Poll, Flag, etc. across the chat backend's payload types.
+
+**Fix status:** Not fixed at the spec/generator level. Worked around client-side in chat-
+android by extending `CustomObjectDtoAdapter` to bucket unknown root keys into the generated
+`custom` property (see issue #8).
+
+**Suggested fix:** Either:
+
+1. **Spec generator recognizes `jsonextra.ExtraFields`**. In `spec.go`'s struct field walker,
+   short-circuit fields whose Go type is `jsonextra.ExtraFields`: instead of emitting a
+   named property, set `additionalProperties: { type: object }` on the parent schema. Each
+   language generator then emits whatever overflow-field convention it uses (Kotlin: an
+   `extraData`-style map field that the existing `CustomObjectDtoAdapter` populates; Swift /
+   TS: similar conventions).
+2. **OpenAPI extension marker**. Add `x-stream-extra-fields: true` on the property in the
+   spec when the Go field is `jsonextra.ExtraFields`. The Kotlin generator emits the
+   property as today plus a marker (or interface implementation) that the SDK's parser
+   recognizes and wraps with the open-schema adapter. Less precise than option 1 but
+   smaller spec-shape impact.
+
+Option 1 is correct. Option 2 is a faster stopgap.
+
+The collateral benefit: once spec + generator + SDK agree, every DTO that uses
+`jsonextra.ExtraFields` becomes a clean leaf migration (combined with the fix for issue #8).
+
+**Migration timing:** Combine with issue #8 - both must land together for root-DTO swaps
+(`User`, `Channel`, `Message`, `Attachment`, etc.) to work end-to-end with the new wire
+generator output.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec

@@ -41,6 +41,13 @@ internal data class GeneratedStyleDto(
     val extraData: Map<String, Any>,
 )
 
+@JsonClass(generateAdapter = true)
+internal data class GeneratedCustomDto(
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "weight_kg") val weightKg: Int,
+    @Json(name = "custom") val custom: Map<String, Any>,
+)
+
 private object ManualStyleAdapter : CustomObjectDtoAdapter<ManualStyleDto>(ManualStyleDto::class) {
     @FromJson
     fun fromJson(
@@ -63,6 +70,21 @@ private object GeneratedStyleAdapter : CustomObjectDtoAdapter<GeneratedStyleDto>
 
     @ToJson
     fun toJson(writer: JsonWriter, value: GeneratedStyleDto): Unit = error("write not under test")
+}
+
+private object GeneratedCustomAdapter : CustomObjectDtoAdapter<GeneratedCustomDto>(
+    kClass = GeneratedCustomDto::class,
+    extraDataPropertyName = "custom",
+) {
+    @FromJson
+    fun fromJson(
+        reader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        valueAdapter: JsonAdapter<GeneratedCustomDto>,
+    ): GeneratedCustomDto? = parseWithExtraData(reader, mapAdapter, valueAdapter)
+
+    @ToJson
+    fun toJson(writer: JsonWriter, value: GeneratedCustomDto): Unit = error("write not under test")
 }
 
 internal class CustomObjectDtoAdapterTest {
@@ -89,5 +111,17 @@ internal class CustomObjectDtoAdapterTest {
         dto.firstName shouldBeEqualTo "alice"
         dto.weightKg shouldBeEqualTo 42
         dto.extraData shouldBeEqualTo mapOf("role" to "admin", "mood" to "happy")
+    }
+
+    @Test
+    fun `generated DTO with custom overflow property buckets unknown keys as custom`() {
+        val moshi = Moshi.Builder().add(GeneratedCustomAdapter).build()
+        val json = """{"first_name":"alice","weight_kg":42,"role":"admin","mood":"happy"}"""
+
+        val dto = moshi.adapter(GeneratedCustomDto::class.java).fromJson(json)!!
+
+        dto.firstName shouldBeEqualTo "alice"
+        dto.weightKg shouldBeEqualTo 42
+        dto.custom shouldBeEqualTo mapOf("role" to "admin", "mood" to "happy")
     }
 }
