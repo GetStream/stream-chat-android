@@ -39,9 +39,9 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
+import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
+import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
@@ -2740,7 +2740,7 @@ internal class MoshiChatApiTest {
         val level = PushPreferenceLevel.all
         val response = PushPreferencesResponse(
             user_channel_preferences = emptyMap(),
-            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(level.value, null)),
+            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(chatLevel = level.value, disabledUntil = null)),
         )
         val call = RetroSuccess(response).toRetrofitCall()
         val api = mock<PushPreferencesApi>()
@@ -2773,7 +2773,7 @@ internal class MoshiChatApiTest {
         val until = randomDate()
         val response = PushPreferencesResponse(
             user_channel_preferences = emptyMap(),
-            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(null, until)),
+            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(chatLevel = null, disabledUntil = until)),
         )
         val call = RetroSuccess(response).toRetrofitCall()
         val api = mock<PushPreferencesApi>()
@@ -2806,7 +2806,7 @@ internal class MoshiChatApiTest {
         val cid = randomCID()
         val level = PushPreferenceLevel.mentions
         val response = PushPreferencesResponse(
-            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(level.value, null))),
+            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(chatLevel = level.value, disabledUntil = null))),
             user_preferences = emptyMap(),
         )
         val call = RetroSuccess(response).toRetrofitCall()
@@ -2840,7 +2840,7 @@ internal class MoshiChatApiTest {
         val cid = randomCID()
         val until = randomDate()
         val response = PushPreferencesResponse(
-            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(null, until))),
+            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(chatLevel = null, disabledUntil = until))),
             user_preferences = emptyMap(),
         )
         val call = RetroSuccess(response).toRetrofitCall()
@@ -2879,12 +2879,12 @@ internal class MoshiChatApiTest {
             user_channel_preferences = emptyMap(),
             user_preferences = mapOf(
                 userId to DownstreamPushPreferenceDto(
-                    chat_level = null,
-                    disabled_until = null,
-                    chat_preferences = DownstreamChatPreferencesDto(
-                        direct_mentions = "all",
-                        channel_mentions = "none",
-                        default_preference = "none",
+                    chatLevel = null,
+                    disabledUntil = null,
+                    chatPreferences = DownstreamChatPreferencesDto(
+                        directMentions = "all",
+                        channelMentions = "none",
+                        defaultPreference = "none",
                     ),
                 ),
             ),
@@ -2923,9 +2923,9 @@ internal class MoshiChatApiTest {
             user_channel_preferences = mapOf(
                 userId to mapOf(
                     cid to DownstreamPushPreferenceDto(
-                        chat_level = null,
-                        disabled_until = null,
-                        chat_preferences = DownstreamChatPreferencesDto(direct_mentions = "all"),
+                        chatLevel = null,
+                        disabledUntil = null,
+                        chatPreferences = DownstreamChatPreferencesDto(directMentions = "all"),
                     ),
                 ),
             ),

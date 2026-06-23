@@ -18,11 +18,11 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 import org.intellij.lang.annotations.Language
@@ -240,8 +240,8 @@ internal object UserDtoTestData {
             blocked_user_ids = null,
             avg_response_time = 1000L,
             push_preferences = DownstreamPushPreferenceDto(
-                chat_level = "default",
-                disabled_until = Date(1591787071588),
+                chatLevel = "default",
+                disabledUntil = Date(1591787071588),
             ),
             extraData = emptyMap(),
         )

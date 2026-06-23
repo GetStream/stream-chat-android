@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
@@ -38,7 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
@@ -131,8 +129,10 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.Role as RoleDto
@@ -917,19 +917,19 @@ internal class DomainMapping(
     )
 
     internal fun DownstreamPushPreferenceDto.toDomain(): PushPreference = PushPreference(
-        level = PushPreferenceLevel.fromValue(chat_level),
-        disabledUntil = disabled_until,
-        chatPreferences = chat_preferences?.toDomain(),
+        level = PushPreferenceLevel.fromValue(chatLevel),
+        disabledUntil = disabledUntil,
+        chatPreferences = chatPreferences?.toDomain(),
     )
 
     internal fun DownstreamChatPreferencesDto.toDomain(): ChatPreferences = ChatPreferences(
-        directMentions = ChatPreferenceToggle.fromValue(direct_mentions),
-        roleMentions = ChatPreferenceToggle.fromValue(role_mentions),
-        groupMentions = ChatPreferenceToggle.fromValue(group_mentions),
-        hereMentions = ChatPreferenceToggle.fromValue(here_mentions),
-        channelMentions = ChatPreferenceToggle.fromValue(channel_mentions),
-        threadReplies = ChatPreferenceToggle.fromValue(thread_replies),
-        defaultPreference = ChatPreferenceToggle.fromValue(default_preference),
+        directMentions = ChatPreferenceToggle.fromValue(directMentions),
+        roleMentions = ChatPreferenceToggle.fromValue(roleMentions),
+        groupMentions = ChatPreferenceToggle.fromValue(groupMentions),
+        hereMentions = ChatPreferenceToggle.fromValue(hereMentions),
+        channelMentions = ChatPreferenceToggle.fromValue(channelMentions),
+        threadReplies = ChatPreferenceToggle.fromValue(threadReplies),
+        defaultPreference = ChatPreferenceToggle.fromValue(defaultPreference),
     )
 
     internal fun List<Map<String, Any>>?.toSortDomain(): QuerySorter<Channel>? {

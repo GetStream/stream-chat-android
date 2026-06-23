@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
@@ -118,6 +117,7 @@ import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.Role as RoleDto
@@ -1384,8 +1384,8 @@ internal object Mother {
         chatLevel: String? = randomString(),
         disabledUntil: Date? = randomDateOrNull(),
     ): DownstreamPushPreferenceDto = DownstreamPushPreferenceDto(
-        chat_level = chatLevel,
-        disabled_until = disabledUntil,
+        chatLevel = chatLevel,
+        disabledUntil = disabledUntil,
     )
 
     fun randomDownstreamUserGroupDto(
