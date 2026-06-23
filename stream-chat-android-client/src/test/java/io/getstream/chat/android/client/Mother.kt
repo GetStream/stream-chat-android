@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -121,6 +120,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 

@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -87,6 +86,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
