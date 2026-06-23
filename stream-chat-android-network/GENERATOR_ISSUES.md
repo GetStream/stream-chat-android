@@ -410,6 +410,54 @@ re-simplify after a regen.
 
 ---
 
+## 7. Generated chat model names collide with domain model names
+
+**Symptom:** Generated wire models share their simple names with the chat domain models in
+`stream-chat-android-core/src/main/java/io/getstream/chat/android/models/`. Confirmed collisions
+today: `Command`, `Message`, `User`, `Channel`, `Member`, `Reaction`, `Attachment`, `Device`,
+`Mute`, `Thread`, `Poll`, `Location` (12 already, more likely as the network module surface
+grows).
+
+Any mapper file needs both types in scope to convert between them, so the wire side has to be
+aliased per-import:
+
+```kotlin
+import io.getstream.chat.android.network.models.Command as CommandDto
+```
+
+That alias accumulates across every mapper / parser file we touch during the migration.
+
+**Root cause:** The Kotlin generator emits a class per OpenAPI schema name verbatim. Chat's
+schema names (`Command`, `Message`, etc.) match the names long-established in the chat
+domain model. There is no opt-in suffix mechanism to disambiguate.
+
+**Fix status:** Not fixed. Worked around per-file with `as XxxDto` aliases in the migrated DTO
+files so far (`UnreadDtos.kt`, etc.). The collision is permanent, not transitional - the chat
+domain model uses these bare names by long-standing convention.
+
+**Suggested fix:** Generator-side, behind a chat-only branch. Add a `classNameSuffix` value
+that defaults to `""` and is set to `"Dto"` for the chat `androidsdk`. Apply at the single
+point in `kotlin.go` where the Kotlin class identifier is computed from the OpenAPI schema
+name; references / discriminator interfaces / service request-response types all flow from
+that one source and pick up the suffix automatically.
+
+Side effects to verify when implementing:
+
+- Discriminator interface names (`WSEvent`, `WSClientEvent`) - whether they should also gain
+  the suffix or stay as-is.
+- Enum nested adapter / class names (e.g. `Command.SetAdapter`).
+- The existing `Role`, `ReactionGroup`, `UnreadChannel`, `UnreadChannelByType`,
+  `UnreadThread` aliased imports become redundant - clean them up at the same time.
+
+Project-side alternative (typealias file in the client module) was considered but rejected:
+the collision is permanent, so a permanent generator-side convention is the cleaner end state
+than ~50+ typealiases we maintain forever.
+
+**Migration timing:** Address before the migration volume grows. Every DTO we swap before the
+fix lands will need its alias revisited.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec
