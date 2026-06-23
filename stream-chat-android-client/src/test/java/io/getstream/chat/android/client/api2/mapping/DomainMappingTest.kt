@@ -761,12 +761,12 @@ internal class DomainMappingTest {
         val moderation = with(sut) { downstreamModerationDto.toDomain() }
         val expected = Moderation(
             action = ModerationAction(downstreamModerationDto.action),
-            originalText = downstreamModerationDto.original_text,
-            textHarms = downstreamModerationDto.text_harms ?: emptyList(),
-            imageHarms = downstreamModerationDto.image_harms ?: emptyList(),
-            blocklistMatched = downstreamModerationDto.blocklist_matched,
-            semanticFilterMatched = downstreamModerationDto.semantic_filter_matched,
-            platformCircumvented = downstreamModerationDto.platform_circumvented ?: false,
+            originalText = downstreamModerationDto.originalText,
+            textHarms = downstreamModerationDto.textHarms ?: emptyList(),
+            imageHarms = downstreamModerationDto.imageHarms ?: emptyList(),
+            blocklistMatched = downstreamModerationDto.blocklistMatched,
+            semanticFilterMatched = downstreamModerationDto.semanticFilterMatched,
+            platformCircumvented = downstreamModerationDto.platformCircumvented ?: false,
         )
         assertEquals(expected, moderation)
     }

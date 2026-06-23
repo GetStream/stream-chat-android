@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
@@ -117,6 +116,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
+import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
@@ -890,12 +890,12 @@ internal object Mother {
         platformCircumvented: Boolean = randomBoolean(),
     ): DownstreamModerationDto = DownstreamModerationDto(
         action = action,
-        original_text = originalText,
-        text_harms = textHarms,
-        image_harms = imageHarms,
-        blocklist_matched = blocklistMatched,
-        semantic_filter_matched = semanticFilterMatched,
-        platform_circumvented = platformCircumvented,
+        originalText = originalText,
+        textHarms = textHarms,
+        imageHarms = imageHarms,
+        blocklistMatched = blocklistMatched,
+        semanticFilterMatched = semanticFilterMatched,
+        platformCircumvented = platformCircumvented,
     )
 
     fun randomPrivacySettingsDto(

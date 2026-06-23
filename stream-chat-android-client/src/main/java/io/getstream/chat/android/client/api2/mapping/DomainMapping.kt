@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
@@ -132,6 +131,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
@@ -729,12 +729,12 @@ internal class DomainMapping(
      */
     internal fun DownstreamModerationDto.toDomain() = Moderation(
         action = ModerationAction.fromValue(this.action),
-        originalText = this.original_text,
-        textHarms = this.text_harms.orEmpty(),
-        imageHarms = this.image_harms.orEmpty(),
-        blocklistMatched = this.blocklist_matched,
-        semanticFilterMatched = this.semantic_filter_matched,
-        platformCircumvented = this.platform_circumvented ?: false,
+        originalText = this.originalText,
+        textHarms = this.textHarms.orEmpty(),
+        imageHarms = this.imageHarms.orEmpty(),
+        blocklistMatched = this.blocklistMatched,
+        semanticFilterMatched = this.semanticFilterMatched,
+        platformCircumvented = this.platformCircumvented ?: false,
     )
 
     /**
