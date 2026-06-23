@@ -777,8 +777,8 @@ internal class DomainMappingTest {
         val sut = Fixture().get()
         val privacySettings = with(sut) { privacySettingsDto.toDomain() }
         val expected = PrivacySettings(
-            typingIndicators = TypingIndicators(enabled = privacySettingsDto.typing_indicators?.enabled == true),
-            readReceipts = ReadReceipts(enabled = privacySettingsDto.read_receipts?.enabled == true),
+            typingIndicators = TypingIndicators(enabled = privacySettingsDto.typingIndicators?.enabled == true),
+            readReceipts = ReadReceipts(enabled = privacySettingsDto.readReceipts?.enabled == true),
         )
         assertEquals(expected, privacySettings)
     }

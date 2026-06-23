@@ -21,11 +21,7 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
@@ -40,6 +36,10 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
@@ -267,9 +267,9 @@ internal class DtoMappingTest {
         val mapping = Fixture().get()
         val dto = with(mapping) { privacySettings.toDto() }
         val expected = PrivacySettingsDto(
-            typing_indicators = TypingIndicatorsDto(enabled = true),
-            read_receipts = ReadReceiptsDto(enabled = false),
-            delivery_receipts = DeliveryReceiptsDto(enabled = false),
+            typingIndicators = TypingIndicatorsDto(enabled = true),
+            readReceipts = ReadReceiptsDto(enabled = false),
+            deliveryReceipts = DeliveryReceiptsDto(enabled = false),
         )
         dto shouldBeEqualTo expected
     }
@@ -284,9 +284,9 @@ internal class DtoMappingTest {
         val mapping = Fixture().get()
         val dto = with(mapping) { privacySettings.toDto() }
         val expected = PrivacySettingsDto(
-            typing_indicators = TypingIndicatorsDto(enabled = true),
-            read_receipts = ReadReceiptsDto(enabled = false),
-            delivery_receipts = null,
+            typingIndicators = TypingIndicatorsDto(enabled = true),
+            readReceipts = ReadReceiptsDto(enabled = false),
+            deliveryReceipts = null,
         )
         dto shouldBeEqualTo expected
     }

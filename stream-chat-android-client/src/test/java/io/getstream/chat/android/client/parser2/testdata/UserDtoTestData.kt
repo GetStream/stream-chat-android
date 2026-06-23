@@ -16,15 +16,15 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -199,13 +199,13 @@ internal object UserDtoTestData {
             image = "image",
             invisible = false,
             privacy_settings = PrivacySettingsDto(
-                typing_indicators = TypingIndicatorsDto(
+                typingIndicators = TypingIndicatorsDto(
                     enabled = false,
                 ),
-                read_receipts = ReadReceiptsDto(
+                readReceipts = ReadReceiptsDto(
                     enabled = false,
                 ),
-                delivery_receipts = DeliveryReceiptsDto(
+                deliveryReceipts = DeliveryReceiptsDto(
                     enabled = false,
                 ),
             ),
@@ -315,13 +315,13 @@ internal object UserDtoTestData {
         role = "owner",
         invisible = false,
         privacy_settings = PrivacySettingsDto(
-            typing_indicators = TypingIndicatorsDto(
+            typingIndicators = TypingIndicatorsDto(
                 enabled = false,
             ),
-            read_receipts = ReadReceiptsDto(
+            readReceipts = ReadReceiptsDto(
                 enabled = false,
             ),
-            delivery_receipts = DeliveryReceiptsDto(
+            deliveryReceipts = DeliveryReceiptsDto(
                 enabled = false,
             ),
         ),

@@ -56,9 +56,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMember
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
@@ -120,9 +117,12 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
+import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -902,8 +902,8 @@ internal object Mother {
         typingIndicators: TypingIndicatorsDto = randomTypingIndicatorsDto(),
         readReceipts: ReadReceiptsDto = randomReadReceiptsDto(),
     ): PrivacySettingsDto = PrivacySettingsDto(
-        typing_indicators = typingIndicators,
-        read_receipts = readReceipts,
+        typingIndicators = typingIndicators,
+        readReceipts = readReceipts,
     )
 
     fun randomTypingIndicatorsDto(enabled: Boolean = randomBoolean()): TypingIndicatorsDto =

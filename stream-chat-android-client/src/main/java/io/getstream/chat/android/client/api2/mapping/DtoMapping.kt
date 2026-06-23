@@ -21,11 +21,7 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
@@ -51,6 +47,10 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 
 internal class DtoMapping(
     private val messageTransformer: MessageTransformer,
@@ -220,9 +220,9 @@ internal class DtoMapping(
      * Maps the domain [PrivacySettings] model to a network [PrivacySettingsDto] model.
      */
     internal fun PrivacySettings.toDto(): PrivacySettingsDto = PrivacySettingsDto(
-        typing_indicators = typingIndicators?.toDto(),
-        read_receipts = readReceipts?.toDto(),
-        delivery_receipts = deliveryReceipts?.toDto(),
+        typingIndicators = typingIndicators?.toDto(),
+        readReceipts = readReceipts?.toDto(),
+        deliveryReceipts = deliveryReceipts?.toDto(),
     )
 
     /**

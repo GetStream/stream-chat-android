@@ -23,7 +23,6 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
@@ -52,9 +51,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
@@ -135,9 +131,13 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -741,9 +741,9 @@ internal class DomainMapping(
      * Transforms [PrivacySettingsDto] to [PrivacySettings].
      */
     internal fun PrivacySettingsDto.toDomain(): PrivacySettings = PrivacySettings(
-        typingIndicators = typing_indicators?.toDomain(),
-        deliveryReceipts = delivery_receipts?.toDomain(),
-        readReceipts = read_receipts?.toDomain(),
+        typingIndicators = typingIndicators?.toDomain(),
+        deliveryReceipts = deliveryReceipts?.toDomain(),
+        readReceipts = readReceipts?.toDomain(),
     )
 
     /**
