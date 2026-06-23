@@ -226,10 +226,7 @@ private fun DirectChannelInfoContent(
                     ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(
                         params = DirectChannelInfoAvatarContainerParams(
                             user = user,
-                            isMuted = content.options.any { option ->
-                                (option is ChannelInfoViewState.Content.Option.MuteChannel && option.isMuted) ||
-                                    (option is ChannelInfoViewState.Content.Option.MuteUser && option.isMuted)
-                            },
+                            isMuted = content.isMuted,
                         ),
                     )
                 }

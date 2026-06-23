@@ -48,6 +48,16 @@ public sealed interface ChannelInfoViewState {
     ) : ChannelInfoViewState {
 
         /**
+         * Whether the conversation is muted: the channel is muted for a group, or the channel or
+         * the other user is muted for a direct message.
+         */
+        public val isMuted: Boolean
+            get() = options.any { option ->
+                (option is Option.MuteChannel && option.isMuted) ||
+                    (option is Option.MuteUser && option.isMuted)
+            }
+
+        /**
          * Represents the options available in the channel information UI.
          */
         public sealed interface Option {

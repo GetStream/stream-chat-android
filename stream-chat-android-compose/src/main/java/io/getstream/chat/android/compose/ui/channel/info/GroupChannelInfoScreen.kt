@@ -317,9 +317,7 @@ private fun GroupChannelInfoContent(
                             channel = header.channel,
                             currentUser = header.currentUser,
                             members = content.members,
-                            isMuted = content.options.any { option ->
-                                option is ChannelInfoViewState.Content.Option.MuteChannel && option.isMuted
-                            },
+                            isMuted = content.isMuted,
                         ),
                     )
                 }
