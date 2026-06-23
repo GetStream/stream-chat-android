@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
@@ -59,7 +59,7 @@ internal class MessageParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private val moshi = Moshi.Builder().add(DateAdapter()).build()
+    private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
 
     private val deviceAdapter = DeviceAdapter()

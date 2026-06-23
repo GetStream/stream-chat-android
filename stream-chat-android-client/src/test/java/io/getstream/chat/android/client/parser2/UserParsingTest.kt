@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
@@ -46,7 +46,7 @@ internal class UserParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private val moshi = Moshi.Builder().add(DateAdapter()).build()
+    private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
     private val deviceAdapter = DeviceAdapter()
     private val privacySettingsAdapter = PrivacySettingsAdapter()

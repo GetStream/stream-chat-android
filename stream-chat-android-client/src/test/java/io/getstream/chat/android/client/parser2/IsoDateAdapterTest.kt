@@ -16,15 +16,16 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import com.squareup.moshi.Moshi
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-internal class DateAdapterTest {
+internal class IsoDateAdapterTest {
 
-    private val dateAdapter = DateAdapter()
+    private val dateAdapter = Moshi.Builder().add(IsoDateAdapter()).build().adapter(Date::class.java)
 
     @Test
     fun readValidDates() {

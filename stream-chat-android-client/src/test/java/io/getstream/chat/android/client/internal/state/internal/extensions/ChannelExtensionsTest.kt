@@ -25,7 +25,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -44,7 +44,7 @@ internal class ChannelExtensionsTest {
     fun `When apply pagination Should not throw any exception`() {
         val channelsFile = File(this.javaClass.classLoader!!.getResource("channels.json").toURI())
         val moshi = Moshi.Builder()
-            .add(DateAdapter())
+            .add(IsoDateAdapter())
             .add(
                 File::class.java,
                 object : JsonAdapter<File>() {

@@ -20,7 +20,6 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
@@ -36,6 +35,7 @@ import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
@@ -57,7 +57,7 @@ internal class DirectEventParser(
 
     // region Leaf adapters
 
-    private val moshi by lazy { Moshi.Builder().add(Date::class.java, DateAdapter()).build() }
+    private val moshi by lazy { Moshi.Builder().add(IsoDateAdapter()).build() }
     private val dateAdapter by lazy { moshi.adapter(Date::class.java) }
     private val deviceAdapter by lazy { DeviceAdapter() }
     private val privacySettingsAdapter by lazy { PrivacySettingsAdapter() }
