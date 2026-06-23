@@ -224,7 +224,13 @@ private fun DirectChannelInfoContent(
             item {
                 content.members.firstOrNull()?.user?.let { user ->
                     ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(
-                        params = DirectChannelInfoAvatarContainerParams(user = user),
+                        params = DirectChannelInfoAvatarContainerParams(
+                            user = user,
+                            isMuted = content.options.any { option ->
+                                (option is ChannelInfoViewState.Content.Option.MuteChannel && option.isMuted) ||
+                                    (option is ChannelInfoViewState.Content.Option.MuteUser && option.isMuted)
+                            },
+                        ),
                     )
                 }
             }
@@ -263,7 +269,7 @@ private fun DirectChannelInfoContent(
 }
 
 @Composable
-internal fun DirectChannelInfoAvatarContainer(user: User) {
+internal fun DirectChannelInfoAvatarContainer(user: User, isMuted: Boolean) {
     Column(
         modifier = Modifier.padding(bottom = StreamTokens.spacingMd),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -277,14 +283,11 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
             ),
         )
         Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
-        Text(
-            text = user.name.takeIf(String::isNotBlank) ?: user.id,
-            style = ChatTheme.typography.headingLarge,
-            color = ChatTheme.colors.textPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        ChannelInfoTitle(
+            title = user.name.takeIf(String::isNotBlank) ?: user.id,
+            isMuted = isMuted,
         )
-        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
+        Spacer(modifier = Modifier.height(StreamTokens.spacing2xs))
         Text(
             text = user.getLastSeenText(LocalContext.current),
             style = ChatTheme.typography.captionDefault,
@@ -342,8 +345,27 @@ private fun DirectChannelInfoContentPreview() {
     }
 }
 
+@Preview
 @Composable
-internal fun DirectChannelInfoContent() {
+private fun DirectChannelInfoChannelMutedContentPreview() {
+    ChatTheme {
+        DirectChannelInfoContent(isChannelMuted = true)
+    }
+}
+
+@Preview
+@Composable
+private fun DirectChannelInfoChannelUserMutedContentPreview() {
+    ChatTheme {
+        DirectChannelInfoContent(isUserMuted = true)
+    }
+}
+
+@Composable
+internal fun DirectChannelInfoContent(
+    isChannelMuted: Boolean = false,
+    isUserMuted: Boolean = false,
+) {
     val member = Member(user = PreviewUserData.user1.copy(lastActive = Date()))
     DirectChannelInfoScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -361,8 +383,8 @@ internal fun DirectChannelInfoContent() {
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.MediaAttachments,
                 ChannelInfoViewState.Content.Option.FilesAttachments,
-                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                ChannelInfoViewState.Content.Option.MuteUser(isMuted = false),
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = isChannelMuted),
+                ChannelInfoViewState.Content.Option.MuteUser(isMuted = isUserMuted),
                 ChannelInfoViewState.Content.Option.BlockUser(isBlocked = false),
                 ChannelInfoViewState.Content.Option.DeleteChannel,
             ),

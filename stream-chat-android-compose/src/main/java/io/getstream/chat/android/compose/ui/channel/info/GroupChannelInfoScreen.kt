@@ -317,6 +317,9 @@ private fun GroupChannelInfoContent(
                             channel = header.channel,
                             currentUser = header.currentUser,
                             members = content.members,
+                            isMuted = content.options.any { option ->
+                                option is ChannelInfoViewState.Content.Option.MuteChannel && option.isMuted
+                            },
                         ),
                     )
                 }
@@ -381,6 +384,7 @@ internal fun GroupChannelInfoAvatarContainer(
     channel: Channel,
     currentUser: User?,
     members: ExpandableList<Member>,
+    isMuted: Boolean,
 ) {
     val totalMembers = members.size + members.collapsedCount
     val onlineCount = channel.members.count { it.user.online }
@@ -397,14 +401,11 @@ internal fun GroupChannelInfoAvatarContainer(
             ),
         )
         Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
-        Text(
-            text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
-            style = ChatTheme.typography.headingLarge,
-            color = ChatTheme.colors.textPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        ChannelInfoTitle(
+            title = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+            isMuted = isMuted,
         )
-        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
+        Spacer(modifier = Modifier.height(StreamTokens.spacing2xs))
         Text(
             text = stringResource(
                 UiCommonR.string.stream_ui_channel_info_member_count_online,

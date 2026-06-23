@@ -54,4 +54,32 @@ internal class DirectChannelInfoContentTest : PaparazziComposeTest {
             DirectChannelInfoContent()
         }
     }
+
+    @Test
+    fun `channel muted content`() {
+        snapshot {
+            DirectChannelInfoContent(isChannelMuted = true)
+        }
+    }
+
+    @Test
+    fun `channel muted content in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            DirectChannelInfoContent(isChannelMuted = true)
+        }
+    }
+
+    @Test
+    fun `user muted content`() {
+        snapshot {
+            DirectChannelInfoContent(isUserMuted = true)
+        }
+    }
+
+    @Test
+    fun `user muted content in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            DirectChannelInfoContent(isUserMuted = true)
+        }
+    }
 }

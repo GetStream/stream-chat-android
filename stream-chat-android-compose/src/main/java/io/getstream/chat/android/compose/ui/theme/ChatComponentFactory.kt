@@ -2680,6 +2680,7 @@ public interface ChatComponentFactory {
     public fun DirectChannelInfoAvatarContainer(params: DirectChannelInfoAvatarContainerParams) {
         io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoAvatarContainer(
             user = params.user,
+            isMuted = params.isMuted,
         )
     }
 
@@ -2694,6 +2695,7 @@ public interface ChatComponentFactory {
             channel = params.channel,
             currentUser = params.currentUser,
             members = params.members,
+            isMuted = params.isMuted,
         )
     }
 
