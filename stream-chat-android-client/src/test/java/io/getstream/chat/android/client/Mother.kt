@@ -58,7 +58,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
@@ -123,6 +122,7 @@ import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -932,10 +932,10 @@ internal object Mother {
         warningCode: Int = randomInt(),
         warningDescription: String = randomString(),
     ): SearchWarningDto = SearchWarningDto(
-        channel_search_cids = channelSearchCids,
-        channel_search_count = channelSearchCount,
-        warning_code = warningCode,
-        warning_description = warningDescription,
+        warningCode = warningCode,
+        warningDescription = warningDescription,
+        channelSearchCount = channelSearchCount,
+        channelSearchCids = channelSearchCids,
     )
 
     fun randomQueryThreadsRequest(

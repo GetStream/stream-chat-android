@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
+import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
 
 @JsonClass(generateAdapter = true)
 internal data class SearchMessagesResponse(

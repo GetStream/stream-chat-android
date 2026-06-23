@@ -789,10 +789,10 @@ internal class DomainMappingTest {
         val sut = Fixture().get()
         val searchWarning = with(sut) { searchWarningDto.toDomain() }
         val expected = SearchWarning(
-            channelSearchCids = searchWarningDto.channel_search_cids,
-            channelSearchCount = searchWarningDto.channel_search_count,
-            warningCode = searchWarningDto.warning_code,
-            warningDescription = searchWarningDto.warning_description,
+            channelSearchCids = searchWarningDto.channelSearchCids.orEmpty(),
+            channelSearchCount = searchWarningDto.channelSearchCount ?: 0,
+            warningCode = searchWarningDto.warningCode,
+            warningDescription = searchWarningDto.warningDescription,
         )
         assertEquals(expected, searchWarning)
     }

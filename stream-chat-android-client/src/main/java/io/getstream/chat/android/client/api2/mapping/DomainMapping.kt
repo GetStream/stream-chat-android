@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMember
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
@@ -138,6 +137,7 @@ import io.getstream.chat.android.models.querysort.SortDirection
 import java.util.Date
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -769,10 +769,10 @@ internal class DomainMapping(
      * Transforms [SearchWarningDto] to [SearchWarning].
      */
     internal fun SearchWarningDto.toDomain(): SearchWarning = SearchWarning(
-        channelSearchCids = channel_search_cids,
-        channelSearchCount = channel_search_count,
-        warningCode = warning_code,
-        warningDescription = warning_description,
+        channelSearchCids = channelSearchCids.orEmpty(),
+        channelSearchCount = channelSearchCount ?: 0,
+        warningCode = warningCode,
+        warningDescription = warningDescription,
     )
 
     /**
