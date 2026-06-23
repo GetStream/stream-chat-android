@@ -41,6 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
@@ -53,6 +54,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -68,7 +70,7 @@ import io.getstream.chat.android.ui.common.R as UiCommonR
  *
  * Shows a gallery view of all media attachments associated with a message, with
  * thumbnails arranged in a grid. The gallery appears as a bottom sheet with rounded
- * top corners and includes a header with a close button.
+ * top corners and includes a header with the gallery title.
  *
  * The component overlays the entire screen with a semi-transparent background.
  * Tapping outside the gallery area dismisses it. Each media item displays a thumbnail
@@ -93,7 +95,7 @@ internal fun MediaGalleryPhotosMenu(
         onDismissRequest = onDismiss,
         modifier = modifier,
     ) {
-        MediaGalleryPhotosMenuHeader(onDismiss)
+        MediaGalleryPhotosMenuHeader()
         LazyVerticalGrid(
             modifier = Modifier.fillMaxWidth(),
             columns = GridCells.Fixed(ColumnCount),
@@ -112,35 +114,21 @@ internal fun MediaGalleryPhotosMenu(
 /**
  * Composable that displays the header for the media gallery bottom sheet.
  *
- * Shows a title "Photos" centered in the header and a close button on the left side.
- * Both the title and close button use the high emphasis text color from the current theme.
- * The close button is clickable and will dismiss the gallery when pressed.
- *
- * @param onDismiss Callback invoked when the user clicks the close button.
+ * Shows the centered "Photos" title in the high emphasis text color. The sheet is dismissed by
+ * swiping it down or tapping the scrim, so the header carries no close button.
  */
 @Composable
-private fun MediaGalleryPhotosMenuHeader(onDismiss: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Icon(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(8.dp)
-                .clickable(
-                    bounded = false,
-                    onClick = onDismiss,
-                ),
-            painter = painterResource(id = R.drawable.stream_design_ic_xmark),
-            contentDescription = stringResource(id = R.string.stream_compose_cancel),
-            tint = ChatTheme.colors.textPrimary,
-        )
-
-        Text(
-            modifier = Modifier.align(Alignment.Center),
-            text = stringResource(R.string.stream_compose_image_preview_photos),
-            style = ChatTheme.typography.headingMedium,
-            color = ChatTheme.colors.textPrimary,
-        )
-    }
+private fun MediaGalleryPhotosMenuHeader() {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = StreamTokens.spacingSm)
+            .padding(bottom = StreamTokens.spacingSm),
+        text = stringResource(R.string.stream_compose_image_preview_photos),
+        style = ChatTheme.typography.headingMedium,
+        color = ChatTheme.colors.textPrimary,
+        textAlign = TextAlign.Center,
+    )
 }
 
 /**
