@@ -97,8 +97,9 @@ public fun UserAvatar(
     message = "Use the overload that takes an AvatarPresenceIndicator. showIndicator showed a grey dot when " +
         "the user was offline; pass an explicit indicator to control the online, offline, and hidden states.",
     replaceWith = ReplaceWith(
-        "UserAvatar(user, modifier, if (user.online) AvatarPresenceIndicator.Online " +
-            "else AvatarPresenceIndicator.Offline, showBorder)",
+        "UserAvatar(user, modifier, if (showIndicator) (if (user.online) AvatarPresenceIndicator.Online " +
+            "else AvatarPresenceIndicator.Offline) else AvatarPresenceIndicator.None, showBorder)",
+        "io.getstream.chat.android.compose.ui.components.avatar.AvatarPresenceIndicator",
     ),
     level = DeprecationLevel.WARNING,
 )
