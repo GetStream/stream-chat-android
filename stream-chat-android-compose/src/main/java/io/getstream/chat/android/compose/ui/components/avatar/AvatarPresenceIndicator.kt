@@ -43,11 +43,7 @@ public enum class AvatarPresenceIndicator {
  * When `false` (the default), an offline user resolves to [AvatarPresenceIndicator.None] and no dot is drawn.
  */
 internal fun User.avatarPresenceIndicator(showWhenOffline: Boolean = false): AvatarPresenceIndicator =
-    when {
-        online -> AvatarPresenceIndicator.Online
-        showWhenOffline -> AvatarPresenceIndicator.Offline
-        else -> AvatarPresenceIndicator.None
-    }
+    resolveAvatarPresenceIndicator(online = online, showWhenOffline = showWhenOffline)
 
 /**
  * Resolves the [AvatarPresenceIndicator] for this channel.
@@ -61,11 +57,15 @@ internal fun User.avatarPresenceIndicator(showWhenOffline: Boolean = false): Ava
 internal fun Channel.avatarPresenceIndicator(
     currentUser: User?,
     showWhenOffline: Boolean = false,
-): AvatarPresenceIndicator {
-    val online = members.any { it.user.id != currentUser?.id && it.user.online }
-    return when {
+): AvatarPresenceIndicator =
+    resolveAvatarPresenceIndicator(
+        online = members.any { it.user.id != currentUser?.id && it.user.online },
+        showWhenOffline = showWhenOffline,
+    )
+
+private fun resolveAvatarPresenceIndicator(online: Boolean, showWhenOffline: Boolean): AvatarPresenceIndicator =
+    when {
         online -> AvatarPresenceIndicator.Online
         showWhenOffline -> AvatarPresenceIndicator.Offline
         else -> AvatarPresenceIndicator.None
     }
-}

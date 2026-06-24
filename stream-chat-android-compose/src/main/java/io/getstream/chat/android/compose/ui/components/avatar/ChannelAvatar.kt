@@ -118,11 +118,8 @@ public fun ChannelAvatar(
  */
 @Deprecated(
     message = "Use the overload that takes an AvatarPresenceIndicator. showIndicator showed a grey dot when " +
-        "the channel was offline; pass an explicit indicator to control the online, offline, and hidden states.",
-    replaceWith = ReplaceWith(
-        "ChannelAvatar(channel, currentUser, modifier, " +
-            "channel.avatarPresenceIndicator(currentUser, showWhenOffline = true), showBorder)",
-    ),
+        "the channel was offline; pass an explicit indicator (AvatarPresenceIndicator.Online, Offline, or None) " +
+        "to control the presence states.",
     level = DeprecationLevel.WARNING,
 )
 @Composable
