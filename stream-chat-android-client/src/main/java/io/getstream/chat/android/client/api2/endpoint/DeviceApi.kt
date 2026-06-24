@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.call.RetrofitCall

@@ -50,7 +50,7 @@ import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
@@ -464,9 +464,9 @@ constructor(
     override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
             request = AddDeviceRequest(
-                device.token,
-                device.pushProvider.key,
-                device.providerName,
+                id = device.token,
+                pushProvider = AddDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+                pushProviderName = device.providerName,
             ),
         ).toUnitCall()
     }

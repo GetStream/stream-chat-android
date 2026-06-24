@@ -47,7 +47,7 @@ import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as U
 import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
@@ -514,8 +514,8 @@ internal class MoshiChatApiTest {
         // then
         val expectedRequest = AddDeviceRequest(
             id = device.token,
-            push_provider = device.pushProvider.key,
-            push_provider_name = device.providerName,
+            pushProvider = AddDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+            pushProviderName = device.providerName,
         )
         result `should be instance of` expected
         verify(api, times(1)).addDevices(expectedRequest)
