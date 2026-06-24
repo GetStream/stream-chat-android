@@ -75,7 +75,8 @@ import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -2666,7 +2667,7 @@ internal class MoshiChatApiTest {
         val remindAt = randomDate()
         val result = sut.createReminder(messageId, remindAt).await()
         // then
-        val expectedBody = ReminderRequest(remind_at = remindAt)
+        val expectedBody = CreateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
         verify(api, times(1)).createReminder(messageId, expectedBody)
     }
@@ -2685,7 +2686,7 @@ internal class MoshiChatApiTest {
         val remindAt = randomDate()
         val result = sut.updateReminder(messageId, remindAt).await()
         // then
-        val expectedBody = ReminderRequest(remind_at = remindAt)
+        val expectedBody = UpdateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
         verify(api, times(1)).updateReminder(messageId, expectedBody)
     }

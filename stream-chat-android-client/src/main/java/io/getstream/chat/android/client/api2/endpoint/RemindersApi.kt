@@ -18,7 +18,8 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
@@ -54,7 +55,7 @@ internal interface RemindersApi {
     @POST("/messages/{id}/reminders")
     fun createReminder(
         @Path("id") messageId: String,
-        @Body body: ReminderRequest,
+        @Body body: CreateReminderRequest,
     ): RetrofitCall<ReminderResponse>
 
     /**
@@ -66,7 +67,7 @@ internal interface RemindersApi {
     @PATCH("/messages/{id}/reminders")
     fun updateReminder(
         @Path("id") messageId: String,
-        @Body body: ReminderRequest,
+        @Body body: UpdateReminderRequest,
     ): RetrofitCall<ReminderResponse>
 
     /**

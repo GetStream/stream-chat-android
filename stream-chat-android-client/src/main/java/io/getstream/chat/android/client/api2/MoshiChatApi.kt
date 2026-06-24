@@ -84,7 +84,8 @@ import io.getstream.chat.android.client.api2.model.requests.QueryReactionsReques
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
@@ -1843,14 +1844,14 @@ constructor(
     override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.createReminder(
             messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
+            body = CreateReminderRequest(remindAt = remindAt),
         ).mapDomain { it.reminder.toDomain() }
     }
 
     override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.updateReminder(
             messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
+            body = UpdateReminderRequest(remindAt = remindAt),
         ).mapDomain { it.reminder.toDomain() }
     }
 
