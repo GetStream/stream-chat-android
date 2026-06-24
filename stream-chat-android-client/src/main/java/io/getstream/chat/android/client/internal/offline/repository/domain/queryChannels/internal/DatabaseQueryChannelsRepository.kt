@@ -64,20 +64,21 @@ internal class DatabaseQueryChannelsRepository(
                 filter = spec.filter,
                 querySort = spec.querySort,
                 cids = spec.cids.toList(),
-                groupKey = spec.groupKey,
                 predefinedFilterName = spec.predefinedFilterName,
                 predefinedFilterValues = spec.predefinedFilterValues,
                 predefinedSortValues = spec.predefinedSortValues,
+                groupKey = spec.groupKey,
             )
 
         private fun toModel(entity: QueryChannelsEntity): QueryChannelsSpec =
             QueryChannelsSpec(
                 filter = entity.filter,
                 querySort = entity.querySort,
-                groupKey = entity.groupKey,
+                cids = entity.cids.toSet(),
                 predefinedFilterName = entity.predefinedFilterName,
                 predefinedFilterValues = entity.predefinedFilterValues,
                 predefinedSortValues = entity.predefinedSortValues,
-            ).also { it.cids = entity.cids.toSet() }
+                groupKey = entity.groupKey,
+            )
     }
 }

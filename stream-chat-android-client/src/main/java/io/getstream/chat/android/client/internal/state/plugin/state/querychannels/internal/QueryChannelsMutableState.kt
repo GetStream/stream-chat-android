@@ -268,9 +268,6 @@ internal class QueryChannelsMutableState(
      *
      * No-op for [QueryChannelsIdentifier.Standard] and [QueryChannelsIdentifier.Grouped] queries —
      * their filter/sort are fixed at construction time and must not be replaced.
-     *
-     * The 2-arg [QueryChannelsSpec.copy] preserves variant-specific identity fields (predefined
-     * name/values, groupKey) and `cids` from the previous spec instance.
      */
     fun applyResolvedSpec(filter: FilterObject, sort: QuerySorter<Channel>) {
         if (identifier !is QueryChannelsIdentifier.Predefined) return
@@ -279,9 +276,12 @@ internal class QueryChannelsMutableState(
         _querySpec = _querySpec.copy(filter = filter, querySort = sort)
     }
 
-    /** Updates [QueryChannelsSpec.cids] on the held spec. */
-    internal fun setCids(cids: Set<String>) {
-        _querySpec.cids = cids
+    /**
+     * Replaces the held [_querySpec] with a copy whose [QueryChannelsSpec.cids] are updated to
+     * [cids]. Required because [QueryChannelsSpec] is now fully immutable.
+     */
+    fun setCids(cids: Set<String>) {
+        _querySpec = _querySpec.copy(cids = cids)
     }
 
     fun destroy() {

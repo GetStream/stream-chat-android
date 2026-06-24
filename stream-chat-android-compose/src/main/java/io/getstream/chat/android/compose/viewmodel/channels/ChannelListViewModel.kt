@@ -144,7 +144,7 @@ public class ChannelListViewModel internal constructor(
      * When `null`, the server-side default is used.
      * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
      * @param searchDebounceMs The debounce time for search queries.
-     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
      */
@@ -191,7 +191,7 @@ public class ChannelListViewModel internal constructor(
      * When `null`, the server-side default is used.
      * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
      * @param searchDebounceMs The debounce time for search queries.
-     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
      */
@@ -235,7 +235,7 @@ public class ChannelListViewModel internal constructor(
      * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param groupKey The name of the channels group.
      * @param searchDebounceMs The debounce time for search queries.
-     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
      */
@@ -243,7 +243,7 @@ public class ChannelListViewModel internal constructor(
         chatClient: ChatClient,
         groupKey: String,
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-        isDraftMessageEnabled: Boolean = false,
+        draftMessagesEnabled: Boolean = false,
         messageSearchSort: QuerySorter<Message>? = null,
         globalState: Flow<GlobalState> = chatClient.globalStateFlow,
     ) : this(
@@ -257,7 +257,7 @@ public class ChannelListViewModel internal constructor(
             clientState = chatClient.clientState,
         ),
         searchDebounceMs = searchDebounceMs,
-        draftMessagesEnabled = isDraftMessageEnabled,
+        draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
         globalState = globalState,
     )
@@ -745,11 +745,6 @@ public class ChannelListViewModel internal constructor(
      */
     private suspend fun init() {
         logger.d { "[init] no args" }
-        val activeQuery: Flow<SearchQuery> = when (mode) {
-            is QueryMode.Standard -> combine(_searchQuery, queryConfigFlow, refreshFlow) { query, _, _ -> query }
-            is QueryMode.Predefined -> combine(_searchQuery, refreshFlow) { query, _ -> query }
-            is QueryMode.Grouped -> combine(_searchQuery, refreshFlow) { query, _ -> query }
-        }
         activeQuery.collectLatest { query ->
             logger.i { "[observeInit] query: $query" }
             when (query) {

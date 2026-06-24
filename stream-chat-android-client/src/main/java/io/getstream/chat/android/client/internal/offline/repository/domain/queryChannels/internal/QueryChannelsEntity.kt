@@ -40,8 +40,6 @@ internal data class QueryChannelsEntity(
     /** Resolved sort. For predefined queries this is the latest server-resolved value. */
     val querySort: QuerySorter<Channel>,
     val cids: List<String>,
-    /** Set only for grouped queries; null otherwise. Identity is the stable server-returned groupKey. */
-    val groupKey: String? = null,
     /**
      * Set only for predefined-filter queries; null for standard ones. Together with the value maps
      * below, the predefined name forms the row's stable identity (the resolved filter/sort can
@@ -50,6 +48,8 @@ internal data class QueryChannelsEntity(
     val predefinedFilterName: String? = null,
     val predefinedFilterValues: Map<String, Any>? = null,
     val predefinedSortValues: Map<String, Any>? = null,
+    /** Set only for grouped queries; null otherwise. Identity is the stable server-returned groupKey. */
+    val groupKey: String? = null,
 )
 
 internal const val QUERY_CHANNELS_ENTITY_TABLE_NAME = "stream_channel_query"

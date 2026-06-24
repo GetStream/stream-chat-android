@@ -129,13 +129,13 @@ public class ChannelListViewModelFactory internal constructor(
      *
      * @param groupKey The name of the channels group.
      * @param chatClient The prepared [ChatClient] instance required for fetching the data.
-     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Optional sorting for message search results.
      */
     public constructor(
         groupKey: String,
         chatClient: ChatClient = ChatClient.instance(),
-        isDraftMessageEnabled: Boolean = true,
+        draftMessagesEnabled: Boolean = true,
         messageSearchSort: QuerySorter<Message>? = null,
     ) : this(
         chatClient = chatClient,
@@ -147,7 +147,7 @@ public class ChannelListViewModelFactory internal constructor(
             groupKey = groupKey,
             clientState = chatClient.clientState,
         ),
-        draftMessagesEnabled = isDraftMessageEnabled,
+        draftMessagesEnabled = draftMessagesEnabled,
         messageSearchSort = messageSearchSort,
     )
 

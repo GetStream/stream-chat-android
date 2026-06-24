@@ -562,6 +562,39 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
+    fun `Given channel list in content state and the current user is online When loading more channels Should filter out duplicate calls`() =
+        runTest {
+            val nextPageRequest = QueryChannelsRequest(
+                filter = queryFilter,
+                querySort = querySort,
+                offset = 30,
+                limit = 60,
+            )
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    nextPageRequest = nextPageRequest,
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenIsOffline(false)
+                .get(this)
+
+            viewModel.loadMore()
+            viewModel.loadMore()
+            viewModel.loadMore()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            assertEquals(2, captor.allValues.size)
+            assertEquals(0, captor.firstValue.offset)
+            assertEquals(30, captor.secondValue.offset)
+        }
+
+    @Test
     fun `Given channel list When setting message search query Should search messages without offset or cursor`() =
         runTest {
             val chatClient: ChatClient = mock()
@@ -1362,10 +1395,11 @@ internal class ChannelListViewModelTest {
                 groupKey != null -> ChannelListViewModel(
                     chatClient = chatClient,
                     groupKey = groupKey,
-                    isDraftMessageEnabled = false,
+                    draftMessagesEnabled = false,
                     messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                 )
+
                 name != null -> ChannelListViewModel(
                     chatClient = chatClient,
                     predefinedFilterName = name,
@@ -1376,6 +1410,7 @@ internal class ChannelListViewModelTest {
                     messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
                 )
+
                 else -> ChannelListViewModel(
                     chatClient = chatClient,
                     initialSort = initialSort,
