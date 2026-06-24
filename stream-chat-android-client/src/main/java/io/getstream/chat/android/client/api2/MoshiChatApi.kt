@@ -61,10 +61,10 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
+import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
+import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
@@ -1128,7 +1128,7 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            request = MarkReadRequest(message_id = messageId),
+            request = MarkReadRequest(messageId = messageId),
         ).toUnitCall()
     }
 
@@ -1141,7 +1141,7 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            request = MarkReadRequest(thread_id = threadId),
+            request = MarkReadRequest(threadId = threadId),
         ).toUnitCall()
     }
 

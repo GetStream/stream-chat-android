@@ -57,9 +57,9 @@ import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
+import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
+import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
@@ -1443,7 +1443,7 @@ internal class MoshiChatApiTest {
         val messageId = randomString()
         val result = sut.markRead(channelType, channelId, messageId).await()
         // then
-        val expectedRequest = MarkReadRequest(message_id = messageId)
+        val expectedRequest = MarkReadRequest(messageId = messageId)
         result `should be instance of` expected
         verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
     }
@@ -1488,7 +1488,7 @@ internal class MoshiChatApiTest {
         val threadId = randomString()
         val result = sut.markThreadRead(channelType, channelId, threadId).await()
         // then
-        val expectedRequest = MarkReadRequest(thread_id = threadId)
+        val expectedRequest = MarkReadRequest(threadId = threadId)
         result `should be instance of` expected
         verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
     }
