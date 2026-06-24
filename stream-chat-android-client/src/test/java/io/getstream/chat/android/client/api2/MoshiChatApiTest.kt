@@ -63,7 +63,7 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
@@ -352,7 +352,7 @@ internal class MoshiChatApiTest {
         val expectedRequest = PartialUpdateMessageRequest(
             set = set,
             unset = unset,
-            skip_enrich_url = skipEnrichUrl,
+            skipEnrichUrl = skipEnrichUrl,
         )
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateMessage(messageId, expectedRequest)
