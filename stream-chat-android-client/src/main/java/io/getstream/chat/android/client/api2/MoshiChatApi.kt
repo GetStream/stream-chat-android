@@ -94,9 +94,8 @@ import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
@@ -995,7 +994,7 @@ constructor(
         return channelApi.updateCooldown(
             channelType = channelType,
             channelId = channelId,
-            body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
+            body = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds)),
         ).map(this::flattenChannel)
     }
 
@@ -1057,7 +1056,7 @@ constructor(
         return channelApi.updateChannelPartial(
             channelType = channelType,
             channelId = channelId,
-            body = UpdateChannelPartialRequest(set, unset),
+            body = UpdateChannelPartialRequest(set = set, unset = unset),
         ).map(this::flattenChannel)
     }
 
