@@ -79,7 +79,7 @@ import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
+import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
@@ -1751,7 +1751,7 @@ internal class MoshiChatApiTest {
         val targetId = randomString()
         val result = sut.unblockUser(targetId).await()
         // then
-        val expectedBody = UnblockUserRequest(targetId)
+        val expectedBody = UnblockUserRequest(blockedUserId = targetId)
         result `should be instance of` expected
         verify(api, times(1)).unblockUser(expectedBody)
     }

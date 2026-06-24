@@ -92,7 +92,7 @@ import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
+import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
@@ -1357,7 +1357,7 @@ constructor(
         }
 
     override fun unblockUser(userId: String): Call<Unit> {
-        return userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
+        return userApi.unblockUser(body = UnblockUserRequest(blockedUserId = userId)).toUnitCall()
     }
 
     override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
