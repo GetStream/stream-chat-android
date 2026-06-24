@@ -63,7 +63,8 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
@@ -1134,7 +1135,9 @@ constructor(
 
     override fun markDelivered(messages: List<Message>): Call<Unit> =
         channelApi.markDelivered(
-            request = MarkDeliveredRequest.create(messages),
+            request = MarkDeliveredRequest(
+                latestDeliveredMessages = messages.map { DeliveredMessagePayload(cid = it.cid, id = it.id) },
+            ),
         ).toUnitCall()
 
     override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {

@@ -53,12 +53,12 @@ import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
@@ -1462,8 +1462,8 @@ internal class MoshiChatApiTest {
         val result = sut.markDelivered(messages).await()
         // then
         val expectedRequest = MarkDeliveredRequest(
-            latest_delivered_messages = messages.map { messageInfo ->
-                DeliveredMessageDto(
+            latestDeliveredMessages = messages.map { messageInfo ->
+                DeliveredMessagePayload(
                     cid = messageInfo.cid,
                     id = messageInfo.id,
                 )
