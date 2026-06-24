@@ -81,7 +81,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRe
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
+import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -376,13 +376,6 @@ constructor(
         }
     }
 
-    private fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
-        toDto().map {
-            SortParamRequest(
-                field = it[QuerySorter.KEY_FIELD_NAME] as? String,
-                direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
-            )
-        }
 
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
@@ -437,7 +430,7 @@ constructor(
             filter = filter?.toMap(),
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return messageApi.queryReactions(messageId, body).mapDomain {
             QueryReactionsResult(
@@ -1957,3 +1950,11 @@ constructor(
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
 }
+
+internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
+    toDto().map {
+        SortParamRequest(
+            field = it[QuerySorter.KEY_FIELD_NAME] as? String,
+            direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
+        )
+    }

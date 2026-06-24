@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
+import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
