@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.HasGroupedUnreadChannels
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
@@ -102,6 +103,7 @@ import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.client.extensions.internal.updateParentOrReply
 import io.getstream.chat.android.client.extensions.internal.updateReads
+import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.realType
@@ -164,6 +166,10 @@ internal class EventHandlerSequential(
     private val syncedEvents: Flow<List<ChatEvent>>,
     private val bufferConfig: MessageBufferConfig,
     scope: CoroutineScope,
+    private val groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
+        stateRegistry = stateRegistry,
+        currentUserId = currentUserId,
+    ),
 ) : EventHandler {
 
     private val logger by taggedLogger(TAG)
@@ -306,7 +312,14 @@ internal class EventHandlerSequential(
         logger.v { "[handleChatEvents] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
         queryChannelsLogic.parseChatEventResults(batchEvent.sortedEvents).forEach { result ->
             when (result) {
-                is EventHandlingResult.Add -> queryChannelsLogic.addChannel(result.channel)
+                is EventHandlingResult.Add -> {
+                    // Use trackChannel instead of addChannel to avoid overwriting the shared
+                    // per-channel state with a potentially stale DB-cached channel.
+                    // Channel events have already updated per-channel state (e.g., lastMessageAt)
+                    // before this method runs, and refreshChannelsState below will reconcile
+                    // the query map with the live per-channel data.
+                    queryChannelsLogic.trackChannel(result.channel)
+                }
                 is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(result.cid)
                 is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(result.cid)
                 is EventHandlingResult.Skip -> Unit
@@ -370,6 +383,7 @@ internal class EventHandlerSequential(
         var me = clientState.user.value
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
+        var groupedUnreadChannels = mutableGlobalState.groupedUnreadChannels.value
         var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
         var blockedUserIds = mutableGlobalState.blockedUserIds.value
 
@@ -417,22 +431,38 @@ internal class EventHandlerSequential(
             }
         }
 
-        batchEvent
-            .takeUnless { it.isFromHistorySync }
-            ?.sortedEvents
-            ?.forEach { event: ChatEvent ->
-                (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
-                (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
-                (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
-                (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
-                (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
-                (event as? UserUpdatedEvent)
-                    ?.takeIf { it.user.id == currentUserId }
-                    ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
-                (event as? NewMessageEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
-                (event as? MessageUpdatedEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
-                (event as? HasChannel)?.channel?.activeLiveLocations?.let(mutableGlobalState::addLiveLocations)
+        val sortedEvents = batchEvent.takeUnless { it.isFromHistorySync }?.sortedEvents.orEmpty()
+
+        sortedEvents.forEach { event: ChatEvent ->
+            (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
+            (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
+            (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
+            (event as? HasGroupedUnreadChannels)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
             }
+            (event as? NotificationRemovedFromChannelEvent)
+                ?.takeIf { it.member.getUserId() == currentUserId }
+                ?.let { groupedUnreadChannelsUpdater.notifyChannelRemoved(batchEvent.id, it.cid) }
+            (event as? ChannelDeletedEvent)
+                ?.let { groupedUnreadChannelsUpdater.notifyChannelRemoved(batchEvent.id, it.cid) }
+            (event as? ChannelUpdatedEvent)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+            }
+            (event as? ChannelUpdatedByUserEvent)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+            }
+            (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
+            (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
+            (event as? UserUpdatedEvent)
+                ?.takeIf { it.user.id == currentUserId }
+                ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
+            (event as? NewMessageEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+            (event as? MessageUpdatedEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+            (event as? HasChannel)?.channel?.activeLiveLocations?.let(mutableGlobalState::addLiveLocations)
+        }
 
         me?.let {
             mutableGlobalState.setBanned(it.isBanned)
@@ -441,6 +471,7 @@ internal class EventHandlerSequential(
         }
         mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
         mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
+        mutableGlobalState.setGroupedUnreadChannels(groupedUnreadChannels)
         mutableGlobalState.setUnreadThreadsCount(unreadThreadsCount)
         mutableGlobalState.setBlockedUserIds(blockedUserIds)
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }

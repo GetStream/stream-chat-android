@@ -31,11 +31,14 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.client.internal.state.extensions.internal.logic
 import io.getstream.chat.android.client.internal.state.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.client.internal.state.extensions.internal.requestsAsState
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.chat.android.client.utils.message.isEphemeral
@@ -60,10 +63,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -141,6 +147,37 @@ public fun ChatClient.queryChannelsAsState(
 }
 
 /**
+ * Creates a [QueryChannelsState] for the given grouped [identifier] without triggering a remote
+ * queryChannels API call. Channels cached under the identifier's DB key are loaded optimistically
+ * so the UI can render immediately while the next `queryGroupedChannels` response populates the
+ * state via the listener.
+ *
+ * Only [QueryChannelsIdentifier.Grouped] is accepted — the standard offset-paginated path is
+ * served by [queryChannelsAsState] instead.
+ *
+ * @param identifier The grouped query's identifier whose state should be initialized.
+ * @param chatEventHandlerFactory The factory used to create the [ChatEventHandler] that routes
+ * events into this grouped list. Defaults to a group-aware factory keyed on [identifier].
+ * @param coroutineScope The [CoroutineScope] used for executing the request.
+ *
+ * @return A StateFlow that emits null until the user is connected, then emits the
+ * [QueryChannelsState] for the identifier.
+ */
+@InternalStreamChatApi
+@JvmOverloads
+public fun ChatClient.initGroupedQueryChannelsAsState(
+    identifier: QueryChannelsIdentifier.Grouped,
+    chatEventHandlerFactory: ChatEventHandlerFactory =
+        groupAwareChatEventHandlerFactory(groupKey = identifier.groupKey, clientState = clientState),
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<QueryChannelsState?> {
+    StreamLog.d(TAG) { "[initGroupedQueryChannelsAsState] identifier: $identifier" }
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).initGroupedQueryChannelsState(identifier, chatEventHandlerFactory)
+    }
+}
+
+/**
  * Performs [ChatClient.queryChannel] with watch = true under the hood and returns [ChannelState] associated with the
  * query.
  * The [ChannelState] cannot be created before connecting the user therefore, the method returns a StateFlow
@@ -160,9 +197,18 @@ public fun ChatClient.watchChannelAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<ChannelState?> {
     StreamLog.i(TAG) { "[watchChannelAsState] cid: $cid, messageLimit: $messageLimit" }
-    return getStateOrNull(coroutineScope) {
+    val flow = getStateOrNull(coroutineScope) {
         requestsAsState(coroutineScope).watchChannel(cid, messageLimit, chatClientConfig.userPresence)
     }
+    val watchedFlow = WatchedChannelStateFlow(flow, cid)
+    val watchedFlowRef = WeakReference(watchedFlow)
+    coroutineScope.launch {
+        runCatching {
+            clientState.initializationState.first { it == InitializationState.COMPLETE }
+            watchedFlowRef.get()?.let(state::trackWatchedChannel)
+        }
+    }
+    return watchedFlow
 }
 
 /**

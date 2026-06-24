@@ -30,7 +30,10 @@ import io.getstream.chat.android.client.api.state.ChannelsStateData
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.client.api.state.initGroupedQueryChannelsAsState
 import io.getstream.chat.android.client.api.state.queryChannelsAsState
+import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.groupAwareChatEventHandlerFactory
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.ChannelListAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelListEvent
@@ -82,10 +85,9 @@ import kotlinx.coroutines.plus
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
- * A state store that represents all the information required to query, filter, show and react to
- * [Channel] items in a list.
+ * ViewModel managing the state of a given Channel List.
  *
- * @param chatClient Used to connect to the API.
+ * @param chatClient The prepared [ChatClient] instance required for fetching the data.
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
@@ -98,7 +100,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param globalState A flow emitting the current [GlobalState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-@Suppress("TooManyFunctions", "LongParameterList")
+@Suppress("TooManyFunctions", "LongParameterList", "LargeClass")
 public class ChannelListViewModel internal constructor(
     public val chatClient: ChatClient,
     private val mode: QueryMode,
@@ -112,12 +114,39 @@ public class ChannelListViewModel internal constructor(
     private val globalState: Flow<GlobalState>,
 ) : ViewModel() {
 
+    /** Internal discriminator for the query modes supported by this ViewModel. */
+    internal sealed interface QueryMode {
+        data class Standard(
+            val initialFilter: FilterObject?,
+            val initialSort: QuerySorter<Channel>,
+        ) : QueryMode
+
+        data class Predefined(
+            val name: String,
+            val filterValues: Map<String, Any>?,
+            val sortValues: Map<String, Any>?,
+        ) : QueryMode
+
+        data class Grouped(val groupKey: String) : QueryMode
+    }
+
     /**
      * Creates a view model that queries channels by an explicit filter and sort.
      *
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param initialSort The initial sort used for [Channel]s. Can be changed at runtime via [setQuerySort].
-     * @param initialFilters The data filter. Can be changed at runtime via [setFilters]. When `null`,
-     * a default filter scoped to messaging channels the current user is a member of is used.
+     * @param initialFilters The data filter. When `null`, a default filter scoped to "messaging" channels the current
+     * user is a member of is used. Can be changed at runtime via [setFilters].
+     * @param channelLimit How many channels we fetch per page.
+     * @param memberLimit How many members are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param messageLimit How many messages are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+     * @param searchDebounceMs The debounce time for search queries.
+     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
+     * @param globalState A flow emitting the current [GlobalState].
      */
     public constructor(
         chatClient: ChatClient,
@@ -149,12 +178,22 @@ public class ChannelListViewModel internal constructor(
      *
      * The filter and sort are identified by [predefinedFilterName] and resolved server-side;
      * [filterValues] and [sortValues] interpolate into the predefined template. [setFilters] and
-     * [setQuerySort] do not affect a view model created this way. Channel search still narrows the
-     * displayed list to the search predicate.
+     * [setQuerySort] do not affect a view model created this way.
      *
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param predefinedFilterName The name of the predefined filter registered on the backend.
      * @param filterValues Optional values interpolated into the predefined filter template.
      * @param sortValues Optional values interpolated into the predefined sort template.
+     * @param channelLimit How many channels we fetch per page.
+     * @param memberLimit How many members are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param messageLimit How many messages are fetched for each channel item when loading channels.
+     * When `null`, the server-side default is used.
+     * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
+     * @param searchDebounceMs The debounce time for search queries.
+     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
+     * @param globalState A flow emitting the current [GlobalState].
      */
     public constructor(
         chatClient: ChatClient,
@@ -186,6 +225,43 @@ public class ChannelListViewModel internal constructor(
         globalState = globalState,
     )
 
+    /**
+     * Grouped channel list constructor. Subscribes to the state identified by [groupKey] without
+     * issuing a remote call; the state is populated externally by `queryGroupedChannels` responses.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+     *
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
+     * @param groupKey The name of the channels group.
+     * @param searchDebounceMs The debounce time for search queries.
+     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
+     * @param globalState A flow emitting the current [GlobalState].
+     */
+    public constructor(
+        chatClient: ChatClient,
+        groupKey: String,
+        searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+        isDraftMessageEnabled: Boolean = false,
+        messageSearchSort: QuerySorter<Message>? = null,
+        globalState: Flow<GlobalState> = chatClient.globalStateFlow,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Grouped(groupKey),
+        channelLimit = DEFAULT_CHANNEL_LIMIT,
+        memberLimit = null,
+        messageLimit = null,
+        chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
+        searchDebounceMs = searchDebounceMs,
+        draftMessagesEnabled = isDraftMessageEnabled,
+        messageSearchSort = messageSearchSort,
+        globalState = globalState,
+    )
+
     private val logger by taggedLogger("Chat:ChannelListVM")
 
     /**
@@ -209,24 +285,26 @@ public class ChannelListViewModel internal constructor(
     private val queryChannelDebouncer = Debouncer(searchDebounceMs, chListScope)
 
     /**
-     * State flow that keeps the value of the current [FilterObject] for channels. Only meaningful in
-     * [QueryMode.Standard]; remains `null` in [QueryMode.Predefined] (the server owns the filter).
+     * Keeps track of the current filter. Only relevant for [QueryMode.Standard], the other modes follow a server-side
+     * filtering spec.
      */
     private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(
         when (mode) {
             is QueryMode.Standard -> mode.initialFilter
             is QueryMode.Predefined -> null
+            is QueryMode.Grouped -> null
         },
     )
 
     /**
-     * State flow that keeps the value of the current [QuerySorter] for channels. Only meaningful in
-     * [QueryMode.Standard]; in [QueryMode.Predefined] it carries an inert default (the server owns the sort).
+     * Keeps track of the current sort spec. Only relevant for [QueryMode.Standard], the other modes follow a
+     * server-side sorting spec.
      */
     private val querySortFlow: MutableStateFlow<QuerySorter<Channel>> = MutableStateFlow(
         when (mode) {
             is QueryMode.Standard -> mode.initialSort
             is QueryMode.Predefined -> QuerySortByField()
+            is QueryMode.Grouped -> QuerySortByField.descByName("last_updated")
         },
     )
 
@@ -327,7 +405,25 @@ public class ChannelListViewModel internal constructor(
      */
     private val searchMessageState: MutableStateFlow<SearchMessageState?> = MutableStateFlow(null)
 
+    /**
+     * Tracks the most recent next-page request issued by [loadMoreQueryChannels] so we can dedupe
+     * repeated load-more clicks against an identical paginated request.
+     */
     private var lastNextQuery: QueryChannelsRequest? = null
+
+    /**
+     * Emits the effective query input to react to. Standard mode reacts to filter/sort changes
+     * (via [queryConfigFlow]) in addition to search and refresh; Predefined and Grouped modes
+     * have server-owned filter/sort, so they only react to search and refresh.
+     */
+    private val activeQuery: Flow<SearchQuery> = when (mode) {
+        is QueryMode.Standard ->
+            combine(_searchQuery, queryConfigFlow, refreshFlow) { query, _, _ -> query }
+        is QueryMode.Predefined ->
+            combine(_searchQuery, refreshFlow) { query, _ -> query }
+        is QueryMode.Grouped ->
+            combine(_searchQuery, refreshFlow) { query, _ -> query }
+    }
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
@@ -379,15 +475,23 @@ public class ChannelListViewModel internal constructor(
      * Use this if you need to support runtime filter changes, through custom filters UI. The applied
      * filter overrides the `initialFilters` set through the constructor.
      *
-     * Has no effect on view models constructed for a predefined-filter query — the predefined identity
-     * is fixed at construction. A warning is logged in that case.
+     * Warning: The filter that's applied will override the `initialFilters` set through the constructor.
+     * Has no effect on view models constructed for a predefined-filter query (predefined identity is
+     * fixed at construction) or for a grouped query (the group's filter is server-owned).
      *
      * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
-        if (mode is QueryMode.Predefined) {
-            logger.w { "[setFilters] ignored — view model uses predefined filter '${mode.name}'" }
-            return
+        when (mode) {
+            is QueryMode.Predefined -> {
+                logger.w { "[setFilters] ignored — view model uses predefined filter '${mode.name}'" }
+                return
+            }
+            is QueryMode.Grouped -> {
+                logger.w { "[setFilters] no-op in Grouped mode (groupKey: ${mode.groupKey})" }
+                return
+            }
+            is QueryMode.Standard -> Unit
         }
         this.filterFlow.tryEmit(value = newFilters)
     }
@@ -397,13 +501,20 @@ public class ChannelListViewModel internal constructor(
      *
      * Use this if you need to support runtime sort changes, through custom sort UI.
      *
-     * Has no effect on view models constructed for a predefined-filter query — the sort is resolved by
-     * the server. A warning is logged in that case.
+     * Has no effect on view models constructed for a predefined-filter query (sort is resolved by
+     * the server) or for a grouped query (the group's sort is fixed).
      */
     public fun setQuerySort(querySort: QuerySorter<Channel>) {
-        if (mode is QueryMode.Predefined) {
-            logger.w { "[setQuerySort] ignored — view model uses predefined filter '${mode.name}'" }
-            return
+        when (mode) {
+            is QueryMode.Predefined -> {
+                logger.w { "[setQuerySort] ignored — view model uses predefined filter '${mode.name}'" }
+                return
+            }
+            is QueryMode.Grouped -> {
+                logger.w { "[setQuerySort] no-op in Grouped mode (groupKey: ${mode.groupKey})" }
+                return
+            }
+            is QueryMode.Standard -> Unit
         }
         this.querySortFlow.tryEmit(value = querySort)
     }
@@ -637,6 +748,7 @@ public class ChannelListViewModel internal constructor(
         val activeQuery: Flow<SearchQuery> = when (mode) {
             is QueryMode.Standard -> combine(_searchQuery, queryConfigFlow, refreshFlow) { query, _, _ -> query }
             is QueryMode.Predefined -> combine(_searchQuery, refreshFlow) { query, _ -> query }
+            is QueryMode.Grouped -> combine(_searchQuery, refreshFlow) { query, _ -> query }
         }
         activeQuery.collectLatest { query ->
             logger.i { "[observeInit] query: $query" }
@@ -645,7 +757,22 @@ public class ChannelListViewModel internal constructor(
                 is SearchQuery.Channels,
                 -> {
                     searchScope.coroutineContext.cancelChildren()
-                    observeQueryChannels(query.query)
+                    when (mode) {
+                        is QueryMode.Standard,
+                        is QueryMode.Predefined,
+                        -> {
+                            // Standard QueryChannels
+                            observeQueryChannels(query.query)
+                        }
+                        is QueryMode.Grouped ->
+                            if (query.query.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
+                                // Standard QueryChannels (with purpose of searching channels)
+                                observeQueryChannels(query.query)
+                            } else {
+                                // GroupedQueryChannels -> just observe underlying state
+                                observeGroupedChannels(mode.groupKey)
+                            }
+                    }
                 }
                 is SearchQuery.Messages -> {
                     chListScope.coroutineContext.cancelChildren()
@@ -776,19 +903,43 @@ public class ChannelListViewModel internal constructor(
         }
     }
 
-    @Suppress("LongMethod")
-    private fun observeQueryChannels(searchQuery: String) = runCatching {
-        queryChannelDebouncer.submitSuspendable {
-            val queryChannelsRequest = buildQueryChannelsRequest(searchQuery) ?: run {
-                logger.v { "[observeQueryChannels] rejected (filter not yet initialized)" }
-                return@submitSuspendable
-            }
-            logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
-            queryChannelsState = chatClient.queryChannelsAsState(
-                request = queryChannelsRequest,
+    /**
+     * Creates a [QueryChannelsState] by issuing a remote queryChannels request built from the
+     * given [searchQuery] (via [buildQueryChannelsRequest]) and starts collecting from it.
+     */
+    private fun observeQueryChannels(searchQuery: String) =
+        observeQueryChannelsInternal(tag = "observeQueryChannels") {
+            val request = buildQueryChannelsRequest(searchQuery) ?: return@observeQueryChannelsInternal null
+            chatClient.queryChannelsAsState(
+                request = request,
                 chatEventHandlerFactory = chatEventHandlerFactory,
                 coroutineScope = chListScope,
             )
+        }
+
+    /**
+     * Subscribes to the identifier-keyed [QueryChannelsState] for the Grouped variant identified
+     * by [groupKey], without triggering a remote API call. State is populated externally by
+     * `queryGroupedChannels` responses routed through the listener.
+     */
+    private fun observeGroupedChannels(groupKey: String) =
+        observeQueryChannelsInternal(tag = "observeGroupedChannels") {
+            chatClient.initGroupedQueryChannelsAsState(
+                identifier = QueryChannelsIdentifier.Grouped(groupKey),
+                chatEventHandlerFactory = chatEventHandlerFactory,
+                coroutineScope = chListScope,
+            )
+        }
+
+    /**
+     * Shared implementation for observing a [QueryChannelsState] from a [createState] producer.
+     */
+    private fun observeQueryChannelsInternal(
+        tag: String,
+        createState: () -> StateFlow<QueryChannelsState?>?,
+    ) = runCatching {
+        queryChannelDebouncer.submitSuspendable {
+            queryChannelsState = createState() ?: return@submitSuspendable
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
                 combine(
                     queryChannelsState.channelsStateData,
@@ -815,7 +966,7 @@ public class ChannelListViewModel internal constructor(
                         }
 
                         is ChannelsStateData.Result -> {
-                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
+                            logger.v { "[$tag] state: Result(channels.size: ${state.channels.size})" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = createChannelItems(
@@ -836,8 +987,8 @@ public class ChannelListViewModel internal constructor(
         }
     }.onFailure {
         when (it is CancellationException) {
-            true -> logger.v { "[observeQueryChannels] cancelled" }
-            else -> logger.e { "[observeQueryChannels] failed: $it" }
+            true -> logger.v { "[$tag] cancelled" }
+            else -> logger.e { "[$tag] failed: $it" }
         }
     }
 
@@ -877,6 +1028,13 @@ public class ChannelListViewModel internal constructor(
                 memberLimit = memberLimit,
             )
         }
+        // When in Grouped mode, this is reached only when search is active
+        is QueryMode.Grouped -> QueryChannelsRequest(
+            filter = optimizedChannelSearchFilter(searchQuery),
+            limit = channelLimit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        )
     }
 
     /**
@@ -910,6 +1068,15 @@ public class ChannelListViewModel internal constructor(
 
     private suspend fun loadMoreQueryChannels() {
         logger.d { "[loadMoreQueryChannels] no args" }
+
+        // Grouped + no active channel search uses cursor pagination via queryGroupedChannels.
+        if (mode is QueryMode.Grouped &&
+            _searchQuery.value.query.length < MIN_CHANNEL_SEARCH_QUERY_LENGTH
+        ) {
+            loadMoreGroupedChannels(mode.groupKey)
+            return
+        }
+
         val currentQuery = queryChannelsState.value?.nextPageRequest?.value
         if (currentQuery == null) {
             logger.v { "[loadMoreQueryChannels] rejected (no current query)" }
@@ -935,6 +1102,7 @@ public class ChannelListViewModel internal constructor(
                 )
             }
             is QueryMode.Predefined -> currentQuery
+            is QueryMode.Grouped -> currentQuery
         }
         if (lastNextQuery == nextQuery) {
             logger.v { "[loadMoreQueryChannels] rejected (same query)" }
@@ -954,6 +1122,47 @@ public class ChannelListViewModel internal constructor(
             lastNextQuery = null
             channelsState = channelsState.copy(isLoadingMore = false, loadingError = true)
         }
+    }
+
+    private suspend fun loadMoreGroupedChannels(groupKey: String) {
+        logger.d { "[loadMoreGroupedChannels] groupKey: $groupKey" }
+        val state = queryChannelsState.value
+        if (state == null) {
+            logger.v { "[loadMoreGroupedChannels] rejected (no current state)" }
+            return
+        }
+        val cursor = state.nextCursor.value
+        if (cursor == null) {
+            logger.v { "[loadMoreGroupedChannels] rejected (no next cursor)" }
+            return
+        }
+        if (channelsState.endOfChannels) {
+            logger.v { "[loadMoreGroupedChannels] rejected (end of channels)" }
+            return
+        }
+        if (channelsState.isLoadingMore) {
+            logger.v { "[loadMoreGroupedChannels] rejected (already loading more)" }
+            return
+        }
+        val config = state.groupedQueryConfig.value
+        channelsState = channelsState.copy(isLoadingMore = true)
+        val result = chatClient.queryGroupedChannelsInternal(
+            limit = config?.limit,
+            groups = mapOf(
+                groupKey to io.getstream.chat.android.models.GroupedChannelsGroupQuery(
+                    limit = config?.pageSize,
+                    next = cursor,
+                ),
+            ),
+            watch = config?.watch ?: true,
+            presence = config?.presence ?: false,
+        ).await()
+        if (result.isSuccess) {
+            logger.v { "[loadMoreGroupedChannels] completed (listener applied)" }
+        } else {
+            logger.e { "[loadMoreGroupedChannels] failed: ${result.errorOrNull()}" }
+        }
+        channelsState = channelsState.copy(isLoadingMore = false)
     }
 
     /**
@@ -1010,17 +1219,19 @@ public class ChannelListViewModel internal constructor(
         )
     }
 
-    private fun optimizedChannelSearchFilter(text: String) =
+    private fun optimizedChannelSearchFilter(text: String): FilterObject =
         Filters.and(
             Filters.autocomplete("name", text),
             Filters.`in`("members", user.value?.id.orEmpty()),
         )
 
-    private fun messageSearchChannelFilter() = when (mode) {
+    private fun messageSearchChannelFilter(): FilterObject? = when (mode) {
         // Standard mode: Use the initial filters (backwards compatible)
         is QueryMode.Standard -> filterFlow.value ?: Filters.defaultChannelListFilter(user.value)
-        // Predefined mode: Use simple membership filter (aligned with other platforms)
-        is QueryMode.Predefined -> when (val userId = user.value?.id) {
+        // Predefined and Grouped modes: Use simple membership filter (aligned with other platforms);
+        is QueryMode.Predefined,
+        is QueryMode.Grouped,
+        -> when (val userId = user.value?.id) {
             null -> null
             else -> Filters.`in`("members", listOf(userId))
         }
@@ -1041,19 +1252,6 @@ public class ChannelListViewModel internal constructor(
          * Minimum length of the search query to start searching for channels.
          */
         private const val MIN_CHANNEL_SEARCH_QUERY_LENGTH = 3
-    }
-
-    internal sealed interface QueryMode {
-        data class Standard(
-            val initialFilter: FilterObject?,
-            val initialSort: QuerySorter<Channel>,
-        ) : QueryMode
-
-        data class Predefined(
-            val name: String,
-            val filterValues: Map<String, Any>?,
-            val sortValues: Map<String, Any>?,
-        ) : QueryMode
     }
 
     private data class SearchMessageState(

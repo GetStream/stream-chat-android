@@ -40,6 +40,14 @@ public interface GlobalState {
     public val channelUnreadCount: StateFlow<Int>
 
     /**
+     * Per-group unread channel counts for the current user.
+     * The map keys are group identifiers provided by the backend (e.g. "direct", "support")
+     * and values are unread channel counts.
+     * Empty map when no grouped counts are available.
+     */
+    public val groupedUnreadChannels: StateFlow<Map<String, Int>>
+
+    /**
      * The number of unread threads for the current user.
      */
     public val unreadThreadsCount: StateFlow<Int>

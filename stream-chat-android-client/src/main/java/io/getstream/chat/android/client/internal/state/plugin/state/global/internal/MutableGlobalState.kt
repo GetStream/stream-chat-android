@@ -39,6 +39,7 @@ internal class MutableGlobalState(
 
     private var _totalUnreadCount: MutableStateFlow<Int>? = MutableStateFlow(0)
     private var _channelUnreadCount: MutableStateFlow<Int>? = MutableStateFlow(0)
+    private var _groupedUnreadChannels: MutableStateFlow<Map<String, Int>>? = MutableStateFlow(emptyMap())
     private var _unreadThreadsCount: MutableStateFlow<Int>? = MutableStateFlow(0)
     private var _banned: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _mutedUsers: MutableStateFlow<List<Mute>>? = MutableStateFlow(emptyList())
@@ -51,6 +52,7 @@ internal class MutableGlobalState(
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
+    override val groupedUnreadChannels: StateFlow<Map<String, Int>> = _groupedUnreadChannels!!
     override val unreadThreadsCount: StateFlow<Int> = _unreadThreadsCount!!
     override val muted: StateFlow<List<Mute>> = _mutedUsers!!
     override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes!!
@@ -70,6 +72,7 @@ internal class MutableGlobalState(
     fun destroy() {
         _totalUnreadCount = null
         _channelUnreadCount = null
+        _groupedUnreadChannels = null
         _unreadThreadsCount = null
         _mutedUsers = null
         _channelMutes = null
@@ -87,6 +90,10 @@ internal class MutableGlobalState(
 
     fun setChannelUnreadCount(channelUnreadCount: Int) {
         _channelUnreadCount?.value = channelUnreadCount
+    }
+
+    fun setGroupedUnreadChannels(groupedUnreadChannels: Map<String, Int>) {
+        _groupedUnreadChannels?.value = groupedUnreadChannels
     }
 
     fun setUnreadThreadsCount(unreadThreadsCount: Int) {

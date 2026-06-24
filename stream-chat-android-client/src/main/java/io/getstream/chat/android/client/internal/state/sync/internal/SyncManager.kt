@@ -48,6 +48,7 @@ import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -86,7 +87,7 @@ private const val SYNC_MAX_CIDS = 100
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
  * when connection is reestablished or when a health check event happens.
  */
-@Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught")
+@Suppress("LongParameterList", "TooManyFunctions", "TooGenericExceptionCaught", "LargeClass")
 internal class SyncManager(
     private val currentUserId: String,
     private val chatClient: ChatClient,
@@ -409,21 +410,118 @@ internal class SyncManager(
     private suspend fun restoreActiveChannels() {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
-        when (val result = updateActiveQueryChannels(recoverAll)) {
-            is Result.Success -> {
-                val updatedCids = result.value
-                logger.v { "[restoreActiveChannels] updatedCids.size: ${updatedCids.size}" }
-                updateActiveChannels(
-                    recoverAll,
-                    updatedCids,
-                )
-            }
 
-            is Result.Failure -> {
-                logger.e { "[restoreActiveChannels] failed: ${result.value}" }
-                return
+        val allLogics = logicRegistry.getActiveQueryChannelsLogic()
+        val hasGroupedQueries = allLogics.any { it.groupKey() != null }
+        val hasStandardQueries = allLogics.any { it.groupKey() == null }
+
+        // --- GroupedQueryChannels path ---
+        val groupedHandledCids: Set<String> = if (hasGroupedQueries) {
+            // Refresh first page of the queries populated via GroupedQueryChannels
+            val refreshed = updateGroupedQueryChannels(recoverAll)
+            // Re-watch tracked channels (specific for this path, where we don't re-watch the groups, just the manually
+            // opened/tracked channels)
+            val rewatched = rewatchTrackedWatchedChannels()
+            refreshed + rewatched
+        } else {
+            emptySet()
+        }
+
+        // --- QueryChannels path ---
+        if (hasStandardQueries) {
+            when (val result = updateActiveQueryChannels(recoverAll)) {
+                is Result.Success -> {
+                    val updatedCids = result.value
+                    logger.v { "[restoreActiveChannels] standardCids.size: ${result.value.size}" }
+                    updateActiveChannels(recoverAll, updatedCids + groupedHandledCids)
+                }
+                is Result.Failure -> {
+                    logger.e { "[restoreActiveChannels] standard query failed: ${result.value}" }
+                    return
+                }
             }
         }
+
+        // --- Active Channels created outside of QueryChannels requests
+        if (!hasStandardQueries && !hasGroupedQueries) {
+            // Check for active channels created outside of a QueryChannels requests
+            updateActiveChannels(recoverAll, cidsToExclude = emptySet())
+        }
+    }
+
+    /**
+     * Drives the recovery flow for grouped channel queries: when at least one active grouped
+     * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once. The
+     * [io.getstream.chat.android.client.internal.state.plugin.listener.internal.QueryGroupedChannelsListenerState]
+     * routes the response into the corresponding per-group state and persists it.
+     *
+     * Assumes all active grouped queries share the same request-level `limit`, `watch`, and
+     * `presence` flags — the first captured config wins.
+     */
+    private suspend fun updateGroupedQueryChannels(recoverAll: Boolean): Set<String> {
+        val activeGroupedLogics = logicRegistry.getActiveQueryChannelsLogic()
+            .filter { it.groupKey() != null && (it.recoveryNeeded().value || recoverAll) }
+
+        if (activeGroupedLogics.isEmpty()) {
+            logger.v { "[updateGroupedQueryChannels] no grouped queries to restore" }
+            return emptySet()
+        }
+
+        // Shared fields (limit, watch, presence) are identical across groups from the same
+        // original session — take the first captured config. Per-group page sizes are merged in
+        // the `groups` map below so the server returns the same page sizes the caller chose.
+        //
+        // Always include every active group's key, even when the captured per-group `pageSize` is
+        // null. An empty `{}` per-group entry is meaningful: it tells the server "refresh this
+        // group too". Filtering it out would cause re-sync to skip that group entirely.
+        val shared = activeGroupedLogics.firstNotNullOfOrNull { it.groupedQueryConfig() }
+        val groupsParam = activeGroupedLogics
+            .mapNotNull { logic ->
+                val key = logic.groupKey() ?: return@mapNotNull null
+                val cfg = logic.groupedQueryConfig()
+                key to GroupedChannelsGroupQuery(limit = cfg?.pageSize)
+            }
+            .toMap()
+            .takeIf { it.isNotEmpty() }
+
+        val result = chatClient.queryGroupedChannelsInternal(
+            limit = shared?.limit,
+            groups = groupsParam,
+            watch = shared?.watch ?: true,
+            presence = shared?.presence ?: false,
+        ).await()
+
+        return when (result) {
+            is Result.Success -> {
+                val cids = result.value.groups.values
+                    .flatMap { group -> group.channels }
+                    .mapTo(mutableSetOf()) { it.cid }
+                logger.v { "[updateGroupedQueryChannels] succeeded; cids.size: ${cids.size}" }
+                cids
+            }
+            is Result.Failure -> {
+                logger.e { "[updateGroupedQueryChannels] queryGroupedChannelsInternal failed: ${result.value}" }
+                emptySet()
+            }
+        }
+    }
+
+    /**
+     * Re-watches channels explicitly opened by the user (tracked via
+     * [io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow]
+     * weak references in [StateRegistry]).
+     */
+    private suspend fun rewatchTrackedWatchedChannels(): Set<String> {
+        val online = clientState.isOnline
+        val watchedCids = stateRegistry.getTrackedWatchedChannels()
+        logger.d { "[rewatchTrackedWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online" }
+        if (watchedCids.isEmpty() || !online) return emptySet()
+
+        watchedCids.forEach { cid ->
+            val (type, id) = cid.cidToTypeAndId()
+            logicRegistry.channel(type, id).watch(userPresence = userPresence)
+        }
+        return watchedCids
     }
 
     private suspend fun updateActiveQueryChannels(recoverAll: Boolean): Result<Set<String>> {
@@ -431,6 +529,7 @@ internal class SyncManager(
         logger.d { "[updateActiveQueryChannels] recoverAll: $recoverAll" }
         val queryLogicsToRestore = logicRegistry.getActiveQueryChannelsLogic()
             .asSequence()
+            .filter { it.groupKey() == null }
             .filter { queryChannelsLogic -> queryChannelsLogic.recoveryNeeded().value || recoverAll }
             .take(QUERIES_TO_RETRY)
             .toList()

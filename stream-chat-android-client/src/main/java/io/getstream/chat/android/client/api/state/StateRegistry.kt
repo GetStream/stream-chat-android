@@ -25,18 +25,17 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.internal.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +43,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Collections
+import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -81,6 +82,9 @@ public class StateRegistry @JvmOverloads constructor(
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
+    private val watchedChannelFlows: MutableMap<WatchedChannelStateFlow, String> =
+        Collections.synchronizedMap(WeakHashMap())
+
     /**
      * Returns [QueryChannelsState] associated with particular [filter] and [sort].
      *
@@ -94,29 +98,16 @@ public class StateRegistry @JvmOverloads constructor(
 
     /**
      * Returns [QueryChannelsState] associated with the given [identifier]. Canonical lookup that
-     * works for both standard and predefined-filter queries. For predefined queries the resulting
-     * state starts with placeholder filter/sort that get replaced via `applyResolvedSpec` once
-     * the server response (or a previously persisted DB row) provides the resolved values.
+     * works for standard, predefined-filter, and grouped queries. [QueryChannelsMutableState]
+     * derives its initial filter/sort and spec shape from the identifier itself, so this method
+     * is just a registry-cache lookup keyed by identifier identity.
      *
      * @param identifier The identifier of the [QueryChannelsState].
      */
     @InternalStreamChatApi
     public fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsState {
         return queryChannels.getOrPut(identifier) {
-            val (initialFilter, initialSort) = when (identifier) {
-                // Use known filter + sort
-                is QueryChannelsIdentifier.Standard -> identifier.filter to identifier.sort
-                // Use temporary neutral filter + sort
-                is QueryChannelsIdentifier.Predefined -> Filters.neutral() to QuerySortByField()
-            }
-            QueryChannelsMutableState(
-                identifier = identifier,
-                initialFilter = initialFilter,
-                initialSort = initialSort,
-                scope = scope,
-                latestUsers = latestUsers,
-                activeLiveLocations = activeLiveLocations,
-            )
+            QueryChannelsMutableState(identifier, scope, latestUsers, activeLiveLocations)
         }
     }
 
@@ -254,6 +245,28 @@ public class StateRegistry @JvmOverloads constructor(
         if (useLegacyChannelState) legacyChannels.toMap() else channels.toMap()
 
     /**
+     * Tracks a channel that was watched via [ChatClient.watchChannelAsState].
+     * The entry lives as long as the caller holds the [flow]; once the caller releases it, the
+     * underlying [WeakHashMap] drops the entry automatically.
+     * Used during reconnect to re-watch only channels the user still has open.
+     *
+     * @param flow The [WatchedChannelStateFlow] identifying the watched channel.
+     */
+    internal fun trackWatchedChannel(flow: WatchedChannelStateFlow) {
+        watchedChannelFlows[flow] = flow.cid
+    }
+
+    /**
+     * Retrieves that channel CIDs which were registered via [trackWatchedChannel] and are still strongly referenced.
+     * Use to retrieve watched channels whose [StateFlow] is referenced by a consumer.
+     */
+    internal fun getTrackedWatchedChannels(): Set<String> {
+        synchronized(watchedChannelFlows) {
+            return watchedChannelFlows.values.toSet()
+        }
+    }
+
+    /**
      * Clear state of all state objects.
      */
     public fun clear() {
@@ -268,6 +281,7 @@ public class StateRegistry @JvmOverloads constructor(
         queryThreads.clear()
         threads.forEach { it.value.destroy() }
         threads.clear()
+        watchedChannelFlows.clear()
     }
 
     internal fun handleBatchEvent(batchEvent: BatchEvent) {

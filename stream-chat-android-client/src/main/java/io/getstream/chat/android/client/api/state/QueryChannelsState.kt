@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api.state
 
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -30,10 +31,23 @@ public interface QueryChannelsState {
     /** If the channels need to be synced. */
     public val recoveryNeeded: StateFlow<Boolean>
 
-    /** The filter is associated with this query channels state. */
+    /**
+     * The filter associated with this query channels state.
+     *
+     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is a
+     * placeholder ([io.getstream.chat.android.models.Filters.neutral]) — grouped lists are
+     * partitioned server-side and do not have a client-side filter. Do not rely on this value
+     * for grouped states.
+     */
     public val filter: FilterObject
 
-    /** The sort object which requested for this query channels state. */
+    /**
+     * The sort associated with this query channels state.
+     *
+     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is a
+     * placeholder (`last_updated` descending) — grouped lists are ordered server-side and
+     * do not have a client-side sort. Do not rely on this value for grouped states.
+     */
     public val sort: QuerySorter<Channel>
 
     /** The request for the current page. */
@@ -50,6 +64,22 @@ public interface QueryChannelsState {
 
     /** If the current state reached the final page. */
     public val endOfChannels: StateFlow<Boolean>
+
+    /**
+     * Cursor for the next page when this state belongs to a grouped query.
+     * `null` means there is no further page (or that this is a standard query that doesn't use cursors).
+     */
+    public val nextCursor: StateFlow<String?>
+
+    /**
+     * Configuration captured from the most recent grouped query response that targeted this
+     * group. Used by paginated and recovery calls so they reuse the caller's original
+     * [GroupedQueryConfig.limit], [GroupedQueryConfig.pageSize], [GroupedQueryConfig.watch] and
+     * [GroupedQueryConfig.presence].
+     *
+     * `null` for standard queries and until the first grouped response has been observed.
+     */
+    public val groupedQueryConfig: StateFlow<GroupedQueryConfig?>
 
     /**
      *  The collection of channels loaded by the query channels request.

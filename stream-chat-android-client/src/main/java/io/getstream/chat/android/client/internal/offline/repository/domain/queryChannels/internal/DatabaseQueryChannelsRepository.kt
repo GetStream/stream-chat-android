@@ -48,33 +48,36 @@ internal class DatabaseQueryChannelsRepository(
     private companion object {
         // Standard: hash of (filter, sort). Predefined: name + value-map hashes, since the
         // resolved filter/sort are unknown until the server replies and we need stable identity
-        // across runs.
+        // across runs. Grouped: stable groupKey returned by the server.
         private fun generateId(identifier: QueryChannelsIdentifier): String = when (identifier) {
             is QueryChannelsIdentifier.Standard ->
                 "${identifier.filter.hashCode()}-${identifier.sort.toDto().hashCode()}"
             is QueryChannelsIdentifier.Predefined ->
                 "pd:${identifier.name}:${identifier.filterValues.hashCode()}:${identifier.sortValues.hashCode()}"
+            is QueryChannelsIdentifier.Grouped ->
+                "grp:${identifier.groupKey}"
         }
 
-        private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsEntity =
+        private fun toEntity(spec: QueryChannelsSpec): QueryChannelsEntity =
             QueryChannelsEntity(
-                id = generateId(queryChannelsSpec.identifier),
-                filter = queryChannelsSpec.filter,
-                querySort = queryChannelsSpec.querySort,
-                cids = queryChannelsSpec.cids.toList(),
-                predefinedFilterName = queryChannelsSpec.predefinedFilterName,
-                predefinedFilterValues = queryChannelsSpec.predefinedFilterValues,
-                predefinedSortValues = queryChannelsSpec.predefinedSortValues,
+                id = generateId(spec.identifier),
+                filter = spec.filter,
+                querySort = spec.querySort,
+                cids = spec.cids.toList(),
+                groupKey = spec.groupKey,
+                predefinedFilterName = spec.predefinedFilterName,
+                predefinedFilterValues = spec.predefinedFilterValues,
+                predefinedSortValues = spec.predefinedSortValues,
             )
 
-        private fun toModel(queryChannelsEntity: QueryChannelsEntity): QueryChannelsSpec =
+        private fun toModel(entity: QueryChannelsEntity): QueryChannelsSpec =
             QueryChannelsSpec(
-                filter = queryChannelsEntity.filter,
-                querySort = queryChannelsEntity.querySort,
-                cids = queryChannelsEntity.cids.toSet(),
-                predefinedFilterName = queryChannelsEntity.predefinedFilterName,
-                predefinedFilterValues = queryChannelsEntity.predefinedFilterValues,
-                predefinedSortValues = queryChannelsEntity.predefinedSortValues,
-            )
+                filter = entity.filter,
+                querySort = entity.querySort,
+                groupKey = entity.groupKey,
+                predefinedFilterName = entity.predefinedFilterName,
+                predefinedFilterValues = entity.predefinedFilterValues,
+                predefinedSortValues = entity.predefinedSortValues,
+            ).also { it.cids = entity.cids.toSet() }
     }
 }
