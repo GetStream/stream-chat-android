@@ -102,7 +102,7 @@ import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
+import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
