@@ -54,7 +54,7 @@ import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
+import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
@@ -65,7 +65,7 @@ import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
@@ -1153,9 +1153,9 @@ constructor(
         threadId: String?,
     ): Call<Unit> {
         val request = MarkUnreadRequest(
-            message_id = messageId,
-            message_timestamp = messageTimestamp,
-            thread_id = threadId,
+            messageId = messageId,
+            messageTimestamp = messageTimestamp,
+            threadId = threadId,
         )
         return channelApi.markUnread(channelType, channelId, request).toUnitCall()
     }
