@@ -287,7 +287,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     Icon(
                         painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                         contentDescription = null,
-                        tint = Color.Black,
+                        tint = ChatTheme.colors.textPrimary,
                     )
                 }
             },
@@ -376,10 +376,12 @@ class CustomLoginActivity : AppCompatActivity() {
                 Text(
                     text = label,
                     style = ChatTheme.typography.headingMedium,
+                    color = ChatTheme.colors.textPrimary,
                 )
                 Text(
                     text = description,
                     style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         }
