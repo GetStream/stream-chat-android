@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 
 /**
@@ -377,6 +378,30 @@ internal fun ChannelAvatarContent() {
                     ChannelAvatar(
                         channel = PreviewChannelData.makeChannelWithMembers(howMany),
                         currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+        }
+
+        listOf(
+            Triple(PreviewChannelData.channelWithFewMembers, null, AvatarPresenceIndicator.Online),
+            Triple(PreviewChannelData.channelWithImage, null, AvatarPresenceIndicator.Offline),
+            Triple(
+                PreviewChannelData.channelWithOnlineUser.copy(id = "!members"),
+                PreviewUserData.user1,
+                AvatarPresenceIndicator.Online,
+            ),
+        ).forEach { (channel, currentUser, indicator) ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        channel = channel,
+                        currentUser = currentUser,
+                        indicator = indicator,
                         modifier = Modifier.size(size),
                     )
                 }
