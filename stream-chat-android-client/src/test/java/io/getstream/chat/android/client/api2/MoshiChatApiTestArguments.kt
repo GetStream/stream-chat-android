@@ -675,29 +675,29 @@ internal object MoshiChatApiTestArguments {
                 channelType = listOf(randomUnreadChannelByTypeDto()),
             )
             val model = UnreadCounts(
-                messagesCount = dto.total_unread_count,
-                threadsCount = dto.total_unread_threads_count,
-                messagesCountByTeam = dto.total_unread_count_by_team!!,
-                channels = dto.channels.map { dto ->
+                messagesCount = dto.totalUnreadCount,
+                threadsCount = dto.totalUnreadThreadsCount,
+                messagesCountByTeam = dto.totalUnreadCountByTeam!!,
+                channels = dto.channels.map { item ->
                     UnreadChannel(
-                        cid = dto.channelId,
-                        messagesCount = dto.unreadCount,
-                        lastRead = dto.lastRead,
+                        cid = item.channelId,
+                        messagesCount = item.unreadCount,
+                        lastRead = item.lastRead,
                     )
                 },
-                threads = dto.threads.map { dto ->
+                threads = dto.threads.map { item ->
                     UnreadThread(
-                        parentMessageId = dto.parentMessageId,
-                        messagesCount = dto.unreadCount,
-                        lastRead = dto.lastRead,
-                        lastReadMessageId = dto.lastReadMessageId,
+                        parentMessageId = item.parentMessageId,
+                        messagesCount = item.unreadCount,
+                        lastRead = item.lastRead,
+                        lastReadMessageId = item.lastReadMessageId,
                     )
                 },
-                channelsByType = dto.channel_type.map { dto ->
+                channelsByType = dto.channelType.map { item ->
                     UnreadChannelByType(
-                        channelType = dto.channelType,
-                        channelsCount = dto.channelCount,
-                        messagesCount = dto.unreadCount,
+                        channelType = item.channelType,
+                        channelsCount = item.channelCount,
+                        messagesCount = item.unreadCount,
                     )
                 },
             )

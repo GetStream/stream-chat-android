@@ -51,10 +51,10 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMember
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
 import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -1343,13 +1343,15 @@ internal object Mother {
         channels: List<UnreadChannelDto> = emptyList(),
         threads: List<UnreadThreadDto> = emptyList(),
         channelType: List<UnreadChannelByTypeDto> = emptyList(),
+        duration: String = randomString(),
     ): UnreadDto = UnreadDto(
-        total_unread_count = totalUnreadCount,
-        total_unread_threads_count = totalUnreadThreadsCount,
-        total_unread_count_by_team = totalUnreadCountByTeam,
+        duration = duration,
+        totalUnreadCount = totalUnreadCount,
+        totalUnreadThreadsCount = totalUnreadThreadsCount,
+        totalUnreadCountByTeam = totalUnreadCountByTeam,
         channels = channels,
         threads = threads,
-        channel_type = channelType,
+        channelType = channelType,
     )
 
     fun randomUnreadCountByTeamDto(

@@ -1034,29 +1034,29 @@ internal class DomainMappingTest {
         val sut = Fixture().get()
         val result = with(sut) { input.toDomain() }
         val expected = UnreadCounts(
-            messagesCount = input.total_unread_count,
-            threadsCount = input.total_unread_threads_count,
-            messagesCountByTeam = input.total_unread_count_by_team!!,
-            channels = input.channels.map { dto ->
+            messagesCount = input.totalUnreadCount,
+            threadsCount = input.totalUnreadThreadsCount,
+            messagesCountByTeam = input.totalUnreadCountByTeam!!,
+            channels = input.channels.map { item ->
                 UnreadChannel(
-                    cid = dto.channelId,
-                    messagesCount = dto.unreadCount,
-                    lastRead = dto.lastRead,
+                    cid = item.channelId,
+                    messagesCount = item.unreadCount,
+                    lastRead = item.lastRead,
                 )
             },
-            threads = input.threads.map { dto ->
+            threads = input.threads.map { item ->
                 UnreadThread(
-                    parentMessageId = dto.parentMessageId,
-                    messagesCount = dto.unreadCount,
-                    lastRead = dto.lastRead,
-                    lastReadMessageId = dto.lastReadMessageId,
+                    parentMessageId = item.parentMessageId,
+                    messagesCount = item.unreadCount,
+                    lastRead = item.lastRead,
+                    lastReadMessageId = item.lastReadMessageId,
                 )
             },
-            channelsByType = input.channel_type.map { dto ->
+            channelsByType = input.channelType.map { item ->
                 UnreadChannelByType(
-                    channelType = dto.channelType,
-                    channelsCount = dto.channelCount,
-                    messagesCount = dto.unreadCount,
+                    channelType = item.channelType,
+                    channelsCount = item.channelCount,
+                    messagesCount = item.unreadCount,
                 )
             },
         )

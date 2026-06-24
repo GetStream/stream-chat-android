@@ -47,8 +47,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMember
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -899,12 +899,12 @@ internal class DomainMapping(
     )
 
     internal fun UnreadDto.toDomain(): UnreadCounts = UnreadCounts(
-        messagesCount = total_unread_count,
-        threadsCount = total_unread_threads_count,
-        messagesCountByTeam = total_unread_count_by_team.orEmpty(),
+        messagesCount = totalUnreadCount,
+        threadsCount = totalUnreadThreadsCount,
+        messagesCountByTeam = totalUnreadCountByTeam.orEmpty(),
         channels = channels.map { it.toDomain() },
         threads = threads.map { it.toDomain() },
-        channelsByType = channel_type.map { it.toDomain() },
+        channelsByType = channelType.map { it.toDomain() },
     )
 
     internal fun UnreadChannelDto.toDomain(): UnreadChannel = UnreadChannel(

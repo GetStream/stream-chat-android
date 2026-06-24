@@ -43,7 +43,7 @@ import io.getstream.chat.android.network.models.ChatPreferencesResponse as Downs
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest

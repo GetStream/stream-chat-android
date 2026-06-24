@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import org.intellij.lang.annotations.Language
 import java.time.ZonedDateTime
 import java.util.Date
@@ -28,12 +28,21 @@ internal object UnreadDtoTestData {
 
     @Language("JSON")
     val json = """{
+        "duration": "1.5ms",
         "total_unread_count": 7,
         "total_unread_threads_count": 15,
-        "total_unread_count_by_team": {
-            "team1": 3,
-            "team2": 4
-        },
+        "channel_type": [
+            {
+                "channel_count": 9,
+                "channel_type": "messaging",
+                "unread_count": 10
+            },
+            {
+                "channel_count": 11,
+                "channel_type": "livestream",
+                "unread_count": 12
+            }
+        ],
         "channels": [
             {
                 "channel_id": "channel1",
@@ -60,24 +69,17 @@ internal object UnreadDtoTestData {
                 "unread_count": 8
             }
         ],
-        "channel_type": [
-            {
-                "channel_count": 9,
-                "channel_type": "messaging",
-                "unread_count": 10
-            },
-            {
-                "channel_count": 11,
-                "channel_type": "livestream",
-                "unread_count": 12
-            }
-        ]
+        "total_unread_count_by_team": {
+            "team1": 3,
+            "team2": 4
+        }
     }""".withoutWhitespace()
 
     val dto = UnreadDto(
-        total_unread_count = 7,
-        total_unread_threads_count = 15,
-        total_unread_count_by_team = mapOf("team1" to 3, "team2" to 4),
+        duration = "1.5ms",
+        totalUnreadCount = 7,
+        totalUnreadThreadsCount = 15,
+        totalUnreadCountByTeam = mapOf("team1" to 3, "team2" to 4),
         channels = listOf(
             UnreadChannelDto(
                 channelId = "channel1",
@@ -104,7 +106,7 @@ internal object UnreadDtoTestData {
                 lastReadMessageId = "message2",
             ),
         ),
-        channel_type = listOf(
+        channelType = listOf(
             UnreadChannelByTypeDto(
                 channelType = "messaging",
                 channelCount = 9,
