@@ -74,7 +74,8 @@ import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequ
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
+import io.getstream.chat.android.network.models.QueryRemindersRequest
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
@@ -2728,7 +2729,12 @@ internal class MoshiChatApiTest {
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toDto().map {
+                SortParamRequest(
+                    field = it["field"] as? String,
+                    direction = (it["direction"] as? Number)?.toInt(),
+                )
+            },
         )
         result `should be instance of` expected
         verify(api, times(1)).queryReminders(expectedBody)

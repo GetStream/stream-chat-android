@@ -82,7 +82,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
+import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -1878,7 +1878,7 @@ constructor(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toSortParams(),
         )
         return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
     }
