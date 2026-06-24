@@ -52,11 +52,11 @@ import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamP
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
+import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
+import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -88,7 +88,7 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -100,7 +100,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
@@ -557,8 +557,8 @@ constructor(
             id = id,
             name = name,
             description = description,
-            team_id = teamId,
-            member_ids = memberIds,
+            teamId = teamId,
+            memberIds = memberIds,
         )
         return userGroupApi.createUserGroup(body).mapUserGroup()
     }
@@ -610,7 +610,7 @@ constructor(
         val body = UpdateUserGroupRequest(
             name = name,
             description = description,
-            team_id = teamId,
+            teamId = teamId,
         )
         return userGroupApi.updateUserGroup(id = id, body = body).mapUserGroup()
     }
@@ -626,9 +626,9 @@ constructor(
         teamId: String?,
     ): Call<UserGroup> {
         val body = AddUserGroupMembersRequest(
-            member_ids = memberIds,
-            as_admin = asAdmin,
-            team_id = teamId,
+            memberIds = memberIds,
+            asAdmin = asAdmin,
+            teamId = teamId,
         )
         return userGroupApi.addUserGroupMembers(id = id, body = body).mapUserGroup()
     }
@@ -639,8 +639,8 @@ constructor(
         teamId: String?,
     ): Call<UserGroup> {
         val body = RemoveUserGroupMembersRequest(
-            member_ids = memberIds,
-            team_id = teamId,
+            memberIds = memberIds,
+            teamId = teamId,
         )
         return userGroupApi.removeUserGroupMembers(id = id, body = body).mapUserGroup()
     }

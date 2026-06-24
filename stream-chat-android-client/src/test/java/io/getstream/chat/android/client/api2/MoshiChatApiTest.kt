@@ -48,11 +48,11 @@ import io.getstream.chat.android.network.models.ChatPreferencesInput as Upstream
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
-import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
+import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
+import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -78,7 +78,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryRemindersReques
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
@@ -86,7 +86,7 @@ import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
-import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
@@ -3037,8 +3037,8 @@ internal class MoshiChatApiTest {
                 id = id,
                 name = name,
                 description = description,
-                team_id = teamId,
-                member_ids = memberIds,
+                teamId = teamId,
+                memberIds = memberIds,
             ),
         )
     }
@@ -3148,7 +3148,7 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).updateUserGroup(
             id = id,
-            body = UpdateUserGroupRequest(name = name, description = description, team_id = teamId),
+            body = UpdateUserGroupRequest(name = name, description = description, teamId = teamId),
         )
     }
 
@@ -3188,7 +3188,7 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).addUserGroupMembers(
             id = id,
-            body = AddUserGroupMembersRequest(member_ids = memberIds, as_admin = asAdmin, team_id = teamId),
+            body = AddUserGroupMembersRequest(memberIds = memberIds, asAdmin = asAdmin, teamId = teamId),
         )
     }
 
@@ -3207,7 +3207,7 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).removeUserGroupMembers(
             id = id,
-            body = RemoveUserGroupMembersRequest(member_ids = memberIds, team_id = teamId),
+            body = RemoveUserGroupMembersRequest(memberIds = memberIds, teamId = teamId),
         )
     }
 
