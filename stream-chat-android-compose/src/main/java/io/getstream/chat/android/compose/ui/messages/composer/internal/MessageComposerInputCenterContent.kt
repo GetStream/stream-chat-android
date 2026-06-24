@@ -46,6 +46,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.messages.composer.ComposerInputTestTag
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -85,7 +86,7 @@ internal fun MessageComposerInputCenterContent(
     BasicTextField(
         modifier = modifier
             .fillMaxWidth()
-            .testTag("Stream_ComposerInputField")
+            .testTag(ComposerInputTestTag)
             .heightIn(min = 48.dp),
         value = textState,
         onValueChange = {
