@@ -60,7 +60,8 @@ import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupReque
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -1373,7 +1374,7 @@ constructor(
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
-            body = GuestUserRequest.create(userId, userName),
+            body = CreateGuestRequest(user = UserRequest(id = userId, name = userName)),
         ).mapDomain { response ->
             GuestUser(
                 response.user.toDomain(),

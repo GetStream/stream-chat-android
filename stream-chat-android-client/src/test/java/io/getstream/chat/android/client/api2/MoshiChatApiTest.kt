@@ -56,7 +56,8 @@ import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupReque
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
@@ -1811,7 +1812,7 @@ internal class MoshiChatApiTest {
         val userName = randomString()
         val result = sut.getGuestUser(userId, userName).await()
         // then
-        val expectedBody = GuestUserRequest.create(userId, userName)
+        val expectedBody = CreateGuestRequest(user = UserRequest(id = userId, name = userName))
         result `should be instance of` expected
         verify(api, times(1)).getGuestUser(expectedBody)
     }
