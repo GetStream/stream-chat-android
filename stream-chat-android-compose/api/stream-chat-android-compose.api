@@ -1204,6 +1204,15 @@ public final class io/getstream/chat/android/compose/ui/components/audio/Wavefor
 	public static final fun StaticWaveformSlider (Ljava/util/List;FZLandroidx/compose/ui/Modifier;IZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator : java/lang/Enum {
+	public static final field None Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static final field Offline Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static final field Online Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static fun values ()[Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarSize {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/AvatarSize;
