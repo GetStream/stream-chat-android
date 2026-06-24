@@ -44,8 +44,8 @@ import io.getstream.chat.android.network.models.SharedLocationResponseData as Do
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
+import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
+import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
@@ -2755,10 +2755,8 @@ internal class MoshiChatApiTest {
         val expectedRequest = UpsertPushPreferencesRequest(
             preferences = listOf(
                 UpstreamPushPreferenceInputDto(
-                    channel_cid = null,
-                    chat_level = level.value,
-                    disabled_until = null,
-                    remove_disable = true,
+                    chatLevel = UpstreamPushPreferenceInputDto.ChatLevel.fromString(level.value),
+                    removeDisable = true,
                 ),
             ),
         )
@@ -2788,10 +2786,7 @@ internal class MoshiChatApiTest {
         val expectedRequest = UpsertPushPreferencesRequest(
             preferences = listOf(
                 UpstreamPushPreferenceInputDto(
-                    channel_cid = null,
-                    chat_level = null,
-                    disabled_until = until,
-                    remove_disable = null,
+                    disabledUntil = until,
                 ),
             ),
         )
@@ -2822,10 +2817,9 @@ internal class MoshiChatApiTest {
         val expectedRequest = UpsertPushPreferencesRequest(
             preferences = listOf(
                 UpstreamPushPreferenceInputDto(
-                    channel_cid = cid,
-                    chat_level = level.value,
-                    disabled_until = null,
-                    remove_disable = true,
+                    channelCid = cid,
+                    chatLevel = UpstreamPushPreferenceInputDto.ChatLevel.fromString(level.value),
+                    removeDisable = true,
                 ),
             ),
         )
@@ -2856,10 +2850,8 @@ internal class MoshiChatApiTest {
         val expectedRequest = UpsertPushPreferencesRequest(
             preferences = listOf(
                 UpstreamPushPreferenceInputDto(
-                    channel_cid = cid,
-                    chat_level = null,
-                    disabled_until = until,
-                    remove_disable = null,
+                    channelCid = cid,
+                    disabledUntil = until,
                 ),
             ),
         )
@@ -2898,14 +2890,10 @@ internal class MoshiChatApiTest {
         val expectedRequest = UpsertPushPreferencesRequest(
             preferences = listOf(
                 UpstreamPushPreferenceInputDto(
-                    channel_cid = null,
-                    chat_level = null,
-                    disabled_until = null,
-                    remove_disable = null,
-                    chat_preferences = UpstreamChatPreferencesDto(
-                        direct_mentions = "all",
-                        channel_mentions = "none",
-                        default_preference = "none",
+                    chatPreferences = UpstreamChatPreferencesDto(
+                        directMentions = UpstreamChatPreferencesDto.DirectMentions.fromString("all"),
+                        channelMentions = UpstreamChatPreferencesDto.ChannelMentions.fromString("none"),
+                        defaultPreference = UpstreamChatPreferencesDto.DefaultPreference.fromString("none"),
                     ),
                 ),
             ),
@@ -2940,11 +2928,10 @@ internal class MoshiChatApiTest {
         val expectedRequest = UpsertPushPreferencesRequest(
             preferences = listOf(
                 UpstreamPushPreferenceInputDto(
-                    channel_cid = cid,
-                    chat_level = null,
-                    disabled_until = null,
-                    remove_disable = null,
-                    chat_preferences = UpstreamChatPreferencesDto(direct_mentions = "all"),
+                    channelCid = cid,
+                    chatPreferences = UpstreamChatPreferencesDto(
+                        directMentions = UpstreamChatPreferencesDto.DirectMentions.fromString("all"),
+                    ),
                 ),
             ),
         )

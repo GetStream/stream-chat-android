@@ -48,7 +48,7 @@ import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
+import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
@@ -483,10 +483,8 @@ constructor(
 
     override fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
         val input = UpstreamPushPreferenceInputDto(
-            channel_cid = null,
-            chat_level = level.value,
-            disabled_until = null,
-            remove_disable = true,
+            chatLevel = UpstreamPushPreferenceInputDto.ChatLevel.fromString(level.value),
+            removeDisable = true,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -496,10 +494,7 @@ constructor(
 
     override fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
         val input = UpstreamPushPreferenceInputDto(
-            channel_cid = null,
-            chat_level = null,
-            disabled_until = until,
-            remove_disable = null,
+            disabledUntil = until,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -509,10 +504,9 @@ constructor(
 
     override fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> {
         val input = UpstreamPushPreferenceInputDto(
-            channel_cid = cid,
-            chat_level = level.value,
-            disabled_until = null,
-            remove_disable = true,
+            channelCid = cid,
+            chatLevel = UpstreamPushPreferenceInputDto.ChatLevel.fromString(level.value),
+            removeDisable = true,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -522,10 +516,8 @@ constructor(
 
     override fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> {
         val input = UpstreamPushPreferenceInputDto(
-            channel_cid = cid,
-            chat_level = null,
-            disabled_until = until,
-            remove_disable = null,
+            channelCid = cid,
+            disabledUntil = until,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -535,11 +527,7 @@ constructor(
 
     override fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
         val input = UpstreamPushPreferenceInputDto(
-            channel_cid = null,
-            chat_level = null,
-            disabled_until = null,
-            remove_disable = null,
-            chat_preferences = with(dtoMapping) { preferences.toDto() },
+            chatPreferences = with(dtoMapping) { preferences.toDto() },
         )
         return pushPreferencesApi
             .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
@@ -548,11 +536,8 @@ constructor(
 
     override fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
         val input = UpstreamPushPreferenceInputDto(
-            channel_cid = cid,
-            chat_level = null,
-            disabled_until = null,
-            remove_disable = null,
-            chat_preferences = with(dtoMapping) { preferences.toDto() },
+            channelCid = cid,
+            chatPreferences = with(dtoMapping) { preferences.toDto() },
         )
         return pushPreferencesApi
             .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))

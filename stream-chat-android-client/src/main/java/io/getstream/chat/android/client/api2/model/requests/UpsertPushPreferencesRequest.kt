@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
+import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 
 /**
  * Request DTO for upserting push notification preferences.

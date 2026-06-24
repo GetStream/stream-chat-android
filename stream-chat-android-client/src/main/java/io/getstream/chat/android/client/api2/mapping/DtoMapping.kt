@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
@@ -46,6 +45,7 @@ import io.getstream.chat.android.models.UserTransformer
 import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
+import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.SharedLocation as UpstreamLocationDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
@@ -299,12 +299,12 @@ internal class DtoMapping(
     )
 
     internal fun ChatPreferences.toDto(): UpstreamChatPreferencesDto = UpstreamChatPreferencesDto(
-        direct_mentions = directMentions?.value,
-        role_mentions = roleMentions?.value,
-        group_mentions = groupMentions?.value,
-        here_mentions = hereMentions?.value,
-        channel_mentions = channelMentions?.value,
-        thread_replies = threadReplies?.value,
-        default_preference = defaultPreference?.value,
+        directMentions = directMentions?.value?.let(UpstreamChatPreferencesDto.DirectMentions::fromString),
+        roleMentions = roleMentions?.value?.let(UpstreamChatPreferencesDto.RoleMentions::fromString),
+        groupMentions = groupMentions?.value?.let(UpstreamChatPreferencesDto.GroupMentions::fromString),
+        hereMentions = hereMentions?.value?.let(UpstreamChatPreferencesDto.HereMentions::fromString),
+        channelMentions = channelMentions?.value?.let(UpstreamChatPreferencesDto.ChannelMentions::fromString),
+        threadReplies = threadReplies?.value?.let(UpstreamChatPreferencesDto.ThreadReplies::fromString),
+        defaultPreference = defaultPreference?.value?.let(UpstreamChatPreferencesDto.DefaultPreference::fromString),
     )
 }
