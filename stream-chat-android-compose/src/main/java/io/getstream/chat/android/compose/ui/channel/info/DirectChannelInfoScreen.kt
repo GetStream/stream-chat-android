@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoScreenModalParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -275,7 +276,7 @@ internal fun DirectChannelInfoAvatarContainer(user: User, isMuted: Boolean) {
             params = UserAvatarParams(
                 modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
                 user = user,
-                showIndicator = true,
+                indicator = user.avatarPresenceIndicator(),
                 showBorder = false,
             ),
         )

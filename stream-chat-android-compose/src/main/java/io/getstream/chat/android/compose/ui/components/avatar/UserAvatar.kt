@@ -208,31 +208,28 @@ private fun UserAvatarContentPreview() {
 @Composable
 internal fun UserAvatarContent() {
     val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium, Small, ExtraSmall) }
+    val users = listOf(PreviewUserData.userWithOnlineStatus, PreviewUserData.userWithoutImage)
+    val indicators = listOf(
+        AvatarPresenceIndicator.Online,
+        AvatarPresenceIndicator.Offline,
+        AvatarPresenceIndicator.None,
+    )
 
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            sizes.forEach { size ->
-                UserAvatar(
-                    user = PreviewUserData.userWithOnlineStatus,
-                    indicator = PreviewUserData.userWithOnlineStatus.avatarPresenceIndicator(showWhenOffline = true),
-                    modifier = Modifier.size(size),
-                )
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            sizes.forEach { size ->
-                UserAvatar(
-                    user = PreviewUserData.userWithoutImage,
-                    indicator = PreviewUserData.userWithoutImage.avatarPresenceIndicator(showWhenOffline = true),
-                    modifier = Modifier.size(size),
-                )
+        users.forEach { user ->
+            indicators.forEach { indicator ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    sizes.forEach { size ->
+                        UserAvatar(
+                            user = user,
+                            indicator = indicator,
+                            modifier = Modifier.size(size),
+                        )
+                    }
+                }
             }
         }
     }
