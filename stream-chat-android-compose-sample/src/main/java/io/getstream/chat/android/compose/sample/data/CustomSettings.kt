@@ -37,6 +37,7 @@ class CustomSettings(private val context: Context) {
     var isComposerLinkPreviewEnabled: Boolean by booleanPref(ComposerLinkPreview)
     var isComposerFloatingStyleEnabled: Boolean by booleanPref(ComposerFloatingStyle)
     var isSystemAttachmentPickerEnabled: Boolean by booleanPref(SystemAttachmentPicker)
+    var isLocationSharingEnabled: Boolean by booleanPref(LocationSharing)
 
     private fun booleanPref(key: String, default: Boolean = false) =
         object : ReadWriteProperty<Any?, Boolean> {
@@ -53,5 +54,6 @@ private const val ChannelPinning = "channel_pinning"
 private const val ComposerLinkPreview = "composer_link_preview"
 private const val ComposerFloatingStyle = "composer_floating_style"
 private const val SystemAttachmentPicker = "system_attachment_picker"
+private const val LocationSharing = "location_sharing"
 
 fun Context.customSettings(): CustomSettings = CustomSettings(this)

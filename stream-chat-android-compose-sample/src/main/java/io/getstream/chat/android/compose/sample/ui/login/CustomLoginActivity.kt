@@ -138,6 +138,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isSystemAttachmentPickerEnabled by remember {
                         mutableStateOf(settings.isSystemAttachmentPickerEnabled)
                     }
+                    var isLocationSharingEnabled by remember {
+                        mutableStateOf(settings.isLocationSharingEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -193,6 +196,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isSystemAttachmentPickerEnabled = it
                                 settings.isSystemAttachmentPickerEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_location_sharing_label),
+                            description = stringResource(R.string.custom_login_flag_location_sharing_description),
+                            value = isLocationSharingEnabled,
+                            onValueChange = {
+                                isLocationSharingEnabled = it
+                                settings.isLocationSharingEnabled = it
                             },
                         ),
                     )
