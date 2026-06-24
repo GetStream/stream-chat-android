@@ -166,6 +166,7 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -374,6 +375,14 @@ constructor(
             }
         }
     }
+
+    private fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
+        toDto().map {
+            SortParamRequest(
+                field = it[QuerySorter.KEY_FIELD_NAME] as? String,
+                direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
+            )
+        }
 
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
@@ -1613,16 +1622,16 @@ constructor(
         val lazyQueryThreads = {
             threadsApi.queryThreads(
                 connectionId,
-                io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                io.getstream.chat.android.network.models.QueryThreadsRequest(
                     filter = query.filter?.toMap(),
-                    sort = query.sort.toDto(),
+                    sort = query.sort.toSortParams(),
                     watch = query.watch,
                     limit = query.limit,
-                    member_limit = query.memberLimit,
+                    memberLimit = query.memberLimit,
                     next = query.next,
-                    participant_limit = query.participantLimit,
+                    participantLimit = query.participantLimit,
                     prev = query.prev,
-                    reply_limit = query.replyLimit,
+                    replyLimit = query.replyLimit,
                 ),
             ).mapDomain { response ->
                 QueryThreadsResult(
