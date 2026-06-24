@@ -87,13 +87,6 @@ internal data class DownstreamUserDto(
 ) : ExtraDataDto
 
 @JsonClass(generateAdapter = true)
-internal data class PartialUpdateUserDto(
-    val id: String,
-    val set: Map<String, Any>,
-    val unset: List<String>,
-)
-
-@JsonClass(generateAdapter = true)
 internal data class DownstreamUserBlockDto(
     val user_id: String,
     val blocked_user_id: String,

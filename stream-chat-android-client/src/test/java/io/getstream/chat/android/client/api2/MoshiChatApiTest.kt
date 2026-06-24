@@ -42,7 +42,7 @@ import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
+import io.getstream.chat.android.network.models.UpdateUserPartialRequest as PartialUpdateUserDto
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
@@ -66,7 +66,7 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
@@ -1791,7 +1791,7 @@ internal class MoshiChatApiTest {
         val result = sut.partialUpdateUser(targetUserId, set, unset).await()
         // then
         val expectedBody = PartialUpdateUsersRequest(
-            users = listOf(PartialUpdateUserDto(targetUserId, set, unset)),
+            users = listOf(PartialUpdateUserDto(id = targetUserId, set = set, unset = unset)),
         )
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateUsers(connectionId, expectedBody)
