@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.state.plugin.state.querychannels
+package io.getstream.chat.android.client.api.state.querychannels
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery

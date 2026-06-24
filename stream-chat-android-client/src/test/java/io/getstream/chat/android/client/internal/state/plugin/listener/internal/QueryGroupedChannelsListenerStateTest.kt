@@ -17,12 +17,12 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery

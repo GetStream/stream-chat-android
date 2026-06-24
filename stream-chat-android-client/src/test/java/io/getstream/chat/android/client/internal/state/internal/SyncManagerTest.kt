@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
@@ -30,7 +31,6 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
-import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade

@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
-import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.test.randomNewMessageEvent

@@ -38,6 +38,7 @@ internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): Any
         this.channelLimit = originalRequest.channelLimit
         this.channelOffset = originalRequest.channelOffset
         this.messageLimit = originalRequest.messageLimit
+        this.memberLimit = originalRequest.memberLimit
         this.sort = originalRequest.sort
     }
 }

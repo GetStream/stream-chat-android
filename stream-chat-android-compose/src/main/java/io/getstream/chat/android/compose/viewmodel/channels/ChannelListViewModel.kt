@@ -232,18 +232,18 @@ public class ChannelListViewModel internal constructor(
      * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
      * Contact & Support.**
      *
-     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param groupKey The name of the channels group.
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
      * @param searchDebounceMs The debounce time for search queries.
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
      */
     public constructor(
-        chatClient: ChatClient,
         groupKey: String,
+        chatClient: ChatClient = ChatClient.instance(),
         searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-        draftMessagesEnabled: Boolean = false,
+        draftMessagesEnabled: Boolean = true,
         messageSearchSort: QuerySorter<Message>? = null,
         globalState: Flow<GlobalState> = chatClient.globalStateFlow,
     ) : this(
@@ -1154,10 +1154,11 @@ public class ChannelListViewModel internal constructor(
         ).await()
         if (result.isSuccess) {
             logger.v { "[loadMoreGroupedChannels] completed (listener applied)" }
+            channelsState = channelsState.copy(isLoadingMore = false, loadingError = false)
         } else {
             logger.e { "[loadMoreGroupedChannels] failed: ${result.errorOrNull()}" }
+            channelsState = channelsState.copy(isLoadingMore = false, loadingError = true)
         }
-        channelsState = channelsState.copy(isLoadingMore = false)
     }
 
     /**

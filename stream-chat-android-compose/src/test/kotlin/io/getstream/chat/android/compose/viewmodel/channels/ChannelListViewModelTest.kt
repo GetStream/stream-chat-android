@@ -24,9 +24,9 @@ import io.getstream.chat.android.client.api.state.ChannelsStateData
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.state.channels.list.ChannelListAction

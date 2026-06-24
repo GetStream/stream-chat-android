@@ -20,11 +20,11 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
-import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig

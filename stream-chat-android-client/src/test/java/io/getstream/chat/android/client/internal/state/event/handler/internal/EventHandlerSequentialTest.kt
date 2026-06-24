@@ -116,6 +116,27 @@ internal class EventHandlerSequentialTest {
     }
 
     @ParameterizedTest
+    @MethodSource("groupedUnreadChannelsArguments")
+    internal fun `GlobalState should be updated with proper groupedUnreadChannels values`(
+        events: List<ChatEvent>,
+        initialGroupedUnreadChannels: Map<String, Int>,
+        prepareFixture: Fixture.() -> Unit,
+        expectedGroupedUnreadChannels: Map<String, Int>,
+    ) = runTest {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(initialGroupedUnreadChannels)
+        }
+        val handler = Fixture()
+            .withMutableGlobalState(mutableGlobalState)
+            .apply(prepareFixture)
+            .get(this)
+
+        handler.handleEvents(*events.toTypedArray())
+
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` expectedGroupedUnreadChannels
+    }
+
+    @ParameterizedTest
     @MethodSource("hasOwnUserArguments")
     internal fun `GlobalState should be updated with info from 'me' user`(
         events: List<ChatEvent>,
