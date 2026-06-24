@@ -286,8 +286,8 @@ public fun ChannelScreen(
 
 /**
  * When a screen reader is active, moves the reading cursor onto the message composer input as a
- * message view opens, without moving input focus, so the keyboard stays closed and the user
- * double-taps to type. A thread is also a message view, so this re-arms when the view switches
+ * message list view opens, without moving input focus, so the keyboard stays closed and the user
+ * double-taps to type. A thread is also a message list view, so this re-arms when the view switches
  * between the channel and a thread.
  *
  * The message list loads asynchronously and the screen reader re-asserts its own initial focus when
