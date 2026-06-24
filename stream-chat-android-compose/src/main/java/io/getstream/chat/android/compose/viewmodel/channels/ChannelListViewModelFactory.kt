@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.ChatEventHandler
 import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.groupAwareChatEventHandlerFactory
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel.QueryMode
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -116,6 +117,37 @@ public class ChannelListViewModelFactory internal constructor(
         messageLimit = messageLimit,
         chatEventHandlerFactory = chatEventHandlerFactory,
         draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+    )
+
+    /**
+     * Grouped [ChannelListViewModel] factory. Wires the ViewModel to the state identified by
+     * [groupKey] without firing a remote call; `queryGroupedChannels` responses populate it.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach
+     * out to our Contact & Support.**
+     *
+     * @param groupKey The name of the channels group.
+     * @param chatClient The prepared [ChatClient] instance required for fetching the data.
+     * @param isDraftMessageEnabled If the draft message feature is enabled.
+     * @param messageSearchSort Optional sorting for message search results.
+     */
+    public constructor(
+        groupKey: String,
+        chatClient: ChatClient = ChatClient.instance(),
+        isDraftMessageEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Grouped(groupKey),
+        channelLimit = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit = null,
+        messageLimit = null,
+        chatEventHandlerFactory = groupAwareChatEventHandlerFactory(
+            groupKey = groupKey,
+            clientState = chatClient.clientState,
+        ),
+        draftMessagesEnabled = isDraftMessageEnabled,
         messageSearchSort = messageSearchSort,
     )
 
