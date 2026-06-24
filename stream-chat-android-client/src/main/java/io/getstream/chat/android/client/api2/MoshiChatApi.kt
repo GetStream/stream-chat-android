@@ -98,7 +98,7 @@ import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUs
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
@@ -1243,7 +1243,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             userId = userId,
-            body = UpdateMemberPartialRequest(set, unset),
+            body = UpdateMemberPartialRequest(set = set, unset = unset),
         ).mapDomain { response ->
             response.channel_member.toDomain()
         }
