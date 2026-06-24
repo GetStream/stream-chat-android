@@ -16,6 +16,7 @@ androidxComposeConstraintLayout = "1.1.0"
 androidxComposeMaterial3 = "1.3.1"
 androidxComposeMaterial3Adaptive = "1.0.0"
 androidxCoreTest = "2.2.0"
+androidxExifInterface = "1.3.7"
 androidxFragment = "1.8.5"
 androidxKtx = "1.15.0"
 androidxLifecycle = "2.8.7"
@@ -114,6 +115,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout"}
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxKtx"}
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "androidxCoreTest"}
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidxExifInterface"}
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment"}
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidxFragment"}
 androidx-legacy-support = { module = "androidx.legacy:legacy-support-v4", version.ref = "androidLegacySupport"}
