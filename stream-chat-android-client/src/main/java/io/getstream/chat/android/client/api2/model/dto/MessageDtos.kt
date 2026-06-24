@@ -22,6 +22,8 @@ import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.SharedLocation as UpstreamLocationDto
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for

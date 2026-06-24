@@ -207,10 +207,12 @@ internal object MessageTestData {
             "channel_cid": "messaging:general",
             "message_id": "msg-all",
             "user_id": "user-1",
-            "latitude": 12.34,
-            "longitude": 56.78,
+            "latitude": 12.5,
+            "longitude": 56.5,
             "created_by_device_id": "device-1",
-            "end_at": "2020-01-01T06:00:00.000Z"
+            "end_at": "2020-01-01T06:00:00.000Z",
+            "created_at": "2020-01-01T00:00:00.000Z",
+            "updated_at": "2020-01-01T00:00:00.000Z"
         },
         "extraData": {
             "key1": "value1",

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -623,7 +623,11 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun updateLiveLocation() = listOf(
         run {
-            val location = randomLocation()
+            // Wire (SharedLocationResponseData) carries lat/long as Float; the round-tripped
+            // domain Location reflects that precision loss.
+            val location = randomLocation().let {
+                it.copy(latitude = it.latitude.toFloat().toDouble(), longitude = it.longitude.toFloat().toDouble())
+            }
             val request = UpdateLiveLocationRequest(
                 message_id = location.messageId,
                 latitude = location.latitude,
@@ -631,13 +635,15 @@ internal object MoshiChatApiTestArguments {
                 created_by_device_id = location.deviceId,
             )
             val response = DownstreamLocationDto(
-                message_id = location.messageId,
-                channel_cid = location.cid,
-                user_id = location.userId,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
+                messageId = location.messageId,
+                channelCid = location.cid,
+                userId = location.userId,
+                latitude = location.latitude.toFloat(),
+                longitude = location.longitude.toFloat(),
+                createdByDeviceId = location.deviceId,
+                endAt = location.endAt,
+                createdAt = java.util.Date(0),
+                updatedAt = java.util.Date(0),
             )
             Arguments.of(location, request, response)
         },
@@ -646,20 +652,24 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun stopLiveLocation() = listOf(
         run {
-            val location = randomLocation()
+            val location = randomLocation().let {
+                it.copy(latitude = it.latitude.toFloat().toDouble(), longitude = it.longitude.toFloat().toDouble())
+            }
             val request = UpdateLiveLocationRequest(
                 message_id = location.messageId,
                 created_by_device_id = location.deviceId,
                 end_at = location.endAt,
             )
             val response = DownstreamLocationDto(
-                message_id = location.messageId,
-                channel_cid = location.cid,
-                user_id = location.userId,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
+                messageId = location.messageId,
+                channelCid = location.cid,
+                userId = location.userId,
+                latitude = location.latitude.toFloat(),
+                longitude = location.longitude.toFloat(),
+                createdByDeviceId = location.deviceId,
+                endAt = location.endAt,
+                createdAt = java.util.Date(0),
+                updatedAt = java.util.Date(0),
             )
             Arguments.of(location, request, response)
         },

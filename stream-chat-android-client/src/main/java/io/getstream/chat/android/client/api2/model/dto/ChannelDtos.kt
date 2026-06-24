@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import java.util.Date
 
 @JsonClass(generateAdapter = true)

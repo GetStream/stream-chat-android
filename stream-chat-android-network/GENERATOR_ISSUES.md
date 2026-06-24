@@ -576,6 +576,55 @@ generator output.
 
 ---
 
+## 10. Spec generator maps `float64` to OpenAPI `format: float`, downgrading precision
+
+**Symptom:** Every `float64` field on the chat backend appears as `format: float` in the
+OpenAPI spec (`chat.yaml`). The Kotlin generator turns `format: float` into `kotlin.Float`
+(32-bit). Concrete impact in `stream-chat-android`: `SharedLocation.latitude` and
+`SharedLocation.longitude` come out as `kotlin.Float`, and round-tripping a domain
+`Location(latitude = 37.7749, longitude = -122.4194)` loses precision
+(`37.774898529052734`, `-122.41940307617188`).
+
+**Root cause:** `lib/combined/openapi/spec/spec.go:836` in `SchemaFormatFromReflectType`:
+
+```go
+case "float32", "float64", "complex64", "complex128":
+    return "float"
+```
+
+Both `float32` (single precision) and `float64` (double precision) map to the same
+OpenAPI format string. The backend Go uses `float64` (see e.g.
+`lib/chat/controller/v1/payload/shared_location.go:15`), but the spec advertises 32-bit.
+
+The Kotlin generator at `lib/combined/openapi/generator/languages/kotlin/kotlin.go:866`
+correctly maps `format: float` -> `kotlin.Float`. The bug is upstream in the spec.
+
+**Fix status:** Not fixed. Worked around in `stream-chat-android-client` by widening
+`Float` to `Double` at the mapper boundary (`DtoMapping.Location.toDto()` calls
+`.toFloat()`, `DomainMapping.DownstreamLocationDto.toDomain()` calls `.toDouble()`).
+Domain models keep `Double`; only the wire DTO uses Float.
+
+**Suggested fix:** Split the case in `spec.go`:
+
+```go
+case "float32", "complex64":
+    return "float"
+case "float64", "complex128":
+    return "double"
+```
+
+And in the Kotlin generator, default `type: number` (no explicit format) to
+`kotlin.Double` rather than `kotlin.Float` (currently both map to Float at
+`kotlin.go:868-869`). `format: double` already maps to `kotlin.Double` correctly.
+
+**Breaking-change caveat:** The spec fix changes the contract for every SDK consuming the
+spec (chat-swift, chat-js, video, feeds, ...). Existing built artifacts with `Float`
+fields would not be source/binary compatible with the new `Double` ones. Land only as a
+coordinated multi-SDK release. Until then, the per-mapper `.toFloat()`/`.toDouble()`
+workaround on the chat-android side keeps things working.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec

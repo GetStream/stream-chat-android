@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
@@ -134,6 +133,7 @@ import io.getstream.chat.android.network.models.ModerationV2Response as Downstre
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
@@ -438,13 +438,13 @@ internal class DomainMapping(
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(
-            cid = channel_cid,
-            messageId = message_id,
-            userId = user_id,
-            latitude = latitude,
-            longitude = longitude,
-            deviceId = created_by_device_id,
-            endAt = end_at,
+            cid = channelCid,
+            messageId = messageId,
+            userId = userId,
+            latitude = latitude.toDouble(),
+            longitude = longitude.toDouble(),
+            deviceId = createdByDeviceId,
+            endAt = endAt,
         )
 
     /**

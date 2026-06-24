@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
@@ -47,6 +46,7 @@ import io.getstream.chat.android.models.UserTransformer
 import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
+import io.getstream.chat.android.network.models.SharedLocation as UpstreamLocationDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
@@ -175,10 +175,12 @@ internal class DtoMapping(
             }
 
     internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
-        latitude = latitude,
-        longitude = longitude,
-        created_by_device_id = deviceId,
-        end_at = endAt,
+        // Generated SharedLocation models lat/long as Float per OpenAPI spec, but the backend
+        // stores float64. Lossy conversion; see GENERATOR_ISSUES.md.
+        latitude = latitude.toFloat(),
+        longitude = longitude.toFloat(),
+        createdByDeviceId = deviceId,
+        endAt = endAt,
     )
 
     internal fun DraftMessage.toDto(): UpstreamMessageDto = UpstreamMessageDto(
