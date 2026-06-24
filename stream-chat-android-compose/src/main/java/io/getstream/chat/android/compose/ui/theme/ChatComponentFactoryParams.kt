@@ -2087,6 +2087,43 @@ public data class GroupChannelInfoMemberItemParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.GroupChannelInfoMemberLeadingContent].
+ *
+ * @param member The member to display.
+ * @param modifier The [Modifier] to be applied to this content.
+ */
+public data class GroupChannelInfoMemberLeadingContentParams(
+    val member: Member,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.GroupChannelInfoMemberCenterContent].
+ *
+ * @param currentUser The currently logged in user.
+ * @param member The member to display.
+ * @param modifier The [Modifier] to be applied to this content.
+ */
+public data class GroupChannelInfoMemberCenterContentParams(
+    val currentUser: User?,
+    val member: Member,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatComponentFactory.GroupChannelInfoMemberTrailingContent].
+ *
+ * @param member The member to display.
+ * @param isOwner Whether the member is the owner.
+ * @param modifier The [Modifier] to be applied to this content.
+ */
+public data class GroupChannelInfoMemberTrailingContentParams(
+    val member: Member,
+    val isOwner: Boolean,
+    val modifier: Modifier = Modifier,
+)
+
+/**
  * Parameters for [ChatComponentFactory.GroupChannelInfoExpandMembersItem].
  *
  * @param collapsedCount The number of collapsed members.

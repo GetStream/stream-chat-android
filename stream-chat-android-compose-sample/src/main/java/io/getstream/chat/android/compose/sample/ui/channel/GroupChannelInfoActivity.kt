@@ -69,7 +69,7 @@ class GroupChannelInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ChatTheme {
+            ChatTheme(componentFactory = MemberRolesComponentFactory) {
                 GroupChannelInfoScreen(
                     modifier = Modifier.statusBarsPadding(),
                     viewModelFactory = viewModelFactory,

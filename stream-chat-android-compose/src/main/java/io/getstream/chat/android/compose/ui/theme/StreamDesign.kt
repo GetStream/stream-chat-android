@@ -463,6 +463,18 @@ public object StreamDesign {
         /** Placeholder text for the input. Lower emphasis than main text. */
         internal val inputTextPlaceholder: Color = textTertiary
 
+        /** Background for neutral role label badges, such as Admin or Moderator. */
+        internal val labelBgNeutral: Color = chrome.s150
+
+        /** Background for primary role label badges, such as the channel owner. */
+        internal val labelBgPrimary: Color = brand.s150
+
+        /** Text color for neutral role label badges. */
+        internal val labelTextNeutral: Color = textPrimary
+
+        /** Text color for primary role label badges. */
+        internal val labelTextPrimary: Color = brand.s900
+
         /** Reaction bar background. */
         internal val reactionBg: Color = backgroundCoreElevation3
 

@@ -74,6 +74,7 @@
   <string name="stream_ui_channel_info_member_modal_option_unban_member">"Cabut Larangan Pengguna"</string>
   <string name="stream_ui_channel_info_member_modal_option_unblock_user">"Buka Blokir Pengguna"</string>
   <string name="stream_ui_channel_info_member_modal_option_unmute_user">"Bunyikan Pengguna"</string>
+  <string name="stream_ui_channel_info_member_admin">"Admin"</string>
   <string name="stream_ui_channel_info_member_moderator">"Moderator"</string>
   <string name="stream_ui_channel_info_member_owner">"Pemilik"</string>
   <string name="stream_ui_channel_info_mute_conversation_error">"Gagal mengubah status bisukan percakapan"</string>

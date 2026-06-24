@@ -2790,6 +2790,50 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the leading content (avatar) of a member row in the group
+     * channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberLeadingContent(params: GroupChannelInfoMemberLeadingContentParams) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberLeadingContent(
+            member = params.member,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the center content (name, last seen and mute icon) of a member
+     * row in the group channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberCenterContent(params: GroupChannelInfoMemberCenterContentParams) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberCenterContent(
+            currentUser = params.currentUser,
+            member = params.member,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the trailing content (role label) of a member row in the group
+     * channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberTrailingContent(params: GroupChannelInfoMemberTrailingContentParams) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberTrailingContent(
+            member = params.member,
+            isOwner = params.isOwner,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
      * Factory method for creating the expand members item in the group channel info screen.
      *
      * @param params Parameters for this component.
