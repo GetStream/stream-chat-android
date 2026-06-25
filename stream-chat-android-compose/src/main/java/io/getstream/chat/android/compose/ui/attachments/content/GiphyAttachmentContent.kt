@@ -61,6 +61,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
+import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
 
 /**
@@ -233,7 +234,7 @@ public fun GiphyAttachmentContent(
             ),
     ) {
         StreamAsyncImage(
-            data = giphyInfo?.url,
+            data = giphyInfo?.url ?: attachment.giphyFallbackPreviewUrl,
             modifier = Modifier.fillMaxSize(),
             contentDescription = null,
             contentScale = contentScale,
