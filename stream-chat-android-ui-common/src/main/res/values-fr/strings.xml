@@ -75,6 +75,7 @@
   <string name="stream_ui_channel_info_member_modal_option_unban_member">"Lever le bannissement"</string>
   <string name="stream_ui_channel_info_member_modal_option_unblock_user">"Débloquer l\'utilisateur"</string>
   <string name="stream_ui_channel_info_member_modal_option_unmute_user">"Réactiver les notifications"</string>
+  <string name="stream_ui_channel_info_member_admin">"Administrateur"</string>
   <string name="stream_ui_channel_info_member_moderator">"Modérateur"</string>
   <string name="stream_ui_channel_info_member_owner">"Propriétaire"</string>
   <string name="stream_ui_channel_info_mute_conversation_error">"Échec du changement de l\'état de sourdine de la conversation"</string>

@@ -1127,6 +1127,10 @@ public final class io/getstream/chat/android/compose/ui/components/OnlineIndicat
 	public static final fun OnlineIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/RoleBadgeKt {
+	public static final fun RoleBadge-eopBjH0 (Ljava/lang/String;JJLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/SearchInputKt {
 	public static final fun SearchInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
@@ -3508,8 +3512,11 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun GroupChannelInfoAddMembersButton (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAddMembersButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public fun GroupChannelInfoAvatarContainer (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;Landroidx/compose/runtime/Composer;I)V
 	public fun GroupChannelInfoExpandMembersItem (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoExpandMembersItemParams;Landroidx/compose/runtime/Composer;I)V
+	public fun GroupChannelInfoMemberCenterContent (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberCenterContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun GroupChannelInfoMemberItem (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberItemParams;Landroidx/compose/runtime/Composer;I)V
+	public fun GroupChannelInfoMemberLeadingContent (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberLeadingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun GroupChannelInfoMemberSection (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberSectionParams;Landroidx/compose/runtime/Composer;I)V
+	public fun GroupChannelInfoMemberTrailingContent (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberTrailingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun GroupChannelInfoTopBar (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun LinkAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/LinkAttachmentContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun MediaAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/MediaAttachmentContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -3704,8 +3711,11 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun GroupChannelInfoAddMembersButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAddMembersButtonParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun GroupChannelInfoAvatarContainer (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoAvatarContainerParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun GroupChannelInfoExpandMembersItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoExpandMembersItemParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun GroupChannelInfoMemberCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberCenterContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun GroupChannelInfoMemberItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberItemParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun GroupChannelInfoMemberLeadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberLeadingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun GroupChannelInfoMemberSection (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberSectionParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun GroupChannelInfoMemberTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberTrailingContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun GroupChannelInfoTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoTopBarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun LinkAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/LinkAttachmentContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun MediaAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/MediaAttachmentContentParams;Landroidx/compose/runtime/Composer;I)V
@@ -4061,6 +4071,23 @@ public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoEx
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberCenterContentParams {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/User;
+	public final fun component2 ()Lio/getstream/chat/android/models/Member;
+	public final fun component3 ()Landroidx/compose/ui/Modifier;
+	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberCenterContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberCenterContentParams;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberCenterContentParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
+	public final fun getMember ()Lio/getstream/chat/android/models/Member;
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberItemParams {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Member;ZLkotlin/jvm/functions/Function0;)V
@@ -4077,6 +4104,21 @@ public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoMe
 	public final fun getOnClick ()Lkotlin/jvm/functions/Function0;
 	public fun hashCode ()I
 	public final fun isOwner ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberLeadingContentParams {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Member;
+	public final fun component2 ()Landroidx/compose/ui/Modifier;
+	public final fun copy (Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberLeadingContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberLeadingContentParams;Lio/getstream/chat/android/models/Member;Landroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberLeadingContentParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lio/getstream/chat/android/models/Member;
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4101,6 +4143,23 @@ public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoMe
 	public final fun getShowAddButton ()Z
 	public final fun getTotalMemberCount ()I
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberTrailingContentParams {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Member;ZLandroidx/compose/ui/Modifier;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Member;ZLandroidx/compose/ui/Modifier;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Member;
+	public final fun component2 ()Z
+	public final fun component3 ()Landroidx/compose/ui/Modifier;
+	public final fun copy (Lio/getstream/chat/android/models/Member;ZLandroidx/compose/ui/Modifier;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberTrailingContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberTrailingContentParams;Lio/getstream/chat/android/models/Member;ZLandroidx/compose/ui/Modifier;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/GroupChannelInfoMemberTrailingContentParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lio/getstream/chat/android/models/Member;
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public fun hashCode ()I
+	public final fun isOwner ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

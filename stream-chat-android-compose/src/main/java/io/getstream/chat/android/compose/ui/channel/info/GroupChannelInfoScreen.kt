@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
@@ -57,8 +59,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
+import io.getstream.chat.android.compose.ui.components.RoleBadge
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -71,8 +75,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAddMembersButtonParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoAvatarContainerParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoExpandMembersItemParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberItemParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberSectionParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
@@ -88,6 +95,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelF
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -496,15 +504,60 @@ internal fun GroupChannelInfoMemberItem(
         modifier = modifier,
         onClick = onClick,
     ) {
-        val user = member.user
-        ChatTheme.componentFactory.UserAvatar(
-            params = UserAvatarParams(
-                modifier = Modifier.size(AvatarSize.Medium),
-                user = user,
-                indicator = user.avatarPresenceIndicator(),
-                showBorder = false,
+        ChatTheme.componentFactory.GroupChannelInfoMemberLeadingContent(
+            params = GroupChannelInfoMemberLeadingContentParams(member = member),
+        )
+        ChatTheme.componentFactory.GroupChannelInfoMemberCenterContent(
+            params = GroupChannelInfoMemberCenterContentParams(
+                modifier = Modifier.weight(1f),
+                currentUser = currentUser,
+                member = member,
             ),
         )
+        ChatTheme.componentFactory.GroupChannelInfoMemberTrailingContent(
+            params = GroupChannelInfoMemberTrailingContentParams(
+                member = member,
+                isOwner = isOwner,
+            ),
+        )
+    }
+}
+
+/**
+ * Leading content of a member row: the member's avatar.
+ */
+@Composable
+internal fun GroupChannelInfoMemberLeadingContent(
+    member: Member,
+    modifier: Modifier = Modifier,
+) {
+    ChatTheme.componentFactory.UserAvatar(
+        params = UserAvatarParams(
+            modifier = modifier.size(AvatarSize.Medium),
+            user = member.user,
+            indicator = member.user.avatarPresenceIndicator(),
+            showBorder = false,
+        ),
+    )
+}
+
+/**
+ * Center content of a member row: the member name and last seen text, plus a mute icon when the
+ * current user has muted the member.
+ */
+@Composable
+internal fun GroupChannelInfoMemberCenterContent(
+    currentUser: User?,
+    member: Member,
+    modifier: Modifier = Modifier,
+) {
+    val user = member.user
+    val isMuted = currentUser?.mutes?.any { it.target?.id == member.getUserId() } == true
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Column(modifier = Modifier.weight(1f)) {
             val errorColor = ChatTheme.colors.accentError
             Text(
@@ -522,24 +575,75 @@ internal fun GroupChannelInfoMemberItem(
                 overflow = TextOverflow.Ellipsis,
             )
         }
-        val role = if (isOwner) {
-            stringResource(id = UiCommonR.string.stream_ui_channel_info_member_owner)
-        } else {
-            when (val role = member.channelRole) {
-                "channel_moderator" -> stringResource(id = UiCommonR.string.stream_ui_channel_info_member_moderator)
-                "channel_member" -> ""
-                else -> role.orEmpty()
-            }
+        if (isMuted) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_design_ic_mute),
+                contentDescription = stringResource(id = R.string.stream_compose_channel_item_muted),
+                tint = ChatTheme.colors.textTertiary,
+            )
         }
-        Text(
-            text = role,
-            style = ChatTheme.typography.bodyDefault,
-            color = ChatTheme.colors.textTertiary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+    }
+}
+
+/**
+ * Trailing content of a member row: a single role badge.
+ *
+ * The role is resolved by priority: owner (derived from the channel creator, shown with the
+ * primary label color), then the global user role (admin), then the channel role (moderator or a
+ * custom role). The default `channel_member` role is not labeled.
+ */
+@Composable
+internal fun GroupChannelInfoMemberTrailingContent(
+    member: Member,
+    isOwner: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val role = when {
+        isOwner -> MemberRoleLabel(
+            text = stringResource(id = UiCommonR.string.stream_ui_channel_info_member_owner),
+            isPrimary = true,
+        )
+        member.user.role == "admin" -> MemberRoleLabel(
+            text = stringResource(id = UiCommonR.string.stream_ui_channel_info_member_admin),
+            isPrimary = false,
+        )
+        member.channelRole == "channel_moderator" -> MemberRoleLabel(
+            text = stringResource(id = UiCommonR.string.stream_ui_channel_info_member_moderator),
+            isPrimary = false,
+        )
+        else ->
+            member.channelRole
+                ?.takeUnless { it.isBlank() || it == "channel_member" || it == "owner" || it == "admin" }
+                ?.let { MemberRoleLabel(text = it, isPrimary = false) }
+    }
+    if (role != null) {
+        RoleBadge(
+            modifier = modifier,
+            text = role.text,
+            backgroundColor = if (role.isPrimary) {
+                ChatTheme.colors.labelBgPrimary
+            } else {
+                ChatTheme.colors.labelBgNeutral
+            },
+            textColor = if (role.isPrimary) {
+                ChatTheme.colors.labelTextPrimary
+            } else {
+                ChatTheme.colors.labelTextNeutral
+            },
         )
     }
 }
+
+/**
+ * A resolved member role to render in the trailing content of a member row.
+ *
+ * @property text The localized role label.
+ * @property isPrimary Whether the badge uses the primary (owner) color, otherwise neutral.
+ */
+private data class MemberRoleLabel(
+    val text: String,
+    val isPrimary: Boolean,
+)
 
 @Composable
 internal fun GroupChannelInfoExpandMembersItem(
@@ -592,11 +696,22 @@ private fun GroupChannelInfoCollapsedMembersPreview() {
 @Composable
 internal fun GroupChannelInfoCollapsedMembers() {
     val channel = PreviewChannelData.channelWithImage.copy(name = "Channel Name")
+    val currentUser = PreviewUserData.user1.copy(
+        mutes = listOf(
+            Mute(
+                user = PreviewUserData.user1,
+                target = PreviewUserData.user3,
+                createdAt = Date(0),
+                updatedAt = Date(0),
+                expires = null,
+            ),
+        ),
+    )
     GroupChannelInfoScaffold(
         modifier = Modifier.fillMaxSize(),
-        currentUser = PreviewUserData.user1,
+        currentUser = currentUser,
         headerState = ChannelHeaderViewState.Content(
-            currentUser = PreviewUserData.user1,
+            currentUser = currentUser,
             connectionState = ConnectionState.Connected,
             channel = channel,
         ),
@@ -609,7 +724,7 @@ internal fun GroupChannelInfoCollapsedMembers() {
                     Member(user = PreviewUserData.user3),
                     Member(user = PreviewUserData.user4),
                 ),
-                minimumVisibleItems = 2,
+                minimumVisibleItems = 3,
                 isCollapsed = true,
             ),
             options = listOf(
@@ -635,11 +750,22 @@ private fun GroupChannelInfoExpandedMembersPreview() {
 
 @Composable
 internal fun GroupChannelInfoExpandedMembers() {
+    val currentUser = PreviewUserData.user1.copy(
+        mutes = listOf(
+            Mute(
+                user = PreviewUserData.user1,
+                target = PreviewUserData.user3,
+                createdAt = Date(0),
+                updatedAt = Date(0),
+                expires = null,
+            ),
+        ),
+    )
     GroupChannelInfoScaffold(
         modifier = Modifier.fillMaxSize(),
-        currentUser = PreviewUserData.user1,
+        currentUser = currentUser,
         headerState = ChannelHeaderViewState.Content(
-            currentUser = PreviewUserData.user1,
+            currentUser = currentUser,
             connectionState = ConnectionState.Connected,
             channel = PreviewChannelData.channelWithImage,
         ),
@@ -647,9 +773,9 @@ internal fun GroupChannelInfoExpandedMembers() {
             owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
-                    Member(user = PreviewUserData.user1.copy(lastActive = Date())),
-                    Member(user = PreviewUserData.user2.copy(online = true)),
-                    Member(user = PreviewUserData.user3),
+                    Member(user = PreviewUserData.user1.copy(lastActive = Date(), role = "admin")),
+                    Member(user = PreviewUserData.user2.copy(online = true), channelRole = "channel_moderator"),
+                    Member(user = PreviewUserData.user3, channelRole = "vip"),
                     Member(user = PreviewUserData.user4.copy(lastActive = Date()), banned = true),
                 ),
                 minimumVisibleItems = 2,
