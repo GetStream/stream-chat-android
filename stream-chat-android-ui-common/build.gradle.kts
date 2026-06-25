@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.constraintlayout)
