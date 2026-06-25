@@ -31,7 +31,7 @@ internal object ReactionTestData {
         "user_id": "user1",
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-02T00:00:00.000Z",
-        "user": {"id": "user1", "role": "user", "banned": false, "online": true},
+        "user": {"id": "user1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
         "emoji_code": "👍",
         "custom_field": "custom_value"
     }"""
@@ -79,7 +79,7 @@ internal object ReactionTestData {
         userId = "user1",
         createdAt = Date(1577836800000),
         updatedAt = Date(1577923200000),
-        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false),
+        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
         emojiCode = "👍",
         extraData = mapOf("custom_field" to "custom_value"),
     )

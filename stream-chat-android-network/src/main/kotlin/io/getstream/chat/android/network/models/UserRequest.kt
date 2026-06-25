@@ -56,5 +56,8 @@ data class UserRequest (
     val name: kotlin.String? = null,
 
     @Json(name = "custom")
-    val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap()
+    val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
+
+    @Json(name = "privacy_settings")
+    val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null
 )

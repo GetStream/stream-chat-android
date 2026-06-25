@@ -25,11 +25,11 @@ internal object ChannelUserReadTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online":true},"last_read":"2025-04-07T16:00:00.000Z","unread_messages":5,"last_read_message_id":"msg-123","last_delivered_at":"2025-04-07T17:00:00.000Z","last_delivered_message_id":"msg-124"}"""
+        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},"last_read":"2025-04-07T16:00:00.000Z","unread_messages":5,"last_read_message_id":"msg-123","last_delivered_at":"2025-04-07T17:00:00.000Z","last_delivered_message_id":"msg-124"}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =
-        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online":true},"last_read":"2025-04-07T16:00:00.000Z","unread_messages":5}"""
+        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},"last_read":"2025-04-07T16:00:00.000Z","unread_messages":5}"""
 
     @Language("JSON")
     val jsonMissingUser =
@@ -37,11 +37,11 @@ internal object ChannelUserReadTestData {
 
     @Language("JSON")
     val jsonMissingLastRead =
-        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online":true},"unread_messages":5,"last_read_message_id":"msg-123","last_delivered_at":"2025-04-07T17:00:00.000Z","last_delivered_message_id":"msg-124"}"""
+        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},"unread_messages":5,"last_read_message_id":"msg-123","last_delivered_at":"2025-04-07T17:00:00.000Z","last_delivered_message_id":"msg-124"}"""
 
     @Language("JSON")
     val jsonMissingUnreadMessages =
-        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online":true},"last_read":"2025-04-07T16:00:00.000Z","last_read_message_id":"msg-123","last_delivered_at":"2025-04-07T17:00:00.000Z","last_delivered_message_id":"msg-124"}"""
+        """{"user":{"id":"user-1","role":"user","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},"last_read":"2025-04-07T16:00:00.000Z","last_read_message_id":"msg-123","last_delivered_at":"2025-04-07T17:00:00.000Z","last_delivered_message_id":"msg-124"}"""
 
     val lastReceivedEventDate = Date(1744200000000L)
 

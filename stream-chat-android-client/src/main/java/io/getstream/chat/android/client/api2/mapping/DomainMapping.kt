@@ -76,9 +76,12 @@ import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
+import io.getstream.chat.android.network.models.ChannelMute as DownstreamChannelMuteResponseDto
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -334,7 +337,11 @@ internal class DomainMapping(
     ).maxBy { it.time }
 
     /**
-     * Transforms [DownstreamUserDto] to [User].
+     * Transforms [DownstreamUserDto] to [User]. The lean user shape (common fields only)
+     * the server sends when a user is referenced inside another entity (message, member,
+     * reaction, etc.). Own-user-only fields (devices, mutes, channel_mutes, unread counts,
+     * privacy_settings, push_preferences, invisible) default to empty / null since the
+     * wire never includes them in this context.
      */
     internal fun DownstreamUserDto.toDomain(): User =
         User(
@@ -342,28 +349,120 @@ internal class DomainMapping(
             name = name ?: "",
             image = image ?: "",
             role = role,
-            invisible = invisible,
-            privacySettings = privacy_settings?.toDomain(),
-            language = language ?: "",
+            invisible = false,
+            language = language,
             banned = banned,
-            devices = devices.orEmpty().map { it.toDomain() },
             online = online,
-            createdAt = created_at,
-            deactivatedAt = deactivated_at,
-            updatedAt = updated_at,
-            lastActive = last_active,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            unreadThreads = unread_threads,
-            mutes = mutes.orEmpty().map { it.toDomain() },
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
             teams = teams,
-            teamsRole = teams_role.orEmpty(),
-            channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
-            blockedUserIds = blocked_user_ids.orEmpty(),
-            avgResponseTime = avg_response_time,
-            pushPreference = push_preferences?.toDomain(),
-            extraData = extraData.toMutableMap(),
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.filterNonNullValues().toMutableMap(),
         ).let(userTransformer::transform)
+
+    /**
+     * Transforms [OwnUserResponse] to [User]. The full own-user shape the server sends in
+     * connect, mute responses, and notification events. Includes devices, mutes,
+     * channel_mutes, unread counts, push_preferences, privacy_settings, etc. that the
+     * lean [DownstreamUserDto] / [UserResponse] shape never carries.
+     */
+    internal fun OwnUserResponse.toDomain(): User =
+        User(
+            id = id,
+            name = name ?: "",
+            image = image ?: "",
+            role = role,
+            invisible = invisible,
+            privacySettings = privacySettings?.toDomain(),
+            language = language,
+            banned = banned,
+            devices = devices.map { it.toDomain() },
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            unreadThreads = unreadThreads,
+            mutes = mutes.map { it.toDomain() },
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            channelMutes = channelMutes.map { it.toDomain() },
+            blockedUserIds = blockedUserIds.orEmpty(),
+            avgResponseTime = avgResponseTime?.toLong(),
+            pushPreference = pushPreferences?.toDomain(),
+            extraData = custom.filterNonNullValues().toMutableMap(),
+        ).let(userTransformer::transform)
+
+    /**
+     * Transforms [UserResponsePrivacyFields] to [User]. The wire shape the server sends
+     * for `user.updated` events — common fields plus typed `invisible` and
+     * `privacy_settings`.
+     */
+    internal fun io.getstream.chat.android.network.models.UserResponsePrivacyFields.toDomain(): User =
+        User(
+            id = id,
+            name = name ?: "",
+            image = image ?: "",
+            role = role,
+            invisible = invisible ?: false,
+            privacySettings = privacySettings?.toDomain(),
+            language = language,
+            banned = banned,
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.filterNonNullValues().toMutableMap(),
+        ).let(userTransformer::transform)
+
+    /**
+     * Transforms a generated [UserMuteResponse] (used inside [OwnUserResponse.mutes]) to
+     * domain [Mute]. Mirrors [DownstreamMuteDto.toDomain] but reads the generated nested
+     * user shape.
+     */
+    internal fun UserMuteResponse.toDomain(): Mute =
+        Mute(
+            user = user?.toDomain(),
+            target = target?.toDomain(),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            expires = expires,
+        )
+
+    /**
+     * Transforms a generated [DownstreamChannelMuteResponseDto] (used inside
+     * [OwnUserResponse.channelMutes]) to domain [ChannelMute]. The nested `channel` field
+     * is a generated [ChannelResponse] that hasn't been migrated yet; we surface a minimal
+     * domain `Channel` here with cid/id/type/timestamps so `isMutedFor` / channel-mute
+     * lookups by cid keep working. TODO once `DownstreamChannelDto` is migrated, swap to a
+     * full `ChannelResponse.toDomain()`.
+     */
+    internal fun DownstreamChannelMuteResponseDto.toDomain(): ChannelMute =
+        ChannelMute(
+            user = user?.toDomain(),
+            channel = channel?.let {
+                Channel(
+                    id = it.id,
+                    type = it.type,
+                    createdAt = it.createdAt,
+                    updatedAt = it.updatedAt,
+                )
+            },
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            expires = expires,
+        )
 
     /**
      * Transforms [DownstreamReactionDto] to [Reaction].

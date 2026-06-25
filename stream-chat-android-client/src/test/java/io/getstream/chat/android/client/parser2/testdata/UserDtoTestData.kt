@@ -37,21 +37,14 @@ internal object UserDtoTestData {
             "role": "",
             "name": "username",
             "image": "image",
-            "invisible": false,
             "language": "language",
             "banned": false,
-            "devices": [],
             "online": false,
-            "created_at": null,
+            "created_at": "1970-01-01T00:00:00.000Z",
+            "updated_at": "1970-01-01T00:00:00.000Z",
             "deactivated_at": null,
-            "updated_at": null,
             "last_active": null,
-            "total_unread_count": 0,
-            "unread_channels": 0,
-            "unread_count": 0,
-            "mutes": [],
-            "teams": [],
-            "channel_mutes": []
+            "teams": []
          }"""
 
     val downstreamUserWithoutExtraData =
@@ -60,27 +53,13 @@ internal object UserDtoTestData {
             id = "",
             name = "username",
             image = "image",
-            invisible = false,
-            privacy_settings = null,
             language = "language",
             role = "",
-            devices = emptyList(),
             online = false,
-            updated_at = null,
-            created_at = null,
-            deactivated_at = null,
-            last_active = null,
-            total_unread_count = 0,
-            unread_channels = 0,
-            unread_count = 0,
-            mutes = emptyList(),
+            createdAt = Date(0),
+            updatedAt = Date(0),
             teams = emptyList(),
-            teams_role = null,
-            channel_mutes = emptyList(),
-            blocked_user_ids = null,
-            avg_response_time = null,
-            push_preferences = null,
-            extraData = emptyMap(),
+            custom = emptyMap(),
         )
 
     @Language("JSON")
@@ -90,20 +69,14 @@ internal object UserDtoTestData {
             "role": "",
             "name": null,
             "image": null,
-            "invisible": false,
+            "language": "",
             "banned": false,
-            "devices": [],
             "online": false,
-            "created_at": null,
+            "created_at": "1970-01-01T00:00:00.000Z",
+            "updated_at": "1970-01-01T00:00:00.000Z",
             "deactivated_at": null,
-            "updated_at": null,
             "last_active": null,
-            "total_unread_count": 0,
-            "unread_channels": 0,
-            "unread_count": 0,
-            "mutes": [],
-            "teams": [],
-            "channel_mutes": []
+            "teams": []
          }"""
 
     val downstreamUserWithoutImageAndName =
@@ -112,27 +85,13 @@ internal object UserDtoTestData {
             id = "",
             name = null,
             image = null,
-            invisible = false,
-            privacy_settings = null,
-            language = null,
+            language = "",
             role = "",
-            devices = emptyList(),
             online = false,
-            updated_at = null,
-            deactivated_at = null,
-            created_at = null,
-            last_active = null,
-            total_unread_count = 0,
-            unread_channels = 0,
-            unread_count = 0,
-            mutes = emptyList(),
+            createdAt = Date(0),
+            updatedAt = Date(0),
             teams = emptyList(),
-            teams_role = null,
-            channel_mutes = emptyList(),
-            blocked_user_ids = null,
-            avg_response_time = null,
-            push_preferences = null,
-            extraData = emptyMap(),
+            custom = emptyMap(),
         )
 
     @Language("JSON")
@@ -140,58 +99,21 @@ internal object UserDtoTestData {
         """{
             "id": "userId",
             "role": "owner",
-            "invisible": false,
-            "privacy_settings": {
-              "typing_indicators": {
-                "enabled": false
-              },
-              "read_receipts": {
-                "enabled": false
-              },
-              "delivery_receipts": {
-                "enabled": false
-              }
-            },
             "language": "language",
             "banned": false,
-            "devices": [
-             {
-              "id": "deviceId",
-              "push_provider": "provider",
-              "push_provider_name": "provider_name",
-              "created_at": "2020-06-10T11:04:31.000Z",
-              "user_id": "userId"
-             }
-            ],
             "online": true,
             "created_at": "2020-06-10T11:04:31.000Z",
             "updated_at": "2020-06-10T11:04:31.588Z",
             "deactivated_at": "2020-06-10T11:04:31.588Z",
             "last_active": "2020-06-10T11:04:31.588Z",
-            "total_unread_count": 1,
-            "unread_channels": 2,
-            "unread_count": 3,
-            "mutes": [
-            {
-             "user": $downstreamJsonWithoutExtraData,
-             "target": $downstreamJsonWithoutExtraData,
-             "created_at": "2020-06-10T11:04:31.000Z",
-             "updated_at": "2020-06-10T11:04:31.588Z"
-            }
-            ],
             "teams": [ "team1", "team2" ],
             "teams_role": {
                 "team1": "owner",
                 "team2": "member"
             },
-            "channel_mutes": [],
             "name": "username",
             "image": "image",
-            "avg_response_time": 1000,
-            "push_preferences": {
-                "chat_level": "default",
-                "disabled_until": "2020-06-10T11:04:31.588Z"
-            }
+            "avg_response_time": 1000
          }"""
     val downstreamUser =
         DownstreamUserDto(
@@ -199,59 +121,21 @@ internal object UserDtoTestData {
             id = "userId",
             name = "username",
             image = "image",
-            invisible = false,
-            privacy_settings = PrivacySettingsDto(
-                typingIndicators = TypingIndicatorsDto(
-                    enabled = false,
-                ),
-                readReceipts = ReadReceiptsDto(
-                    enabled = false,
-                ),
-                deliveryReceipts = DeliveryReceiptsDto(
-                    enabled = false,
-                ),
-            ),
             language = "language",
             role = "owner",
-            devices = listOf(
-                DeviceDto(
-                    id = "deviceId",
-                    pushProvider = "provider",
-                    pushProviderName = "provider_name",
-                    createdAt = Date(1591787071000),
-                    userId = "userId",
-                ),
-            ),
             online = true,
-            updated_at = Date(1591787071588),
-            created_at = Date(1591787071000),
-            deactivated_at = Date(1591787071588),
-            last_active = Date(1591787071588),
-            total_unread_count = 1,
-            unread_channels = 2,
-            unread_count = 3,
-            mutes = listOf(
-                DownstreamMuteDto(
-                    user = downstreamUserWithoutExtraData,
-                    target = downstreamUserWithoutExtraData,
-                    created_at = Date(1591787071000),
-                    updated_at = Date(1591787071588),
-                    null,
-                ),
-            ),
+            updatedAt = Date(1591787071588),
+            createdAt = Date(1591787071000),
+            deactivatedAt = Date(1591787071588),
+            lastActive = Date(1591787071588),
             teams = listOf("team1", "team2"),
-            teams_role = mapOf(
+            teamsRole = mapOf(
                 "team1" to "owner",
                 "team2" to "member",
             ),
-            channel_mutes = emptyList(),
-            blocked_user_ids = null,
-            avg_response_time = 1000L,
-            push_preferences = DownstreamPushPreferenceDto(
-                chatLevel = "default",
-                disabledUntil = Date(1591787071588),
-            ),
-            extraData = emptyMap(),
+            blockedUserIds = emptyList(),
+            avgResponseTime = 1000,
+            custom = emptyMap(),
         )
 
     @Language("JSON")

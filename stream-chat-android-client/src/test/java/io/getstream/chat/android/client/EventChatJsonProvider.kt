@@ -522,7 +522,7 @@ internal fun createHealthEventStringJson() =
         """.trimIndent(),
     )
 
-internal fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
+internal fun createConnectedEventStringJson(userJsonString: String? = createOwnUserJsonString()) =
     createChatEventStringJson(
         "health.check",
         """
@@ -535,7 +535,7 @@ internal fun createNotificationChannelMutesUpdatedEventStringJson() =
     createChatEventStringJson(
         "notification.channel_mutes_updated",
         """
-            "me": ${createUserJsonString()}
+            "me": ${createOwnUserJsonString()}
         """.trimIndent(),
     )
 
@@ -543,7 +543,7 @@ internal fun createNotificationMutesUpdatedEventStringJson() =
     createChatEventStringJson(
         "notification.mutes_updated",
         """
-            "me": ${createUserJsonString()}
+            "me": ${createOwnUserJsonString()}
         """.trimIndent(),
     )
 
@@ -808,17 +808,34 @@ private fun createUserJsonString() =
         {
             "id": "bender",
             "role": "user",
+            "language": "",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "last_active": "2020-06-29T06:14:28.000Z",
+            "banned": false,
+            "online": true,
+            "image": "https://api.adorable.io/avatars/285/bender.png",
+            "name": "Bender"
+          }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createOwnUserJsonString() =
+    """
+        {
+            "id": "bender",
+            "role": "user",
+            "language": "",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
             "last_active": "2020-06-29T06:14:28.000Z",
             "banned": false,
             "online": true,
             "invisible": false,
-            "devices": [ ],
-            "mutes": [ ],
-            "channel_mutes": [ ],
             "total_unread_count": 26,
             "unread_channels": 2,
+            "unread_count": 0,
+            "unread_threads": 0,
             "image": "https://api.adorable.io/avatars/285/bender.png",
             "name": "Bender"
           }

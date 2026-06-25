@@ -35,23 +35,8 @@ internal object UserTestData {
             "name": "John Doe",
             "image": "https://example.com/avatar.jpg",
             "role": "user",
-            "invisible": true,
-            "privacy_settings": {
-                "typing_indicators": {"enabled": true},
-                "read_receipts": {"enabled": false},
-                "delivery_receipts": {"enabled": true}
-            },
             "language": "en",
             "banned": false,
-            "devices": [
-                {
-                    "id": "device1",
-                    "push_provider": "firebase",
-                    "push_provider_name": "Firebase",
-                    "created_at": "2020-01-01T00:00:00.000Z",
-                    "user_id": "user1"
-                }
-            ],
             "online": true,
             "created_at": "2020-01-01T00:00:00.000Z",
             "deactivated_at": null,
@@ -59,9 +44,6 @@ internal object UserTestData {
             "last_active": "2020-01-03T00:00:00.000Z",
             "teams": ["team1", "team2"],
             "teams_role": {"team1": "admin", "team2": "member"},
-            "total_unread_count": 5,
-            "unread_channels": 3,
-            "unread_threads": 2,
             "blocked_user_ids": ["blocked1"],
             "avg_response_time": 3600,
             "custom_field": "custom_value"
@@ -73,8 +55,11 @@ internal object UserTestData {
         {
             "id": "user456",
             "role": "admin",
+            "language": "",
             "banned": true,
-            "online": false
+            "online": false,
+            "created_at": "2020-01-01T00:00:00.000Z",
+            "updated_at": "2020-01-01T00:00:00.000Z"
         }
     """.trimIndent()
 
@@ -123,29 +108,14 @@ internal object UserTestData {
         name = "John Doe",
         image = "https://example.com/avatar.jpg",
         role = "user",
-        invisible = true,
-        privacySettings = PrivacySettings(
-            typingIndicators = TypingIndicators(enabled = true),
-            readReceipts = ReadReceipts(enabled = false),
-            deliveryReceipts = DeliveryReceipts(enabled = true),
-        ),
+        invisible = false,
         language = "en",
         banned = false,
-        devices = listOf(
-            Device(
-                token = "device1",
-                pushProvider = PushProvider.FIREBASE,
-                providerName = "Firebase",
-            ),
-        ),
         online = true,
         createdAt = Date(1577836800000L),
         deactivatedAt = null,
         updatedAt = Date(1577923200000L),
         lastActive = Date(1578009600000L),
-        totalUnreadCount = 5,
-        unreadChannels = 3,
-        unreadThreads = 2,
         teams = listOf("team1", "team2"),
         teamsRole = mapOf("team1" to "admin", "team2" to "member"),
         blockedUserIds = listOf("blocked1"),
@@ -172,25 +142,11 @@ internal object UserTestData {
         image = "",
         role = "admin",
         invisible = false,
-        privacySettings = null,
         language = "",
         banned = true,
-        devices = emptyList(),
         online = false,
-        createdAt = null,
-        deactivatedAt = null,
-        updatedAt = null,
-        lastActive = null,
-        totalUnreadCount = 0,
-        unreadChannels = 0,
-        unreadThreads = 0,
-        mutes = emptyList(),
-        teams = emptyList(),
-        teamsRole = emptyMap(),
-        channelMutes = emptyList(),
-        blockedUserIds = emptyList(),
-        avgResponseTime = null,
-        pushPreference = null,
+        createdAt = Date(1577836800000L),
+        updatedAt = Date(1577836800000L),
         extraData = emptyMap(),
     )
 
@@ -199,13 +155,16 @@ internal object UserTestData {
         {
             "id": "user123",
             "role": "user",
+            "language": "",
             "banned": false,
             "online": true,
+            "created_at": "2020-01-01T00:00:00.000Z",
+            "updated_at": "2020-01-01T00:00:00.000Z",
             "name": null,
             "image": null,
-            "invisible": null,
-            "language": null,
-            "avg_response_time": null
+            "avg_response_time": null,
+            "last_active": null,
+            "deactivated_at": null
         }
     """.trimIndent()
 
@@ -214,10 +173,12 @@ internal object UserTestData {
         name = "",
         image = "",
         role = "user",
-        invisible = null,
+        invisible = false,
         language = "",
         banned = false,
         online = true,
+        createdAt = Date(1577836800000L),
+        updatedAt = Date(1577836800000L),
         avgResponseTime = null,
         extraData = emptyMap(),
     )

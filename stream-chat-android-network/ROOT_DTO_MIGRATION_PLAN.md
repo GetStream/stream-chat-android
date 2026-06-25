@@ -142,7 +142,7 @@ and `/lib/chat/controller/v1/payload/update_users.go`:
 | Wire context | Kotlin type | Notes |
 |---|---|---|
 | Nested user (`mute.user`, `message.user`, `member.user`, `reaction.user`, `channel.created_by`, search results, etc.) | `UserResponse` | Matches the wire 1:1. |
-| Own-user (`TokenResponse.me`, `ConnectedEvent.me`, etc.) | `OwnUserResponse` | Spec is correct; generator currently drops `privacy_settings` despite the spec yaml declaring it. Workaround: extract from `custom` overflow until a regen lands. |
+| Own-user (`ConnectedEvent.me`, `MuteUserResponse.own_user`, notification `me` events) | `OwnUserResponse` | Resolved: `generate-kotlin-chat-client.sh` was passing `--classes-to-skip PrivacySettingsResponse,PrivacySettings,...` which stripped every field of those types from generated DTOs. Removed `PrivacySettingsResponse` (and dead `PrivacySettings` entry) from the skip list; regen now emits `privacy_settings` on `OwnUserResponse` / `UserResponsePrivacyFields` / `FullUserResponse` / `UserRequest` / `ConnectUserDetailsRequest`. |
 | `FullUserResponse` | unused on mobile | Admin-only. |
 
 ### Implications for the plan
@@ -165,8 +165,13 @@ Mappers:
 
 ### Generator follow-up
 
-Log `OwnUserResponse` missing `privacy_settings` as a generator issue (`#12`)? Spec yaml
-has it; Kotlin output doesn't. Likely a regen out-of-date or a generator filter quirk on
-nested `$ref` fields tagged `omit_for_video`. Verify by regenerating from the current
-generator and inspecting the diff. If the bug is real, log it; if a stale regen, just
-regen.
+Resolved during step 1: `generate-kotlin-chat-client.sh` had `PrivacySettingsResponse`
+and a dead `PrivacySettings` entry in `--classes-to-skip`. The generator's skip logic
+strips every field whose type matches a skipped class
+(`kotlin.go:147 getLastWord(field.Type, ".") == classToSkip`), which silently removed
+`privacy_settings` from `OwnUserResponse`, `UserResponsePrivacyFields`,
+`FullUserResponse`, `UserRequest`, and `ConnectUserDetailsRequest`. Removed both
+entries; the only entry left is `StopRTMPBroadcastsRequest` (video-only).
+
+The script change is in the chat-manager repo at `generate-kotlin-chat-client.sh`;
+needs to be committed there separately from this branch.

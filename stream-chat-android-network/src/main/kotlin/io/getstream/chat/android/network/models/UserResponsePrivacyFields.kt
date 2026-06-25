@@ -94,6 +94,9 @@ data class UserResponsePrivacyFields (
     @Json(name = "revoke_tokens_issued_before")
     val revokeTokensIssuedBefore: java.util.Date? = null,
 
+    @Json(name = "privacy_settings")
+    val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null,
+
     @Json(name = "teams_role")
     val teamsRole: kotlin.collections.Map<kotlin.String, kotlin.String>? = emptyMap()
 )

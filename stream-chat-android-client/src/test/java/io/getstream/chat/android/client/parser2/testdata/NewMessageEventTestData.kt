@@ -27,7 +27,7 @@ internal object NewMessageEventTestData {
 
     @Language("JSON")
     private const val MINIMAL_USER_JSON =
-        """{"id":"user-1","role":"user","banned":false,"online":true}"""
+        """{"id":"user-1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"}"""
 
     @Language("JSON")
     private const val MINIMAL_MESSAGE_JSON = """{
@@ -213,6 +213,8 @@ internal object NewMessageEventTestData {
         invisible = false,
         banned = false,
         online = true,
+        createdAt = Date(1577836800000L),
+        updatedAt = Date(1577836800000L),
     )
 
     private val optionalMissingChannelInfo = ChannelInfo(

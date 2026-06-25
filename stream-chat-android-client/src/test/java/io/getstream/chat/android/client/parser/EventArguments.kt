@@ -192,11 +192,15 @@ internal object EventArguments {
         createdAt = date,
         updatedAt = date,
         lastActive = date,
-        unreadChannels = 2,
-        totalUnreadCount = 26,
         name = "Bender",
         image = "https://api.adorable.io/avatars/285/bender.png",
         extraData = mutableMapOf(),
+    )
+
+    private val ownUser = user.copy(
+        totalUnreadCount = 26,
+        unreadChannels = 2,
+        unreadThreads = 0,
     )
 
     private val member = Member(
@@ -766,20 +770,20 @@ internal object EventArguments {
         type = EventType.HEALTH_CHECK,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        me = user,
+        me = ownUser,
         connectionId = connectionId,
     )
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        me = user,
+        me = ownUser,
     )
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(
         type = EventType.NOTIFICATION_MUTES_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        me = user,
+        me = ownUser,
     )
     private val newMessageEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,

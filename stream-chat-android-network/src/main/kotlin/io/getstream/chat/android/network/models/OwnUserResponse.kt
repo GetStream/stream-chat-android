@@ -118,6 +118,9 @@ data class OwnUserResponse (
     @Json(name = "latest_hidden_channels")
     val latestHiddenChannels: kotlin.collections.List<kotlin.String>? = emptyList(),
 
+    @Json(name = "privacy_settings")
+    val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null,
+
     @Json(name = "push_preferences")
     val pushPreferences: io.getstream.chat.android.network.models.PushPreferencesResponse? = null,
 

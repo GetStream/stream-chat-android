@@ -720,7 +720,7 @@ internal object MoshiChatApiTestArguments {
             RetroSuccess(
                 MuteUserResponse(
                     Mother.randomDownstreamMuteDto(),
-                    Mother.randomDownstreamUserDto(),
+                    Mother.randomOwnUserResponse(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,

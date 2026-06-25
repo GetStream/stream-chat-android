@@ -23,9 +23,14 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 
 internal object DownstreamUserDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamUserDto>(DownstreamUserDto::class) {
+    CustomObjectDtoAdapter<DownstreamUserDto>(
+        kClass = DownstreamUserDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     fun fromJson(
@@ -37,6 +42,42 @@ internal object DownstreamUserDtoAdapter :
     @ToJson
     @Suppress("UNUSED_PARAMETER")
     fun toJson(jsonWriter: JsonWriter, value: DownstreamUserDto): Unit = error("Can't convert this to Json")
+}
+
+internal object OwnUserResponseAdapter :
+    CustomObjectDtoAdapter<OwnUserResponse>(
+        kClass = OwnUserResponse::class,
+        extraDataPropertyName = "custom",
+    ) {
+
+    @FromJson
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        userAdapter: JsonAdapter<OwnUserResponse>,
+    ): OwnUserResponse? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
+
+    @ToJson
+    @Suppress("UNUSED_PARAMETER")
+    fun toJson(jsonWriter: JsonWriter, value: OwnUserResponse): Unit = error("Can't convert this to Json")
+}
+
+internal object UserResponsePrivacyFieldsAdapter :
+    CustomObjectDtoAdapter<UserResponsePrivacyFields>(
+        kClass = UserResponsePrivacyFields::class,
+        extraDataPropertyName = "custom",
+    ) {
+
+    @FromJson
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        userAdapter: JsonAdapter<UserResponsePrivacyFields>,
+    ): UserResponsePrivacyFields? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
+
+    @ToJson
+    @Suppress("UNUSED_PARAMETER")
+    fun toJson(jsonWriter: JsonWriter, value: UserResponsePrivacyFields): Unit = error("Can't convert this to Json")
 }
 
 internal object UpstreamUserDtoAdapter :

@@ -20,7 +20,6 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
-import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import java.util.Date
 
 /**
@@ -48,43 +47,7 @@ internal data class UpstreamUserDto(
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
-/**
- * See [io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class DownstreamUserDto(
-    val id: String,
-    val name: String?,
-    val image: String?,
-    val role: String,
-    val invisible: Boolean? = false,
-    val privacy_settings: PrivacySettingsDto?,
-    val language: String?,
-    val banned: Boolean,
-    val devices: List<DeviceDto>?,
-    val online: Boolean,
-    val created_at: Date?,
-    val deactivated_at: Date?,
-    val updated_at: Date?,
-    val last_active: Date?,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val unread_count: Int = 0,
-    val unread_threads: Int = 0,
-    val mutes: List<DownstreamMuteDto>?,
-    val teams: List<String> = emptyList(),
-    val teams_role: Map<String, String>?,
-    val channel_mutes: List<DownstreamChannelMuteDto>?,
-    val blocked_user_ids: List<String>?,
-    val avg_response_time: Long?,
-    val push_preferences: DownstreamPushPreferenceDto?,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
+internal typealias DownstreamUserDto = io.getstream.chat.android.network.models.UserResponse
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserBlockDto(

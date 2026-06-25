@@ -25,7 +25,7 @@ internal object MemberTestData {
 
     @Language("JSON")
     val jsonAllFields = """{
-        "user": {"id": "user1", "role": "user", "banned": false, "online": true},
+        "user": {"id": "user1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-02T00:00:00.000Z",
         "invited": true,
@@ -44,7 +44,7 @@ internal object MemberTestData {
 
     @Language("JSON")
     val jsonOptionalFieldsMissing = """{
-        "user": {"id": "user1", "role": "user", "banned": false, "online": true}
+        "user": {"id": "user1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"}
     }"""
 
     @Language("JSON")
@@ -54,7 +54,7 @@ internal object MemberTestData {
     }"""
 
     val expectedAllFields = Member(
-        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false),
+        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
         createdAt = Date(1577836800000),
         updatedAt = Date(1577923200000),
         isInvited = true,
@@ -72,7 +72,7 @@ internal object MemberTestData {
     )
 
     val expectedOptionalFieldsMissing = Member(
-        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false),
+        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
         createdAt = null,
         updatedAt = null,
         isInvited = null,

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.result.Error
 import java.util.Date
 
@@ -242,7 +243,7 @@ internal data class NotificationChannelDeletedEventDto(
 internal data class NotificationChannelMutesUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val me: DownstreamUserDto,
+    val me: OwnUserResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -376,7 +377,7 @@ internal data class NotificationThreadMessageNewEventDto(
 internal data class NotificationMutesUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val me: DownstreamUserDto,
+    val me: OwnUserResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -525,7 +526,7 @@ internal data class GlobalUserUnbannedEventDto(
 internal data class UserUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: io.getstream.chat.android.network.models.UserResponsePrivacyFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -676,7 +677,7 @@ internal data class UserMessagesDeletedEventDto(
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val me: DownstreamUserDto,
+    val me: OwnUserResponse,
     val connection_id: String,
 ) : ChatEventDto()
 

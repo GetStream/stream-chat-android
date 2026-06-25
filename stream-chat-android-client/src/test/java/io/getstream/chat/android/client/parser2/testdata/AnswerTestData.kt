@@ -25,7 +25,7 @@ internal object AnswerTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"id":"answer1","poll_id":"poll1","answer_text":"This is my answer","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online":true},"user_id":"user1","is_answer":true,"option_id":""}"""
+        """{"id":"answer1","poll_id":"poll1","answer_text":"This is my answer","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},"user_id":"user1","is_answer":true,"option_id":""}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =

@@ -69,7 +69,7 @@ internal object ChannelTestData {
         "watchers":[],
         "read":[],
         "config":{$MINIMAL_CONFIG},
-        "created_by":{"id":"user1","role":"user","created_at":"2020-06-29T06:14:28.000Z","updated_at":"2020-06-29T06:14:28.000Z","banned":false,"online":true,"invisible":false},
+        "created_by":{"id":"user1","role":"user","created_at":"2020-06-29T06:14:28.000Z","updated_at":"2020-06-29T06:14:28.000Z","banned":false,"online":true,"invisible":false,"language":"","created_at":"2020-01-01T00:00:00.000Z","updated_at":"2020-01-01T00:00:00.000Z"},
         "team":"team1",
         "cooldown":30,
         "pinned_messages":[],
@@ -102,7 +102,7 @@ internal object ChannelTestData {
                 "text":"Hello",
                 "html":"<p>Hello</p>",
                 "type":"regular",
-                "user":{"id":"user1","role":"user","banned":false,"online":true},
+                "user":{"id":"user1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
                 "attachments":[],
                 "latest_reactions":[],
                 "own_reactions":[],
@@ -116,22 +116,22 @@ internal object ChannelTestData {
         ],
         "members":[
             {
-                "user":{"id":"member1","role":"user","banned":false,"online":true},
+                "user":{"id":"member1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
                 "created_at":"2020-06-29T05:00:00.000Z"
             }
         ],
         "watchers":[
-            {"id":"watcher1","role":"user","banned":false,"online":true}
+            {"id":"watcher1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"}
         ],
         "read":[
             {
-                "user":{"id":"reader1","role":"user","banned":false,"online":true},
+                "user":{"id":"reader1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
                 "last_read":"2020-06-29T06:10:00.000Z",
                 "unread_messages":2
             }
         ],
         "config":{$MINIMAL_CONFIG},
-        "created_by":{"id":"user1","role":"user","created_at":"2020-06-29T06:14:28.000Z","updated_at":"2020-06-29T06:14:28.000Z","banned":false,"online":true,"invisible":false},
+        "created_by":{"id":"user1","role":"user","created_at":"2020-06-29T06:14:28.000Z","updated_at":"2020-06-29T06:14:28.000Z","banned":false,"online":true,"invisible":false,"language":"","created_at":"2020-01-01T00:00:00.000Z","updated_at":"2020-01-01T00:00:00.000Z"},
         "team":"team1",
         "cooldown":0,
         "pinned_messages":[
@@ -141,7 +141,7 @@ internal object ChannelTestData {
                 "text":"Pinned message",
                 "html":"<p>Pinned message</p>",
                 "type":"regular",
-                "user":{"id":"user1","role":"user","banned":false,"online":true},
+                "user":{"id":"user1","role":"user","banned":false,"online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
                 "attachments":[],
                 "latest_reactions":[],
                 "own_reactions":[],
@@ -305,7 +305,7 @@ internal object ChannelTestData {
                 text = "Hello",
                 html = "<p>Hello</p>",
                 type = "regular",
-                user = User(id = "user1", role = "user", banned = false, online = true, invisible = false),
+                user = User(id = "user1", role = "user", banned = false, online = true, invisible = false, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
                 createdAt = Date(1593410400000),
                 updatedAt = Date(1593410400000),
                 silent = false,
@@ -359,7 +359,7 @@ internal object ChannelTestData {
                 text = "Pinned message",
                 html = "<p>Pinned message</p>",
                 type = "regular",
-                user = User(id = "user1", role = "user", banned = false, online = true, invisible = false),
+                user = User(id = "user1", role = "user", banned = false, online = true, invisible = false, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
                 createdAt = Date(1593406800000), // 2020-06-29T05:00:00Z = 07:00 CEST
                 updatedAt = Date(1593406800000),
                 silent = false,
