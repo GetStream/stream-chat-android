@@ -162,7 +162,7 @@ public fun GiphyAttachmentContent(
         "Missing Giphy attachment."
     }
 
-    val previewUrl = attachment.titleLink ?: attachment.ogUrl
+    val previewUrl = attachment.titleLink ?: attachment.thumbUrl ?: attachment.ogUrl
 
     checkNotNull(previewUrl) {
         "Missing preview URL."
