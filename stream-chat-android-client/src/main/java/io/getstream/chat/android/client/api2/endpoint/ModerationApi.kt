@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
+import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse

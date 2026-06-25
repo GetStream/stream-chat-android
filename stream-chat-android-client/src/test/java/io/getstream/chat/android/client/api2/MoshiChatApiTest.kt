@@ -62,7 +62,7 @@ import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
+import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
@@ -671,7 +671,7 @@ internal class MoshiChatApiTest {
         val result = sut.muteChannel(channelType, channelId, expiration).await()
         // then
         val expectedRequest = MuteChannelRequest(
-            channel_cid = "$channelType:$channelId",
+            channelCids = listOf("$channelType:$channelId"),
             expiration = expiration,
         )
         result `should be instance of` expected
@@ -693,7 +693,7 @@ internal class MoshiChatApiTest {
         val result = sut.unmuteChannel(channelType, channelId).await()
         // then
         val expectedRequest = MuteChannelRequest(
-            channel_cid = "$channelType:$channelId",
+            channelCids = listOf("$channelType:$channelId"),
             expiration = null,
         )
         result `should be instance of` expected

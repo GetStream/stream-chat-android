@@ -68,7 +68,7 @@ import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
+import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
@@ -716,7 +716,7 @@ constructor(
     ): Call<Unit> {
         return moderationApi.muteChannel(
             body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
+                channelCids = listOf("$channelType:$channelId"),
                 expiration = expiration,
             ),
         ).toUnitCall()
@@ -728,7 +728,7 @@ constructor(
     ): Call<Unit> {
         return moderationApi.unmuteChannel(
             body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
+                channelCids = listOf("$channelType:$channelId"),
                 expiration = null,
             ),
         ).toUnitCall()
