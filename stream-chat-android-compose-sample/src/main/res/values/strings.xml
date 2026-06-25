@@ -41,6 +41,8 @@
     <string name="custom_login_flag_composer_link_preview_description">Show link previews in the message composer</string>
     <string name="custom_login_flag_system_attachment_picker_label">System attachment picker</string>
     <string name="custom_login_flag_system_attachment_picker_description">Use the system\'s native file/media picker</string>
+    <string name="custom_login_flag_location_sharing_label">Location sharing</string>
+    <string name="custom_login_flag_location_sharing_description">Add a Location option to the attachment picker for sharing static and live locations</string>
     <string name="custom_login_flag_channel_pinning_label">Channel pinning</string>
     <string name="custom_login_flag_channel_pinning_description">Show the Pin/Unpin Chat action in the channel options menu</string>
 
