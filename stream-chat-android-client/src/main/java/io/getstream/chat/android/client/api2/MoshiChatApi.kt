@@ -84,7 +84,7 @@ import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
-import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
+import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -1102,7 +1102,7 @@ constructor(
         return channelApi.rejectInvite(
             channelType = channelType,
             channelId = channelId,
-            body = RejectInviteRequest(),
+            body = RejectInviteRequest(rejectInvite = true),
         ).map(this::flattenChannel)
     }
 

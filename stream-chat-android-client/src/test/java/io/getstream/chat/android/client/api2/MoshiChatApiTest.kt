@@ -76,7 +76,7 @@ import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.toSortParams
 import io.getstream.chat.android.network.models.QueryRemindersRequest
-import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
+import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
@@ -1384,7 +1384,7 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val result = sut.rejectInvite(channelType, channelId).await()
         // then
-        val expectedBody = RejectInviteRequest()
+        val expectedBody = RejectInviteRequest(rejectInvite = true)
         result `should be instance of` expected
         verify(api, times(1)).rejectInvite(channelType, channelId, expectedBody)
     }
