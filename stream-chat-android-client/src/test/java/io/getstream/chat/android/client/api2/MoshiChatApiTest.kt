@@ -69,7 +69,7 @@ import io.getstream.chat.android.network.models.UpdatePollPartialRequest as Part
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
+import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
@@ -90,7 +90,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
-import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
+import io.getstream.chat.android.network.models.VoteData as UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -2334,7 +2334,7 @@ internal class MoshiChatApiTest {
         val optionId = randomString()
         val result = sut.castPollVote(messageId, pollId, optionId).await()
         // then
-        val expectedVote = PollVoteRequest(UpstreamVoteDto(option_id = optionId))
+        val expectedVote = PollVoteRequest(UpstreamVoteDto(optionId = optionId))
         result `should be instance of` expected
         verify(api, times(1)).castPollVote(messageId, pollId, expectedVote)
     }
@@ -2354,7 +2354,7 @@ internal class MoshiChatApiTest {
         val answer = randomString()
         val result = sut.castPollAnswer(messageId, pollId, answer).await()
         // then
-        val expectedAnswer = PollVoteRequest(UpstreamVoteDto(answer_text = answer))
+        val expectedAnswer = PollVoteRequest(UpstreamVoteDto(answerText = answer))
         result `should be instance of` expected
         verify(api, times(1)).castPollVote(messageId, pollId, expectedAnswer)
     }

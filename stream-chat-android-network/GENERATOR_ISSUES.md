@@ -625,6 +625,49 @@ workaround on the chat-android side keeps things working.
 
 ---
 
+## 11. Spec emits `Custom` (capital C) `@Json` name for poll request DTOs
+
+**Symptom:** Generated `CreatePollRequest`, `UpdatePollRequest`, `CreatePollOptionRequest`,
+`UpdatePollOptionRequest` declare:
+
+```kotlin
+@Json(name = "Custom")
+val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap()
+```
+
+**Root cause:** The chat backend's Go poll-request structs declare the extra-fields property
+as `Custom jsonextra.ExtraFields` with no `json:"custom"` tag, unlike most other DTOs. The
+spec generator falls back to using the Go field name (`Custom`) verbatim. The Kotlin
+generator faithfully echoes that into `@Json(name = "Custom")`. Peer DTOs that have explicit
+`json:"custom"` tags emit the correct lowercase name (see `PollOptionResponseData`,
+`PollOptionInput`).
+
+**Why this is cosmetic, not a wire-format bug:** The wire never contains `"Custom"` or
+`"custom"` literally for these payloads. The server's `jsonextra.ExtraFields` flattens map
+contents to root on encode and sweeps unknown root keys back into the map on decode (issue
+#9). The client's `CustomObjectDtoAdapter` does the same: on encode, it serializes the DTO
+through Moshi's default adapter (producing a Map keyed by the `@Json` name), then **looks up
+that key, removes it from the Map, and merges the contents at root level** before writing the
+wire. On decode it reverses the process. The literal annotation name only appears in the
+intermediate Map between Moshi and the adapter - the wire shape is "flat root keys" on both
+sides.
+
+The only requirement is that the adapter be registered with
+`extraDataPropertyName = "Custom"` (matching the `@Json` name) when wrapping these specific
+DTOs. As long as that's consistent, the typo is invisible on the wire.
+
+**Fix status:** Not fixed. Cosmetic; does not block migration of these DTOs as long as the
+adapter wiring matches the annotation. Still worth fixing for spec consistency.
+
+**Suggested fix:** Spec-side - add `json:"custom"` tags to the affected Go struct fields, or
+recognize the convention in the spec generator's struct walker.
+
+**Migration timing:** Not blocking. The real blocker for `CreatePollRequest` /
+`UpdatePollRequest` migration is issue #8 (generator-side emission of the `custom` /
+`extraData` field at all), not this naming quirk.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec

@@ -75,7 +75,7 @@ import io.getstream.chat.android.network.models.UpdatePollPartialRequest as Part
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
+import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
@@ -104,7 +104,7 @@ import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
-import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
+import io.getstream.chat.android.network.models.VoteData as UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -1692,7 +1692,7 @@ constructor(
     ): Call<Vote> = castVote(
         messageId = messageId,
         pollId = pollId,
-        vote = UpstreamVoteDto(option_id = optionId),
+        vote = UpstreamVoteDto(optionId = optionId),
     )
 
     override fun castPollAnswer(
@@ -1702,7 +1702,7 @@ constructor(
     ): Call<Vote> = castVote(
         messageId = messageId,
         pollId = pollId,
-        vote = UpstreamVoteDto(answer_text = answer),
+        vote = UpstreamVoteDto(answerText = answer),
     )
 
     private fun castVote(

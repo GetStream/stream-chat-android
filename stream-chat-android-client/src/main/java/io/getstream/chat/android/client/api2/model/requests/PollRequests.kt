@@ -95,23 +95,3 @@ internal data class UpstreamOptionDto(
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
-/**
- * Used for voting on a poll.
- *
- * @property vote the vote object.
- */
-@JsonClass(generateAdapter = true)
-internal data class PollVoteRequest(
-    val vote: UpstreamVoteDto,
-)
-
-/**
- * Used for voting on a poll.
- *
- * @property option_id the text of the answer.
- */
-@JsonClass(generateAdapter = true)
-internal data class UpstreamVoteDto(
-    val option_id: String? = null,
-    val answer_text: String? = null,
-)
