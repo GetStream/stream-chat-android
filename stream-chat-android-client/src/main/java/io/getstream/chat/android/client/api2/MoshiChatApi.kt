@@ -1434,16 +1434,16 @@ constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
-            sort = if (query.predefinedFilter != null) null else query.sort,
-            predefined_filter = query.predefinedFilter,
-            filter_values = query.filterValues,
-            sort_values = query.sortValues,
+        val request = io.getstream.chat.android.network.models.QueryChannelsRequest(
+            filterConditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
+            sort = if (query.predefinedFilter != null) null else query.querySort.toSortParams(),
+            predefinedFilter = query.predefinedFilter,
+            filterValues = query.filterValues,
+            sortValues = query.sortValues,
             offset = query.offset,
             limit = query.limit,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,

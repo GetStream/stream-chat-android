@@ -1900,13 +1900,13 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannels(query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = query.filter.toMap(),
-            sort = query.sort,
+        val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
+            filterConditions = query.filter.toMap(),
+            sort = query.querySort.toSortParams(),
             offset = query.offset,
             limit = query.limit,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -1939,16 +1939,16 @@ internal class MoshiChatApiTest {
             sut.setConnection(userId = userId, connectionId = connectionId)
             val result = sut.queryChannels(query).await()
             // then
-            val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-                filter_conditions = null,
+            val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
+                filterConditions = null,
                 sort = null,
-                predefined_filter = predefinedFilter,
-                filter_values = filterValues,
-                sort_values = sortValues,
+                predefinedFilter = predefinedFilter,
+                filterValues = filterValues,
+                sortValues = sortValues,
                 offset = query.offset,
                 limit = query.limit,
-                message_limit = query.messageLimit,
-                member_limit = query.memberLimit,
+                messageLimit = query.messageLimit,
+                memberLimit = query.memberLimit,
                 state = query.state,
                 watch = query.watch,
                 presence = query.presence,
