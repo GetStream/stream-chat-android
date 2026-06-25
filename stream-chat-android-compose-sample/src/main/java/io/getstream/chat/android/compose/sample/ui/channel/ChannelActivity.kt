@@ -76,7 +76,7 @@ class ChannelActivity : ComponentActivity() {
 
     @Composable
     private fun SetupChatTheme() {
-        val componentFactory = remember(cid) {
+        val componentFactory = remember {
             if (settings.isLocationSharingEnabled) {
                 LocationComponentFactory(locationViewModelFactory = SharedLocationViewModelFactory(cid))
             } else {
