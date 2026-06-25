@@ -79,8 +79,8 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
@@ -1765,7 +1765,7 @@ constructor(
             filter = filter?.toMap(),
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return pollsApi.queryPollVotes(pollId, request).mapDomain { it.toDomain() }
     }
@@ -1780,7 +1780,7 @@ constructor(
             filter = filter?.toMap(),
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
     }
