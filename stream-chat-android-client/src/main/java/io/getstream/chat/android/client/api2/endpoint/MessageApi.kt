@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRe
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
+import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse

@@ -89,7 +89,7 @@ import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
+import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
@@ -1323,10 +1323,7 @@ constructor(
         return messageApi.sendAction(
             messageId = request.messageId,
             request = SendActionRequest(
-                channel_id = request.channelId,
-                message_id = request.messageId,
-                type = request.type,
-                form_data = request.formData,
+                formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
             ),
         ).mapDomain { response ->
             response.message.toDomain()

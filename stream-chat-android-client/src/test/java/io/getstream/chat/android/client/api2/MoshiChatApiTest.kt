@@ -80,7 +80,7 @@ import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectIn
 import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
+import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
@@ -1693,10 +1693,7 @@ internal class MoshiChatApiTest {
         val result = sut.sendAction(request).await()
         // then
         val expectedRequest = SendActionRequest(
-            channel_id = request.channelId,
-            message_id = request.messageId,
-            type = request.type,
-            form_data = request.formData,
+            formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
         )
         result `should be instance of` expected
         verify(api, times(1)).sendAction(request.messageId, expectedRequest)
