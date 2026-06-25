@@ -707,24 +707,41 @@ internal object Mother {
     ): DownstreamMuteDto = DownstreamMuteDto(
         user = user,
         target = target,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         expires = expires,
     )
 
     fun randomDownstreamChannelMuteDto(
         user: DownstreamUserDto = randomDownstreamUserDto(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(),
+        channel: io.getstream.chat.android.network.models.ChannelResponse? = randomChannelResponse(),
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
         expires: Date? = randomDateOrNull(),
     ): DownstreamChannelMuteDto = DownstreamChannelMuteDto(
         user = user,
         channel = channel,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         expires = expires,
     )
+
+    fun randomChannelResponse(
+        id: String = randomString(),
+        type: String = randomString(),
+        cid: String = "$type:$id",
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): io.getstream.chat.android.network.models.ChannelResponse =
+        io.getstream.chat.android.network.models.ChannelResponse(
+            cid = cid,
+            id = id,
+            type = type,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            disabled = false,
+            frozen = false,
+        )
 
     fun randomDownstreamReactionGroupDto(
         count: Int = randomInt(),

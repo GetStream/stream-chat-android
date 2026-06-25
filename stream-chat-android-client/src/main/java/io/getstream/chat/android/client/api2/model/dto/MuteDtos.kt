@@ -28,11 +28,4 @@ internal data class UpstreamMuteDto(
     val expires: Date?,
 )
 
-@JsonClass(generateAdapter = true)
-internal data class DownstreamMuteDto(
-    val user: DownstreamUserDto?,
-    val target: DownstreamUserDto?,
-    val created_at: Date,
-    val updated_at: Date,
-    val expires: Date?,
-)
+internal typealias DownstreamMuteDto = io.getstream.chat.android.network.models.UserMuteResponse

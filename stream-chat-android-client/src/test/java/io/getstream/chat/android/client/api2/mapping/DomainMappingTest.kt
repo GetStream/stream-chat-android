@@ -386,8 +386,8 @@ internal class DomainMappingTest {
         val expected = Mute(
             user = with(sut) { downstreamMuteDto.user?.toDomain() },
             target = with(sut) { downstreamMuteDto.target?.toDomain() },
-            createdAt = downstreamMuteDto.created_at,
-            updatedAt = downstreamMuteDto.updated_at,
+            createdAt = downstreamMuteDto.createdAt,
+            updatedAt = downstreamMuteDto.updatedAt,
             expires = downstreamMuteDto.expires,
         )
         assertEquals(expected, mute)
@@ -400,11 +400,17 @@ internal class DomainMappingTest {
         val mute = with(sut) {
             downstreamMuteDto.toDomain()
         }
+        val channel = downstreamMuteDto.channel!!
         val expected = ChannelMute(
             user = with(sut) { downstreamMuteDto.user?.toDomain() },
-            channel = with(sut) { downstreamMuteDto.channel?.toDomain() },
-            createdAt = downstreamMuteDto.created_at,
-            updatedAt = downstreamMuteDto.updated_at,
+            channel = io.getstream.chat.android.models.Channel(
+                id = channel.id,
+                type = channel.type,
+                createdAt = channel.createdAt,
+                updatedAt = channel.updatedAt,
+            ),
+            createdAt = downstreamMuteDto.createdAt,
+            updatedAt = downstreamMuteDto.updatedAt,
             expires = downstreamMuteDto.expires,
         )
         assertEquals(expected, mute)

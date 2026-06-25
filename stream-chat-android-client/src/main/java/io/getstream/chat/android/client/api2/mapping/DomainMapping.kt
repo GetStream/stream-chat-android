@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
@@ -76,7 +75,6 @@ import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.network.models.ChannelMute as DownstreamChannelMuteResponseDto
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
@@ -427,9 +425,7 @@ internal class DomainMapping(
         ).let(userTransformer::transform)
 
     /**
-     * Transforms a generated [UserMuteResponse] (used inside [OwnUserResponse.mutes]) to
-     * domain [Mute]. Mirrors [DownstreamMuteDto.toDomain] but reads the generated nested
-     * user shape.
+     * Transforms [UserMuteResponse] to [Mute].
      */
     internal fun UserMuteResponse.toDomain(): Mute =
         Mute(
@@ -441,14 +437,11 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms a generated [DownstreamChannelMuteResponseDto] (used inside
-     * [OwnUserResponse.channelMutes]) to domain [ChannelMute]. The nested `channel` field
-     * is a generated [ChannelResponse] that hasn't been migrated yet; we surface a minimal
-     * domain `Channel` here with cid/id/type/timestamps so `isMutedFor` / channel-mute
-     * lookups by cid keep working. TODO once `DownstreamChannelDto` is migrated, swap to a
-     * full `ChannelResponse.toDomain()`.
+     * Transforms [DownstreamChannelMuteDto] to [ChannelMute]. The nested `channel` is a
+     * generated `ChannelResponse` not yet migrated; we surface a minimal domain `Channel`
+     * (id/type/timestamps) so cid-based mute lookups keep working until that migration.
      */
-    internal fun DownstreamChannelMuteResponseDto.toDomain(): ChannelMute =
+    internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
         ChannelMute(
             user = user?.toDomain(),
             channel = channel?.let {
@@ -490,30 +483,6 @@ internal class DomainMapping(
             sumScore = sumScores,
             firstReactionAt = firstReactionAt,
             lastReactionAt = lastReactionAt,
-        )
-
-    /**
-     * Transforms [DownstreamMuteDto] to [Mute].
-     */
-    internal fun DownstreamMuteDto.toDomain(): Mute =
-        Mute(
-            user = user?.toDomain(),
-            target = target?.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            expires = expires,
-        )
-
-    /**
-     * Transforms [DownstreamChannelMuteDto] into [ChannelMute]
-     */
-    internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
-        ChannelMute(
-            user = user?.toDomain(),
-            channel = channel?.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            expires = expires,
         )
 
     /**
