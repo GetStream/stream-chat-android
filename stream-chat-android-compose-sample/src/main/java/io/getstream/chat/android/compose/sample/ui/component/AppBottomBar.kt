@@ -25,10 +25,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,8 +38,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.sample.R
@@ -66,7 +70,8 @@ fun AppBottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.backgroundCoreElevation1),
+                .background(ChatTheme.colors.backgroundCoreElevation1)
+                .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
@@ -76,10 +81,10 @@ fun AppBottomBar(
                 text = R.string.app_bottom_bar_chats,
                 isSelected = selectedOption == AppBottomBarOption.CHATS,
                 onClick = { onOptionSelected(AppBottomBarOption.CHATS) },
-                decorationBadge = {
-                    if (unreadChannelsCount > 0) {
-                        UnreadCountIndicator(unreadChannelsCount)
-                    }
+                decorationBadge = if (unreadChannelsCount > 0) {
+                    { NavBarBadge(unreadChannelsCount) }
+                } else {
+                    null
                 },
             )
             AppBottomBarOptionTile(
@@ -88,10 +93,10 @@ fun AppBottomBar(
                 text = R.string.app_bottom_bar_threads,
                 isSelected = selectedOption == AppBottomBarOption.THREADS,
                 onClick = { onOptionSelected(AppBottomBarOption.THREADS) },
-                decorationBadge = {
-                    if (unreadThreadsCount > 0) {
-                        UnreadCountIndicator(unreadThreadsCount)
-                    }
+                decorationBadge = if (unreadThreadsCount > 0) {
+                    { NavBarBadge(unreadThreadsCount) }
+                } else {
+                    null
                 },
             )
         }
@@ -116,39 +121,82 @@ private fun AppBottomBarOptionTile(
     decorationBadge: (@Composable () -> Unit)? = null,
 ) {
     val contentColor by animateColorAsState(
-        targetValue = if (isSelected) ChatTheme.colors.textPrimary else ChatTheme.colors.textSecondary,
+        targetValue = if (isSelected) ChatTheme.colors.textPrimary else ChatTheme.colors.textTertiary,
     )
-    Box(
+    Column(
         modifier = Modifier
+            .clip(CircleShape)
             .clickable(
-                indication = ripple(bounded = false),
+                indication = ripple(),
                 interactionSource = null,
                 onClick = onClick,
             )
-            .padding(4.dp),
+            .defaultMinSize(minHeight = 56.dp, minWidth = 72.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
     ) {
-        // Content
-        Column(
-            modifier = Modifier.padding(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        Box {
             Icon(
                 painter = painterResource(if (isSelected) selectedIcon else unselectedIcon),
                 contentDescription = null,
                 tint = contentColor,
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(text),
-                fontSize = 12.sp,
-                color = contentColor,
-            )
-        }
-        // Decoration badge
-        decorationBadge?.let {
-            Box(modifier = Modifier.align(Alignment.TopEnd)) {
-                decorationBadge()
+            decorationBadge?.let {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 10.dp, y = (-6).dp),
+                ) {
+                    it()
+                }
             }
         }
+        Text(
+            text = stringResource(text),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = contentColor,
+        )
+    }
+}
+
+@Composable
+private fun NavBarBadge(count: Int) {
+    Box(
+        modifier = Modifier
+            .background(color = ChatTheme.colors.borderCoreOnInverse, shape = CircleShape)
+            .padding(2.dp),
+    ) {
+        UnreadCountIndicator(
+            modifier = Modifier.defaultMinSize(minHeight = 16.dp, minWidth = 16.dp),
+            unreadCount = count,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AppBottomBarChatsSelectedPreview() {
+    ChatTheme {
+        AppBottomBar(
+            unreadChannelsCount = 100,
+            unreadThreadsCount = 4,
+            selectedOption = AppBottomBarOption.CHATS,
+            onOptionSelected = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AppBottomBarThreadsSelectedPreview() {
+    ChatTheme {
+        AppBottomBar(
+            unreadChannelsCount = 0,
+            unreadThreadsCount = 0,
+            selectedOption = AppBottomBarOption.THREADS,
+            onOptionSelected = {},
+        )
     }
 }
