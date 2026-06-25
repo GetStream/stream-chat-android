@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
+import io.getstream.chat.android.network.models.QueryUsersPayload as QueryUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest

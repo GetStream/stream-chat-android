@@ -2160,9 +2160,9 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryUsers(query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = query.filter.toMap(),
-            sort = query.sort,
+        val expectedPayload = io.getstream.chat.android.network.models.QueryUsersPayload(
+            filterConditions = query.filter.toMap(),
+            sort = query.querySort.toSortParams(),
             offset = query.offset,
             limit = query.limit,
             presence = query.presence,

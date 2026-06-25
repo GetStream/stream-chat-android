@@ -1516,11 +1516,11 @@ constructor(
     }
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = queryUsers.filter.toMap(),
+        val request = io.getstream.chat.android.network.models.QueryUsersPayload(
+            filterConditions = queryUsers.filter.toMap(),
             offset = queryUsers.offset,
             limit = queryUsers.limit,
-            sort = queryUsers.sort,
+            sort = queryUsers.querySort.toSortParams(),
             presence = queryUsers.presence,
         )
         val lazyQueryUsersCall = {
