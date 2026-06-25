@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
-import android.view.accessibility.AccessibilityManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +41,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -52,7 +49,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.getSystemService
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
@@ -65,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.rememberIsTouchExplorationEnabled
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -207,26 +204,6 @@ public fun GiphyMessageContent(
 }
 
 private const val PreviewFocusRequestDelayMs = 100L
-
-/**
- * Observes [AccessibilityManager.isTouchExplorationEnabled] and recomposes when it toggles. Used
- * to gate focus-stealing behaviour so we only request TalkBack focus when an explore-by-touch
- * service (e.g. TalkBack) is active — otherwise we would yank Compose focus away from the
- * composer's text field for sighted users and dismiss the IME.
- */
-@Composable
-private fun rememberIsTouchExplorationEnabled(): Boolean {
-    val context = LocalContext.current
-    val manager = remember(context) { context.getSystemService<AccessibilityManager>() } ?: return false
-    var enabled by remember(manager) { mutableStateOf(manager.isTouchExplorationEnabled) }
-    DisposableEffect(manager) {
-        val listener = AccessibilityManager.TouchExplorationStateChangeListener { enabled = it }
-        manager.addTouchExplorationStateChangeListener(listener)
-        enabled = manager.isTouchExplorationEnabled
-        onDispose { manager.removeTouchExplorationStateChangeListener(listener) }
-    }
-    return enabled
-}
 
 @Composable
 internal fun GiphyMessageContent() {
