@@ -113,3 +113,60 @@ for any typed field that the domain currently reads via `extraData`.
   fields side-by-side; flag anything missing for an upstream spec patch.
 - Server's tolerance for receiving the lean `UserRequest` shape on endpoints that today
   receive the full `UpstreamUserDto` (i.e. `updateUsers`).
+
+## Findings after checking the backend Go types
+
+The wire shape is **not** overloaded — the backend sends two distinct response types
+depending on context. Confirmed by reading
+`/Users/gianmarcodavid/Sviluppo/chat/lib/combined/controllers/common/commonpayloads/user.go`
+and `/lib/chat/controller/v1/payload/update_users.go`:
+
+- **`UserResponse` (Go)** embeds `UserResponseCommonFields` and adds `shadow_banned`,
+  `bypass_moderation`, `ban_expires`, `push_notifications`, `privacy_settings`,
+  `devices`, `invisible`. **Every extra field is tagged `ignore_if_client_side`**, so
+  the client-side spec strips them. What the mobile client receives is exactly
+  `UserResponseCommonFields`: `id, name, image, custom, language, role, teams,
+  teams_role, created_at, updated_at, deleted_at, banned, online, last_active,
+  deactivated_at, blocked_user_ids, avg_response_time, revoke_tokens_issued_before`.
+- **`OwnUserResponse` (Go)** embeds `UserResponseCommonFields` and adds
+  `push_preferences`, `privacy_settings`, `devices`, `invisible`, `mutes`,
+  `channel_mutes`, `unread_count`, `total_unread_count`, `unread_channels`,
+  `unread_threads`, `latest_hidden_channels`, `blocked_user_ids`. No
+  `ignore_if_client_side` on the extra fields here. Sent for own-user contexts only
+  (connect, `me`, update self).
+- **`FullUserResponse` (Go)** is admin-only (server-side / `update_users`). The Kotlin
+  `FullUserResponse.kt` mirrors it but is **not** the right type for the mobile client.
+
+### Kotlin counterparts
+
+| Wire context | Kotlin type | Notes |
+|---|---|---|
+| Nested user (`mute.user`, `message.user`, `member.user`, `reaction.user`, `channel.created_by`, search results, etc.) | `UserResponse` | Matches the wire 1:1. |
+| Own-user (`TokenResponse.me`, `ConnectedEvent.me`, etc.) | `OwnUserResponse` | Spec is correct; generator currently drops `privacy_settings` despite the spec yaml declaring it. Workaround: extract from `custom` overflow until a regen lands. |
+| `FullUserResponse` | unused on mobile | Admin-only. |
+
+### Implications for the plan
+
+The original split (1: User, 2: Mute, ...) still works, just with two Kotlin user types
+instead of one. `DownstreamUserDto` is replaced by:
+- `UserResponse` everywhere it's nested in another DTO (Mute, Member, Message, Reaction,
+  Channel, ChannelUserRead, Event payloads' user field, etc.)
+- `OwnUserResponse` in the few places we deserialize own-user (`TokenResponse`,
+  `ConnectedEvent`, possibly others). Cross-reference call sites.
+
+Mappers:
+- `UserResponse.toDomain()` populates the domain `User` from the common fields and
+  leaves own-user-only fields (devices, mutes, channel_mutes, unread counts,
+  privacy_settings, push_preferences) at their defaults.
+- `OwnUserResponse.toDomain()` populates the full domain `User`, pulling
+  `privacy_settings` out of the `custom` overflow via a Moshi sub-adapter until the
+  generator regen lands.
+- Domain `User` keeps its current shape; both mappers feed into it.
+
+### Generator follow-up
+
+Log `OwnUserResponse` missing `privacy_settings` as a generator issue (`#12`)? Spec yaml
+has it; Kotlin output doesn't. Likely a regen out-of-date or a generator filter quirk on
+nested `$ref` fields tagged `omit_for_video`. Verify by regenerating from the current
+generator and inspecting the diff. If the bug is real, log it; if a stale regen, just
+regen.
