@@ -207,7 +207,6 @@ private fun MediaGalleryPhotosMenuItem(
                     .padding(8.dp)
                     .size(AvatarSize.Small),
                 user = user,
-                showIndicator = false,
                 showBorder = true,
             ),
         )

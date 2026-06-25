@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 
 /**
@@ -63,7 +64,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
  * @param channel The channel whose avatar will be displayed.
  * @param currentUser The user currently logged in.
  * @param modifier The modifier to be applied to this layout.
- * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+ * @param indicator The presence indicator to overlay on the avatar. Defaults to [AvatarPresenceIndicator.None].
  * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
  */
 @Composable
@@ -71,7 +72,7 @@ public fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
-    showIndicator: Boolean = false,
+    indicator: AvatarPresenceIndicator = AvatarPresenceIndicator.None,
     showBorder: Boolean = false,
 ) {
     val testTagModifier = modifier.testTag("Stream_ChannelAvatar")
@@ -80,8 +81,7 @@ public fun ChannelAvatar(
         SimpleGroupAvatar(
             modifier = testTagModifier,
             channel = channel,
-            currentUser = currentUser,
-            showIndicator = showIndicator,
+            indicator = indicator,
             showBorder = showBorder,
         )
     } else {
@@ -92,7 +92,7 @@ public fun ChannelAvatar(
                 params = UserAvatarParams(
                     modifier = testTagModifier,
                     user = directMessageRecipient,
-                    showIndicator = showIndicator,
+                    indicator = indicator,
                     showBorder = showBorder,
                 ),
             )
@@ -101,25 +101,58 @@ public fun ChannelAvatar(
                 modifier = testTagModifier,
                 channel = channel,
                 currentUser = currentUser,
-                showIndicator = showIndicator,
+                indicator = indicator,
                 showBorder = showBorder,
             )
         }
     }
 }
 
+/**
+ * The default avatar for a channel.
+ *
+ * @param channel The channel whose avatar will be displayed.
+ * @param currentUser The user currently logged in.
+ * @param modifier The modifier to be applied to this layout.
+ * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+ * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+ */
+@Deprecated(
+    message = "Use the overload that takes an AvatarPresenceIndicator. showIndicator showed a grey dot when " +
+        "the channel was offline; pass an explicit indicator (AvatarPresenceIndicator.Online, Offline, or None) " +
+        "to control the presence states.",
+    level = DeprecationLevel.WARNING,
+)
+@Composable
+public fun ChannelAvatar(
+    channel: Channel,
+    currentUser: User?,
+    modifier: Modifier = Modifier,
+    showIndicator: Boolean,
+    showBorder: Boolean = false,
+) {
+    ChannelAvatar(
+        channel = channel,
+        currentUser = currentUser,
+        modifier = modifier,
+        indicator = if (showIndicator) {
+            channel.avatarPresenceIndicator(currentUser, showWhenOffline = true)
+        } else {
+            AvatarPresenceIndicator.None
+        },
+        showBorder = showBorder,
+    )
+}
+
 @Composable
 private fun SimpleGroupAvatar(
     channel: Channel,
-    currentUser: User?,
-    showIndicator: Boolean,
+    indicator: AvatarPresenceIndicator,
     showBorder: Boolean,
     modifier: Modifier,
 ) {
     WithChannelIndicator(
-        channel = channel,
-        currentUser = currentUser,
-        showIndicator = showIndicator,
+        indicator = indicator,
         modifier = modifier,
     ) {
         Avatar(
@@ -132,22 +165,17 @@ private fun SimpleGroupAvatar(
 
 @Composable
 private fun WithChannelIndicator(
-    channel: Channel,
-    currentUser: User?,
-    showIndicator: Boolean,
+    indicator: AvatarPresenceIndicator,
     modifier: Modifier = Modifier,
     content: @Composable BoxWithConstraintsScope.() -> Unit,
 ) {
     BoxWithConstraints(modifier) {
         content()
 
-        if (showIndicator) {
-            val isOnline = remember(channel.members, currentUser?.id) {
-                channel.members.any { it.user.id != currentUser?.id && it.user.online }
-            }
+        if (indicator != AvatarPresenceIndicator.None) {
             val dimensions = resolveIndicatorDimensions()
             OnlineIndicator(
-                isOnline = isOnline,
+                indicator = indicator,
                 dimensions = dimensions,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -187,14 +215,12 @@ private object StackedGroupAvatarSpecs {
 private fun StackedGroupAvatar(
     channel: Channel,
     currentUser: User?,
-    showIndicator: Boolean,
+    indicator: AvatarPresenceIndicator,
     showBorder: Boolean,
     modifier: Modifier,
 ) {
     WithChannelIndicator(
-        channel = channel,
-        currentUser = currentUser,
-        showIndicator = showIndicator,
+        indicator = indicator,
         modifier = modifier,
     ) {
         val dimensions = resolveStackedAvatarDimensions()
@@ -352,6 +378,30 @@ internal fun ChannelAvatarContent() {
                     ChannelAvatar(
                         channel = PreviewChannelData.makeChannelWithMembers(howMany),
                         currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+        }
+
+        listOf(
+            Triple(PreviewChannelData.channelWithFewMembers, null, AvatarPresenceIndicator.Online),
+            Triple(PreviewChannelData.channelWithImage, null, AvatarPresenceIndicator.Offline),
+            Triple(
+                PreviewChannelData.channelWithOnlineUser.copy(id = "!members"),
+                PreviewUserData.user1,
+                AvatarPresenceIndicator.Online,
+            ),
+        ).forEach { (channel, currentUser, indicator) ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        channel = channel,
+                        currentUser = currentUser,
+                        indicator = indicator,
                         modifier = Modifier.size(size),
                     )
                 }

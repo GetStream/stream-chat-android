@@ -64,6 +64,7 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.components.RoleBadge
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
@@ -403,7 +404,6 @@ internal fun GroupChannelInfoAvatarContainer(
                 modifier = Modifier.size(AvatarSize.ExtraExtraLarge),
                 channel = channel,
                 currentUser = currentUser,
-                showIndicator = false,
             ),
         )
         Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
@@ -535,7 +535,7 @@ internal fun GroupChannelInfoMemberLeadingContent(
         params = UserAvatarParams(
             modifier = modifier.size(AvatarSize.Medium),
             user = member.user,
-            showIndicator = true,
+            indicator = member.user.avatarPresenceIndicator(),
             showBorder = false,
         ),
     )

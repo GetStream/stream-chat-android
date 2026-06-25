@@ -56,7 +56,6 @@ internal fun PollVoteItem(
                     .background(ChatTheme.colors.borderCoreOpacitySubtle, CircleShape)
                     .padding(borderSize),
                 user = user,
-                showIndicator = false,
                 showBorder = false,
             ),
         )

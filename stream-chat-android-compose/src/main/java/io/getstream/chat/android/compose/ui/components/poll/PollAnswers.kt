@@ -198,7 +198,6 @@ internal fun PollAnswersItem(
                         params = UserAvatarParams(
                             modifier = Modifier.size(AvatarSize.ExtraSmall),
                             user = user,
-                            showIndicator = false,
                             showBorder = false,
                         ),
                     )

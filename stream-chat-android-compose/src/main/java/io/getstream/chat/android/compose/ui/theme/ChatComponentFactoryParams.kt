@@ -48,6 +48,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMo
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
@@ -1445,12 +1446,19 @@ public data class AvatarParams(
  * @param modifier Modifier for styling.
  * @param showIndicator Whether to overlay an online status indicator.
  * @param showBorder Whether to draw a border around the avatar.
+ * @param indicator The presence indicator to overlay on the avatar. When non-null it takes precedence over
+ * [showIndicator]. When `null` (the default), [showIndicator] is used for backward compatibility.
  */
 public data class UserAvatarParams(
     val user: User,
     val modifier: Modifier = Modifier,
+    @Deprecated(
+        message = "Use indicator. showIndicator showed a grey dot when the user was offline.",
+        level = DeprecationLevel.WARNING,
+    )
     val showIndicator: Boolean = false,
     val showBorder: Boolean = false,
+    val indicator: AvatarPresenceIndicator? = null,
 )
 
 /**
@@ -1461,13 +1469,20 @@ public data class UserAvatarParams(
  * @param currentUser The user currently logged in.
  * @param showIndicator Whether to overlay an online status indicator.
  * @param showBorder Whether to draw a border around the avatar.
+ * @param indicator The presence indicator to overlay on the avatar. When non-null it takes precedence over
+ * [showIndicator]. When `null` (the default), [showIndicator] is used for backward compatibility.
  */
 public data class ChannelAvatarParams(
     val channel: Channel,
     val modifier: Modifier = Modifier,
     val currentUser: User? = null,
+    @Deprecated(
+        message = "Use indicator. showIndicator showed a grey dot when the channel was offline.",
+        level = DeprecationLevel.WARNING,
+    )
     val showIndicator: Boolean = false,
     val showBorder: Boolean = false,
+    val indicator: AvatarPresenceIndicator? = null,
 )
 
 /**
