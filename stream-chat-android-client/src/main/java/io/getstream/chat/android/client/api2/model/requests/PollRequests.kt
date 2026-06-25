@@ -106,18 +106,6 @@ internal data class PollVoteRequest(
 )
 
 /**
- * Used for updating a poll.
- *
- * @property set the fields to set.
- * @property unset the fields to unset.
- */
-@JsonClass(generateAdapter = true)
-internal data class PartialUpdatePollRequest(
-    val set: Map<String, Any> = emptyMap(),
-    val unset: List<String> = emptyList(),
-)
-
-/**
  * Used for voting on a poll.
  *
  * @property option_id the text of the answer.

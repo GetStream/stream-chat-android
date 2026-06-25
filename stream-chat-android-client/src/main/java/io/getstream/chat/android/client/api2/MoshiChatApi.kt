@@ -71,7 +71,7 @@ import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
@@ -1724,7 +1724,7 @@ constructor(
         ).mapDomain { it.vote.toDomain() }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
-        val request = PartialUpdatePollRequest(set, unset)
+        val request = PartialUpdatePollRequest(set = set, unset = unset)
         return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
     }
 
