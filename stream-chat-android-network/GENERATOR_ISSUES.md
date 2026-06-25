@@ -668,6 +668,96 @@ recognize the convention in the spec generator's struct walker.
 
 ---
 
+## 12. Distinct Go types sharing a simple name collapse into one OpenAPI schema
+
+**Symptom:** Generated `ChannelMemberResponse.kt` has only two fields:
+
+```kotlin
+data class ChannelMemberResponse(
+    @Json(name = "channel_role") val channelRole: String,
+    @Json(name = "notifications_muted") val notificationsMuted: Boolean,
+)
+```
+
+The real wire shape (what the server actually serializes for channel members in responses
+like `QueryMembers`, `UpdateChannelPartial`, etc.) has ~20 fields: `user`, `banned`,
+`shadow_banned`, `created_at`, `updated_at`, `deleted_at`, `status`, `invite_accepted_at`,
+`invite_rejected_at`, `pinned_at`, `archived_at`, `custom`, `is_moderator`, `role`,
+`channel_role`, `notifications_muted`, `deleted_messages`, `ban_expires`, `user_id`.
+The Kotlin DTO is silently lossy. Plugging it in via typealias would drop user/dates/banned
+status on every member list, breaking member rendering, ban indicators, role checks, etc.
+
+**Root cause:** Two distinct Go structs both named `ChannelMemberResponse` exist in the
+backend:
+
+1. `lib/chat/controller/v1/payload/channel_response.go:389` - **full** type, used by real
+   chat responses (`UpdateChannelPartialResponse.Members []*payload.ChannelMemberResponse`,
+   `QueryMembersResponse`, etc.).
+2. `lib/combined/controllers/common/commonpayloads/member.go:8` - **lean** type with only
+   `channel_role` + `notifications_muted`. Used as `Message.member` to surface the author's
+   per-channel role inside message payloads (so a Message doesn't have to carry the full
+   member object).
+
+Both are legitimate and serve different purposes. The bug is in
+`lib/combined/openapi/spec/spec.go:569` (`clarifyName`), which dedupes schemas by **string
+name**, not by `reflect.Type`:
+
+```go
+func (o *OpenAPI) clarifyName(original string) string {
+    if existing, ok := o.names[original]; ok {
+        return existing  // <-- second type with same bare name silently aliases to the first
+    }
+    ...
+}
+```
+
+The first `ChannelMemberResponse` walked (the lean `commonpayloads` version) wins the bare
+name. When the full `payload` version is later walked, `clarifyName` returns the existing
+name and the full struct is never registered as a separate schema. Every `$ref` in the spec
+that should resolve to the full type now points at the lean one. Confirmed against the
+generated `chat-only-clientside-api.yaml` - only a single `ChannelMemberResponse` schema
+exists, with the lean two-field shape.
+
+The wire itself is still correct (the server serializes the full struct's json tags into
+the response), so the SDK can decode the full payload just fine if its type allows. The
+SDK can't decode it via the generated DTO because the DTO doesn't model the missing
+fields.
+
+This pattern is not specific to ChannelMemberResponse. Any time two Go types share an
+unqualified name in the backend, the spec generator collapses them. Other likely
+collisions: `Response`, `RequestPayload`, generic shape names that might appear in
+multiple packages.
+
+**Fix status:** Not fixed. Blocks the `DownstreamMemberDto` -> generated migration
+(step 4 of the root-DTO plan), which in turn blocks `DownstreamChannelDto` (channels
+contain members) and `DownstreamMessageDto` (messages reference both).
+
+**Suggested fix:** Two angles, listed by ambition.
+
+1. **Rename the lean type upstream.** Rename
+   `commonpayloads.ChannelMemberResponse` to something distinctive like
+   `MemberRoleResponse` or `ChannelMemberRoleResponse`. The two Go types stop colliding,
+   the spec emits two separate schemas (`ChannelMemberResponse` full, `MemberRoleResponse`
+   lean), and consumers reference the correct one. One-line change in the backend, plus
+   updating ~3 call sites that consume the lean type. Cosmetic name change, no wire
+   impact (the json tags on both types are unchanged).
+2. **Patch `clarifyName` to dedupe by type, not by string.** Key the `o.names` map off
+   `reflect.Type` (or a `(package, name)` tuple) instead of the bare string. Second
+   registration of a same-named type from a different package gets `_1` suffix as the
+   collision-handling code already does for re-registrations of the same type. More
+   invasive, but eliminates the entire class of bug. Other latent collisions may exist
+   that we haven't surfaced yet.
+
+Option 1 is the smallest fix that unblocks chat-android. Option 2 is the correct long-term
+fix and worth coordinating with the other SDK teams (chat-swift, chat-js, feeds-android,
+video).
+
+**Migration timing:** Required before `DownstreamMemberDto`, `DownstreamChannelDto`, and
+`DownstreamMessageDto` can move. Step 5 (`DownstreamReactionDto`) only nests `user`, which
+is already migrated, so reaction migration can proceed in parallel without waiting.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec
