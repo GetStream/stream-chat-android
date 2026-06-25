@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberInfoModalSheetTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -150,7 +151,7 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
             params = UserAvatarParams(
                 modifier = Modifier.size(AvatarSize.ExtraLarge),
                 user = user,
-                showIndicator = true,
+                indicator = user.avatarPresenceIndicator(),
                 showBorder = false,
             ),
         )

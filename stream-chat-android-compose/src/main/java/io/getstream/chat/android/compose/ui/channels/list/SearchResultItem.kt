@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.channels.MessagePreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.SearchResultItemCenterContentParams
@@ -140,7 +141,7 @@ internal fun DefaultSearchResultItemLeadingContent(
                             bottom = StreamTokens.spacingMd,
                         )
                         .size(48.dp),
-                    showIndicator = true,
+                    indicator = user.avatarPresenceIndicator(),
                 ),
             )
         }

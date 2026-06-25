@@ -108,7 +108,6 @@ internal fun DefaultPinnedMessageItemLeadingContent(message: Message) {
         params = UserAvatarParams(
             user = message.user,
             modifier = Modifier.size(AvatarSize.Large),
-            showIndicator = false,
             showBorder = false,
         ),
     )

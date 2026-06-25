@@ -50,14 +50,15 @@ import io.getstream.chat.android.ui.common.utils.extensions.initials
  * image is available. It is commonly used in message lists, headers, and user profiles.
  *
  * @param user The user whose avatar will be displayed.
- * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
+ * @param modifier The modifier to be applied to this layout.
+ * @param indicator The presence indicator to overlay on the avatar. Defaults to [AvatarPresenceIndicator.None].
  * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
  */
 @Composable
 public fun UserAvatar(
     user: User,
     modifier: Modifier = Modifier,
-    showIndicator: Boolean = false,
+    indicator: AvatarPresenceIndicator = AvatarPresenceIndicator.None,
     showBorder: Boolean = false,
 ) {
     BoxWithConstraints(modifier) {
@@ -68,10 +69,10 @@ public fun UserAvatar(
             modifier = Modifier.size(maxWidth),
         )
 
-        if (showIndicator) {
+        if (indicator != AvatarPresenceIndicator.None) {
             val dimensions = resolveIndicatorDimensions()
             OnlineIndicator(
-                isOnline = user.online,
+                indicator = indicator,
                 dimensions = dimensions,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -82,6 +83,43 @@ public fun UserAvatar(
             )
         }
     }
+}
+
+/**
+ * The default user avatar content.
+ *
+ * @param user The user whose avatar will be displayed.
+ * @param modifier The modifier to be applied to this layout.
+ * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
+ * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+ */
+@Deprecated(
+    message = "Use the overload that takes an AvatarPresenceIndicator. showIndicator showed a grey dot when " +
+        "the user was offline; pass an explicit indicator to control the online, offline, and hidden states.",
+    replaceWith = ReplaceWith(
+        "UserAvatar(user, modifier, if (showIndicator) (if (user.online) AvatarPresenceIndicator.Online " +
+            "else AvatarPresenceIndicator.Offline) else AvatarPresenceIndicator.None, showBorder)",
+        "io.getstream.chat.android.compose.ui.components.avatar.AvatarPresenceIndicator",
+    ),
+    level = DeprecationLevel.WARNING,
+)
+@Composable
+public fun UserAvatar(
+    user: User,
+    modifier: Modifier = Modifier,
+    showIndicator: Boolean,
+    showBorder: Boolean = false,
+) {
+    UserAvatar(
+        user = user,
+        modifier = modifier,
+        indicator = if (showIndicator) {
+            user.avatarPresenceIndicator(showWhenOffline = true)
+        } else {
+            AvatarPresenceIndicator.None
+        },
+        showBorder = showBorder,
+    )
 }
 
 internal fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicatorDimensions = when {
@@ -171,31 +209,28 @@ private fun UserAvatarContentPreview() {
 @Composable
 internal fun UserAvatarContent() {
     val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium, Small, ExtraSmall) }
+    val users = listOf(PreviewUserData.userWithOnlineStatus, PreviewUserData.userWithoutImage)
+    val indicators = listOf(
+        AvatarPresenceIndicator.Online,
+        AvatarPresenceIndicator.Offline,
+        AvatarPresenceIndicator.None,
+    )
 
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            sizes.forEach { size ->
-                UserAvatar(
-                    user = PreviewUserData.userWithOnlineStatus,
-                    showIndicator = true,
-                    modifier = Modifier.size(size),
-                )
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            sizes.forEach { size ->
-                UserAvatar(
-                    user = PreviewUserData.userWithoutImage,
-                    showIndicator = true,
-                    modifier = Modifier.size(size),
-                )
+        users.forEach { user ->
+            indicators.forEach { indicator ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    sizes.forEach { size ->
+                        UserAvatar(
+                            user = user,
+                            indicator = indicator,
+                            modifier = Modifier.size(size),
+                        )
+                    }
+                }
             }
         }
     }

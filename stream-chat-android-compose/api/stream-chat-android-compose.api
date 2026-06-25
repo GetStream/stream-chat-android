@@ -1204,6 +1204,15 @@ public final class io/getstream/chat/android/compose/ui/components/audio/Wavefor
 	public static final fun StaticWaveformSlider (Ljava/util/List;FZLandroidx/compose/ui/Modifier;IZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator : java/lang/Enum {
+	public static final field None Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static final field Offline Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static final field Online Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public static fun values ()[Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarSize {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/AvatarSize;
@@ -1216,6 +1225,7 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Avatar
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
+	public static final fun ChannelAvatar (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;ZLandroidx/compose/runtime/Composer;II)V
 	public static final fun ChannelAvatar (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/runtime/Composer;II)V
 }
 
@@ -1232,6 +1242,7 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Compos
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/UserAvatarKt {
+	public static final fun UserAvatar (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;ZLandroidx/compose/runtime/Composer;II)V
 	public static final fun UserAvatar (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/runtime/Composer;II)V
 }
 
@@ -2546,18 +2557,20 @@ public final class io/getstream/chat/android/compose/ui/theme/AvatarParams {
 
 public final class io/getstream/chat/android/compose/ui/theme/ChannelAvatarParams {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
 	public final fun component2 ()Landroidx/compose/ui/Modifier;
 	public final fun component3 ()Lio/getstream/chat/android/models/User;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun copy (Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZ)Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;
+	public final fun component6 ()Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;)Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;Lio/getstream/chat/android/models/Channel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
+	public final fun getIndicator ()Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getShowBorder ()Z
 	public final fun getShowIndicator ()Z
@@ -6440,15 +6453,17 @@ public final class io/getstream/chat/android/compose/ui/theme/TranslationConfig 
 
 public final class io/getstream/chat/android/compose/ui/theme/UserAvatarParams {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZ)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
 	public final fun component2 ()Landroidx/compose/ui/Modifier;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
-	public final fun copy (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZ)Lio/getstream/chat/android/compose/ui/theme/UserAvatarParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/UserAvatarParams;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/UserAvatarParams;
+	public final fun component5 ()Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
+	public final fun copy (Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;)Lio/getstream/chat/android/compose/ui/theme/UserAvatarParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/UserAvatarParams;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;ZZLio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/UserAvatarParams;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getIndicator ()Lio/getstream/chat/android/compose/ui/components/avatar/AvatarPresenceIndicator;
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getShowBorder ()Z
 	public final fun getShowIndicator ()Z

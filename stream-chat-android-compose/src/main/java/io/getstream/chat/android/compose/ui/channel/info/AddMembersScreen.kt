@@ -272,7 +272,6 @@ private fun AddMembersUserItem(
             UserAvatarParams(
                 user = user,
                 modifier = Modifier.size(AvatarSize.Medium),
-                showIndicator = false,
                 showBorder = false,
             ),
         )

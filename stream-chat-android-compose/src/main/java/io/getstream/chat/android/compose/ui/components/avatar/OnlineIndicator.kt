@@ -30,15 +30,16 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 @Composable
 internal fun OnlineIndicator(
-    isOnline: Boolean,
+    indicator: AvatarPresenceIndicator,
     dimensions: OnlineIndicatorDimensions,
     modifier: Modifier = Modifier,
 ) {
     val colors = ChatTheme.colors
 
-    val color = when (isOnline) {
-        true -> colors.avatarPresenceBgOnline
-        false -> colors.avatarPresenceBgOffline
+    val color = when (indicator) {
+        AvatarPresenceIndicator.Online -> colors.avatarPresenceBgOnline
+        AvatarPresenceIndicator.Offline -> colors.avatarPresenceBgOffline
+        AvatarPresenceIndicator.None -> return
     }
 
     Box(

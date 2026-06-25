@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.channels.MessagePreviewContent
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -100,7 +101,7 @@ public fun ThreadItem(
             params = UserAvatarParams(
                 modifier = Modifier.size(AvatarSize.ExtraLarge),
                 user = thread.parentMessage.user,
-                showIndicator = true,
+                indicator = thread.parentMessage.user.avatarPresenceIndicator(),
             ),
         )
         ThreadItemContentContainer(

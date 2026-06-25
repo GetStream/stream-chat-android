@@ -91,6 +91,8 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarPresenceIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -1897,12 +1899,18 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    @Suppress("DEPRECATION")
     @Composable
     public fun UserAvatar(params: UserAvatarParams) {
+        val indicator = params.indicator ?: if (params.showIndicator) {
+            params.user.avatarPresenceIndicator(showWhenOffline = true)
+        } else {
+            AvatarPresenceIndicator.None
+        }
         io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
             modifier = params.modifier,
             user = params.user,
-            showIndicator = params.showIndicator,
+            indicator = indicator,
             showBorder = params.showBorder,
         )
     }
@@ -1914,13 +1922,19 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    @Suppress("DEPRECATION")
     @Composable
     public fun ChannelAvatar(params: ChannelAvatarParams) {
+        val indicator = params.indicator ?: if (params.showIndicator) {
+            params.channel.avatarPresenceIndicator(params.currentUser, showWhenOffline = true)
+        } else {
+            AvatarPresenceIndicator.None
+        }
         io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
             modifier = params.modifier,
             channel = params.channel,
             currentUser = params.currentUser,
-            showIndicator = params.showIndicator,
+            indicator = indicator,
             showBorder = params.showBorder,
         )
     }

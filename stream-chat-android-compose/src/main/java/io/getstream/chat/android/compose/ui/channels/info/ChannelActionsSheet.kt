@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelAvatarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuCenterContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelMenuHeaderContentParams
@@ -145,7 +146,7 @@ internal fun DefaultChannelMenuHeaderContent(
                 modifier = Modifier.size(AvatarSize.ExtraLarge),
                 channel = selectedChannel,
                 currentUser = currentUser,
-                showIndicator = true,
+                indicator = selectedChannel.avatarPresenceIndicator(currentUser),
             ),
         )
 
