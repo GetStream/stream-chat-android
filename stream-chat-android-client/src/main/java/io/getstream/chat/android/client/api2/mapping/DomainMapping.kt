@@ -65,6 +65,7 @@ import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
@@ -76,6 +77,8 @@ import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.Command as CommandDto
+import io.getstream.chat.android.network.models.ImageData
+import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -605,6 +608,11 @@ internal class DomainMapping(
         val name = extras.remove("name") as? String
         val extraData = mutableMapOf<String, Any>()
         for ((k, v) in extras) if (v != null) extraData[k] = v
+        // UI reads Giphy data from extraData["giphy"]; the generated DTO splits it out
+        // into a typed `giphy: Images` field, so re-emit it in the legacy nested-map shape.
+        // TODO consider promoting a typed `giphy: Giphy?` property on the domain `Attachment`
+        // and migrating callers off the `extraData["giphy"]` map so this round-trip can go.
+        giphy?.let { extraData[AttachmentType.GIPHY] = it.toLegacyMap() }
         return Attachment(
             assetUrl = assetUrl,
             authorName = authorName,
@@ -1007,3 +1015,21 @@ private fun Map<String, Any?>.filterNonNullValues(): Map<String, Any> {
     for ((k, v) in this) if (v != null) out[k] = v
     return out
 }
+
+private fun Images.toLegacyMap(): Map<String, Map<String, String>> = mapOf(
+    "original" to original.toLegacyMap(),
+    "fixed_height" to fixedHeight.toLegacyMap(),
+    "fixed_height_downsampled" to fixedHeightDownsampled.toLegacyMap(),
+    "fixed_height_still" to fixedHeightStill.toLegacyMap(),
+    "fixed_width" to fixedWidth.toLegacyMap(),
+    "fixed_width_downsampled" to fixedWidthDownsampled.toLegacyMap(),
+    "fixed_width_still" to fixedWidthStill.toLegacyMap(),
+)
+
+private fun ImageData.toLegacyMap(): Map<String, String> = mapOf(
+    "url" to url,
+    "width" to width,
+    "height" to height,
+    "size" to size,
+    "frames" to frames,
+)
