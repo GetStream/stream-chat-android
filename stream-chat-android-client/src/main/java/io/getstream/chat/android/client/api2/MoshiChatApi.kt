@@ -1405,13 +1405,13 @@ constructor(
         next: String?,
         sort: QuerySorter<Message>?,
     ): Call<SearchMessagesResult> {
-        val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = channelFilter.toMap(),
-            message_filter_conditions = messageFilter.toMap(),
+        val newRequest = io.getstream.chat.android.network.models.SearchPayload(
+            filterConditions = channelFilter.toMap(),
+            messageFilterConditions = messageFilter.toMap(),
             offset = offset,
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return generalApi.searchMessages(newRequest)
             .mapDomain { response ->

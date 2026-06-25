@@ -1872,13 +1872,13 @@ internal class MoshiChatApiTest {
         val next = randomString()
         val result = sut.searchMessages(channelFilter, messageFilter, offset, limit, next, sort).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = channelFilter.toMap(),
-            message_filter_conditions = messageFilter.toMap(),
+        val expectedPayload = io.getstream.chat.android.network.models.SearchPayload(
+            filterConditions = channelFilter.toMap(),
+            messageFilterConditions = messageFilter.toMap(),
             offset = offset,
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toSortParams(),
         )
         result `should be instance of` expected
         verify(api, times(1)).searchMessages(expectedPayload)
