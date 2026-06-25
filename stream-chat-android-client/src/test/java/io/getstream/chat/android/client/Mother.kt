@@ -685,17 +685,16 @@ internal object Mother {
         userId: String = randomString(),
         emojiCode: String? = randomString(),
         user: DownstreamUserDto = randomDownstreamUserDto(id = userId),
-        extraData: Map<String, Any> = emptyMap(),
+        custom: Map<String, Any?> = buildMap { emojiCode?.let { put("emoji_code", it) } },
     ): DownstreamReactionDto = DownstreamReactionDto(
-        created_at = createdAt,
-        message_id = messageId,
+        createdAt = createdAt,
+        messageId = messageId,
         score = score,
         type = type,
-        updated_at = updatedAt,
+        updatedAt = updatedAt,
         user = user,
-        user_id = userId,
-        emoji_code = emojiCode,
-        extraData = extraData,
+        userId = userId,
+        custom = custom,
     )
 
     fun randomDownstreamMuteDto(

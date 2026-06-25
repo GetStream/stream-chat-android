@@ -898,7 +898,8 @@ private fun createMessageReactionJsonString() =
             "score": 1,
             "user": ${createUserJsonString()},
             "user_id": "bender",
-            "created_at": "2020-06-29T06:14:28.000Z"
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 
@@ -993,7 +994,8 @@ private fun createReactionJsonString() =
             "score": 3,
             "user": ${createUserJsonString()},
             "user_id": "bender",
-            "created_at": "2020-06-29T06:14:28.000Z"
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 

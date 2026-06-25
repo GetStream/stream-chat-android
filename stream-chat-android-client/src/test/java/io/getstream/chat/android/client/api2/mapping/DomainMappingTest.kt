@@ -362,16 +362,20 @@ internal class DomainMappingTest {
             downstreamReactionDto.toDomain()
         }
         val expected = Reaction(
-            messageId = downstreamReactionDto.message_id,
+            messageId = downstreamReactionDto.messageId,
             type = downstreamReactionDto.type,
             score = downstreamReactionDto.score,
-            user = with(sut) { downstreamReactionDto.user?.toDomain() },
-            userId = downstreamReactionDto.user?.id.orEmpty(),
-            createdAt = downstreamReactionDto.created_at,
-            updatedAt = downstreamReactionDto.updated_at,
-            extraData = downstreamReactionDto.extraData,
+            user = with(sut) { downstreamReactionDto.user.toDomain() },
+            userId = downstreamReactionDto.userId,
+            createdAt = downstreamReactionDto.createdAt,
+            updatedAt = downstreamReactionDto.updatedAt,
+            extraData = downstreamReactionDto.custom
+                .filterValues { it != null }
+                .mapValues { it.value!! }
+                .minus("emoji_code")
+                .toMutableMap(),
             deletedAt = null,
-            emojiCode = downstreamReactionDto.emoji_code,
+            emojiCode = downstreamReactionDto.custom["emoji_code"] as? String,
         )
         assertEquals(expected, reaction)
     }

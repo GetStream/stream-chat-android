@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 
 internal object DownstreamReactionDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamReactionDto>(DownstreamReactionDto::class) {
+    CustomObjectDtoAdapter<DownstreamReactionDto>(DownstreamReactionDto::class, extraDataPropertyName = "custom") {
 
     @FromJson
     fun fromJson(

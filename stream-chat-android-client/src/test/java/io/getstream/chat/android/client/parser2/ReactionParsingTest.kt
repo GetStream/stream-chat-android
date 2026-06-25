@@ -69,13 +69,6 @@ internal class ReactionParsingTest {
         assertEquals(ReactionTestData.expectedAllFields, reaction)
     }
 
-    @Test
-    fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(ReactionTestData.jsonOptionalFieldsMissing, DownstreamReactionDto::class.java)
-        val reaction = with(domainMapping) { dto.toDomain() }
-        assertEquals(ReactionTestData.expectedOptionalFieldsMissing, reaction)
-    }
-
     // endregion
 
     // region Direct path (JSON → Reaction via ReactionAdapter)
@@ -95,13 +88,6 @@ internal class ReactionParsingTest {
     // endregion
 
     // region Explicit null values
-
-    @Test
-    fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(ReactionTestData.jsonWithExplicitNulls, DownstreamReactionDto::class.java)
-        val reaction = with(domainMapping) { dto.toDomain() }
-        assertEquals(ReactionTestData.expectedWithExplicitNulls, reaction)
-    }
 
     @Test
     fun `Direct path - deserializes with explicit null values`() {

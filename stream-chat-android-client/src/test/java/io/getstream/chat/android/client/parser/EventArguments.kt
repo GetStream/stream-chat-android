@@ -277,6 +277,7 @@ internal object EventArguments {
         user = user,
         userId = "bender",
         createdAt = date,
+        updatedAt = date,
     )
 
     private val message = Message(
@@ -306,6 +307,7 @@ internal object EventArguments {
         user = user,
         userId = "bender",
         createdAt = date,
+        updatedAt = date,
     )
 
     private val poll = Poll(

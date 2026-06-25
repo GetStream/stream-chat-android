@@ -43,10 +43,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
-import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
-import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
-import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
-import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -74,12 +70,6 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.network.models.Command as CommandDto
-import io.getstream.chat.android.network.models.ImageData
-import io.getstream.chat.android.network.models.Images
-import io.getstream.chat.android.network.models.OwnUserResponse
-import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
@@ -128,20 +118,30 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.network.models.ImageData
+import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
+import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
+import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
-import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
-import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
-import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
+import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
+import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -326,7 +326,7 @@ internal class DomainMapping(
     private fun List<DownstreamReactionDto>.toDomain(
         messageId: String,
     ): List<Reaction> =
-        filter { it.message_id == messageId }
+        filter { it.messageId == messageId }
             .map { it.toDomain() }
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
@@ -462,15 +462,15 @@ internal class DomainMapping(
      */
     internal fun DownstreamReactionDto.toDomain(): Reaction =
         Reaction(
-            createdAt = created_at,
-            messageId = message_id,
+            createdAt = createdAt,
+            messageId = messageId,
             score = score,
             type = type,
-            updatedAt = updated_at,
-            user = user?.toDomain(),
-            userId = user_id,
-            emojiCode = emoji_code,
-            extraData = extraData.toMutableMap(),
+            updatedAt = updatedAt,
+            user = user.toDomain(),
+            userId = userId,
+            emojiCode = custom["emoji_code"] as? String,
+            extraData = custom.filterNonNullValues().minus("emoji_code"),
         )
 
     /**
@@ -623,7 +623,7 @@ internal class DomainMapping(
     internal fun String?.toVotingVisibility(): VotingVisibility = when (this) {
         null,
         "public",
-        -> VotingVisibility.PUBLIC
+            -> VotingVisibility.PUBLIC
 
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
