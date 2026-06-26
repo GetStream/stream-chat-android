@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
+import io.getstream.chat.android.ui.common.images.internal.VideoThumbnailImageData
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.result.Error
 
@@ -141,8 +142,13 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
     item: ChannelAttachmentsViewState.Content.Item,
     onClick: () -> Unit,
 ) {
-    val data = item.attachment.upload
-        ?: if (item.attachment.isImage()) item.attachment.imageUrl else item.attachment.thumbUrl
+    val attachment = item.attachment
+    val data = attachment.upload ?: when {
+        attachment.isImage() -> attachment.imageUrl
+        attachment.isVideo() && (attachment.thumbUrl != null || attachment.assetUrl != null) ->
+            VideoThumbnailImageData(thumbnailUrl = attachment.thumbUrl, videoUrl = attachment.assetUrl)
+        else -> attachment.thumbUrl
+    }
     Box(
         modifier = Modifier
             .clickable(onClick = onClick),
