@@ -16,25 +16,5 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamUserGroupDto(
-    val id: String,
-    val name: String,
-    val description: String? = null,
-    val team_id: String? = null,
-    val members: List<DownstreamUserGroupMemberDto> = emptyList(),
-    val created_by: String? = null,
-    val created_at: Date? = null,
-    val updated_at: Date? = null,
-)
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamUserGroupMemberDto(
-    val group_id: String,
-    val user_id: String,
-    val is_admin: Boolean = false,
-    val created_at: Date? = null,
-)
+internal typealias DownstreamUserGroupDto = io.getstream.chat.android.network.models.UserGroupResponse
+internal typealias DownstreamUserGroupMemberDto = io.getstream.chat.android.network.models.UserGroupMember

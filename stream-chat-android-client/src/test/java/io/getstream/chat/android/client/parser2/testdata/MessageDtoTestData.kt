@@ -45,6 +45,8 @@ internal object MessageDtoTestData {
             {
               "id": "g1",
               "name": "platform",
+              "created_at": "1970-01-01T00:00:00.000Z",
+              "updated_at": "1970-01-01T00:00:00.000Z",
               "members": []
             }
           ],
@@ -164,7 +166,7 @@ internal object MessageDtoTestData {
         mentioned_users = listOf(UserDtoTestData.downstreamUserWithoutExtraData),
         mentioned_here = true,
         mentioned_channel = true,
-        mentioned_groups = listOf(DownstreamUserGroupDto(id = "g1", name = "platform")),
+        mentioned_groups = listOf(DownstreamUserGroupDto(id = "g1", name = "platform", createdAt = Date(0), updatedAt = Date(0))),
         mentioned_roles = listOf("admin", "moderator"),
         i18n = emptyMap(),
         thread_participants = emptyList(),

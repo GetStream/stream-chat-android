@@ -878,20 +878,23 @@ The CHA-3559 patch we already pulled in only renamed the
 `clarifyName` logic still dedupes by string, so other name collisions like
 `UserGroupResponse` remain.
 
-**Fix status:** Not fixed. Migration of `DownstreamUserGroupDto` to the
-generated DTO deferred (blocks step 7c of the root-DTO plan and downstream
-Message migration where `mentioned_groups` is typed `List<UserGroupResponse>?`).
+**Fix status:** Worked around on the `chat-openapi-android` branch of the chat
+repo (commit `[android-migration-only] Rename slim UserGroupResponse to
+MentionedUserGroupResponse`). Renaming the slim payload + constructors lets
+the full controller type reclaim the bare `UserGroupResponse` schema; the spec
+now emits two schemas (`MentionedUserGroupResponse` and `UserGroupResponse`)
+matching the wire reality. The regenerated Kotlin client gains `members` on
+`UserGroupResponse` and message responses reference the new slim
+`MentionedUserGroupResponse`.
 
-**Suggested fix:** Same single-rename approach as CHA-3365 - rename
-`commonpayloads.UserGroupResponse` to something distinctive (e.g.
-`MessageMentionedGroupResponse`), so the full controller type wins the bare
-`UserGroupResponse` name and the generated DTO regains `members`. The proper
-long-term fix is still issue #12's option 2: patch `clarifyName` to dedupe by
-`reflect.Type` instead of struct name, which eliminates the entire class.
+**Suggested fix:** Land the same rename upstream on chat master. Same pattern
+as the three schemas fixed in CHA-3559 (`ChannelConfig`, `FlagResponse`,
+`BanResponse`). The proper long-term fix is still issue #12's option 2: patch
+`clarifyName` to dedupe by `reflect.Type` instead of struct name, which
+eliminates this entire class of bug.
 
-**Migration timing:** Blocks step 7c. Step 7d (Message) needs it too because
-`MessageResponse.mentioned_groups: List<UserGroupResponse>?` reaches into the
-same generated type.
+**Migration timing:** Unblocked locally for android. Upstream patch must land
+before this branch merges.
 
 ---
 

@@ -5688,6 +5688,39 @@ public final class io/getstream/chat/android/network/models/MembersResponseJsonA
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/network/models/MentionedUserGroupResponse {
+	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/network/models/MentionedUserGroupResponse;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/MentionedUserGroupResponse;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/MentionedUserGroupResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getCreatedBy ()Ljava/lang/String;
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getTeamId ()Ljava/lang/String;
+	public final fun getUpdatedAt ()Ljava/util/Date;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/network/models/MentionedUserGroupResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/network/models/MentionedUserGroupResponse;
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/MentionedUserGroupResponse;)V
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/network/models/MessageActionRequest {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/Map;)V
@@ -12239,8 +12272,8 @@ public final class io/getstream/chat/android/network/models/UserGroupMemberRemov
 }
 
 public final class io/getstream/chat/android/network/models/UserGroupResponse {
-	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
@@ -12248,13 +12281,15 @@ public final class io/getstream/chat/android/network/models/UserGroupResponse {
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Ljava/lang/String;
-	public final fun copy (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/network/models/UserGroupResponse;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/UserGroupResponse;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/UserGroupResponse;
+	public final fun component8 ()Ljava/util/List;
+	public final fun copy (Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/network/models/UserGroupResponse;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/UserGroupResponse;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/UserGroupResponse;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCreatedBy ()Ljava/lang/String;
 	public final fun getDescription ()Ljava/lang/String;
 	public final fun getId ()Ljava/lang/String;
+	public final fun getMembers ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getTeamId ()Ljava/lang/String;
 	public final fun getUpdatedAt ()Ljava/util/Date;

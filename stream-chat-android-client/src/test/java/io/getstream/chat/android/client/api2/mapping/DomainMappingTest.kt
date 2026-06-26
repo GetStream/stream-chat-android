@@ -187,8 +187,8 @@ internal class DomainMappingTest {
             mentioned_here = true,
             mentioned_channel = true,
             mentioned_groups = listOf(
-                DownstreamUserGroupDto(id = "g1", name = "platform"),
-                DownstreamUserGroupDto(id = "g2", name = "support"),
+                DownstreamUserGroupDto(id = "g1", name = "platform", createdAt = Date(0), updatedAt = Date(0)),
+                DownstreamUserGroupDto(id = "g2", name = "support", createdAt = Date(0), updatedAt = Date(0)),
             ),
             mentioned_roles = listOf("admin", "moderator"),
         )
@@ -930,10 +930,11 @@ internal class DomainMappingTest {
     @Test
     fun `DownstreamUserGroupDto is correctly mapped to UserGroup`() {
         val memberDto = DownstreamUserGroupMemberDto(
-            group_id = randomString(),
-            user_id = randomString(),
-            is_admin = randomBoolean(),
-            created_at = randomDate(),
+            appPk = 0,
+            groupId = randomString(),
+            userId = randomString(),
+            isAdmin = randomBoolean(),
+            createdAt = randomDate(),
         )
         val dto = randomDownstreamUserGroupDto(members = listOf(memberDto))
         val sut = Fixture().get()
@@ -942,18 +943,18 @@ internal class DomainMappingTest {
             id = dto.id,
             name = dto.name,
             description = dto.description,
-            team = dto.team_id.orEmpty(),
+            team = dto.teamId.orEmpty(),
             members = listOf(
                 UserGroupMember(
-                    groupId = memberDto.group_id,
-                    userId = memberDto.user_id,
-                    isAdmin = memberDto.is_admin,
-                    createdAt = memberDto.created_at,
+                    groupId = memberDto.groupId,
+                    userId = memberDto.userId,
+                    isAdmin = memberDto.isAdmin,
+                    createdAt = memberDto.createdAt,
                 ),
             ),
-            createdBy = dto.created_by,
-            createdAt = dto.created_at,
-            updatedAt = dto.updated_at,
+            createdBy = dto.createdBy,
+            createdAt = dto.createdAt,
+            updatedAt = dto.updatedAt,
         )
         assertEquals(expected, userGroup)
     }

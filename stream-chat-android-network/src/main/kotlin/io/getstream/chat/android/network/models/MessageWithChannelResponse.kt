@@ -149,7 +149,7 @@ data class MessageWithChannelResponse (
     val mentionedGroupIds: kotlin.collections.List<kotlin.String>? = emptyList(),
 
     @Json(name = "mentioned_groups")
-    val mentionedGroups: kotlin.collections.List<io.getstream.chat.android.network.models.UserGroupResponse>? = emptyList(),
+    val mentionedGroups: kotlin.collections.List<io.getstream.chat.android.network.models.MentionedUserGroupResponse>? = emptyList(),
 
     @Json(name = "mentioned_roles")
     val mentionedRoles: kotlin.collections.List<kotlin.String>? = emptyList(),

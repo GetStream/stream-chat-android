@@ -39,7 +39,7 @@ import com.squareup.moshi.ToJson
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class UserGroupResponse (
+data class MentionedUserGroupResponse (
     @Json(name = "created_at")
     val createdAt: java.util.Date,
 
@@ -59,8 +59,5 @@ data class UserGroupResponse (
     val description: kotlin.String? = null,
 
     @Json(name = "team_id")
-    val teamId: kotlin.String? = null,
-
-    @Json(name = "members")
-    val members: kotlin.collections.List<io.getstream.chat.android.network.models.UserGroupMember>? = emptyList()
+    val teamId: kotlin.String? = null
 )

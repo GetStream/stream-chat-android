@@ -1443,17 +1443,17 @@ internal object Mother {
         teamId: String? = randomString(),
         members: List<DownstreamUserGroupMemberDto> = emptyList(),
         createdBy: String? = randomString(),
-        createdAt: Date? = randomDate(),
-        updatedAt: Date? = randomDate(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
     ): DownstreamUserGroupDto = DownstreamUserGroupDto(
         id = id,
         name = name,
         description = description,
-        team_id = teamId,
+        teamId = teamId,
         members = members,
-        created_by = createdBy,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        createdBy = createdBy,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     fun randomDownstreamRoleDto(

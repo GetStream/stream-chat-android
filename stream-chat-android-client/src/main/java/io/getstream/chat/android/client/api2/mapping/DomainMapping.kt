@@ -1044,18 +1044,18 @@ internal class DomainMapping(
         id = id,
         name = name,
         description = description,
-        team = team_id.orEmpty(),
-        members = members.map { it.toDomain() },
-        createdBy = created_by,
-        createdAt = created_at,
-        updatedAt = updated_at,
+        team = teamId.orEmpty(),
+        members = members.orEmpty().map { it.toDomain() },
+        createdBy = createdBy,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     internal fun DownstreamUserGroupMemberDto.toDomain(): UserGroupMember = UserGroupMember(
-        groupId = group_id,
-        userId = user_id,
-        isAdmin = is_admin,
-        createdAt = created_at,
+        groupId = groupId,
+        userId = userId,
+        isAdmin = isAdmin,
+        createdAt = createdAt,
     )
 
     internal fun RoleDto.toDomain(): Role = Role(
