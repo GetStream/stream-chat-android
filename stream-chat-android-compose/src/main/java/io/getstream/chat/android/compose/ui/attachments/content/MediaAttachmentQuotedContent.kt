@@ -48,6 +48,7 @@ import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.common.images.internal.VideoThumbnailImageData
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import java.io.File
@@ -173,7 +174,7 @@ internal fun MediaAttachmentQuotedContent() {
                 "image" -> Color.Red.toArgb()
                 "imgur" -> Color.Green.toArgb()
                 "giphy" -> Color.Blue.toArgb()
-                "video" -> Color.Yellow.toArgb()
+                is VideoThumbnailImageData -> Color.Yellow.toArgb()
                 is File -> Color.Magenta.toArgb()
                 else -> Color.LightGray.toArgb()
             },

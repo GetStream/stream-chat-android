@@ -52,8 +52,7 @@ public data class VideoThumbnailImageData(
  * the video frame. It must be registered as the outermost interceptor so URL-rewriting
  * interceptors still apply to the fallback video URL.
  */
-@InternalStreamChatApi
-public class VideoThumbnailFallbackInterceptor : Interceptor {
+internal class VideoThumbnailFallbackInterceptor : Interceptor {
 
     override suspend fun intercept(chain: Interceptor.Chain): ImageResult {
         val data = chain.request.data as? VideoThumbnailImageData ?: return chain.proceed()
