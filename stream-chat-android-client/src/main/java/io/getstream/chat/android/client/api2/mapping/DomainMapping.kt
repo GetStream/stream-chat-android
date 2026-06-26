@@ -267,7 +267,7 @@ internal class DomainMapping(
                 messageTextUpdatedAt = message_text_updated_at,
                 poll = poll?.toDomain(),
                 restrictedVisibility = emptyList(),
-                reminder = reminder?.toDomain(),
+                reminder = reminder?.toReminderInfoDomain(),
                 sharedLocation = shared_location?.toDomain(),
                 channelRole = member?.channel_role,
                 deletedForMe = deleted_for_me ?: false,
@@ -944,25 +944,29 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms a network [DownstreamReminderDto] model to a domain [MessageReminder].
+     * Transforms a network [DownstreamReminderDto] to a domain [MessageReminder].
      */
     internal fun DownstreamReminderDto.toDomain(): MessageReminder = MessageReminder(
-        remindAt = remind_at,
-        cid = channel_cid,
+        remindAt = remindAt,
+        cid = channelCid,
         channel = channel?.toDomain(),
-        messageId = message_id,
-        message = message?.toDomain(),
-        createdAt = created_at,
-        updatedAt = updated_at,
+        messageId = messageId,
+        // TODO(message-migration): restore as `message?.toDomain()` once
+        //  DownstreamMessageDto migrates to MessageResponse. The wire embeds it.
+        message = null,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     /**
-     * Transforms a network [DownstreamReminderInfoDto] model to a domain [MessageReminderInfo].
+     * Transforms a network [DownstreamReminderDto] to a domain [MessageReminderInfo] - the
+     * stripped form embedded in messages. Same underlying type as the full mapper above,
+     * distinct method to avoid the typealias ambiguity.
      */
-    internal fun DownstreamReminderInfoDto.toDomain(): MessageReminderInfo = MessageReminderInfo(
-        remindAt = remind_at,
-        createdAt = created_at,
-        updatedAt = updated_at,
+    internal fun DownstreamReminderDto.toReminderInfoDomain(): MessageReminderInfo = MessageReminderInfo(
+        remindAt = remindAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     /**

@@ -1085,6 +1085,7 @@ private fun createReminderJsonString() =
             "remind_at": "2020-06-29T06:14:28.000Z",
             "channel_cid": "channelType:channelId",
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "user_id": "bender",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z"
         }

@@ -199,6 +199,9 @@ internal object MessageTestData {
             "platform_circumvented": true
         },
         "reminder": {
+            "channel_cid": "messaging:general",
+            "message_id": "msg-1",
+            "user_id": "user-1",
             "remind_at": "2020-02-01T00:00:00.000Z",
             "created_at": "2020-01-01T00:00:00.000Z",
             "updated_at": "2020-01-01T00:00:00.000Z"

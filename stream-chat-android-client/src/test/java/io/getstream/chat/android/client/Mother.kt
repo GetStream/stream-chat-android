@@ -1256,20 +1256,20 @@ internal object Mother {
 
     fun randomDownstreamReminderDto(
         channelCid: String = randomString(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
+        channel: DownstreamChannelDto? = randomDownstreamChannelDto(id = channelCid),
         messageId: String = randomString(),
-        message: DownstreamMessageDto = randomDownstreamMessageDto(id = messageId),
+        userId: String = randomString(),
         remindAt: Date? = randomDateOrNull(),
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
     ): DownstreamReminderDto = DownstreamReminderDto(
-        channel_cid = channelCid,
+        channelCid = channelCid,
         channel = channel,
-        message_id = messageId,
-        message = message,
-        remind_at = remindAt,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        messageId = messageId,
+        userId = userId,
+        remindAt = remindAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     fun randomQueryRemindersResponse(

@@ -24,19 +24,19 @@ internal object MessageReminderInfoTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"remind_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z"}"""
+        """{"channel_cid":"messaging:general","message_id":"msg-1","user_id":"user-1","remind_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z"}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =
-        """{"created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z"}"""
+        """{"channel_cid":"messaging:general","message_id":"msg-1","user_id":"user-1","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingCreatedAt =
-        """{"remind_at":"2025-04-08T12:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z"}"""
+        """{"channel_cid":"messaging:general","message_id":"msg-1","user_id":"user-1","remind_at":"2025-04-08T12:00:00.000Z","updated_at":"2025-04-07T15:30:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingUpdatedAt =
-        """{"remind_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z"}"""
+        """{"channel_cid":"messaging:general","message_id":"msg-1","user_id":"user-1","remind_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z"}"""
 
     val expectedAllFields = MessageReminderInfo(
         remindAt = Date(1744113600000L),

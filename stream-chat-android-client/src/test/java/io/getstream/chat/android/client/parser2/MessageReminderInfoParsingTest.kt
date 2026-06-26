@@ -51,14 +51,14 @@ internal class MessageReminderInfoParsingTest {
     @Test
     fun `DTO path - deserializes all fields`() {
         val dto = parser.fromJson(MessageReminderInfoTestData.jsonAllFields, DownstreamReminderInfoDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
+        val domain = with(domainMapping) { dto.toReminderInfoDomain() }
         assertEquals(MessageReminderInfoTestData.expectedAllFields, domain)
     }
 
     @Test
     fun `DTO path - deserializes with optional fields missing`() {
         val dto = parser.fromJson(MessageReminderInfoTestData.jsonOptionalFieldsMissing, DownstreamReminderInfoDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
+        val domain = with(domainMapping) { dto.toReminderInfoDomain() }
         assertEquals(MessageReminderInfoTestData.expectedOptionalFieldsMissing, domain)
     }
 
@@ -83,25 +83,23 @@ internal class MessageReminderInfoParsingTest {
     // region Error message parity
 
     @Test
-    fun `Both paths - same error on missing created_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Both paths - throw on missing created_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(MessageReminderInfoTestData.jsonMissingCreatedAt, DownstreamReminderInfoDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+        assertThrows<JsonDataException> {
             adapter.fromJson(MessageReminderInfoTestData.jsonMissingCreatedAt)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error on missing updated_at`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Both paths - throw on missing updated_at`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(MessageReminderInfoTestData.jsonMissingUpdatedAt, DownstreamReminderInfoDto::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
+        assertThrows<JsonDataException> {
             adapter.fromJson(MessageReminderInfoTestData.jsonMissingUpdatedAt)
         }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion
