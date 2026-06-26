@@ -922,6 +922,9 @@ private fun createMemberJsonString() =
         {
             "user": ${createUserJsonString()},
             "channel_role": "channel_member",
+            "notifications_muted": false,
+            "shadow_banned": false,
+            "banned": false,
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z"
         }

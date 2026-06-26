@@ -208,6 +208,9 @@ internal object EventArguments {
         channelRole = "channel_member",
         createdAt = date,
         updatedAt = date,
+        notificationsMuted = false,
+        shadowBanned = false,
+        banned = false,
     )
 
     private val giphyCommand = Command(

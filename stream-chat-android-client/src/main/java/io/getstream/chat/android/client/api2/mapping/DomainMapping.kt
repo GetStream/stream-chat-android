@@ -490,21 +490,21 @@ internal class DomainMapping(
      */
     internal fun DownstreamMemberDto.toDomain(): Member =
         Member(
-            user = user.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
+            user = user?.toDomain() ?: User(),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
             isInvited = invited,
-            inviteAcceptedAt = invite_accepted_at,
-            inviteRejectedAt = invite_rejected_at,
-            shadowBanned = shadow_banned ?: false,
-            banned = banned ?: false,
-            channelRole = channel_role,
-            notificationsMuted = notifications_muted,
+            inviteAcceptedAt = inviteAcceptedAt,
+            inviteRejectedAt = inviteRejectedAt,
+            shadowBanned = shadowBanned,
+            banned = banned,
+            channelRole = channelRole,
+            notificationsMuted = notificationsMuted,
             status = status,
-            banExpires = ban_expires,
-            pinnedAt = pinned_at,
-            archivedAt = archived_at,
-            extraData = extraData,
+            banExpires = banExpires,
+            pinnedAt = pinnedAt,
+            archivedAt = archivedAt,
+            extraData = custom.filterNonNullValues(),
         )
 
     internal fun DownstreamLocationDto.toDomain(): Location =

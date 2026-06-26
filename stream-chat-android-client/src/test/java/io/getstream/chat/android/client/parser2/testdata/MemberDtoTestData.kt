@@ -26,6 +26,10 @@ internal object MemberDtoTestData {
     val downstreamJsonWithExtraData = """
         {
         "user" : ${UserDtoTestData.downstreamJson},
+        "created_at" : "2020-06-10T11:04:31.000Z",
+        "updated_at" : "2020-06-10T11:04:31.588Z",
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "shadow_banned" : false,
         "banned" : false,
         "is_premium" : true
@@ -35,6 +39,10 @@ internal object MemberDtoTestData {
     val downstreamJsonWithoutExtraData = """
         {
         "user" : ${UserDtoTestData.downstreamJson},
+        "created_at" : "2020-06-10T11:04:31.000Z",
+        "updated_at" : "2020-06-10T11:04:31.588Z",
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
         "shadow_banned" : false,
         "banned" : false
         }""".withoutWhitespace()
@@ -58,38 +66,24 @@ internal object MemberDtoTestData {
 
     val downstreamMemberWithExtraData = DownstreamMemberDto(
         user = UserDtoTestData.downstreamUser,
-        created_at = null,
-        updated_at = null,
-        invited = null,
-        invite_accepted_at = null,
-        invite_rejected_at = null,
-        shadow_banned = false,
+        createdAt = java.util.Date(1591787071000),
+        updatedAt = java.util.Date(1591787071588),
+        channelRole = "channel_member",
+        notificationsMuted = false,
+        shadowBanned = false,
         banned = false,
-        channel_role = null,
-        notifications_muted = null,
-        status = null,
-        ban_expires = null,
-        pinned_at = null,
-        archived_at = null,
-        extraData = mapOf("is_premium" to true),
+        custom = mapOf("is_premium" to true),
     )
 
     val downstreamMemberWithoutExtraData = DownstreamMemberDto(
         user = UserDtoTestData.downstreamUser,
-        created_at = null,
-        updated_at = null,
-        invited = null,
-        invite_accepted_at = null,
-        invite_rejected_at = null,
-        shadow_banned = false,
+        createdAt = java.util.Date(1591787071000),
+        updatedAt = java.util.Date(1591787071588),
+        channelRole = "channel_member",
+        notificationsMuted = false,
+        shadowBanned = false,
         banned = false,
-        channel_role = null,
-        notifications_muted = null,
-        status = null,
-        ban_expires = null,
-        pinned_at = null,
-        archived_at = null,
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 
     val upstreamMemberWithExtraData = UpstreamMemberDto(

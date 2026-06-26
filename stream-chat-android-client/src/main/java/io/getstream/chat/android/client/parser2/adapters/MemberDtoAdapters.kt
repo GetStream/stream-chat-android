@@ -28,7 +28,8 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
  * JSON adapter for [DownstreamMemberDto].
  * Handles the proper deserialization of the [extraData] field.
  */
-internal object DownstreamMemberDtoAdapter : CustomObjectDtoAdapter<DownstreamMemberDto>(DownstreamMemberDto::class) {
+internal object DownstreamMemberDtoAdapter :
+    CustomObjectDtoAdapter<DownstreamMemberDto>(DownstreamMemberDto::class, extraDataPropertyName = "custom") {
 
     @FromJson
     fun fromJson(

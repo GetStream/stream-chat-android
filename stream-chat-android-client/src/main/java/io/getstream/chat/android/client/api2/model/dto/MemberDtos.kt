@@ -47,32 +47,7 @@ internal data class UpstreamMemberDto(
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
-/**
- * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class DownstreamMemberDto(
-    val user: DownstreamUserDto,
-    val created_at: Date?,
-    val updated_at: Date?,
-    val invited: Boolean?,
-    val invite_accepted_at: Date?,
-    val invite_rejected_at: Date?,
-    val shadow_banned: Boolean? = false,
-    val banned: Boolean? = false,
-    val channel_role: String?,
-    val notifications_muted: Boolean?,
-    val status: String?,
-    val ban_expires: Date?,
-    val pinned_at: Date?,
-    val archived_at: Date?,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
+internal typealias DownstreamMemberDto = io.getstream.chat.android.network.models.ChannelMemberResponse
 
 /**
  * DTO holding limited data about a channel member.

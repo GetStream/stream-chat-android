@@ -446,21 +446,21 @@ internal class DomainMappingTest {
             downstreamMemberDto.toDomain()
         }
         val expected = Member(
-            user = with(sut) { downstreamMemberDto.user.toDomain() },
-            createdAt = downstreamMemberDto.created_at,
-            updatedAt = downstreamMemberDto.updated_at,
+            user = with(sut) { downstreamMemberDto.user!!.toDomain() },
+            createdAt = downstreamMemberDto.createdAt,
+            updatedAt = downstreamMemberDto.updatedAt,
             isInvited = downstreamMemberDto.invited,
-            inviteAcceptedAt = downstreamMemberDto.invite_accepted_at,
-            inviteRejectedAt = downstreamMemberDto.invite_rejected_at,
-            shadowBanned = downstreamMemberDto.shadow_banned ?: false,
-            banned = downstreamMemberDto.banned ?: false,
-            channelRole = downstreamMemberDto.channel_role,
-            notificationsMuted = downstreamMemberDto.notifications_muted,
+            inviteAcceptedAt = downstreamMemberDto.inviteAcceptedAt,
+            inviteRejectedAt = downstreamMemberDto.inviteRejectedAt,
+            shadowBanned = downstreamMemberDto.shadowBanned,
+            banned = downstreamMemberDto.banned,
+            channelRole = downstreamMemberDto.channelRole,
+            notificationsMuted = downstreamMemberDto.notificationsMuted,
             status = downstreamMemberDto.status,
-            banExpires = downstreamMemberDto.ban_expires,
-            pinnedAt = downstreamMemberDto.pinned_at,
-            archivedAt = downstreamMemberDto.archived_at,
-            extraData = downstreamMemberDto.extraData,
+            banExpires = downstreamMemberDto.banExpires,
+            pinnedAt = downstreamMemberDto.pinnedAt,
+            archivedAt = downstreamMemberDto.archivedAt,
+            extraData = downstreamMemberDto.custom.filterValues { it != null }.mapValues { it.value!! },
         )
         assertEquals(expected, member)
     }
