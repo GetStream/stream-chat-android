@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.common.images.internal
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.request.SuccessResult
-import coil3.video.videoFrameMillis
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -73,19 +72,11 @@ public class VideoThumbnailFallbackInterceptor : Interceptor {
         if (videoUrl != null) {
             val videoRequest = chain.request.newBuilder()
                 .data(videoUrl)
-                .videoFrameMillis(VIDEO_FRAME_MILLIS)
+                .videoFramePreview()
                 .build()
             return chain.withRequest(videoRequest).proceed()
         }
 
         return chain.proceed()
-    }
-
-    private companion object {
-        /**
-         * Offset of the extracted frame, kept slightly above zero so the very first frame
-         * (often black) is skipped.
-         */
-        private const val VIDEO_FRAME_MILLIS = 100L
     }
 }

@@ -30,6 +30,7 @@ import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
 import io.getstream.chat.android.client.internal.file.StreamFileManager
+import io.getstream.chat.android.ui.common.images.internal.VideoFrameFetcher
 import io.getstream.chat.android.ui.common.images.internal.VideoThumbnailFallbackInterceptor
 import okio.Path.Companion.toOkioPath
 
@@ -85,6 +86,7 @@ public class StreamImageLoaderFactory(
             .components {
                 add(VideoThumbnailFallbackInterceptor())
                 interceptors.forEach { add(it) }
+                add(VideoFrameFetcher.Factory())
                 add(OkHttpNetworkFetcherFactory())
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     add(AnimatedImageDecoder.Factory(enforceMinimumFrameDelay = true))
