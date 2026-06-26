@@ -96,6 +96,16 @@ internal class VideoThumbnailFallbackInterceptorTest {
     }
 
     @Test
+    fun `proceeds unchanged when there is neither a thumbnail nor a video`() = runTest {
+        val data = VideoThumbnailImageData(thumbnailUrl = null, videoUrl = null)
+        val chain = chainFor(data, resultFor = { success })
+
+        interceptor.intercept(chain)
+
+        assertEquals(listOf(data.toString()), chain.proceeded)
+    }
+
+    @Test
     fun `passes through requests that are not video thumbnails`() = runTest {
         val chain = chainFor(THUMB_URL, resultFor = { success })
 
