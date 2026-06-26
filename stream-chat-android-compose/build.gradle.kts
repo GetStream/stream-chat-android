@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.exifinterface)
     implementation(libs.stream.log)
 
     // Compose

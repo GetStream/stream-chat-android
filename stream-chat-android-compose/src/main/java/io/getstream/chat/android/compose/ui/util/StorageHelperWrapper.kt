@@ -89,7 +89,7 @@ public class StorageHelperWrapper(
                 return@mapNotNull null
             }
 
-            Attachment(
+            val attachment = Attachment(
                 upload = fileFromUri,
                 type = it.type,
                 name = it.title ?: fileFromUri?.name ?: "",
@@ -97,6 +97,7 @@ public class StorageHelperWrapper(
                 mimeType = it.mimeType,
                 extraData = it.extraData,
             )
+            LocalAttachmentDimensionsResolver.resolveDimensions(attachment, fileFromUri)
         }
     }
 
