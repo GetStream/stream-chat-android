@@ -37,6 +37,8 @@ import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
+import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
+import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -77,6 +79,13 @@ internal class NewMessageEventParsingTest {
     private val reactionGroupAdapter = ReactionGroupAdapter(
         dateAdapter = dateAdapter,
     )
+    private val userGroupMemberAdapter = UserGroupMemberAdapter(
+        dateAdapter = dateAdapter,
+    )
+    private val userGroupAdapter = UserGroupAdapter(
+        memberAdapter = userGroupMemberAdapter,
+        dateAdapter = dateAdapter,
+    )
     private val attachmentAdapter = AttachmentAdapter()
     private val channelInfoAdapter = ChannelInfoAdapter()
     private val moderationDetailsAdapter = MessageModerationDetailsAdapter()
@@ -100,6 +109,7 @@ internal class NewMessageEventParsingTest {
         reactionAdapter = reactionAdapter,
         reactionGroupAdapter = reactionGroupAdapter,
         userAdapter = userAdapter,
+        userGroupAdapter = userGroupAdapter,
         moderationDetailsAdapter = moderationDetailsAdapter,
         moderationAdapter = moderationAdapter,
         pollAdapter = pollAdapter,
