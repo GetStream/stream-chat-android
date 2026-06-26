@@ -35,6 +35,8 @@ import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
+import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
+import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.MessageTransformer
@@ -76,6 +78,8 @@ internal class DirectEventParser(
     private val userAdapter by lazy {
         UserAdapter(deviceAdapter, privacySettingsAdapter, dateAdapter, userTransformer)
     }
+    private val userGroupMemberAdapter by lazy { UserGroupMemberAdapter(dateAdapter) }
+    private val userGroupAdapter by lazy { UserGroupAdapter(userGroupMemberAdapter, dateAdapter) }
     private val reactionAdapter by lazy { ReactionAdapter(userAdapter, dateAdapter) }
     private val pollAdapter by lazy {
         PollAdapter(userAdapter, optionAdapter, dateAdapter, currentUserIdProvider)
@@ -84,7 +88,7 @@ internal class DirectEventParser(
     private val messageAdapter by lazy {
         MessageAdapter(
             attachmentAdapter, channelInfoAdapter, reactionAdapter,
-            reactionGroupAdapter, userAdapter, moderationDetailsAdapter, moderationAdapter,
+            reactionGroupAdapter, userAdapter, userGroupAdapter, moderationDetailsAdapter, moderationAdapter,
             pollAdapter, reminderAdapter, locationAdapter, dateAdapter, messageTransformer,
         )
     }

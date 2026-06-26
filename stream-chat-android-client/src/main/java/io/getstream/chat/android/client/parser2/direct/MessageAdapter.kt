@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserGroup
 import java.util.Date
 
 @Suppress("LongParameterList")
@@ -40,6 +41,7 @@ internal class MessageAdapter(
     private val reactionAdapter: JsonAdapter<Reaction>,
     private val reactionGroupAdapter: ReactionGroupAdapter,
     private val userAdapter: JsonAdapter<User>,
+    private val userGroupAdapter: JsonAdapter<UserGroup>,
     private val moderationDetailsAdapter: JsonAdapter<MessageModerationDetails>,
     private val moderationAdapter: JsonAdapter<Moderation>,
     private val pollAdapter: JsonAdapter<Poll>,
@@ -70,6 +72,10 @@ internal class MessageAdapter(
         var id: String? = null
         var latestReactions: List<Reaction>? = null
         var mentionedUsers: List<User>? = null
+        var mentionedHere: Boolean? = null
+        var mentionedChannel: Boolean? = null
+        var mentionedGroups: List<UserGroup>? = null
+        var mentionedRoles: List<String>? = null
         var ownReactions: List<Reaction>? = null
         var parentId: String? = null
         var pinExpires: Date? = null
@@ -120,6 +126,10 @@ internal class MessageAdapter(
                 "id" -> id = reader.nextString()
                 "latest_reactions" -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "mentioned_users" -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
+                "mentioned_here" -> mentionedHere = JsonParsingUtils.readNullableBoolean(reader)
+                "mentioned_channel" -> mentionedChannel = JsonParsingUtils.readNullableBoolean(reader)
+                "mentioned_groups" -> mentionedGroups = JsonParsingUtils.parseList(reader, userGroupAdapter)
+                "mentioned_roles" -> mentionedRoles = JsonParsingUtils.parseStringList(reader)
                 "own_reactions" -> ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "parent_id" -> parentId = JsonParsingUtils.readNullableString(reader)
                 "pin_expires" -> pinExpires = dateAdapter.fromJson(reader)
@@ -222,6 +232,10 @@ internal class MessageAdapter(
             id = id,
             latestReactions = filteredLatestReactions,
             mentionedUsers = mentionedUsers,
+            mentionedHere = mentionedHere == true,
+            mentionedChannel = mentionedChannel == true,
+            mentionedGroups = mentionedGroups.orEmpty(),
+            mentionedRoles = mentionedRoles.orEmpty(),
             ownReactions = filteredOwnReactions,
             parentId = parentId,
             pinExpires = pinExpires,

@@ -79,6 +79,28 @@ internal object MessageTestData {
         "mentioned_users": [
             {"id": "user-2", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"}
         ],
+        "mentioned_here": true,
+        "mentioned_channel": true,
+        "mentioned_groups": [
+            {
+                "id": "group-1",
+                "name": "engineering",
+                "description": "Engineering team",
+                "team_id": "team-1",
+                "members": [
+                    {
+                        "group_id": "group-1",
+                        "user_id": "user-1",
+                        "is_admin": true,
+                        "created_at": "2020-01-01T00:00:00.000Z"
+                    }
+                ],
+                "created_by": "user-1",
+                "created_at": "2020-01-01T00:00:00.000Z",
+                "updated_at": "2020-01-01T00:00:00.000Z"
+            }
+        ],
+        "mentioned_roles": ["admin", "moderator"],
         "thread_participants": [
             {"id": "user-3", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"}
         ],
@@ -566,7 +588,11 @@ internal object MessageTestData {
         "command": null,
         "parent_id": null,
         "quoted_message_id": null,
-        "deleted_for_me": null
+        "deleted_for_me": null,
+        "mentioned_here": true,
+        "mentioned_channel": true,
+        "mentioned_groups": [],
+        "mentioned_roles": ["admin", "moderator"]
     }"""
 
     val expectedWithExplicitNulls = Message(
@@ -593,6 +619,10 @@ internal object MessageTestData {
         deletedForMe = false,
         shadowed = false,
         showInChannel = false,
+        mentionedHere = true,
+        mentionedChannel = true,
+        mentionedGroups = emptyList(),
+        mentionedRoles = listOf("admin", "moderator"),
         extraData = emptyMap(),
     )
 
@@ -883,6 +913,10 @@ internal object MessageTestData {
             }
         ],
         "mentioned_users": [],
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "mentioned_groups": [],
+        "mentioned_roles": [],
         "reply_count": 0,
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
