@@ -758,6 +758,39 @@ is already migrated, so reaction migration can proceed in parallel without waiti
 
 ---
 
+## 13. `openapi:"-"` strips real wire fields from the spec
+
+**Symptom:** Generated `ChannelConfigWithInfo.kt` is missing `message_retention`, even
+though every chat `channel.config` JSON the backend sends carries it
+(`"message_retention": "infinite"`). Moshi drops the unknown root key on decode; the
+domain `Config.messageRetention` defaults to `"infinite"` and any non-default value the
+server sets is silently lost.
+
+**Root cause:** The Go field on the `types.ChannelConfigFields` struct
+(`lib/combined/types/channel_config.go:66`) is tagged
+`json:"message_retention" ... openapi:"-"`. The `openapi:"-"` instructs the spec generator
+to omit the field. The json tag still serializes it to the wire. Result: the wire emits
+the field, but no consumer of the spec models it.
+
+This is the inverse of issue #5 (cross-product leak): there the spec emits things that
+shouldn't be there; here the spec drops things that should be there.
+
+**Fix status:** Worked around in chat-android by defaulting `Config.messageRetention =
+"infinite"` in `ChannelConfigWithInfo.toDomain()` with a comment pointing to this entry.
+Acceptable because the field is rarely customized and the default matches the most common
+backend value.
+
+**Suggested fix:** Audit Go fields tagged `openapi:"-"` that still have a `json:` tag with
+a real name. Either remove the `openapi:"-"` (preferred, so the spec describes the wire
+honestly) or drop the json tag (and audit downstream consumers that may rely on the wire
+field). For `MessageRetention` specifically, removing `openapi:"-"` is the right answer:
+it's documented behaviour and SDKs already depend on the value.
+
+**Migration timing:** Not blocking. The android workaround is one line. Worth pushing
+upstream alongside the next batch of spec/openapi fixes.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec
