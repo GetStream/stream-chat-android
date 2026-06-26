@@ -306,21 +306,22 @@ internal class DomainMappingTest {
 
         assertEquals(downstreamChannelDto.id, channel.id)
         assertEquals(downstreamChannelDto.type, channel.type)
-        assertEquals(downstreamChannelDto.name ?: "", channel.name)
-        assertEquals(downstreamChannelDto.image ?: "", channel.image)
-        assertEquals(downstreamChannelDto.watcher_count, channel.watcherCount)
-        assertEquals(downstreamChannelDto.filter_tags.orEmpty(), channel.filterTags)
+        assertEquals(downstreamChannelDto.custom["name"] as? String ?: "", channel.name)
+        assertEquals(downstreamChannelDto.custom["image"] as? String ?: "", channel.image)
+        assertEquals(downstreamChannelDto.filterTags.orEmpty(), channel.filterTags)
         assertEquals(downstreamChannelDto.frozen, channel.frozen)
-        assertEquals(downstreamChannelDto.created_at, channel.createdAt)
-        assertEquals(downstreamChannelDto.deleted_at, channel.deletedAt)
-        assertEquals(downstreamChannelDto.updated_at, channel.updatedAt)
-        assertEquals(downstreamChannelDto.member_count, channel.memberCount)
-        assertEquals(downstreamChannelDto.team, channel.team)
-        assertEquals(downstreamChannelDto.cooldown, channel.cooldown)
-        assertEquals(downstreamChannelDto.own_capabilities.toSet(), channel.ownCapabilities)
-        assertEquals(downstreamChannelDto.message_count, channel.messageCount)
-        assertEquals(downstreamChannelDto.last_message_at, channel.lastMessageAt)
-        assertEquals(downstreamChannelDto.extraData, channel.extraData)
+        assertEquals(downstreamChannelDto.createdAt, channel.createdAt)
+        assertEquals(downstreamChannelDto.deletedAt, channel.deletedAt)
+        assertEquals(downstreamChannelDto.updatedAt, channel.updatedAt)
+        assertEquals(downstreamChannelDto.memberCount ?: 0, channel.memberCount)
+        assertEquals(downstreamChannelDto.team.orEmpty(), channel.team)
+        assertEquals(downstreamChannelDto.cooldown ?: 0, channel.cooldown)
+        assertEquals(
+            downstreamChannelDto.ownCapabilities.orEmpty().map { it.value }.toSet(),
+            channel.ownCapabilities,
+        )
+        assertEquals(downstreamChannelDto.messageCount, channel.messageCount)
+        assertEquals(downstreamChannelDto.lastMessageAt, channel.lastMessageAt)
     }
 
     @Test
@@ -690,38 +691,38 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `ConfigDto is correctly mapped to Config`() {
+    fun `ChannelConfigWithInfo is correctly mapped to Config`() {
         val configDto = randomConfigDto()
         val sut = Fixture().get()
         val config = with(sut) { configDto.toDomain() }
         val expected = Config(
-            createdAt = configDto.created_at,
-            updatedAt = configDto.updated_at,
-            name = configDto.name ?: "",
-            typingEventsEnabled = configDto.typing_events,
-            readEventsEnabled = configDto.read_events,
-            deliveryEventsEnabled = configDto.delivery_events,
-            connectEventsEnabled = configDto.connect_events,
+            createdAt = configDto.createdAt,
+            updatedAt = configDto.updatedAt,
+            name = configDto.name,
+            typingEventsEnabled = configDto.typingEvents,
+            readEventsEnabled = configDto.readEvents,
+            deliveryEventsEnabled = configDto.deliveryEvents,
+            connectEventsEnabled = configDto.connectEvents,
             searchEnabled = configDto.search,
             isReactionsEnabled = configDto.reactions,
             isThreadEnabled = configDto.replies,
             muteEnabled = configDto.mutes,
             uploadsEnabled = configDto.uploads,
-            urlEnrichmentEnabled = configDto.url_enrichment,
-            customEventsEnabled = configDto.custom_events,
-            pushNotificationsEnabled = configDto.push_notifications,
-            skipLastMsgUpdateForSystemMsgs = configDto.skip_last_msg_update_for_system_msgs ?: false,
+            urlEnrichmentEnabled = configDto.urlEnrichment,
+            customEventsEnabled = configDto.customEvents,
+            pushNotificationsEnabled = configDto.pushNotifications,
+            skipLastMsgUpdateForSystemMsgs = configDto.skipLastMsgUpdateForSystemMsgs,
             pollsEnabled = configDto.polls,
-            messageRetention = configDto.message_retention,
-            maxMessageLength = configDto.max_message_length,
-            automod = configDto.automod,
-            automodBehavior = configDto.automod_behavior,
-            blocklistBehavior = configDto.blocklist_behavior ?: "",
+            messageRetention = "infinite",
+            maxMessageLength = configDto.maxMessageLength,
+            automod = configDto.automod.value,
+            automodBehavior = configDto.automodBehavior.value,
+            blocklistBehavior = configDto.blocklistBehavior?.value.orEmpty(),
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
-            messageRemindersEnabled = configDto.user_message_reminders ?: false,
-            sharedLocationsEnabled = configDto.shared_locations ?: false,
-            markMessagesPending = configDto.mark_messages_pending,
-            pushLevel = configDto.push_level,
+            messageRemindersEnabled = configDto.userMessageReminders,
+            sharedLocationsEnabled = configDto.sharedLocations,
+            markMessagesPending = configDto.markMessagesPending,
+            pushLevel = configDto.pushLevel?.value,
         )
         assertEquals(expected, config)
     }

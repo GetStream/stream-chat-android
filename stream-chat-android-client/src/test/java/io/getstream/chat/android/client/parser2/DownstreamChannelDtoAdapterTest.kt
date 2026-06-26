@@ -18,9 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
-import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class DownstreamChannelDtoAdapterTest {
@@ -53,10 +51,4 @@ internal class DownstreamChannelDtoAdapterTest {
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutNameAndImage
     }
 
-    @Test
-    fun `Can't serialize downstream dto`() {
-        invoking {
-            parser.toJson(ChannelDtoTestData.downstreamChannel)
-        }.shouldThrow(RuntimeException::class)
-    }
 }

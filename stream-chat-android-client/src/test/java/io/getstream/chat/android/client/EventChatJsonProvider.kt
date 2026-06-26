@@ -941,6 +941,7 @@ private fun createChannelJsonString() =
     "created_at": "2020-06-29T06:14:28.000Z",
     "updated_at": "2020-06-29T06:14:28.000Z",
     "created_by": ${createUserJsonString()},
+    "disabled": false,
     "frozen": false,
     "members": [
         ${createMemberJsonString()}
@@ -964,15 +965,17 @@ private fun createConfigJsonString() =
           "search": true,
           "reactions": true,
           "replies": true,
+          "quotes": true,
           "mutes": true,
           "uploads": true,
           "url_enrichment":true,
           "custom_events": true,
           "push_notifications":true,
           "skip_last_msg_update_for_system_msgs": false,
-          "message_retention": "infinite",
           "max_message_length": 5000,
           "polls": false,
+          "reminders": false,
+          "count_messages": true,
           "automod": "disabled",
           "automod_behavior":"flag",
           "blocklist_behavior":"flag",
@@ -984,6 +987,8 @@ private fun createConfigJsonString() =
               "set": "fun_set"
             }
           ],
+          "user_message_reminders": false,
+          "shared_locations": false,
           "mark_messages_pending": false
         }
     """.trimIndent()

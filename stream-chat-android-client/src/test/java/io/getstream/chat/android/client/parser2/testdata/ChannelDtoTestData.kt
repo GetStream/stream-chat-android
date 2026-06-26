@@ -16,11 +16,10 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
-import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.Command as CommandDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -40,6 +39,7 @@ internal object ChannelDtoTestData {
           "search": false,
           "reactions": true,
           "replies": true,
+          "quotes": true,
           "mutes": true,
           "uploads": true,
           "url_enrichment": false,
@@ -47,11 +47,12 @@ internal object ChannelDtoTestData {
           "push_notifications": true,
           "skip_last_msg_update_for_system_msgs": false,
           "polls": true,
-          "message_retention": "retention",
+          "reminders": true,
+          "count_messages": true,
           "max_message_length": 500,
-          "automod": "none",
-          "automod_behavior": "none",
-          "blocklist_behavior": "empty",
+          "automod": "disabled",
+          "automod_behavior": "flag",
+          "blocklist_behavior": "flag",
           "commands": [
            {
             "name": "giphy",
@@ -66,29 +67,31 @@ internal object ChannelDtoTestData {
         }
         """.withoutWhitespace()
 
-    private val configDto: ConfigDto = ConfigDto(
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
+    private val configDto: ChannelConfigWithInfo = ChannelConfigWithInfo(
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
         name = "config1",
-        typing_events = true,
-        read_events = true,
-        delivery_events = true,
-        connect_events = true,
+        typingEvents = true,
+        readEvents = true,
+        deliveryEvents = true,
+        connectEvents = true,
         search = false,
         reactions = true,
         replies = true,
+        quotes = true,
         mutes = true,
         uploads = true,
-        url_enrichment = false,
-        custom_events = false,
-        push_notifications = true,
-        skip_last_msg_update_for_system_msgs = false,
+        urlEnrichment = false,
+        customEvents = false,
+        pushNotifications = true,
+        skipLastMsgUpdateForSystemMsgs = false,
         polls = true,
-        message_retention = "retention",
-        max_message_length = 500,
-        automod = "none",
-        automod_behavior = "none",
-        blocklist_behavior = "empty",
+        reminders = true,
+        countMessages = true,
+        maxMessageLength = 500,
+        automod = ChannelConfigWithInfo.Automod.Disabled,
+        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
+        blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Flag,
         commands = listOf(
             CommandDto(
                 name = "giphy",
@@ -97,9 +100,9 @@ internal object ChannelDtoTestData {
                 set = "none",
             ),
         ),
-        user_message_reminders = false,
-        shared_locations = true,
-        mark_messages_pending = false,
+        userMessageReminders = false,
+        sharedLocations = true,
+        markMessagesPending = false,
     )
 
     @Language("JSON")
@@ -108,9 +111,9 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
+          "disabled": false,
           "name": "channelName",
           "image": "channelImage",
-          "watcher_count": 1,
           "filter_tags": ["tag1"],
           "frozen": false,
           "last_message_at": "2020-06-10T11:04:31.588Z",
@@ -118,7 +121,6 @@ internal object ChannelDtoTestData {
           "deleted_at": "2020-06-10T11:04:31.588Z",
           "updated_at": "2020-06-10T11:04:31.588Z",
           "member_count": 2,
-          "messages": [${MessageDtoTestData.downstreamJson}],
           "members": [
            {
             "user": ${UserDtoTestData.downstreamJson},
@@ -136,51 +138,26 @@ internal object ChannelDtoTestData {
             "archived_at": "2020-06-10T11:04:31.588Z"
            }
           ],
-          "watchers": [${UserDtoTestData.downstreamJson}],
-          "read": [
-           {
-            "user": ${UserDtoTestData.downstreamJson},
-            "last_read": "2020-06-10T11:04:31.0Z",
-            "unread_messages": 1,
-            "last_read_message_id": "messageId"
-           }
-          ],
           "config": $configJson,
           "created_by": ${UserDtoTestData.downstreamJson},
           "team": "team1",
           "cooldown": 1,
-          "pinned_messages": [${MessageDtoTestData.downstreamJson}],
           "draft": true,
-          "own_capabilities": ["connect-events", "pin-message"],
-          "membership": {
-            "user": ${UserDtoTestData.downstreamJson},
-            "created_at": "2020-06-10T11:04:31.0Z",
-            "updated_at": "2020-06-10T11:04:31.588Z",
-            "invited": true,
-            "invite_accepted_at": "2020-06-10T11:04:31.588Z",
-            "shadow_banned": false,
-            "banned": false,
-            "channel_role": "member",
-            "notifications_muted": false,
-            "status": "member"
-           }
+          "own_capabilities": ["connect-events", "pin-message"]
         }
         """.withoutWhitespace()
     val downstreamChannel = DownstreamChannelDto(
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
-        name = "channelName",
-        image = "channelImage",
-        watcher_count = 1,
-        filter_tags = listOf("tag1"),
+        disabled = false,
+        filterTags = listOf("tag1"),
         frozen = false,
-        last_message_at = Date(1591787071588),
-        created_at = Date(1591787071000),
-        deleted_at = Date(1591787071588),
-        updated_at = Date(1591787071588),
-        member_count = 2,
-        messages = listOf(MessageDtoTestData.downstreamMessage),
+        lastMessageAt = Date(1591787071588),
+        createdAt = Date(1591787071000),
+        deletedAt = Date(1591787071588),
+        updatedAt = Date(1591787071588),
+        memberCount = 2,
         members = listOf(
             DownstreamMemberDto(
                 user = UserDtoTestData.downstreamUser,
@@ -200,39 +177,19 @@ internal object ChannelDtoTestData {
                 custom = emptyMap(),
             ),
         ),
-        watchers = listOf(UserDtoTestData.downstreamUser),
-        read = listOf(
-            DownstreamChannelUserRead(
-                user = UserDtoTestData.downstreamUser,
-                last_read = Date(1591787071000),
-                unread_messages = 1,
-                last_read_message_id = "messageId",
-            ),
-        ),
         config = configDto,
-        created_by = UserDtoTestData.downstreamUser,
+        createdBy = UserDtoTestData.downstreamUser,
         team = "team1",
         cooldown = 1,
-        pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
-        own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
-        membership = DownstreamMemberDto(
-            user = UserDtoTestData.downstreamUser,
-            createdAt = Date(1591787071000),
-            updatedAt = Date(1591787071588),
-            invited = true,
-            inviteAcceptedAt = Date(1591787071588),
-            inviteRejectedAt = null,
-            shadowBanned = false,
-            banned = false,
-            channelRole = "member",
-            notificationsMuted = false,
-            status = "member",
-            banExpires = null,
-            pinnedAt = null,
-            archivedAt = null,
-            custom = emptyMap(),
+        ownCapabilities = listOf(
+            ChannelOwnCapability.ConnectEvents,
+            ChannelOwnCapability.PinMessage,
         ),
-        extraData = mapOf("draft" to true),
+        custom = mapOf(
+            "name" to "channelName",
+            "image" to "channelImage",
+            "draft" to true,
+        ),
     )
 
     @Language("JSON")
@@ -241,9 +198,12 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
+          "disabled": false,
           "name": "channelName",
           "image": "channelImage",
           "frozen": false,
+          "created_at": "2020-06-10T11:04:31.0Z",
+          "updated_at": "2020-06-10T11:04:31.588Z",
           "config": $configJson
         }
         """.withoutWhitespace()
@@ -251,27 +211,15 @@ internal object ChannelDtoTestData {
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
-        name = "channelName",
-        image = "channelImage",
-        watcher_count = 0,
-        filter_tags = null,
+        disabled = false,
         frozen = false,
-        last_message_at = null,
-        created_at = null,
-        deleted_at = null,
-        updated_at = null,
-        member_count = 0,
-        messages = emptyList(),
-        members = emptyList(),
-        watchers = emptyList(),
-        read = emptyList(),
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
         config = configDto,
-        created_by = null,
-        team = "",
-        cooldown = 0,
-        pinned_messages = emptyList(),
-        membership = null,
-        extraData = emptyMap(),
+        custom = mapOf(
+            "name" to "channelName",
+            "image" to "channelImage",
+        ),
     )
 
     @Language("JSON")
@@ -280,9 +228,10 @@ internal object ChannelDtoTestData {
           "cid": "channelType:channelId",
           "id": "channelId",
           "type": "channelType",
-          "name": null,
-          "image": null,
+          "disabled": false,
           "frozen": false,
+          "created_at": "2020-06-10T11:04:31.0Z",
+          "updated_at": "2020-06-10T11:04:31.588Z",
           "config": $configJson
         }
         """.withoutWhitespace()
@@ -290,26 +239,11 @@ internal object ChannelDtoTestData {
         cid = "channelType:channelId",
         id = "channelId",
         type = "channelType",
-        name = null,
-        image = null,
-        watcher_count = 0,
-        filter_tags = null,
+        disabled = false,
         frozen = false,
-        last_message_at = null,
-        created_at = null,
-        deleted_at = null,
-        updated_at = null,
-        member_count = 0,
-        messages = emptyList(),
-        members = emptyList(),
-        watchers = emptyList(),
-        read = emptyList(),
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
         config = configDto,
-        created_by = null,
-        team = "",
-        cooldown = 0,
-        pinned_messages = emptyList(),
-        membership = null,
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 }

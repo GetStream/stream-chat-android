@@ -21,7 +21,6 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -118,6 +117,8 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.OwnUserResponse
@@ -171,41 +172,37 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DownstreamChannelDto] into [Channel]
-     *
+     * Transforms [DownstreamChannelDto] into [Channel]. Channel-level wire fields only;
+     * `messages`, `watchers`, `read`, `pinnedMessages`, `membership`, `activeLiveLocations`,
+     * `watcherCount` are populated by [MoshiChatApi.flattenChannel] from the outer
+     * `ChannelStateResponse` wrapper. Event-embedded channels legitimately have those empty.
      */
     internal fun DownstreamChannelDto.toDomain(): Channel =
         Channel(
             id = id,
             type = type,
-            name = name ?: "",
-            image = image ?: "",
-            watcherCount = watcher_count,
-            filterTags = filter_tags.orEmpty(),
+            name = custom["name"] as? String ?: "",
+            image = custom["image"] as? String ?: "",
+            filterTags = filterTags.orEmpty(),
             frozen = frozen,
-            createdAt = created_at,
-            deletedAt = deleted_at,
-            updatedAt = updated_at,
-            memberCount = member_count,
-            messages = messages.map { it.toDomain(this.toChannelInfo()) },
-            members = members.map { it.toDomain() },
-            watchers = watchers.map { it.toDomain() },
-            read = read.map {
-                it.toDomain(
-                    lastReceivedEventDate = last_message_at ?: it.last_read,
-                )
-            },
-            config = config.toDomain(),
-            createdBy = created_by?.toDomain() ?: User(),
-            team = team,
-            cooldown = cooldown,
-            pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
-            ownCapabilities = own_capabilities.toSet(),
-            membership = membership?.toDomain(),
-            activeLiveLocations = active_live_locations.map { it.toDomain() },
-            messageCount = message_count,
-            lastMessageAt = last_message_at,
-            extraData = extraData.toMutableMap(),
+            createdAt = createdAt,
+            deletedAt = deletedAt,
+            updatedAt = updatedAt,
+            memberCount = memberCount ?: 0,
+            members = members.orEmpty().map { it.toDomain() },
+            config = config?.toDomain() ?: Config(),
+            createdBy = createdBy?.toDomain() ?: User(),
+            team = team.orEmpty(),
+            cooldown = cooldown ?: 0,
+            ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
+            messageCount = messageCount,
+            lastMessageAt = lastMessageAt,
+            extraData = custom.filterNonNullValues()
+                .toMutableMap()
+                .apply {
+                    remove("name")
+                    remove("image")
+                },
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
 
@@ -213,10 +210,10 @@ internal class DomainMapping(
         ChannelInfo(
             cid = cid,
             id = id,
-            memberCount = member_count,
-            name = name,
+            memberCount = memberCount ?: 0,
+            name = custom["name"] as? String,
             type = type,
-            image = image,
+            image = custom["image"] as? String,
         )
 
     /**
@@ -742,36 +739,38 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [ConfigDto] to [Config].
+     * Transforms [ChannelConfigWithInfo] to domain [Config]. The wire emits
+     * `message_retention` (Go tags it `openapi:"-"` so it's absent from the generated
+     * DTO; see GENERATOR_ISSUES); we default to "infinite" until the spec is fixed.
      */
-    internal fun ConfigDto.toDomain(): Config = Config(
-        createdAt = created_at,
-        updatedAt = updated_at,
-        name = name ?: "",
-        typingEventsEnabled = typing_events,
-        readEventsEnabled = read_events,
-        deliveryEventsEnabled = delivery_events,
-        connectEventsEnabled = connect_events,
+    internal fun ChannelConfigWithInfo.toDomain(): Config = Config(
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        name = name,
+        typingEventsEnabled = typingEvents,
+        readEventsEnabled = readEvents,
+        deliveryEventsEnabled = deliveryEvents,
+        connectEventsEnabled = connectEvents,
         searchEnabled = search,
         isReactionsEnabled = reactions,
         isThreadEnabled = replies,
         muteEnabled = mutes,
         uploadsEnabled = uploads,
-        urlEnrichmentEnabled = url_enrichment,
-        customEventsEnabled = custom_events,
-        pushNotificationsEnabled = push_notifications,
-        skipLastMsgUpdateForSystemMsgs = skip_last_msg_update_for_system_msgs ?: false,
+        urlEnrichmentEnabled = urlEnrichment,
+        customEventsEnabled = customEvents,
+        pushNotificationsEnabled = pushNotifications,
+        skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
         pollsEnabled = polls,
-        messageRetention = message_retention,
-        maxMessageLength = max_message_length,
-        automod = automod,
-        automodBehavior = automod_behavior,
-        blocklistBehavior = blocklist_behavior ?: "",
+        messageRetention = "infinite",
+        maxMessageLength = maxMessageLength,
+        automod = automod.value,
+        automodBehavior = automodBehavior.value,
+        blocklistBehavior = blocklistBehavior?.value.orEmpty(),
         commands = commands.map { it.toDomain() },
-        messageRemindersEnabled = user_message_reminders ?: false,
-        sharedLocationsEnabled = shared_locations ?: false,
-        markMessagesPending = mark_messages_pending,
-        pushLevel = push_level,
+        messageRemindersEnabled = userMessageReminders,
+        sharedLocationsEnabled = sharedLocations,
+        markMessagesPending = markMessagesPending,
+        pushLevel = pushLevel?.value,
     )
 
     /**
