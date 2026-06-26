@@ -116,6 +116,27 @@ internal class EventHandlerSequentialTest {
     }
 
     @ParameterizedTest
+    @MethodSource("groupedUnreadChannelsArguments")
+    internal fun `GlobalState should be updated with proper groupedUnreadChannels values`(
+        events: List<ChatEvent>,
+        initialGroupedUnreadChannels: Map<String, Int>,
+        prepareFixture: Fixture.() -> Unit,
+        expectedGroupedUnreadChannels: Map<String, Int>,
+    ) = runTest {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(initialGroupedUnreadChannels)
+        }
+        val handler = Fixture()
+            .withMutableGlobalState(mutableGlobalState)
+            .apply(prepareFixture)
+            .get(this)
+
+        handler.handleEvents(*events.toTypedArray())
+
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` expectedGroupedUnreadChannels
+    }
+
+    @ParameterizedTest
     @MethodSource("hasOwnUserArguments")
     internal fun `GlobalState should be updated with info from 'me' user`(
         events: List<ChatEvent>,
@@ -465,6 +486,38 @@ internal class EventHandlerSequentialTest {
 
         fun listener(): ChatEventListener<ChatEvent> = capturedListener.get()
 
+        /**
+         * Stubs [stateRegistry] so the channel identified by [channelType] / [channelId] is
+         * active and `channel(...).toChannel()` returns a channel with the given
+         * [extraData] and a single [ChannelUserRead] for [currentUser] carrying [unreadMessages].
+         */
+        fun withActiveChannel(
+            channelType: String,
+            channelId: String,
+            extraData: Map<String, Any>,
+            unreadMessages: Int,
+        ) = apply {
+            val cached = randomChannel(
+                id = channelId,
+                type = channelType,
+                extraData = extraData,
+                read = listOf(
+                    io.getstream.chat.android.randomChannelUserRead(
+                        user = currentUser,
+                        unreadMessages = unreadMessages,
+                    ),
+                ),
+            )
+            val channelMutableState: io.getstream.chat.android.client.channel.state.ChannelState =
+                mock {
+                    on { toChannel() } doReturn cached
+                }
+            val cid = io.getstream.chat.android.client.utils.internal.ChannelId
+                .fromTypeAndId(channelType, channelId)!!
+            whenever(stateRegistry.isActiveChannel(cid)) doReturn true
+            whenever(stateRegistry.channel(channelType, channelId)) doReturn channelMutableState
+        }
+
         fun get(scope: CoroutineScope) = EventHandlerSequential(
             currentUserId = currentUser.id,
             subscribeForEvents = subscribeForEvents,
@@ -495,6 +548,96 @@ internal class EventHandlerSequentialTest {
         private val prepareFixtureWithCurrentUser: Fixture.() -> Unit = {
             withCurrentUser(currentUser)
         }
+
+        private val groupedUnreadChannels = mapOf("direct" to positiveRandomInt(), "support" to positiveRandomInt())
+        private val initialGroupedUnreadChannels = mapOf("old" to positiveRandomInt())
+
+        @Suppress("LongMethod")
+        @JvmStatic
+        fun groupedUnreadChannelsArguments() = listOf(
+            // NewMessageEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNewMessageEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                prepareFixtureWithReadCapability,
+                groupedUnreadChannels,
+            ),
+            // NotificationMarkReadEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationMarkReadEvent(
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationMarkUnreadEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationMarkUnreadEvent(
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationMessageNewEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationMessageNewEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationChannelDeletedEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationChannelDeletedEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                neutralPrepareFixture,
+                groupedUnreadChannels,
+            ),
+            // NotificationChannelTruncatedEvent with grouped unreads updates GlobalState
+            Arguments.of(
+                listOf(
+                    randomNotificationChannelTruncatedEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = groupedUnreadChannels,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                prepareFixtureWithReadCapability,
+                groupedUnreadChannels,
+            ),
+            // Event with null grouped unreads preserves previous value
+            Arguments.of(
+                listOf(
+                    randomNewMessageEvent(
+                        cid = randomCid,
+                        groupedUnreadChannels = null,
+                    ),
+                ),
+                initialGroupedUnreadChannels,
+                prepareFixtureWithReadCapability,
+                initialGroupedUnreadChannels,
+            ),
+        )
 
         @JvmStatic
         fun unreadCountArguments() = unreadArgumentMarkAllReadEvent() +

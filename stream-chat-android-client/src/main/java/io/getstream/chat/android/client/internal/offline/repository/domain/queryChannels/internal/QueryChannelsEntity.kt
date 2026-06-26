@@ -48,6 +48,8 @@ internal data class QueryChannelsEntity(
     val predefinedFilterName: String? = null,
     val predefinedFilterValues: Map<String, Any>? = null,
     val predefinedSortValues: Map<String, Any>? = null,
+    /** Set only for grouped queries; null otherwise. Identity is the stable server-returned groupKey. */
+    val groupKey: String? = null,
 )
 
 internal const val QUERY_CHANNELS_ENTITY_TABLE_NAME = "stream_channel_query"

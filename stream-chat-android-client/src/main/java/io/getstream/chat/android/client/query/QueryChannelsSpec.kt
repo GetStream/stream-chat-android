@@ -23,11 +23,14 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 /**
  * Spec describing a query channels operation and the channel CIDs that belong to it.
  *
- * For predefined-filter queries the [predefinedFilterName] plus value maps form the spec's stable
- * identity in the offline DB and must not change once assigned. [filter] and [querySort] are the
- * *currently resolved* values for this spec instance — for predefined queries the resolved values
- * are captured by replacing the held spec instance (see
- * `QueryChannelsMutableState.applyResolvedSpec`).
+ * Three identity flavors are supported:
+ *  - Standard queries: identity is `(filter, querySort)`.
+ *  - Predefined queries: identity is [predefinedFilterName] plus the interpolation value maps. The
+ *    [filter] and [querySort] held by this spec instance are the *currently resolved* values for
+ *    that predefined query (captured by replacing the held spec instance — see
+ *    `QueryChannelsMutableState.applyResolvedSpec`).
+ *  - Grouped queries: identity is [groupKey], the stable key returned by the server's grouped
+ *    channels endpoint. [filter] and [querySort] hold neutral placeholders for these queries.
  *
  * The 2-arg [constructor] and 2-arg [copy] are kept for binary compatibility with callers that
  * predate the predefined-filter fields. They delegate to the primary constructor with the
@@ -40,11 +43,12 @@ public data class QueryChannelsSpec(
     val predefinedFilterName: String? = null,
     val predefinedFilterValues: Map<String, Any>? = null,
     val predefinedSortValues: Map<String, Any>? = null,
+    val groupKey: String? = null,
 ) {
     public constructor(
         filter: FilterObject,
         querySort: QuerySorter<Channel>,
-    ) : this(filter, querySort, emptySet(), null, null, null)
+    ) : this(filter, querySort, emptySet(), null, null, null, null)
 
     public fun copy(
         filter: FilterObject = this.filter,
@@ -56,5 +60,6 @@ public data class QueryChannelsSpec(
         predefinedFilterName = predefinedFilterName,
         predefinedFilterValues = predefinedFilterValues,
         predefinedSortValues = predefinedSortValues,
+        groupKey = groupKey,
     )
 }

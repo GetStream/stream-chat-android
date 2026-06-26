@@ -18,11 +18,13 @@ package io.getstream.chat.android.client.internal.state.plugin.state
 
 import io.getstream.chat.android.client.api.MessageLimitConfig
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -871,6 +873,43 @@ internal class StateRegistryTest {
 
         assertEquals(1, stateRegistry.getActiveChannelStates().size)
         assertTrue(stateRegistry.isActiveChannel(messaging123))
+    }
+
+    // endregion
+
+    // region WatchedChannelStateFlow tracking
+
+    @Test
+    fun `trackWatchedChannel should make CID available in getTrackedWatchedChannels`() {
+        val flow = WatchedChannelStateFlow(MutableStateFlow<ChannelState?>(null), "messaging:123")
+        stateRegistry.trackWatchedChannel(flow)
+
+        assertEquals(setOf("messaging:123"), stateRegistry.getTrackedWatchedChannels())
+    }
+
+    @Test
+    fun `getTrackedWatchedChannels should return empty set when nothing tracked`() {
+        assertTrue(stateRegistry.getTrackedWatchedChannels().isEmpty())
+    }
+
+    @Test
+    fun `trackWatchedChannel should deduplicate CIDs from multiple flows`() {
+        val flow1 = WatchedChannelStateFlow(MutableStateFlow<ChannelState?>(null), "messaging:123")
+        val flow2 = WatchedChannelStateFlow(MutableStateFlow<ChannelState?>(null), "messaging:123")
+        stateRegistry.trackWatchedChannel(flow1)
+        stateRegistry.trackWatchedChannel(flow2)
+
+        assertEquals(setOf("messaging:123"), stateRegistry.getTrackedWatchedChannels())
+    }
+
+    @Test
+    fun `clear should remove all tracked entries`() {
+        val flow = WatchedChannelStateFlow(MutableStateFlow<ChannelState?>(null), "messaging:123")
+        stateRegistry.trackWatchedChannel(flow)
+
+        stateRegistry.clear()
+
+        assertTrue(stateRegistry.getTrackedWatchedChannels().isEmpty())
     }
 
     // endregion

@@ -29,7 +29,9 @@ import io.getstream.chat.android.client.api.state.ThreadState
 import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.internal.state.extensions.internal.logic
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.identifier
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
@@ -70,6 +72,25 @@ internal class ChatClientStateCalls(
             .await()
             .queryChannels(request.identifier)
             .also { queryChannelsState -> queryChannelsState.chatEventHandlerFactory = chatEventHandlerFactory }
+    }
+
+    /**
+     * Creates or retrieves the [QueryChannelsState] for the given grouped [identifier] without
+     * launching a remote queryChannels API call. Channels cached under the identifier's DB key
+     * are optimistically loaded into the state.
+     */
+    internal suspend fun initGroupedQueryChannelsState(
+        identifier: QueryChannelsIdentifier.Grouped,
+        chatEventHandlerFactory: ChatEventHandlerFactory,
+    ): QueryChannelsState {
+        logger.d { "[initGroupedQueryChannelsState] identifier: $identifier" }
+        chatClient.clientState.user.first { it != null }
+        val state = deferredState
+            .await()
+            .queryChannels(identifier)
+            .apply { this.chatEventHandlerFactory = chatEventHandlerFactory }
+        chatClient.logic.queryChannels(identifier).loadOfflineGroupedChannels()
+        return state
     }
 
     /** Reference request of the channel query. */
