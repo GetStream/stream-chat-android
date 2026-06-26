@@ -70,4 +70,9 @@ internal class QuotedMessageTest : PaparazziComposeTest {
     fun `reply by other to me`() {
         snapshotWithDarkModeRow { QuotedMessageReplyByOtherToMe() }
     }
+
+    @Test
+    fun `rtl text aligns to the end`() {
+        snapshotWithDarkModeRow { QuotedMessageRtl() }
+    }
 }

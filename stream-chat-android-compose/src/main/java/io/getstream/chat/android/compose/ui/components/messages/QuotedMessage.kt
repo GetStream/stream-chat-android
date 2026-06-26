@@ -319,12 +319,30 @@ private fun QuotedMessageReplyByOtherToMePreview() {
     ChatTheme { QuotedMessageReplyByOtherToMe() }
 }
 
+@Preview
+@Composable
+private fun QuotedMessageRtlPreview() {
+    ChatTheme { QuotedMessageRtl() }
+}
+
 @Composable
 internal fun QuotedMessageFromOtherUser() {
     QuotedMessage(
         message = Message(
             id = "msg-1",
             text = "Hey, did you see the new design?",
+            user = PreviewUserData.user2,
+        ),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Composable
+internal fun QuotedMessageRtl() {
+    QuotedMessage(
+        message = Message(
+            id = "msg-rtl",
+            text = "مرحبا، هذه رسالة تجريبية.",
             user = PreviewUserData.user2,
         ),
         currentUser = PreviewUserData.user1,
