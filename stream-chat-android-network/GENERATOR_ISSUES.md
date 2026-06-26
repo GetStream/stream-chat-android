@@ -898,6 +898,58 @@ before this branch merges.
 
 ---
 
+## 16. CHA-3365's `ChannelMemberResponse` alias hid a wire/spec mismatch
+
+**Symptom:** Decoding any response that embeds a message with a `member` field
+crashes with `JsonDataException: Required value 'banned' missing at
+$.reminder.message.member`. First observed when calling `POST /messages/{id}
+/reminders`: the response is `ReminderResponse` -> `ReminderResponseData` ->
+`message: MessageResponse?` -> `member: ChannelMemberResponse?`, and the wire
+member carries only `channel_role` + `notifications_muted`, while the
+generated DTO expects ~20 required fields including `banned`.
+
+**Root cause:** CHA-3365 (which we cherry-picked to restore the full
+`ChannelMemberResponse` schema) made the two Go types - the slim
+`commonpayloads.ChannelMemberResponse` (2 fields) and the full
+`payload.ChannelMemberResponse` (20 fields) - declare the same
+`NameOverride: "ChannelMemberResponse"`. That picks the richer shape for the
+spec, which restores the full schema for direct member endpoints, but
+silently lies about `Message.member` and the equivalent moderation payload -
+both of which still use the slim Go type with only 2 fields on the wire.
+
+The two Go types genuinely have different wire shapes for different purposes;
+they were never meant to be the same OpenAPI schema. CHA-3365 papered over
+the collision without disambiguating it.
+
+**Cross-SDK check:** the same code path on iOS's `open-api-llc` branch has the
+same defect (`MessageResponse.member` typed as the full `ChannelMemberResponse`),
+so it will crash identically on the first message-with-member payload. The
+hand-written iOS legacy code on `open-api-user-group-endpoints` declares the
+member field with only the slim two fields, confirming the wire reality.
+
+**Fix status:** Worked around on the `chat-openapi-android` branch of the chat
+repo (commit `[android-migration-only] Rename slim ChannelMemberResponse to
+MessageMemberResponse`). Renamed the slim type to `MessageMemberResponse`,
+dropped its `NameOverride`, and updated the two callers (`message.go`,
+`chat_v1_response.go`). The full `payload.ChannelMemberResponse` keeps its
+20-field schema; the slim type now has its own 2-field `MessageMemberResponse`
+schema; `MessageResponse.member` references the slim one. Decoding works in
+both contexts.
+
+**Suggested fix:** Land the same rename upstream on chat master. Drop the
+`NameOverride: "ChannelMemberResponse"` from
+`payload.ChannelMemberResponse.OpenAPIInfo()` while you're at it - the comment
+already notes it's no longer needed once the collision is gone. Same pattern
+as CHA-3559's three schema renames. The proper long-term fix is still
+issue #12's option 2: dedupe `clarifyName` by `reflect.Type` rather than
+struct name, which catches this whole class of bug at the generator level.
+
+**Migration timing:** Unblocked locally for android. Upstream patch must land
+before this branch merges, alongside the UserGroupResponse rename (issue #15)
+and the PollResponseData omitempty fix (issue #14).
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec

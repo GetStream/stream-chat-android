@@ -164,7 +164,7 @@ data class MessageResponse (
     val imageLabels: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>? = emptyMap(),
 
     @Json(name = "member")
-    val member: io.getstream.chat.android.network.models.ChannelMemberResponse? = null,
+    val member: io.getstream.chat.android.network.models.MessageMemberResponse? = null,
 
     @Json(name = "moderation")
     val moderation: io.getstream.chat.android.network.models.ModerationV2Response? = null,

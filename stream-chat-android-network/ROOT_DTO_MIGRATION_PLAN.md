@@ -60,6 +60,12 @@ still-manual outer DTOs. Each step is self-contained and live-testable.
 6. **`DownstreamChannelDto` → `ChannelResponse`** (members already generated from step 4). **Test:** channel list, channel info.
 7. **`DownstreamMessageDto` → `MessageResponse`** (user, reactions, members already generated). **Test:** message list, threads, search, reminders.
 
+   **Carries a pending fixup from step 7d (Reminder):** `DownstreamReminderDto.toDomain()`
+   currently sets `message = null` (search for `TODO(message-migration)` in
+   `DomainMapping.kt`). Once `DownstreamMessageDto` is the generated `MessageResponse`,
+   restore the field to `message = message?.toDomain()` so reminder events / query
+   responses carry the embedded reminded-message again.
+
 ### Outbound (Upstream) sequence
 
 8. **`UpstreamUserDto` → `UserRequest`** (with `custom` overflow for missing fields). **Test:** updateUser via FAB or any path that re-uploads the user.
