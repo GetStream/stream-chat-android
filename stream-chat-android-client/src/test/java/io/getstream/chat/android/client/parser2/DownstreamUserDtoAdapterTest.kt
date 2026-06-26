@@ -23,9 +23,7 @@ import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstr
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUser
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutImageAndName
-import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class DownstreamUserDtoAdapterTest {
@@ -49,10 +47,4 @@ internal class DownstreamUserDtoAdapterTest {
         user shouldBeEqualTo downstreamUser
     }
 
-    @Test
-    fun `Can't serialize downstream dto`() {
-        invoking {
-            parser.toJson(downstreamUser)
-        }.shouldThrow(RuntimeException::class)
-    }
 }

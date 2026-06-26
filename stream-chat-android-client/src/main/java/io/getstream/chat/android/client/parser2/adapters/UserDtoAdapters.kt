@@ -36,12 +36,16 @@ internal object DownstreamUserDtoAdapter :
     fun fromJson(
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        messageAdapter: JsonAdapter<DownstreamUserDto>,
-    ): DownstreamUserDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
+        userAdapter: JsonAdapter<DownstreamUserDto>,
+    ): DownstreamUserDto? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
 
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamUserDto): Unit = error("Can't convert this to Json")
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: DownstreamUserDto?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        userAdapter: JsonAdapter<DownstreamUserDto>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, userAdapter)
 }
 
 internal object OwnUserResponseAdapter :
@@ -58,8 +62,12 @@ internal object OwnUserResponseAdapter :
     ): OwnUserResponse? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
 
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: OwnUserResponse): Unit = error("Can't convert this to Json")
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: OwnUserResponse?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        userAdapter: JsonAdapter<OwnUserResponse>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, userAdapter)
 }
 
 internal object UserResponsePrivacyFieldsAdapter :
@@ -76,8 +84,12 @@ internal object UserResponsePrivacyFieldsAdapter :
     ): UserResponsePrivacyFields? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
 
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: UserResponsePrivacyFields): Unit = error("Can't convert this to Json")
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: UserResponsePrivacyFields?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        userAdapter: JsonAdapter<UserResponsePrivacyFields>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, userAdapter)
 }
 
 internal object UpstreamUserDtoAdapter :
