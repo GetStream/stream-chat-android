@@ -376,6 +376,15 @@ internal fun MessageTextWithAllMentionTypes() {
     )
 }
 
+@Composable
+internal fun MessageTextRtl() {
+    MessageText(
+        message = Message(text = "مرحبا، هذه رسالة تجريبية."),
+        currentUser = null,
+        onLongItemClick = {},
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun MessageTextPlainPreview() {
