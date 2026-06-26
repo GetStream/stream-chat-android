@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.images.internal.VideoThumbnailImageData
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 /**
@@ -30,7 +31,9 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
  * Otherwise, it returns null.
  *
  * For image attachments, [Attachment.imageUrl] is used.
- * For video attachments when thumbnails are enabled, [Attachment.thumbUrl] is used.
+ * For video attachments when thumbnails are enabled, the server [Attachment.thumbUrl] is used,
+ * falling back to a frame extracted from the [Attachment.assetUrl] video when the thumbnail is
+ * missing or fails to load (see [VideoThumbnailImageData]).
  */
 @get:Composable
 internal val Attachment.imagePreviewData: Any?
@@ -39,9 +42,13 @@ internal val Attachment.imagePreviewData: Any?
             imageUrl
                 ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 ?: upload
-        isVideo() && ChatTheme.videoThumbnailsEnabled ->
-            thumbUrl
-                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-                ?: upload
+        isVideo() && ChatTheme.videoThumbnailsEnabled -> {
+            val thumbnailUrl = thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+            if (thumbnailUrl != null || assetUrl != null) {
+                VideoThumbnailImageData(thumbnailUrl = thumbnailUrl, videoUrl = assetUrl)
+            } else {
+                upload
+            }
+        }
         else -> null
     }
