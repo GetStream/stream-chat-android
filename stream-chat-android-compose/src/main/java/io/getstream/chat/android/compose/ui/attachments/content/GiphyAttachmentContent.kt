@@ -71,6 +71,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.GiphyInfo
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
+import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.giphyInfo
 
 /**
@@ -111,7 +112,7 @@ public fun GiphyAttachmentContent(
         "Missing Giphy attachment."
     }
 
-    val previewUrl = attachment.titleLink ?: attachment.ogUrl
+    val previewUrl = attachment.titleLink ?: attachment.thumbUrl ?: attachment.ogUrl
 
     checkNotNull(previewUrl) {
         "Missing preview URL."
@@ -170,7 +171,7 @@ public fun GiphyAttachmentContent(
                 },
         ) {
             StreamAsyncImage(
-                data = giphyInfo?.url,
+                data = giphyInfo?.url ?: attachment.giphyFallbackPreviewUrl,
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = giphyTitle,
                 contentScale = contentScale,
