@@ -289,6 +289,23 @@ internal fun MessageComposerInputFilled() {
 
 @Preview
 @Composable
+private fun MessageComposerInputRtlPreview() {
+    ChatTheme {
+        MessageComposerInputRtl()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputRtl() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "مرحبا، هذه رسالة تجريبية.",
+        ),
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerInputOverflowPreview() {
     ChatTheme {
         MessageComposerInputOverflow()

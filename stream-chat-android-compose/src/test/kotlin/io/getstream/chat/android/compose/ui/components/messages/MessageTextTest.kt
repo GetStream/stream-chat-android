@@ -61,4 +61,9 @@ internal class MessageTextTest : PaparazziComposeTest {
     fun `text with all mention types`() {
         snapshotWithDarkModeRow { MessageTextWithAllMentionTypes() }
     }
+
+    @Test
+    fun `rtl text aligns to the end`() {
+        snapshotWithDarkModeRow { MessageTextRtl() }
+    }
 }

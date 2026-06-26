@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageComposerI
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputPlaceholder
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReply
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReplyAttachmentsAndLink
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputRtl
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputSlowMode
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputThreadMode
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputThreadModeAlsoSendToChannel
@@ -57,6 +58,13 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     fun filled() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerInputFilled()
+        }
+    }
+
+    @Test
+    fun `rtl input aligns to the end`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputRtl()
         }
     }
 

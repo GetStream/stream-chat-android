@@ -47,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -215,7 +216,7 @@ private fun QuotedMessageText(body: QuotedMessageBody, color: Color) {
                 .testTag("Stream_QuotedMessage")
                 .semantics { if (spokenText != null) contentDescription = spokenText },
             text = body.text,
-            style = ChatTheme.typography.metadataDefault,
+            style = ChatTheme.typography.metadataDefault.copy(textDirection = TextDirection.Content),
             color = color,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

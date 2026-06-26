@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDirection
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -55,7 +56,12 @@ internal object MessageStyling {
         textStyle(outgoing, ChatTheme.typography, ChatTheme.colors)
 
     fun textStyle(outgoing: Boolean, typography: StreamDesign.Typography, colors: StreamDesign.Colors): TextStyle {
-        return typography.bodyDefault.copy(color = textColor(outgoing, colors))
+        // Render in the direction of the text content so RTL messages align and order correctly,
+        // regardless of the device locale.
+        return typography.bodyDefault.copy(
+            color = textColor(outgoing, colors),
+            textDirection = TextDirection.Content,
+        )
     }
 
     fun linkStyle(typography: StreamDesign.Typography, colors: StreamDesign.Colors): TextStyle =
