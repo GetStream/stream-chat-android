@@ -29,8 +29,8 @@ object Serializer {
     @JvmStatic
     val moshiBuilder: Moshi.Builder = Moshi.Builder()
         .add(io.getstream.chat.android.network.models.BlockListOptions.Behavior.BehaviorAdapter())
-        .add(io.getstream.chat.android.network.models.ChannelConfig.BlocklistBehavior.BlocklistBehaviorAdapter())
-        .add(io.getstream.chat.android.network.models.ChannelConfig.PushLevel.PushLevelAdapter())
+        .add(io.getstream.chat.android.network.models.ChannelConfigOverrides.BlocklistBehavior.BlocklistBehaviorAdapter())
+        .add(io.getstream.chat.android.network.models.ChannelConfigOverrides.PushLevel.PushLevelAdapter())
         .add(io.getstream.chat.android.network.models.ChannelConfigWithInfo.Automod.AutomodAdapter())
         .add(io.getstream.chat.android.network.models.ChannelConfigWithInfo.AutomodBehavior.AutomodBehaviorAdapter())
         .add(io.getstream.chat.android.network.models.ChannelConfigWithInfo.BlocklistBehavior.BlocklistBehaviorAdapter())

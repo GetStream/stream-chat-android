@@ -71,7 +71,7 @@ data class ChannelInput (
     val members: kotlin.collections.List<io.getstream.chat.android.network.models.ChannelMemberRequest>? = emptyList(),
 
     @Json(name = "config_overrides")
-    val configOverrides: io.getstream.chat.android.network.models.ChannelConfig? = null,
+    val configOverrides: io.getstream.chat.android.network.models.ChannelConfigOverrides? = null,
 
     @Json(name = "created_by")
     val createdBy: io.getstream.chat.android.network.models.UserRequest? = null,

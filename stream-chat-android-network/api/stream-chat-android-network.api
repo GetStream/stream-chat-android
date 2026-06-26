@@ -1055,6 +1055,146 @@ public final class io/getstream/chat/android/network/models/ChannelConfigJsonAda
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;Ljava/lang/Boolean;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/List;Lio/getstream/chat/android/network/models/ChatPreferences;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;Ljava/lang/Boolean;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/List;Lio/getstream/chat/android/network/models/ChatPreferences;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/Boolean;
+	public final fun component11 ()Ljava/lang/Boolean;
+	public final fun component12 ()Ljava/lang/Boolean;
+	public final fun component13 ()Ljava/lang/Boolean;
+	public final fun component14 ()Ljava/util/List;
+	public final fun component15 ()Lio/getstream/chat/android/network/models/ChatPreferences;
+	public final fun component16 ()Ljava/util/Map;
+	public final fun component2 ()Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;
+	public final fun component3 ()Ljava/lang/Boolean;
+	public final fun component4 ()Ljava/lang/Integer;
+	public final fun component5 ()Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;
+	public final fun component6 ()Ljava/lang/Boolean;
+	public final fun component7 ()Ljava/lang/Boolean;
+	public final fun component8 ()Ljava/lang/Boolean;
+	public final fun component9 ()Ljava/lang/Boolean;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;Ljava/lang/Boolean;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/List;Lio/getstream/chat/android/network/models/ChatPreferences;Ljava/util/Map;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelConfigOverrides;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;Ljava/lang/Boolean;Ljava/lang/Integer;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/List;Lio/getstream/chat/android/network/models/ChatPreferences;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBlocklist ()Ljava/lang/String;
+	public final fun getBlocklistBehavior ()Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;
+	public final fun getChatPreferences ()Lio/getstream/chat/android/network/models/ChatPreferences;
+	public final fun getCommands ()Ljava/util/List;
+	public final fun getCountMessages ()Ljava/lang/Boolean;
+	public final fun getGrants ()Ljava/util/Map;
+	public final fun getMaxMessageLength ()Ljava/lang/Integer;
+	public final fun getPushLevel ()Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;
+	public final fun getQuotes ()Ljava/lang/Boolean;
+	public final fun getReactions ()Ljava/lang/Boolean;
+	public final fun getReplies ()Ljava/lang/Boolean;
+	public final fun getSharedLocations ()Ljava/lang/Boolean;
+	public final fun getTypingEvents ()Ljava/lang/Boolean;
+	public final fun getUploads ()Ljava/lang/Boolean;
+	public final fun getUrlEnrichment ()Ljava/lang/Boolean;
+	public final fun getUserMessageReminders ()Ljava/lang/Boolean;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior {
+	public static final field Companion Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getValue ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Block : io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Block;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$BlocklistBehaviorAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> ()V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;)V
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Companion {
+	public final fun fromString (Ljava/lang/String;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Flag : io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Flag;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Unknown : io/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Unknown;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Unknown;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$BlocklistBehavior$Unknown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUnknownValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public static final field Companion Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Companion;
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getValue ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$All : io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$All;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$AllMentions : io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$AllMentions;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Companion {
+	public final fun fromString (Ljava/lang/String;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$DirectMentions : io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$DirectMentions;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Mentions : io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Mentions;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$None : io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public static final field INSTANCE Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$None;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$PushLevelAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> ()V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel;)V
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Unknown : io/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Unknown;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Unknown;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides$PushLevel$Unknown;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUnknownValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/network/models/ChannelConfigOverridesJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/network/models/ChannelConfigOverrides;
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/network/models/ChannelConfigOverrides;)V
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/network/models/ChannelConfigWithInfo {
 	public fun <init> (Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$Automod;Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$AutomodBehavior;ZZLjava/util/Date;ZZZIZLjava/lang/String;ZZZZZZZZZZZLjava/util/Date;ZZZLjava/util/List;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$BlocklistBehavior;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$PushLevel;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/Thresholds;Lio/getstream/chat/android/network/models/ChatPreferences;Ljava/util/Map;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$Automod;Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$AutomodBehavior;ZZLjava/util/Date;ZZZIZLjava/lang/String;ZZZZZZZZZZZLjava/util/Date;ZZZLjava/util/List;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$BlocklistBehavior;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/network/models/ChannelConfigWithInfo$PushLevel;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/Thresholds;Lio/getstream/chat/android/network/models/ChatPreferences;Ljava/util/Map;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1542,11 +1682,11 @@ public final class io/getstream/chat/android/network/models/ChannelHiddenEventJs
 
 public final class io/getstream/chat/android/network/models/ChannelInput {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfig;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfig;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfigOverrides;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfigOverrides;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/Boolean;
 	public final fun component10 ()Ljava/util/List;
-	public final fun component11 ()Lio/getstream/chat/android/network/models/ChannelConfig;
+	public final fun component11 ()Lio/getstream/chat/android/network/models/ChannelConfigOverrides;
 	public final fun component12 ()Lio/getstream/chat/android/network/models/UserRequest;
 	public final fun component13 ()Ljava/util/Map;
 	public final fun component2 ()Ljava/lang/String;
@@ -1557,12 +1697,12 @@ public final class io/getstream/chat/android/network/models/ChannelInput {
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/util/List;
 	public final fun component9 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfig;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;)Lio/getstream/chat/android/network/models/ChannelInput;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelInput;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfig;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelInput;
+	public final fun copy (Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfigOverrides;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;)Lio/getstream/chat/android/network/models/ChannelInput;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelInput;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/network/models/ChannelConfigOverrides;Lio/getstream/chat/android/network/models/UserRequest;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelInput;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAutoTranslationEnabled ()Ljava/lang/Boolean;
 	public final fun getAutoTranslationLanguage ()Ljava/lang/String;
-	public final fun getConfigOverrides ()Lio/getstream/chat/android/network/models/ChannelConfig;
+	public final fun getConfigOverrides ()Lio/getstream/chat/android/network/models/ChannelConfigOverrides;
 	public final fun getCreatedBy ()Lio/getstream/chat/android/network/models/UserRequest;
 	public final fun getCreatedById ()Ljava/lang/String;
 	public final fun getCustom ()Ljava/util/Map;
@@ -1697,15 +1837,52 @@ public final class io/getstream/chat/android/network/models/ChannelMemberRequest
 }
 
 public final class io/getstream/chat/android/network/models/ChannelMemberResponse {
-	public fun <init> (Ljava/lang/String;Z)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Z
-	public final fun copy (Ljava/lang/String;Z)Lio/getstream/chat/android/network/models/ChannelMemberResponse;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelMemberResponse;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelMemberResponse;
+	public fun <init> (ZLjava/lang/String;Ljava/util/Date;ZZLjava/util/Date;Ljava/util/Map;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/network/models/UserResponse;)V
+	public synthetic fun <init> (ZLjava/lang/String;Ljava/util/Date;ZZLjava/util/Date;Ljava/util/Map;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/network/models/UserResponse;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component10 ()Ljava/util/Date;
+	public final fun component11 ()Ljava/util/Date;
+	public final fun component12 ()Ljava/util/Date;
+	public final fun component13 ()Ljava/lang/Boolean;
+	public final fun component14 ()Ljava/lang/Boolean;
+	public final fun component15 ()Ljava/util/Date;
+	public final fun component16 ()Ljava/lang/String;
+	public final fun component17 ()Ljava/lang/String;
+	public final fun component18 ()Ljava/lang/String;
+	public final fun component19 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component20 ()Lio/getstream/chat/android/network/models/UserResponse;
+	public final fun component3 ()Ljava/util/Date;
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()Ljava/util/Date;
+	public final fun component7 ()Ljava/util/Map;
+	public final fun component8 ()Ljava/util/Date;
+	public final fun component9 ()Ljava/util/Date;
+	public final fun copy (ZLjava/lang/String;Ljava/util/Date;ZZLjava/util/Date;Ljava/util/Map;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/network/models/UserResponse;)Lio/getstream/chat/android/network/models/ChannelMemberResponse;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/network/models/ChannelMemberResponse;ZLjava/lang/String;Ljava/util/Date;ZZLjava/util/Date;Ljava/util/Map;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/network/models/UserResponse;ILjava/lang/Object;)Lio/getstream/chat/android/network/models/ChannelMemberResponse;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArchivedAt ()Ljava/util/Date;
+	public final fun getBanExpires ()Ljava/util/Date;
+	public final fun getBanned ()Z
 	public final fun getChannelRole ()Ljava/lang/String;
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getCustom ()Ljava/util/Map;
+	public final fun getDeletedAt ()Ljava/util/Date;
+	public final fun getDeletedMessages ()Ljava/util/List;
+	public final fun getInviteAcceptedAt ()Ljava/util/Date;
+	public final fun getInviteRejectedAt ()Ljava/util/Date;
+	public final fun getInvited ()Ljava/lang/Boolean;
 	public final fun getNotificationsMuted ()Z
+	public final fun getPinnedAt ()Ljava/util/Date;
+	public final fun getRole ()Ljava/lang/String;
+	public final fun getShadowBanned ()Z
+	public final fun getStatus ()Ljava/lang/String;
+	public final fun getUpdatedAt ()Ljava/util/Date;
+	public final fun getUser ()Lio/getstream/chat/android/network/models/UserResponse;
+	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
+	public final fun isModerator ()Ljava/lang/Boolean;
 	public fun toString ()Ljava/lang/String;
 }
 

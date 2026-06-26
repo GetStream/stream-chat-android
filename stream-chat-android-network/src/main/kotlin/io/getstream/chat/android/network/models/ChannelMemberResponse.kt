@@ -40,9 +40,63 @@ import com.squareup.moshi.ToJson
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 data class ChannelMemberResponse (
+    @Json(name = "banned")
+    val banned: kotlin.Boolean,
+
     @Json(name = "channel_role")
     val channelRole: kotlin.String,
 
+    @Json(name = "created_at")
+    val createdAt: java.util.Date,
+
     @Json(name = "notifications_muted")
-    val notificationsMuted: kotlin.Boolean
+    val notificationsMuted: kotlin.Boolean,
+
+    @Json(name = "shadow_banned")
+    val shadowBanned: kotlin.Boolean,
+
+    @Json(name = "updated_at")
+    val updatedAt: java.util.Date,
+
+    @Json(name = "custom")
+    val custom: kotlin.collections.Map<kotlin.String, Any?> = emptyMap(),
+
+    @Json(name = "archived_at")
+    val archivedAt: java.util.Date? = null,
+
+    @Json(name = "ban_expires")
+    val banExpires: java.util.Date? = null,
+
+    @Json(name = "deleted_at")
+    val deletedAt: java.util.Date? = null,
+
+    @Json(name = "invite_accepted_at")
+    val inviteAcceptedAt: java.util.Date? = null,
+
+    @Json(name = "invite_rejected_at")
+    val inviteRejectedAt: java.util.Date? = null,
+
+    @Json(name = "invited")
+    val invited: kotlin.Boolean? = null,
+
+    @Json(name = "is_moderator")
+    val isModerator: kotlin.Boolean? = null,
+
+    @Json(name = "pinned_at")
+    val pinnedAt: java.util.Date? = null,
+
+    @Json(name = "role")
+    val role: kotlin.String? = null,
+
+    @Json(name = "status")
+    val status: kotlin.String? = null,
+
+    @Json(name = "user_id")
+    val userId: kotlin.String? = null,
+
+    @Json(name = "deleted_messages")
+    val deletedMessages: kotlin.collections.List<kotlin.String>? = emptyList(),
+
+    @Json(name = "user")
+    val user: io.getstream.chat.android.network.models.UserResponse? = null
 )
