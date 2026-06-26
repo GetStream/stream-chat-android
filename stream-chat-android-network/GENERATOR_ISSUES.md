@@ -844,6 +844,57 @@ against the local-patch regen.
 
 ---
 
+## 15. `UserGroupResponse` schema collapses, drops `members` field
+
+**Symptom:** Generated `UserGroupResponse.kt` has 7 fields (`id`, `name`,
+`createdAt`, `updatedAt`, plus optional `createdBy`/`description`/`teamId`).
+Real wire for direct user-group endpoints (`POST /user_groups`, `GET
+/user_groups/{id}`, etc.) carries an additional `members` array.
+
+Migrating `DownstreamUserGroupDto` to a typealias of the generated
+`UserGroupResponse` would silently drop the members on every direct group
+response.
+
+**Root cause:** Same class as issue #12 - two distinct Go structs share the
+unqualified name `UserGroupResponse`:
+
+1. `lib/combined/controllers/common/commonpayloads/user_group.go:13` -
+   `commonpayloads.UserGroupResponse`, the slim hydration payload used inside
+   `message.mentioned_groups[]`.
+2. `lib/core/api/usergroups/controller/user_group_types.go:245` -
+   `controller.UserGroupResponse`, which embeds the slim payload and adds
+   `Members []*types.UserGroupMember`. Used by the direct user-group endpoints.
+
+The spec generator's `clarifyName`
+(`lib/combined/openapi/spec/spec.go:569`) dedupes schemas by bare struct name.
+The slim `commonpayloads.UserGroupResponse` wins the bare name; the full
+`controller.UserGroupResponse` silently aliases to it. The spec emits only the
+slim schema (verified in `releases/v2/chat-only-clientside-api.yaml`'s
+`UserGroupResponse:` block - no `members` property), and Kotlin/Swift
+generators faithfully render the spec.
+
+The CHA-3559 patch we already pulled in only renamed the
+`commonpayloads.ChannelMemberResponse` instance of this bug; the underlying
+`clarifyName` logic still dedupes by string, so other name collisions like
+`UserGroupResponse` remain.
+
+**Fix status:** Not fixed. Migration of `DownstreamUserGroupDto` to the
+generated DTO deferred (blocks step 7c of the root-DTO plan and downstream
+Message migration where `mentioned_groups` is typed `List<UserGroupResponse>?`).
+
+**Suggested fix:** Same single-rename approach as CHA-3365 - rename
+`commonpayloads.UserGroupResponse` to something distinctive (e.g.
+`MessageMentionedGroupResponse`), so the full controller type wins the bare
+`UserGroupResponse` name and the generated DTO regains `members`. The proper
+long-term fix is still issue #12's option 2: patch `clarifyName` to dedupe by
+`reflect.Type` instead of struct name, which eliminates the entire class.
+
+**Migration timing:** Blocks step 7c. Step 7d (Message) needs it too because
+`MessageResponse.mentioned_groups: List<UserGroupResponse>?` reaches into the
+same generated type.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec
