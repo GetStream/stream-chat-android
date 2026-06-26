@@ -96,26 +96,24 @@ internal object PollDtoTestData {
             "option1": 10
           },
           "voting_visibility": "public",
-          "extraData": {
-            "poll_key": "poll_value"
-          },
+          "poll_key": "poll_value",
           "customPollKey": "customPollValue"
         }"""
 
     val downstreamPoll = DownstreamPollDto(
-        allow_answers = true,
-        allow_user_suggested_options = false,
-        answers_count = 5,
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_id = "userId",
+        allowAnswers = true,
+        allowUserSuggestedOptions = false,
+        answersCount = 5,
+        createdAt = Date(1591787071000),
+        createdBy = UserDtoTestData.downstreamUser,
+        createdById = "userId",
         description = "Poll description",
-        enforce_unique_vote = true,
+        enforceUniqueVote = true,
         id = "poll1",
-        is_closed = false,
-        latest_answers = emptyList(),
-        latest_votes_by_option = emptyMap(),
-        max_votes_allowed = 1,
+        isClosed = false,
+        latestAnswers = emptyList(),
+        latestVotesByOption = emptyMap(),
+        maxVotesAllowed = 1,
         name = "Poll Name",
         options = listOf(
             DownstreamPollOptionDto(
@@ -124,15 +122,13 @@ internal object PollDtoTestData {
                 custom = emptyMap(),
             ),
         ),
-        own_votes = emptyList(),
-        updated_at = Date(1591787071588),
-        vote_count = 10,
-        vote_counts_by_option = mapOf("option1" to 10),
-        voting_visibility = "public",
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "poll_key" to "poll_value",
-            ),
+        ownVotes = emptyList(),
+        updatedAt = Date(1591787071588),
+        voteCount = 10,
+        voteCountsByOption = mapOf("option1" to 10),
+        votingVisibility = "public",
+        custom = mapOf(
+            "poll_key" to "poll_value",
             "customPollKey" to "customPollValue",
         ),
     )
@@ -149,41 +145,31 @@ internal object PollDtoTestData {
           "description": "Simple poll",
           "enforce_unique_vote": false,
           "id": "poll2",
-          "is_closed": null,
-          "latest_answers": null,
-          "latest_votes_by_option": null,
-          "max_votes_allowed": null,
           "name": "Simple Poll",
           "options": [],
           "own_votes": [],
           "updated_at": "2020-06-10T11:04:31.588Z",
           "vote_count": 0,
-          "vote_counts_by_option": null,
-          "voting_visibility": null
+          "voting_visibility": "public"
         }"""
 
     val downstreamPollWithoutExtraData = DownstreamPollDto(
-        allow_answers = false,
-        allow_user_suggested_options = true,
-        answers_count = 0,
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_id = "userId",
+        allowAnswers = false,
+        allowUserSuggestedOptions = true,
+        answersCount = 0,
+        createdAt = Date(1591787071000),
+        createdBy = UserDtoTestData.downstreamUser,
+        createdById = "userId",
         description = "Simple poll",
-        enforce_unique_vote = false,
+        enforceUniqueVote = false,
         id = "poll2",
-        is_closed = null,
-        latest_answers = null,
-        latest_votes_by_option = null,
-        max_votes_allowed = null,
         name = "Simple Poll",
         options = emptyList(),
-        own_votes = emptyList(),
-        updated_at = Date(1591787071588),
-        vote_count = 0,
-        vote_counts_by_option = null,
-        voting_visibility = null,
-        extraData = emptyMap(),
+        ownVotes = emptyList(),
+        updatedAt = Date(1591787071588),
+        voteCount = 0,
+        votingVisibility = "public",
+        custom = emptyMap(),
     )
 
     // UpstreamOptionDto Test Data

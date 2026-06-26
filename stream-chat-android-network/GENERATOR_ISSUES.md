@@ -791,6 +791,59 @@ upstream alongside the next batch of spec/openapi fixes.
 
 ---
 
+## 14. `PollResponseData` collection fields lie about being required
+
+**Symptom:** Casting a poll vote against the live backend crashes the generated
+SDK with:
+
+```
+com.squareup.moshi.JsonDataException: Non-null value 'voteCountsByOption'
+(JSON name 'vote_counts_by_option') was null at $.vote_counts_by_option at $.poll
+```
+
+The same applies to `latest_votes_by_option` and `latest_answers`.
+
+**Root cause:** A three-way disagreement between Go code, openapi spec, and wire:
+
+- Go (`lib/combined/controllers/common/payload/polls/poll.go:26-28`) types these
+  as `map[string]int`, `map[string][]*PollVoteResponseData`, and
+  `[]*PollVoteResponseData` with `json:"<name>"` tags **without `omitempty`**.
+  `encoding/json` serializes nil maps and slices as JSON `null` when omitempty
+  is absent.
+- The clientside openapi spec
+  (`releases/chat-openapi-clientside.yaml:8858-8860` and `releases/v2/chat-only-
+  clientside-api.yaml:8456-8458`) lists all three under `required:`. The chat-
+  manager's `FieldRequiredResponse` (`lib/combined/openapi/spec/spec.go:90-95`)
+  marks any non-pointer field without `omitempty` as required.
+- The wire emits `"vote_counts_by_option": null` for empty/new polls. Generated
+  SDKs trust the spec and refuse to decode null into a non-null collection.
+
+**Cross-SDK check:** confirmed the same defect exists in iOS's
+`feature/open-api-llc` branch — `Sources/StreamChat/Generated/OpenAPI/models/
+PollResponseData.swift` declares the three fields non-optional, so it would crash
+on the same wire. The iOS hand-written legacy code on `open-api-user-group-
+endpoints/.../PollsPayloads.swift` correctly declares them optional, confirming
+the wire reality.
+
+**Fix status:** Worked around in the `chat-openapi-android` branch of the chat
+repo by adding `,omitempty` to the three Go tags (commit
+`[android-migration-only] Add omitempty to PollResponseData empty-able
+collections`). The spec generator's `FieldRequiredResponse` then drops them from
+`required:`, and the regenerated Kotlin DTO ends up `Map<...>?` / `List<...>?`,
+matching the wire. The chat-android mapper uses `.orEmpty()` at the call sites.
+
+**Suggested fix:** Land the same `omitempty` change upstream on chat master.
+Benefits every SDK consuming `PollResponseData` (chat-android, chat-swift
+open-api-llc, and any future SDK). Behaviour change is benign: instead of
+`"vote_counts_by_option": null`, the wire will omit the key entirely for empty
+polls. SDKs treat that as "absent" and apply the empty-collection default.
+
+**Migration timing:** Spec patch must land before unblocking step 7b
+(`DownstreamPollDto` -> `PollResponseData`) on master. Our branch already runs
+against the local-patch regen.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec

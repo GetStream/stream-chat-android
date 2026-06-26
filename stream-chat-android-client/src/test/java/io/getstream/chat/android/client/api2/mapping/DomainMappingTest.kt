@@ -495,12 +495,12 @@ internal class DomainMappingTest {
                 Option(option.id, option.text, option.custom.filterValues { it != null }.mapValues { it.value!! })
             },
             votingVisibility = VotingVisibility.PUBLIC,
-            enforceUniqueVote = pollDto.enforce_unique_vote,
-            maxVotesAllowed = pollDto.max_votes_allowed ?: 1,
-            allowUserSuggestedOptions = pollDto.allow_user_suggested_options,
-            allowAnswers = pollDto.allow_answers,
-            voteCount = pollDto.vote_count,
-            voteCountsByOption = pollDto.vote_counts_by_option ?: emptyMap(),
+            enforceUniqueVote = pollDto.enforceUniqueVote,
+            maxVotesAllowed = pollDto.maxVotesAllowed ?: 1,
+            allowUserSuggestedOptions = pollDto.allowUserSuggestedOptions,
+            allowAnswers = pollDto.allowAnswers,
+            voteCount = pollDto.voteCount,
+            voteCountsByOption = pollDto.voteCountsByOption.orEmpty(),
             votes = listOf(
                 Vote(
                     id = ownVote.id,
@@ -529,10 +529,10 @@ internal class DomainMappingTest {
                     user = with(sut) { ownVote.user?.toDomain() },
                 ),
             ),
-            createdAt = pollDto.created_at,
-            updatedAt = pollDto.updated_at,
-            closed = pollDto.is_closed ?: false,
-            answersCount = pollDto.answers_count,
+            createdAt = pollDto.createdAt,
+            updatedAt = pollDto.updatedAt,
+            closed = pollDto.isClosed ?: false,
+            answersCount = pollDto.answersCount,
             answers = listOf(
                 Answer(
                     id = answer.id,
@@ -543,8 +543,8 @@ internal class DomainMappingTest {
                     user = with(sut) { answer.user?.toDomain() },
                 ),
             ),
-            createdBy = with(sut) { pollDto.created_by?.toDomain() },
-            extraData = pollDto.extraData ?: emptyMap(),
+            createdBy = with(sut) { pollDto.createdBy?.toDomain() },
+            extraData = pollDto.custom.filterValues { it != null }.mapValues { it.value!! },
         )
         assertEquals(expected, poll)
     }

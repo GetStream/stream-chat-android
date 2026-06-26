@@ -76,9 +76,6 @@ data class PollResponseData (
     @Json(name = "voting_visibility")
     val votingVisibility: kotlin.String,
 
-    @Json(name = "latest_answers")
-    val latestAnswers: kotlin.collections.List<io.getstream.chat.android.network.models.PollVoteResponseData> = emptyList(),
-
     @Json(name = "options")
     val options: kotlin.collections.List<io.getstream.chat.android.network.models.PollOptionResponseData> = emptyList(),
 
@@ -88,18 +85,21 @@ data class PollResponseData (
     @Json(name = "custom")
     val custom: kotlin.collections.Map<kotlin.String, Any?> = emptyMap(),
 
-    @Json(name = "latest_votes_by_option")
-    val latestVotesByOption: kotlin.collections.Map<kotlin.String, kotlin.collections.List<io.getstream.chat.android.network.models.PollVoteResponseData>> = emptyMap(),
-
-    @Json(name = "vote_counts_by_option")
-    val voteCountsByOption: kotlin.collections.Map<kotlin.String, kotlin.Int> = emptyMap(),
-
     @Json(name = "is_closed")
     val isClosed: kotlin.Boolean? = null,
 
     @Json(name = "max_votes_allowed")
     val maxVotesAllowed: kotlin.Int? = null,
 
+    @Json(name = "latest_answers")
+    val latestAnswers: kotlin.collections.List<io.getstream.chat.android.network.models.PollVoteResponseData>? = emptyList(),
+
     @Json(name = "created_by")
-    val createdBy: io.getstream.chat.android.network.models.UserResponse? = null
+    val createdBy: io.getstream.chat.android.network.models.UserResponse? = null,
+
+    @Json(name = "latest_votes_by_option")
+    val latestVotesByOption: kotlin.collections.Map<kotlin.String, kotlin.collections.List<io.getstream.chat.android.network.models.PollVoteResponseData>>? = emptyMap(),
+
+    @Json(name = "vote_counts_by_option")
+    val voteCountsByOption: kotlin.collections.Map<kotlin.String, kotlin.Int>? = emptyMap()
 )

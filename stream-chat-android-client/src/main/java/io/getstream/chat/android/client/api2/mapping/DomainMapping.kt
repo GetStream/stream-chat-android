@@ -328,7 +328,7 @@ internal class DomainMapping(
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
         updated_at,
-        poll?.updated_at,
+        poll?.updatedAt,
     ).maxBy { it.time }
 
     /**
@@ -521,14 +521,14 @@ internal class DomainMapping(
      * @return Poll
      */
     internal fun DownstreamPollDto.toDomain(): Poll {
-        val ownUserId = currentUserIdProvider() ?: own_votes.firstOrNull()?.user?.id
-        val votes = latest_votes_by_option
-            ?.values
-            ?.flatten()
-            ?.filter { it.isAnswer != true }
-            ?.map { it.toDomain() } ?: emptyList()
-        val ownVotes = (
-            own_votes
+        val ownUserId = currentUserIdProvider() ?: ownVotes.firstOrNull()?.user?.id
+        val votes = latestVotesByOption.orEmpty()
+            .values
+            .flatten()
+            .filter { it.isAnswer != true }
+            .map { it.toDomain() }
+        val ownVotesDomain = (
+            ownVotes
                 .filter { it.isAnswer != true }
                 .map { it.toDomain() } +
                 votes.filter { it.user?.id == ownUserId }
@@ -537,29 +537,29 @@ internal class DomainMapping(
             .values
             .toList()
 
-        val answers = latest_answers?.map { it.toAnswerDomain() } ?: emptyList()
+        val answers = latestAnswers.orEmpty().map { it.toAnswerDomain() }
 
         return Poll(
             id = id,
             name = name,
             description = description,
             options = options.map { it.toDomain() },
-            votingVisibility = voting_visibility.toVotingVisibility(),
-            enforceUniqueVote = enforce_unique_vote,
-            maxVotesAllowed = max_votes_allowed,
-            allowUserSuggestedOptions = allow_user_suggested_options,
-            allowAnswers = allow_answers,
-            voteCount = vote_count,
-            voteCountsByOption = vote_counts_by_option ?: emptyMap(),
+            votingVisibility = votingVisibility.toVotingVisibility(),
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            voteCount = voteCount,
+            voteCountsByOption = voteCountsByOption.orEmpty(),
             votes = votes,
-            ownVotes = ownVotes,
-            createdAt = created_at,
-            updatedAt = updated_at,
-            closed = is_closed ?: false,
-            answersCount = answers_count,
+            ownVotes = ownVotesDomain,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            closed = isClosed ?: false,
+            answersCount = answersCount,
             answers = answers,
-            createdBy = created_by?.toDomain(),
-            extraData = extraData ?: emptyMap(),
+            createdBy = createdBy?.toDomain(),
+            extraData = custom.filterNonNullValues(),
         )
     }
 

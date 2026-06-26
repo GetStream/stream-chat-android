@@ -30,7 +30,11 @@ import io.getstream.chat.android.network.models.PollOptionResponseData as Downst
  * Deserializer for [DownstreamPollDto] that handles the [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto]
  * implementation.
  */
-internal object DownstreamPollDtoAdapter : CustomObjectDtoAdapter<DownstreamPollDto>(DownstreamPollDto::class) {
+internal object DownstreamPollDtoAdapter :
+    CustomObjectDtoAdapter<DownstreamPollDto>(
+        kClass = DownstreamPollDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     fun fromJson(
@@ -40,7 +44,12 @@ internal object DownstreamPollDtoAdapter : CustomObjectDtoAdapter<DownstreamPoll
     ): DownstreamPollDto? = parseWithExtraData(jsonReader, mapAdapter, pollAdapter)
 
     @ToJson
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamPollDto): Unit = error("Can't convert this to Json")
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: DownstreamPollDto?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        pollAdapter: JsonAdapter<DownstreamPollDto>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, pollAdapter)
 }
 
 /**
@@ -61,7 +70,12 @@ internal object DownstreamPollOptionDtoAdapter :
     ): DownstreamPollOptionDto? = parseWithExtraData(jsonReader, mapAdapter, optionAdapter)
 
     @ToJson
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamPollOptionDto): Unit = error("Can't convert this to Json")
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: DownstreamPollOptionDto?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        optionAdapter: JsonAdapter<DownstreamPollOptionDto>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, optionAdapter)
 }
 
 /**
