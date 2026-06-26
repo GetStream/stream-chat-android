@@ -1196,14 +1196,14 @@ internal object Mother {
         user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
     ): DownstreamVoteDto = DownstreamVoteDto(
         id = id,
-        poll_id = pollId,
-        option_id = optionId,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        pollId = pollId,
+        optionId = optionId,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         user = user,
-        user_id = userId,
-        is_answer = false,
-        answer_text = null,
+        userId = userId,
+        isAnswer = false,
+        answerText = null,
     )
 
     fun randomAnswerDownstreamVoteDto(
@@ -1217,14 +1217,14 @@ internal object Mother {
         answerText: String = randomString(),
     ): DownstreamVoteDto = DownstreamVoteDto(
         id = id,
-        poll_id = pollId,
-        option_id = optionId,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        pollId = pollId,
+        optionId = optionId,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         user = user,
-        user_id = userId,
-        is_answer = true,
-        answer_text = answerText,
+        userId = userId,
+        isAnswer = true,
+        answerText = answerText,
     )
 
     fun randomUpdatePollRequest(

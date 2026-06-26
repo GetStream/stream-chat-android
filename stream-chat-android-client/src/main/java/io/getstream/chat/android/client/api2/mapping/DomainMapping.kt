@@ -525,11 +525,11 @@ internal class DomainMapping(
         val votes = latest_votes_by_option
             ?.values
             ?.flatten()
-            ?.filter { it.is_answer != true }
+            ?.filter { it.isAnswer != true }
             ?.map { it.toDomain() } ?: emptyList()
         val ownVotes = (
             own_votes
-                .filter { it.is_answer != true }
+                .filter { it.isAnswer != true }
                 .map { it.toDomain() } +
                 votes.filter { it.user?.id == ownUserId }
             )
@@ -591,10 +591,10 @@ internal class DomainMapping(
      */
     internal fun DownstreamVoteDto.toDomain(): Vote = Vote(
         id = id,
-        pollId = poll_id,
-        optionId = option_id,
-        createdAt = created_at,
-        updatedAt = updated_at,
+        pollId = pollId,
+        optionId = optionId,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         user = user?.toDomain(),
     )
 
@@ -605,10 +605,10 @@ internal class DomainMapping(
      */
     internal fun DownstreamVoteDto.toAnswerDomain(): Answer = Answer(
         id = id,
-        pollId = poll_id,
-        text = answer_text ?: "",
-        createdAt = created_at,
-        updatedAt = updated_at,
+        pollId = pollId,
+        text = answerText.orEmpty(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         user = user?.toDomain(),
     )
 

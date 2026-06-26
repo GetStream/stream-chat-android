@@ -20,29 +20,7 @@ import com.squareup.moshi.JsonClass
 import java.util.Date
 import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 
-/**
- * Represents the DTO for a vote in a poll.
- *
- * @property id The id of the vote.
- * @property poll_id The id of the poll.
- * @property option_id The id of the option that was voted for.
- * @property created_at The date when the vote was created.
- * @property updated_at The date when the vote was last updated.
- * @property user The user who voted.
- * @property user_id The id of the user who voted.
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamVoteDto(
-    val id: String,
-    val poll_id: String,
-    val option_id: String,
-    val created_at: Date,
-    val updated_at: Date,
-    val user: DownstreamUserDto?,
-    val user_id: String?,
-    val is_answer: Boolean?,
-    val answer_text: String?,
-)
+internal typealias DownstreamVoteDto = io.getstream.chat.android.network.models.PollVoteResponseData
 
 /**
  * Represents the DTO for a poll.
