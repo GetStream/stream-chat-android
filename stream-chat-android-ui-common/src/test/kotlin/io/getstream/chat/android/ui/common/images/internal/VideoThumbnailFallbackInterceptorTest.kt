@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.images.internal
 
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import coil3.getExtra
 import coil3.intercept.Interceptor
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
@@ -64,6 +65,8 @@ internal class VideoThumbnailFallbackInterceptorTest {
 
         assertEquals(listOf(THUMB_URL, VIDEO_URL), chain.proceeded)
         assertTrue(result is SuccessResult)
+        // The video fallback request must be marked so VideoFrameFetcher handles it.
+        assertTrue(chain.proceededRequests.last().getExtra(videoFramePreviewKey))
     }
 
     @Test
@@ -114,17 +117,19 @@ internal class VideoThumbnailFallbackInterceptorTest {
         override val request: ImageRequest,
         private val resultFor: (String?) -> ImageResult,
         val proceeded: MutableList<String?> = mutableListOf(),
+        val proceededRequests: MutableList<ImageRequest> = mutableListOf(),
     ) : Interceptor.Chain {
         override val size: Size get() = Size.ORIGINAL
 
         override suspend fun proceed(): ImageResult {
             val key = request.data.toString()
             proceeded.add(key)
+            proceededRequests.add(request)
             return resultFor(key)
         }
 
         override fun withRequest(request: ImageRequest): Interceptor.Chain =
-            FakeCoilChain(request, resultFor, proceeded)
+            FakeCoilChain(request, resultFor, proceeded, proceededRequests)
 
         override fun withSize(size: Size): Interceptor.Chain = this
     }
