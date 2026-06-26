@@ -58,6 +58,11 @@ internal class TypingSuggester(private val options: TypingSuggestionOptions) {
         }
 
         val suggestionText = text.substring(suggestionStart, caretLocation)
+        // A suggestion cannot start with whitespace: typing a space right after the symbol ends it (e.g. "@ "),
+        // while internal spaces stay allowed so multi-word names like "@John Doe" remain searchable.
+        if (suggestionText.firstOrNull()?.isWhitespace() == true) {
+            return null
+        }
         if (suggestionText.length < options.minimumRequiredCharacters) {
             return null
         }
