@@ -23,13 +23,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
+import io.getstream.chat.android.compose.sample.ui.location.LocationComponentFactory
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.ChannelScreen
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
@@ -72,6 +76,13 @@ class ChannelActivity : ComponentActivity() {
 
     @Composable
     private fun SetupChatTheme() {
+        val componentFactory = remember {
+            if (settings.isLocationSharingEnabled) {
+                LocationComponentFactory(locationViewModelFactory = SharedLocationViewModelFactory(cid))
+            } else {
+                object : ChatComponentFactory {}
+            }
+        }
         SampleChatTheme(
             config = ChatUiConfig(
                 composer = ComposerConfig(
@@ -80,6 +91,7 @@ class ChannelActivity : ComponentActivity() {
                 ),
                 attachmentPicker = AttachmentPickerConfig(useSystemPicker = settings.isSystemAttachmentPickerEnabled),
             ),
+            componentFactory = componentFactory,
         ) {
             SetupContent()
         }

@@ -75,6 +75,7 @@
   <string name="stream_ui_channel_info_member_modal_option_unban_member">"Quitar suspensión"</string>
   <string name="stream_ui_channel_info_member_modal_option_unblock_user">"Desbloquear usuario"</string>
   <string name="stream_ui_channel_info_member_modal_option_unmute_user">"Desilenciar usuario"</string>
+  <string name="stream_ui_channel_info_member_admin">"Administrador"</string>
   <string name="stream_ui_channel_info_member_moderator">"Moderador"</string>
   <string name="stream_ui_channel_info_member_owner">"Propietario"</string>
   <string name="stream_ui_channel_info_mute_conversation_error">"Error al cambiar el estado de silencio de la conversación"</string>

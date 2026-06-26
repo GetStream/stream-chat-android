@@ -75,6 +75,7 @@
   <string name="stream_ui_channel_info_member_modal_option_unban_member">"Rimuovi ban utente"</string>
   <string name="stream_ui_channel_info_member_modal_option_unblock_user">"Sblocca utente"</string>
   <string name="stream_ui_channel_info_member_modal_option_unmute_user">"Riattiva audio utente"</string>
+  <string name="stream_ui_channel_info_member_admin">"Amministratore"</string>
   <string name="stream_ui_channel_info_member_moderator">"Moderatore"</string>
   <string name="stream_ui_channel_info_member_owner">"Proprietario"</string>
   <string name="stream_ui_channel_info_mute_conversation_error">"Impossibile cambiare lo stato di silenziamento della conversazione"</string>

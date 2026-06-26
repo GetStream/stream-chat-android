@@ -63,6 +63,7 @@
   <plurals name="stream_ui_channel_info_member_count">
     <item quantity="other">"%d명의 멤버"</item>
   </plurals>
+  <string name="stream_ui_channel_info_member_admin">"어드민"</string>
   <string name="stream_ui_channel_info_member_moderator">"관리자"</string>
   <string name="stream_ui_channel_info_member_modal_ban_expired">"차단이 이미 만료되었습니다"</string>
   <string name="stream_ui_channel_info_member_modal_ban_expires_at">"차단 만료: %s"</string>

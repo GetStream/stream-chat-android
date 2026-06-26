@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelAc
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
+import io.getstream.chat.android.compose.sample.ui.channel.MemberRolesTrailingContent
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
@@ -74,6 +75,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.theme.DirectChannelInfoTopBarParams
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoTopBarParams
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
@@ -405,32 +407,45 @@ class ChatsActivity : ComponentActivity() {
             onNavigateToChannel = onNavigateToChannel,
         )
 
-        if (AdaptiveLayoutInfo.singlePaneWindow()) {
-            GroupChannelInfoScreen(
-                viewModelFactory = viewModelFactory,
-                onNavigationIconClick = onNavigationIconClick,
-            )
-        } else {
-            CompoundComponentFactory(
-                factory = {
-                    object : ChatComponentFactory by it {
-                        @Composable
-                        override fun GroupChannelInfoTopBar(params: GroupChannelInfoTopBarParams) {
-                            GroupChannelInfoTopBar(
-                                headerState = params.headerState,
-                                infoState = params.infoState,
-                                listState = params.listState,
-                                navigationIcon = { CloseButton(onClick = params.onNavigationIconClick) },
-                                onActionClick = params.onActionClick,
-                            )
-                        }
+        CompoundComponentFactory(
+            factory = {
+                object : ChatComponentFactory by it {
+                    @Composable
+                    override fun GroupChannelInfoMemberTrailingContent(
+                        params: GroupChannelInfoMemberTrailingContentParams,
+                    ) {
+                        MemberRolesTrailingContent(params)
                     }
-                },
-            ) {
+                }
+            },
+        ) {
+            if (AdaptiveLayoutInfo.singlePaneWindow()) {
                 GroupChannelInfoScreen(
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = onNavigationIconClick,
                 )
+            } else {
+                CompoundComponentFactory(
+                    factory = {
+                        object : ChatComponentFactory by it {
+                            @Composable
+                            override fun GroupChannelInfoTopBar(params: GroupChannelInfoTopBarParams) {
+                                GroupChannelInfoTopBar(
+                                    headerState = params.headerState,
+                                    infoState = params.infoState,
+                                    listState = params.listState,
+                                    navigationIcon = { CloseButton(onClick = params.onNavigationIconClick) },
+                                    onActionClick = params.onActionClick,
+                                )
+                            }
+                        }
+                    },
+                ) {
+                    GroupChannelInfoScreen(
+                        viewModelFactory = viewModelFactory,
+                        onNavigationIconClick = onNavigationIconClick,
+                    )
+                }
             }
         }
     }

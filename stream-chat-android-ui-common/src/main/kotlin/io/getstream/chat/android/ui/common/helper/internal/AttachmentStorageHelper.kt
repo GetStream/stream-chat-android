@@ -21,6 +21,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.annotation.WorkerThread
+import androidx.exifinterface.media.ExifInterface
 import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -171,7 +172,7 @@ public class AttachmentStorageHelper(
             BitmapFactory.decodeFile(file.absolutePath, options)
             val w = options.outWidth.takeIf { it > 0 }
             val h = options.outHeight.takeIf { it > 0 }
-            w to h
+            if (w != null && h != null && hasSwappedExifDimensions(file)) h to w else w to h
         }
 
         attachment.isVideo() -> {
@@ -193,6 +194,18 @@ public class AttachmentStorageHelper(
         }
 
         else -> null to null
+    }
+
+    private fun hasSwappedExifDimensions(file: File): Boolean = try {
+        val orientation = ExifInterface(file.absolutePath)
+            .getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+
+        orientation == ExifInterface.ORIENTATION_ROTATE_90 ||
+            orientation == ExifInterface.ORIENTATION_ROTATE_270 ||
+            orientation == ExifInterface.ORIENTATION_TRANSPOSE ||
+            orientation == ExifInterface.ORIENTATION_TRANSVERSE
+    } catch (_: Exception) {
+        false
     }
 
     public companion object {

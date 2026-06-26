@@ -372,22 +372,26 @@ private fun RecordingSnackbars(
     hintHostState: SnackbarHostState,
     rationaleHostState: SnackbarHostState,
 ) {
-    SnackbarPopup(
-        hostState = hintHostState,
-        snackbar = {
-            ChatTheme.componentFactory.MessageComposerAudioRecordingHint(
-                params = MessageComposerAudioRecordingHintParams(it),
-            )
-        },
-    )
-    SnackbarPopup(
-        hostState = rationaleHostState,
-        snackbar = {
-            ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(
-                params = MessageComposerAudioRecordingPermissionRationaleParams(it),
-            )
-        },
-    )
+    if (hintHostState.currentSnackbarData != null) {
+        SnackbarPopup(
+            hostState = hintHostState,
+            snackbar = {
+                ChatTheme.componentFactory.MessageComposerAudioRecordingHint(
+                    params = MessageComposerAudioRecordingHintParams(it),
+                )
+            },
+        )
+    }
+    if (rationaleHostState.currentSnackbarData != null) {
+        SnackbarPopup(
+            hostState = rationaleHostState,
+            snackbar = {
+                ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(
+                    params = MessageComposerAudioRecordingPermissionRationaleParams(it),
+                )
+            },
+        )
+    }
 }
 
 /** Emits press/release interactions on [interactionSource] while [isPressed] is true. */

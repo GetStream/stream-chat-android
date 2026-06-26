@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.models.Member
@@ -55,7 +56,7 @@ internal fun ChannelMembersItem(
             params = UserAvatarParams(
                 modifier = Modifier.size(64.dp),
                 user = member.user,
-                showIndicator = true,
+                indicator = member.user.avatarPresenceIndicator(),
                 showBorder = false,
             ),
         )

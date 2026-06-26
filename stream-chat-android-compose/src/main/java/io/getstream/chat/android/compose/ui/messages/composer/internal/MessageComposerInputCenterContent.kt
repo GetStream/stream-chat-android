@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.composer.ComposerInputTestTag
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -56,6 +59,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.capabilitie
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
+@Suppress("LongMethod")
 @Composable
 internal fun MessageComposerInputCenterContent(
     state: MessageComposerState,
@@ -83,49 +87,82 @@ internal fun MessageComposerInputCenterContent(
     val visualTransformation = rememberVisualTransformation(typography, colors)
     val canSendMessage = state.canSendMessage()
 
-    BasicTextField(
-        modifier = modifier
-            .fillMaxWidth()
-            .testTag(ComposerInputTestTag)
-            .heightIn(min = 48.dp),
-        value = textState,
-        onValueChange = {
-            textState = it
-            if (value != it.text) onValueChange(it.text)
-        },
-        visualTransformation = visualTransformation,
-        textStyle = typography.bodyDefault.copy(color = colors.textPrimary),
-        cursorBrush = SolidColor(colors.accentPrimary),
-        decorationBox = { innerTextField ->
-            Box(
-                modifier = Modifier.padding(
-                    start = if (state.activeCommand != null) {
-                        StreamTokens.spacingSm
-                    } else {
-                        StreamTokens.spacingMd
-                    },
-                    top = StreamTokens.spacingSm,
-                    bottom = StreamTokens.spacingSm,
-                ),
-                contentAlignment = Alignment.CenterStart,
-            ) {
-                innerTextField()
+    // Resolve the layout direction from the input content so RTL text (e.g. Arabic, Hebrew) typed on
+    // an LTR device aligns and orders correctly. Empty / neutral input keeps the device direction.
+    val deviceLayoutDirection = LocalLayoutDirection.current
+    val contentLayoutDirection = remember(value, deviceLayoutDirection) {
+        value.contentLayoutDirection(default = deviceLayoutDirection)
+    }
 
-                if (value.isEmpty()) {
-                    TextFieldPlaceholder(
-                        canSendMessage = canSendMessage,
-                        coolDownTime = state.coolDownTime,
-                        activeCommandDescriptionRes = state.activeCommand?.placeholderRes,
-                    )
+    CompositionLocalProvider(LocalLayoutDirection provides contentLayoutDirection) {
+        BasicTextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .testTag(ComposerInputTestTag)
+                .heightIn(min = 48.dp),
+            value = textState,
+            onValueChange = {
+                textState = it
+                if (value != it.text) onValueChange(it.text)
+            },
+            visualTransformation = visualTransformation,
+            textStyle = typography.bodyDefault.copy(color = colors.textPrimary),
+            cursorBrush = SolidColor(colors.accentPrimary),
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier.padding(
+                        start = if (state.activeCommand != null) {
+                            StreamTokens.spacingSm
+                        } else {
+                            StreamTokens.spacingMd
+                        },
+                        top = StreamTokens.spacingSm,
+                        bottom = StreamTokens.spacingSm,
+                    ),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    innerTextField()
+
+                    if (value.isEmpty()) {
+                        TextFieldPlaceholder(
+                            canSendMessage = canSendMessage,
+                            coolDownTime = state.coolDownTime,
+                            activeCommandDescriptionRes = state.activeCommand?.placeholderRes,
+                        )
+                    }
                 }
-            }
-        },
-        maxLines = TextFieldMaxLines,
-        singleLine = false,
-        enabled = canSendMessage && state.coolDownTime <= 0,
-        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-    )
+            },
+            maxLines = TextFieldMaxLines,
+            singleLine = false,
+            enabled = canSendMessage && state.coolDownTime <= 0,
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+        )
+    }
 }
+
+/**
+ * Resolves the [LayoutDirection] that matches the first strong directional character in this string.
+ * Falls back to [default] when the string is empty or contains only neutral characters — this keeps
+ * the empty composer aligned with the device locale instead of forcing LTR.
+ */
+private fun String.contentLayoutDirection(default: LayoutDirection): LayoutDirection =
+    firstNotNullOfOrNull { char ->
+        when (Character.getDirectionality(char)) {
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT,
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC,
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING,
+            Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE,
+            -> LayoutDirection.Rtl
+
+            Character.DIRECTIONALITY_LEFT_TO_RIGHT,
+            Character.DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING,
+            Character.DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE,
+            -> LayoutDirection.Ltr
+            // Neutral / weak character (punctuation, digits, whitespace, etc.): skip it so the scan
+            // continues to the first strong directional character.
+            else -> null
+        }
+    } ?: default
 
 @Composable
 private fun TextFieldPlaceholder(

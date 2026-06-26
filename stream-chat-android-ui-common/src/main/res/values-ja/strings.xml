@@ -63,6 +63,7 @@
   <plurals name="stream_ui_channel_info_member_count">
     <item quantity="other">"%d人のメンバー"</item>
   </plurals>
+  <string name="stream_ui_channel_info_member_admin">"管理者"</string>
   <string name="stream_ui_channel_info_member_moderator">"モデレーター"</string>
   <string name="stream_ui_channel_info_member_modal_ban_expired">"BANはすでに期限切れです"</string>
   <string name="stream_ui_channel_info_member_modal_ban_expires_at">"BANの期限：%s"</string>

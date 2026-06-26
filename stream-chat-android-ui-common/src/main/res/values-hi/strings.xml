@@ -75,6 +75,7 @@
   <string name="stream_ui_channel_info_member_modal_option_unban_member">"उपयोगकर्ता का प्रतिबंध हटाएँ"</string>
   <string name="stream_ui_channel_info_member_modal_option_unblock_user">"उपयोगकर्ता को अनब्लॉक करें"</string>
   <string name="stream_ui_channel_info_member_modal_option_unmute_user">"उपयोगकर्ता को अनम्यूट करें"</string>
+  <string name="stream_ui_channel_info_member_admin">"एडमिन"</string>
   <string name="stream_ui_channel_info_member_moderator">"मॉडरेटर"</string>
   <string name="stream_ui_channel_info_member_owner">"स्वामी"</string>
   <string name="stream_ui_channel_info_mute_conversation_error">"बातचीत म्यूट स्थिति बदलने में विफल"</string>

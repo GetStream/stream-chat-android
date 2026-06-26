@@ -172,7 +172,6 @@ internal fun DefaultMentionSuggestionItemLeadingContent(
             params = UserAvatarParams(
                 modifier = modifier.size(AvatarSize.Medium),
                 user = mention.user,
-                showIndicator = false,
                 showBorder = true,
             ),
         )

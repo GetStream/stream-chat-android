@@ -91,6 +91,8 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarPresenceIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndicator
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
@@ -1897,12 +1899,18 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    @Suppress("DEPRECATION")
     @Composable
     public fun UserAvatar(params: UserAvatarParams) {
+        val indicator = params.indicator ?: if (params.showIndicator) {
+            params.user.avatarPresenceIndicator(showWhenOffline = true)
+        } else {
+            AvatarPresenceIndicator.None
+        }
         io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
             modifier = params.modifier,
             user = params.user,
-            showIndicator = params.showIndicator,
+            indicator = indicator,
             showBorder = params.showBorder,
         )
     }
@@ -1914,13 +1922,19 @@ public interface ChatComponentFactory {
      *
      * @param params Parameters for this component.
      */
+    @Suppress("DEPRECATION")
     @Composable
     public fun ChannelAvatar(params: ChannelAvatarParams) {
+        val indicator = params.indicator ?: if (params.showIndicator) {
+            params.channel.avatarPresenceIndicator(params.currentUser, showWhenOffline = true)
+        } else {
+            AvatarPresenceIndicator.None
+        }
         io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
             modifier = params.modifier,
             channel = params.channel,
             currentUser = params.currentUser,
-            showIndicator = params.showIndicator,
+            indicator = indicator,
             showBorder = params.showBorder,
         )
     }
@@ -2786,6 +2800,50 @@ public interface ChatComponentFactory {
             member = params.member,
             isOwner = params.isOwner,
             onClick = params.onClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the leading content (avatar) of a member row in the group
+     * channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberLeadingContent(params: GroupChannelInfoMemberLeadingContentParams) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberLeadingContent(
+            member = params.member,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the center content (name, last seen and mute icon) of a member
+     * row in the group channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberCenterContent(params: GroupChannelInfoMemberCenterContentParams) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberCenterContent(
+            currentUser = params.currentUser,
+            member = params.member,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the trailing content (role label) of a member row in the group
+     * channel info screen.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun GroupChannelInfoMemberTrailingContent(params: GroupChannelInfoMemberTrailingContentParams) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberTrailingContent(
+            member = params.member,
+            isOwner = params.isOwner,
+            modifier = params.modifier,
         )
     }
 

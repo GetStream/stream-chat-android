@@ -138,6 +138,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isSystemAttachmentPickerEnabled by remember {
                         mutableStateOf(settings.isSystemAttachmentPickerEnabled)
                     }
+                    var isLocationSharingEnabled by remember {
+                        mutableStateOf(settings.isLocationSharingEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -193,6 +196,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isSystemAttachmentPickerEnabled = it
                                 settings.isSystemAttachmentPickerEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_location_sharing_label),
+                            description = stringResource(R.string.custom_login_flag_location_sharing_description),
+                            value = isLocationSharingEnabled,
+                            onValueChange = {
+                                isLocationSharingEnabled = it
+                                settings.isLocationSharingEnabled = it
                             },
                         ),
                     )
@@ -275,7 +287,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     Icon(
                         painter = painterResource(id = ComposeR.drawable.stream_design_ic_arrow_left),
                         contentDescription = null,
-                        tint = Color.Black,
+                        tint = ChatTheme.colors.textPrimary,
                     )
                 }
             },
@@ -364,10 +376,12 @@ class CustomLoginActivity : AppCompatActivity() {
                 Text(
                     text = label,
                     style = ChatTheme.typography.headingMedium,
+                    color = ChatTheme.colors.textPrimary,
                 )
                 Text(
                     text = description,
                     style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         }
