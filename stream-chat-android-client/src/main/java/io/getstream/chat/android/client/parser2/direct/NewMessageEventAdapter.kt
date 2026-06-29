@@ -55,6 +55,7 @@ internal class NewMessageEventAdapter(
         var totalUnreadCount: Int = 0
         var unreadChannels: Int = 0
         var channelMessageCount: Int? = null
+        var groupedUnreadChannels: Map<String, Int>? = null
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
@@ -83,6 +84,7 @@ internal class NewMessageEventAdapter(
                 "total_unread_count" -> totalUnreadCount = reader.nextInt()
                 "unread_channels" -> unreadChannels = reader.nextInt()
                 "channel_message_count" -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
+                "grouped_unread_channels" -> groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
                 else -> reader.skipValue()
             }
         }
@@ -149,6 +151,7 @@ internal class NewMessageEventAdapter(
             totalUnreadCount = totalUnreadCount,
             unreadChannels = unreadChannels,
             channelMessageCount = channelMessageCount,
+            groupedUnreadChannels = groupedUnreadChannels,
         )
     }
 
