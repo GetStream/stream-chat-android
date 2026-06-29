@@ -19,24 +19,6 @@ package io.getstream.chat.android.ui.common.images.internal
 import coil3.intercept.Interceptor
 import coil3.request.ImageResult
 import coil3.request.SuccessResult
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-
-/**
- * Image request data for a video preview that should be loaded from the server thumbnail when
- * available, and fall back to a frame extracted from the video itself when the thumbnail is
- * missing or fails to load.
- *
- * Pass an instance of this as the Coil request data (instead of a raw URL) to opt into the
- * fallback handled by [VideoThumbnailFallbackInterceptor].
- *
- * @param thumbnailUrl The server-provided thumbnail URL, already transformed for CDN resizing if enabled.
- * @param videoUrl The URL of the video asset, used to extract a preview frame when [thumbnailUrl] fails.
- */
-@InternalStreamChatApi
-public data class VideoThumbnailImageData(
-    public val thumbnailUrl: String?,
-    public val videoUrl: String?,
-)
 
 /**
  * A Coil [Interceptor] that resolves a [VideoThumbnailImageData] request by loading the server
