@@ -38,10 +38,11 @@ internal class TypingSuggester(private val options: TypingSuggestionOptions) {
             return null
         }
 
-        // Only show typing suggestions after a space, or at the start of the input
-        // valid examples: "@user", "Hello @user"
-        // invalid examples: "Hello@user"
-        val isValidPosition = firstSymbolBeforeCaret == 0 || text[firstSymbolBeforeCaret - 1].isWhitespace()
+        // The symbol must not be glued to a letter or digit.
+        // valid: "@user", "Hello @user", "@user,@user2"
+        // invalid: "Hello@user"
+        val charBeforeSymbol = text.getOrNull(firstSymbolBeforeCaret - 1)
+        val isValidPosition = charBeforeSymbol?.isLetterOrDigit() != true
         if (!isValidPosition) {
             return null
         }

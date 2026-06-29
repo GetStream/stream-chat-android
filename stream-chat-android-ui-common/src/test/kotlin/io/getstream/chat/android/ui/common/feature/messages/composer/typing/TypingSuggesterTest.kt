@@ -45,6 +45,10 @@ internal class TypingSuggesterTest {
             Arguments.of("@ ", null),
             Arguments.of("@  john", null),
             Arguments.of("Hello@john", null),
+            Arguments.of("@john,@jane", TypingSuggestion("jane", 7 until 11)),
+            Arguments.of("@john, @jane", TypingSuggestion("jane", 8 until 12)),
+            Arguments.of("(@john", TypingSuggestion("john", 2 until 6)),
+            Arguments.of("john@example.com", null),
         )
     }
 }
