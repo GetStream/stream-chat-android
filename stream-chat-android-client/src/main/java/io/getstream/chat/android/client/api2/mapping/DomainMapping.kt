@@ -885,22 +885,22 @@ internal class DomainMapping(
      */
     internal fun DownstreamThreadInfoDto.toDomain(): ThreadInfo =
         ThreadInfo(
-            activeParticipantCount = active_participant_count ?: 0,
-            cid = channel_cid,
-            createdAt = created_at,
-            createdBy = created_by?.toDomain(),
-            createdByUserId = created_by_user_id,
-            deletedAt = deleted_at,
-            lastMessageAt = last_message_at,
-            parentMessage = parent_message?.toDomain(channel?.toChannelInfo()),
-            parentMessageId = parent_message_id,
-            participantCount = participant_count ?: 0,
-            replyCount = reply_count ?: 0,
+            activeParticipantCount = activeParticipantCount,
+            cid = channelCid,
+            createdAt = createdAt,
+            createdBy = createdBy?.toDomain(),
+            createdByUserId = createdByUserId,
+            deletedAt = deletedAt,
+            lastMessageAt = lastMessageAt,
+            parentMessage = parentMessage?.toDomain(channel?.toChannelInfo()),
+            parentMessageId = parentMessageId,
+            participantCount = participantCount,
+            replyCount = replyCount ?: 0,
             title = title,
-            updatedAt = updated_at,
+            updatedAt = updatedAt,
             channel = channel?.toDomain(),
-            threadParticipants = thread_participants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
-            extraData = extraData,
+            threadParticipants = threadParticipants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
+            extraData = custom.filterNonNullValues(),
         )
 
     /**

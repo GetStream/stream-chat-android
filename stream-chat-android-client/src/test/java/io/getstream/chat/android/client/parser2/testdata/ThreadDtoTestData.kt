@@ -199,16 +199,16 @@ internal object ThreadDtoTestData {
         }"""
 
     val downstreamThreadInfo = DownstreamThreadInfoDto(
-        channel_cid = "messaging:789",
+        channelCid = "messaging:789",
         channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
-        parent_message_id = "parent_msg_id_3",
-        parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
-        created_by_user_id = "user3",
-        created_by = UserDtoTestData.downstreamUser,
-        reply_count = 15,
-        participant_count = 8,
-        active_participant_count = 4,
-        thread_participants = listOf(
+        parentMessageId = "parent_msg_id_3",
+        parentMessage = MessageDtoTestData.downstreamMessageWithoutExtraData,
+        createdByUserId = "user3",
+        createdBy = UserDtoTestData.downstreamUser,
+        replyCount = 15,
+        participantCount = 8,
+        activeParticipantCount = 4,
+        threadParticipants = listOf(
             DownstreamThreadParticipantDto(
                 appPk = 0,
                 channelCid = "messaging:thread1",
@@ -219,12 +219,12 @@ internal object ThreadDtoTestData {
                 lastThreadMessageAt = null,
             ),
         ),
-        last_message_at = Date(1591787071588),
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
-        deleted_at = null,
+        lastMessageAt = Date(1591787071588),
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
+        deletedAt = null,
         title = "Thread Info Title",
-        extraData = mapOf(
+        custom = mapOf(
             "extraData" to mapOf(
                 "info_key1" to "info_value1",
                 "info_key2" to false,
@@ -254,21 +254,21 @@ internal object ThreadDtoTestData {
         }"""
 
     val downstreamThreadInfoWithoutExtraData = DownstreamThreadInfoDto(
-        channel_cid = "messaging:000",
+        channelCid = "messaging:000",
         channel = null,
-        parent_message_id = "parent_msg_id_4",
-        parent_message = null,
-        created_by_user_id = "user4",
-        created_by = UserDtoTestData.downstreamUser,
-        reply_count = 0,
-        participant_count = 1,
-        active_participant_count = 1,
-        thread_participants = emptyList(),
-        last_message_at = null,
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
-        deleted_at = null,
+        parentMessageId = "parent_msg_id_4",
+        parentMessage = null,
+        createdByUserId = "user4",
+        createdBy = UserDtoTestData.downstreamUser,
+        replyCount = 0,
+        participantCount = 1,
+        activeParticipantCount = 1,
+        threadParticipants = emptyList(),
+        lastMessageAt = null,
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
+        deletedAt = null,
         title = "Minimal Thread Info",
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 }

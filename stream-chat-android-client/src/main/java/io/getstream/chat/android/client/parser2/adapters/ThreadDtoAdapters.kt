@@ -46,7 +46,10 @@ internal object DownstreamThreadDtoAdapter :
  * Moshi adapter that handles deserialization of [DownstreamThreadInfoDto] with extra data.
  */
 internal object DownstreamThreadInfoDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamThreadInfoDto>(DownstreamThreadInfoDto::class) {
+    CustomObjectDtoAdapter<DownstreamThreadInfoDto>(
+        kClass = DownstreamThreadInfoDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     fun fromJson(

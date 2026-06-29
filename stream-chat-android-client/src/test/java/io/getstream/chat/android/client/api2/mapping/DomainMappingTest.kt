@@ -887,22 +887,22 @@ internal class DomainMappingTest {
         val sut = Fixture().get()
         val threadInfo = with(sut) { downstreamThreadInfoDto.toDomain() }
         val expected = ThreadInfo(
-            activeParticipantCount = downstreamThreadInfoDto.active_participant_count ?: 0,
-            cid = downstreamThreadInfoDto.channel_cid,
-            createdAt = downstreamThreadInfoDto.created_at,
-            createdBy = with(sut) { downstreamThreadInfoDto.created_by?.toDomain() },
-            createdByUserId = downstreamThreadInfoDto.created_by_user_id,
-            deletedAt = downstreamThreadInfoDto.deleted_at,
-            lastMessageAt = downstreamThreadInfoDto.last_message_at,
-            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain(downstreamThreadInfoDto.channel?.toChannelInfo()) },
-            parentMessageId = downstreamThreadInfoDto.parent_message_id,
-            participantCount = downstreamThreadInfoDto.participant_count ?: 0,
-            replyCount = downstreamThreadInfoDto.reply_count ?: 0,
+            activeParticipantCount = downstreamThreadInfoDto.activeParticipantCount,
+            cid = downstreamThreadInfoDto.channelCid,
+            createdAt = downstreamThreadInfoDto.createdAt,
+            createdBy = with(sut) { downstreamThreadInfoDto.createdBy?.toDomain() },
+            createdByUserId = downstreamThreadInfoDto.createdByUserId,
+            deletedAt = downstreamThreadInfoDto.deletedAt,
+            lastMessageAt = downstreamThreadInfoDto.lastMessageAt,
+            parentMessage = with(sut) { downstreamThreadInfoDto.parentMessage?.toDomain(downstreamThreadInfoDto.channel?.toChannelInfo()) },
+            parentMessageId = downstreamThreadInfoDto.parentMessageId,
+            participantCount = downstreamThreadInfoDto.participantCount,
+            replyCount = downstreamThreadInfoDto.replyCount ?: 0,
             title = downstreamThreadInfoDto.title,
-            updatedAt = downstreamThreadInfoDto.updated_at,
+            updatedAt = downstreamThreadInfoDto.updatedAt,
             channel = with(sut) { downstreamThreadInfoDto.channel?.toDomain() },
-            threadParticipants = with(sut) { downstreamThreadInfoDto.thread_participants.orEmpty().map { it.toDomain() } },
-            extraData = downstreamThreadInfoDto.extraData,
+            threadParticipants = with(sut) { downstreamThreadInfoDto.threadParticipants.orEmpty().map { it.toDomain() } },
+            extraData = downstreamThreadInfoDto.custom.filterValues { it != null }.mapValues { it.value!! },
         )
         assertEquals(expected, threadInfo)
     }
