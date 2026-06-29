@@ -921,9 +921,9 @@ internal class DomainMappingTest {
         val blocklist = with(sut) { downstreamBlocklist.toDomain() }
         val expected = listOf(
             UserBlock(
-                blockedBy = downstreamUserBlockDto.user_id,
-                userId = downstreamUserBlockDto.blocked_user_id,
-                blockedAt = downstreamUserBlockDto.created_at,
+                blockedBy = downstreamUserBlockDto.userId,
+                userId = downstreamUserBlockDto.blockedUserId,
+                blockedAt = downstreamUserBlockDto.createdAt,
             ),
         )
         assertEquals(expected, blocklist)

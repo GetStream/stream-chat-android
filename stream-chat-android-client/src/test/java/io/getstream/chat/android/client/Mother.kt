@@ -1072,10 +1072,14 @@ internal object Mother {
         userId: String = randomString(),
         blockedUserId: String = randomString(),
         createdAt: Date = randomDate(),
+        user: DownstreamUserDto = randomDownstreamUserDto(id = userId),
+        blockedUser: DownstreamUserDto = randomDownstreamUserDto(id = blockedUserId),
     ): DownstreamUserBlockDto = DownstreamUserBlockDto(
-        user_id = userId,
-        blocked_user_id = blockedUserId,
-        created_at = createdAt,
+        userId = userId,
+        blockedUserId = blockedUserId,
+        createdAt = createdAt,
+        user = user,
+        blockedUser = blockedUser,
     )
 
     fun randomBlockUserResponse(

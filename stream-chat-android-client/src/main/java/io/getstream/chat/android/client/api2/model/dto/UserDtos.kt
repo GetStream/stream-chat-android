@@ -16,15 +16,6 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
-
 internal typealias UpstreamUserDto = io.getstream.chat.android.network.models.UserRequest
 internal typealias DownstreamUserDto = io.getstream.chat.android.network.models.UserResponse
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamUserBlockDto(
-    val user_id: String,
-    val blocked_user_id: String,
-    val created_at: Date,
-)
+internal typealias DownstreamUserBlockDto = io.getstream.chat.android.network.models.BlockedUserResponse

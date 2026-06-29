@@ -915,9 +915,9 @@ internal class DomainMapping(
      * Transforms [DownstreamUserBlockDto] into [UserBlock]
      */
     internal fun DownstreamUserBlockDto.toDomain(): UserBlock = UserBlock(
-        blockedBy = user_id,
-        userId = blocked_user_id,
-        blockedAt = created_at,
+        blockedBy = userId,
+        userId = blockedUserId,
+        blockedAt = createdAt,
     )
 
     /**
