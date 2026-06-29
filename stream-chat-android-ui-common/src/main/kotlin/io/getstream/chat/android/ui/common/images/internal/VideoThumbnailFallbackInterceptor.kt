@@ -44,8 +44,7 @@ public data class VideoThumbnailImageData(
  *
  * Server-side thumbnail generation is asynchronous, so right after a video is sent the thumbnail
  * URL can return 404 until generation finishes. Without a fallback the preview stays blank until
- * the item is rendered again. This mirrors the iOS behaviour of generating a frame from the video
- * when the thumbnail is not yet available.
+ * the item is rendered again.
  *
  * The interceptor rewrites the request data to a plain URL before proceeding, so the rest of the
  * pipeline (CDN signing, network fetching, frame decoding) is reused for both the thumbnail and

@@ -37,7 +37,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * Offset of the extracted frame, kept slightly above zero so the very first frame
- * (often black) is skipped. Matches the iOS preview offset.
+ * (often black) is skipped.
  */
 private const val VIDEO_FRAME_MICROS = 100_000L
 
