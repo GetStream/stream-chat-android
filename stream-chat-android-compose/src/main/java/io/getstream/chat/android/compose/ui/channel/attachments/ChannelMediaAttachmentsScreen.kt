@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -50,6 +49,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
+import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.result.Error
 
@@ -136,13 +136,17 @@ private fun ChannelMediaAttachmentsContent(
 }
 
 @Composable
-internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
+internal fun ChannelMediaAttachmentsItem(
     modifier: Modifier,
     item: ChannelAttachmentsViewState.Content.Item,
     onClick: () -> Unit,
 ) {
-    val data = item.attachment.upload
-        ?: if (item.attachment.isImage()) item.attachment.imageUrl else item.attachment.thumbUrl
+    val attachment = item.attachment
+    val data = attachment.upload ?: when {
+        attachment.isImage() -> attachment.imageUrl
+        attachment.isVideo() -> attachment.videoThumbnailImageData(attachment.thumbUrl)
+        else -> attachment.thumbUrl
+    }
     Box(
         modifier = Modifier
             .clickable(onClick = onClick),
