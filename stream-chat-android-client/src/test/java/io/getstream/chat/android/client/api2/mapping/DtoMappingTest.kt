@@ -21,7 +21,6 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
@@ -127,22 +126,11 @@ internal class DtoMappingTest {
         val member = randomMember()
         val mapping = Fixture().get()
         val dto = with(mapping) { member.toDto() }
-        val expected = UpstreamMemberDto(
-            user = with(mapping) { member.user.toDto() },
-            created_at = member.createdAt,
-            updated_at = member.updatedAt,
-            invited = member.isInvited,
-            invite_accepted_at = member.inviteAcceptedAt,
-            invite_rejected_at = member.inviteRejectedAt,
-            shadow_banned = member.shadowBanned,
-            banned = member.banned,
-            channel_role = member.channelRole,
-            notifications_muted = member.notificationsMuted,
-            status = member.status,
-            ban_expires = member.banExpires,
-            pinned_at = member.pinnedAt,
-            archived_at = member.archivedAt,
-            extraData = member.extraData,
+        val expected = UpstreamMemberDataDto(
+            userId = member.getUserId(),
+            channelRole = member.channelRole,
+            user = null,
+            custom = member.extraData,
         )
         dto shouldBeEqualTo expected
     }

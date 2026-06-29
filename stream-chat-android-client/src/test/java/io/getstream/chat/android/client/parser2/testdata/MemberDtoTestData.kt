@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import org.intellij.lang.annotations.Language
 
 internal object MemberDtoTestData {
@@ -47,23 +46,6 @@ internal object MemberDtoTestData {
         "banned" : false
         }""".withoutWhitespace()
 
-    @Language("JSON")
-    val upstreamJsonWithExtraData = """
-        {
-        "user" : ${UserDtoTestData.upstreamJson},
-        "shadow_banned" : false,
-        "banned" : false,
-        "is_premium" : true
-        }""".withoutWhitespace()
-
-    @Language("JSON")
-    val upstreamJsonWithoutExtraData = """
-        {
-        "user" : ${UserDtoTestData.upstreamJson},
-        "shadow_banned" : false,
-        "banned" : false
-        }""".withoutWhitespace()
-
     val downstreamMemberWithExtraData = DownstreamMemberDto(
         user = UserDtoTestData.downstreamUser,
         createdAt = java.util.Date(1591787071000),
@@ -86,39 +68,4 @@ internal object MemberDtoTestData {
         custom = emptyMap(),
     )
 
-    val upstreamMemberWithExtraData = UpstreamMemberDto(
-        user = UserDtoTestData.upstreamUser,
-        created_at = null,
-        updated_at = null,
-        invited = null,
-        invite_accepted_at = null,
-        invite_rejected_at = null,
-        shadow_banned = false,
-        banned = false,
-        channel_role = null,
-        notifications_muted = null,
-        status = null,
-        ban_expires = null,
-        pinned_at = null,
-        archived_at = null,
-        extraData = mapOf("is_premium" to true),
-    )
-
-    val upstreamMemberWithoutExtraData = UpstreamMemberDto(
-        user = UserDtoTestData.upstreamUser,
-        created_at = null,
-        updated_at = null,
-        invited = null,
-        invite_accepted_at = null,
-        invite_rejected_at = null,
-        shadow_banned = false,
-        banned = false,
-        channel_role = null,
-        notifications_muted = null,
-        status = null,
-        ban_expires = null,
-        pinned_at = null,
-        archived_at = null,
-        extraData = emptyMap(),
-    )
 }

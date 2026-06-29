@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
+import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 
 @JsonClass(generateAdapter = true)
 internal data class QueryMembersRequest(
@@ -27,5 +27,5 @@ internal data class QueryMembersRequest(
     val offset: Int,
     val limit: Int,
     val sort: List<Map<String, Any>>,
-    val members: List<UpstreamMemberDto>,
+    val members: List<UpstreamMemberDataDto>,
 )
