@@ -28,7 +28,10 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
  * Moshi adapter that handles deserialization of [DownstreamThreadDto] with extra data.
  */
 internal object DownstreamThreadDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamThreadDto>(DownstreamThreadDto::class) {
+    CustomObjectDtoAdapter<DownstreamThreadDto>(
+        kClass = DownstreamThreadDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     fun fromJson(

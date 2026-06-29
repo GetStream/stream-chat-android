@@ -81,6 +81,7 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageReminder
@@ -853,30 +854,35 @@ internal class DomainMappingTest {
         val thread = with(sut) { downstreamThreadDto.toDomain() }
         val fallbackChannelInfo = with(sut) { downstreamThreadDto.channel?.toChannelInfo() }
         val expected = Thread(
-            activeParticipantCount = downstreamThreadDto.active_participant_count ?: 0,
-            cid = downstreamThreadDto.channel_cid,
+            activeParticipantCount = downstreamThreadDto.activeParticipantCount,
+            cid = downstreamThreadDto.channelCid,
             channel = with(sut) { downstreamThreadDto.channel?.toDomain() },
-            parentMessageId = downstreamThreadDto.parent_message_id,
-            parentMessage = with(sut) { downstreamThreadDto.parent_message.toDomain(fallbackChannelInfo) },
-            createdByUserId = downstreamThreadDto.created_by_user_id,
-            createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
-            participantCount = downstreamThreadDto.participant_count,
+            parentMessageId = downstreamThreadDto.parentMessageId,
+            parentMessage = with(sut) {
+                downstreamThreadDto.parentMessage?.toDomain(fallbackChannelInfo)
+                    ?: Message(id = downstreamThreadDto.parentMessageId)
+            },
+            createdByUserId = downstreamThreadDto.createdByUserId,
+            createdBy = with(sut) { downstreamThreadDto.createdBy?.toDomain() },
+            participantCount = downstreamThreadDto.participantCount,
             threadParticipants = with(sut) {
                 listOf(participant1Dto, participant2Dto).map { it.toDomain() }.sortedByLastReply()
             },
-            lastMessageAt = downstreamThreadDto.last_message_at,
-            createdAt = downstreamThreadDto.created_at,
-            updatedAt = downstreamThreadDto.updated_at,
-            deletedAt = downstreamThreadDto.deleted_at,
+            lastMessageAt = downstreamThreadDto.lastMessageAt ?: downstreamThreadDto.createdAt,
+            createdAt = downstreamThreadDto.createdAt,
+            updatedAt = downstreamThreadDto.updatedAt,
+            deletedAt = downstreamThreadDto.deletedAt,
             title = downstreamThreadDto.title,
             latestReplies = with(sut) {
-                downstreamThreadDto.latest_replies.map { it.toDomain(fallbackChannelInfo) }
+                downstreamThreadDto.latestReplies.map { it.toDomain(fallbackChannelInfo) }
             },
             read = with(sut) {
-                downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
+                downstreamThreadDto.read.orEmpty().map {
+                    it.toDomain(downstreamThreadDto.lastMessageAt ?: downstreamThreadDto.createdAt)
+                }
             },
             draft = with(sut) { downstreamThreadDto.draft?.toDomain(fallbackChannelInfo) },
-            extraData = downstreamThreadDto.extraData,
+            extraData = downstreamThreadDto.custom.filterValues { it != null }.mapValues { it.value!! },
         )
         assertEquals(expected, thread)
     }

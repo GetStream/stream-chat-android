@@ -72,22 +72,22 @@ internal object ThreadDtoTestData {
         }"""
 
     val downstreamThread = DownstreamThreadDto(
-        active_participant_count = 3,
+        activeParticipantCount = 3,
         channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
-        channel_cid = "messaging:123",
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_user_id = "user1",
-        deleted_at = null,
+        channelCid = "messaging:123",
+        createdAt = Date(1591787071000),
+        createdBy = UserDtoTestData.downstreamUser,
+        createdByUserId = "user1",
+        deletedAt = null,
         draft = null,
-        last_message_at = Date(1591787071588),
-        latest_replies = listOf(MessageDtoTestData.downstreamMessageWithoutExtraData),
-        parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
-        parent_message_id = "parent_msg_id",
-        participant_count = 5,
+        lastMessageAt = Date(1591787071588),
+        latestReplies = listOf(MessageDtoTestData.downstreamMessageWithoutExtraData),
+        parentMessage = MessageDtoTestData.downstreamMessageWithoutExtraData,
+        parentMessageId = "parent_msg_id",
+        participantCount = 5,
         read = emptyList(),
-        reply_count = 10,
-        thread_participants = listOf(
+        replyCount = 10,
+        threadParticipants = listOf(
             DownstreamThreadParticipantDto(
                 appPk = 0,
                 channelCid = "messaging:thread1",
@@ -99,8 +99,8 @@ internal object ThreadDtoTestData {
             ),
         ),
         title = "Thread Title",
-        updated_at = Date(1591787071588),
-        extraData = mapOf(
+        updatedAt = Date(1591787071588),
+        custom = mapOf(
             "extraData" to mapOf(
                 "key1" to "value1",
                 "key2" to true,
@@ -142,25 +142,25 @@ internal object ThreadDtoTestData {
         }"""
 
     val downstreamThreadWithoutExtraData = DownstreamThreadDto(
-        active_participant_count = 2,
+        activeParticipantCount = 2,
         channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
-        channel_cid = "messaging:456",
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_user_id = "user2",
-        deleted_at = null,
+        channelCid = "messaging:456",
+        createdAt = Date(1591787071000),
+        createdBy = UserDtoTestData.downstreamUser,
+        createdByUserId = "user2",
+        deletedAt = null,
         draft = null,
-        last_message_at = Date(1591787071588),
-        latest_replies = emptyList(),
-        parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
-        parent_message_id = "parent_msg_id_2",
-        participant_count = 2,
+        lastMessageAt = Date(1591787071588),
+        latestReplies = emptyList(),
+        parentMessage = MessageDtoTestData.downstreamMessageWithoutExtraData,
+        parentMessageId = "parent_msg_id_2",
+        participantCount = 2,
         read = emptyList(),
-        reply_count = 0,
-        thread_participants = emptyList(),
+        replyCount = 0,
+        threadParticipants = emptyList(),
         title = "Simple Thread",
-        updated_at = Date(1591787071588),
-        extraData = emptyMap(),
+        updatedAt = Date(1591787071588),
+        custom = emptyMap(),
     )
 
     @Language("JSON")

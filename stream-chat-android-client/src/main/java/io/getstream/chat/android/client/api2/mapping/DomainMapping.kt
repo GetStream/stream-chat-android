@@ -856,28 +856,28 @@ internal class DomainMapping(
      */
     internal fun DownstreamThreadDto.toDomain(): Thread =
         Thread(
-            activeParticipantCount = active_participant_count ?: 0,
-            cid = channel_cid,
+           activeParticipantCount = activeParticipantCount,
+            cid = channelCid,
             channel = channel?.toDomain(),
-            parentMessageId = parent_message_id,
-            parentMessage = parent_message.toDomain(channel?.toChannelInfo()),
-            createdByUserId = created_by_user_id,
-            createdBy = created_by?.toDomain(),
-            participantCount = participant_count,
-            threadParticipants = thread_participants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
-            lastMessageAt = last_message_at,
-            createdAt = created_at,
-            updatedAt = updated_at,
-            deletedAt = deleted_at,
+            parentMessageId = parentMessageId,
+            parentMessage = parentMessage?.toDomain(channel?.toChannelInfo()) ?: Message(id = parentMessageId),
+            createdByUserId = createdByUserId,
+            createdBy = createdBy?.toDomain(),
+            participantCount = participantCount,
+            threadParticipants = threadParticipants.orEmpty().map { it.toDomain() }.sortedByLastReply(),
+            lastMessageAt = lastMessageAt ?: createdAt,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            deletedAt = deletedAt,
             title = title,
-            latestReplies = latest_replies.map { it.toDomain(channel?.toChannelInfo()) },
+            latestReplies = latestReplies.map { it.toDomain(channel?.toChannelInfo()) },
             read = read.orEmpty().map {
                 it.toDomain(
-                    lastReceivedEventDate = last_message_at,
+                    lastReceivedEventDate = lastMessageAt ?: createdAt,
                 )
             },
             draft = draft?.toDomain(channel?.toChannelInfo()),
-            extraData = extraData,
+            extraData = custom.filterNonNullValues(),
         )
 
     /**
