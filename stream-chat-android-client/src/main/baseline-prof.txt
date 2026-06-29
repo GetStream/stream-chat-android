@@ -505,7 +505,6 @@ Lio/getstream/chat/android/client/api2/endpoint/OpenGraphApi;
 Lio/getstream/chat/android/client/api2/endpoint/PollsApi;
 Lio/getstream/chat/android/client/api2/endpoint/ThreadsApi;
 Lio/getstream/chat/android/client/api2/endpoint/UserApi;
-Lio/getstream/chat/android/client/api2/endpoint/VideoCallApi;
 Lio/getstream/chat/android/client/api2/mapping/AppSettingsMappingKt;
 HSPLio/getstream/chat/android/client/api2/mapping/AppSettingsMappingKt;->toDomain(Lio/getstream/chat/android/client/api2/model/response/AppDto;)Lio/getstream/chat/android/models/App;
 HSPLio/getstream/chat/android/client/api2/mapping/AppSettingsMappingKt;->toDomain(Lio/getstream/chat/android/client/api2/model/response/AppSettingsResponse;)Lio/getstream/chat/android/models/AppSettings;
@@ -1208,8 +1207,6 @@ Lio/getstream/chat/android/client/api2/model/requests/UpdateCooldownRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateMemberPartialRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateMessageRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateUsersRequest;
-Lio/getstream/chat/android/client/api2/model/requests/VideoCallCreateRequest;
-Lio/getstream/chat/android/client/api2/model/requests/VideoCallTokenRequest;
 Lio/getstream/chat/android/client/api2/model/response/AppDto;
 HSPLio/getstream/chat/android/client/api2/model/response/AppDto;-><init>(Ljava/lang/String;Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;)V
 HSPLio/getstream/chat/android/client/api2/model/response/AppDto;->getFile_upload_config()Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;
