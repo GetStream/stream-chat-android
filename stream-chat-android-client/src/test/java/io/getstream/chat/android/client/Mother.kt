@@ -1018,10 +1018,18 @@ internal object Mother {
         userId: String = randomString(),
         user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
         lastThreadMessageAt: Date? = randomDateOrNull(),
+        appPk: Int = randomInt(),
+        channelCid: String = randomCID(),
+        createdAt: Date = randomDate(),
+        lastReadAt: Date = randomDate(),
     ): DownstreamThreadParticipantDto = DownstreamThreadParticipantDto(
-        user_id = userId,
+        appPk = appPk,
+        channelCid = channelCid,
+        createdAt = createdAt,
+        lastReadAt = lastReadAt,
+        userId = userId,
         user = user,
-        last_thread_message_at = lastThreadMessageAt,
+        lastThreadMessageAt = lastThreadMessageAt,
     )
 
     fun randomDownstreamThreadInfoDto(

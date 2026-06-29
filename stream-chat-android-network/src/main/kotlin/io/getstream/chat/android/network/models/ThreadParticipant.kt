@@ -45,7 +45,7 @@ data class ThreadParticipant(
     val lastReadAt: java.util.Date,
 
     @Json(name = "custom")
-    val custom: kotlin.collections.Map<kotlin.String, Any?> = emptyMap(),
+    val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
 
     @Json(name = "last_thread_message_at")
     val lastThreadMessageAt: java.util.Date? = null,

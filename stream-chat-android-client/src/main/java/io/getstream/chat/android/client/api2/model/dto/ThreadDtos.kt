@@ -107,17 +107,4 @@ internal data class DownstreamThreadInfoDto(
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
-/**
- * The DTO for Thread Participant.
- *
- * @param user_id The ID of the user (thread participant).
- * @param user The user as the thread participant. (Note: It is not always delivered, sometimes we only get the ID of
- * the user - [user_id]).
- * @param last_thread_message_at The date of the last message in the thread at the time of participation.
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamThreadParticipantDto(
-    val user_id: String,
-    val user: DownstreamUserDto?,
-    val last_thread_message_at: Date?,
-)
+internal typealias DownstreamThreadParticipantDto = io.getstream.chat.android.network.models.ThreadParticipant

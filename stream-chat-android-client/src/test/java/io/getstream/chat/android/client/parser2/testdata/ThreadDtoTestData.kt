@@ -44,6 +44,10 @@ internal object ThreadDtoTestData {
           "reply_count": 10,
           "thread_participants": [
             {
+              "app_pk": 0,
+              "channel_cid": "messaging:thread1",
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "last_read_at": "2020-06-10T11:04:31.000Z",
               "user_id": "user1",
               "user": ${UserDtoTestData.downstreamJson},
               "last_thread_message_at": null
@@ -85,9 +89,13 @@ internal object ThreadDtoTestData {
         reply_count = 10,
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
-                user_id = "user1",
+                appPk = 0,
+                channelCid = "messaging:thread1",
+                createdAt = Date(1591787071000),
+                lastReadAt = Date(1591787071000),
+                userId = "user1",
                 user = UserDtoTestData.downstreamUser,
-                last_thread_message_at = null,
+                lastThreadMessageAt = null,
             ),
         ),
         title = "Thread Title",
@@ -169,6 +177,10 @@ internal object ThreadDtoTestData {
           "active_participant_count": 4,
           "thread_participants": [
             {
+              "app_pk": 0,
+              "channel_cid": "messaging:thread1",
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "last_read_at": "2020-06-10T11:04:31.000Z",
               "user_id": "user1",
               "user": ${UserDtoTestData.downstreamJson},
               "last_thread_message_at": null
@@ -198,9 +210,13 @@ internal object ThreadDtoTestData {
         active_participant_count = 4,
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
-                user_id = "user1",
+                appPk = 0,
+                channelCid = "messaging:thread1",
+                createdAt = Date(1591787071000),
+                lastReadAt = Date(1591787071000),
+                userId = "user1",
                 user = UserDtoTestData.downstreamUser,
-                last_thread_message_at = null,
+                lastThreadMessageAt = null,
             ),
         ),
         last_message_at = Date(1591787071588),
