@@ -40,17 +40,23 @@ internal object DownstreamReactionDtoAdapter :
 }
 
 internal object UpstreamReactionDtoAdapter :
-    CustomObjectDtoAdapter<UpstreamReactionDto>(UpstreamReactionDto::class) {
+    CustomObjectDtoAdapter<UpstreamReactionDto>(
+        kClass = UpstreamReactionDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
-    @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): UpstreamReactionDto = error("Can't parse this from Json")
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        reactionAdapter: JsonAdapter<UpstreamReactionDto>,
+    ): UpstreamReactionDto? = parseWithExtraData(jsonReader, mapAdapter, reactionAdapter)
 
     @ToJson
     fun toJson(
         jsonWriter: JsonWriter,
-        message: UpstreamReactionDto?,
+        value: UpstreamReactionDto?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
-        messageAdapter: JsonAdapter<UpstreamReactionDto>,
-    ) = serializeWithExtraData(jsonWriter, message, mapAdapter, messageAdapter)
+        reactionAdapter: JsonAdapter<UpstreamReactionDto>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, reactionAdapter)
 }

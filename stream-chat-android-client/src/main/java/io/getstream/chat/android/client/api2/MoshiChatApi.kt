@@ -59,7 +59,7 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
+import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -442,10 +442,10 @@ constructor(
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> {
         return messageApi.sendReaction(
             messageId = reaction.messageId,
-            request = ReactionRequest(
+            request = SendReactionRequest(
                 reaction = with(dtoMapping) { reaction.toDto() },
-                enforce_unique = enforceUnique,
-                skip_push = skipPush,
+                enforceUnique = enforceUnique,
+                skipPush = skipPush,
             ),
         ).mapDomain { response ->
             response.reaction.toDomain()

@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
+import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
@@ -119,7 +119,7 @@ internal interface MessageApi {
     @POST("/messages/{id}/reaction")
     fun sendReaction(
         @Path("id") messageId: String,
-        @Body request: ReactionRequest,
+        @Body request: SendReactionRequest,
     ): RetrofitCall<ReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")

@@ -240,16 +240,15 @@ internal class DtoMappingTest {
         val reaction = randomReaction()
         val mapping = Fixture().get()
         val dto = with(mapping) { reaction.toDto() }
+        val expectedCustom = reaction.emojiCode
+            ?.let { reaction.extraData + ("emoji_code" to it) }
+            ?: reaction.extraData
         val expected = UpstreamReactionDto(
-            created_at = reaction.createdAt,
-            message_id = reaction.messageId,
-            score = reaction.score,
             type = reaction.type,
-            updated_at = reaction.updatedAt,
-            user = reaction.user?.let { with(mapping) { it.toDto() } },
-            user_id = reaction.userId,
-            extraData = reaction.extraData,
-            emoji_code = reaction.emojiCode,
+            createdAt = reaction.createdAt,
+            score = reaction.score,
+            updatedAt = reaction.updatedAt,
+            custom = expectedCustom,
         )
         dto shouldBeEqualTo expected
     }

@@ -16,33 +16,5 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.core.internal.StreamHandsOff
-import java.util.Date
-
-/**
- * See [io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class UpstreamReactionDto(
-    val created_at: Date?,
-    val message_id: String,
-    val score: Int,
-    val type: String,
-    val updated_at: Date?,
-    val user: UpstreamUserDto?,
-    val user_id: String,
-    // Note: This is not contextually a top-level field in the API, it should be inside `reaction.extraData`.
-    // But for convenience, we make it a top-level field here, because when serialized, it will be top-level in the
-    // JSON string.
-    val emoji_code: String?,
-
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
+internal typealias UpstreamReactionDto = io.getstream.chat.android.network.models.ReactionRequest
 internal typealias DownstreamReactionDto = io.getstream.chat.android.network.models.ReactionResponse

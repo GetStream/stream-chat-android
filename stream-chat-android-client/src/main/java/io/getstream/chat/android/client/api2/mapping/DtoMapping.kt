@@ -211,15 +211,11 @@ internal class DtoMapping(
      * Maps the domain [Reaction] model to a network [UpstreamReactionDto].
      */
     internal fun Reaction.toDto(): UpstreamReactionDto = UpstreamReactionDto(
-        created_at = createdAt,
-        message_id = messageId,
-        score = score,
         type = type,
-        updated_at = updatedAt,
-        user = user?.toDto(),
-        user_id = userId,
-        emoji_code = emojiCode,
-        extraData = extraData,
+        createdAt = createdAt,
+        score = score,
+        updatedAt = updatedAt,
+        custom = if (emojiCode != null) extraData + ("emoji_code" to emojiCode) else extraData,
     )
 
     /**
