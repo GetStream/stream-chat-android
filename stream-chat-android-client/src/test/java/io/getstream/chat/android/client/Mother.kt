@@ -261,8 +261,6 @@ internal object Mother {
     fun randomDownstreamDraftMessageDto(
         id: String = randomString(),
         text: String = randomString(),
-        command: String? = null,
-        args: String? = null,
         attachments: List<AttachmentDto>? = emptyList(),
         mentionedUsers: List<DownstreamUserDto>? = emptyList(),
         silent: Boolean = randomBoolean(),
@@ -270,12 +268,10 @@ internal object Mother {
     ): DownstreamDraftMessageDto = DownstreamDraftMessageDto(
         id = id,
         text = text,
-        command = command,
-        args = args,
         attachments = attachments,
-        mentioned_users = mentionedUsers,
+        mentionedUsers = mentionedUsers,
         silent = silent,
-        show_in_channel = showInChannel,
+        showInChannel = showInChannel,
     )
 
     fun randomDownstreamMessageDto(

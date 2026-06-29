@@ -248,10 +248,7 @@ internal class DomainMappingTest {
     @Test
     fun `DownstreamDraftDto is correctly mapped to DraftMessage`() {
         val draftMessageResponse = randomDownstreamDraftDto(
-            message = randomDownstreamDraftMessageDto(
-                command = "giphy",
-                args = "cat",
-            ),
+            message = randomDownstreamDraftMessageDto(),
         )
         val sut = Fixture()
             .get()
@@ -265,12 +262,10 @@ internal class DomainMappingTest {
                 attachments = with(sut) {
                     draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList()
                 },
-                mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
-                extraData = draftMessageResponse.message.extraData ?: emptyMap(),
-                silent = draftMessageResponse.message.silent,
-                showInChannel = draftMessageResponse.message.show_in_channel,
-                command = draftMessageResponse.message.command,
-                args = draftMessageResponse.message.args,
+                mentionedUsersIds = draftMessageResponse.message.mentionedUsers?.map { it.id } ?: emptyList(),
+                extraData = emptyMap(),
+                silent = draftMessageResponse.message.silent ?: false,
+                showInChannel = draftMessageResponse.message.showInChannel ?: false,
             )
         }
 

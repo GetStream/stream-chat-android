@@ -297,13 +297,11 @@ internal class DomainMapping(
             id = message.id,
             parentId = parent_message?.id ?: parent_id,
             replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
-            showInChannel = message.show_in_channel,
-            mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
-            silent = message.silent,
+            showInChannel = message.showInChannel ?: false,
+            mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
+            silent = message.silent ?: false,
             text = message.text,
-            command = message.command,
-            args = message.args,
-            extraData = message.extraData ?: emptyMap(),
+            extraData = message.custom.filterNonNullValues(),
         )
 
     /**
@@ -635,7 +633,7 @@ internal class DomainMapping(
     internal fun String?.toVotingVisibility(): VotingVisibility = when (this) {
         null,
         "public",
-        -> VotingVisibility.PUBLIC
+            -> VotingVisibility.PUBLIC
 
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
