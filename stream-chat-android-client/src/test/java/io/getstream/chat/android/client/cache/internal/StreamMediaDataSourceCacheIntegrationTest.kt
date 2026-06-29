@@ -121,6 +121,53 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
         )
     }
 
+    /**
+     * Verifies the LRU evictor is wired with [VideoCacheConfig.maxSizeBytes]. Three videos are
+     * written into a cache sized to hold exactly two; the read between the second and third write
+     * bumps the first video's recency so the second video becomes the least-recently-used and is
+     * the one dropped.
+     */
+    @Test
+    fun `LRU eviction drops the least-recently-used entry when cache fills`() {
+        val evictionDir = File(context.cacheDir, EVICTION_SUB_DIR).also { it.deleteRecursively() }
+        val evictionCache = VideoMediaCache.create(
+            context,
+            evictionDir,
+            VideoCacheConfig(maxSizeBytes = 2 * TOTAL_LENGTH),
+        )
+        try {
+            val upstream = RecordingDataSourceFactory()
+            val factory = VideoCacheDataSourceFactory(evictionCache, upstream)
+
+            // Fill the cache to capacity, then bump A's recency, then push C in to force eviction.
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_B_URL)))
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_C_URL)))
+
+            assertEquals(
+                "A, B, and C should each have hit upstream exactly once so far",
+                3,
+                upstream.openCount,
+            )
+
+            // A was the most-recently-touched, so it must still be cached.
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
+            assertEquals("A must still be cached", 3, upstream.openCount)
+
+            // C is the newest write, so it must still be cached.
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_C_URL)))
+            assertEquals("C must still be cached", 3, upstream.openCount)
+
+            // B is the least-recently-used and must have been evicted.
+            readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_B_URL)))
+            assertEquals("B must have been evicted and refetched", 4, upstream.openCount)
+        } finally {
+            evictionCache.release()
+            evictionDir.deleteRecursively()
+        }
+    }
+
     private fun readFully(source: DataSource, spec: DataSpec) {
         source.open(spec)
         try {
@@ -211,7 +258,11 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
 
     private companion object {
         private const val SUB_DIR = "video_cache_integration_test"
+        private const val EVICTION_SUB_DIR = "video_cache_eviction_test"
         private const val VIDEO_URL = "https://stream.io/v.mp4"
+        private const val VIDEO_A_URL = "https://stream.io/a.mp4"
+        private const val VIDEO_B_URL = "https://stream.io/b.mp4"
+        private const val VIDEO_C_URL = "https://stream.io/c.mp4"
         private const val TOTAL_LENGTH = 4096L
         private const val BUFFER_SIZE = 512
         private const val FILL_BYTE: Byte = 0xAB.toByte()
