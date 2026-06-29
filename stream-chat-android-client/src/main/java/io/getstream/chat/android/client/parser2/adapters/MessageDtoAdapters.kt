@@ -47,17 +47,23 @@ internal object DownstreamMessageDtoAdapter :
 }
 
 internal object UpstreamMessageDtoAdapter :
-    CustomObjectDtoAdapter<UpstreamMessageDto>(UpstreamMessageDto::class) {
+    CustomObjectDtoAdapter<UpstreamMessageDto>(
+        kClass = UpstreamMessageDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
-    @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): UpstreamMessageDto = error("Can't parse this from Json")
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        messageAdapter: JsonAdapter<UpstreamMessageDto>,
+    ): UpstreamMessageDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
     fun toJson(
         jsonWriter: JsonWriter,
-        message: UpstreamMessageDto?,
+        value: UpstreamMessageDto?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
         messageAdapter: JsonAdapter<UpstreamMessageDto>,
-    ) = serializeWithExtraData(jsonWriter, message, mapAdapter, messageAdapter)
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, messageAdapter)
 }

@@ -236,8 +236,6 @@ internal object MessageDtoTestData {
     val upstreamJson =
         """{
           "attachments": [${AttachmentDtoTestData.json}],
-          "cid": "cid",
-          "html": "html",
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "type": "regular",
           "mentioned_users": [],
@@ -246,17 +244,13 @@ internal object MessageDtoTestData {
           "mentioned_group_ids": [],
           "mentioned_roles": [],
           "pinned": true,
-          "shadowed": false,
           "show_in_channel": false,
           "silent": false,
           "text": "text",
-          "thread_participants": [],
-          "extraData": {
-            "key1": "value1",
-            "key2": true,
-            "key3": {
-              "key4": "val4"
-            }
+          "key1": "value1",
+          "key2": true,
+          "key3": {
+            "key4": "val4"
           },
           "customKey1": "customVal1",
           "customKey2": true,
@@ -269,46 +263,39 @@ internal object MessageDtoTestData {
         }""".withoutWhitespace()
     val upstreamMessage = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "regular",
-        cid = "cid",
+        type = io.getstream.chat.android.network.models.MessageRequest.Type.Regular,
         text = "text",
-        html = "html",
-        parent_id = null,
-        command = null,
-        args = null,
         silent = false,
-        shadowed = false,
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "key1" to "value1",
-                "key2" to true,
-                "key3" to mapOf(
-                    "key4" to "val4",
-                ),
+        showInChannel = false,
+        mentionedUsers = emptyList(),
+        mentionedHere = false,
+        mentionedChannel = false,
+        mentionedGroupIds = emptyList(),
+        mentionedRoles = emptyList(),
+        attachments = listOf(AttachmentDtoTestData.attachment),
+        quotedMessageId = null,
+        pinned = true,
+        pinnedAt = null,
+        pinExpires = null,
+        parentId = null,
+        restrictedVisibility = listOf("jc"),
+        sharedLocation = null,
+        custom = mapOf(
+            "key1" to "value1",
+            "key2" to true,
+            "key3" to mapOf(
+                "key4" to "val4",
             ),
             "customKey1" to "customVal1",
             "customKey2" to true,
             "customKey3" to listOf("a", "b", "c"),
         ),
-        show_in_channel = false,
-        mentioned_users = emptyList(),
-        thread_participants = emptyList(),
-        attachments = listOf(AttachmentDtoTestData.attachment),
-        quoted_message_id = null,
-        pinned = true,
-        pinned_by = null,
-        pinned_at = null,
-        pin_expires = null,
-        restricted_visibility = listOf("jc"),
-        shared_location = null,
     )
 
     @Language("JSON")
     val upstreamJsonWithoutExtraData =
         """{
           "attachments": [],
-          "cid": "cid",
-          "html": "",
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "type": "regular",
           "mentioned_users": [],
@@ -317,35 +304,30 @@ internal object MessageDtoTestData {
           "mentioned_group_ids": [],
           "mentioned_roles": [],
           "pinned": false,
-          "shadowed": false,
           "show_in_channel": false,
           "silent": false,
           "text": "",
-          "thread_participants": [],
           "restricted_visibility": []
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "regular",
-        cid = "cid",
+        type = io.getstream.chat.android.network.models.MessageRequest.Type.Regular,
         text = "",
-        html = "",
-        parent_id = null,
-        command = null,
-        args = null,
         silent = false,
-        shadowed = false,
-        extraData = emptyMap(),
-        show_in_channel = false,
-        mentioned_users = emptyList(),
-        thread_participants = emptyList(),
+        showInChannel = false,
+        mentionedUsers = emptyList(),
+        mentionedHere = false,
+        mentionedChannel = false,
+        mentionedGroupIds = emptyList(),
+        mentionedRoles = emptyList(),
         attachments = emptyList(),
-        quoted_message_id = null,
+        quotedMessageId = null,
         pinned = false,
-        pinned_by = null,
-        pinned_at = null,
-        pin_expires = null,
-        restricted_visibility = emptyList(),
-        shared_location = null,
+        pinnedAt = null,
+        pinExpires = null,
+        parentId = null,
+        restrictedVisibility = emptyList(),
+        sharedLocation = null,
+        custom = emptyMap(),
     )
 }

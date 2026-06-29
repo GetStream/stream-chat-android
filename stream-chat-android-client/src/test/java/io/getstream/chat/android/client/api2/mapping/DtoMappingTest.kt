@@ -141,28 +141,16 @@ internal class DtoMappingTest {
         val mapping = Fixture().get()
         val dto = with(mapping) { message.toDto() }
         val expected = UpstreamMessageDto(
-            attachments = message.attachments.map { with(mapping) { it.toDto() } },
-            cid = message.cid,
-            command = message.command,
-            args = message.args,
-            html = "",
             id = message.id,
-            type = "regular",
-            mentioned_users = message.mentionedUsersIds,
-            parent_id = message.parentId,
-            pin_expires = null,
-            pinned = null,
-            pinned_at = null,
-            pinned_by = null,
-            quoted_message_id = message.replyMessage?.id,
-            shadowed = false,
-            show_in_channel = message.showInChannel,
-            silent = message.silent,
             text = message.text,
-            thread_participants = emptyList(),
-            restricted_visibility = emptyList(),
-            shared_location = null,
-            extraData = message.extraData,
+            type = io.getstream.chat.android.network.models.MessageRequest.Type.Regular,
+            attachments = message.attachments.map { with(mapping) { it.toDto() } },
+            mentionedUsers = message.mentionedUsersIds,
+            parentId = message.parentId,
+            quotedMessageId = message.replyMessage?.id,
+            showInChannel = message.showInChannel,
+            silent = message.silent,
+            custom = message.extraData,
         )
         dto shouldBeEqualTo expected
     }
@@ -176,32 +164,25 @@ internal class DtoMappingTest {
             .get()
         val dto = with(mapping) { message.toDto() }
         val expected = UpstreamMessageDto(
-            attachments = message.attachments.map { with(mapping) { it.toDto() } },
-            cid = message.cid,
-            command = message.command,
-            args = null,
-            html = message.html,
             id = message.id,
-            type = message.type,
-            mentioned_users = message.mentionedUsersIds,
-            mentioned_here = message.mentionedHere,
-            mentioned_channel = message.mentionedChannel,
-            mentioned_roles = message.mentionedRoles,
-            mentioned_group_ids = message.mentionedGroups.map(UserGroup::id),
-            parent_id = message.parentId,
-            pin_expires = message.pinExpires,
-            pinned = message.pinned,
-            pinned_at = message.pinnedAt,
-            pinned_by = message.pinnedBy?.let { with(mapping) { it.toDto() } },
-            quoted_message_id = message.replyMessageId,
-            shadowed = message.shadowed,
-            show_in_channel = message.showInChannel,
-            silent = message.silent,
             text = message.text,
-            thread_participants = message.threadParticipants.map { with(mapping) { it.toDto() } },
-            restricted_visibility = message.restrictedVisibility,
-            shared_location = message.sharedLocation?.let { with(mapping) { it.toDto() } },
-            extraData = message.extraData,
+            type = io.getstream.chat.android.network.models.MessageRequest.Type.fromString(message.type),
+            attachments = message.attachments.map { with(mapping) { it.toDto() } },
+            mentionedUsers = message.mentionedUsersIds,
+            mentionedHere = message.mentionedHere,
+            mentionedChannel = message.mentionedChannel,
+            mentionedRoles = message.mentionedRoles,
+            mentionedGroupIds = message.mentionedGroups.map(UserGroup::id),
+            parentId = message.parentId,
+            pinExpires = message.pinExpires,
+            pinned = message.pinned,
+            pinnedAt = message.pinnedAt,
+            quotedMessageId = message.replyMessageId,
+            showInChannel = message.showInChannel,
+            silent = message.silent,
+            restrictedVisibility = message.restrictedVisibility,
+            sharedLocation = message.sharedLocation?.let { with(mapping) { it.toDto() } },
+            custom = message.extraData,
         )
 
         dto shouldBeEqualTo expected
@@ -217,7 +198,7 @@ internal class DtoMappingTest {
 
         val dto = with(mapping) { message.toDto() }
 
-        dto.type shouldBeEqualTo expectedType
+        dto.type?.value shouldBeEqualTo expectedType
     }
 
     @Test
