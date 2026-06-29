@@ -1066,7 +1066,8 @@ private fun createDraftJsonString() =
                 "id": "draft-message-id",
                 "text": "Draft text"
             },
-            "channel_cid": "channelType:channelId"
+            "channel_cid": "channelType:channelId",
+            "created_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 

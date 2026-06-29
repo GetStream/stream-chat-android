@@ -241,13 +241,15 @@ internal object Mother {
     fun randomDownstreamDraftDto(
         message: DownstreamDraftMessageDto = randomDownstreamDraftMessageDto(),
         channelCid: String = randomCID(),
+        createdAt: Date = randomDate(),
         quotedMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
         parentMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
     ): DownstreamDraftDto = DownstreamDraftDto(
         message = message,
-        channel_cid = channelCid,
-        quoted_message = quotedMessage,
-        parent_message = parentMessage,
+        channelCid = channelCid,
+        createdAt = createdAt,
+        quotedMessage = quotedMessage,
+        parentMessage = parentMessage,
     )
 
     fun randomDownstreamPendingMessageDto(

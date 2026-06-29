@@ -255,10 +255,10 @@ internal class DomainMappingTest {
         val expectedMappedDraftMessage = with(sut) {
             DraftMessage(
                 id = draftMessageResponse.message.id,
-                cid = draftMessageResponse.channel_cid,
+                cid = draftMessageResponse.channelCid,
                 text = draftMessageResponse.message.text,
-                parentId = draftMessageResponse.parent_message?.id,
-                replyMessage = draftMessageResponse.quoted_message?.toDomain(),
+                parentId = draftMessageResponse.parentMessage?.id,
+                replyMessage = draftMessageResponse.quotedMessage?.toDomain(),
                 attachments = with(sut) {
                     draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList()
                 },

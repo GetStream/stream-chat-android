@@ -21,15 +21,7 @@ import com.squareup.moshi.JsonClass
 internal typealias UpstreamMessageDto = io.getstream.chat.android.network.models.MessageRequest
 internal typealias DownstreamMessageDto = io.getstream.chat.android.network.models.MessageResponse
 internal typealias DownstreamDraftMessageDto = io.getstream.chat.android.network.models.DraftPayloadResponse
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamDraftDto(
-    val message: DownstreamDraftMessageDto,
-    val channel_cid: String,
-    val quoted_message: DownstreamMessageDto? = null,
-    val parent_id: String? = null,
-    val parent_message: DownstreamMessageDto? = null,
-)
+internal typealias DownstreamDraftDto = io.getstream.chat.android.network.models.DraftResponse
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamPendingMessageDto(

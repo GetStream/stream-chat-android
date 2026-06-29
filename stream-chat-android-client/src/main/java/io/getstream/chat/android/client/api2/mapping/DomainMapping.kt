@@ -292,11 +292,11 @@ internal class DomainMapping(
 
     internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
-            attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
-            cid = channel_cid,
+            attachments = message.attachments?.map { it.toDomain() }.orEmpty(),
+            cid = channelCid,
             id = message.id,
-            parentId = parent_message?.id ?: parent_id,
-            replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
+            parentId = parentMessage?.id ?: parentId,
+            replyMessage = quotedMessage?.toDomain(fallbackChannelInfo),
             showInChannel = message.showInChannel ?: false,
             mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
             silent = message.silent ?: false,
