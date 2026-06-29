@@ -42,6 +42,7 @@ import java.util.Locale
  * - External storage management for photos and videos captured using the SDK
  */
 @InternalStreamChatApi
+@Suppress("TooManyFunctions")
 public class StreamFileManager {
 
     /**
@@ -54,6 +55,18 @@ public class StreamFileManager {
      */
     public fun getImageCache(context: Context): File {
         return context.cacheDir.resolve(IMAGE_CACHE_DIR)
+    }
+
+    /**
+     * Returns the directory used for caching video bytes streamed through ExoPlayer.
+     *
+     * Path: `{cacheDir}/stream_video_cache/`
+     *
+     * @param context Android context for accessing the cache directory.
+     * @return File pointing to the video cache directory.
+     */
+    public fun getVideoCache(context: Context): File {
+        return context.cacheDir.resolve(VIDEO_CACHE_DIR)
     }
 
     /**
@@ -232,9 +245,11 @@ public class StreamFileManager {
     public fun clearAllCache(context: Context): Result<Unit> {
         val streamCacheResult = clearCache(context)
         val imageCacheResult = clearImageCache(context)
+        val videoCacheResult = clearVideoCache(context)
         val timestampedCacheResult = clearTimestampedCacheFolders(context)
         return streamCacheResult
             .flatMap { imageCacheResult }
+            .flatMap { videoCacheResult }
             .flatMap { timestampedCacheResult }
     }
 
@@ -424,6 +439,22 @@ public class StreamFileManager {
     }
 
     @Suppress("TooGenericExceptionCaught")
+    private fun clearVideoCache(context: Context): Result<Unit> {
+        return try {
+            val directory = getVideoCache(context)
+            if (!directory.exists()) {
+                Result.Success(Unit)
+            } else if (directory.deleteRecursively()) {
+                Result.Success(Unit)
+            } else {
+                Result.Failure(Error.GenericError("Could not clear video cache directory."))
+            }
+        } catch (e: Exception) {
+            Result.Failure(Error.ThrowableError("Could not clear video cache directory.", e))
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
     private fun clearTimestampedCacheFolders(context: Context): Result<Unit> {
         return try {
             val cacheDir = context.cacheDir
@@ -448,6 +479,7 @@ public class StreamFileManager {
     private companion object {
         private const val CACHE_DIR = "stream_cache"
         private const val IMAGE_CACHE_DIR = "stream_image_cache"
+        private const val VIDEO_CACHE_DIR = "stream_video_cache"
         private const val TIMESTAMPED_DIR_TIMESTAMP_FORMAT = "HHmmssSSS"
         private const val TIMESTAMPED_DIR_PREFIX = "STREAM_"
         private const val EXTERNAL_DIR_TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss"

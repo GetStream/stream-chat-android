@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.models.AttachmentType
 
 /**
  * An Activity that is capable of playing video/audio stream.
@@ -62,11 +63,15 @@ public class MediaPreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val url = intent.getStringExtra(KEY_URL)
         val title = intent.getStringExtra(KEY_TITLE) ?: ""
+        val mimeType = intent.getStringExtra(KEY_MIME_TYPE)
+        val type = intent.getStringExtra(KEY_TYPE)
 
         if (url.isNullOrEmpty() || ChatClient.isInitialized.not()) {
             finish()
             return
         }
+
+        val enableVideoCache = isVideoContent(mimeType, type)
 
         setContent {
             ChatTheme {
@@ -77,6 +82,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                         .windowInsetsPadding(WindowInsets.systemBars),
                     url = url,
                     title = title,
+                    useVideoCache = enableVideoCache,
                     onPlaybackError = {
                         Toast.makeText(
                             this,
@@ -92,10 +98,20 @@ public class MediaPreviewActivity : AppCompatActivity() {
     }
 
     /**
+     * Returns `true` when the playing attachment is confidently a video, so its bytes can be
+     * routed through the video cache. Any other content (audio, unknown mime/type) bypasses the
+     * cache.
+     */
+    private fun isVideoContent(mimeType: String?, type: String?): Boolean =
+        type == AttachmentType.VIDEO || mimeType?.startsWith("video/") == true
+
+    /**
      * Represents a screen with a media player.
      *
      * @param url The URL of the stream for playback.
      * @param title The name of the file for playback.
+     * @param useVideoCache Whether to route playback through the configured video cache. Set to
+     * `true` only when the content is confidently a video — any other content bypasses the cache.
      * @param onPlaybackError Handler for playback errors.
      * @param onBackPressed Handler for back press action.
      */
@@ -104,6 +120,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
         modifier: Modifier = Modifier,
         url: String,
         title: String,
+        useVideoCache: Boolean,
         onPlaybackError: (error: Throwable) -> Unit,
         onBackPressed: () -> Unit,
     ) {
@@ -120,6 +137,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                         .padding(padding),
                     assetUrl = url,
                     playWhenReady = true,
+                    useVideoCache = useVideoCache,
                     onPlaybackError = onPlaybackError,
                 )
             },
@@ -176,6 +194,8 @@ public class MediaPreviewActivity : AppCompatActivity() {
     public companion object {
         private const val KEY_URL: String = "url"
         private const val KEY_TITLE: String = "title"
+        private const val KEY_MIME_TYPE: String = "mime_type"
+        private const val KEY_TYPE: String = "type"
 
         /**
          * Used to build an [Intent] to start the [MediaPreviewActivity] with the required data.
@@ -183,11 +203,24 @@ public class MediaPreviewActivity : AppCompatActivity() {
          * @param context The context to start the activity with.
          * @param url The URL of the media file.
          * @param title The name of the media file.
+         * @param mimeType The MIME type of the media file (e.g. `video/mp4`, `audio/mpeg`). Used
+         * together with [type] to decide whether to route playback through the video cache.
+         * @param type The attachment type (e.g. [AttachmentType.VIDEO], [AttachmentType.AUDIO]).
+         * Same caching behaviour as [mimeType].
          */
-        public fun getIntent(context: Context, url: String, title: String? = null): Intent {
+        @JvmOverloads
+        public fun getIntent(
+            context: Context,
+            url: String,
+            title: String? = null,
+            mimeType: String? = null,
+            type: String? = null,
+        ): Intent {
             return Intent(context, MediaPreviewActivity::class.java).apply {
                 putExtra(KEY_URL, url)
                 putExtra(KEY_TITLE, title)
+                putExtra(KEY_MIME_TYPE, mimeType)
+                putExtra(KEY_TYPE, type)
             }
         }
     }

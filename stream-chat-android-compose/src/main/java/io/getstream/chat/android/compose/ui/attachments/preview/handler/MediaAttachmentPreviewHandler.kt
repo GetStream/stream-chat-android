@@ -49,6 +49,8 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
                 context = context,
                 url = requireNotNull(attachment.assetUrl),
                 title = attachment.title ?: attachment.name,
+                mimeType = attachment.mimeType,
+                type = attachment.type,
             ),
         )
     }

@@ -72,6 +72,8 @@ import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamAudioPlayer
+import io.getstream.chat.android.client.cache.StreamCacheConfig
+import io.getstream.chat.android.client.cache.internal.VideoMediaCache
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -300,6 +302,8 @@ internal constructor(
     internal val messageReceiptManager: MessageReceiptManager,
     @InternalStreamChatApi
     public val cdn: CDN? = null,
+    @InternalStreamChatApi
+    public val videoCache: VideoMediaCache? = null,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -4810,6 +4814,7 @@ internal constructor(
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
         private var cdn: CDN? = null
+        private var cacheConfig: StreamCacheConfig? = null
         private var appName: String? = null
         private var appVersion: String? = null
 
@@ -5023,6 +5028,15 @@ internal constructor(
         }
 
         /**
+         * Configures the SDK's user-configurable on-disk caches.
+         *
+         * @param config The per-cache configurations.
+         */
+        public fun cacheConfig(config: StreamCacheConfig): Builder = apply {
+            this.cacheConfig = config
+        }
+
+        /**
          * Sets the CDN URL to be used by the client.
          */
         public fun cdnUrl(value: String): Builder = apply {
@@ -5200,6 +5214,9 @@ internal constructor(
             val api = module.api()
             val appSettingsManager = AppSettingManager(api)
 
+            val videoCache = cacheConfig?.video?.let {
+                VideoMediaCache.create(appContext, StreamFileManager().getVideoCache(appContext), it)
+            }
             val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn)
             val audioPlayer: AudioPlayer = StreamAudioPlayer(
                 mediaPlayer = NativeMediaPlayerImpl(mediaDataSourceFactory) {
@@ -5255,6 +5272,7 @@ internal constructor(
                     api = api,
                 ),
                 cdn = cdn,
+                videoCache = videoCache,
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
