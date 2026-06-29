@@ -16,10 +16,6 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
-import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
-
 internal typealias DownstreamVoteDto = io.getstream.chat.android.network.models.PollVoteResponseData
 
 internal typealias DownstreamPollDto = io.getstream.chat.android.network.models.PollResponseData

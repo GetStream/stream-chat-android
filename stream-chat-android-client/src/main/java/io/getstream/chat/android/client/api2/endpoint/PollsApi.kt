@@ -18,10 +18,6 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
-import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
-import io.getstream.chat.android.network.models.QueryPollVotesRequest
-import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
@@ -31,6 +27,8 @@ import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -38,6 +36,8 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
 
 /**
  * Retrofit interface defining the Polls API.

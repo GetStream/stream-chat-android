@@ -21,9 +21,7 @@ import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
-import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
@@ -38,11 +36,11 @@ import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
-import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -79,15 +77,10 @@ internal class NewMessageEventParsingTest {
     private val reactionGroupAdapter = ReactionGroupAdapter(
         dateAdapter = dateAdapter,
     )
-    private val userGroupMemberAdapter = UserGroupMemberAdapter(
-        dateAdapter = dateAdapter,
-    )
     private val userGroupAdapter = UserGroupAdapter(
-        memberAdapter = userGroupMemberAdapter,
         dateAdapter = dateAdapter,
     )
     private val attachmentAdapter = AttachmentAdapter()
-    private val channelInfoAdapter = ChannelInfoAdapter()
     private val moderationDetailsAdapter = MessageModerationDetailsAdapter()
     private val moderationAdapter = ModerationAdapter()
     private val optionAdapter = OptionAdapter()
@@ -105,7 +98,6 @@ internal class NewMessageEventParsingTest {
     )
     private val messageAdapter = MessageAdapter(
         attachmentAdapter = attachmentAdapter,
-        channelInfoAdapter = channelInfoAdapter,
         reactionAdapter = reactionAdapter,
         reactionGroupAdapter = reactionGroupAdapter,
         userAdapter = userAdapter,

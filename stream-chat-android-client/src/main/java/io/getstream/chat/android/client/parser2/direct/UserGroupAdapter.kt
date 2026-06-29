@@ -20,11 +20,9 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.UserGroup
-import io.getstream.chat.android.models.UserGroupMember
 import java.util.Date
 
 internal class UserGroupAdapter(
-    private val memberAdapter: JsonAdapter<UserGroupMember>,
     private val dateAdapter: JsonAdapter<Date>,
 ) : JsonAdapter<UserGroup>() {
 
@@ -37,7 +35,6 @@ internal class UserGroupAdapter(
         var name: String? = null
         var description: String? = null
         var teamId: String? = null
-        var members: List<UserGroupMember>? = null
         var createdBy: String? = null
         var createdAt: Date? = null
         var updatedAt: Date? = null
@@ -48,7 +45,6 @@ internal class UserGroupAdapter(
                 "name" -> name = reader.nextString()
                 "description" -> description = JsonParsingUtils.readNullableString(reader)
                 "team_id" -> teamId = JsonParsingUtils.readNullableString(reader)
-                "members" -> members = JsonParsingUtils.parseList(reader, memberAdapter)
                 "created_by" -> createdBy = JsonParsingUtils.readNullableString(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
@@ -65,7 +61,7 @@ internal class UserGroupAdapter(
             name = name,
             description = description,
             team = teamId.orEmpty(),
-            members = members ?: emptyList(),
+            members = emptyList(),
             createdBy = createdBy,
             createdAt = createdAt,
             updatedAt = updatedAt,

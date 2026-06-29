@@ -48,13 +48,3 @@ internal data class UpstreamMemberDto(
 ) : ExtraDataDto
 
 internal typealias DownstreamMemberDto = io.getstream.chat.android.network.models.ChannelMemberResponse
-
-/**
- * DTO holding limited data about a channel member.
- *
- * @property channel_role The role of the member in the channel.
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamMemberInfoDto(
-    val channel_role: String?,
-)

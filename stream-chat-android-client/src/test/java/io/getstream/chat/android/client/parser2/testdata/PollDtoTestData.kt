@@ -17,11 +17,11 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 
 internal object PollDtoTestData {
 

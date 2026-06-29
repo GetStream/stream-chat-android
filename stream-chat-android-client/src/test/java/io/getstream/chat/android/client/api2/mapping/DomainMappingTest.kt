@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
 import io.getstream.chat.android.client.Mother.randomBannedUserResponse
 import io.getstream.chat.android.client.Mother.randomBlockUserResponse
-import io.getstream.chat.android.client.Mother.randomChannelInfoDto
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
 import io.getstream.chat.android.client.Mother.randomDeviceDto
@@ -36,7 +35,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamDraftMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMemberDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamOptionDto
@@ -64,7 +62,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
@@ -74,7 +71,6 @@ import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.ChannelUserRead
@@ -168,12 +164,11 @@ internal class DomainMappingTest {
 
         val result = with(sut) {
             randomDownstreamMessageDto(
-                pinned_by = randomDownstreamUserDto(),
-                quoted_message = randomDownstreamMessageDto(),
-                moderation_details = randomDownstreamModerationDetailsDto(),
+                pinnedBy = randomDownstreamUserDto(),
+                quotedMessage = randomDownstreamMessageDto(),
                 moderation = randomDownstreamModerationDto(),
                 poll = randomDownstreamPollDto(),
-                deleted_for_me = randomBoolean(),
+                deletedForMe = randomBoolean(),
             ).toDomain()
         }
 
@@ -184,13 +179,23 @@ internal class DomainMappingTest {
     fun `Mention fields propagate from DownstreamMessageDto to Message`() {
         val sut = Fixture().get()
         val dto = randomDownstreamMessageDto(
-            mentioned_here = true,
-            mentioned_channel = true,
-            mentioned_groups = listOf(
-                DownstreamUserGroupDto(id = "g1", name = "platform", createdAt = Date(0), updatedAt = Date(0)),
-                DownstreamUserGroupDto(id = "g2", name = "support", createdAt = Date(0), updatedAt = Date(0)),
+            mentionedHere = true,
+            mentionedChannel = true,
+            mentionedGroups = listOf(
+                io.getstream.chat.android.network.models.MentionedUserGroupResponse(
+                    id = "g1",
+                    name = "platform",
+                    createdAt = Date(0),
+                    updatedAt = Date(0),
+                ),
+                io.getstream.chat.android.network.models.MentionedUserGroupResponse(
+                    id = "g2",
+                    name = "support",
+                    createdAt = Date(0),
+                    updatedAt = Date(0),
+                ),
             ),
-            mentioned_roles = listOf("admin", "moderator"),
+            mentionedRoles = listOf("admin", "moderator"),
         )
 
         val result = with(sut) { dto.toDomain() }
@@ -200,6 +205,44 @@ internal class DomainMappingTest {
         assertEquals(listOf("admin", "moderator"), result.mentionedRoles)
         assertEquals(listOf("g1", "g2"), result.mentionedGroups.map(UserGroup::id))
         assertEquals(listOf("platform", "support"), result.mentionedGroups.map(UserGroup::name))
+    }
+
+    @Test
+    fun `moderation_details flattened in custom map is reconstructed into MessageModerationDetails`() {
+        val sut = Fixture().get()
+        val dto = randomDownstreamMessageDto(
+            custom = mapOf(
+                "moderation_details" to mapOf(
+                    "original_text" to "spam_text",
+                    "action" to "MESSAGE_RESPONSE_ACTION_BOUNCE",
+                    "error_msg" to "rejected",
+                ),
+                "key1" to "value1",
+            ),
+        )
+
+        val result = with(sut) { dto.toDomain() }
+
+        assertEquals(
+            MessageModerationDetails(
+                originalText = "spam_text",
+                action = MessageModerationAction.bounce,
+                errorMsg = "rejected",
+            ),
+            result.moderationDetails,
+        )
+        assertEquals("value1", result.extraData["key1"])
+        assertEquals(null, result.extraData["moderation_details"])
+    }
+
+    @Test
+    fun `moderation_details absent from custom map yields null moderationDetails`() {
+        val sut = Fixture().get()
+        val dto = randomDownstreamMessageDto(custom = mapOf("key1" to "value1"))
+
+        val result = with(sut) { dto.toDomain() }
+
+        assertEquals(null, result.moderationDetails)
     }
 
     @Test
@@ -661,22 +704,6 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `ChannelInfoDto is correctly mapped to ChannelInfo`() {
-        val channelInfoDto = randomChannelInfoDto()
-        val sut = Fixture().get()
-        val channelInfo = with(sut) { channelInfoDto.toDomain() }
-        val expected = ChannelInfo(
-            cid = channelInfoDto.cid,
-            type = channelInfoDto.type,
-            id = channelInfoDto.id,
-            name = channelInfoDto.name,
-            memberCount = channelInfoDto.member_count,
-            image = channelInfoDto.image,
-        )
-        assertEquals(expected, channelInfo)
-    }
-
-    @Test
     fun `CommandDto is correctly mapped to Command`() {
         val commandDto = randomCommandDto()
         val sut = Fixture().get()
@@ -758,19 +785,6 @@ internal class DomainMappingTest {
             rejectedAt = downstreamFlagDto.rejected_at,
         )
         assertEquals(expected, flag)
-    }
-
-    @Test
-    fun `DownstreamModerationDetailsDto is correctly mapped to ModerationDetails`() {
-        val downstreamModerationDetailsDto = randomDownstreamModerationDetailsDto()
-        val sut = Fixture().get()
-        val moderationDetails = with(sut) { downstreamModerationDetailsDto.toDomain() }
-        val expected = MessageModerationDetails(
-            originalText = downstreamModerationDetailsDto.original_text.orEmpty(),
-            action = MessageModerationAction(downstreamModerationDetailsDto.action.orEmpty()),
-            errorMsg = downstreamModerationDetailsDto.error_msg.orEmpty(),
-        )
-        assertEquals(expected, moderationDetails)
     }
 
     @Test
@@ -866,7 +880,7 @@ internal class DomainMappingTest {
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
             },
-            draft = with(sut) { downstreamThreadDto.draft?.toDomain() },
+            draft = with(sut) { downstreamThreadDto.draft?.toDomain(fallbackChannelInfo) },
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)

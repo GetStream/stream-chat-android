@@ -46,11 +46,11 @@ import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
-import io.getstream.chat.android.network.models.SharedLocation as UpstreamLocationDto
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
+import io.getstream.chat.android.network.models.SharedLocation as UpstreamLocationDto
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 
 internal class DtoMapping(

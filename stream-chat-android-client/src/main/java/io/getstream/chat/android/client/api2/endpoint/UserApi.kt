@@ -19,14 +19,9 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
-import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
-import io.getstream.chat.android.network.models.QueryUsersPayload as QueryUsersRequest
-import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
-import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
@@ -39,6 +34,11 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Query
+import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
+import io.getstream.chat.android.network.models.QueryUsersPayload as QueryUsersRequest
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
+import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
 
 @AuthenticatedApi
 internal interface UserApi {

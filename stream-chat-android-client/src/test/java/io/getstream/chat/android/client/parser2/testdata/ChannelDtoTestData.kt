@@ -20,9 +20,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelOwnCapability
-import io.getstream.chat.android.network.models.Command as CommandDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
+import io.getstream.chat.android.network.models.Command as CommandDto
 
 internal object ChannelDtoTestData {
 

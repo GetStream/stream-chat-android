@@ -25,8 +25,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
-import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -88,6 +86,8 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import okhttp3.ResponseBody
 import org.junit.jupiter.params.provider.Arguments
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
+import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 
 @Suppress("UNUSED", "LargeClass")
 internal object MoshiChatApiTestArguments {

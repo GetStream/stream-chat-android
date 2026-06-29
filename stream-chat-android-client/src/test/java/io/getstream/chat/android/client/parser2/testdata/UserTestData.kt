@@ -16,12 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.DeliveryReceipts
-import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.ReadReceipts
-import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.models.Device
-import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.User
 import org.intellij.lang.annotations.Language
 import java.util.Date

@@ -20,9 +20,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
-import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
@@ -36,7 +34,6 @@ import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
-import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageTestData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
@@ -44,6 +41,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -79,15 +77,10 @@ internal class MessageParsingTest {
     private val reactionGroupAdapter = ReactionGroupAdapter(
         dateAdapter = dateAdapter,
     )
-    private val userGroupMemberAdapter = UserGroupMemberAdapter(
-        dateAdapter = dateAdapter,
-    )
     private val userGroupAdapter = UserGroupAdapter(
-        memberAdapter = userGroupMemberAdapter,
         dateAdapter = dateAdapter,
     )
     private val attachmentAdapter = AttachmentAdapter()
-    private val channelInfoAdapter = ChannelInfoAdapter()
     private val moderationDetailsAdapter = MessageModerationDetailsAdapter()
     private val moderationAdapter = ModerationAdapter()
     private val optionAdapter = OptionAdapter()
@@ -106,7 +99,6 @@ internal class MessageParsingTest {
 
     private val messageAdapter = MessageAdapter(
         attachmentAdapter = attachmentAdapter,
-        channelInfoAdapter = channelInfoAdapter,
         reactionAdapter = reactionAdapter,
         reactionGroupAdapter = reactionGroupAdapter,
         userAdapter = userAdapter,
@@ -178,47 +170,6 @@ internal class MessageParsingTest {
 
     // endregion
 
-    // region Quoted message field-order independence
-
-    @Test
-    fun `Both paths - quoted message with channel before quoted_message`() {
-        assertBothPaths(
-            MessageTestData.jsonWithQuotedMessageAfterChannel,
-            MessageTestData.expectedQuotedMessageWithChannel,
-        )
-    }
-
-    @Test
-    fun `Both paths - quoted message with channel after quoted_message`() {
-        assertBothPaths(
-            MessageTestData.jsonWithQuotedMessageBeforeChannel,
-            MessageTestData.expectedQuotedMessageWithChannel,
-        )
-    }
-
-    @Test
-    fun `Direct path - quoted message field order does not affect result`() {
-        val resultChannelFirst = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageAfterChannel)
-        val resultQuotedFirst = messageAdapter.fromJson(MessageTestData.jsonWithQuotedMessageBeforeChannel)
-        assertEquals(resultChannelFirst, resultQuotedFirst)
-    }
-
-    // Locks down the documented one-level depth limit of channelInfo propagation in the direct
-    // path. If full recursion is added later, this test will fail and the documented limit in
-    // MessageAdapter should be removed.
-    @Test
-    fun `Direct path - channelInfo propagation stops at one level deep`() {
-        val result = messageAdapter.fromJson(MessageTestData.jsonTwoDeepQuotedMessage)
-        // Depth 0 (outer): has `channel`, so channelInfo is set.
-        assertEquals(MessageTestData.expectedChannelInfo, result?.channelInfo)
-        // Depth 1: no `channel`, but gets the outer's channelInfo via one-level enrichment.
-        assertEquals(MessageTestData.expectedChannelInfo, result?.replyTo?.channelInfo)
-        // Depth 2: no `channel`, and propagation stops — channelInfo stays null.
-        assertEquals(null, result?.replyTo?.replyTo?.channelInfo)
-    }
-
-    // endregion
-
     // region Required field error parity (both paths must throw on the same JSON)
 
     @Test
@@ -255,29 +206,6 @@ internal class MessageParsingTest {
     @Test
     fun `Both paths - throw on missing user`() = assertBothPathsThrow(MessageTestData.jsonMissingUser)
 
-    @Test
-    fun `Both paths - throw on missing attachments`() = assertBothPathsThrow(MessageTestData.jsonMissingAttachments)
-
-    @Test
-    fun `Both paths - throw on missing latest_reactions`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingLatestReactions)
-
-    @Test
-    fun `Both paths - throw on missing mentioned_users`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingMentionedUsers)
-
-    @Test
-    fun `Both paths - throw on missing own_reactions`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingOwnReactions)
-
-    @Test
-    fun `Both paths - throw on explicit null i18n`() =
-        assertBothPathsThrow(MessageTestData.jsonExplicitNullI18n)
-
-    @Test
-    fun `Both paths - throw on explicit null thread_participants`() =
-        assertBothPathsThrow(MessageTestData.jsonExplicitNullThreadParticipants)
-
     private fun assertBothPathsThrow(json: String) {
         assertThrows<JsonDataException> {
             parser.fromJson(json, DownstreamMessageDto::class.java)
@@ -302,7 +230,6 @@ internal class MessageParsingTest {
         )
         val transformedMessageAdapter = MessageAdapter(
             attachmentAdapter = attachmentAdapter,
-            channelInfoAdapter = channelInfoAdapter,
             reactionAdapter = reactionAdapter,
             reactionGroupAdapter = reactionGroupAdapter,
             userAdapter = userAdapter,
@@ -351,7 +278,6 @@ internal class MessageParsingTest {
         )
         val transformedMessageAdapter = MessageAdapter(
             attachmentAdapter = attachmentAdapter,
-            channelInfoAdapter = channelInfoAdapter,
             reactionAdapter = transformedReactionAdapter,
             reactionGroupAdapter = reactionGroupAdapter,
             userAdapter = transformedUserAdapter,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,15 +18,11 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
@@ -39,7 +35,7 @@ import com.squareup.moshi.ToJson
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class CreateDeviceRequest (
+data class CreateDeviceRequest(
     @Json(name = "id")
     val id: kotlin.String,
 
@@ -53,31 +49,29 @@ data class CreateDeviceRequest (
     val pushProviderName: kotlin.String? = null,
 
     @Json(name = "voip_token")
-    val voipToken: kotlin.Boolean? = null
-)
-{
-    
-    /**
-    * PushProvider Enum
-    */
-    sealed class PushProvider(val value: kotlin.String) {
-            override fun toString(): String = value
+    val voipToken: kotlin.Boolean? = null,
+) {
 
-            companion object {
-                fun fromString(s: kotlin.String): PushProvider = when (s) {
-                    "apn" -> Apn
-                    "firebase" -> Firebase
-                    "huawei" -> Huawei
-                    "xiaomi" -> Xiaomi
-                    else -> Unknown(s)
-                }
+    /**
+     * PushProvider Enum
+     */
+    sealed class PushProvider(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): PushProvider = when (s) {
+                "apn" -> Apn
+                "firebase" -> Firebase
+                "huawei" -> Huawei
+                "xiaomi" -> Xiaomi
+                else -> Unknown(s)
             }
-            object Apn : PushProvider("apn")
-            object Firebase : PushProvider("firebase")
-            object Huawei : PushProvider("huawei")
-            object Xiaomi : PushProvider("xiaomi")
-            data class Unknown(val unknownValue: kotlin.String) : PushProvider(unknownValue)
-        
+        }
+        object Apn : PushProvider("apn")
+        object Firebase : PushProvider("firebase")
+        object Huawei : PushProvider("huawei")
+        object Xiaomi : PushProvider("xiaomi")
+        data class Unknown(val unknownValue: kotlin.String) : PushProvider(unknownValue)
 
         class PushProviderAdapter : JsonAdapter<PushProvider>() {
             @FromJson
@@ -91,5 +85,5 @@ data class CreateDeviceRequest (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

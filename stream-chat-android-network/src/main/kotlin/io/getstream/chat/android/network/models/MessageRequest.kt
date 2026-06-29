@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +18,26 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import kotlin.collections.List
+import kotlin.collections.Map
 
 /**
  * Message data for creating or updating a message
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class MessageRequest (
+data class MessageRequest(
     @Json(name = "id")
     val id: kotlin.String? = null,
 
@@ -101,29 +99,27 @@ data class MessageRequest (
     val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
 
     @Json(name = "shared_location")
-    val sharedLocation: io.getstream.chat.android.network.models.SharedLocation? = null
-)
-{
-    
-    /**
-    * Type Enum
-    */
-    sealed class Type(val value: kotlin.String) {
-            override fun toString(): String = value
+    val sharedLocation: io.getstream.chat.android.network.models.SharedLocation? = null,
+) {
 
-            companion object {
-                fun fromString(s: kotlin.String): Type = when (s) {
-                    "''" -> Empty
-                    "regular" -> Regular
-                    "system" -> System
-                    else -> Unknown(s)
-                }
+    /**
+     * Type Enum
+     */
+    sealed class Type(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): Type = when (s) {
+                "''" -> Empty
+                "regular" -> Regular
+                "system" -> System
+                else -> Unknown(s)
             }
-            object Empty : Type("''")
-            object Regular : Type("regular")
-            object System : Type("system")
-            data class Unknown(val unknownValue: kotlin.String) : Type(unknownValue)
-        
+        }
+        object Empty : Type("''")
+        object Regular : Type("regular")
+        object System : Type("system")
+        data class Unknown(val unknownValue: kotlin.String) : Type(unknownValue)
 
         class TypeAdapter : JsonAdapter<Type>() {
             @FromJson
@@ -137,5 +133,5 @@ data class MessageRequest (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

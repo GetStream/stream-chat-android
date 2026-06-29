@@ -18,13 +18,13 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import org.intellij.lang.annotations.Language
+import java.util.Date
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
-import org.intellij.lang.annotations.Language
-import java.util.Date
 
 internal object UserDtoTestData {
 
@@ -218,13 +218,15 @@ internal object UserDtoTestData {
             ),
         ),
         banned = false,
-        devices = listOf(DeviceDto(
-                    id = "deviceId",
-                    pushProvider = "provider",
-                    pushProviderName = "provider_name",
-                    createdAt = Date(1591787071000),
-                    userId = "userId",
-                )),
+        devices = listOf(
+            DeviceDto(
+                id = "deviceId",
+                pushProvider = "provider",
+                pushProviderName = "provider_name",
+                createdAt = Date(1591787071000),
+                userId = "userId",
+            ),
+        ),
         teams = listOf("team1", "team2"),
         teams_role = mapOf(
             "team1" to "owner",

@@ -94,4 +94,3 @@ internal data class UpstreamOptionDto(
     val text: String,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-

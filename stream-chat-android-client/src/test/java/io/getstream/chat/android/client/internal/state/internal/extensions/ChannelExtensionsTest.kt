@@ -25,10 +25,10 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.randomChannel
 import okio.buffer
 import okio.source

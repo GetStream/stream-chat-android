@@ -950,6 +950,90 @@ and the PollResponseData omitempty fix (issue #14).
 
 ---
 
+## 17. Bounce response sends `reaction_counts`/`reaction_scores` as JSON null
+
+**Symptom:** Parsing the response to `POST /messages` crashes with
+`JsonDataException: Non-null value 'reactionCounts' (JSON name 'reaction_counts')
+was null` whenever the sent message gets bounced by automod (V1 or V2 bounce
+action). Reproduced live in the compose sample app with a blocklist policy.
+
+The wire payload from a bounced send looks like:
+
+```json
+{
+  "message": {
+    "id": "...", "type": "error", "text": "verybadword",
+    "attachments": [], "latest_reactions": [], "own_reactions": [],
+    "reaction_counts": null,
+    "reaction_scores": null,
+    "moderation": {"action": "bounce", "original_text": "verybadword"},
+    ...
+  }
+}
+```
+
+Normal (non-bounced) sends and channel queries return `"reaction_counts": {}` /
+`"reaction_scores": {}` instead, which parses cleanly.
+
+**Root cause:** The bounce response builder in
+`lib/chat/controller/v1/send_message.go` constructs the response via
+`payload.NewMessageResponse(*message)` in a `defer` block but never calls
+`(*MessageResponse).PrepareSerialization(user)` afterwards.
+`PrepareSerialization` (lib/chat/controller/v1/payload/message.go:240) is the
+function that normalizes nil int-maps to `{}`:
+
+```go
+func (m *MessageResponse) PrepareSerialization(user *types.User) {
+    m.HideShadowBan(user)
+    if m.ReactionCounts == nil { m.ReactionCounts = map[string]int{} }
+    if m.ReactionScores == nil { m.ReactionScores = map[string]int{} }
+}
+```
+
+Read paths like `get_pinned_messages`, `get_replies`, and channel-state
+assembly do call it; write paths like `send_message` don't, so any newly
+constructed message that hasn't been touched by a reactor leaks the raw nil
+maps.
+
+The generated Kotlin `MessageResponse` types these as
+`reactionCounts: Map<String, Int> = emptyMap()` (non-nullable, default empty).
+Moshi accepts default-on-missing but rejects explicit null, so the bounce
+payload fails to parse.
+
+This isn't really a generator issue - the spec is internally consistent. It's
+a wire-vs-spec drift: the bounce-path response in production doesn't match the
+shape the spec declares.
+
+**Fix status:** Not fixed. The android migration leaves this as a known
+limitation - bounced-message parsing crashes until the wire is fixed. No local
+patch in the SDK (would be papering over a real backend inconsistency that
+also affects iOS/JS once they tighten their parsers).
+
+**Suggested fix:** Backend - one of these, easiest first.
+
+1. Call `response.Message.PrepareSerialization(user)` immediately after
+   `response.Message = payload.NewMessageResponse(*message)` in
+   `send_message.go:305` (and the same near line 562). Smallest change. May
+   need the same treatment in `update_message.go`, `update_message_partial.go`,
+   `run_message_action.go`, `translate_message.go` - audit any controller that
+   builds a `MessageResponse` from a freshly-constructed `types.Message`
+   without going through channel-state serialization.
+2. Move the nil-map normalization into `NewMessageResponse` itself so every
+   caller benefits without remembering to call `PrepareSerialization`.
+   Broader blast radius but eliminates the class of bug.
+
+Once the backend is consistent, no SDK change needed. If we instead choose to
+accept the wire as-is and adjust the spec, mark `reactionCounts`/
+`reactionScores` as nullable on `MessageResponse` and regenerate - but that
+just hides the backend inconsistency in the type system, and iOS/JS would
+still need to handle null.
+
+**Migration timing:** Migration ships with this open. SDK consumers who use
+the bounce moderation action see crashes on the bounced message; everything
+else works. Linked from the test plan as a known limitation.
+
+---
+
 ## Pattern observations
 
 - Several issues collapse to the same root: the generator faithfully echoes whatever the spec

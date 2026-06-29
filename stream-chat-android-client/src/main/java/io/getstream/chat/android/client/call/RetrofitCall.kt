@@ -42,6 +42,7 @@ internal class RetrofitCall<T : Any>(
     scope: CoroutineScope,
 ) : Call<T> {
     private val callScope = scope + SupervisorJob(scope.coroutineContext.job)
+
     // TODO [G.] tmp, remove logging
     private val logger by taggedLogger("Chat:RetrofitCall")
 

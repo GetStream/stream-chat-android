@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 
 @JsonClass(generateAdapter = true)
 internal data class AddMembersRequest(

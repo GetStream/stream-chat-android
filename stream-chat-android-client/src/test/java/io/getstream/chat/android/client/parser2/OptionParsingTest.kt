@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.testdata.OptionTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -27,6 +26,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 
 internal class OptionParsingTest {
 

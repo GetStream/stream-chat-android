@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
+import org.intellij.lang.annotations.Language
+import java.time.ZonedDateTime
+import java.util.Date
 import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
 import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
 import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
-import org.intellij.lang.annotations.Language
-import java.time.ZonedDateTime
-import java.util.Date
 
 internal object UnreadDtoTestData {
 

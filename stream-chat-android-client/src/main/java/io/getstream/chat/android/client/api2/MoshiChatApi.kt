@@ -47,64 +47,29 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
-import io.getstream.chat.android.network.models.UpdateUserPartialRequest as PartialUpdateUserDto
-import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
-import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.network.models.CreateGuestRequest
-import io.getstream.chat.android.network.models.UserRequest
-import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
-import io.getstream.chat.android.network.models.DeliveredMessagePayload
-import io.getstream.chat.android.network.models.MarkDeliveredRequest
-import io.getstream.chat.android.network.models.MarkReadRequest
-import io.getstream.chat.android.network.models.MarkUnreadRequest
-import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
-import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
-import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
-import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.network.models.QueryDraftsRequest
-import io.getstream.chat.android.network.models.QueryPollVotesRequest
-import io.getstream.chat.android.network.models.QueryPollsRequest
-import io.getstream.chat.android.network.models.QueryReactionsRequest
-import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
-import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
-import io.getstream.chat.android.network.models.CreateReminderRequest
-import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
-import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
-import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
-import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
-import io.getstream.chat.android.network.models.VoteData as UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -166,7 +131,29 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
+import io.getstream.chat.android.network.models.CreateUserGroupRequest
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
+import io.getstream.chat.android.network.models.MarkReadRequest
+import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
+import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.QueryRemindersRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -182,6 +169,19 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
+import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
+import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
+import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
+import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
+import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
+import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
+import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
+import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
+import io.getstream.chat.android.network.models.UpdateUserPartialRequest as PartialUpdateUserDto
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
+import io.getstream.chat.android.network.models.VoteData as UpstreamVoteDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class MoshiChatApi
@@ -375,7 +375,6 @@ constructor(
             }
         }
     }
-
 
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(

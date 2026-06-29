@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +18,25 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import kotlin.collections.List
 
 /**
  * Block list contains restricted words
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class CreateBlockListRequest (
+data class CreateBlockListRequest(
     @Json(name = "name")
     val name: kotlin.String,
 
@@ -56,35 +53,33 @@ data class CreateBlockListRequest (
     val team: kotlin.String? = null,
 
     @Json(name = "type")
-    val type: Type? = null
-)
-{
-    
-    /**
-    * Type Enum
-    */
-    sealed class Type(val value: kotlin.String) {
-            override fun toString(): String = value
+    val type: Type? = null,
+) {
 
-            companion object {
-                fun fromString(s: kotlin.String): Type = when (s) {
-                    "domain" -> Domain
-                    "domain_allowlist" -> DomainAllowlist
-                    "email" -> Email
-                    "email_allowlist" -> EmailAllowlist
-                    "regex" -> Regex
-                    "word" -> Word
-                    else -> Unknown(s)
-                }
+    /**
+     * Type Enum
+     */
+    sealed class Type(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): Type = when (s) {
+                "domain" -> Domain
+                "domain_allowlist" -> DomainAllowlist
+                "email" -> Email
+                "email_allowlist" -> EmailAllowlist
+                "regex" -> Regex
+                "word" -> Word
+                else -> Unknown(s)
             }
-            object Domain : Type("domain")
-            object DomainAllowlist : Type("domain_allowlist")
-            object Email : Type("email")
-            object EmailAllowlist : Type("email_allowlist")
-            object Regex : Type("regex")
-            object Word : Type("word")
-            data class Unknown(val unknownValue: kotlin.String) : Type(unknownValue)
-        
+        }
+        object Domain : Type("domain")
+        object DomainAllowlist : Type("domain_allowlist")
+        object Email : Type("email")
+        object EmailAllowlist : Type("email_allowlist")
+        object Regex : Type("regex")
+        object Word : Type("word")
+        data class Unknown(val unknownValue: kotlin.String) : Type(unknownValue)
 
         class TypeAdapter : JsonAdapter<Type>() {
             @FromJson
@@ -98,5 +93,5 @@ data class CreateBlockListRequest (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

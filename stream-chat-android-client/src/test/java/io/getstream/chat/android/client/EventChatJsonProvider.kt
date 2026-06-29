@@ -555,6 +555,7 @@ internal fun createNewMessageEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
+            "channel_member_count": 1,
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
@@ -572,6 +573,7 @@ internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
+            "channel_member_count": 1,
             "watcher_count": 3,
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
@@ -847,7 +849,6 @@ private fun createMessageJsonString() =
         {
             "id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "text": "Hello",
-            "channel": ${createChannelInfoJsonString()},
             "user": ${createUserJsonString()},
             "html": "<p>Hello</p>",
             "attachments": [
@@ -868,9 +869,13 @@ private fun createMessageJsonString() =
             "mentioned_users": [
                 ${createUserJsonString()}
             ],
+            "mentioned_here": false,
+            "mentioned_channel": false,
             "thread_participants": [
                 ${createUserJsonString()}
             ],
+            "pinned": false,
+            "shadowed": false,
             "silent": false,
             "type": "regular",
             "cid": ""
@@ -900,19 +905,6 @@ private fun createMessageReactionJsonString() =
             "user_id": "bender",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z"
-        }
-    """.trimIndent()
-
-@Language("JSON")
-private fun createChannelInfoJsonString() =
-    """
-        {
-            "id": "channelId",
-            "type": "channelType",
-            "cid": "channelType:channelId",
-            "member_count": 1,
-            "name": "Channel Name",
-            "image": "https://domain.io/avatars/285/channel.png"
         }
     """.trimIndent()
 

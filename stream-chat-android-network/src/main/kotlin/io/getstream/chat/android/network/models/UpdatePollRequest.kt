@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +18,26 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import kotlin.collections.List
+import kotlin.collections.Map
 
 /**
- * 
+ *
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class UpdatePollRequest (
+data class UpdatePollRequest(
     @Json(name = "id")
     val id: kotlin.String,
 
@@ -71,27 +69,25 @@ data class UpdatePollRequest (
     val options: kotlin.collections.List<io.getstream.chat.android.network.models.PollOptionRequest>? = emptyList(),
 
     @Json(name = "Custom")
-    val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap()
-)
-{
-    
-    /**
-    * VotingVisibility Enum
-    */
-    sealed class VotingVisibility(val value: kotlin.String) {
-            override fun toString(): String = value
+    val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
+) {
 
-            companion object {
-                fun fromString(s: kotlin.String): VotingVisibility = when (s) {
-                    "anonymous" -> Anonymous
-                    "public" -> Public
-                    else -> Unknown(s)
-                }
+    /**
+     * VotingVisibility Enum
+     */
+    sealed class VotingVisibility(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): VotingVisibility = when (s) {
+                "anonymous" -> Anonymous
+                "public" -> Public
+                else -> Unknown(s)
             }
-            object Anonymous : VotingVisibility("anonymous")
-            object Public : VotingVisibility("public")
-            data class Unknown(val unknownValue: kotlin.String) : VotingVisibility(unknownValue)
-        
+        }
+        object Anonymous : VotingVisibility("anonymous")
+        object Public : VotingVisibility("public")
+        data class Unknown(val unknownValue: kotlin.String) : VotingVisibility(unknownValue)
 
         class VotingVisibilityAdapter : JsonAdapter<VotingVisibility>() {
             @FromJson
@@ -105,5 +101,5 @@ data class UpdatePollRequest (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

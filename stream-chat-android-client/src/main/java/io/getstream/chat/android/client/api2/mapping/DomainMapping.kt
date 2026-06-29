@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -28,12 +27,10 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -121,6 +118,7 @@ import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.MentionedUserGroupResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import java.util.Date
@@ -220,60 +218,77 @@ internal class DomainMapping(
      * Transforms [DownstreamMessageDto] to [Message].
      */
     internal fun DownstreamMessageDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): Message =
-        (channel?.toDomain() ?: fallbackChannelInfo).let { channelInfo: ChannelInfo? ->
-            Message(
-                attachments = attachments.map { it.toDomain() },
-                channelInfo = channelInfo,
-                cid = cid,
-                command = command,
-                createdAt = created_at,
-                deletedAt = deleted_at,
-                html = html,
-                i18n = i18n,
-                id = id,
-                latestReactions = latest_reactions.toDomain(
-                    messageId = id,
-                ),
-                mentionedUsers = mentioned_users.map { it.toDomain() },
-                mentionedHere = mentioned_here ?: false,
-                mentionedChannel = mentioned_channel ?: false,
-                mentionedGroups = mentioned_groups.map { it.toDomain() },
-                mentionedRoles = mentioned_roles,
-                ownReactions = own_reactions.toDomain(
-                    messageId = id,
-                ),
-                parentId = parent_id,
-                pinExpires = pin_expires,
-                pinned = pinned,
-                pinnedAt = pinned_at,
-                pinnedBy = pinned_by?.toDomain(),
-                reactionCounts = reaction_counts.orEmpty().toMutableMap(),
-                reactionScores = reaction_scores.orEmpty().toMutableMap(),
-                reactionGroups = reaction_groups.orEmpty().mapValues { it.value.toDomain(it.key) },
-                replyCount = reply_count,
-                deletedReplyCount = deleted_reply_count,
-                replyMessageId = quoted_message_id,
-                replyTo = quoted_message?.toDomain(channelInfo),
-                shadowed = shadowed,
-                showInChannel = show_in_channel,
-                silent = silent,
-                text = text,
-                threadParticipants = thread_participants.map { it.toDomain() },
-                type = type,
-                updatedAt = lastUpdateTime(),
-                user = user.toDomain(),
-                moderationDetails = moderation_details?.toDomain(),
-                moderation = moderation?.toDomain(),
-                messageTextUpdatedAt = message_text_updated_at,
-                poll = poll?.toDomain(),
-                restrictedVisibility = emptyList(),
-                reminder = reminder?.toReminderInfoDomain(),
-                sharedLocation = shared_location?.toDomain(),
-                channelRole = member?.channel_role,
-                deletedForMe = deleted_for_me ?: false,
-                extraData = extraData.toMutableMap(),
-            ).let(messageTransformer::transform)
-        }
+        Message(
+            attachments = attachments.map { it.toDomain() },
+            channelInfo = fallbackChannelInfo,
+            cid = cid,
+            command = command,
+            createdAt = createdAt,
+            deletedAt = deletedAt,
+            html = html,
+            i18n = i18n.orEmpty(),
+            id = id,
+            latestReactions = latestReactions.toDomain(messageId = id),
+            mentionedUsers = mentionedUsers.map { it.toDomain() },
+            mentionedHere = mentionedHere,
+            mentionedChannel = mentionedChannel,
+            mentionedGroups = mentionedGroups.orEmpty().map { it.toDomain() },
+            mentionedRoles = mentionedRoles.orEmpty(),
+            ownReactions = ownReactions.toDomain(messageId = id),
+            parentId = parentId,
+            pinExpires = pinExpires,
+            pinned = pinned,
+            pinnedAt = pinnedAt,
+            pinnedBy = pinnedBy?.toDomain(),
+            reactionCounts = reactionCounts.toMutableMap(),
+            reactionScores = reactionScores.toMutableMap(),
+            reactionGroups = reactionGroups.orEmpty().mapValues { it.value.toDomain(it.key) },
+            replyCount = replyCount,
+            deletedReplyCount = deletedReplyCount,
+            replyMessageId = quotedMessageId,
+            replyTo = quotedMessage?.toDomain(fallbackChannelInfo),
+            shadowed = shadowed,
+            showInChannel = showInChannel ?: false,
+            silent = silent,
+            text = text,
+            threadParticipants = threadParticipants.orEmpty().map { it.toDomain() },
+            type = type,
+            updatedAt = lastUpdateTime(),
+            user = user.toDomain(),
+            moderationDetails = moderationDetailsFromCustom(custom),
+            moderation = moderation?.toDomain(),
+            messageTextUpdatedAt = messageTextUpdatedAt,
+            poll = poll?.toDomain(),
+            restrictedVisibility = restrictedVisibility,
+            reminder = reminder?.toReminderInfoDomain(),
+            sharedLocation = sharedLocation?.toDomain(),
+            channelRole = member?.channelRole,
+            deletedForMe = deletedForMe ?: false,
+            extraData = custom.filterNonNullValues().minus("moderation_details").toMutableMap(),
+        ).let(messageTransformer::transform)
+
+    // V1 moderation lives flat in `custom["moderation_details"]` because the auto-mod bounce
+    // path predates V2 and was never lifted into the spec; the V2 typed `moderation` field is
+    // unrelated.
+    private fun moderationDetailsFromCustom(custom: Map<String, Any?>): MessageModerationDetails? {
+        val raw = custom["moderation_details"] as? Map<*, *> ?: return null
+        return MessageModerationDetails(
+            originalText = (raw["original_text"] as? String).orEmpty(),
+            action = MessageModerationAction.fromRawValue((raw["action"] as? String).orEmpty()),
+            errorMsg = (raw["error_msg"] as? String).orEmpty(),
+        )
+    }
+
+    private fun MentionedUserGroupResponse.toDomain(): UserGroup = UserGroup(
+        id = id,
+        name = name,
+        description = description,
+        team = teamId.orEmpty(),
+        members = emptyList(),
+        createdBy = createdBy,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
 
     internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
@@ -327,7 +342,7 @@ internal class DomainMapping(
             .map { it.toDomain() }
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
-        updated_at,
+        updatedAt,
         poll?.updatedAt,
     ).maxBy { it.time }
 
@@ -620,7 +635,7 @@ internal class DomainMapping(
     internal fun String?.toVotingVisibility(): VotingVisibility = when (this) {
         null,
         "public",
-            -> VotingVisibility.PUBLIC
+        -> VotingVisibility.PUBLIC
 
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
@@ -716,19 +731,6 @@ internal class DomainMapping(
     }
 
     /**
-     * Transforms [ChannelInfoDto] to [ChannelInfo].
-     */
-    internal fun ChannelInfoDto.toDomain(): ChannelInfo =
-        ChannelInfo(
-            cid = cid,
-            id = id,
-            memberCount = member_count,
-            name = name,
-            type = type,
-            image = image,
-        )
-
-    /**
      * Transforms [CommandDto] to [Command].
      */
     internal fun CommandDto.toDomain(): Command = Command(
@@ -799,15 +801,6 @@ internal class DomainMapping(
             rejectedAt = rejected_at,
         )
     }
-
-    /**
-     * Maps an [DownstreamModerationDetailsDto] to its [MessageModerationDetails] representation.
-     */
-    internal fun DownstreamModerationDetailsDto.toDomain(): MessageModerationDetails = MessageModerationDetails(
-        originalText = original_text.orEmpty(),
-        action = MessageModerationAction.fromRawValue(action.orEmpty()),
-        errorMsg = error_msg.orEmpty(),
-    )
 
     /**
      * Maps the network [DownstreamModerationDto] to the domain model [Moderation].
@@ -951,9 +944,7 @@ internal class DomainMapping(
         cid = channelCid,
         channel = channel?.toDomain(),
         messageId = messageId,
-        // TODO(message-migration): restore as `message?.toDomain()` once
-        //  DownstreamMessageDto migrates to MessageResponse. The wire embeds it.
-        message = null,
+        message = message?.toDomain(channel?.toChannelInfo()),
         createdAt = createdAt,
         updatedAt = updatedAt,
     )

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -26,6 +25,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 
 @AuthenticatedApi
 internal interface DeviceApi {

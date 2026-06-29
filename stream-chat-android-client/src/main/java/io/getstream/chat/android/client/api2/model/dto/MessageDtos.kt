@@ -20,10 +20,7 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.network.models.ModerationV2Response as DownstreamModerationDto
-import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
 import io.getstream.chat.android.network.models.SharedLocation as UpstreamLocationDto
-import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for
@@ -63,62 +60,7 @@ internal data class UpstreamMessageDto(
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
-/**
- * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class DownstreamMessageDto(
-    val attachments: List<AttachmentDto>,
-    val channel: ChannelInfoDto?,
-    val cid: String,
-    val command: String?,
-    val created_at: Date,
-    val deleted_at: Date?,
-    val html: String,
-    val i18n: Map<String, String> = emptyMap(),
-    val id: String,
-    val latest_reactions: List<DownstreamReactionDto>,
-    val mentioned_users: List<DownstreamUserDto>,
-    val mentioned_here: Boolean? = null,
-    val mentioned_channel: Boolean? = null,
-    val mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
-    val mentioned_roles: List<String> = emptyList(),
-    val own_reactions: List<DownstreamReactionDto>,
-    val parent_id: String?,
-    val pin_expires: Date?,
-    val pinned: Boolean = false,
-    val pinned_at: Date?,
-    val message_text_updated_at: Date?,
-    val pinned_by: DownstreamUserDto?,
-    val quoted_message: DownstreamMessageDto?,
-    val quoted_message_id: String?,
-    val reaction_counts: Map<String, Int>?,
-    val reaction_scores: Map<String, Int>?,
-    val reaction_groups: Map<String, ReactionGroupDto>?,
-    val reply_count: Int,
-    val deleted_reply_count: Int,
-    val shadowed: Boolean = false,
-    val show_in_channel: Boolean = false,
-    val silent: Boolean,
-    val text: String,
-    val thread_participants: List<DownstreamUserDto> = emptyList(),
-    val type: String,
-    val updated_at: Date,
-    val user: DownstreamUserDto,
-    val moderation_details: DownstreamModerationDetailsDto? = null, // Used for Moderation V1
-    val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
-    val poll: DownstreamPollDto? = null,
-    val reminder: DownstreamReminderInfoDto? = null,
-    val shared_location: DownstreamLocationDto? = null,
-    val member: DownstreamMemberInfoDto? = null,
-    val deleted_for_me: Boolean?,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
+internal typealias DownstreamMessageDto = io.getstream.chat.android.network.models.MessageResponse
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamDraftDto(

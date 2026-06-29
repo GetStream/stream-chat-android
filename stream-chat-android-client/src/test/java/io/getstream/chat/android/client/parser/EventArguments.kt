@@ -261,8 +261,8 @@ internal object EventArguments {
         memberCount = channel.memberCount,
         id = channel.id,
         type = channel.type,
-        name = "Channel Name",
-        image = "https://domain.io/avatars/285/channel.png",
+        name = null,
+        image = null,
     )
 
     private val messageAttachment = Attachment(
@@ -302,6 +302,8 @@ internal object EventArguments {
         replyCount = 1,
         threadParticipants = listOf(user),
     )
+
+    private val messageWithoutChannelInfo = message.copy(channelInfo = null)
 
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
@@ -491,7 +493,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageWithoutChannelInfo,
         hardDelete = false,
         channelMessageCount = 1,
         deletedForMe = false,
@@ -504,7 +506,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageWithoutChannelInfo,
         hardDelete = true,
         channelMessageCount = 1,
         deletedForMe = true,
@@ -528,7 +530,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageWithoutChannelInfo,
     )
     private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
@@ -650,7 +652,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageWithoutChannelInfo,
         reaction = reaction,
     )
     private val reactionNewEvent = ReactionNewEvent(
@@ -661,7 +663,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageWithoutChannelInfo,
         reaction = reaction,
     )
     private val reactionUpdateEvent = ReactionUpdateEvent(
@@ -672,7 +674,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageWithoutChannelInfo,
         reaction = reaction,
     )
     private val typingStartEvent = TypingStartEvent(

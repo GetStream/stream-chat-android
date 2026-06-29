@@ -20,7 +20,6 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.direct.PollAdapter
@@ -30,6 +29,7 @@ import io.getstream.chat.android.client.parser2.testdata.PollTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

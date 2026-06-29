@@ -20,11 +20,7 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.network.models.Attachment as AttachmentDto
-import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
-import java.util.Date
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
@@ -37,10 +33,6 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
-import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
-import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
-import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
-import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
@@ -58,6 +50,14 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import java.util.Date
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
+import io.getstream.chat.android.network.models.ChannelMemberRequest as UpstreamMemberDataDto
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse as DeliveryReceiptsDto
+import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
+import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
+import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadReceiptsDto
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
 
 internal class DtoMappingTest {
 

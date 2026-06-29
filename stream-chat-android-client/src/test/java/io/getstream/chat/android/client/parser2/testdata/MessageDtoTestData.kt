@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.network.models.MentionedUserGroupResponse
+import io.getstream.chat.android.network.models.MessageMemberResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 import io.getstream.chat.android.network.models.ReactionGroupResponse as ReactionGroupDto
@@ -46,8 +46,7 @@ internal object MessageDtoTestData {
               "id": "g1",
               "name": "platform",
               "created_at": "1970-01-01T00:00:00.000Z",
-              "updated_at": "1970-01-01T00:00:00.000Z",
-              "members": []
+              "updated_at": "1970-01-01T00:00:00.000Z"
             }
           ],
           "mentioned_roles": ["admin", "moderator"],
@@ -79,35 +78,17 @@ internal object MessageDtoTestData {
           "moderation_details": {
             "original_text": "spam_text",
             "action": "bounce",
-            "error_msg": "this_message_did_not_meet_our_content_guidelines",
-            "harms": [
-              {
-                "name": "spam_commercial",
-                "phrase_list_ids": [],
-                "details": [
-                  {
-                    "spam_commercial": {
-                      "threshold": 0.7,
-                      "language": "en",
-                      "lang_score": 0.8328282,
-                      "clean_msg": "spam_text",
-                      "pred_score": {
-                        "spam_commercial": 0.993
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
+            "error_msg": "this_message_did_not_meet_our_content_guidelines"
           },
-          "member": ${MemberInfoDtoTestData.downstreamJson},
+          "member": {
+            "channel_role": "channel_member",
+            "notifications_muted": false
+          },
           "deleted_for_me": true,
-          "extraData": {
-            "key1": "value1",
-            "key2": true,
-            "key3": {
-              "key4": "val4"
-            }
+          "key1": "value1",
+          "key2": true,
+          "key3": {
+            "key4": "val4"
           },
           "customKey1": "customVal1",
           "customKey2": true,
@@ -122,91 +103,64 @@ internal object MessageDtoTestData {
         cid = "cid",
         text = "text",
         html = "html",
-        parent_id = "parentId",
+        parentId = "parentId",
         command = "command",
         user = UserDtoTestData.downstreamUser,
         silent = false,
         shadowed = false,
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
-        deleted_at = Date(1591787071588),
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "key1" to "value1",
-                "key2" to true,
-                "key3" to mapOf(
-                    "key4" to "val4",
-                ),
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
+        deletedAt = Date(1591787071588),
+        custom = mapOf(
+            "moderation_details" to mapOf(
+                "original_text" to "spam_text",
+                "action" to "bounce",
+                "error_msg" to "this_message_did_not_meet_our_content_guidelines",
+            ),
+            "key1" to "value1",
+            "key2" to true,
+            "key3" to mapOf(
+                "key4" to "val4",
             ),
             "customKey1" to "customVal1",
             "customKey2" to true,
-            "customKey3" to listOf(
-                "a",
-                "b",
-                "c",
-            ),
+            "customKey3" to listOf("a", "b", "c"),
         ),
         type = "regular",
-        reply_count = 0,
-        deleted_reply_count = 0,
-        reaction_counts = mapOf("like" to 2),
-        reaction_scores = mapOf("like" to 10),
-        reaction_groups = mapOf(
-            "like" to
-                ReactionGroupDto(
-                    count = 2,
-                    sumScores = 10,
-                    firstReactionAt = Date(1591787071588),
-                    lastReactionAt = Date(1591787071588),
-                ),
-        ),
-        latest_reactions = listOf(ReactionDtoTestData.downstreamReactionWithoutExtraData),
-        own_reactions = emptyList(),
-        show_in_channel = false,
-        mentioned_users = listOf(UserDtoTestData.downstreamUserWithoutExtraData),
-        mentioned_here = true,
-        mentioned_channel = true,
-        mentioned_groups = listOf(DownstreamUserGroupDto(id = "g1", name = "platform", createdAt = Date(0), updatedAt = Date(0))),
-        mentioned_roles = listOf("admin", "moderator"),
-        i18n = emptyMap(),
-        thread_participants = emptyList(),
-        attachments = listOf(AttachmentDtoTestData.attachment),
-        quoted_message_id = "messageId",
-        quoted_message = null,
-        pinned = false,
-        pinned_by = UserDtoTestData.downstreamUserWithoutExtraData,
-        pinned_at = null,
-        pin_expires = null,
-        channel = null,
-        message_text_updated_at = null,
-        moderation_details = DownstreamModerationDetailsDto(
-            original_text = "spam_text",
-            action = "bounce",
-            error_msg = "this_message_did_not_meet_our_content_guidelines",
-            extraData = mapOf(
-                "harms" to listOf(
-                    mapOf(
-                        "name" to "spam_commercial",
-                        "phrase_list_ids" to emptyList<String>(),
-                        "details" to listOf(
-                            mapOf(
-                                "spam_commercial" to mapOf(
-                                    "threshold" to 0.7,
-                                    "language" to "en",
-                                    "lang_score" to 0.8328282,
-                                    "clean_msg" to "spam_text",
-                                    "pred_score" to mapOf(
-                                        "spam_commercial" to 0.993,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+        replyCount = 0,
+        deletedReplyCount = 0,
+        reactionCounts = mapOf("like" to 2),
+        reactionScores = mapOf("like" to 10),
+        reactionGroups = mapOf(
+            "like" to ReactionGroupDto(
+                count = 2,
+                sumScores = 10,
+                firstReactionAt = Date(1591787071588),
+                lastReactionAt = Date(1591787071588),
             ),
         ),
-        member = MemberInfoDtoTestData.downstreamMemberInfo,
-        deleted_for_me = true,
+        latestReactions = listOf(ReactionDtoTestData.downstreamReactionWithoutExtraData),
+        ownReactions = emptyList(),
+        showInChannel = false,
+        mentionedUsers = listOf(UserDtoTestData.downstreamUserWithoutExtraData),
+        mentionedHere = true,
+        mentionedChannel = true,
+        mentionedGroups = listOf(
+            MentionedUserGroupResponse(id = "g1", name = "platform", createdAt = Date(0), updatedAt = Date(0)),
+        ),
+        mentionedRoles = listOf("admin", "moderator"),
+        i18n = emptyMap(),
+        threadParticipants = emptyList(),
+        attachments = listOf(AttachmentDtoTestData.attachment),
+        quotedMessageId = "messageId",
+        quotedMessage = null,
+        pinned = false,
+        pinnedBy = UserDtoTestData.downstreamUserWithoutExtraData,
+        pinnedAt = null,
+        pinExpires = null,
+        messageTextUpdatedAt = null,
+        member = MessageMemberResponse(channelRole = "channel_member", notificationsMuted = false),
+        deletedForMe = true,
     )
 
     @Language("JSON")
@@ -220,6 +174,8 @@ internal object MessageDtoTestData {
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "latest_reactions": [],
           "mentioned_users": [],
+          "mentioned_here": false,
+          "mentioned_channel": false,
           "own_reactions": [],
           "reaction_counts": {},
           "reaction_scores": {},
@@ -235,31 +191,6 @@ internal object MessageDtoTestData {
           "type": "",
           "updated_at": "2020-06-10T11:04:31.588Z",
           "user": ${UserDtoTestData.downstreamJson},
-          "moderation_details": {
-            "original_text": "spam_text",
-            "action": "bounce",
-            "error_msg": "this_message_did_not_meet_our_content_guidelines",
-            "harms": [
-              {
-                "name": "spam_commercial",
-                "phrase_list_ids": [],
-                "details": [
-                  {
-                    "spam_commercial": {
-                      "threshold": 0.7,
-                      "language": "en",
-                      "lang_score": 0.8328282,
-                      "clean_msg": "spam_text",
-                      "pred_score": {
-                        "spam_commercial": 0.993
-                      }
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "member": ${MemberInfoDtoTestData.downstreamJson},
           "deleted_for_me": false
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
@@ -267,130 +198,38 @@ internal object MessageDtoTestData {
         cid = "cid",
         text = "",
         html = "",
-        parent_id = null,
+        parentId = null,
         command = null,
         user = UserDtoTestData.downstreamUser,
         silent = false,
         shadowed = false,
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
-        deleted_at = null,
-        extraData = emptyMap(),
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
+        deletedAt = null,
+        custom = emptyMap(),
         type = "",
-        reply_count = 0,
-        deleted_reply_count = 0,
-        reaction_counts = emptyMap(),
-        reaction_scores = emptyMap(),
-        reaction_groups = emptyMap(),
-        latest_reactions = emptyList(),
-        own_reactions = emptyList(),
-        show_in_channel = false,
-        mentioned_users = emptyList(),
+        replyCount = 0,
+        deletedReplyCount = 0,
+        reactionCounts = emptyMap(),
+        reactionScores = emptyMap(),
+        reactionGroups = emptyMap(),
+        latestReactions = emptyList(),
+        ownReactions = emptyList(),
+        showInChannel = false,
+        mentionedUsers = emptyList(),
+        mentionedHere = false,
+        mentionedChannel = false,
         i18n = emptyMap(),
-        thread_participants = emptyList(),
+        threadParticipants = emptyList(),
         attachments = emptyList(),
-        quoted_message_id = null,
-        quoted_message = null,
+        quotedMessageId = null,
+        quotedMessage = null,
         pinned = false,
-        pinned_by = null,
-        pinned_at = null,
-        pin_expires = null,
-        channel = null,
-        message_text_updated_at = null,
-        moderation_details = DownstreamModerationDetailsDto(
-            original_text = "spam_text",
-            action = "bounce",
-            error_msg = "this_message_did_not_meet_our_content_guidelines",
-            extraData = mapOf(
-                "harms" to listOf(
-                    mapOf(
-                        "name" to "spam_commercial",
-                        "phrase_list_ids" to emptyList<String>(),
-                        "details" to listOf(
-                            mapOf(
-                                "spam_commercial" to mapOf(
-                                    "threshold" to 0.7,
-                                    "language" to "en",
-                                    "lang_score" to 0.8328282,
-                                    "clean_msg" to "spam_text",
-                                    "pred_score" to mapOf(
-                                        "spam_commercial" to 0.993,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        member = MemberInfoDtoTestData.downstreamMemberInfo,
-        deleted_for_me = false,
-    )
-
-    @Language("JSON")
-    val downstreamJsonWithChannelInfo =
-        """{
-          "attachments" : [],
-          "cid": "cid",
-          "created_at": "2020-06-10T11:04:31.0Z",
-          "html": "",
-          "i18n": {},
-          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-          "latest_reactions": [],
-          "mentioned_users": [],
-          "own_reactions": [],
-          "reaction_counts": {},
-          "reaction_scores": {},
-          "reaction_groups": {},
-          "reply_count": 1,
-          "deleted_reply_count": 2,
-          "pinned": false,
-          "shadowed": false,
-          "show_in_channel": false,
-          "silent": false,
-          "text": "",
-          "thread_participants" : [],
-          "type": "",
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "user": ${UserDtoTestData.downstreamJson},
-          "channel": ${ChannelInfoDtoTestData.channelInfoJsonWithoutMemberCount}
-        }""".withoutWhitespace()
-    val downstreamMessageWithChannelInfo = DownstreamMessageDto(
-        id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        cid = "cid",
-        text = "",
-        html = "",
-        parent_id = null,
-        command = null,
-        user = UserDtoTestData.downstreamUser,
-        silent = false,
-        shadowed = false,
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
-        deleted_at = null,
-        extraData = emptyMap(),
-        type = "",
-        reply_count = 1,
-        deleted_reply_count = 2,
-        reaction_counts = emptyMap(),
-        reaction_scores = emptyMap(),
-        reaction_groups = emptyMap(),
-        latest_reactions = emptyList(),
-        own_reactions = emptyList(),
-        show_in_channel = false,
-        mentioned_users = emptyList(),
-        i18n = emptyMap(),
-        thread_participants = emptyList(),
-        attachments = emptyList(),
-        quoted_message_id = null,
-        quoted_message = null,
-        pinned = false,
-        pinned_by = null,
-        pinned_at = null,
-        pin_expires = null,
-        message_text_updated_at = null,
-        channel = ChannelInfoDtoTestData.channelInfoDtoWithoutMemberCount,
-        deleted_for_me = null,
+        pinnedBy = null,
+        pinnedAt = null,
+        pinExpires = null,
+        messageTextUpdatedAt = null,
+        deletedForMe = false,
     )
 
     @Language("JSON")
@@ -449,11 +288,7 @@ internal object MessageDtoTestData {
             ),
             "customKey1" to "customVal1",
             "customKey2" to true,
-            "customKey3" to listOf(
-                "a",
-                "b",
-                "c",
-            ),
+            "customKey3" to listOf("a", "b", "c"),
         ),
         show_in_channel = false,
         mentioned_users = emptyList(),

@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.PollDtoTestData
-import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 
 internal class DownstreamPollOptionDtoAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()

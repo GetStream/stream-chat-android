@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.UnreadDtoTestData
-import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 
 internal class UnreadDtoAdapterTest {
 

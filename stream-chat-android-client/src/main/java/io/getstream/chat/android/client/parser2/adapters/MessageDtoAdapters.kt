@@ -25,7 +25,10 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 
 internal object DownstreamMessageDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamMessageDto>(DownstreamMessageDto::class) {
+    CustomObjectDtoAdapter<DownstreamMessageDto>(
+        kClass = DownstreamMessageDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
     fun fromJson(
@@ -35,8 +38,12 @@ internal object DownstreamMessageDtoAdapter :
     ): DownstreamMessageDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
 
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamMessageDto): Unit = error("Can't convert this to Json")
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: DownstreamMessageDto?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        messageAdapter: JsonAdapter<DownstreamMessageDto>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, messageAdapter)
 }
 
 internal object UpstreamMessageDtoAdapter :

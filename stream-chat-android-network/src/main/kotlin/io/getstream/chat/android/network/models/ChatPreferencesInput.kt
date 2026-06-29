@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,15 +18,11 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
@@ -35,11 +31,11 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class ChatPreferencesInput (
+data class ChatPreferencesInput(
     @Json(name = "channel_mentions")
     val channelMentions: ChannelMentions? = null,
 
@@ -59,27 +55,25 @@ data class ChatPreferencesInput (
     val roleMentions: RoleMentions? = null,
 
     @Json(name = "thread_replies")
-    val threadReplies: ThreadReplies? = null
-)
-{
-    
-    /**
-    * ChannelMentions Enum
-    */
-    sealed class ChannelMentions(val value: kotlin.String) {
-            override fun toString(): String = value
+    val threadReplies: ThreadReplies? = null,
+) {
 
-            companion object {
-                fun fromString(s: kotlin.String): ChannelMentions = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * ChannelMentions Enum
+     */
+    sealed class ChannelMentions(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): ChannelMentions = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : ChannelMentions("all")
-            object None : ChannelMentions("none")
-            data class Unknown(val unknownValue: kotlin.String) : ChannelMentions(unknownValue)
-        
+        }
+        object All : ChannelMentions("all")
+        object None : ChannelMentions("none")
+        data class Unknown(val unknownValue: kotlin.String) : ChannelMentions(unknownValue)
 
         class ChannelMentionsAdapter : JsonAdapter<ChannelMentions>() {
             @FromJson
@@ -94,23 +88,23 @@ data class ChatPreferencesInput (
             }
         }
     }
-    /**
-    * DefaultPreference Enum
-    */
-    sealed class DefaultPreference(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): DefaultPreference = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * DefaultPreference Enum
+     */
+    sealed class DefaultPreference(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): DefaultPreference = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : DefaultPreference("all")
-            object None : DefaultPreference("none")
-            data class Unknown(val unknownValue: kotlin.String) : DefaultPreference(unknownValue)
-        
+        }
+        object All : DefaultPreference("all")
+        object None : DefaultPreference("none")
+        data class Unknown(val unknownValue: kotlin.String) : DefaultPreference(unknownValue)
 
         class DefaultPreferenceAdapter : JsonAdapter<DefaultPreference>() {
             @FromJson
@@ -125,23 +119,23 @@ data class ChatPreferencesInput (
             }
         }
     }
-    /**
-    * DirectMentions Enum
-    */
-    sealed class DirectMentions(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): DirectMentions = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * DirectMentions Enum
+     */
+    sealed class DirectMentions(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): DirectMentions = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : DirectMentions("all")
-            object None : DirectMentions("none")
-            data class Unknown(val unknownValue: kotlin.String) : DirectMentions(unknownValue)
-        
+        }
+        object All : DirectMentions("all")
+        object None : DirectMentions("none")
+        data class Unknown(val unknownValue: kotlin.String) : DirectMentions(unknownValue)
 
         class DirectMentionsAdapter : JsonAdapter<DirectMentions>() {
             @FromJson
@@ -156,23 +150,23 @@ data class ChatPreferencesInput (
             }
         }
     }
-    /**
-    * GroupMentions Enum
-    */
-    sealed class GroupMentions(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): GroupMentions = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * GroupMentions Enum
+     */
+    sealed class GroupMentions(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): GroupMentions = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : GroupMentions("all")
-            object None : GroupMentions("none")
-            data class Unknown(val unknownValue: kotlin.String) : GroupMentions(unknownValue)
-        
+        }
+        object All : GroupMentions("all")
+        object None : GroupMentions("none")
+        data class Unknown(val unknownValue: kotlin.String) : GroupMentions(unknownValue)
 
         class GroupMentionsAdapter : JsonAdapter<GroupMentions>() {
             @FromJson
@@ -187,23 +181,23 @@ data class ChatPreferencesInput (
             }
         }
     }
-    /**
-    * HereMentions Enum
-    */
-    sealed class HereMentions(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): HereMentions = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * HereMentions Enum
+     */
+    sealed class HereMentions(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): HereMentions = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : HereMentions("all")
-            object None : HereMentions("none")
-            data class Unknown(val unknownValue: kotlin.String) : HereMentions(unknownValue)
-        
+        }
+        object All : HereMentions("all")
+        object None : HereMentions("none")
+        data class Unknown(val unknownValue: kotlin.String) : HereMentions(unknownValue)
 
         class HereMentionsAdapter : JsonAdapter<HereMentions>() {
             @FromJson
@@ -218,23 +212,23 @@ data class ChatPreferencesInput (
             }
         }
     }
-    /**
-    * RoleMentions Enum
-    */
-    sealed class RoleMentions(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): RoleMentions = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * RoleMentions Enum
+     */
+    sealed class RoleMentions(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): RoleMentions = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : RoleMentions("all")
-            object None : RoleMentions("none")
-            data class Unknown(val unknownValue: kotlin.String) : RoleMentions(unknownValue)
-        
+        }
+        object All : RoleMentions("all")
+        object None : RoleMentions("none")
+        data class Unknown(val unknownValue: kotlin.String) : RoleMentions(unknownValue)
 
         class RoleMentionsAdapter : JsonAdapter<RoleMentions>() {
             @FromJson
@@ -249,23 +243,23 @@ data class ChatPreferencesInput (
             }
         }
     }
-    /**
-    * ThreadReplies Enum
-    */
-    sealed class ThreadReplies(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): ThreadReplies = when (s) {
-                    "all" -> All
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * ThreadReplies Enum
+     */
+    sealed class ThreadReplies(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): ThreadReplies = when (s) {
+                "all" -> All
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : ThreadReplies("all")
-            object None : ThreadReplies("none")
-            data class Unknown(val unknownValue: kotlin.String) : ThreadReplies(unknownValue)
-        
+        }
+        object All : ThreadReplies("all")
+        object None : ThreadReplies("none")
+        data class Unknown(val unknownValue: kotlin.String) : ThreadReplies(unknownValue)
 
         class ThreadRepliesAdapter : JsonAdapter<ThreadReplies>() {
             @FromJson
@@ -279,5 +273,5 @@ data class ChatPreferencesInput (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

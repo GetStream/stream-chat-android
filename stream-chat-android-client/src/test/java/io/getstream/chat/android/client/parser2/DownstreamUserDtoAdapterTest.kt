@@ -46,5 +46,4 @@ internal class DownstreamUserDtoAdapterTest {
         val user = parser.fromJson(downstreamJson, DownstreamUserDto::class.java)
         user shouldBeEqualTo downstreamUser
     }
-
 }

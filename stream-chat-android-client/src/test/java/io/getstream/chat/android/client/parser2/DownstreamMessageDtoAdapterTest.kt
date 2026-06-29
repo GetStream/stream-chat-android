@@ -18,14 +18,10 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJson
-import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJsonWithChannelInfo
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessage
-import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithChannelInfo
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithoutExtraData
-import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class DownstreamMessageDtoAdapterTest {
@@ -38,21 +34,8 @@ internal class DownstreamMessageDtoAdapterTest {
     }
 
     @Test
-    fun `Deserialize JSON message with channel info`() {
-        val message = parser.fromJson(downstreamJsonWithChannelInfo, DownstreamMessageDto::class.java)
-        message shouldBeEqualTo downstreamMessageWithChannelInfo
-    }
-
-    @Test
     fun `Deserialize JSON message without custom fields`() {
         val message = parser.fromJson(downstreamJsonWithoutExtraData, DownstreamMessageDto::class.java)
         message shouldBeEqualTo downstreamMessageWithoutExtraData
-    }
-
-    @Test
-    fun `Can't serialize downstream dto`() {
-        invoking {
-            parser.toJson(downstreamMessage)
-        }.shouldThrow(RuntimeException::class)
     }
 }

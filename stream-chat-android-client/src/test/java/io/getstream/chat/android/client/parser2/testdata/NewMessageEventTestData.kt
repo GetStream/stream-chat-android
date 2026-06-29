@@ -45,6 +45,10 @@ internal object NewMessageEventTestData {
         "deleted_reply_count":0,
         "created_at":"2020-01-01T00:00:00.000Z",
         "updated_at":"2020-01-01T00:00:00.000Z",
+        "mentioned_here":false,
+        "mentioned_channel":false,
+        "pinned":false,
+        "shadowed":false,
         "silent":false
     }"""
 
@@ -173,6 +177,10 @@ internal object NewMessageEventTestData {
         "deleted_reply_count":0,
         "created_at":"2020-01-01T00:00:00.000Z",
         "updated_at":"2020-01-01T00:00:00.000Z",
+        "mentioned_here":false,
+        "mentioned_channel":false,
+        "pinned":false,
+        "shadowed":false,
         "silent":false
     }"""
 
@@ -192,6 +200,10 @@ internal object NewMessageEventTestData {
         "deleted_reply_count":0,
         "created_at":"2020-01-01T00:00:00.000Z",
         "updated_at":"2020-01-01T00:00:00.000Z",
+        "mentioned_here":false,
+        "mentioned_channel":false,
+        "pinned":false,
+        "shadowed":false,
         "silent":false,
         "quoted_message":$QUOTED_MESSAGE_NO_CHANNEL_JSON
     }"""

@@ -37,7 +37,6 @@ import java.util.Date
 @Suppress("LongParameterList")
 internal class MessageAdapter(
     private val attachmentAdapter: JsonAdapter<Attachment>,
-    private val channelInfoAdapter: JsonAdapter<ChannelInfo>,
     private val reactionAdapter: JsonAdapter<Reaction>,
     private val reactionGroupAdapter: ReactionGroupAdapter,
     private val userAdapter: JsonAdapter<User>,
@@ -62,7 +61,6 @@ internal class MessageAdapter(
         reader.beginObject()
 
         var attachments: List<Attachment>? = null
-        var channel: ChannelInfo? = null
         var cid: String? = null
         var command: String? = null
         var createdAt: Date? = null
@@ -111,18 +109,12 @@ internal class MessageAdapter(
             val key = reader.nextName()
             when (key) {
                 "attachments" -> attachments = JsonParsingUtils.parseList(reader, attachmentAdapter)
-                "channel" -> channel = channelInfoAdapter.fromJson(reader)
                 "cid" -> cid = reader.nextString()
                 "command" -> command = JsonParsingUtils.readNullableString(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "html" -> html = reader.nextString()
-                // i18n is non-nullable in DownstreamMessageDto (with default), so the DTO path
-                // throws on explicit JSON null even though missing is fine. Match that here.
-                "i18n" -> {
-                    JsonParsingUtils.rejectExplicitNull(reader, "i18n")
-                    i18n = JsonParsingUtils.parseStringMap(reader)
-                }
+                "i18n" -> i18n = JsonParsingUtils.parseStringMap(reader)
                 "id" -> id = reader.nextString()
                 "latest_reactions" -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "mentioned_users" -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
@@ -137,12 +129,7 @@ internal class MessageAdapter(
                 "pinned_at" -> pinnedAt = dateAdapter.fromJson(reader)
                 "message_text_updated_at" -> messageTextUpdatedAt = dateAdapter.fromJson(reader)
                 "pinned_by" -> pinnedBy = userAdapter.fromJson(reader)
-                "quoted_message" -> {
-                    // Parse with outer fallback only; parent's channel may not be parsed yet.
-                    // Post-loop enrichment ensures parity with DTO toDomain(channelInfo).
-                    quotedMessage = fromJson(reader, fallbackChannelInfo)
-                }
-
+                "quoted_message" -> quotedMessage = fromJson(reader, fallbackChannelInfo)
                 "quoted_message_id" -> quotedMessageId = JsonParsingUtils.readNullableString(reader)
                 "reaction_counts" -> reactionCounts = JsonParsingUtils.parseIntMap(reader)
                 "reaction_scores" -> reactionScores = JsonParsingUtils.parseIntMap(reader)
@@ -153,12 +140,7 @@ internal class MessageAdapter(
                 "show_in_channel" -> showInChannel = reader.nextBoolean()
                 "silent" -> silent = reader.nextBoolean()
                 "text" -> text = reader.nextString()
-                // thread_participants is non-nullable in DownstreamMessageDto (with default),
-                // so the DTO path throws on explicit JSON null. Match that here.
-                "thread_participants" -> {
-                    JsonParsingUtils.rejectExplicitNull(reader, "thread_participants")
-                    threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
-                }
+                "thread_participants" -> threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
                 "type" -> type = reader.nextString()
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "user" -> user = userAdapter.fromJson(reader)
@@ -174,14 +156,10 @@ internal class MessageAdapter(
         }
         reader.endObject()
 
-        JsonParsingUtils.requireField(attachments, "attachments", reader)
         JsonParsingUtils.requireField(cid, "cid", reader)
         JsonParsingUtils.requireField(createdAt, "created_at", reader)
         JsonParsingUtils.requireField(html, "html", reader)
         JsonParsingUtils.requireField(id, "id", reader)
-        JsonParsingUtils.requireField(latestReactions, "latest_reactions", reader)
-        JsonParsingUtils.requireField(mentionedUsers, "mentioned_users", reader)
-        JsonParsingUtils.requireField(ownReactions, "own_reactions", reader)
         JsonParsingUtils.requireField(replyCount, "reply_count", reader)
         JsonParsingUtils.requireField(deletedReplyCount, "deleted_reply_count", reader)
         JsonParsingUtils.requireField(silent, "silent", reader)
@@ -190,29 +168,9 @@ internal class MessageAdapter(
         JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
         JsonParsingUtils.requireField(user, "user", reader)
 
-        val resolvedChannelInfo = channel ?: fallbackChannelInfo
-
-        // Enrich the quoted message with the parent's resolved channelInfo (matching DTO
-        // toDomain behavior where the parent passes its resolved channelInfo as fallback to
-        // quoted_message.toDomain()).
-        //
-        // Known limit: channelInfo propagation is only one level deep. A two-deep chain
-        // (message -> quoted_message -> quoted_message) where the inner two messages have no
-        // `channel` field will leave the innermost message's channelInfo null, while the DTO
-        // path would propagate the outer message's channelInfo down two levels. Two-deep
-        // quoted_message chains are rare in practice; if support is needed, this fallback
-        // needs to be threaded recursively (or replaced with a post-hoc traversal).
-        val enrichedQuotedMessage = quotedMessage?.let { qm ->
-            if (resolvedChannelInfo != null && qm.channelInfo == null) {
-                qm.copy(channelInfo = resolvedChannelInfo)
-            } else {
-                qm
-            }
-        }
-
         // Filter reactions by messageId (matching DomainMapping behavior)
-        val filteredLatestReactions = latestReactions.filter { it.messageId == id }
-        val filteredOwnReactions = ownReactions.filter { it.messageId == id }
+        val filteredLatestReactions = latestReactions.orEmpty().filter { it.messageId == id }
+        val filteredOwnReactions = ownReactions.orEmpty().filter { it.messageId == id }
 
         // Calculate last update time: max of updated_at and poll?.updatedAt
         val lastUpdateTime = listOfNotNull(
@@ -221,8 +179,8 @@ internal class MessageAdapter(
         ).maxByOrNull { it.time } ?: updatedAt
 
         return Message(
-            attachments = attachments,
-            channelInfo = resolvedChannelInfo,
+            attachments = attachments.orEmpty(),
+            channelInfo = fallbackChannelInfo,
             cid = cid,
             command = command,
             createdAt = createdAt,
@@ -231,7 +189,7 @@ internal class MessageAdapter(
             i18n = i18n ?: emptyMap(),
             id = id,
             latestReactions = filteredLatestReactions,
-            mentionedUsers = mentionedUsers,
+            mentionedUsers = mentionedUsers.orEmpty(),
             mentionedHere = mentionedHere == true,
             mentionedChannel = mentionedChannel == true,
             mentionedGroups = mentionedGroups.orEmpty(),
@@ -248,7 +206,7 @@ internal class MessageAdapter(
             replyCount = replyCount,
             deletedReplyCount = deletedReplyCount,
             replyMessageId = quotedMessageId,
-            replyTo = enrichedQuotedMessage,
+            replyTo = quotedMessage,
             shadowed = shadowed ?: false,
             showInChannel = showInChannel ?: false,
             silent = silent,

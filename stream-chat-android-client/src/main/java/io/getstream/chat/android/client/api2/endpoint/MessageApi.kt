@@ -17,12 +17,8 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.network.models.QueryDraftsRequest
-import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
-import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
@@ -35,6 +31,8 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryReactionsRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -42,6 +40,8 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 
 @Suppress("TooManyFunctions")
 @AuthenticatedApi

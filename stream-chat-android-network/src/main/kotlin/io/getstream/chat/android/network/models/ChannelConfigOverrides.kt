@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +18,26 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import kotlin.collections.List
+import kotlin.collections.Map
 
 /**
  * Channel configuration overrides
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class ChannelConfigOverrides (
+data class ChannelConfigOverrides(
     @Json(name = "blocklist")
     val blocklist: kotlin.String? = null,
 
@@ -86,27 +84,25 @@ data class ChannelConfigOverrides (
     val chatPreferences: io.getstream.chat.android.network.models.ChatPreferences? = null,
 
     @Json(name = "grants")
-    val grants: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>? = emptyMap()
-)
-{
-    
-    /**
-    * BlocklistBehavior Enum
-    */
-    sealed class BlocklistBehavior(val value: kotlin.String) {
-            override fun toString(): String = value
+    val grants: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>? = emptyMap(),
+) {
 
-            companion object {
-                fun fromString(s: kotlin.String): BlocklistBehavior = when (s) {
-                    "block" -> Block
-                    "flag" -> Flag
-                    else -> Unknown(s)
-                }
+    /**
+     * BlocklistBehavior Enum
+     */
+    sealed class BlocklistBehavior(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): BlocklistBehavior = when (s) {
+                "block" -> Block
+                "flag" -> Flag
+                else -> Unknown(s)
             }
-            object Block : BlocklistBehavior("block")
-            object Flag : BlocklistBehavior("flag")
-            data class Unknown(val unknownValue: kotlin.String) : BlocklistBehavior(unknownValue)
-        
+        }
+        object Block : BlocklistBehavior("block")
+        object Flag : BlocklistBehavior("flag")
+        data class Unknown(val unknownValue: kotlin.String) : BlocklistBehavior(unknownValue)
 
         class BlocklistBehaviorAdapter : JsonAdapter<BlocklistBehavior>() {
             @FromJson
@@ -121,29 +117,29 @@ data class ChannelConfigOverrides (
             }
         }
     }
-    /**
-    * PushLevel Enum
-    */
-    sealed class PushLevel(val value: kotlin.String) {
-            override fun toString(): String = value
 
-            companion object {
-                fun fromString(s: kotlin.String): PushLevel = when (s) {
-                    "all" -> All
-                    "all_mentions" -> AllMentions
-                    "direct_mentions" -> DirectMentions
-                    "mentions" -> Mentions
-                    "none" -> None
-                    else -> Unknown(s)
-                }
+    /**
+     * PushLevel Enum
+     */
+    sealed class PushLevel(val value: kotlin.String) {
+        override fun toString(): String = value
+
+        companion object {
+            fun fromString(s: kotlin.String): PushLevel = when (s) {
+                "all" -> All
+                "all_mentions" -> AllMentions
+                "direct_mentions" -> DirectMentions
+                "mentions" -> Mentions
+                "none" -> None
+                else -> Unknown(s)
             }
-            object All : PushLevel("all")
-            object AllMentions : PushLevel("all_mentions")
-            object DirectMentions : PushLevel("direct_mentions")
-            object Mentions : PushLevel("mentions")
-            object None : PushLevel("none")
-            data class Unknown(val unknownValue: kotlin.String) : PushLevel(unknownValue)
-        
+        }
+        object All : PushLevel("all")
+        object AllMentions : PushLevel("all_mentions")
+        object DirectMentions : PushLevel("direct_mentions")
+        object Mentions : PushLevel("mentions")
+        object None : PushLevel("none")
+        data class Unknown(val unknownValue: kotlin.String) : PushLevel(unknownValue)
 
         class PushLevelAdapter : JsonAdapter<PushLevel>() {
             @FromJson
@@ -157,5 +153,5 @@ data class ChannelConfigOverrides (
                 writer.value(value?.value)
             }
         }
-    }    
+    }
 }

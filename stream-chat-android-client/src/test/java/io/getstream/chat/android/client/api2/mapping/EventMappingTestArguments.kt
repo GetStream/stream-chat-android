@@ -191,7 +191,6 @@ internal object EventMappingTestArguments {
     private val CHANNEL_IMAGE = randomString()
     private val MESSAGE_ID = randomString()
     private val MESSAGE = Mother.randomDownstreamMessageDto()
-    private val MESSAGE_WITHOUT_CHANNEL_INFO = MESSAGE.copy(channel = null)
     private val DRAFT = Mother.randomDownstreamDraftDto()
     private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val CLEAR_HISTORY = randomBoolean()
@@ -233,7 +232,7 @@ internal object EventMappingTestArguments {
             name = CHANNEL_NAME,
             image = CHANNEL_IMAGE,
         ),
-        message = MESSAGE_WITHOUT_CHANNEL_INFO,
+        message = MESSAGE,
     )
 
     private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
@@ -909,7 +908,9 @@ internal object EventMappingTestArguments {
         cid = channelTruncatedDto.cid,
         channelType = channelTruncatedDto.channel_type,
         channelId = channelTruncatedDto.channel_id,
-        message = with(domainMapping) { channelTruncatedDto.message?.toDomain() },
+        message = with(domainMapping) {
+            channelTruncatedDto.message?.toDomain(channelTruncatedDto.channel.toChannelInfo())
+        },
         channel = with(domainMapping) {
             channelTruncatedDto.channel.toDomain()
         },
@@ -923,7 +924,9 @@ internal object EventMappingTestArguments {
         cid = channelUpdatedByUserDto.cid,
         channelType = channelUpdatedByUserDto.channel_type,
         channelId = channelUpdatedByUserDto.channel_id,
-        message = with(domainMapping) { channelUpdatedByUserDto.message?.toDomain() },
+        message = with(domainMapping) {
+            channelUpdatedByUserDto.message?.toDomain(channelUpdatedByUserDto.channel.toChannelInfo())
+        },
         channel = with(domainMapping) {
             channelUpdatedByUserDto.channel.toDomain()
         },
@@ -936,7 +939,9 @@ internal object EventMappingTestArguments {
         cid = channelUpdatedDto.cid,
         channelType = channelUpdatedDto.channel_type,
         channelId = channelUpdatedDto.channel_id,
-        message = with(domainMapping) { channelUpdatedDto.message?.toDomain() },
+        message = with(domainMapping) {
+            channelUpdatedDto.message?.toDomain(channelUpdatedDto.channel.toChannelInfo())
+        },
         channel = with(domainMapping) {
             channelUpdatedDto.channel.toDomain()
         },
@@ -1237,7 +1242,9 @@ internal object EventMappingTestArguments {
         cid = notificationMessageNewDto.cid,
         channelType = notificationMessageNewDto.channel_type,
         channelId = notificationMessageNewDto.channel_id,
-        message = with(domainMapping) { notificationMessageNewDto.message.toDomain() },
+        message = with(domainMapping) {
+            notificationMessageNewDto.message.toDomain(notificationMessageNewDto.channel.toChannelInfo())
+        },
         channel = with(domainMapping) {
             notificationMessageNewDto.channel.toDomain()
         },
@@ -1250,7 +1257,9 @@ internal object EventMappingTestArguments {
         cid = notificationThreadMessageNewDto.cid,
         channelType = notificationThreadMessageNewDto.channel_type,
         channelId = notificationThreadMessageNewDto.channel_id,
-        message = with(domainMapping) { notificationThreadMessageNewDto.message.toDomain() },
+        message = with(domainMapping) {
+            notificationThreadMessageNewDto.message.toDomain(notificationThreadMessageNewDto.channel.toChannelInfo())
+        },
         channel = with(domainMapping) {
             notificationThreadMessageNewDto.channel.toDomain()
         },

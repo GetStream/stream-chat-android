@@ -21,7 +21,6 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
-import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
@@ -36,12 +35,11 @@ import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
-import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.log.taggedLogger
 import okio.Buffer
 import java.util.Date
@@ -64,7 +62,6 @@ internal class DirectEventParser(
     private val deviceAdapter by lazy { DeviceAdapter() }
     private val privacySettingsAdapter by lazy { PrivacySettingsAdapter() }
     private val attachmentAdapter by lazy { AttachmentAdapter() }
-    private val channelInfoAdapter by lazy { ChannelInfoAdapter() }
     private val moderationDetailsAdapter by lazy { MessageModerationDetailsAdapter() }
     private val moderationAdapter by lazy { ModerationAdapter() }
     private val optionAdapter by lazy { OptionAdapter() }
@@ -78,8 +75,7 @@ internal class DirectEventParser(
     private val userAdapter by lazy {
         UserAdapter(deviceAdapter, privacySettingsAdapter, dateAdapter, userTransformer)
     }
-    private val userGroupMemberAdapter by lazy { UserGroupMemberAdapter(dateAdapter) }
-    private val userGroupAdapter by lazy { UserGroupAdapter(userGroupMemberAdapter, dateAdapter) }
+    private val userGroupAdapter by lazy { UserGroupAdapter(dateAdapter) }
     private val reactionAdapter by lazy { ReactionAdapter(userAdapter, dateAdapter) }
     private val pollAdapter by lazy {
         PollAdapter(userAdapter, optionAdapter, dateAdapter, currentUserIdProvider)
@@ -87,7 +83,7 @@ internal class DirectEventParser(
     private val reminderAdapter by lazy { MessageReminderInfoAdapter(dateAdapter) }
     private val messageAdapter by lazy {
         MessageAdapter(
-            attachmentAdapter, channelInfoAdapter, reactionAdapter,
+            attachmentAdapter, reactionAdapter,
             reactionGroupAdapter, userAdapter, userGroupAdapter, moderationDetailsAdapter, moderationAdapter,
             pollAdapter, reminderAdapter, locationAdapter, dateAdapter, messageTransformer,
         )

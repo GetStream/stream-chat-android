@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -33,9 +31,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
@@ -51,10 +47,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMember
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
-import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
-import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
-import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -92,6 +84,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
@@ -123,6 +116,10 @@ import io.getstream.chat.android.network.models.ReadReceiptsResponse as ReadRece
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningDto
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse as TypingIndicatorsDto
+import io.getstream.chat.android.network.models.UnreadCountsChannel as UnreadChannelDto
+import io.getstream.chat.android.network.models.UnreadCountsChannelType as UnreadChannelByTypeDto
+import io.getstream.chat.android.network.models.UnreadCountsThread as UnreadThreadDto
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -283,95 +280,89 @@ internal object Mother {
 
     fun randomDownstreamMessageDto(
         attachments: List<AttachmentDto> = emptyList(),
-        channel: ChannelInfoDto? = randomChannelInfoDto(),
         cid: String = randomString(),
         command: String? = randomString(),
-        created_at: Date = randomDate(),
-        deleted_at: Date? = randomDateOrNull(),
+        createdAt: Date = randomDate(),
+        deletedAt: Date? = randomDateOrNull(),
         html: String = randomString(),
         i18n: Map<String, String> = emptyMap(),
         id: String = randomString(),
-        latest_reactions: List<DownstreamReactionDto> = emptyList(),
-        mentioned_users: List<DownstreamUserDto> = emptyList(),
-        mentioned_here: Boolean? = null,
-        mentioned_channel: Boolean? = null,
-        mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
-        mentioned_roles: List<String> = emptyList(),
-        own_reactions: List<DownstreamReactionDto> = emptyList(),
-        parent_id: String? = randomString(),
-        pin_expires: Date? = randomDateOrNull(),
+        latestReactions: List<DownstreamReactionDto> = emptyList(),
+        mentionedUsers: List<DownstreamUserDto> = emptyList(),
+        mentionedHere: Boolean = false,
+        mentionedChannel: Boolean = false,
+        mentionedGroups: List<io.getstream.chat.android.network.models.MentionedUserGroupResponse> = emptyList(),
+        mentionedRoles: List<String> = emptyList(),
+        ownReactions: List<DownstreamReactionDto> = emptyList(),
+        parentId: String? = randomString(),
+        pinExpires: Date? = randomDateOrNull(),
         pinned: Boolean = randomBoolean(),
-        pinned_at: Date? = randomDateOrNull(),
-        message_text_updated_at: Date? = randomDateOrNull(),
-        pinned_by: DownstreamUserDto? = null,
-        quoted_message: DownstreamMessageDto? = null,
-        quoted_message_id: String? = randomString(),
-        reaction_counts: Map<String, Int>? = emptyMap(),
-        reaction_scores: Map<String, Int>? = emptyMap(),
-        reaction_groups: Map<String, ReactionGroupDto>? = emptyMap(),
-        reply_count: Int = randomInt(),
-        deleted_reply_count: Int = randomInt(),
+        pinnedAt: Date? = randomDateOrNull(),
+        messageTextUpdatedAt: Date? = randomDateOrNull(),
+        pinnedBy: DownstreamUserDto? = null,
+        quotedMessage: DownstreamMessageDto? = null,
+        quotedMessageId: String? = randomString(),
+        reactionCounts: Map<String, Int> = emptyMap(),
+        reactionScores: Map<String, Int> = emptyMap(),
+        reactionGroups: Map<String, ReactionGroupDto>? = emptyMap(),
+        replyCount: Int = randomInt(),
+        deletedReplyCount: Int = randomInt(),
         shadowed: Boolean = randomBoolean(),
-        show_in_channel: Boolean = randomBoolean(),
+        showInChannel: Boolean = randomBoolean(),
         silent: Boolean = randomBoolean(),
         text: String = randomString(),
-        thread_participants: List<DownstreamUserDto> = emptyList(),
+        threadParticipants: List<DownstreamUserDto> = emptyList(),
         type: String = randomString(),
-        updated_at: Date = randomDate(),
+        updatedAt: Date = randomDate(),
         user: DownstreamUserDto = randomDownstreamUserDto(),
-        moderation_details: DownstreamModerationDetailsDto? = null,
         moderation: DownstreamModerationDto? = null,
         poll: DownstreamPollDto? = null,
-        member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
-        deleted_for_me: Boolean? = null,
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamMessageDto {
-        return DownstreamMessageDto(
-            attachments = attachments,
-            channel = channel,
-            cid = cid,
-            command = command,
-            created_at = created_at,
-            deleted_at = deleted_at,
-            html = html,
-            i18n = i18n,
-            id = id,
-            latest_reactions = latest_reactions,
-            mentioned_users = mentioned_users,
-            mentioned_here = mentioned_here,
-            mentioned_channel = mentioned_channel,
-            mentioned_groups = mentioned_groups,
-            mentioned_roles = mentioned_roles,
-            own_reactions = own_reactions,
-            parent_id = parent_id,
-            pin_expires = pin_expires,
-            pinned = pinned,
-            pinned_at = pinned_at,
-            message_text_updated_at = message_text_updated_at,
-            pinned_by = pinned_by,
-            quoted_message = quoted_message,
-            quoted_message_id = quoted_message_id,
-            reaction_counts = reaction_counts,
-            reaction_scores = reaction_scores,
-            reaction_groups = reaction_groups,
-            reply_count = reply_count,
-            deleted_reply_count = deleted_reply_count,
-            shadowed = shadowed,
-            show_in_channel = show_in_channel,
-            silent = silent,
-            text = text,
-            thread_participants = thread_participants,
-            type = type,
-            updated_at = updated_at,
-            user = user,
-            moderation_details = moderation_details,
-            moderation = moderation,
-            poll = poll,
-            member = member,
-            deleted_for_me = deleted_for_me,
-            extraData = extraData,
-        )
-    }
+        member: io.getstream.chat.android.network.models.MessageMemberResponse? = null,
+        deletedForMe: Boolean? = null,
+        custom: Map<String, Any?> = emptyMap(),
+    ): DownstreamMessageDto = DownstreamMessageDto(
+        attachments = attachments,
+        cid = cid,
+        command = command,
+        createdAt = createdAt,
+        deletedAt = deletedAt,
+        html = html,
+        i18n = i18n,
+        id = id,
+        latestReactions = latestReactions,
+        mentionedUsers = mentionedUsers,
+        mentionedHere = mentionedHere,
+        mentionedChannel = mentionedChannel,
+        mentionedGroups = mentionedGroups,
+        mentionedRoles = mentionedRoles,
+        ownReactions = ownReactions,
+        parentId = parentId,
+        pinExpires = pinExpires,
+        pinned = pinned,
+        pinnedAt = pinnedAt,
+        messageTextUpdatedAt = messageTextUpdatedAt,
+        pinnedBy = pinnedBy,
+        quotedMessage = quotedMessage,
+        quotedMessageId = quotedMessageId,
+        reactionCounts = reactionCounts,
+        reactionScores = reactionScores,
+        reactionGroups = reactionGroups,
+        replyCount = replyCount,
+        deletedReplyCount = deletedReplyCount,
+        shadowed = shadowed,
+        showInChannel = showInChannel,
+        silent = silent,
+        text = text,
+        threadParticipants = threadParticipants,
+        type = type,
+        updatedAt = updatedAt,
+        user = user,
+        moderation = moderation,
+        poll = poll,
+        member = member,
+        deletedForMe = deletedForMe,
+        custom = custom,
+    )
 
     fun randomOwnUserResponse(
         id: String = randomString(),
@@ -498,22 +489,6 @@ internal object Mother {
         filterTags = filterTags,
         ownCapabilities = ownCapabilities.map(io.getstream.chat.android.network.models.ChannelOwnCapability::fromString),
         custom = custom,
-    )
-
-    fun randomChannelInfoDto(
-        type: String = randomString(),
-        id: String = randomString(),
-        cid: String = "$type:$id",
-        memberCount: Int = randomInt(),
-        name: String? = randomString(),
-        image: String? = randomString(),
-    ): ChannelInfoDto = ChannelInfoDto(
-        cid = cid,
-        id = id,
-        member_count = memberCount,
-        name = name,
-        type = type,
-        image = image,
     )
 
     fun randomConfigDto(
@@ -782,9 +757,6 @@ internal object Mother {
         custom = custom,
     )
 
-    fun randomDownstreamMemberInfoDto(channelRole: String? = randomString()): DownstreamMemberInfoDto =
-        DownstreamMemberInfoDto(channel_role = channelRole)
-
     fun randomDownstreamChannelUserRead(
         user: DownstreamUserDto = randomDownstreamUserDto(),
         lastRead: Date = randomDate(),
@@ -912,18 +884,6 @@ internal object Mother {
         reviewed_at = reviewedAt,
         reviewed_by = reviewedBy,
         rejected_at = rejectedAt,
-    )
-
-    fun randomDownstreamModerationDetailsDto(
-        originalText: String = randomString(),
-        action: String = randomString(),
-        errorMsg: String = randomString(),
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamModerationDetailsDto = DownstreamModerationDetailsDto(
-        original_text = originalText,
-        action = action,
-        error_msg = errorMsg,
-        extraData = extraData,
     )
 
     fun randomDownstreamModerationDto(

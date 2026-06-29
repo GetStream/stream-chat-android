@@ -24,8 +24,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import java.util.Date
+import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 
 @JsonClass(generateAdapter = true)
 internal data class ChannelResponse(

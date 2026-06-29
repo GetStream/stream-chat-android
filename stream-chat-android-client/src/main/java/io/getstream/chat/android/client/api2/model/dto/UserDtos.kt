@@ -18,9 +18,9 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import java.util.Date
 import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
 import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
-import java.util.Date
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter] for

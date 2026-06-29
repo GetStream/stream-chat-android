@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    https://github.com/GetStream/stream-video-android/blob/main/LICENSE
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +18,21 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
+import com.squareup.moshi.Json
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.*
-import kotlin.io.*
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
- * 
+ *
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class OwnUserResponse (
+data class OwnUserResponse(
     @Json(name = "banned")
     val banned: kotlin.Boolean,
 
@@ -128,5 +121,5 @@ data class OwnUserResponse (
     val teamsRole: kotlin.collections.Map<kotlin.String, kotlin.String>? = emptyMap(),
 
     @Json(name = "total_unread_count_by_team")
-    val totalUnreadCountByTeam: kotlin.collections.Map<kotlin.String, kotlin.Int>? = emptyMap()
+    val totalUnreadCountByTeam: kotlin.collections.Map<kotlin.String, kotlin.Int>? = emptyMap(),
 )

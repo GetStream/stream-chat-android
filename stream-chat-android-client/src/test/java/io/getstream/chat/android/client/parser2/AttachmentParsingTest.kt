@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.testdata.AttachmentTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -25,6 +24,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 
 internal class AttachmentParsingTest {
 

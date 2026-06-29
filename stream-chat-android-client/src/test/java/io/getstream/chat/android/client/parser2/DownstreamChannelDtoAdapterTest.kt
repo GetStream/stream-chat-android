@@ -50,5 +50,4 @@ internal class DownstreamChannelDtoAdapterTest {
         )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutNameAndImage
     }
-
 }

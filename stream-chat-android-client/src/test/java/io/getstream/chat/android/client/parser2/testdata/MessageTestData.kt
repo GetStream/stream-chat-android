@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -87,14 +86,6 @@ internal object MessageTestData {
                 "name": "engineering",
                 "description": "Engineering team",
                 "team_id": "team-1",
-                "members": [
-                    {
-                        "group_id": "group-1",
-                        "user_id": "user-1",
-                        "is_admin": true,
-                        "created_at": "2020-01-01T00:00:00.000Z"
-                    }
-                ],
                 "created_by": "user-1",
                 "created_at": "2020-01-01T00:00:00.000Z",
                 "updated_at": "2020-01-01T00:00:00.000Z"
@@ -198,14 +189,7 @@ internal object MessageTestData {
         "show_in_channel": true,
         "silent": true,
         "deleted_for_me": true,
-        "channel": {
-            "cid": "messaging:general",
-            "id": "general",
-            "type": "messaging",
-            "member_count": 5,
-            "name": "General"
-        },
-        "member": {"channel_role": "channel_member"},
+        "member": {"channel_role": "channel_member", "notifications_muted": false},
         "moderation_details": {
             "original_text": "spam_text",
             "action": "MESSAGE_RESPONSE_ACTION_BOUNCE",
@@ -270,6 +254,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -288,6 +276,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -306,6 +298,10 @@ internal object MessageTestData {
         "reply_count": 0,
         "deleted_reply_count": 0,
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -324,6 +320,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -342,6 +342,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -360,6 +364,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -378,6 +386,10 @@ internal object MessageTestData {
         "reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -396,7 +408,11 @@ internal object MessageTestData {
         "reply_count": 0,
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z"
+        "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false
     }"""
 
     @Language("JSON")
@@ -414,6 +430,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -432,6 +452,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -450,6 +474,10 @@ internal object MessageTestData {
         "reply_count": 0,
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -468,78 +496,10 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingAttachments = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingLatestReactions = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingMentionedUsers = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingOwnReactions = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -585,6 +545,7 @@ internal object MessageTestData {
         "updated_at": "2020-01-01T00:00:00.000Z",
         "silent": false,
         "pinned": false,
+        "shadowed": false,
         "command": null,
         "parent_id": null,
         "quoted_message_id": null,
@@ -625,227 +586,6 @@ internal object MessageTestData {
         mentionedRoles = listOf("admin", "moderator"),
         extraData = emptyMap(),
     )
-
-    // region Quoted message with channel info (field-order independence test)
-
-    /**
-     * JSON where "quoted_message" appears BEFORE "channel" in the object.
-     * Tests that the direct parser produces the same result regardless of field order.
-     */
-    @Language("JSON")
-    val jsonWithQuotedMessageBeforeChannel = """{
-        "id": "msg-parent",
-        "cid": "messaging:general",
-        "text": "Parent message",
-        "html": "<p>Parent message</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "silent": false,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "quoted_message_id": "msg-quoted",
-        "quoted_message": {
-            "id": "msg-quoted",
-            "cid": "messaging:general",
-            "text": "Quoted message",
-            "html": "<p>Quoted message</p>",
-            "type": "regular",
-            "user": {"id": "user-2", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-            "attachments": [],
-            "latest_reactions": [],
-            "own_reactions": [],
-            "mentioned_users": [],
-            "reply_count": 0,
-            "deleted_reply_count": 0,
-            "silent": false,
-            "created_at": "2020-01-01T00:00:00.000Z",
-            "updated_at": "2020-01-01T00:00:00.000Z"
-        },
-        "channel": {
-            "cid": "messaging:general",
-            "id": "general",
-            "type": "messaging",
-            "member_count": 5,
-            "name": "General"
-        }
-    }"""
-
-    /**
-     * Same JSON content but "channel" appears BEFORE "quoted_message".
-     */
-    @Language("JSON")
-    val jsonWithQuotedMessageAfterChannel = """{
-        "id": "msg-parent",
-        "cid": "messaging:general",
-        "text": "Parent message",
-        "html": "<p>Parent message</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "silent": false,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "channel": {
-            "cid": "messaging:general",
-            "id": "general",
-            "type": "messaging",
-            "member_count": 5,
-            "name": "General"
-        },
-        "quoted_message_id": "msg-quoted",
-        "quoted_message": {
-            "id": "msg-quoted",
-            "cid": "messaging:general",
-            "text": "Quoted message",
-            "html": "<p>Quoted message</p>",
-            "type": "regular",
-            "user": {"id": "user-2", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-            "attachments": [],
-            "latest_reactions": [],
-            "own_reactions": [],
-            "mentioned_users": [],
-            "reply_count": 0,
-            "deleted_reply_count": 0,
-            "silent": false,
-            "created_at": "2020-01-01T00:00:00.000Z",
-            "updated_at": "2020-01-01T00:00:00.000Z"
-        }
-    }"""
-
-    val expectedChannelInfo = ChannelInfo(
-        cid = "messaging:general",
-        id = "general",
-        type = "messaging",
-        memberCount = 5,
-        name = "General",
-    )
-
-    /**
-     * Outer message has `channel`; the inner two messages (depth 1 and depth 2) do not.
-     * Locks down the documented one-level depth limit of channelInfo propagation in the
-     * direct path: depth-1 message gets the outer's channelInfo, depth-2 message stays null.
-     */
-    @Language("JSON")
-    val jsonTwoDeepQuotedMessage = """{
-        "id": "msg-outer",
-        "cid": "messaging:general",
-        "text": "Outer",
-        "html": "<p>Outer</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "silent": false,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "channel": {
-            "cid": "messaging:general",
-            "id": "general",
-            "type": "messaging",
-            "member_count": 5,
-            "name": "General"
-        },
-        "quoted_message": {
-            "id": "msg-mid",
-            "cid": "messaging:general",
-            "text": "Mid",
-            "html": "<p>Mid</p>",
-            "type": "regular",
-            "user": {"id": "user-2", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-            "attachments": [],
-            "latest_reactions": [],
-            "own_reactions": [],
-            "mentioned_users": [],
-            "reply_count": 0,
-            "deleted_reply_count": 0,
-            "silent": false,
-            "created_at": "2020-01-01T00:00:00.000Z",
-            "updated_at": "2020-01-01T00:00:00.000Z",
-            "quoted_message": {
-                "id": "msg-inner",
-                "cid": "messaging:general",
-                "text": "Inner",
-                "html": "<p>Inner</p>",
-                "type": "regular",
-                "user": {"id": "user-3", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-                "attachments": [],
-                "latest_reactions": [],
-                "own_reactions": [],
-                "mentioned_users": [],
-                "reply_count": 0,
-                "deleted_reply_count": 0,
-                "silent": false,
-                "created_at": "2020-01-01T00:00:00.000Z",
-                "updated_at": "2020-01-01T00:00:00.000Z"
-            }
-        }
-    }"""
-
-    val expectedQuotedMessageWithChannel = Message(
-        id = "msg-parent",
-        cid = "messaging:general",
-        text = "Parent message",
-        html = "<p>Parent message</p>",
-        type = "regular",
-        user = User(id = "user-1", role = "user", invisible = false, banned = false, online = true, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
-        attachments = emptyList(),
-        latestReactions = emptyList(),
-        ownReactions = emptyList(),
-        mentionedUsersIds = emptyList(),
-        mentionedUsers = emptyList(),
-        replyCount = 0,
-        deletedReplyCount = 0,
-        createdAt = Date(1577836800000L),
-        updatedAt = Date(1577836800000L),
-        silent = false,
-        pinned = false,
-        shadowed = false,
-        showInChannel = false,
-        deletedForMe = false,
-        channelInfo = expectedChannelInfo,
-        replyMessageId = "msg-quoted",
-        replyTo = Message(
-            id = "msg-quoted",
-            cid = "messaging:general",
-            text = "Quoted message",
-            html = "<p>Quoted message</p>",
-            type = "regular",
-            user = User(id = "user-2", role = "user", invisible = false, banned = false, online = true, createdAt = Date(1577836800000L), updatedAt = Date(1577836800000L)),
-            attachments = emptyList(),
-            latestReactions = emptyList(),
-            ownReactions = emptyList(),
-            mentionedUsersIds = emptyList(),
-            mentionedUsers = emptyList(),
-            replyCount = 0,
-            deletedReplyCount = 0,
-            createdAt = Date(1577836800000L),
-            updatedAt = Date(1577836800000L),
-            silent = false,
-            pinned = false,
-            shadowed = false,
-            showInChannel = false,
-            deletedForMe = false,
-            channelInfo = expectedChannelInfo,
-        ),
-        extraData = emptyMap(),
-    )
-
-    // endregion
 
     // region Reactions filtered by messageId
 
@@ -921,6 +661,8 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "pinned": false,
+        "shadowed": false,
         "silent": false
     }"""
 
@@ -996,9 +738,13 @@ internal object MessageTestData {
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T00:00:00.000Z",
+        "mentioned_here": false,
+        "mentioned_channel": false,
+        "pinned": false,
+        "shadowed": false,
         "silent": false,
-        "reaction_counts": null,
-        "reaction_scores": null,
+        "reaction_counts": {},
+        "reaction_scores": {},
         "reaction_groups": null
     }"""
 
@@ -1028,55 +774,6 @@ internal object MessageTestData {
         reactionGroups = emptyMap(),
         extraData = emptyMap(),
     )
-
-    /**
-     * `i18n` is non-nullable in DownstreamMessageDto (defaults to `emptyMap()`). The DTO path
-     * throws on explicit JSON null; MessageAdapter must do the same. Field-absent is a separate
-     * case (covered elsewhere) where both paths fall back to the empty default.
-     */
-    @Language("JSON")
-    val jsonExplicitNullI18n = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "i18n": null
-    }"""
-
-    /**
-     * `thread_participants` is non-nullable in DownstreamMessageDto (defaults to `emptyList()`).
-     * Same explicit-null-rejection as `i18n` above.
-     */
-    @Language("JSON")
-    val jsonExplicitNullThreadParticipants = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "language": "", "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z"},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "thread_participants": null
-    }"""
 
     // endregion
 }

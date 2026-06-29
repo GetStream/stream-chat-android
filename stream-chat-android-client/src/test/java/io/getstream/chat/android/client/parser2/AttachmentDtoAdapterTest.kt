@@ -17,10 +17,10 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.AttachmentDtoTestData
-import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.kotest.assertions.json.shouldEqualJson
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 
 internal class AttachmentDtoAdapterTest {
 
