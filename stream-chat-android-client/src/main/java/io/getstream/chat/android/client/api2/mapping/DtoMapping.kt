@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -36,7 +35,6 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
-import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
@@ -175,17 +173,6 @@ internal class DtoMapping(
         showInChannel = showInChannel,
         silent = silent,
         custom = extraData,
-    )
-
-    /**
-     * Maps the domain [Mute] model to a network [UpstreamMuteDto] model.
-     */
-    internal fun Mute.toDto(): UpstreamMuteDto = UpstreamMuteDto(
-        user = user?.toDto(),
-        target = target?.toDto(),
-        created_at = createdAt,
-        updated_at = updatedAt,
-        expires = expires,
     )
 
     /**

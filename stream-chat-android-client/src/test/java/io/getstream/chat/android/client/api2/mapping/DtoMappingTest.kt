@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.test.randomConnectedEvent
@@ -38,7 +37,6 @@ import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
@@ -199,21 +197,6 @@ internal class DtoMappingTest {
         val dto = with(mapping) { message.toDto() }
 
         dto.type?.value shouldBeEqualTo expectedType
-    }
-
-    @Test
-    fun `Mute is correctly mapped to Dto`() {
-        val mute = randomMute()
-        val mapping = Fixture().get()
-        val dto = with(mapping) { mute.toDto() }
-        val expected = UpstreamMuteDto(
-            user = mute.user?.let { with(mapping) { it.toDto() } },
-            target = mute.target?.let { with(mapping) { it.toDto() } },
-            created_at = mute.createdAt,
-            updated_at = mute.updatedAt,
-            expires = mute.expires,
-        )
-        dto shouldBeEqualTo expected
     }
 
     @Test
