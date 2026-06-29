@@ -17,36 +17,9 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
-import io.getstream.chat.android.network.models.DeviceResponse as DeviceDto
-import io.getstream.chat.android.network.models.PrivacySettingsResponse as PrivacySettingsDto
 
-/**
- * See [io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class UpstreamUserDto(
-    val banned: Boolean,
-    val id: String,
-    val name: String,
-    val image: String,
-    val invisible: Boolean,
-    val privacy_settings: PrivacySettingsDto?,
-    val language: String,
-    val role: String,
-    val devices: List<DeviceDto>,
-    val teams: List<String>,
-    val teams_role: Map<String, String>?,
-
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
+internal typealias UpstreamUserDto = io.getstream.chat.android.network.models.UserRequest
 internal typealias DownstreamUserDto = io.getstream.chat.android.network.models.UserResponse
 
 @JsonClass(generateAdapter = true)

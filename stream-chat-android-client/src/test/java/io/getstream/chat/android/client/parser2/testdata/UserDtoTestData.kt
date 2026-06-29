@@ -139,36 +139,26 @@ internal object UserDtoTestData {
     @Language("JSON")
     val upstreamJsonWithoutExtraData =
         """{
-            "banned": true,
             "id": "userId",
             "name": "username",
             "image": "image",
             "invisible": false,
-            "language": "language",
-            "role": "owner",
-            "devices": [],
-            "teams": []
+            "language": "language"
          }""".withoutWhitespace()
 
     val upstreamUserWithoutExtraData = UpstreamUserDto(
         id = "userId",
-        role = "owner",
         name = "username",
         image = "image",
         language = "language",
         invisible = false,
-        privacy_settings = null,
-        banned = true,
-        devices = emptyList(),
-        teams = emptyList(),
-        teams_role = null,
-        extraData = emptyMap(),
+        privacySettings = null,
+        custom = emptyMap(),
     )
 
     @Language("JSON")
     val upstreamJson =
         """{
-            "banned": false,
             "id": "userId",
             "name": "username",
             "image": "image",
@@ -184,29 +174,13 @@ internal object UserDtoTestData {
                 "enabled": false
               }
             },
-            "language": "language",
-            "role": "owner",
-            "devices": [
-             {
-              "id": "deviceId",
-              "push_provider": "provider",
-              "push_provider_name": "provider_name",
-              "created_at": "2020-06-10T11:04:31.000Z",
-              "user_id": "userId"
-             }
-            ],
-            "teams": [ "team1", "team2"],
-            "teams_role": {
-                "team1": "owner",
-                "team2": "member"
-            }
+            "language": "language"
          }""".withoutWhitespace()
 
     val upstreamUser = UpstreamUserDto(
         id = "userId",
-        role = "owner",
         invisible = false,
-        privacy_settings = PrivacySettingsDto(
+        privacySettings = PrivacySettingsDto(
             typingIndicators = TypingIndicatorsDto(
                 enabled = false,
             ),
@@ -217,24 +191,9 @@ internal object UserDtoTestData {
                 enabled = false,
             ),
         ),
-        banned = false,
-        devices = listOf(
-            DeviceDto(
-                id = "deviceId",
-                pushProvider = "provider",
-                pushProviderName = "provider_name",
-                createdAt = Date(1591787071000),
-                userId = "userId",
-            ),
-        ),
-        teams = listOf("team1", "team2"),
-        teams_role = mapOf(
-            "team1" to "owner",
-            "team2" to "member",
-        ),
         name = "username",
         image = "image",
         language = "language",
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 }

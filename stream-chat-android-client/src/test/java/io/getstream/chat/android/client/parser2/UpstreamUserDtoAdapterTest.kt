@@ -16,11 +16,8 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData
 import io.kotest.assertions.json.shouldEqualJson
-import org.amshove.kluent.invoking
-import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class UpstreamUserDtoAdapterTest {
@@ -36,12 +33,5 @@ internal class UpstreamUserDtoAdapterTest {
     fun `Serialize JSON user without custom fields`() {
         val jsonString = parser.toJson(UserDtoTestData.upstreamUserWithoutExtraData)
         jsonString.shouldEqualJson(UserDtoTestData.upstreamJsonWithoutExtraData)
-    }
-
-    @Test
-    fun `Can't parse upstream user`() {
-        invoking {
-            parser.fromJson(UserDtoTestData.upstreamJson, UpstreamUserDto::class.java)
-        }.shouldThrow(RuntimeException::class)
     }
 }

@@ -93,17 +93,23 @@ internal object UserResponsePrivacyFieldsAdapter :
 }
 
 internal object UpstreamUserDtoAdapter :
-    CustomObjectDtoAdapter<UpstreamUserDto>(UpstreamUserDto::class) {
+    CustomObjectDtoAdapter<UpstreamUserDto>(
+        kClass = UpstreamUserDto::class,
+        extraDataPropertyName = "custom",
+    ) {
 
     @FromJson
-    @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): UpstreamUserDto = error("Can't parse this from Json")
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        userAdapter: JsonAdapter<UpstreamUserDto>,
+    ): UpstreamUserDto? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
 
     @ToJson
     fun toJson(
         jsonWriter: JsonWriter,
-        message: UpstreamUserDto?,
+        value: UpstreamUserDto?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
-        messageAdapter: JsonAdapter<UpstreamUserDto>,
-    ) = serializeWithExtraData(jsonWriter, message, mapAdapter, messageAdapter)
+        userAdapter: JsonAdapter<UpstreamUserDto>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, userAdapter)
 }

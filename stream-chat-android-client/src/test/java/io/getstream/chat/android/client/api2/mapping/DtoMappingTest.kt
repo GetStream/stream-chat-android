@@ -310,17 +310,12 @@ internal class DtoMappingTest {
         val dto = with(mapping) { user.toDto() }
         val expected = UpstreamUserDto(
             id = user.id,
-            role = user.role,
             name = user.name,
             image = user.image,
             invisible = user.isInvisible,
-            privacy_settings = user.privacySettings?.let { with(mapping) { it.toDto() } },
+            privacySettings = user.privacySettings?.let { with(mapping) { it.toDto() } },
             language = user.language,
-            banned = user.isBanned,
-            devices = user.devices.map { with(mapping) { it.toDto() } },
-            teams = user.teams,
-            teams_role = user.teamsRole,
-            extraData = user.extraData,
+            custom = user.extraData,
         )
 
         dto shouldBeEqualTo expected

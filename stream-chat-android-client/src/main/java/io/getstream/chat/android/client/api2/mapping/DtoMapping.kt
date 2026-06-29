@@ -273,18 +273,13 @@ internal class DtoMapping(
         userTransformer.transform(this)
             .run {
                 UpstreamUserDto(
-                    banned = isBanned,
                     id = id,
                     name = name,
                     image = image,
                     invisible = isInvisible,
-                    privacy_settings = privacySettings?.toDto(),
+                    privacySettings = privacySettings?.toDto(),
                     language = language,
-                    role = role,
-                    devices = devices.map { it.toDto() },
-                    teams = teams,
-                    teams_role = teamsRole,
-                    extraData = extraData,
+                    custom = extraData,
                 )
             }
 
