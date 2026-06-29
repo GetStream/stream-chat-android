@@ -668,11 +668,11 @@ internal class DomainMapping(
         ChannelUserRead(
             user = user.toDomain(),
             lastReceivedEventDate = lastReceivedEventDate,
-            lastRead = last_read,
-            unreadMessages = unread_messages,
-            lastReadMessageId = last_read_message_id,
-            lastDeliveredAt = last_delivered_at,
-            lastDeliveredMessageId = last_delivered_message_id,
+            lastRead = lastRead,
+            unreadMessages = unreadMessages,
+            lastReadMessageId = lastReadMessageId,
+            lastDeliveredAt = lastDeliveredAt,
+            lastDeliveredMessageId = lastDeliveredMessageId,
         )
 
     /**

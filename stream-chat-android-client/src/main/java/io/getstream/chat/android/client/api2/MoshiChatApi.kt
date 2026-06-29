@@ -1259,7 +1259,7 @@ constructor(
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
-                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.last_read)
+                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.lastRead)
                 },
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),

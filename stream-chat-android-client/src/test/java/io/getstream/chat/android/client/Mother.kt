@@ -766,11 +766,11 @@ internal object Mother {
         lastDeliveredMessageId: String? = randomStringOrNull(),
     ) = DownstreamChannelUserRead(
         user = user,
-        last_read = lastRead,
-        unread_messages = unreadMessages,
-        last_read_message_id = lastReadMessageId,
-        last_delivered_at = lastDeliveredAt,
-        last_delivered_message_id = lastDeliveredMessageId,
+        lastRead = lastRead,
+        unreadMessages = unreadMessages,
+        lastReadMessageId = lastReadMessageId,
+        lastDeliveredAt = lastDeliveredAt,
+        lastDeliveredMessageId = lastDeliveredMessageId,
     )
 
     fun randomAttachmentDto(

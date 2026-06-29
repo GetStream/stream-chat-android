@@ -627,12 +627,12 @@ internal class DomainMappingTest {
         }
         val expected = ChannelUserRead(
             user = with(sut) { downstreamChannelUserRead.user.toDomain() },
-            lastRead = downstreamChannelUserRead.last_read,
-            unreadMessages = downstreamChannelUserRead.unread_messages,
-            lastReadMessageId = downstreamChannelUserRead.last_read_message_id,
+            lastRead = downstreamChannelUserRead.lastRead,
+            unreadMessages = downstreamChannelUserRead.unreadMessages,
+            lastReadMessageId = downstreamChannelUserRead.lastReadMessageId,
             lastReceivedEventDate = lastReceivedEventDate,
-            lastDeliveredAt = downstreamChannelUserRead.last_delivered_at,
-            lastDeliveredMessageId = downstreamChannelUserRead.last_delivered_message_id,
+            lastDeliveredAt = downstreamChannelUserRead.lastDeliveredAt,
+            lastDeliveredMessageId = downstreamChannelUserRead.lastDeliveredMessageId,
         )
 
         assertEquals(expected, channelUserRead)

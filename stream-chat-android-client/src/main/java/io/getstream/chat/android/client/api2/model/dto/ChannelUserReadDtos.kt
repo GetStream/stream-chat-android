@@ -26,12 +26,4 @@ internal data class UpstreamChannelUserRead(
     val unread_messages: Int,
 )
 
-@JsonClass(generateAdapter = true)
-internal data class DownstreamChannelUserRead(
-    val user: DownstreamUserDto,
-    val last_read: Date,
-    val unread_messages: Int,
-    val last_read_message_id: String?,
-    val last_delivered_at: Date? = null,
-    val last_delivered_message_id: String? = null,
-)
+internal typealias DownstreamChannelUserRead = io.getstream.chat.android.network.models.ReadStateResponse
