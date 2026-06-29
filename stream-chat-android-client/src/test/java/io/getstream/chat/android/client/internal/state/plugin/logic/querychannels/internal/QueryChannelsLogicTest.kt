@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -477,6 +478,118 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsDatabaseLogic).selectChannels(listOf(dbChannel.cid))
         verify(queryChannelsStateLogic).handleChatEvent(event1, inMemoryChannel)
         verify(queryChannelsStateLogic).handleChatEvent(event2, dbChannel)
+    }
+
+    // endregion
+
+    // region loadOfflineChannels
+
+    @Test
+    fun `loadOfflineChannels populates state from cache`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val cachedChannels = listOf(randomChannel(), randomChannel())
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn
+            CachedQueryChannels(spec = queryChannelsSpec, channels = cachedChannels)
+
+        // When
+        logic.loadOfflineChannels(request)
+
+        // Then
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic).addChannelsState(cachedChannels)
+        verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+        verify(queryChannelsStateLogic, never()).setChannelsOffset(any())
+    }
+
+    @Test
+    fun `loadOfflineChannels handles null cache gracefully`() = runTest {
+        // Given
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn null
+
+        // When
+        logic.loadOfflineChannels(request)
+
+        // Then
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+    }
+
+    @Test
+    fun `loadOfflineChannels skips when channels already populated`() = runTest {
+        // Given - race condition: channels were populated by a concurrent prefill
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        val existingChannels = mapOf("messaging:ch1" to randomChannel())
+        whenever(queryChannelsStateLogic.getChannels()) doReturn existingChannels
+        whenever(queryChannelsDatabaseLogic.fetchChannelsFromCache(any(), any())) doReturn
+            CachedQueryChannels(spec = queryChannelsSpec, channels = listOf(randomChannel()))
+
+        // When
+        logic.loadOfflineChannels(request)
+
+        // Then - only setCurrentRequest should be called, nothing else
+        verify(queryChannelsStateLogic).setCurrentRequest(request)
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    // endregion
+
+    // region Grouped accessors
+
+    @Test
+    fun `groupKey returns null for a Standard identifier`() {
+        val standardLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Standard(filter, sort),
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        assertEquals(null, standardLogic.groupKey())
+    }
+
+    @Test
+    fun `groupKey returns the identifier's groupKey for a Grouped identifier`() {
+        val groupedLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(groupKey = "direct"),
+            client = client,
+            queryChannelsStateLogic = queryChannelsStateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        assertEquals("direct", groupedLogic.groupKey())
+    }
+
+    @Test
+    fun `groupedQueryConfig forwards to the state logic`() {
+        val config = GroupedQueryConfig(limit = 30, pageSize = 10, watch = true, presence = false)
+        whenever(queryChannelsStateLogic.getGroupedQueryConfig()) doReturn config
+
+        assertEquals(config, logic.groupedQueryConfig())
+        verify(queryChannelsStateLogic).getGroupedQueryConfig()
+    }
+
+    @Test
+    fun `setGroupedQueryConfig forwards to the state logic`() {
+        val config = GroupedQueryConfig(limit = 30, pageSize = 10, watch = false, presence = false)
+
+        logic.setGroupedQueryConfig(config)
+
+        verify(queryChannelsStateLogic).setGroupedQueryConfig(config)
+    }
+
+    @Test
+    fun `currentRequest reads the active request from the state`() {
+        val request = QueryChannelsRequest(filter = filter, limit = 30, querySort = sort)
+        whenever(queryChannelsState.currentRequest) doReturn MutableStateFlow(request)
+
+        assertEquals(request, logic.currentRequest())
     }
 
     // endregion

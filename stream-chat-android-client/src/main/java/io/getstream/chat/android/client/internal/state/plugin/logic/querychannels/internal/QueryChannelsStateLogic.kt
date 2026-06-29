@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.internal.users
@@ -134,6 +135,20 @@ internal class QueryChannelsStateLogic(
         mutableState.setChannelsOffset(offset)
     }
 
+    internal fun setNextCursor(cursor: String?) {
+        mutableState.setNextCursor(cursor)
+    }
+
+    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        mutableState.setGroupedQueryConfig(config)
+    }
+
+    internal fun getGroupedQueryConfig(): GroupedQueryConfig? = mutableState.groupedQueryConfig.value
+
+    internal fun setCids(cids: Set<String>) {
+        mutableState.setCids(cids)
+    }
+
     /**
      * Increments the channels offset.
      *
@@ -219,6 +234,24 @@ internal class QueryChannelsStateLogic(
         if (mutableState.rawChannels == null) {
             mutableState.setChannels(emptyMap())
         }
+    }
+
+    /**
+     * Registers the given [channel] in this query's tracking (CID spec + channel map)
+     * **without** updating the shared per-channel [ChannelState].
+     *
+     * Use this instead of [addChannelsState] when the channel is already active and its
+     * per-channel state may contain fresher data than the provided [channel] object
+     * (e.g., during event handling where the channel event handler has already updated
+     * `lastMessageAt` but the DB-cached channel still has the old value).
+     *
+     * A subsequent [refreshChannels] call will pull the authoritative per-channel state
+     * into the query map.
+     */
+    internal fun trackChannel(channel: Channel) {
+        mutableState.setCids(mutableState.queryChannelsSpec.cids + channel.cid)
+        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        mutableState.setChannels(existingChannels + (channel.cid to channel))
     }
 
     /**

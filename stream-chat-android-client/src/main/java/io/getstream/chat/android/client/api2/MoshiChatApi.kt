@@ -77,6 +77,8 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
@@ -132,6 +134,9 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -1484,6 +1489,51 @@ constructor(
             postponeCall(lazyQueryChannelsCall)
         } else {
             lazyQueryChannelsCall()
+        }
+    }
+
+    override fun queryGroupedChannels(
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+    ): Call<GroupedChannels> {
+        val body = QueryGroupedChannelsRequest(
+            limit = limit,
+            groups = groups?.mapValues { (_, query) ->
+                QueryGroupedChannelsGroupRequest(
+                    limit = query.limit,
+                    next = query.next,
+                    prev = query.prev,
+                )
+            },
+            watch = watch,
+            presence = presence,
+        )
+        val lazyCall = {
+            channelApi.queryGroupedChannels(
+                connectionId = connectionId,
+                body = body,
+            ).map { response ->
+                GroupedChannels(
+                    groups = response.groups.mapValues { entry ->
+                        GroupedChannelsGroup(
+                            groupKey = entry.key,
+                            channels = entry.value.channels.map(::flattenChannel),
+                            unreadChannels = entry.value.unread_channels ?: 0,
+                            next = entry.value.next,
+                            prev = entry.value.prev,
+                        )
+                    },
+                )
+            }
+        }
+        val isConnectionRequired = watch || presence
+        return if (isConnectionRequired && connectionId.isBlank()) {
+            logger.i { "[queryGroupedChannels] postponing because an active connection is required" }
+            postponeCall(lazyCall)
+        } else {
+            lazyCall()
         }
     }
 

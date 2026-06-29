@@ -191,6 +191,8 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Location
@@ -3345,6 +3347,74 @@ internal constructor(
         }.share(userScope) {
             QueryChannelsIdentifier(request)
         }
+    }
+
+    /**
+     * Queries channels grouped into the specified groups and returns the first page of each.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+     *
+     * @param groups The group names to fetch. Required; must contain at least one group name.
+     * Duplicate names are silently de-duplicated.
+     * @param limit Default max channels per group. Accepted range is `1..10`. `null` uses the
+     * server default.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
+     */
+    @CheckResult
+    public fun queryGroupedChannels(
+        groups: List<String>,
+        limit: Int? = null,
+        watch: Boolean = true,
+        presence: Boolean = false,
+    ): Call<GroupedChannels> = queryGroupedChannelsInternal(
+        limit = limit,
+        groups = groups.associateWith { GroupedChannelsGroupQuery() },
+        watch = watch,
+        presence = presence,
+    )
+
+    /**
+     * Internal variant of [queryGroupedChannels] that accepts a per-group configuration map.
+     *
+     * Supports per-group request options (`limit`, `next`/`prev` cursors) and returns per-group
+     * pagination cursors. Pagination (`next` or `prev` on any group) is only allowed when
+     * exactly one group is requested.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+     *
+     * @param limit Default max channels per group when a group does not specify its own limit.
+     * Accepted range is `1..10`. `null` uses the server default.
+     * @param groups Optional per-group configuration keyed by group name. `null` returns the
+     * first pages of the server-defined default set.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
+     */
+    @CheckResult
+    @InternalStreamChatApi
+    public fun queryGroupedChannelsInternal(
+        limit: Int? = null,
+        groups: Map<String, GroupedChannelsGroupQuery>? = null,
+        watch: Boolean = true,
+        presence: Boolean = false,
+    ): Call<GroupedChannels> {
+        return api.queryGroupedChannels(limit = limit, groups = groups, watch = watch, presence = presence)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    plugin.onQueryGroupedChannelsRequest(limit, groups, watch, presence)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    plugin.onQueryGroupedChannelsResult(result, limit, groups, watch, presence)
+                }
+            }
     }
 
     /**

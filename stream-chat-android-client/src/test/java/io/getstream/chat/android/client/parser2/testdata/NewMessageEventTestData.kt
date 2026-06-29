@@ -62,7 +62,8 @@ internal object NewMessageEventTestData {
         "watcher_count": 5,
         "total_unread_count": 3,
         "unread_channels": 1,
-        "channel_message_count": 42
+        "channel_message_count": 42,
+        "grouped_unread_channels": {"team": 2, "messaging": 5}
     }"""
 
     @Language("JSON")

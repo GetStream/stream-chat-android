@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
@@ -28,6 +29,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -38,8 +40,13 @@ import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
@@ -72,6 +79,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -81,6 +90,8 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@Suppress("LargeClass")
+@OptIn(InternalStreamChatApi::class)
 @ExperimentalCoroutinesApi
 internal class SyncManagerTest {
 
@@ -595,6 +606,580 @@ internal class SyncManagerTest {
             verify(chatClient, never()).getSyncHistory(any(), any<String>())
             verify(chatClient, never()).getSyncHistory(any(), any<Date>())
         }
+
+    // region Grouped Channels Sync
+
+    @Test
+    fun `on reconnect should call queryGroupedChannels instead of queryFirstPage for prefilled queries`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val channelA = randomChannel(type = "messaging", id = "a")
+            val channelB = randomChannel(type = "messaging", id = "b")
+
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = null,
+                    pageSize = 5,
+                    watch = true,
+                    presence = false,
+                )
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(
+                Result.Success(
+                    GroupedChannels(
+                        groups = mapOf("all" to GroupedChannelsGroup(groupKey = "all", channels = listOf(channelA, channelB))),
+                    ),
+                ),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            // First event marks isFirstConnect=false
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            // Second event triggers reconnect with recoverAll=true
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = null,
+                groups = mapOf("all" to GroupedChannelsGroupQuery(limit = 5)),
+                watch = true,
+                presence = false,
+            )
+            verify(queryLogic, never()).queryFirstPage()
+        }
+
+    @Test
+    fun `on reconnect with only grouped queries updateActiveChannels should not run`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val channelA = randomChannel(type = "messaging", id = "a")
+
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = null,
+                    pageSize = null,
+                    watch = true,
+                    presence = false,
+                )
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(
+                Result.Success(
+                    GroupedChannels(
+                        groups = mapOf("all" to GroupedChannelsGroup(groupKey = "all", channels = listOf(channelA))),
+                    ),
+                ),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // The standard path (updateActiveChannels) should not run when only grouped queries exist.
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    @Test
+    fun `on reconnect with grouped query failure standard path should not run`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = null,
+                    pageSize = null,
+                    watch = true,
+                    presence = false,
+                )
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(
+                Result.Failure(
+                    Error.NetworkError(message = "fail", serverErrorCode = 0, statusCode = 500),
+                ),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // The standard path should not run when only grouped queries exist, even on failure.
+            verify(chatClient, never()).queryChannelsInternal(any())
+        }
+
+    @Test
+    fun `updateActiveQueryChannels should skip grouped queries`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val groupedQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = null,
+                    pageSize = null,
+                    watch = true,
+                    presence = false,
+                )
+            }
+
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+                onBlocking { it.queryFirstPage() } doReturn Result.Success(emptyList())
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyMap()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(
+                Result.Success(GroupedChannels(groups = emptyMap())),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // Standard query should have queryFirstPage called (once per connect event)
+            verify(standardQuery, times(2)).queryFirstPage()
+            // Grouped query should NOT have queryFirstPage called
+            verify(groupedQuery, never()).queryFirstPage()
+        }
+
+    @Test
+    @Suppress("LongMethod")
+    fun `dual-mode reconnect updateActiveChannels should query only cids not covered by grouped or standard`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            // Three distinct cids: one from the grouped response, one from the standard response,
+            // one only present in the active channel states (must be the only cid queried).
+            val groupedChannel = randomChannel(type = "messaging", id = "grouped")
+            val standardChannel = randomChannel(type = "messaging", id = "standard")
+            val activeOnlyCid = "messaging:active"
+
+            val groupedQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    null,
+                    null,
+                    true,
+                    false,
+                )
+            }
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                onBlocking { it.queryFirstPage() } doReturn Result.Success(listOf(standardChannel))
+            }
+
+            val groupedActiveState: ChannelState = mock {
+                on(it.cid) doReturn groupedChannel.cid
+                on(it.recoveryNeeded) doReturn false
+            }
+            val standardActiveState: ChannelState = mock {
+                on(it.cid) doReturn standardChannel.cid
+                on(it.recoveryNeeded) doReturn false
+            }
+            val activeOnlyState: ChannelState = mock {
+                on(it.cid) doReturn activeOnlyCid
+                on(it.recoveryNeeded) doReturn false
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            val groupedActiveChannelId = ChannelId.fromCid(groupedChannel.cid)!!
+            val standardActiveChannelId = ChannelId.fromCid(standardChannel.cid)!!
+            val activeOnlyChannelId = ChannelId.fromCid(activeOnlyCid)!!
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                groupedActiveChannelId to groupedActiveState,
+                standardActiveChannelId to standardActiveState,
+                activeOnlyChannelId to activeOnlyState,
+            )
+            whenever(stateRegistry.getTrackedWatchedChannels()) doReturn emptySet()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(
+                Result.Success(
+                    GroupedChannels(
+                        groups = mapOf(
+                            "all" to GroupedChannelsGroup(groupKey = "all", channels = listOf(groupedChannel)),
+                        ),
+                    ),
+                ),
+            )
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient).queryChannelsInternal(captor.capture())
+            val filter = captor.firstValue.filter as InFilterObject
+            assertEquals("cid", filter.fieldName)
+            assertEquals(setOf(activeOnlyCid), filter.values)
+        }
+
+    @Test
+    @Suppress("LongMethod")
+    fun `dual-mode reconnect should exclude tracked watched cids from updateActiveChannels`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val watchedCid = "messaging:watched"
+            val activeOnlyCid = "messaging:active"
+
+            val groupedQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = null,
+                    pageSize = null,
+                    watch = true,
+                    presence = false,
+                )
+            }
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                onBlocking { it.queryFirstPage() } doReturn Result.Success(emptyList())
+            }
+
+            val watchedState: ChannelState = mock {
+                on(it.cid) doReturn watchedCid
+                on(it.recoveryNeeded) doReturn false
+            }
+            val activeOnlyState: ChannelState = mock {
+                on(it.cid) doReturn activeOnlyCid
+                on(it.recoveryNeeded) doReturn false
+            }
+
+            val rewatchedLogic: ChannelLogic = mock {
+                onBlocking { it.watch(any(), any()) } doReturn Result.Success(randomChannel())
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(groupedQuery, standardQuery)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(logicRegistry.channel(any(), any())) doReturn rewatchedLogic
+            val watchedChannelId = ChannelId.fromCid(watchedCid)!!
+            val activeOnlyChannelId = ChannelId.fromCid(activeOnlyCid)!!
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                watchedChannelId to watchedState,
+                activeOnlyChannelId to activeOnlyState,
+            )
+            whenever(stateRegistry.getTrackedWatchedChannels()) doReturn setOf(watchedCid)
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient).queryChannelsInternal(captor.capture())
+            val filter = captor.firstValue.filter as InFilterObject
+            assertEquals("cid", filter.fieldName)
+            assertEquals(setOf(activeOnlyCid), filter.values)
+        }
+
+    @Test
+    fun `reconnect with no grouped or standard queries should query all active channel states`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val cidA = "messaging:a"
+            val cidB = "messaging:b"
+            val activeStateA: ChannelState = mock {
+                on(it.cid) doReturn cidA
+                on(it.recoveryNeeded) doReturn false
+            }
+            val activeStateB: ChannelState = mock {
+                on(it.cid) doReturn cidB
+                on(it.recoveryNeeded) doReturn false
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            val channelIdA = ChannelId.fromCid(cidA)!!
+            val channelIdB = ChannelId.fromCid(cidB)!!
+            whenever(stateRegistry.getActiveChannelStates()) doReturn mapOf(
+                channelIdA to activeStateA,
+                channelIdB to activeStateB,
+            )
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // No grouped path, no standard path → exclusion set is empty, all active cids are queried.
+            verify(chatClient, never()).queryGroupedChannelsInternal(
+                limit = anyOrNull(),
+                groups = anyOrNull(),
+                watch = any(),
+                presence = any(),
+            )
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient).queryChannelsInternal(captor.capture())
+            val filter = captor.firstValue.filter as InFilterObject
+            assertEquals("cid", filter.fieldName)
+            assertEquals(setOf(cidA, cidB), filter.values)
+        }
+
+    @Test
+    fun `on reconnect with multiple grouped queries should pass per-group limits and shared flags`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val sharedConfigA = GroupedQueryConfig(limit = null, pageSize = 5, watch = true, presence = false)
+            val sharedConfigB = GroupedQueryConfig(limit = null, pageSize = 5, watch = true, presence = false)
+            val queryLogicA: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "a"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn sharedConfigA
+            }
+            val queryLogicB: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "b"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn sharedConfigB
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogicA, queryLogicB)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = null,
+                groups = mapOf(
+                    "a" to GroupedChannelsGroupQuery(limit = 5),
+                    "b" to GroupedChannelsGroupQuery(limit = 5),
+                ),
+                watch = true,
+                presence = false,
+            )
+        }
+
+    @Test
+    fun `on reconnect when no captured per-group pageSize should still include the group key with empty entry`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            // Caller had set a request-level limit but no per-group override → captured pageSize is null.
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = 20,
+                    pageSize = null,
+                    watch = true,
+                    presence = false,
+                )
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            // The group key is kept in the map even with no per-group pageSize so the server
+            // still refreshes it. The empty `GroupedChannelsGroupQuery(limit = null)` serializes
+            // as `{}` and signals "include this group in the response".
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = 20,
+                groups = mapOf("all" to GroupedChannelsGroupQuery(limit = null)),
+                watch = true,
+                presence = false,
+            )
+        }
+
+    @Test
+    fun `on reconnect with no captured config should still include the group key with empty entry`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            // No groupedQueryConfig stubbed → first response hasn't landed yet.
+            val queryLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "all"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                ),
+            ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = null,
+                groups = mapOf("all" to GroupedChannelsGroupQuery(limit = null)),
+                watch = true,
+                presence = false,
+            )
+        }
+
+    private fun connectedEvent(createdAt: Date, rawCreatedAt: String) = ConnectedEvent(
+        type = "type",
+        createdAt = createdAt,
+        rawCreatedAt = rawCreatedAt,
+        connectionId = randomString(),
+        me = user,
+    )
+
+    // endregion
 
     private fun TestScope.localRandomMessage() = randomMessage(
         createdLocallyAt = Date(currentTime),

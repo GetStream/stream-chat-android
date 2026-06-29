@@ -40,6 +40,8 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -367,6 +369,30 @@ internal interface ChatApi {
 
     @CheckResult
     fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult>
+
+    /**
+     * Queries channels grouped into server-defined groups.
+     *
+     * Supports per-group request options (limit, next/prev cursors) and returns per-group
+     * pagination cursors. Pagination (`next` or `prev` on any group) is only allowed when
+     * exactly one group is requested.
+     *
+     * @param limit Default max channels per group when a group does not specify its own limit.
+     * `null` uses the server default.
+     * @param groups Optional per-group configuration keyed by group name. `null` returns the
+     * server-defined default set.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
+     */
+    @CheckResult
+    fun queryGroupedChannels(
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+    ): Call<GroupedChannels>
 
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>

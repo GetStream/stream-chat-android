@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy.ChannelLogicLegacyImpl
@@ -98,21 +99,14 @@ internal class LogicRegistryTest {
             onBlocking { selectMessagesForThread(any(), any()) } doReturn emptyList()
         }
 
-        // Stub query channels state. LogicRegistry now resolves state via the identifier-based
-        // overload, so we stub that one. For Standard identifiers we project the filter/sort back
-        // out as the initial values for QueryChannelsMutableState.
+        // Stub query channels state. LogicRegistry resolves state via the identifier-based
+        // overload; the MutableState derives its initial filter/sort from the identifier itself.
         queryChannelsStateCache.clear()
         whenever(stateRegistry.queryChannels(any<QueryChannelsIdentifier>())).thenAnswer {
             val identifier = it.getArgument<QueryChannelsIdentifier>(0)
-            val (initialFilter, initialSort) = when (identifier) {
-                is QueryChannelsIdentifier.Standard -> identifier.filter to identifier.sort
-                is QueryChannelsIdentifier.Predefined -> Filters.neutral() to QuerySortByField<Channel>()
-            }
             queryChannelsStateCache.getOrPut(identifier) {
                 QueryChannelsMutableState(
                     identifier = identifier,
-                    initialFilter = initialFilter,
-                    initialSort = initialSort,
                     scope = coroutineScope,
                     latestUsers = MutableStateFlow(emptyMap()),
                     activeLiveLocations = MutableStateFlow(emptyList()),
@@ -190,6 +184,40 @@ internal class LogicRegistryTest {
     }
 
     // region General tests (not related to legacy channel logic)
+
+    // region queryChannels (grouped + identifier-keyed)
+
+    @Test
+    fun `queryChannels with Grouped identifier creates a logic instance`() {
+        val identifier = QueryChannelsIdentifier.Grouped("vip")
+
+        val logic = logicRegistry.queryChannels(identifier)
+
+        Assertions.assertNotNull(logic)
+    }
+
+    @Test
+    fun `queryChannels with Grouped identifier returns the same instance on repeat call`() {
+        val identifier = QueryChannelsIdentifier.Grouped("vip")
+
+        val first = logicRegistry.queryChannels(identifier)
+        val second = logicRegistry.queryChannels(identifier)
+
+        Assertions.assertSame(first, second)
+    }
+
+    @Test
+    fun `queryChannels with Grouped identifier auto-installs a GroupAwareChatEventHandlerFactory`() {
+        val identifier = QueryChannelsIdentifier.Grouped("vip")
+
+        logicRegistry.queryChannels(identifier)
+
+        val state = queryChannelsStateCache[identifier]
+        Assertions.assertNotNull(state)
+        Assertions.assertTrue(state!!.chatEventHandlerFactory is GroupAwareChatEventHandlerFactory)
+    }
+
+    // endregion
 
     // -- QueryChannels --
 
