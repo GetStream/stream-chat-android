@@ -77,7 +77,7 @@ internal class VideoFrameFetcher(
         try {
             retriever.setDataSource(data.toString(), options.requestHeaders())
             val bitmap = retriever.extractFrame()
-                ?: error("Could not extract a preview frame from video: $data")
+                ?: error("Could not extract a preview frame from the video")
             ImageFetchResult(
                 image = bitmap.asImage(),
                 isSampled = false,
