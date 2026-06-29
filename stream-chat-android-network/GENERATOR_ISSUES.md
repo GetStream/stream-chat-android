@@ -1,1053 +1,464 @@
 # OpenAPI Generator Issues
 
-Running log of problems hit while migrating `stream-chat-android-network` to generated models from
-`Sviluppo/chat` (the `chat-manager openapi generate-client` flow driven by
-`generate-kotlin-chat-client.sh`).
+Issues hit while migrating `stream-chat-android-network` to generated models
+from `Sviluppo/chat` (regen driven by `generate-kotlin-chat-client.sh`).
 
-Each entry should record: symptom, where it came from, root cause, and fix status. "Local fix"
-means edited in a local checkout of the generator repo only - changes are not upstream and will be
-lost on the next `chat-manager` pull. "Upstream" means merged into the generator repo.
-
----
-
-## 1. Events generated with two abstract-class supertypes
-
-**Symptom:** Compile errors `Only one class can appear in a supertype list` plus
-`'getWSClientEventType' / 'getWSEventType' overrides nothing` plus
-`Class X is not abstract and does not implement getEventType()` on ~10 event types
-(`UserBannedEvent`, `UserUnbannedEvent`, `UserUpdatedEvent`, `UserWatchingStartEvent`,
-`UserWatchingStopEvent`, `UserReactivatedEvent`, `UserPresenceChangedEvent`, ...).
-
-**Root cause:** Two related bugs.
-
-1. The chat OpenAPI spec emits **two identical discriminator schemas** (`WSClientEvent` and
-   `WSEvent`) with the same 75 `oneOf` entries. There is no semantic difference - every chat WS
-   event is client-deliverable. The split was copied from the video spec where the distinction is
-   real. Source: `lib/combined/openapi/spec/spec.go:1369-1392` only renames/suppresses these for
-   `isVideoOnly()`, leaving chat to emit both. The Kotlin generator then appends both as parent
-   classes to every event, producing illegal `: WSClientEvent(), WSEvent()`.
-2. The Kotlin generator names the child's override method as `get<ParentName><FieldName>`
-   (`getWSClientEventType`) but names the parent's abstract method as `getEvent<FieldName>`
-   (`getEventType`) for non-feeds SDKs. The two sides disagree. Source:
-   `lib/combined/openapi/generator/languages/kotlin/kotlin.go:372-378` vs `:451-464`.
-
-**Fix status:** Local fix only. Both touches live in `/Users/gianmarcodavid/Sviluppo/chat`:
-
-- `spec.go:615` - added `isChatOnly()` mirroring `isVideoOnly()` (chat without video/feeds).
-- `spec.go:1369-1392` - chat-only specs rename `WSEvent` to `ChatEvent` and suppress
-  `WSClientEvent`, matching how video-only is renamed to `VideoEvent`.
-- `kotlin.go:372-378` - child override-method name now matches the parent's naming logic
-  (`getEvent<Field>` by default, `get<ParentName><Field>` only for feeds).
-
-**Suggested upstream fix:** Same as above. The chat output now matches the existing manual
-`ChatEventDto` shape (single sealed parent, `getEventType()`) and is symmetric with video's
-`VideoEvent`. No `WSClientEvent` / `WSEvent` artifact leaks into the public API.
+Each entry: symptom, root cause, fix status. **Local fix** = patched in the
+local chat-repo checkout only (branch `chat-openapi-android`); lost on next
+upstream pull. **Upstream** = merged into chat master.
 
 ---
 
-## 2. Kotlin reserved word `object` not escaped in property names
+## 1. Events generated with two abstract supertypes
 
-**Symptom:** `EnrichedActivity.kt:64 Syntax error: Parameter name expected`.
+**Symptom:** Compile errors `Only one class can appear in a supertype list`
+plus `getEventType()` not overridden, on ~10 user/presence event classes.
 
-```kotlin
-@Json(name = "object")
-val object: io.getstream.chat.android.network.models.Data? = null,
-```
+**Root cause:** Two bugs.
+1. Chat spec emits two identical discriminator schemas (`WSClientEvent`,
+   `WSEvent`) with the same 75 `oneOf` entries. The split exists for video
+   (where the distinction is real) but not for chat. `spec.go:1369-1392`
+   only renames/suppresses these under `isVideoOnly()`.
+2. `kotlin.go:372-378` names the child override `get<ParentName><Field>` while
+   the parent's abstract method is `getEvent<Field>` (`:451-464`). The two
+   disagree for non-feeds SDKs.
 
-`object` is a hard keyword in Kotlin and must be backtick-escaped or renamed.
+**Fix status:** Local fix.
+- `spec.go`: added `isChatOnly()`, mirrors `isVideoOnly()`; chat-only renames
+  `WSEvent` -> `ChatEvent` and suppresses `WSClientEvent`.
+- `kotlin.go:372-378`: child override naming aligned with parent
+  (`getEvent<Field>` by default).
 
-**Root cause:** The Kotlin param-name converter (Kotlin language's `ParamName` /
-`getKotlinMethod` helpers in
-`lib/combined/openapi/generator/languages/kotlin/kotlin.go`) lowercases / camel-cases the JSON
-field name but has no list of Kotlin reserved words to escape.
-
-**Fix status:** Locally fixed in the generator (not upstream). `kotlin.go` now has a
-`kotlinHardKeywords` table and an `escapeIfKeyword` helper applied by `ParamName`. The helper
-backticks the name only when it's already a dex-safe identifier (`[A-Za-z_$][A-Za-z0-9_$]*`),
-preserving Android compatibility. Future regens auto-emit `` val `object`: ... `` without
-manual patching.
-
-**Suggested fix:** In the param-name converter, wrap identifiers that collide with Kotlin hard
-keywords in backticks (`` `object` ``). The full hard-keyword list is documented at
-[kotlinlang.org/docs/keyword-reference.html](https://kotlinlang.org/docs/keyword-reference.html).
-
-**Important Android constraint:** Backticking only fixes JVM Kotlin compilation. **Android's
-D8/R8 dex compiler rejects identifiers containing characters outside the JVM-identifier set**
-(letters, digits, `_`, `$`). So `` `object` `` is dex-safe, but `` `name with spaces` ``,
-`` `name-with-dashes` ``, or `` `name<with>angles` `` would compile to .class but fail to dex.
-
-So the rule for the param-name converter must be: **if backticking the raw name would produce a
-dex-safe identifier, backtick it; otherwise sanitize**. Concretely:
-
-1. If the converted name is a Kotlin hard keyword and is otherwise a valid dex identifier
-   (matches `[A-Za-z_$][A-Za-z0-9_$]*`), wrap in backticks. Use `@Json(name = ...)` to preserve
-   the original wire name.
-2. If the converted name contains characters outside `[A-Za-z0-9_$]`, sanitize to a valid
-   identifier (e.g., replace non-alphanumerics with `_`, prepend `_` if leading digit) and rely
-   on `@Json(name = ...)` for the wire mapping.
-3. Never emit a backticked identifier containing characters outside the dex-safe set.
+Output now matches the existing `ChatEventDto` shape (single sealed parent,
+`getEventType()`) and is symmetric with video's `VideoEvent`.
 
 ---
 
-## 3. Unresolved `Time` reference (feedsSDK time-wrapper leaks into chat spec)
+## 2. Kotlin reserved words not escaped in property names
 
-**Symptom:** `EnrichedReaction.kt:64 / :76 Unresolved reference 'Time'`.
+**Symptom:** `EnrichedActivity.kt: Syntax error: Parameter name expected` on
+`val object: ...`.
 
-```kotlin
-@Json(name = "created_at")
-val createdAt: io.getstream.chat.android.network.models.Time? = null,
-```
+**Root cause:** The param-name converter in
+`lib/combined/openapi/generator/languages/kotlin/kotlin.go` has no list of
+Kotlin hard keywords to escape.
 
-No `Time.kt` is generated in the output.
+**Fix status:** Local fix. `kotlin.go` now has a `kotlinHardKeywords` table
+and an `escapeIfKeyword` helper applied by `ParamName`. Only backticks names
+that are dex-safe identifiers (`[A-Za-z_$][A-Za-z0-9_$]*`).
 
-**Root cause:** `EnrichedActivity` and `EnrichedReaction` come from
-`github.com/GetStream/stream-go2/v8` (external feeds SDK) and reach the chat spec through
-`ReviewQueueItem.feeds_v2_activity` in the moderation module (chat client-side spec is built with
-`-products chat,common,moderation`). `feedsSDK.Time` is:
+**Important Android constraint:** D8/R8 rejects identifiers with characters
+outside `[A-Za-z0-9_$]`, even backticked. Rule for the converter:
+1. Hard keyword + dex-safe -> backtick, keep wire name via `@Json(name = ...)`.
+2. Non-dex-safe chars -> sanitize to a valid identifier; rely on `@Json(name)`.
+3. Never emit a backticked identifier with non-dex-safe chars.
 
+---
+
+## 3. `Time` wrapper from feeds SDK leaks into chat spec, breaks codegen
+
+**Symptom:** `EnrichedReaction.kt: Unresolved reference 'Time'`. No `Time.kt`
+emitted.
+
+**Root cause:** `feedsSDK.Time` embeds `time.Time` (`type Time struct {
+time.Time }`). `spec.go:825,849,905` only special-cases
+`reflect.TypeOf(time.Time{})` exactly, so wrappers that embed it become empty
+`object` schemas. `kotlin.go:425-428` then silently skips empty-class emission
+but doesn't rewrite `$ref` users.
+
+`EnrichedActivity`/`EnrichedReaction` reach chat through
+`ReviewQueueItem.feeds_v2_activity` (chat spec built with
+`-products chat,common,moderation`).
+
+**Fix status:** Indirectly fixed by issue #5's `moderation` product drop -
+`EnrichedActivity`, `EnrichedReaction`, `Time` no longer in chat output.
+
+**Suggested upstream fix:** Generalize time-recognition in `spec.go` to also
+match structs that anonymously embed `time.Time`.
+
+---
+
+## 4. Empty-string enum value emits invalid `''` literal
+
+**Symptom:** `MessageRequest.kt: Empty character literal` on
+`object '' : Type("''")`.
+
+**Root cause:** The spec lists `""` as an allowed value for
+`MessageRequest.type`. The Kotlin enum template emits `''` for both the
+companion `when` arm and the `object` declaration.
+
+**Fix status:** Local fix. `kotlin.go` (~line 336) now uses a
+`buildEnumClassName` helper that runs `templates.PascalCase` (strips
+non-alphanumeric) and falls back to `Empty`.
+
+Collision case (multiple values sanitizing to the same identifier) is not
+handled - silently overwrites, matching other language generators.
+
+---
+
+## 5. Cross-product types and admin endpoints leak into chat SDK
+
+**Symptom:** Chat models include feeds/moderation types (`EnrichedActivity`,
+`EnrichedReaction`, `ReviewQueueItem`, `Time`) and 21 standalone
+`/api/v2/moderation/*` admin routes that the chat SDK should never expose.
+
+**Root cause:** Chat spec built with `-products chat,common,moderation`.
+Moderation responses reference cross-product shapes (e.g.
+`ReviewQueueItem.feeds_v2_activity: EnrichedActivity`); when the spec walker
+resolves every reachable `$ref`, those shapes get pulled in.
+
+**Fix status:** Local fix. `generate-kotlin-chat-client.sh` now builds with
+`-products chat,common` only (chat-scoped moderation routes
+`/api/v2/chat/moderation/*` are tagged `chat` and survive). Model count
+472 -> 324.
+
+**Suggested upstream fix:** Either (a) split moderation responses per-product
+context in the spec, (b) add `omit_for_chat` openapi tag (analogous to
+`omit_for_video` at `spec.go:611-613`), or (c) adopt the TypeScript generator's
+per-product API split.
+
+**Audit needed before shipping:** sweep the generated models for cross-product
+shapes that snuck through via `chat`/`common`. Decide per class: push upstream
+fix, mark `internal`, or keep public.
+
+---
+
+## 6. Datetime fields generated as `OffsetDateTime` instead of `Date`
+
+**Symptom:** Every generated DTO with a datetime field would use
+`org.threeten.bp.OffsetDateTime`. The chat domain layer and existing mappers
+all use `java.util.Date`, forcing per-field conversion
+(`Date(dto.createdAt.toInstant().toEpochMilli())`) in every mapper.
+
+**Root cause:** `kotlin.go:640-651` hardcodes `OffsetDateTime` for all
+android SDKs except feeds.
+
+**Fix status:** Local fix. Inverted the default at `kotlin.go:644-654`: video
+keeps `OffsetDateTime`, everyone else gets `Date`. Network module no longer
+depends on threetenbp.
+
+**Suggested upstream fix:** Same as local fix. Long-term: a `--datetime-type`
+flag on `chat-manager openapi generate-client`.
+
+---
+
+## 7. Generated model names collide with chat domain model names
+
+**Symptom:** 12+ generated wire models share simple names with chat domain
+models (`Command`, `Message`, `User`, `Channel`, `Member`, `Reaction`,
+`Attachment`, `Device`, `Mute`, `Thread`, `Poll`, `Location`). Mappers need
+per-import `as XxxDto` aliases.
+
+**Root cause:** Kotlin generator emits a class per OpenAPI schema name
+verbatim. No opt-in suffix mechanism.
+
+**Fix status:** Worked around with per-file `as XxxDto` aliases.
+
+**Suggested upstream fix:** Add a `classNameSuffix` config (defaults to `""`,
+set to `"Dto"` for chat) applied at the single point in `kotlin.go` where the
+class identifier is computed from the schema name. References, discriminator
+interfaces, and enum nested adapters flow from that one source.
+
+A project-side typealias file was considered and rejected: collision is
+permanent, so a generator-side convention is cleaner than ~50 typealiases we
+maintain forever.
+
+---
+
+## 8. Generated DTOs incompatible with `CustomObjectDtoAdapter`
+
+**Symptom:** Can't typealias root DTOs (`AttachmentDto`, `MessageDto`,
+`ChannelDto`, `UserDto`, `MemberDto`, `ReactionDto`, `PollDto`, `PollOptionDto`,
+`ThreadDto`, `ThreadInfoDto`, `UpstreamMemberDataDto`) to generated counterparts.
+The adapter routes unknown root keys into `extraData`; substituting the
+generated DTO breaks both directions silently.
+
+**Root cause:** `CustomObjectDtoAdapter.memberNames` uses
+`kClass.members.map { it.name }`. Two assumptions hardcoded:
+1. Property name == JSON wire name. Manual DTOs are snake_case; generated DTOs
+   are camelCase + `@Json(name = "snake_case")` - membership check fails and
+   every declared field gets bucketed as extra data.
+2. The DTO has an `extraData: Map<String, Any>` property. Generated DTOs don't
+   - the spec doesn't model `additionalProperties` here.
+
+**Fix status:** Local fix. `CustomObjectDtoAdapter.memberNames` now reads
+`@Json(name = ...)` via reflection, falling back to property name. The
+`extraData` field is supplied by aliasing the adapter's
+`extraDataPropertyName` to `"custom"` (the wire name the generator already
+emits), so the wrapper merges root keys into the generated `custom` map.
+
+**Suggested upstream fix:** Generator emits an `extraData: Map<String, Any>
+= emptyMap()` field when a schema is marked open (e.g. via
+`additionalProperties: {}` or a chat-specific extension tag). Combine with
+issue #9.
+
+---
+
+## 9. Spec emits `custom: object` for `jsonextra.ExtraFields` but wire flattens
+
+**Symptom:** Generated DTOs corresponding to backend structs with
+`Custom jsonextra.ExtraFields` get a typed `@Json(name = "custom") val custom:
+Map<String, Any?>`. The wire doesn't contain a literal `"custom"` key -
+`jsonextra.ExtraFields` flattens to root on encode and sweeps unknown root
+keys on decode. Stock Moshi: `custom` always parses empty; real keys at root
+get dropped.
+
+**Root cause:** `spec.go`'s struct walker reflects through fields generically.
+`jsonextra.ExtraFields` is `map[string]interface{}` under the hood and the
+`json:"custom"` tag is read literally. Affects every chat schema with an
+`ExtraFields` field (User, Channel, Message, Attachment, Member, Reaction,
+Thread, Poll, Flag, ...).
+
+**Fix status:** Worked around client-side via issue #8's adapter fix.
+
+**Suggested upstream fix:**
+1. Spec generator recognizes `jsonextra.ExtraFields`: emit
+   `additionalProperties: { type: object }` on the parent schema instead of a
+   named property. Each language generator then uses its overflow-field
+   convention. Correct.
+2. OpenAPI extension marker (`x-stream-extra-fields: true`) per property.
+   Smaller spec-shape impact. Stopgap.
+
+---
+
+## 10. `float64` -> OpenAPI `format: float` (downgrades precision)
+
+**Symptom:** `SharedLocation.latitude`/`longitude` come out as `kotlin.Float`,
+round-tripping a `Double(37.7749, -122.4194)` loses precision
+(`37.774898529052734`).
+
+**Root cause:** `spec.go:836` `SchemaFormatFromReflectType` maps both
+`float32` and `float64` to `"float"`. Backend uses `float64`
+(`shared_location.go:15`), spec advertises 32-bit.
+
+**Fix status:** Worked around in the SDK by widening Float to Double at the
+mapper boundary; domain uses Double, wire DTO uses Float.
+
+**Suggested upstream fix:** Split the case in `spec.go`:
 ```go
-type Time struct { time.Time }   // embeds Go's time.Time
+case "float32", "complex64":   return "float"
+case "float64", "complex128":  return "double"
 ```
-
-The chat-manager spec generator only special-cases `reflect.TypeOf(time.Time{})` exactly
-(`spec.go:825,849,905`), so wrappers that embed `time.Time` aren't recognized as date-time. They
-get reflected as empty `type: object` schemas. The Kotlin generator then silently skips emitting
-empty-class files (`kotlin.go:425-428`) but does not rewrite downstream `$ref` users, producing a
-dangling type reference.
-
-**Fix status:** Not fixed.
-
-**Suggested fix:** In `spec.go`, generalize the time-recognition path to also match any struct
-that anonymously embeds `time.Time`. Three touches:
-
-- `SchemaTypeFromReflectType` (line 810): add `if embedsTimeTime(typ) { return timeFormat }`.
-- `SchemaFormatFromReflectType` (line 846): same check returning `"date-time"`.
-- `schemaFromType` (line 905): short-circuit for embedded-time structs before
-  `schemaFromStruct` is called.
-
-Helper:
-
-```go
-func embedsTimeTime(typ reflect.Type) bool {
-    if typ.Kind() != reflect.Struct { return false }
-    tt := reflect.TypeOf(time.Time{})
-    for i := 0; i < typ.NumField(); i++ {
-        f := typ.Field(i)
-        if f.Anonymous && f.Type == tt { return true }
-    }
-    return false
-}
-```
-
-Alternatively, drop `feeds_v2_activity` from the chat client-side spec entirely if the chat SDK
-shouldn't surface feeds activities - this is a product decision.
-
----
-
-## 4. Empty-string enum value generated as invalid `''` literal
-
-**Symptom:** `MessageRequest.kt:115 Empty character literal`, `:121 Syntax error: Name expected`.
-
-```kotlin
-sealed class Type(val value: String) {
-    companion object {
-        fun fromString(s: String): Type = when (s) {
-            "''" -> ''                          // invalid: empty char literal
-            "regular" -> Regular
-            ...
-        }
-    }
-    object '' : Type("''")                      // invalid: bare '' is not a valid identifier
-    object Regular : Type("regular")
-    ...
-}
-```
-
-**Root cause:** The OpenAPI spec lists an empty string `""` as one of the allowed enum values for
-`MessageRequest.type`. The Kotlin generator's enum template emits the value as `''` for both the
-companion-object match arm and the `object` declaration. `''` is interpreted as an empty `Char`
-literal at the value site and as an invalid identifier at the declaration site.
-
-**Fix status:** Locally fixed in the generator (not upstream). `kotlin.go` now has a small
-`buildEnumClassName` helper used at the enum emission site (line ~336). It calls
-`templates.PascalCase`, which already strips non-alphanumeric chars, and falls back to `Empty`
-when the resulting identifier would be empty. Mirrors Swift's `ConstantName` shape.
-
-The collision case (multiple values sanitizing to the same identifier, e.g. both `""` and `''`
-in the same enum) is not handled - the Go map silently overwrites, matching what every other
-language generator does. If a real spec hits this, we'll add disambiguation then.
-
-**Suggested fix:** Two angles:
-
-- Spec-side: drop the empty-string value from the enum if it isn't a real allowed wire value.
-- Generator-side: implemented as above.
-
----
-
-## 5. Cross-product types and admin-only endpoints leak into the chat SDK
-
-**Symptom:** The chat client-side spec includes models that don't belong to chat - notably
-feeds types (`EnrichedActivity`, `EnrichedReaction`, `Time`), and very likely other moderation
-cross-product shapes (video, call-related types if moderation surfaces them). These end up as
-generated Kotlin classes in `stream-chat-android-network`, bloating the public API surface and
-adding binary size / method count overhead for chat consumers who will never use them.
-
-Sample: `EnrichedReaction`, `EnrichedActivity`, `Time` (issue #3 above is a direct consequence).
-Listing the rest requires a sweep of the generated `models/` directory against the chat product's
-actual model set.
-
-**Endpoint side of the same problem:** `ChatApi` includes 21 standalone
-`/api/v2/moderation/...` endpoints (`review_queue`, `appeals`, `action_config`, `configs`,
-`submit_action`, `ban`, `flag`, `mute`, `appeal/{id}`, `appeals/bulk_action`, ...) - admin /
-moderator-console operations that a chat client app should never call directly. Chat-scoped
-moderation that DOES belong (`/api/v2/chat/moderation/flags/message`,
-`/api/v2/chat/moderation/mute/channel`, etc. - 5 endpoints) is correctly under the chat path
-prefix. The 21 standalone moderation routes are the entry point through which the cross-product
-types reach the chat models graph: `review_queue` returns `ReviewQueueItem` which carries
-`feeds_v2_activity: EnrichedActivity`, etc.
-
-Quick numbers from the current `ChatApi`:
-
-| Path prefix | Count | Belongs in chat SDK? |
-|---|---|---|
-| `/api/v2/chat/...` | 83 | yes |
-| `/api/v2/chat/moderation/...` | 5 | yes (chat-scoped moderation) |
-| `/api/v2/moderation/...` | 21 | no (admin/moderator console) |
-| other (`app`, `blocklists`, `devices`, `users`, ...) | 46 | case-by-case |
-| **total** | 155 | |
-
-**Root cause:** The chat client-side spec is built with three products
-(`-products chat,common,moderation`, per `generate-kotlin-chat-client.sh`). Moderation responses
-reference cross-product shapes - e.g. `ReviewQueueItem.feeds_v2_activity: EnrichedActivity` -
-because a single moderation review-queue endpoint can return items from any product. When the
-spec walker resolves every `$ref` reachable from a chat client-side endpoint, those cross-product
-shapes are pulled in.
-
-This is a product/spec concern more than a generator bug, but it surfaces as generator output and
-becomes an SDK API problem the moment we ship.
-
-**Fix status:** Fixed by dropping the `moderation` product from the chat spec build.
-`generate-kotlin-chat-client.sh` now invokes `chat-manager openapi generate-spec -products
-chat,common` directly instead of using the bundled spec (which is built with
-`chat,common,moderation`). Chat-scoped moderation routes (`/api/v2/chat/moderation/*`) are
-tagged with the `chat` product and survive; the 21 standalone `/api/v2/moderation/*` admin
-routes and the cross-product types (`EnrichedActivity`, `EnrichedReaction`, `ReviewQueueItem`,
-`Time`) are gone. Module shrank from 472 to 324 generated model files.
-
-**Suggested fix:** Several angles, listed by ambition:
-
-1. **Trim moderation responses for chat clients.** The `feeds_v2_activity` (and any other
-   non-chat cross-product fields) shouldn't appear on chat-context moderation responses. Either
-   (a) split moderation responses per product context in the spec, or (b) mark fields with an
-   `omit_for_chat` openapi tag analogous to the existing `omit_for_video`
-   (`lib/combined/openapi/spec/spec.go:611-613`).
-2. **Filter at the generator.** A `--exclude-models` (or include-only-reachable-from-this-set)
-   flag on `chat-manager openapi generate-client` would let the Kotlin generator drop models that
-   shouldn't be in this product's SDK. Less precise (some legit shared shapes might be cut), but
-   easy.
-3. **Curate the chat product surface.** Build the chat client-side spec from chat-only routes
-   plus a curated set of moderation routes that don't reference cross-product types. Most
-   correct, biggest blast radius.
-4. **Per-product API split, mirroring the TypeScript generator.** The TypeScript language plugin
-   already does this. In `lib/combined/openapi/generator/languages/typescript/typescript.go` it
-   iterates over the product set, filters operations via `spec.FilterByProduct(product)`, and
-   emits a separate `{Product}Api.ts` file per product - `ChatApi.ts` contains only chat-tagged
-   routes, `ModerationApi.ts` contains only the admin moderation routes, etc. The `Moderation`
-   API is its own file, so consumers (e.g. the chat SDK) can choose not to expose it. There's
-   also a `productToResourceClass` map (`chat` -> `channel`, `video` -> `call`, `feeds` -> `feed`)
-   that emits a focused sub-API file (e.g. `ChannelApi.ts`) for routes under
-   `/api/v2/{product}/{resource}/{type}/{id}`.
-
-   The Kotlin language plugin has no equivalent: it emits a single `ChatApi.kt` containing every
-   route in the spec. Adopting the TypeScript pattern would give us:
-
-   - `apis/ChatApi.kt` - only chat-tagged routes (~88 methods, was 155)
-   - `apis/ChannelApi.kt` - channel-scoped sub-API
-   - `apis/ModerationApi.kt` - admin moderation, kept separate and likely excluded from the chat
-     SDK's public surface
-   - No code for video / feeds products in a chat-only generation pass
-
-Either (1) or a curated (3) plus (4) is the right long-term answer. (2) is a stopgap if upstream
-changes are slow.
-
-## Cross-SDK state (as of 2026-06-15)
-
-Surveyed how other Stream SDKs handle the same generator output:
-
-| SDK | Uses OpenAPI generator? | Generated file count | Cross-product leak? | Notes |
-|---|---|---|---|---|
-| chat-android (this) | yes | 472 | yes | `EnrichedActivity`, `EnrichedReaction`, `Time`, 21 admin `/moderation/*` routes |
-| chat-swift (`feature/open-api-llc`, last commit 2026-06-09) | yes | 471 | yes (but `EnrichedReaction` has the `Time`-typed fields stripped) | Same generator output shape; somehow avoided the Time wrapper bug, worth syncing with the iOS team on how |
-| chat-js (`feat/integrate-open-api-generated-client`, last commit 2026-06-15) | yes - different shape | 7 aggregated files | partially avoided | Per-product `*Api.ts` files; admin moderation is `src/gen/moderation/ModerationApi.ts` and not pulled into the chat API surface by default |
-| chat-swift `main` / chat-js `main` | no - hand-written | n/a | n/a | Existing released SDKs predate the generator |
-| feeds-android, feeds-swift | yes | same leak | yes | Same generator, same leakage of cross-product types |
-
-Conclusions:
-
-- The cross-product leak is universal across teams that consume the Kotlin/Swift generator
-  output. No SDK has fixed it upstream.
-- The TypeScript generator already implements option (4) above - the per-product split. The
-  Kotlin and Swift generators have not adopted the same pattern.
-- The iOS team is roughly where we are. Coordinating on issues #3 and #5 with them avoids
-  divergent local fixes and is the path to an upstream solution.
-
-**Audit needed:** Before shipping, sweep `stream-chat-android-network/src/main/kotlin/.../models/`
-and identify which generated classes have no chat-domain meaning. Decide per-class whether to:
-
-- Push for an upstream spec/generator fix (best),
-- Mark `internal` and never expose,
-- Keep as public if the symbol genuinely needs to round-trip (e.g. moderation reviewers do see
-  feeds activities in cross-product orgs).
-
-### Product tags scope and the path to model trimming
-
-Concrete observation from the upstream generator source
-(`lib/combined/openapi/generator/types/types.go`):
-
-- `Operation` has a `Product string` field (line 684). Endpoints are product-tagged.
-- `Model` has no equivalent. Models are universal across products.
-- `FilterByProduct` (line 1125) filters only operations.
-
-This means option 4 (per-product **API** split) is straightforward to implement. **Model**
-trimming - emitting only the models actually referenced by the kept operations - is a separate
-problem because models have no product tag.
-
-The generator already has a reachability traversal at `Context.ResponseModels()` (lines
-1185-1212): seeds from each kept operation's `ResponseModel`, walks model fields, resolves
-referenced model names via `GetModel`, expands until fixed point. The TypeScript plugin calls it
-for date-decoder selection (`typescript.go:85`), but **no language plugin currently uses it to
-trim the emitted model set** - every plugin still emits all of `spec.Models`.
-
-A reachability-based model trim would need two changes:
-
-1. Extend the seed set to also include request bodies and parameter types (currently only
-   `ResponseModel`).
-2. Apply it at model emission time in each language plugin: replace
-   `for _, model := range spec.Models` with iteration over the reachable closure of the
-   filtered operations.
-
-Both changes live in shared (generic) generator code, not in any one language plugin. **Touching
-that code should be coordinated with the iOS / TS / feeds-android maintainers** rather than
-landed as a local fork.
-
----
-
-## 6. Chat datetime fields generated as `OffsetDateTime` instead of `Date`
-
-**Symptom:** Every generated DTO with a datetime field uses `org.threeten.bp.OffsetDateTime`
-(159 files in the current chat output). The chat domain layer, the existing manual DTOs (via the
-`ExactDate` Moshi adapter), and the entire mapping layer all use `java.util.Date`. Result: every
-single mapper between a generated DTO and a domain class has to write a per-field conversion
-like:
-
-```kotlin
-createdAt = Date(dto.createdAt.toInstant().toEpochMilli())
-```
-
-This is pure boilerplate, with no benefit - chat code has never preserved timezones and doesn't
-need to. The cost compounds at scale: the migration will write thousands of these conversions
-that will all be deleted later if/when the generator is fixed.
-
-**Root cause:** Hard-coded in `lib/combined/openapi/generator/languages/kotlin/kotlin.go:640-651`:
-
-```go
-if strings.Contains(typeInfo.Name, "DatetimeType") {
-    if androidsdk == "feeds" {
-        return "java.util.Date"
-    }
-    return "org.threeten.bp.OffsetDateTime"
-}
-```
-
-Only feeds opts into `Date`. Chat and video fall through to `OffsetDateTime`. There is no
-explanation in the code or templates for why feeds was singled out - presumably the original
-author of the feeds branch ran into the same conversion-boilerplate problem we are hitting now.
-
-**Cross-SDK reality check:**
-
-| Product | Datetime type | Mapper conversion |
-|---|---|---|
-| feeds | `java.util.Date` (107 files) | none |
-| video | `org.threeten.bp.OffsetDateTime` (99 files) | yes |
-| chat (today) | `org.threeten.bp.OffsetDateTime` (159 files) | yes |
-
-Video pays the same tax as chat would. Feeds skips it.
-
-**Fix status:** Locally fixed in the generator (not upstream). Inverted the default in
-`kotlin.go:644-654`: video keeps `OffsetDateTime`, every other product gets `Date`. Chat
-output regenerated, network module no longer depends on threetenbp, and the existing Role +
-ReactionGroup mappers dropped their `Date(it.toInstant().toEpochMilli())` conversions.
-
-**Suggested fix:** Invert the default - treat `Date` as the default, opt only video into
-`OffsetDateTime`:
-
-```go
-if strings.Contains(typeInfo.Name, "DatetimeType") {
-    if androidsdk == "video" {
-        return "org.threeten.bp.OffsetDateTime"
-    }
-    return "java.util.Date"
-}
-```
-
-Rationale: two of the three current products (feeds, chat) want `Date`, and any new product
-added later is more likely to follow the same shape than to want timezone-preserving datetime.
-Treat the majority as the default; let the outlier opt in.
-
-After regeneration: generated `RoleDto.createdAt: Date`, mapper becomes `createdAt = createdAt`.
-The network module also no longer needs `org.threeten:threetenbp` as a dependency (one less
-transitive on the chat-client classpath), and the threetenbp date adapters in
-`stream-chat-android-network/.../infrastructure/` become dead code.
-
-Long-term, the right shape might be a `--datetime-type` flag on `chat-manager openapi
-generate-client` so each consumer picks the type it wants - but the inverted-default per-SDK
-switch is fine for now.
-
-**Migration timing:** Worth applying this **before** we do more DTO swaps, because every mapper
-we write between now and a fix will get rewritten when the fix lands. The swap done so far
-(`DownstreamRoleDto -> Role`) is the first and only mapper that pays this cost; cheap to
-re-simplify after a regen.
-
----
-
-## 7. Generated chat model names collide with domain model names
-
-**Symptom:** Generated wire models share their simple names with the chat domain models in
-`stream-chat-android-core/src/main/java/io/getstream/chat/android/models/`. Confirmed collisions
-today: `Command`, `Message`, `User`, `Channel`, `Member`, `Reaction`, `Attachment`, `Device`,
-`Mute`, `Thread`, `Poll`, `Location` (12 already, more likely as the network module surface
-grows).
-
-Any mapper file needs both types in scope to convert between them, so the wire side has to be
-aliased per-import:
-
-```kotlin
-import io.getstream.chat.android.network.models.Command as CommandDto
-```
-
-That alias accumulates across every mapper / parser file we touch during the migration.
-
-**Root cause:** The Kotlin generator emits a class per OpenAPI schema name verbatim. Chat's
-schema names (`Command`, `Message`, etc.) match the names long-established in the chat
-domain model. There is no opt-in suffix mechanism to disambiguate.
-
-**Fix status:** Not fixed. Worked around per-file with `as XxxDto` aliases in the migrated DTO
-files so far (`UnreadDtos.kt`, etc.). The collision is permanent, not transitional - the chat
-domain model uses these bare names by long-standing convention.
-
-**Suggested fix:** Generator-side, behind a chat-only branch. Add a `classNameSuffix` value
-that defaults to `""` and is set to `"Dto"` for the chat `androidsdk`. Apply at the single
-point in `kotlin.go` where the Kotlin class identifier is computed from the OpenAPI schema
-name; references / discriminator interfaces / service request-response types all flow from
-that one source and pick up the suffix automatically.
-
-Side effects to verify when implementing:
-
-- Discriminator interface names (`WSEvent`, `WSClientEvent`) - whether they should also gain
-  the suffix or stay as-is.
-- Enum nested adapter / class names (e.g. `Command.SetAdapter`).
-- The existing `Role`, `ReactionGroup`, `UnreadChannel`, `UnreadChannelByType`,
-  `UnreadThread` aliased imports become redundant - clean them up at the same time.
-
-Project-side alternative (typealias file in the client module) was considered but rejected:
-the collision is permanent, so a permanent generator-side convention is the cleaner end state
-than ~50+ typealiases we maintain forever.
-
-**Migration timing:** Address before the migration volume grows. Every DTO we swap before the
-fix lands will need its alias revisited.
-
----
-
-## 8. Generated DTOs are incompatible with `CustomObjectDtoAdapter` extra-data routing
-
-**Symptom:** Cannot migrate the chat root DTOs (`AttachmentDto`, `MessageDto`, `ChannelDto`,
-`UserDto`, `MemberDto`, `ReactionDto`, `PollDto`, `PollOptionDto`, `ThreadDto`,
-`ThreadInfoDto`, `UpstreamMemberDataDto`) to their generated counterparts. These DTOs go
-through `stream-chat-android-client/.../parser2/adapters/CustomObjectDtoAdapter` which
-round-trips an open-schema `extraData: Map<String, Any>` field — the wire allows arbitrary
-unknown keys, the client persists them, and round-trips them on serialization. Substituting
-the generated DTO breaks both directions silently.
-
-**Root cause:** The adapter is built on Kotlin reflection over the DTO class:
-
-```kotlin
-private val memberNames: List<String> by lazy {
-    kClass.members.map { member -> member.name }.minus(EXTRA_DATA)
-}
-```
-
-It then walks the parsed JSON map and buckets any key not in `memberNames` into the
-`extraData` sub-map. Two assumptions hard-coded into this:
-
-1. **Kotlin property names equal JSON wire names.** Manual DTOs declare snake_case
-   properties (`val message_text: String`) so the reflection-derived name matches the wire
-   key. Generated DTOs declare camelCase + `@Json(name = "message_text")` -
-   reflection returns `messageText`, the wire key is `message_text`, the membership check
-   fails, and **every declared field gets bucketed as extra data**.
-2. **The DTO has an `extraData: Map<String, Any>` property.** Manual DTOs declare one
-   explicitly. Generated DTOs never have it - the OpenAPI spec doesn't currently model
-   `additionalProperties` for these schemas, so the generator has nothing to emit. With no
-   `extraData` field, the post-extraction map can't be deserialized.
-
-`@StreamHandsOff` annotations on the affected manual DTOs encode exactly this hazard.
-
-**Fix status:** Not fixed. Blocks ~10 leaf migrations and effectively gates the entire
-root-DTO portion of the migration.
-
-**Suggested fix:** Two changes that must land together.
-
-- **Client-side**: rewrite `CustomObjectDtoAdapter.memberNames` to read `@Json(name = ...)`
-  values via reflection (Kotlin property → wire name) instead of the Kotlin property names.
-  After the change, both manual and generated DTOs work uniformly - members are identified
-  by what they look like on the wire. Hand-validated DTOs without `@Json` annotations
-  continue to work via property-name fallback.
-- **Generator-side**: every chat DTO that goes through the open-schema adapter needs an
-  `extraData: Map<String, Any>` field. Cleanest path is to mark the affected schemas in the
-  OpenAPI spec as `additionalProperties: {}` (or a chat-specific extension tag) and have the
-  Kotlin generator emit a `extraData: Map<String, Any> = emptyMap()` property whenever the
-  schema is so marked. Alternative: a chat-only generator branch that adds the field to a
-  hard-coded set of schema names. Spec-side is cleaner; generator-side is a faster stopgap.
-
-Once both ship:
-
-- `AttachmentDto`, `MessageDto`, `ChannelDto`, `UserDto`, `MemberDto`, `ReactionDto`,
-  `PollDto`, `PollOptionDto`, `ThreadDto`, `ThreadInfoDto`, `UpstreamMemberDataDto` become
-  mechanical alias-style migrations.
-- The `@StreamHandsOff` annotations on the manual DTOs can come off (or stay as warning
-  signal until the manual DTOs are fully retired).
-
-**Migration timing:** Required before any of the root DTOs can move. All leaf migrations
-that depend on these root types (mutes, channel reads, reminders, flags) are blocked until
-then.
-
----
-
-## 9. Spec generator emits `custom: object` for `jsonextra.ExtraFields` fields, but the wire flattens them to root
-
-**Symptom:** Every generated Kotlin (and Swift/TS) DTO that corresponds to a backend struct
-containing `Custom jsonextra.ExtraFields \`json:"custom"\`` gets a typed
-`@Json(name = "custom") val custom: Map<String, Any?>` property. The wire produced by the
-backend does not contain a literal `"custom"` key - `jsonextra.ExtraFields` flattens map
-contents to the root of the enclosing object on encode and pulls unknown root-level keys
-into the map on decode (see `kit/v3/jsonextra/JSONEXTRA_SPEC.md`, section 5). Plugging the
-generated DTO into stock Moshi yields:
-
-- `custom` always parses as `emptyMap()` because the wire has no `"custom"` key.
-- Real custom keys at the root (e.g. `birthland`, `team_name`, `jcTest`) get silently
-  dropped because Moshi defaults to ignoring unknown JSON fields.
-
-**Root cause:** `lib/combined/openapi/spec/spec.go` walks struct fields generically and
-reflects through them. There is no recognition of `jsonextra.ExtraFields` - the type is
-`map[string]interface{}` under the hood, and the `json:"custom"` tag is read literally. The
-spec emits `custom: type: object` as a normal nested property. The `jsonextra` runtime
-flatten-on-encode / sweep-on-decode semantics live entirely outside the spec generator's
-field walker.
-
-This affects every chat schema that has an `ExtraFields` field - chat-android observed on
-`UserResponseCommonFields`, and the same pattern lives on Channel, Message, Attachment,
-Member, Reaction, Thread, Poll, Flag, etc. across the chat backend's payload types.
-
-**Fix status:** Not fixed at the spec/generator level. Worked around client-side in chat-
-android by extending `CustomObjectDtoAdapter` to bucket unknown root keys into the generated
-`custom` property (see issue #8).
-
-**Suggested fix:** Either:
-
-1. **Spec generator recognizes `jsonextra.ExtraFields`**. In `spec.go`'s struct field walker,
-   short-circuit fields whose Go type is `jsonextra.ExtraFields`: instead of emitting a
-   named property, set `additionalProperties: { type: object }` on the parent schema. Each
-   language generator then emits whatever overflow-field convention it uses (Kotlin: an
-   `extraData`-style map field that the existing `CustomObjectDtoAdapter` populates; Swift /
-   TS: similar conventions).
-2. **OpenAPI extension marker**. Add `x-stream-extra-fields: true` on the property in the
-   spec when the Go field is `jsonextra.ExtraFields`. The Kotlin generator emits the
-   property as today plus a marker (or interface implementation) that the SDK's parser
-   recognizes and wraps with the open-schema adapter. Less precise than option 1 but
-   smaller spec-shape impact.
-
-Option 1 is correct. Option 2 is a faster stopgap.
-
-The collateral benefit: once spec + generator + SDK agree, every DTO that uses
-`jsonextra.ExtraFields` becomes a clean leaf migration (combined with the fix for issue #8).
-
-**Migration timing:** Combine with issue #8 - both must land together for root-DTO swaps
-(`User`, `Channel`, `Message`, `Attachment`, etc.) to work end-to-end with the new wire
-generator output.
-
----
-
-## 10. Spec generator maps `float64` to OpenAPI `format: float`, downgrading precision
-
-**Symptom:** Every `float64` field on the chat backend appears as `format: float` in the
-OpenAPI spec (`chat.yaml`). The Kotlin generator turns `format: float` into `kotlin.Float`
-(32-bit). Concrete impact in `stream-chat-android`: `SharedLocation.latitude` and
-`SharedLocation.longitude` come out as `kotlin.Float`, and round-tripping a domain
-`Location(latitude = 37.7749, longitude = -122.4194)` loses precision
-(`37.774898529052734`, `-122.41940307617188`).
-
-**Root cause:** `lib/combined/openapi/spec/spec.go:836` in `SchemaFormatFromReflectType`:
-
-```go
-case "float32", "float64", "complex64", "complex128":
-    return "float"
-```
-
-Both `float32` (single precision) and `float64` (double precision) map to the same
-OpenAPI format string. The backend Go uses `float64` (see e.g.
-`lib/chat/controller/v1/payload/shared_location.go:15`), but the spec advertises 32-bit.
-
-The Kotlin generator at `lib/combined/openapi/generator/languages/kotlin/kotlin.go:866`
-correctly maps `format: float` -> `kotlin.Float`. The bug is upstream in the spec.
-
-**Fix status:** Not fixed. Worked around in `stream-chat-android-client` by widening
-`Float` to `Double` at the mapper boundary (`DtoMapping.Location.toDto()` calls
-`.toFloat()`, `DomainMapping.DownstreamLocationDto.toDomain()` calls `.toDouble()`).
-Domain models keep `Double`; only the wire DTO uses Float.
-
-**Suggested fix:** Split the case in `spec.go`:
-
-```go
-case "float32", "complex64":
-    return "float"
-case "float64", "complex128":
-    return "double"
-```
-
-And in the Kotlin generator, default `type: number` (no explicit format) to
-`kotlin.Double` rather than `kotlin.Float` (currently both map to Float at
-`kotlin.go:868-869`). `format: double` already maps to `kotlin.Double` correctly.
-
-**Breaking-change caveat:** The spec fix changes the contract for every SDK consuming the
-spec (chat-swift, chat-js, video, feeds, ...). Existing built artifacts with `Float`
-fields would not be source/binary compatible with the new `Double` ones. Land only as a
-coordinated multi-SDK release. Until then, the per-mapper `.toFloat()`/`.toDouble()`
-workaround on the chat-android side keeps things working.
+And default `type: number` (no explicit format) to `kotlin.Double` rather
+than `kotlin.Float` in the Kotlin generator.
+
+**Caveat:** Source/binary breaking change for every SDK; coordinate
+multi-SDK release.
 
 ---
 
 ## 11. Spec emits `Custom` (capital C) `@Json` name for poll request DTOs
 
-**Symptom:** Generated `CreatePollRequest`, `UpdatePollRequest`, `CreatePollOptionRequest`,
-`UpdatePollOptionRequest` declare:
+**Symptom:** Generated `CreatePollRequest`, `UpdatePollRequest`,
+`CreatePollOptionRequest`, `UpdatePollOptionRequest` declare
+`@Json(name = "Custom") val custom: Map<...>`.
 
-```kotlin
-@Json(name = "Custom")
-val custom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap()
-```
+**Root cause:** Backend poll-request structs declare `Custom
+jsonextra.ExtraFields` without an explicit `json:"custom"` tag. Spec generator
+falls back to Go field name verbatim.
 
-**Root cause:** The chat backend's Go poll-request structs declare the extra-fields property
-as `Custom jsonextra.ExtraFields` with no `json:"custom"` tag, unlike most other DTOs. The
-spec generator falls back to using the Go field name (`Custom`) verbatim. The Kotlin
-generator faithfully echoes that into `@Json(name = "Custom")`. Peer DTOs that have explicit
-`json:"custom"` tags emit the correct lowercase name (see `PollOptionResponseData`,
-`PollOptionInput`).
+**Why cosmetic, not a wire bug:** The wire never contains `"Custom"` /
+`"custom"` literally - `jsonextra.ExtraFields` flattens at root on encode
+(see #9). `CustomObjectDtoAdapter` does the same on the client. The annotation
+name only matters in the intermediate Map between Moshi and the adapter. As
+long as the adapter is registered with `extraDataPropertyName = "Custom"`
+matching the annotation, the typo is invisible on the wire.
 
-**Why this is cosmetic, not a wire-format bug:** The wire never contains `"Custom"` or
-`"custom"` literally for these payloads. The server's `jsonextra.ExtraFields` flattens map
-contents to root on encode and sweeps unknown root keys back into the map on decode (issue
-#9). The client's `CustomObjectDtoAdapter` does the same: on encode, it serializes the DTO
-through Moshi's default adapter (producing a Map keyed by the `@Json` name), then **looks up
-that key, removes it from the Map, and merges the contents at root level** before writing the
-wire. On decode it reverses the process. The literal annotation name only appears in the
-intermediate Map between Moshi and the adapter - the wire shape is "flat root keys" on both
-sides.
+**Fix status:** Not fixed. Cosmetic.
 
-The only requirement is that the adapter be registered with
-`extraDataPropertyName = "Custom"` (matching the `@Json` name) when wrapping these specific
-DTOs. As long as that's consistent, the typo is invisible on the wire.
-
-**Fix status:** Not fixed. Cosmetic; does not block migration of these DTOs as long as the
-adapter wiring matches the annotation. Still worth fixing for spec consistency.
-
-**Suggested fix:** Spec-side - add `json:"custom"` tags to the affected Go struct fields, or
-recognize the convention in the spec generator's struct walker.
-
-**Migration timing:** Not blocking. The real blocker for `CreatePollRequest` /
-`UpdatePollRequest` migration is issue #8 (generator-side emission of the `custom` /
-`extraData` field at all), not this naming quirk.
+**Suggested upstream fix:** Add `json:"custom"` tags to the affected Go fields,
+or recognize the convention in the spec generator's struct walker.
 
 ---
 
-## 12. Distinct Go types sharing a simple name collapse into one OpenAPI schema
+## 12. Distinct Go types with same simple name collapse into one OpenAPI schema
 
-**Symptom:** Generated `ChannelMemberResponse.kt` has only two fields:
+**Symptom:** Generated `ChannelMemberResponse.kt` has 2 fields; the real wire
+shape for channel-member responses (QueryMembers, UpdateChannelPartial, etc.)
+has ~20 fields. Typealiasing would silently drop user/dates/banned status.
 
-```kotlin
-data class ChannelMemberResponse(
-    @Json(name = "channel_role") val channelRole: String,
-    @Json(name = "notifications_muted") val notificationsMuted: Boolean,
-)
-```
+**Root cause:** Two distinct Go structs are both named `ChannelMemberResponse`:
+1. `lib/chat/controller/v1/payload/channel_response.go:389` - full type,
+   used by real channel-member responses.
+2. `lib/combined/controllers/common/commonpayloads/member.go:8` - lean type
+   (`channel_role` + `notifications_muted`), used as `Message.member`.
 
-The real wire shape (what the server actually serializes for channel members in responses
-like `QueryMembers`, `UpdateChannelPartial`, etc.) has ~20 fields: `user`, `banned`,
-`shadow_banned`, `created_at`, `updated_at`, `deleted_at`, `status`, `invite_accepted_at`,
-`invite_rejected_at`, `pinned_at`, `archived_at`, `custom`, `is_moderator`, `role`,
-`channel_role`, `notifications_muted`, `deleted_messages`, `ban_expires`, `user_id`.
-The Kotlin DTO is silently lossy. Plugging it in via typealias would drop user/dates/banned
-status on every member list, breaking member rendering, ban indicators, role checks, etc.
+`spec.go:569` `clarifyName` dedupes by string name, not `reflect.Type`. The
+first registered type wins the bare name; the second silently aliases to it.
 
-**Root cause:** Two distinct Go structs both named `ChannelMemberResponse` exist in the
-backend:
+**Fix status:** Upstream fix CHA-3559 renamed the lean type to claim the bare
+name back for the full type. (See #16 for the consequence.)
 
-1. `lib/chat/controller/v1/payload/channel_response.go:389` - **full** type, used by real
-   chat responses (`UpdateChannelPartialResponse.Members []*payload.ChannelMemberResponse`,
-   `QueryMembersResponse`, etc.).
-2. `lib/combined/controllers/common/commonpayloads/member.go:8` - **lean** type with only
-   `channel_role` + `notifications_muted`. Used as `Message.member` to surface the author's
-   per-channel role inside message payloads (so a Message doesn't have to carry the full
-   member object).
-
-Both are legitimate and serve different purposes. The bug is in
-`lib/combined/openapi/spec/spec.go:569` (`clarifyName`), which dedupes schemas by **string
-name**, not by `reflect.Type`:
-
-```go
-func (o *OpenAPI) clarifyName(original string) string {
-    if existing, ok := o.names[original]; ok {
-        return existing  // <-- second type with same bare name silently aliases to the first
-    }
-    ...
-}
-```
-
-The first `ChannelMemberResponse` walked (the lean `commonpayloads` version) wins the bare
-name. When the full `payload` version is later walked, `clarifyName` returns the existing
-name and the full struct is never registered as a separate schema. Every `$ref` in the spec
-that should resolve to the full type now points at the lean one. Confirmed against the
-generated `chat-only-clientside-api.yaml` - only a single `ChannelMemberResponse` schema
-exists, with the lean two-field shape.
-
-The wire itself is still correct (the server serializes the full struct's json tags into
-the response), so the SDK can decode the full payload just fine if its type allows. The
-SDK can't decode it via the generated DTO because the DTO doesn't model the missing
-fields.
-
-This pattern is not specific to ChannelMemberResponse. Any time two Go types share an
-unqualified name in the backend, the spec generator collapses them. Other likely
-collisions: `Response`, `RequestPayload`, generic shape names that might appear in
-multiple packages.
-
-**Fix status:** Not fixed. Blocks the `DownstreamMemberDto` -> generated migration
-(step 4 of the root-DTO plan), which in turn blocks `DownstreamChannelDto` (channels
-contain members) and `DownstreamMessageDto` (messages reference both).
-
-**Suggested fix:** Two angles, listed by ambition.
-
-1. **Rename the lean type upstream.** Rename
-   `commonpayloads.ChannelMemberResponse` to something distinctive like
-   `MemberRoleResponse` or `ChannelMemberRoleResponse`. The two Go types stop colliding,
-   the spec emits two separate schemas (`ChannelMemberResponse` full, `MemberRoleResponse`
-   lean), and consumers reference the correct one. One-line change in the backend, plus
-   updating ~3 call sites that consume the lean type. Cosmetic name change, no wire
-   impact (the json tags on both types are unchanged).
-2. **Patch `clarifyName` to dedupe by type, not by string.** Key the `o.names` map off
-   `reflect.Type` (or a `(package, name)` tuple) instead of the bare string. Second
-   registration of a same-named type from a different package gets `_1` suffix as the
-   collision-handling code already does for re-registrations of the same type. More
-   invasive, but eliminates the entire class of bug. Other latent collisions may exist
-   that we haven't surfaced yet.
-
-Option 1 is the smallest fix that unblocks chat-android. Option 2 is the correct long-term
-fix and worth coordinating with the other SDK teams (chat-swift, chat-js, feeds-android,
-video).
-
-**Migration timing:** Required before `DownstreamMemberDto`, `DownstreamChannelDto`, and
-`DownstreamMessageDto` can move. Step 5 (`DownstreamReactionDto`) only nests `user`, which
-is already migrated, so reaction migration can proceed in parallel without waiting.
+**Suggested upstream fix:** Patch `clarifyName` to key off `reflect.Type` (or
+a `(package, name)` tuple). Eliminates the entire class of bug - other latent
+collisions likely exist. Coordinate with other SDK teams.
 
 ---
 
 ## 13. `openapi:"-"` strips real wire fields from the spec
 
-**Symptom:** Generated `ChannelConfigWithInfo.kt` is missing `message_retention`, even
-though every chat `channel.config` JSON the backend sends carries it
-(`"message_retention": "infinite"`). Moshi drops the unknown root key on decode; the
-domain `Config.messageRetention` defaults to `"infinite"` and any non-default value the
-server sets is silently lost.
+**Symptom:** Generated `ChannelConfigWithInfo.kt` missing `message_retention`,
+even though the wire always carries it. Moshi drops the unknown key; domain
+default `"infinite"` hides non-default backend values.
 
-**Root cause:** The Go field on the `types.ChannelConfigFields` struct
-(`lib/combined/types/channel_config.go:66`) is tagged
-`json:"message_retention" ... openapi:"-"`. The `openapi:"-"` instructs the spec generator
-to omit the field. The json tag still serializes it to the wire. Result: the wire emits
-the field, but no consumer of the spec models it.
+**Root cause:** `types/channel_config.go:66` tags the field
+`json:"message_retention" ... openapi:"-"`. The `openapi:"-"` instructs the
+spec generator to omit; the json tag still serializes it.
 
-This is the inverse of issue #5 (cross-product leak): there the spec emits things that
-shouldn't be there; here the spec drops things that should be there.
+**Fix status:** Worked around in the SDK by defaulting
+`Config.messageRetention = "infinite"` in `ChannelConfigWithInfo.toDomain()`.
 
-**Fix status:** Worked around in chat-android by defaulting `Config.messageRetention =
-"infinite"` in `ChannelConfigWithInfo.toDomain()` with a comment pointing to this entry.
-Acceptable because the field is rarely customized and the default matches the most common
-backend value.
-
-**Suggested fix:** Audit Go fields tagged `openapi:"-"` that still have a `json:` tag with
-a real name. Either remove the `openapi:"-"` (preferred, so the spec describes the wire
-honestly) or drop the json tag (and audit downstream consumers that may rely on the wire
-field). For `MessageRetention` specifically, removing `openapi:"-"` is the right answer:
-it's documented behaviour and SDKs already depend on the value.
-
-**Migration timing:** Not blocking. The android workaround is one line. Worth pushing
-upstream alongside the next batch of spec/openapi fixes.
+**Suggested upstream fix:** Audit Go fields tagged `openapi:"-"` with a real
+`json:` tag. Remove `openapi:"-"` so the spec describes the wire honestly.
 
 ---
 
 ## 14. `PollResponseData` collection fields lie about being required
 
-**Symptom:** Casting a poll vote against the live backend crashes the generated
-SDK with:
+**Symptom:** Casting a vote crashes with `JsonDataException: Non-null value
+'voteCountsByOption' was null at $.poll`. Same for `latest_votes_by_option`,
+`latest_answers`.
 
-```
-com.squareup.moshi.JsonDataException: Non-null value 'voteCountsByOption'
-(JSON name 'vote_counts_by_option') was null at $.vote_counts_by_option at $.poll
-```
+**Root cause:** Same class as #18. Go (`polls/poll.go:26-28`) types the
+fields as `map[string]int` / `[]*PollVoteResponseData` with `json:"..."` and
+no `omitempty`. `encoding/json` marshals nil maps/slices as JSON null.
+`spec.go:90-95` `FieldRequiredResponse` marks any non-pointer field without
+`omitempty` as required. Wire emits null for empty/new polls.
 
-The same applies to `latest_votes_by_option` and `latest_answers`.
-
-**Root cause:** A three-way disagreement between Go code, openapi spec, and wire:
-
-- Go (`lib/combined/controllers/common/payload/polls/poll.go:26-28`) types these
-  as `map[string]int`, `map[string][]*PollVoteResponseData`, and
-  `[]*PollVoteResponseData` with `json:"<name>"` tags **without `omitempty`**.
-  `encoding/json` serializes nil maps and slices as JSON `null` when omitempty
-  is absent.
-- The clientside openapi spec
-  (`releases/chat-openapi-clientside.yaml:8858-8860` and `releases/v2/chat-only-
-  clientside-api.yaml:8456-8458`) lists all three under `required:`. The chat-
-  manager's `FieldRequiredResponse` (`lib/combined/openapi/spec/spec.go:90-95`)
-  marks any non-pointer field without `omitempty` as required.
-- The wire emits `"vote_counts_by_option": null` for empty/new polls. Generated
-  SDKs trust the spec and refuse to decode null into a non-null collection.
-
-**Cross-SDK check:** confirmed the same defect exists in iOS's
-`feature/open-api-llc` branch — `Sources/StreamChat/Generated/OpenAPI/models/
-PollResponseData.swift` declares the three fields non-optional, so it would crash
-on the same wire. The iOS hand-written legacy code on `open-api-user-group-
-endpoints/.../PollsPayloads.swift` correctly declares them optional, confirming
-the wire reality.
-
-**Fix status:** Worked around in the `chat-openapi-android` branch of the chat
-repo by adding `,omitempty` to the three Go tags (commit
+**Fix status:** Local fix. Commit
 `[android-migration-only] Add omitempty to PollResponseData empty-able
-collections`). The spec generator's `FieldRequiredResponse` then drops them from
-`required:`, and the regenerated Kotlin DTO ends up `Map<...>?` / `List<...>?`,
-matching the wire. The chat-android mapper uses `.orEmpty()` at the call sites.
+collections` - adds `,omitempty` to the three Go tags; regen makes them
+nullable; mapper uses `.orEmpty()`.
 
-**Suggested fix:** Land the same `omitempty` change upstream on chat master.
-Benefits every SDK consuming `PollResponseData` (chat-android, chat-swift
-open-api-llc, and any future SDK). Behaviour change is benign: instead of
-`"vote_counts_by_option": null`, the wire will omit the key entirely for empty
-polls. SDKs treat that as "absent" and apply the empty-collection default.
-
-**Migration timing:** Spec patch must land before unblocking step 7b
-(`DownstreamPollDto` -> `PollResponseData`) on master. Our branch already runs
-against the local-patch regen.
+**Suggested upstream fix:** Land the same `omitempty` upstream, or apply the
+generator-level fix described in #18.
 
 ---
 
 ## 15. `UserGroupResponse` schema collapses, drops `members` field
 
-**Symptom:** Generated `UserGroupResponse.kt` has 7 fields (`id`, `name`,
-`createdAt`, `updatedAt`, plus optional `createdBy`/`description`/`teamId`).
-Real wire for direct user-group endpoints (`POST /user_groups`, `GET
-/user_groups/{id}`, etc.) carries an additional `members` array.
+**Symptom:** Generated `UserGroupResponse.kt` has 7 fields; direct
+user-group endpoints (`POST /user_groups`, `GET /user_groups/{id}`) carry an
+additional `members` array.
 
-Migrating `DownstreamUserGroupDto` to a typealias of the generated
-`UserGroupResponse` would silently drop the members on every direct group
-response.
-
-**Root cause:** Same class as issue #12 - two distinct Go structs share the
-unqualified name `UserGroupResponse`:
-
-1. `lib/combined/controllers/common/commonpayloads/user_group.go:13` -
-   `commonpayloads.UserGroupResponse`, the slim hydration payload used inside
+**Root cause:** Same as #12. Two Go structs named `UserGroupResponse`:
+1. `commonpayloads/user_group.go:13` - slim hydration payload used inside
    `message.mentioned_groups[]`.
-2. `lib/core/api/usergroups/controller/user_group_types.go:245` -
-   `controller.UserGroupResponse`, which embeds the slim payload and adds
-   `Members []*types.UserGroupMember`. Used by the direct user-group endpoints.
+2. `core/api/usergroups/controller/user_group_types.go:245` - full type that
+   embeds the slim payload + `Members []*UserGroupMember`.
 
-The spec generator's `clarifyName`
-(`lib/combined/openapi/spec/spec.go:569`) dedupes schemas by bare struct name.
-The slim `commonpayloads.UserGroupResponse` wins the bare name; the full
-`controller.UserGroupResponse` silently aliases to it. The spec emits only the
-slim schema (verified in `releases/v2/chat-only-clientside-api.yaml`'s
-`UserGroupResponse:` block - no `members` property), and Kotlin/Swift
-generators faithfully render the spec.
+The slim one wins the bare name; the full one silently aliases. CHA-3559's
+patch only fixed the `ChannelMemberResponse` instance.
 
-The CHA-3559 patch we already pulled in only renamed the
-`commonpayloads.ChannelMemberResponse` instance of this bug; the underlying
-`clarifyName` logic still dedupes by string, so other name collisions like
-`UserGroupResponse` remain.
+**Fix status:** Local fix. Commit `[android-migration-only] Rename slim
+UserGroupResponse to MentionedUserGroupResponse`. Renames the slim payload
++ constructors so the full controller type reclaims the bare schema name.
 
-**Fix status:** Worked around on the `chat-openapi-android` branch of the chat
-repo (commit `[android-migration-only] Rename slim UserGroupResponse to
-MentionedUserGroupResponse`). Renaming the slim payload + constructors lets
-the full controller type reclaim the bare `UserGroupResponse` schema; the spec
-now emits two schemas (`MentionedUserGroupResponse` and `UserGroupResponse`)
-matching the wire reality. The regenerated Kotlin client gains `members` on
-`UserGroupResponse` and message responses reference the new slim
-`MentionedUserGroupResponse`.
-
-**Suggested fix:** Land the same rename upstream on chat master. Same pattern
-as the three schemas fixed in CHA-3559 (`ChannelConfig`, `FlagResponse`,
-`BanResponse`). The proper long-term fix is still issue #12's option 2: patch
-`clarifyName` to dedupe by `reflect.Type` instead of struct name, which
-eliminates this entire class of bug.
-
-**Migration timing:** Unblocked locally for android. Upstream patch must land
-before this branch merges.
+**Suggested upstream fix:** Land the same rename, or the long-term
+`clarifyName` fix from #12.
 
 ---
 
-## 16. CHA-3365's `ChannelMemberResponse` alias hid a wire/spec mismatch
+## 16. CHA-3365 papered over a wire/spec mismatch for `Message.member`
 
-**Symptom:** Decoding any response that embeds a message with a `member` field
+**Symptom:** Decoding any response embedding a message with a `member` field
 crashes with `JsonDataException: Required value 'banned' missing at
-$.reminder.message.member`. First observed when calling `POST /messages/{id}
-/reminders`: the response is `ReminderResponse` -> `ReminderResponseData` ->
-`message: MessageResponse?` -> `member: ChannelMemberResponse?`, and the wire
-member carries only `channel_role` + `notifications_muted`, while the
-generated DTO expects ~20 required fields including `banned`.
+$.reminder.message.member`. The wire's `member` carries only `channel_role`
++ `notifications_muted`; generated DTO expects ~20 required fields.
 
-**Root cause:** CHA-3365 (which we cherry-picked to restore the full
-`ChannelMemberResponse` schema) made the two Go types - the slim
-`commonpayloads.ChannelMemberResponse` (2 fields) and the full
-`payload.ChannelMemberResponse` (20 fields) - declare the same
-`NameOverride: "ChannelMemberResponse"`. That picks the richer shape for the
-spec, which restores the full schema for direct member endpoints, but
-silently lies about `Message.member` and the equivalent moderation payload -
-both of which still use the slim Go type with only 2 fields on the wire.
+**Root cause:** CHA-3365 (cherry-picked to restore the full
+`ChannelMemberResponse`) made both Go types declare the same
+`NameOverride: "ChannelMemberResponse"`. Picks the richer shape for the spec,
+but silently lies about `Message.member` and equivalent moderation payloads
+- both still use the slim Go type with 2 fields on the wire.
 
-The two Go types genuinely have different wire shapes for different purposes;
-they were never meant to be the same OpenAPI schema. CHA-3365 papered over
-the collision without disambiguating it.
+**Fix status:** Local fix. Commit `[android-migration-only] Rename slim
+ChannelMemberResponse to MessageMemberResponse`. Renamed the slim type,
+dropped `NameOverride`, updated the two callers (`message.go`,
+`chat_v1_response.go`). Spec now emits two schemas;
+`MessageResponse.member` references the slim one.
 
-**Cross-SDK check:** the same code path on iOS's `open-api-llc` branch has the
-same defect (`MessageResponse.member` typed as the full `ChannelMemberResponse`),
-so it will crash identically on the first message-with-member payload. The
-hand-written iOS legacy code on `open-api-user-group-endpoints` declares the
-member field with only the slim two fields, confirming the wire reality.
-
-**Fix status:** Worked around on the `chat-openapi-android` branch of the chat
-repo (commit `[android-migration-only] Rename slim ChannelMemberResponse to
-MessageMemberResponse`). Renamed the slim type to `MessageMemberResponse`,
-dropped its `NameOverride`, and updated the two callers (`message.go`,
-`chat_v1_response.go`). The full `payload.ChannelMemberResponse` keeps its
-20-field schema; the slim type now has its own 2-field `MessageMemberResponse`
-schema; `MessageResponse.member` references the slim one. Decoding works in
-both contexts.
-
-**Suggested fix:** Land the same rename upstream on chat master. Drop the
-`NameOverride: "ChannelMemberResponse"` from
-`payload.ChannelMemberResponse.OpenAPIInfo()` while you're at it - the comment
-already notes it's no longer needed once the collision is gone. Same pattern
-as CHA-3559's three schema renames. The proper long-term fix is still
-issue #12's option 2: dedupe `clarifyName` by `reflect.Type` rather than
-struct name, which catches this whole class of bug at the generator level.
-
-**Migration timing:** Unblocked locally for android. Upstream patch must land
-before this branch merges, alongside the UserGroupResponse rename (issue #15)
-and the PollResponseData omitempty fix (issue #14).
+**Suggested upstream fix:** Land the same rename + drop the
+`NameOverride: "ChannelMemberResponse"` on
+`payload.ChannelMemberResponse.OpenAPIInfo()`. The long-term `clarifyName`
+fix (#12) is the real answer.
 
 ---
 
 ## 17. Bounce response sends `reaction_counts`/`reaction_scores` as JSON null
 
-**Symptom:** Parsing the response to `POST /messages` crashes with
-`JsonDataException: Non-null value 'reactionCounts' (JSON name 'reaction_counts')
-was null` whenever the sent message gets bounced by automod (V1 or V2 bounce
-action). Reproduced live in the compose sample app with a blocklist policy.
+**Symptom:** `POST /messages` crashes when automod bounces the message:
+`JsonDataException: Non-null value 'reactionCounts' was null`. Bounce wire
+emits `"reaction_counts": null` / `"reaction_scores": null`; normal sends
+emit `{}`.
 
-The wire payload from a bounced send looks like:
+**Root cause:** `send_message.go` builds the bounce response via
+`payload.NewMessageResponse(*message)` in a `defer` but never calls
+`PrepareSerialization(user)` (`message.go:240`), which normalizes nil int-maps
+to `{}`. Read paths (`get_pinned_messages`, `get_replies`, channel-state) do
+call it; write paths don't.
 
-```json
-{
-  "message": {
-    "id": "...", "type": "error", "text": "verybadword",
-    "attachments": [], "latest_reactions": [], "own_reactions": [],
-    "reaction_counts": null,
-    "reaction_scores": null,
-    "moderation": {"action": "bounce", "original_text": "verybadword"},
-    ...
-  }
-}
-```
+This is wire-vs-spec drift, not a generator bug.
 
-Normal (non-bounced) sends and channel queries return `"reaction_counts": {}` /
-`"reaction_scores": {}` instead, which parses cleanly.
+**Fix status:** Not fixed. Bounced-message parsing crashes until backend is
+fixed. No SDK patch (would paper over a real backend inconsistency that
+affects every SDK).
 
-**Root cause:** The bounce response builder in
-`lib/chat/controller/v1/send_message.go` constructs the response via
-`payload.NewMessageResponse(*message)` in a `defer` block but never calls
-`(*MessageResponse).PrepareSerialization(user)` afterwards.
-`PrepareSerialization` (lib/chat/controller/v1/payload/message.go:240) is the
-function that normalizes nil int-maps to `{}`:
-
-```go
-func (m *MessageResponse) PrepareSerialization(user *types.User) {
-    m.HideShadowBan(user)
-    if m.ReactionCounts == nil { m.ReactionCounts = map[string]int{} }
-    if m.ReactionScores == nil { m.ReactionScores = map[string]int{} }
-}
-```
-
-Read paths like `get_pinned_messages`, `get_replies`, and channel-state
-assembly do call it; write paths like `send_message` don't, so any newly
-constructed message that hasn't been touched by a reactor leaks the raw nil
-maps.
-
-The generated Kotlin `MessageResponse` types these as
-`reactionCounts: Map<String, Int> = emptyMap()` (non-nullable, default empty).
-Moshi accepts default-on-missing but rejects explicit null, so the bounce
-payload fails to parse.
-
-This isn't really a generator issue - the spec is internally consistent. It's
-a wire-vs-spec drift: the bounce-path response in production doesn't match the
-shape the spec declares.
-
-**Fix status:** Not fixed. The android migration leaves this as a known
-limitation - bounced-message parsing crashes until the wire is fixed. No local
-patch in the SDK (would be papering over a real backend inconsistency that
-also affects iOS/JS once they tighten their parsers).
-
-**Suggested fix:** Backend - one of these, easiest first.
-
-1. Call `response.Message.PrepareSerialization(user)` immediately after
-   `response.Message = payload.NewMessageResponse(*message)` in
-   `send_message.go:305` (and the same near line 562). Smallest change. May
-   need the same treatment in `update_message.go`, `update_message_partial.go`,
-   `run_message_action.go`, `translate_message.go` - audit any controller that
-   builds a `MessageResponse` from a freshly-constructed `types.Message`
-   without going through channel-state serialization.
-2. Move the nil-map normalization into `NewMessageResponse` itself so every
-   caller benefits without remembering to call `PrepareSerialization`.
-   Broader blast radius but eliminates the class of bug.
-
-Once the backend is consistent, no SDK change needed. If we instead choose to
-accept the wire as-is and adjust the spec, mark `reactionCounts`/
-`reactionScores` as nullable on `MessageResponse` and regenerate - but that
-just hides the backend inconsistency in the type system, and iOS/JS would
-still need to handle null.
-
-**Migration timing:** Migration ships with this open. SDK consumers who use
-the bounce moderation action see crashes on the bounced message; everything
-else works. Linked from the test plan as a known limitation.
+**Suggested upstream fix:** Call `response.Message.PrepareSerialization(user)`
+after constructing the response in `send_message.go:305` and `:562`. Audit
+other write controllers (`update_message`, `run_message_action`,
+`translate_message`) that build a `MessageResponse` outside channel-state
+serialization. Or move nil-map normalization into `NewMessageResponse` itself.
 
 ---
 
-## Pattern observations
+## 18. Non-pointer Map/Slice without `omitempty` are wire-nullable but spec-required (~91 models)
 
-- Several issues collapse to the same root: the generator faithfully echoes whatever the spec
-  produces and never validates that the output is legal Kotlin. Spec-side fixes (one-time, per
-  artifact) cost less than generator-side fixes (one-time, but every spec quirk re-introduces the
-  problem).
-- The Kotlin generator has a per-`androidSdk` branching pattern (`feeds` / `video` / chat falling
-  through) but new branches are easy to miss when changing logic - issues #1 surfaced because the
-  child-method-name code at one site didn't replicate the per-SDK branching present at the parent
-  site.
-- Per-`androidSdk` branches in `spec.go` (`isVideoOnly`, now `isChatOnly`) are the right home for
-  product-shape decisions and should be preferred over generator-side product detection.
-- **Android dex identifier rules are stricter than JVM Kotlin.** Backticking lets the Kotlin
-  compiler accept arbitrary characters in names, but D8/R8 rejects anything outside
-  `[A-Za-z0-9_$]`. Issues #2 and #4 both rely on this: backtick only when the raw name is
-  already a dex-safe identifier; otherwise rename to a sanitized identifier and preserve the
-  original wire name via `@Json(name = ...)`.
+**Symptom:** Decoding `POST /threads` (and any other response nesting a
+`ThreadParticipant`) crashes with `JsonDataException: Non-null value 'custom'
+was null at $.thread_participants[0].custom`. Same class as #14 and #17.
+
+**Scope.** 91 generated DTOs declare `val custom: Map<String, Any?> =
+emptyMap()` (non-nullable, required). Examples: `ChannelMemberResponse`,
+`OwnUserResponse`, `Attachment`, `ThreadParticipant`, `ThreadResponse`,
+`DraftPayloadResponse`, `PollOptionResponseData`, ~60 event payloads.
+
+Most don't crash today because:
+- The parent DTO is wrapped by `CustomObjectDtoAdapter` with
+  `extraDataPropertyName = "custom"` (User, Reaction, Channel, Message,
+  Member, Attachment, Poll). The wrapper substitutes its own collected map
+  before Moshi delegates.
+- The model isn't typealiased yet (events, draft internals).
+- The wire happens to always populate the field.
+
+`ThreadParticipant` is the first crash because it's nested **without** a
+wrapper AND the server sends `null`. Likely next: `PollOptionResponseData`,
+`ThreadResponse`, event payloads.
+
+**Root cause:** Same as #14. `spec.go:90-95` `FieldRequiredResponse` treats
+only `reflect.Ptr` as wire-nullable:
+```go
+if strings.Contains(field.Tag.Get("json"), "omitempty") { return false }
+return field.Type.Kind() != reflect.Ptr
+```
+Go maps and slices are reference types too - a nil map/slice marshals to
+JSON `null` without `omitempty`, exactly like a nil pointer. Mismarks every
+non-`omitempty` Map and Slice field as required.
+
+**Fix status:** Targeted per-model workaround. Commit
+`temp: Add omitempty to ThreadParticipant.Custom` adds `,omitempty` to the Go
+tag; the spec drops it from `required:`; the regenerated DTO is
+`Map<...>? = emptyMap()`. Same pattern as #14. Does not scale - each new
+crash would need its own `temp:` commit.
+
+**Suggested upstream fix:** Patch `FieldRequiredResponse` to treat
+`reflect.Map` and `reflect.Slice` like `reflect.Ptr`:
+```go
+switch field.Type.Kind() {
+case reflect.Ptr, reflect.Map, reflect.Slice:
+    return false
+}
+```
+Catches #14, #17, and this issue in one change. Mapper-side cost: `.orEmpty()`
+at call sites. Coordinate with iOS / chat-js - same spec, same field-required
+logic.
