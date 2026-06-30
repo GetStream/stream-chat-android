@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
@@ -153,6 +152,7 @@ import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
 import java.util.Date
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
+import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
@@ -179,6 +179,7 @@ internal class EventMapping(
         is GeneratedMessageUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageDeliveredEvent -> toDomain(rawCreatedAt)
+        is GeneratedMemberAddedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -209,7 +210,6 @@ internal class EventMapping(
             is GlobalUserBannedEventDto -> toDomain()
             is GlobalUserUnbannedEventDto -> toDomain()
             is HealthEventDto -> toDomain()
-            is MemberAddedEventDto -> toDomain()
             is MemberRemovedEventDto -> toDomain()
             is MemberUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
@@ -363,15 +363,15 @@ internal class EventMapping(
     /**
      * Transforms [MemberAddedEventDto] to [MemberAddedEvent].
      */
-    private fun MemberAddedEventDto.toDomain(): MemberAddedEvent = with(domainMapping) {
+    private fun GeneratedMemberAddedEvent.toDomain(rawCreatedAt: String?): MemberAddedEvent = with(domainMapping) {
         MemberAddedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            user = user?.toDomain() ?: User(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
             member = member.toDomain(),
         )
     }

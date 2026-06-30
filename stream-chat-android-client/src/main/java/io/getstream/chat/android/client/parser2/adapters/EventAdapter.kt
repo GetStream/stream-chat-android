@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventD
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
@@ -100,7 +99,6 @@ internal class EventDtoAdapter(
     private val draftMessageUpdatedEventAdapter = moshi.adapter(DraftMessageUpdatedEventDto::class.java)
     private val draftMessageDeletedEventAdapter = moshi.adapter(DraftMessageDeletedEventDto::class.java)
     private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
-    private val memberAddedEventAdapter = moshi.adapter(MemberAddedEventDto::class.java)
     private val memberRemovedEventAdapter = moshi.adapter(MemberRemovedEventDto::class.java)
     private val memberUpdatedEventAdapter = moshi.adapter(MemberUpdatedEventDto::class.java)
     private val channelUpdatedByUserEventAdapter = moshi.adapter(ChannelUpdatedByUserEventDto::class.java)
@@ -169,7 +167,6 @@ internal class EventDtoAdapter(
             EventType.DRAFT_MESSAGE_UPDATED -> draftMessageUpdatedEventAdapter
             EventType.DRAFT_MESSAGE_DELETED -> draftMessageDeletedEventAdapter
             EventType.REACTION_UPDATED -> reactionUpdateEventAdapter
-            EventType.MEMBER_ADDED -> memberAddedEventAdapter
             EventType.MEMBER_REMOVED -> memberRemovedEventAdapter
             EventType.MEMBER_UPDATED -> memberUpdatedEventAdapter
             EventType.CHANNEL_UPDATED -> when {
