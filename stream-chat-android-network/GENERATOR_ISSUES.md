@@ -462,3 +462,44 @@ case reflect.Ptr, reflect.Map, reflect.Slice:
 Catches #14, #17, and this issue in one change. Mapper-side cost: `.orEmpty()`
 at call sites. Coordinate with iOS / chat-js - same spec, same field-required
 logic.
+
+---
+
+## 19. Flag endpoint response (`payload.FlagResponse`) not in chat-only spec output
+
+**Symptom:** No generated Kotlin model maps the response of
+`POST /moderation/flag` / `POST /moderation/unflag`. Closest generated type
+is `MessageFlagResponse`, but that's the shape returned by `query_message_flags`
+and lacks `target_user`, `target_message_id`. Blocks typealiasing
+`DownstreamFlagDto`.
+
+**Root cause:** `/api/v2/moderation/flag` and `/api/v2/moderation/unflag` are
+admin moderation routes, not chat-scoped (`/api/v2/chat/moderation/*`). Issue
+#5's local fix drops the `moderation` product from the chat-only spec build
+(`generate-kotlin-chat-client.sh` uses `-products chat,common`), so these
+routes and their response type `payload.FlagResponse` aren't reachable from
+any kept operation - the generator never emits a Kotlin schema for them.
+
+The SDK still calls these endpoints (`ModerationApi.flag` / `unflag` in the
+Android client), so the hand-written `DownstreamFlagDto` stays in place. The
+hand-written DTO has its own bugs (`created_at: String` instead of `Date`,
+`reviewed_by: Date?` instead of `String`) that Moshi tolerates at runtime.
+
+**Fix status:** Not fixed. `DownstreamFlagDto` stays hand-written; migration
+skipped for now.
+
+**Suggested upstream fix:** Either:
+
+1. Add a chat-scoped flag endpoint on the backend (`/api/v2/chat/moderation/flag`
+   tagged with `chat` product). The product filter would then surface its
+   response type. Cleanest end state - aligns flag with the other chat-scoped
+   moderation routes (`flags/message`, `mute/channel`, etc.).
+2. Bring moderation back into the spec build with model-level filtering
+   (issue #5's option 2 or 4). Larger lift; touches every other admin route too.
+3. Add a chat-only tag on `payload.FlagResponse` itself so the spec walker
+   surfaces it even when the moderation product is filtered. Targeted but
+   ad-hoc.
+
+**Migration timing:** Not blocking - the hand-written DTO works. Revisit if
+the spec / product-filter architecture is reworked, or if the SDK's flag
+endpoints are repointed at chat-scoped paths.
