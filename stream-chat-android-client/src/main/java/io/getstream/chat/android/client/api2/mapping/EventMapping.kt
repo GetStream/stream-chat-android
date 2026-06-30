@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -54,16 +53,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejecte
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.network.models.MessageNewEvent
-import io.getstream.chat.android.network.models.WSClientEvent
-import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
-import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
-import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
-import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
-import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
-import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
-import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
-import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -155,15 +144,30 @@ import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.network.models.MessageNewEvent
+import io.getstream.chat.android.network.models.WSClientEvent
+import java.util.Date
+import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
+import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
+import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
+import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
+import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
+import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
+import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 
 @Suppress("LargeClass")
 internal class EventMapping(
     private val domainMapping: DomainMapping,
 ) {
+
+    private val streamDateFormatter = StreamDateFormatter("EventMapping")
 
     /** Generated-DTO mirror of [ChatEventDto.toDomain]; [rawCreatedAt] is peeked from the wire. */
     internal fun WSClientEvent.toDomain(rawCreatedAt: String?): ChatEvent = when (this) {
@@ -174,6 +178,7 @@ internal class EventMapping(
         is GeneratedReactionNewEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageDeletedEvent -> toDomain(rawCreatedAt)
+        is GeneratedMessageDeliveredEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -207,7 +212,6 @@ internal class EventMapping(
             is MemberAddedEventDto -> toDomain()
             is MemberRemovedEventDto -> toDomain()
             is MemberUpdatedEventDto -> toDomain()
-            is MessageDeliveredEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
             is NotificationChannelDeletedEventDto -> toDomain()
             is NotificationChannelMutesUpdatedEventDto -> toDomain()
@@ -401,38 +405,40 @@ internal class EventMapping(
         )
     }
 
-    private fun GeneratedMessageDeletedEvent.toDomain(rawCreatedAt: String?): MessageDeletedEvent = with(domainMapping) {
-        MessageDeletedEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt.orEmpty(),
-            user = user?.toDomain(),
-            cid = cid.orEmpty(),
-            channelType = channelType.orEmpty(),
-            channelId = channelId.orEmpty(),
-            message = message.toDomain(),
-            hardDelete = hardDelete,
-            channelMessageCount = channelMessageCount,
-            deletedForMe = deletedForMe ?: false,
-        )
-    }
+    private fun GeneratedMessageDeletedEvent.toDomain(rawCreatedAt: String?): MessageDeletedEvent =
+        with(domainMapping) {
+            MessageDeletedEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain(),
+                cid = cid.orEmpty(),
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                message = message.toDomain(),
+                hardDelete = hardDelete,
+                channelMessageCount = channelMessageCount,
+                deletedForMe = deletedForMe ?: false,
+            )
+        }
 
     /**
      * Transforms [MessageDeliveredEventDto] to [MessageDeliveredEvent].
      */
-    private fun MessageDeliveredEventDto.toDomain() = with(domainMapping) {
-        MessageDeliveredEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            lastDeliveredAt = last_delivered_at.date,
-            lastDeliveredMessageId = last_delivered_message_id,
-        )
-    }
+    private fun GeneratedMessageDeliveredEvent.toDomain(rawCreatedAt: String?): MessageDeliveredEvent =
+        with(domainMapping) {
+            MessageDeliveredEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+                cid = cid.orEmpty(),
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                lastDeliveredAt = lastDeliveredAt?.let(streamDateFormatter::parse) ?: Date(0),
+                lastDeliveredMessageId = lastDeliveredMessageId.orEmpty(),
+            )
+        }
 
     // Defensive cid-based split mirroring the legacy adapter. Code-read of the backend suggests
     // `message.read` always carries `cid` (every Go constructor populates it from a real channel;
@@ -463,18 +469,19 @@ internal class EventMapping(
         }
     }
 
-    private fun GeneratedMessageUpdatedEvent.toDomain(rawCreatedAt: String?): MessageUpdatedEvent = with(domainMapping) {
-        MessageUpdatedEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt.orEmpty(),
-            user = user?.toDomain() ?: User(),
-            cid = cid.orEmpty(),
-            channelType = channelType.orEmpty(),
-            channelId = channelId.orEmpty(),
-            message = message.toDomain(),
-        )
-    }
+    private fun GeneratedMessageUpdatedEvent.toDomain(rawCreatedAt: String?): MessageUpdatedEvent =
+        with(domainMapping) {
+            MessageUpdatedEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+                cid = cid.orEmpty(),
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                message = message.toDomain(),
+            )
+        }
 
     private fun MessageNewEvent.toDomain(rawCreatedAt: String?): NewMessageEvent = with(domainMapping) {
         // build ChannelInfo from the event data, as it is not delivered within the `message` field
@@ -762,19 +769,20 @@ internal class EventMapping(
             )
         }
 
-    private fun GeneratedReactionDeletedEvent.toDomain(rawCreatedAt: String?): ReactionDeletedEvent = with(domainMapping) {
-        ReactionDeletedEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt.orEmpty(),
-            user = user?.toDomain() ?: User(),
-            cid = cid.orEmpty(),
-            channelType = channelType.orEmpty(),
-            channelId = channelId.orEmpty(),
-            message = message?.toDomain() ?: Message(),
-            reaction = reaction?.toDomain() ?: Reaction(),
-        )
-    }
+    private fun GeneratedReactionDeletedEvent.toDomain(rawCreatedAt: String?): ReactionDeletedEvent =
+        with(domainMapping) {
+            ReactionDeletedEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+                cid = cid.orEmpty(),
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                message = message?.toDomain() ?: Message(),
+                reaction = reaction?.toDomain() ?: Reaction(),
+            )
+        }
 
     private fun GeneratedReactionNewEvent.toDomain(rawCreatedAt: String?): ReactionNewEvent = with(domainMapping) {
         ReactionNewEvent(

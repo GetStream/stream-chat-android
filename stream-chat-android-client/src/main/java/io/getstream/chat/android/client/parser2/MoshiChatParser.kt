@@ -63,6 +63,7 @@ import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
+import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
@@ -190,6 +191,7 @@ internal class MoshiChatParser(
             EventType.REACTION_NEW -> moshi.adapter(GeneratedReactionNewEvent::class.java).fromJson(raw)
             EventType.MESSAGE_UPDATED -> moshi.adapter(GeneratedMessageUpdatedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_DELETED -> moshi.adapter(GeneratedMessageDeletedEvent::class.java).fromJson(raw)
+            EventType.MESSAGE_DELIVERED -> moshi.adapter(GeneratedMessageDeliveredEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

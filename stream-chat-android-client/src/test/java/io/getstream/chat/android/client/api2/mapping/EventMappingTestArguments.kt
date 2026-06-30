@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -407,16 +406,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         member = MEMBER,
     )
 
-    private val messageDeliveredDto = MessageDeliveredEventDto(
-        type = EventType.MESSAGE_DELIVERED,
-        created_at = EXACT_DATE,
-        user = USER,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        last_delivered_at = EXACT_DATE,
-        last_delivered_message_id = LAST_DELIVERED_MESSAGE_ID,
-    )
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
@@ -953,18 +942,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         member = with(domainMapping) { memberUpdatedDto.member.toDomain() },
     )
 
-    private val messageDelivered = MessageDeliveredEvent(
-        type = EventType.MESSAGE_DELIVERED,
-        createdAt = EXACT_DATE.date,
-        rawCreatedAt = EXACT_DATE.rawDate,
-        user = with(domainMapping) { USER.toDomain() },
-        cid = CID,
-        channelType = CHANNEL_TYPE,
-        channelId = CHANNEL_ID,
-        lastDeliveredAt = EXACT_DATE.date,
-        lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
-    )
-
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
         type = notificationAddedToChannelDto.type,
         createdAt = notificationAddedToChannelDto.created_at.date,
@@ -1391,7 +1368,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(memberAddedDto, memberAdded),
         Arguments.of(memberRemovedDto, memberRemoved),
         Arguments.of(memberUpdatedDto, memberUpdated),
-        Arguments.of(messageDeliveredDto, messageDelivered),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
@@ -1669,6 +1645,29 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         user = SLIM_USER,
     )
 
+    private val messageDeliveredGenerated = io.getstream.chat.android.network.models.MessageDeliveredEvent(
+        createdAt = DATE,
+        type = EventType.MESSAGE_DELIVERED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        lastDeliveredAt = DATE_STRING,
+        lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
+    )
+
+    private val messageDeliveredExpected = MessageDeliveredEvent(
+        type = EventType.MESSAGE_DELIVERED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        lastDeliveredAt = DATE,
+        lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
+    )
+
     private val markAllReadExpected = MarkAllReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
         createdAt = DATE,
@@ -1690,5 +1689,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(messageReadGenerated, DATE_STRING, messageReadExpected),
         Arguments.of(notificationMarkReadGenerated, DATE_STRING, notificationMarkReadExpected),
         Arguments.of(markAllReadGenerated, DATE_STRING, markAllReadExpected),
+        Arguments.of(messageDeliveredGenerated, DATE_STRING, messageDeliveredExpected),
     )
 }
