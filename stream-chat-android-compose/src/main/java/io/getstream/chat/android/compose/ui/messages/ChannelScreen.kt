@@ -51,6 +51,9 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
@@ -205,8 +208,17 @@ public fun ChannelScreen(
     ChannelScreenContentBox {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            topBar = { topBarContent(backAction) },
-            bottomBar = bottomBarContent,
+            // Order the regions for the screen reader: header, then list, then composer.
+            topBar = {
+                Box(Modifier.traversalRegion(HeaderTraversalIndex)) {
+                    topBarContent(backAction)
+                }
+            },
+            bottomBar = {
+                Box(Modifier.traversalRegion(ComposerTraversalIndex)) {
+                    bottomBarContent()
+                }
+            },
             snackbarHost = { StreamSnackbarHost(snackbarHostState) },
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { contentPadding ->
@@ -215,7 +227,8 @@ public fun ChannelScreen(
             MessageList(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .traversalRegion(ListTraversalIndex),
                 contentPadding = contentPadding,
                 viewModel = listViewModel,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
@@ -320,6 +333,18 @@ private fun ComposerScreenReaderEntryFocus(listViewModel: MessageListViewModel) 
 }
 
 private const val ComposerEntryFocusWindowMs = 2000L
+
+// Screen-reader region order: header first, then the list, then the composer.
+private const val HeaderTraversalIndex = -1f
+private const val ListTraversalIndex = 0f
+private const val ComposerTraversalIndex = 1f
+
+// Marks the receiver as a screen-reader traversal region at the given reading-order index.
+private fun Modifier.traversalRegion(index: Float): Modifier =
+    semantics {
+        isTraversalGroup = true
+        traversalIndex = index
+    }
 
 @Composable
 private fun ChannelScreenContentBox(content: @Composable BoxScope.() -> Unit) {
