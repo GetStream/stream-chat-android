@@ -16,15 +16,8 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.JsonClass
-
 internal typealias UpstreamMessageDto = io.getstream.chat.android.network.models.MessageRequest
 internal typealias DownstreamMessageDto = io.getstream.chat.android.network.models.MessageResponse
 internal typealias DownstreamDraftMessageDto = io.getstream.chat.android.network.models.DraftPayloadResponse
 internal typealias DownstreamDraftDto = io.getstream.chat.android.network.models.DraftResponse
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamPendingMessageDto(
-    val message: DownstreamMessageDto,
-    val metadata: Map<String, String>?,
-)
+internal typealias DownstreamPendingMessageDto = io.getstream.chat.android.network.models.PendingMessageResponse

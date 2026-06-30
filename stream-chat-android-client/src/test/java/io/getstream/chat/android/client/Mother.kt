@@ -253,11 +253,15 @@ internal object Mother {
     )
 
     fun randomDownstreamPendingMessageDto(
-        message: DownstreamMessageDto = randomDownstreamMessageDto(),
+        message: DownstreamMessageDto? = randomDownstreamMessageDto(),
         metadata: Map<String, String> = randomPendingMessageMetadata(),
+        channel: DownstreamChannelDto? = null,
+        user: DownstreamUserDto? = null,
     ): DownstreamPendingMessageDto = DownstreamPendingMessageDto(
         message = message,
         metadata = metadata,
+        channel = channel,
+        user = user,
     )
 
     fun randomDownstreamDraftMessageDto(

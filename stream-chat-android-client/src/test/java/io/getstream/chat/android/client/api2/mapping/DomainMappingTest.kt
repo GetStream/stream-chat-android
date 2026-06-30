@@ -280,12 +280,13 @@ internal class DomainMappingTest {
     @Test
     fun `DownstreamPendingMessageDto is correctly mapped to PendingMessage`() {
         val downstreamPendingMessageDto = randomDownstreamPendingMessageDto()
+        val message = downstreamPendingMessageDto.message!!
         val sut = Fixture().get()
         val expected = PendingMessage(
-            message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
+            message = with(sut) { message.toDomain() },
             metadata = downstreamPendingMessageDto.metadata.orEmpty(),
         )
-        val result = with(sut) { downstreamPendingMessageDto.toDomain(downstreamPendingMessageDto.message.cid) }
+        val result = with(sut) { downstreamPendingMessageDto.toDomain(message.cid) }
         assertEquals(expected, result)
     }
 

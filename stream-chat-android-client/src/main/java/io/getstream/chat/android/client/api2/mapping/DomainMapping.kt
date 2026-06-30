@@ -310,10 +310,13 @@ internal class DomainMapping(
     internal fun DownstreamPendingMessageDto.toDomain(
         cid: String,
         fallbackChannelInfo: ChannelInfo? = null,
-    ): PendingMessage = PendingMessage(
-        message = message.toDomain(fallbackChannelInfo).enrichWithCid(cid),
-        metadata = metadata.orEmpty(),
-    )
+    ): PendingMessage? {
+        val message = message?.toDomain(fallbackChannelInfo)?.enrichWithCid(cid) ?: return null
+        return PendingMessage(
+            message = message,
+            metadata = metadata.orEmpty(),
+        )
+    }
 
     /**
      * Transforms [MessageResponse] to [PendingMessage].
