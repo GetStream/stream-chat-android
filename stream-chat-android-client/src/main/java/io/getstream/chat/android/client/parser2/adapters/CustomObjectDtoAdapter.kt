@@ -106,14 +106,15 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
         // Convert input value into a Map
         val map: MutableMap<String, Any?> = valueAdapter.toJsonValue(value) as MutableMap<String, Any?>
 
-        // Grab real "extraData" property's value
-        val extraData = map[extraDataPropertyName] as Map<String, Any?>
+        // Grab real "extraData" property's value (nullable: generated DTOs may declare it
+        // nullable, in which case Moshi may omit the key or emit null).
+        val extraData = map[extraDataPropertyName] as? Map<String, Any?>
 
         // Remove literal "extraData" field from Map
         map.remove(extraDataPropertyName)
 
         // Merge all values from "extraData" property back into the Map as top level fields
-        map.putAll(extraData)
+        extraData?.let(map::putAll)
 
         // Write Map to output
         mapAdapter.toJson(jsonWriter, map)
