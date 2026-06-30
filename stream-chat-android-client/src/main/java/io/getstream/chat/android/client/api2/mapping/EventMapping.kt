@@ -436,19 +436,33 @@ internal class EventMapping(
         )
     }
 
-    private fun GeneratedMessageReadEvent.toDomain(rawCreatedAt: String?): MessageReadEvent = with(domainMapping) {
-        MessageReadEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt.orEmpty(),
-            user = user?.toDomain() ?: User(),
-            cid = cid.orEmpty(),
-            channelType = channelType.orEmpty(),
-            channelId = channelId.orEmpty(),
-            thread = thread?.toDomain(),
-            lastReadMessageId = lastReadMessageId,
-            team = team,
-        )
+    // Defensive cid-based split mirroring the legacy adapter. Code-read of the backend suggests
+    // `message.read` always carries `cid` (every Go constructor populates it from a real channel;
+    // `markAllRead()` fires `notification.mark_read` instead), but we keep the cid-absent branch
+    // rather than drop it on the strength of a grep alone.
+    private fun GeneratedMessageReadEvent.toDomain(rawCreatedAt: String?): ChatEvent = with(domainMapping) {
+        val channelCid = cid
+        if (channelCid != null) {
+            MessageReadEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+                cid = channelCid,
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                thread = thread?.toDomain(),
+                lastReadMessageId = lastReadMessageId,
+                team = team,
+            )
+        } else {
+            MarkAllReadEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+            )
+        }
     }
 
     private fun GeneratedMessageUpdatedEvent.toDomain(rawCreatedAt: String?): MessageUpdatedEvent = with(domainMapping) {

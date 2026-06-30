@@ -174,10 +174,6 @@ internal class EventDtoAdapter(
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
             EventType.DRAFT_MESSAGE_UPDATED -> draftMessageUpdatedEventAdapter
             EventType.DRAFT_MESSAGE_DELETED -> draftMessageDeletedEventAdapter
-            EventType.MESSAGE_READ -> when {
-                map.containsKey("cid") -> return null
-                else -> markAllReadEventAdapter
-            }
             EventType.MESSAGE_DELIVERED -> messageDeliveredEventAdapter
             EventType.REACTION_UPDATED -> reactionUpdateEventAdapter
             EventType.MEMBER_ADDED -> memberAddedEventAdapter
