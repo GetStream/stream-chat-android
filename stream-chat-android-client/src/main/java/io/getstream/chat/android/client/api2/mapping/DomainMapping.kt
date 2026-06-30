@@ -375,6 +375,28 @@ internal class DomainMapping(
             extraData = custom.filterNonNullValues().toMutableMap(),
         ).let(userTransformer::transform)
 
+    /** Slim user shape (no `banned`, `privacy_settings`, `devices`); those domain fields stay at defaults. */
+    internal fun io.getstream.chat.android.network.models.UserResponseCommonFields.toDomain(): User =
+        User(
+            id = id,
+            name = name ?: "",
+            image = image ?: "",
+            role = role,
+            invisible = false,
+            language = language,
+            banned = false,
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.filterNonNullValues().toMutableMap(),
+        ).let(userTransformer::transform)
+
     /**
      * Transforms [OwnUserResponse] to [User]. The full own-user shape the server sends in
      * connect, mute responses, and notification events. Includes devices, mutes,

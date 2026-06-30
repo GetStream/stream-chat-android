@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -115,7 +114,6 @@ import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
@@ -219,22 +217,7 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val newMessageDto = NewMessageEventDto(
-        type = EventType.MESSAGE_NEW,
-        created_at = EXACT_DATE,
-        user = USER,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel_member_count = CHANNEL_MEMBER_COUNT,
-        channel_custom = mapOf(
-            "name" to CHANNEL_NAME,
-            "image" to CHANNEL_IMAGE,
-        ),
-        message = MESSAGE,
-    )
-
-    private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
+private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         type = EventType.DRAFT_MESSAGE_UPDATED,
         created_at = EXACT_DATE,
         draft = DRAFT,
@@ -836,31 +819,6 @@ internal object EventMappingTestArguments {
     // END: DTO Models
 
     // BEGIN: Domain models
-
-    private val newMessage = NewMessageEvent(
-        type = newMessageDto.type,
-        createdAt = newMessageDto.created_at.date,
-        rawCreatedAt = newMessageDto.created_at.rawDate,
-        user = with(domainMapping) { newMessageDto.user.toDomain() },
-        cid = newMessageDto.cid,
-        channelType = newMessageDto.channel_type,
-        channelId = newMessageDto.channel_id,
-        message = with(domainMapping) {
-            val channelInfo = ChannelInfo(
-                cid = newMessageDto.cid,
-                id = newMessageDto.channel_id,
-                type = newMessageDto.channel_type,
-                memberCount = newMessageDto.channel_member_count ?: 0,
-                name = newMessageDto.channel_custom?.get("name") as? String,
-                image = newMessageDto.channel_custom?.get("image") as? String,
-            )
-            newMessageDto.message.toDomain(channelInfo)
-        },
-        watcherCount = newMessageDto.watcher_count,
-        totalUnreadCount = newMessageDto.total_unread_count,
-        unreadChannels = newMessageDto.unread_channels,
-        channelMessageCount = newMessageDto.channel_message_count,
-    )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
         type = draftMessageUpdatedDto.type,
@@ -1586,7 +1544,6 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(newMessageDto, newMessage),
         Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelDeletedDto, channelDeleted),

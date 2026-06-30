@@ -49,7 +49,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -60,6 +59,8 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventD
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
+import io.getstream.chat.android.network.models.MessageNewEvent
+import io.getstream.chat.android.network.models.WSClientEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -156,11 +157,18 @@ import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.User
 
 @Suppress("LargeClass")
 internal class EventMapping(
     private val domainMapping: DomainMapping,
 ) {
+
+    /** Generated-DTO mirror of [ChatEventDto.toDomain]; [rawCreatedAt] is peeked from the wire. */
+    internal fun WSClientEvent.toDomain(rawCreatedAt: String?): ChatEvent = when (this) {
+        is MessageNewEvent -> toDomain(rawCreatedAt)
+        else -> error("Unmapped generated event ${this::class.simpleName}")
+    }
 
     /**
      * Transforms [ChatEventDto] to [ChatEvent].
@@ -171,7 +179,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is NewMessageEventDto -> toDomain()
             is ChannelDeletedEventDto -> toDomain()
             is ChannelHiddenEventDto -> toDomain()
             is ChannelTruncatedEventDto -> toDomain()
@@ -464,32 +471,29 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [NewMessageEventDto] to [NewMessageEvent].
-     */
-    private fun NewMessageEventDto.toDomain(): NewMessageEvent = with(domainMapping) {
+    private fun MessageNewEvent.toDomain(rawCreatedAt: String?): NewMessageEvent = with(domainMapping) {
         // build ChannelInfo from the event data, as it is not delivered within the `message` field
         val channelInfo = ChannelInfo(
             cid = cid,
-            id = channel_id,
-            type = channel_type,
-            memberCount = channel_member_count ?: 0,
-            name = channel_custom?.get("name") as? String,
-            image = channel_custom?.get("image") as? String,
+            id = channelId,
+            type = channelType,
+            memberCount = channelMemberCount ?: 0,
+            name = channelCustom?.get("name") as? String,
+            image = channelCustom?.get("image") as? String,
         )
         NewMessageEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            user = user?.toDomain() ?: User(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
             message = message.toDomain(channelInfo),
-            watcherCount = watcher_count,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            channelMessageCount = channel_message_count,
+            watcherCount = watcherCount,
+            totalUnreadCount = totalUnreadCount ?: 0,
+            unreadChannels = unreadChannels ?: 0,
+            channelMessageCount = channelMessageCount,
         )
     }
 

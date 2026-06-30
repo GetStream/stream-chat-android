@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
@@ -32,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
@@ -54,10 +54,15 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapt
 import io.getstream.chat.android.client.parser2.adapters.UpstreamOptionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UserResponseCommonFieldsAdapter
 import io.getstream.chat.android.client.parser2.adapters.UserResponsePrivacyFieldsAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.MessageNewEvent
+import io.getstream.chat.android.network.models.WSClientEvent
+import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -79,6 +84,7 @@ internal class MoshiChatParser(
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(OwnUserResponseAdapter)
+            .add(UserResponseCommonFieldsAdapter)
             .add(UserResponsePrivacyFieldsAdapter)
             .add(UpstreamUserDtoAdapter)
             .add(DownstreamMemberDtoAdapter)
@@ -160,10 +166,48 @@ internal class MoshiChatParser(
         return event.enrichIfNeeded()
     }
 
-    // Dispatcher for events that have been migrated off the hand-written ChatEventDto family.
-    // Entries are added per-event during the events-DTO migration; returns null when the type
-    // string isn't yet migrated so the caller falls through to the unknown-event path.
-    private fun parseGeneratedEvent(raw: String): ChatEvent? = null
+    // TODO: the generated `WSEventAdapter` covers this dispatch via a 75-entry table, but its
+    // `fromJson` hardcodes `Serializer.moshi` for the subclass parse — bypasses our
+    // `CustomObjectDtoAdapter` wrappers and drops extras on nested user/message/channel.
+    // Once the generator lets `WSEventAdapter` accept the calling Moshi, this `when` and the
+    // mirror in `EventMapping.WSClientEvent.toDomain` collapse to `wsEventAdapter.fromJson`.
+    private fun parseGeneratedEvent(raw: String): ChatEvent? {
+        val type = peekField(raw, "type") ?: return null
+        val rawCreatedAt = peekField(raw, "created_at")
+        val event: WSClientEvent = when (type) {
+            EventType.MESSAGE_NEW -> moshi.adapter(MessageNewEvent::class.java).fromJson(raw)
+            else -> null
+        } ?: return null
+        return with(eventMapping) { event.toDomain(rawCreatedAt) }
+    }
+
+    // TODO: only used to recover `created_at` after the generated `Date` field strips
+    // sub-millisecond precision (SyncManager round-trips that string to `getSyncHistory`).
+    // Goes away if the spec adopts a string-preserving date format.
+    private fun peekField(raw: String, name: String): String? {
+        if (raw.isBlank()) return null
+        val reader = JsonReader.of(Buffer().writeUtf8(raw))
+        return try {
+            reader.use {
+                if (it.peek() != JsonReader.Token.BEGIN_OBJECT) return null
+                it.beginObject()
+                while (it.hasNext()) {
+                    if (it.nextName() == name) {
+                        return if (it.peek() == JsonReader.Token.NULL) {
+                            it.nextNull()
+                        } else {
+                            it.nextString()
+                        }
+                    } else {
+                        it.skipValue()
+                    }
+                }
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     private fun buildUnknownEvent(raw: String): ChatEvent {
         val map = rawMapAdapter.fromJson(raw)!!.filterValues { it != null }

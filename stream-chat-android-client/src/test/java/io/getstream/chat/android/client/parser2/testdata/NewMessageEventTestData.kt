@@ -58,6 +58,7 @@ internal object NewMessageEventTestData {
         "created_at": "2020-01-01T00:00:00.000Z",
         "user": ${UserTestData.jsonAllFields},
         "cid": "messaging:general",
+        "message_id": "msg-1",
         "channel_member_count": 10,
         "channel_custom": {"name": "General", "image": "https://example.com/channel.png"},
         "channel_type": "messaging",
@@ -75,6 +76,8 @@ internal object NewMessageEventTestData {
         "created_at": "2020-01-01T00:00:00.000Z",
         "user": $MINIMAL_USER_JSON,
         "cid": "messaging:general",
+        "message_id": "msg-min",
+        "watcher_count": 0,
         "channel_type": "messaging",
         "channel_id": "general",
         "message": $MINIMAL_MESSAGE_JSON
@@ -214,6 +217,8 @@ internal object NewMessageEventTestData {
         "created_at": "2020-01-01T00:00:00.000Z",
         "user": $MINIMAL_USER_JSON,
         "cid": "messaging:general",
+        "message_id": "msg-quoted",
+        "watcher_count": 0,
         "channel_type": "messaging",
         "channel_id": "general",
         "message": $MESSAGE_WITH_QUOTED_NO_CHANNEL_JSON
