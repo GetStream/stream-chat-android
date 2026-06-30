@@ -49,13 +49,13 @@ internal class VideoCacheDataSourceFactory(
         .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
 
     override fun createDataSource(): DataSource = delegate.createDataSource()
-}
 
-/**
- * Returns the cache key for [dataSpec]. Strips the URI's query so rotating signature or expiry
- * parameters on the same path land on the same cache entry; a caller-supplied [DataSpec.key] is
- * honoured when present.
- */
-@OptIn(UnstableApi::class)
-private fun cacheKeyFor(dataSpec: DataSpec): String =
-    dataSpec.key ?: dataSpec.uri.buildUpon().clearQuery().build().toString()
+    /**
+     * Returns the cache key for [dataSpec]. Strips the URI's query so rotating signature or expiry
+     * parameters on the same path land on the same cache entry; a caller-supplied [DataSpec.key] is
+     * honoured when present.
+     */
+    @OptIn(UnstableApi::class)
+    private fun cacheKeyFor(dataSpec: DataSpec): String =
+        dataSpec.key ?: dataSpec.uri.buildUpon().clearQuery().build().toString()
+}
