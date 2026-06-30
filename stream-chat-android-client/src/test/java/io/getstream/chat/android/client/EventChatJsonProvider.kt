@@ -201,6 +201,7 @@ internal fun createMessageUpdatedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
+            "message_id": "messageId",
             "watcher_count": 3,
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"

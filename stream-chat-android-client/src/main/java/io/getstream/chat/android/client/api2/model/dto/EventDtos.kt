@@ -173,17 +173,6 @@ internal data class MessageReadEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class MessageUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class DraftMessageUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,

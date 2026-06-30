@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -449,16 +448,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         channel_id = CHANNEL_ID,
         user = USER,
         last_read_message_id = LAST_READ_MESSAGE_ID,
-    )
-
-    private val messageUpdatedDto = MessageUpdatedEventDto(
-        type = EventType.MESSAGE_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
     )
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
@@ -1051,17 +1040,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         team = messageReadDto.team,
     )
 
-    private val messageUpdated = MessageUpdatedEvent(
-        type = messageUpdatedDto.type,
-        createdAt = messageUpdatedDto.created_at.date,
-        rawCreatedAt = messageUpdatedDto.created_at.rawDate,
-        cid = messageUpdatedDto.cid,
-        channelType = messageUpdatedDto.channel_type,
-        channelId = messageUpdatedDto.channel_id,
-        user = with(domainMapping) { messageUpdatedDto.user.toDomain() },
-        message = with(domainMapping) { messageUpdatedDto.message.toDomain() },
-    )
-
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
         type = notificationAddedToChannelDto.type,
         createdAt = notificationAddedToChannelDto.created_at.date,
@@ -1503,7 +1481,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(messageDeletedDto, messageDeleted),
         Arguments.of(messageDeliveredDto, messageDelivered),
         Arguments.of(messageReadDto, messageRead),
-        Arguments.of(messageUpdatedDto, messageUpdated),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
@@ -1671,6 +1648,28 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         reaction = with(domainMapping) { REACTION.toDomain() },
     )
 
+    private val messageUpdatedGenerated = io.getstream.chat.android.network.models.MessageUpdatedEvent(
+        createdAt = DATE,
+        messageId = MESSAGE_ID,
+        message = MESSAGE,
+        type = EventType.MESSAGE_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+    )
+
+    private val messageUpdatedExpected = MessageUpdatedEvent(
+        type = EventType.MESSAGE_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain() },
+    )
+
     @JvmStatic
     fun generatedArguments() = listOf(
         Arguments.of(messageNewGenerated, DATE_STRING, messageNewExpected),
@@ -1678,5 +1677,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(typingStopGenerated, DATE_STRING, typingStopExpected),
         Arguments.of(reactionDeletedGenerated, DATE_STRING, reactionDeletedExpected),
         Arguments.of(reactionNewGenerated, DATE_STRING, reactionNewExpected),
+        Arguments.of(messageUpdatedGenerated, DATE_STRING, messageUpdatedExpected),
     )
 }
