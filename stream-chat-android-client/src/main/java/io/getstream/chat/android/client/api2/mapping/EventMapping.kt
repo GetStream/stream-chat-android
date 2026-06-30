@@ -45,7 +45,6 @@ import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
@@ -60,6 +59,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
+import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
@@ -174,6 +174,7 @@ internal class EventMapping(
         is GeneratedReactionDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedReactionNewEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageUpdatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedMessageDeletedEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
     }
 
@@ -206,7 +207,6 @@ internal class EventMapping(
             is MemberAddedEventDto -> toDomain()
             is MemberRemovedEventDto -> toDomain()
             is MemberUpdatedEventDto -> toDomain()
-            is MessageDeletedEventDto -> toDomain()
             is MessageDeliveredEventDto -> toDomain()
             is MessageReadEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
@@ -403,22 +403,19 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [MessageDeletedEventDto] to [MessageDeletedEvent].
-     */
-    private fun MessageDeletedEventDto.toDomain(): MessageDeletedEvent = with(domainMapping) {
+    private fun GeneratedMessageDeletedEvent.toDomain(rawCreatedAt: String?): MessageDeletedEvent = with(domainMapping) {
         MessageDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
             user = user?.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
             message = message.toDomain(),
-            hardDelete = hard_delete ?: false,
-            channelMessageCount = channel_message_count,
-            deletedForMe = deleted_for_me ?: false,
+            hardDelete = hardDelete,
+            channelMessageCount = channelMessageCount,
+            deletedForMe = deletedForMe ?: false,
         )
     }
 

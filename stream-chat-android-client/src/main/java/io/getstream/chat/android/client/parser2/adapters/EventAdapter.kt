@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
@@ -104,7 +103,6 @@ internal class EventDtoAdapter(
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
     private val draftMessageUpdatedEventAdapter = moshi.adapter(DraftMessageUpdatedEventDto::class.java)
     private val draftMessageDeletedEventAdapter = moshi.adapter(DraftMessageDeletedEventDto::class.java)
-    private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
     private val messageReadEventAdapter = moshi.adapter(MessageReadEventDto::class.java)
     private val messageDeliveredEventAdapter = moshi.adapter(MessageDeliveredEventDto::class.java)
     private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
@@ -178,7 +176,6 @@ internal class EventDtoAdapter(
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
             EventType.DRAFT_MESSAGE_UPDATED -> draftMessageUpdatedEventAdapter
             EventType.DRAFT_MESSAGE_DELETED -> draftMessageDeletedEventAdapter
-            EventType.MESSAGE_DELETED -> messageDeletedEventAdapter
             EventType.MESSAGE_READ -> when {
                 map.containsKey("cid") -> messageReadEventAdapter
                 else -> markAllReadEventAdapter

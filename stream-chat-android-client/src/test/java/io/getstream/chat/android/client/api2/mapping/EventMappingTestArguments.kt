@@ -43,7 +43,6 @@ import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
@@ -415,18 +414,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         channel_id = CHANNEL_ID,
         user = USER,
         member = MEMBER,
-    )
-
-    private val messageDeletedDto = MessageDeletedEventDto(
-        type = EventType.MESSAGE_DELETED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
-        hard_delete = HARD_DELETE,
-        deleted_for_me = DELETED_FOR_ME,
     )
 
     private val messageDeliveredDto = MessageDeliveredEventDto(
@@ -1002,20 +989,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         member = with(domainMapping) { memberUpdatedDto.member.toDomain() },
     )
 
-    private val messageDeleted = MessageDeletedEvent(
-        type = messageDeletedDto.type,
-        createdAt = messageDeletedDto.created_at.date,
-        rawCreatedAt = messageDeletedDto.created_at.rawDate,
-        cid = messageDeletedDto.cid,
-        channelType = messageDeletedDto.channel_type,
-        channelId = messageDeletedDto.channel_id,
-        user = with(domainMapping) { messageDeletedDto.user?.toDomain() },
-        message = with(domainMapping) { messageDeletedDto.message.toDomain() },
-        hardDelete = messageDeletedDto.hard_delete ?: false,
-        channelMessageCount = messageDeletedDto.channel_message_count,
-        deletedForMe = messageDeletedDto.deleted_for_me ?: false,
-    )
-
     private val messageDelivered = MessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
         createdAt = EXACT_DATE.date,
@@ -1478,7 +1451,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(memberAddedDto, memberAdded),
         Arguments.of(memberRemovedDto, memberRemoved),
         Arguments.of(memberUpdatedDto, memberUpdated),
-        Arguments.of(messageDeletedDto, messageDeleted),
         Arguments.of(messageDeliveredDto, messageDelivered),
         Arguments.of(messageReadDto, messageRead),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
@@ -1670,6 +1642,33 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         message = with(domainMapping) { MESSAGE.toDomain() },
     )
 
+    private val messageDeletedGenerated = io.getstream.chat.android.network.models.MessageDeletedEvent(
+        createdAt = DATE,
+        hardDelete = HARD_DELETE,
+        messageId = MESSAGE_ID,
+        message = MESSAGE,
+        type = EventType.MESSAGE_DELETED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        deletedForMe = DELETED_FOR_ME,
+    )
+
+    private val messageDeletedExpected = MessageDeletedEvent(
+        type = EventType.MESSAGE_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain() },
+        hardDelete = HARD_DELETE,
+        channelMessageCount = null,
+        deletedForMe = DELETED_FOR_ME,
+    )
+
     @JvmStatic
     fun generatedArguments() = listOf(
         Arguments.of(messageNewGenerated, DATE_STRING, messageNewExpected),
@@ -1678,5 +1677,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(reactionDeletedGenerated, DATE_STRING, reactionDeletedExpected),
         Arguments.of(reactionNewGenerated, DATE_STRING, reactionNewExpected),
         Arguments.of(messageUpdatedGenerated, DATE_STRING, messageUpdatedExpected),
+        Arguments.of(messageDeletedGenerated, DATE_STRING, messageDeletedExpected),
     )
 }

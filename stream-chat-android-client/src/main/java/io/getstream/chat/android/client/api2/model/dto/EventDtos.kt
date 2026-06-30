@@ -134,20 +134,6 @@ internal data class MemberUpdatedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class MessageDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto?,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-    val hard_delete: Boolean?,
-    val channel_message_count: Int? = null,
-    val deleted_for_me: Boolean? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class MessageDeliveredEventDto(
     val type: String,
     val created_at: ExactDate,
