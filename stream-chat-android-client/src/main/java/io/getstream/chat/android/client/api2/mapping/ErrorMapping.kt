@@ -16,29 +16,21 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatErrorDetail
 
+// `APIError.details` is wire-typed `List<Int>` per the generated spec (Go's
+// `DetailsOrArray` always marshals to `[]`), so the historic structured-detail
+// path is dropped: ChatError.details stays at its default empty list.
 internal fun ErrorDto.toDomain(): ChatError {
     val dto = this
     return ChatError(
         code = dto.code,
         message = dto.message,
-        statusCode = dto.StatusCode,
-        exceptionFields = dto.exception_fields,
-        moreInfo = dto.more_info,
-        details = dto.details.map { it.toDomain() },
+        statusCode = dto.statusCode,
+        exceptionFields = dto.exceptionFields.orEmpty(),
+        moreInfo = dto.moreInfo,
     ).apply {
         duration = dto.duration
     }
-}
-
-internal fun ErrorDetailDto.toDomain(): ChatErrorDetail {
-    val dto = this
-    return ChatErrorDetail(
-        code = dto.code,
-        messages = dto.messages,
-    )
 }

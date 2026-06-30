@@ -45,7 +45,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
-import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
@@ -1297,23 +1296,13 @@ internal object Mother {
         duration: String = randomString(),
         exceptionFields: Map<String, String> = emptyMap(),
         moreInfo: String = randomString(),
-        details: List<ErrorDetailDto> = emptyList(),
     ): ErrorDto = ErrorDto(
         code = code,
         message = message,
-        StatusCode = statusCode,
+        statusCode = statusCode,
         duration = duration,
-        exception_fields = exceptionFields,
-        more_info = moreInfo,
-        details = details,
-    )
-
-    fun randomErrorDetailDto(
-        code: Int = randomInt(),
-        messages: List<String> = listOf(randomString()),
-    ): ErrorDetailDto = ErrorDetailDto(
-        code = code,
-        messages = messages,
+        exceptionFields = exceptionFields,
+        moreInfo = moreInfo,
     )
 
     fun randomSocketErrorResponse(

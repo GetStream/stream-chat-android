@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatErrorDetail
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
@@ -30,21 +29,10 @@ internal class ErrorMappingTest {
         val expected = ChatError(
             code = dto.code,
             message = dto.message,
-            statusCode = dto.StatusCode,
-            exceptionFields = dto.exception_fields,
-            moreInfo = dto.more_info,
-            details = dto.details.map { it.toDomain() },
+            statusCode = dto.statusCode,
+            exceptionFields = dto.exceptionFields.orEmpty(),
+            moreInfo = dto.moreInfo,
             duration = dto.duration,
-        )
-        dto.toDomain() shouldBeEqualTo expected
-    }
-
-    @Test
-    fun `ErrorDetailDto is correctly mapped to ChatErrorDetail`() {
-        val dto = Mother.randomErrorDetailDto()
-        val expected = ChatErrorDetail(
-            code = dto.code,
-            messages = dto.messages,
         )
         dto.toDomain() shouldBeEqualTo expected
     }
