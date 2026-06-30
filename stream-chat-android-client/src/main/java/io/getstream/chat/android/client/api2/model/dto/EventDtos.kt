@@ -101,17 +101,6 @@ internal data class HealthEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class MemberRemovedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val member: DownstreamMemberDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class MemberUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
