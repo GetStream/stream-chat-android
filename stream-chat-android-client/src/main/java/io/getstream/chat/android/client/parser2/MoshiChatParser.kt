@@ -62,6 +62,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
+import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
 import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -176,6 +177,7 @@ internal class MoshiChatParser(
         val rawCreatedAt = peekField(raw, "created_at")
         val event: WSClientEvent = when (type) {
             EventType.MESSAGE_NEW -> moshi.adapter(MessageNewEvent::class.java).fromJson(raw)
+            EventType.TYPING_START -> moshi.adapter(GeneratedTypingStartEvent::class.java).fromJson(raw)
             else -> null
         } ?: return null
         return with(eventMapping) { event.toDomain(rawCreatedAt) }

@@ -71,7 +71,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
@@ -609,16 +608,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         user = USER,
         reaction = REACTION,
         message = MESSAGE,
-    )
-
-    private val typingStartDto = TypingStartEventDto(
-        type = EventType.TYPING_START,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        parent_id = randomString(),
     )
 
     private val typingStopDto = TypingStopEventDto(
@@ -1291,17 +1280,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         message = with(domainMapping) { reactionUpdateDto.message.toDomain() },
     )
 
-    private val typingStart = TypingStartEvent(
-        type = typingStartDto.type,
-        createdAt = typingStartDto.created_at.date,
-        rawCreatedAt = typingStartDto.created_at.rawDate,
-        cid = typingStartDto.cid,
-        channelType = typingStartDto.channel_type,
-        channelId = typingStartDto.channel_id,
-        user = with(domainMapping) { typingStartDto.user.toDomain() },
-        parentId = typingStartDto.parent_id,
-    )
-
     private val typingStop = TypingStopEvent(
         type = typingStopDto.type,
         createdAt = typingStopDto.created_at.date,
@@ -1587,7 +1565,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(reactionDeletedDto, reactionDeleted),
         Arguments.of(reactionNewDto, reactionNew),
         Arguments.of(reactionUpdateDto, reactionUpdate),
-        Arguments.of(typingStartDto, typingStart),
         Arguments.of(typingStopDto, typingStop),
         Arguments.of(unknownDto, unknown),
         Arguments.of(userDeletedDto, userDeleted),
