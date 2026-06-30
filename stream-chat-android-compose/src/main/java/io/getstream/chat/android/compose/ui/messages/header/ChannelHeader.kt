@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -194,6 +195,8 @@ internal fun DefaultChannelHeaderCenterContent(
 
     Column(
         modifier = modifier
+            // Read the title and subtitle as one ordered unit within the header.
+            .semantics { isTraversalGroup = true }
             .height(IntrinsicSize.Max)
             .ifNotNull(onHeaderTitleClick) { callback ->
                 clickable(
