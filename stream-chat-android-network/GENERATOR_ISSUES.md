@@ -385,15 +385,26 @@ fix (#12) is the real answer.
 
 ---
 
-## 17. Bounce response sends `reaction_counts`/`reaction_scores` as JSON null
+## 17. Write-path send responses send `reaction_counts`/`reaction_scores` as JSON null
 
-**Symptom:** `POST /messages` crashes when automod bounces the message:
-`JsonDataException: Non-null value 'reactionCounts' was null`. Bounce wire
-emits `"reaction_counts": null` / `"reaction_scores": null`; normal sends
-emit `{}`.
+**Symptom:** `POST /messages` crashes parsing the response when the server-side
+path builds the response from a freshly-constructed `types.Message`.
+`JsonDataException: Non-null value 'reactionCounts' was null`. Wire emits
+`"reaction_counts": null` / `"reaction_scores": null` and `"updated_at":
+"0001-01-01T00:00:00Z"` (Go zero time, the giveaway). Read-path responses emit
+`{}` and parse cleanly.
 
-**Root cause:** `send_message.go` builds the bounce response via
-`payload.NewMessageResponse(*message)` in a `defer` but never calls
+Two known triggers observed live in compose-sample:
+- **Bounce path** (V1/V2 automod): blocklisted text hits `bounce` action,
+  response uses the same write-path builder.
+- **Pending message path**: channel type with `mark_messages_pending: true`,
+  send a message. Response built at `send_message.go:562`.
+
+Same root cause for both.
+
+**Root cause:** `send_message.go` builds the response via
+`payload.NewMessageResponse(*message)` (`defer` at line 305 for the normal
+write path, line 562 for the pending branch) but never calls
 `PrepareSerialization(user)` (`message.go:240`), which normalizes nil int-maps
 to `{}`. Read paths (`get_pinned_messages`, `get_replies`, channel-state) do
 call it; write paths don't.
