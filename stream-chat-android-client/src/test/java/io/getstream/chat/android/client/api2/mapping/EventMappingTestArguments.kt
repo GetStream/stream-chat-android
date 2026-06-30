@@ -64,7 +64,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessage
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
@@ -600,17 +599,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         channel = CHANNEL,
         member = MEMBER,
         user = USER,
-    )
-
-    private val reactionDeletedDto = ReactionDeletedEventDto(
-        type = EventType.REACTION_DELETED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        reaction = REACTION,
-        message = MESSAGE,
     )
 
     private val reactionNewDto = ReactionNewEventDto(
@@ -1259,18 +1247,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         user = with(domainMapping) { notificationRemovedFromChannelDto.user?.toDomain() },
     )
 
-    private val reactionDeleted = ReactionDeletedEvent(
-        type = reactionDeletedDto.type,
-        createdAt = reactionDeletedDto.created_at.date,
-        rawCreatedAt = reactionDeletedDto.created_at.rawDate,
-        cid = reactionDeletedDto.cid,
-        channelType = reactionDeletedDto.channel_type,
-        channelId = reactionDeletedDto.channel_id,
-        user = with(domainMapping) { reactionDeletedDto.user.toDomain() },
-        reaction = with(domainMapping) { reactionDeletedDto.reaction.toDomain() },
-        message = with(domainMapping) { reactionDeletedDto.message.toDomain() },
-    )
-
     private val reactionNew = ReactionNewEvent(
         type = reactionNewDto.type,
         createdAt = reactionNewDto.created_at.date,
@@ -1566,7 +1542,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(threadUpdatedDto, threadUpdated),
         Arguments.of(notificationMutesUpdatedDto, notificationMutesUpdated),
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
-        Arguments.of(reactionDeletedDto, reactionDeleted),
         Arguments.of(reactionNewDto, reactionNew),
         Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
@@ -1673,10 +1648,35 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         parentId = "parent-1",
     )
 
+    private val reactionDeletedGenerated = io.getstream.chat.android.network.models.ReactionDeletedEvent(
+        createdAt = DATE,
+        type = EventType.REACTION_DELETED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        user = SLIM_USER,
+        message = MESSAGE,
+        reaction = REACTION,
+    )
+
+    private val reactionDeletedExpected = ReactionDeletedEvent(
+        type = EventType.REACTION_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain() },
+        reaction = with(domainMapping) { REACTION.toDomain() },
+    )
+
     @JvmStatic
     fun generatedArguments() = listOf(
         Arguments.of(messageNewGenerated, DATE_STRING, messageNewExpected),
         Arguments.of(typingStartGenerated, DATE_STRING, typingStartExpected),
         Arguments.of(typingStopGenerated, DATE_STRING, typingStopExpected),
+        Arguments.of(reactionDeletedGenerated, DATE_STRING, reactionDeletedExpected),
     )
 }

@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessage
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
@@ -113,7 +112,6 @@ internal class EventDtoAdapter(
     private val messageDeliveredEventAdapter = moshi.adapter(MessageDeliveredEventDto::class.java)
     private val reactionNewEventAdapter = moshi.adapter(ReactionNewEventDto::class.java)
     private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
-    private val reactionDeletedEventAdapter = moshi.adapter(ReactionDeletedEventDto::class.java)
     private val memberAddedEventAdapter = moshi.adapter(MemberAddedEventDto::class.java)
     private val memberRemovedEventAdapter = moshi.adapter(MemberRemovedEventDto::class.java)
     private val memberUpdatedEventAdapter = moshi.adapter(MemberUpdatedEventDto::class.java)
@@ -193,7 +191,6 @@ internal class EventDtoAdapter(
             EventType.MESSAGE_DELIVERED -> messageDeliveredEventAdapter
             EventType.REACTION_NEW -> reactionNewEventAdapter
             EventType.REACTION_UPDATED -> reactionUpdateEventAdapter
-            EventType.REACTION_DELETED -> reactionDeletedEventAdapter
             EventType.MEMBER_ADDED -> memberAddedEventAdapter
             EventType.MEMBER_REMOVED -> memberRemovedEventAdapter
             EventType.MEMBER_UPDATED -> memberUpdatedEventAdapter

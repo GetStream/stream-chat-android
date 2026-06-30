@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
+import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
@@ -70,7 +71,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessage
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
@@ -157,6 +157,8 @@ import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 
 @Suppress("LargeClass")
@@ -169,6 +171,7 @@ internal class EventMapping(
         is MessageNewEvent -> toDomain(rawCreatedAt)
         is GeneratedTypingStartEvent -> toDomain(rawCreatedAt)
         is GeneratedTypingStopEvent -> toDomain(rawCreatedAt)
+        is GeneratedReactionDeletedEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
     }
 
@@ -219,7 +222,6 @@ internal class EventMapping(
             is ThreadUpdatedEventDto -> toDomain()
             is NotificationMutesUpdatedEventDto -> toDomain()
             is NotificationRemovedFromChannelEventDto -> toDomain()
-            is ReactionDeletedEventDto -> toDomain()
             is ReactionNewEventDto -> toDomain()
             is ReactionUpdateEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
@@ -754,20 +756,17 @@ internal class EventMapping(
             )
         }
 
-    /**
-     * Transforms [ReactionDeletedEventDto] to [ReactionDeletedEvent].
-     */
-    private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent = with(domainMapping) {
+    private fun GeneratedReactionDeletedEvent.toDomain(rawCreatedAt: String?): ReactionDeletedEvent = with(domainMapping) {
         ReactionDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            message = message.toDomain(),
-            reaction = reaction.toDomain(),
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            user = user?.toDomain() ?: User(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
+            message = message?.toDomain() ?: Message(),
+            reaction = reaction?.toDomain() ?: Reaction(),
         )
     }
 

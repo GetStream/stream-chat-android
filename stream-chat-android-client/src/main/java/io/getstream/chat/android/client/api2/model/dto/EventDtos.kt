@@ -376,18 +376,6 @@ internal data class NotificationRemovedFromChannelEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class ReactionDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-    val reaction: DownstreamReactionDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ReactionNewEventDto(
     val type: String,
     val created_at: ExactDate,
