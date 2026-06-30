@@ -63,6 +63,7 @@ import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
+import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import okio.Buffer
@@ -182,6 +183,7 @@ internal class MoshiChatParser(
             EventType.TYPING_START -> moshi.adapter(GeneratedTypingStartEvent::class.java).fromJson(raw)
             EventType.TYPING_STOP -> moshi.adapter(GeneratedTypingStopEvent::class.java).fromJson(raw)
             EventType.REACTION_DELETED -> moshi.adapter(GeneratedReactionDeletedEvent::class.java).fromJson(raw)
+            EventType.REACTION_NEW -> moshi.adapter(GeneratedReactionNewEvent::class.java).fromJson(raw)
             else -> null
         } ?: return null
         return with(eventMapping) { event.toDomain(rawCreatedAt) }
