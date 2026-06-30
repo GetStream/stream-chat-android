@@ -18,16 +18,21 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
@@ -141,12 +146,33 @@ internal class MoshiChatParser(
 
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 
+    private val rawMapAdapter: JsonAdapter<MutableMap<String, Any?>> =
+        moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
+    private val exactDateAdapter = moshi.adapter(ExactDate::class.java)
+    private val downstreamUserDtoAdapter = moshi.adapter(DownstreamUserDto::class.java)
+
     private fun parseAndProcessEvent(raw: String): ChatEvent {
-        val directEvent = directEventParser?.parse(raw)
-        if (directEvent != null) {
-            // Direct adapters handle enrichment inline — no enrichIfNeeded() needed.
-            return directEvent
-        }
-        return with(eventMapping) { chatEventDtoAdapter.fromJson(raw)!!.toDomain() }.enrichIfNeeded()
+        directEventParser?.parse(raw)?.let { return it }
+
+        val event = chatEventDtoAdapter.fromJson(raw)?.let { dto -> with(eventMapping) { dto.toDomain() } }
+            ?: parseGeneratedEvent(raw)
+            ?: buildUnknownEvent(raw)
+        return event.enrichIfNeeded()
+    }
+
+    // Dispatcher for events that have been migrated off the hand-written ChatEventDto family.
+    // Entries are added per-event during the events-DTO migration; returns null when the type
+    // string isn't yet migrated so the caller falls through to the unknown-event path.
+    private fun parseGeneratedEvent(raw: String): ChatEvent? = null
+
+    private fun buildUnknownEvent(raw: String): ChatEvent {
+        val map = rawMapAdapter.fromJson(raw)!!.filterValues { it != null }
+        val dto = UnknownEventDto(
+            type = (map["type"] as? String) ?: EventType.UNKNOWN,
+            created_at = exactDateAdapter.fromJsonValue(map["created_at"])!!,
+            user = downstreamUserDtoAdapter.fromJsonValue(map["user"]),
+            rawData = map,
+        )
+        return with(eventMapping) { dto.toDomain() }
     }
 }

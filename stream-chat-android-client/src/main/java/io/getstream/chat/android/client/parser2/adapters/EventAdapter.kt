@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
@@ -78,7 +77,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
@@ -88,7 +86,6 @@ import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
@@ -267,13 +264,7 @@ internal class EventDtoAdapter(
             EventType.AI_TYPING_INDICATOR_UPDATED -> aiTypingIndicatorUpdatedEventAdapter
             EventType.AI_TYPING_INDICATOR_CLEAR -> aiTypingIndicatorClearEventAdapter
             EventType.AI_TYPING_INDICATOR_STOP -> aiTypingIndicatorStopEventAdapter
-            else -> // Custom case, early return
-                return UnknownEventDto(
-                    type = type ?: EventType.UNKNOWN,
-                    created_at = moshi.adapter(ExactDate::class.java).fromJsonValue(map["created_at"])!!,
-                    user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
-                    rawData = map,
-                )
+            else -> return null
         }
 
         return adapter.fromJsonValue(map)
