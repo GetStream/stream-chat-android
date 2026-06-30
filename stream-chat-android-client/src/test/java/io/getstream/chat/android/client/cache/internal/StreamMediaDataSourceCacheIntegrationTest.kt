@@ -122,6 +122,34 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
     }
 
     /**
+     * The cache key strips the query, so a second open on the same path with a different query
+     * (e.g. a rotated `Expires`/`Signature` set on a pre-signed URL) lands on the existing cache
+     * entry. The CDN still receives the original URL with query intact on the miss.
+     */
+    @Test
+    fun `same path with rotated query hits cache and forwards original URL to CDN on miss`() {
+        val cdn = FakeCDN()
+        val upstream = RecordingDataSourceFactory()
+        val factory = VideoCacheDataSourceFactory(cache, CDNDataSourceFactory(cdn) { upstream.createDataSource() })
+
+        val firstUrl = "$VIDEO_URL?expires=100&sig=alpha"
+        val secondUrl = "$VIDEO_URL?expires=200&sig=beta"
+        readFully(factory.createDataSource(), DataSpec(Uri.parse(firstUrl)))
+        readFully(factory.createDataSource(), DataSpec(Uri.parse(secondUrl)))
+
+        assertEquals(
+            "CDN should be invoked exactly once with the original URL on miss, then bypassed on hit",
+            listOf(firstUrl),
+            cdn.invocations,
+        )
+        assertEquals(
+            "Upstream should be opened exactly once across the miss + hit",
+            1,
+            upstream.openCount,
+        )
+    }
+
+    /**
      * Verifies the LRU evictor is wired with [VideoCacheConfig.maxSizeBytes]. Three videos are
      * written into a cache sized to hold exactly two; the read between the second and third write
      * bumps the first video's recency so the second video becomes the least-recently-used and is
