@@ -514,3 +514,32 @@ skipped for now.
 **Migration timing:** Not blocking - the hand-written DTO works. Revisit if
 the spec / product-filter architecture is reworked, or if the SDK's flag
 endpoints are repointed at chat-scoped paths.
+
+---
+
+## 20. `member.user.language` required by spec but absent on the WS wire
+
+**Symptom:** Receiving any WS event whose payload nests a member with a user
+(`member_added`, `member_removed`, and likely `notification.added_to_channel`,
+`notification.invited`, etc.) crashes with
+`JsonDataException: Required value 'language' missing at $ at $.user at $.member`.
+The wire's `member.user` is a slim object that omits `language`.
+
+**Root cause:** `ChannelMemberResponse.user` is typed `UserResponse?`, and
+both `UserResponse.language` and `UserResponseCommonFields.language` are
+declared non-null in the spec. The Go marshaler appears to omit `language`
+on nested member.user payloads, so the generated codegen adapter rejects the
+JSON.
+
+Pre-existing - the legacy hand-written `MemberAddedEventDto` / `MemberRemovedEventDto`
+also typed `member: DownstreamMemberDto` (= `ChannelMemberResponse`), so
+the same exception would have fired on the legacy path. The DTO migration
+to `GeneratedMemberAddedEvent` / `GeneratedMemberRemovedEvent` did not
+introduce this bug; it only made it observable while wiring up manual tests.
+
+**Fix status:** Not fixed. Migration of member events proceeds; manual WS
+testing of these flows is blocked until the spec is corrected.
+
+**Suggested upstream fix:** Make `language` nullable on `UserResponse` and
+`UserResponseCommonFields` (the wire reality), or have the Go marshaler
+populate a non-empty default for nested member.user.
