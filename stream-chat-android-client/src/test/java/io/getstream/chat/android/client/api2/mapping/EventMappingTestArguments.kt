@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
@@ -51,7 +50,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTrunca
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
@@ -379,12 +377,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         connection_id = CONNECTION_ID,
     )
 
-    private val markAllReadDto = MarkAllReadEventDto(
-        type = EventType.NOTIFICATION_MARK_READ,
-        created_at = EXACT_DATE,
-        user = USER,
-    )
-
     private val memberAddedDto = MemberAddedEventDto(
         type = EventType.MEMBER_ADDED,
         created_at = EXACT_DATE,
@@ -490,16 +482,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         channel_id = CHANNEL_ID,
         user = USER,
         member = MEMBER,
-    )
-
-    private val notificationMarkReadDto = NotificationMarkReadEventDto(
-        type = EventType.NOTIFICATION_MARK_READ,
-        created_at = EXACT_DATE,
-        user = USER,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        last_read_message_id = LAST_READ_MESSAGE_ID,
     )
 
     private val notificationMarkUnreadDto = NotificationMarkUnreadEventDto(
@@ -938,13 +920,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         connectionId = healthDto.connection_id,
     )
 
-    private val markAllRead = MarkAllReadEvent(
-        type = markAllReadDto.type,
-        createdAt = markAllReadDto.created_at.date,
-        rawCreatedAt = markAllReadDto.created_at.rawDate,
-        user = with(domainMapping) { markAllReadDto.user.toDomain() },
-    )
-
     private val memberAdded = MemberAddedEvent(
         type = memberAddedDto.type,
         createdAt = memberAddedDto.created_at.date,
@@ -1071,17 +1046,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         channelId = notificationInvitedDto.channel_id,
         user = with(domainMapping) { notificationInvitedDto.user.toDomain() },
         member = with(domainMapping) { notificationInvitedDto.member.toDomain() },
-    )
-
-    private val notificationMarkRead = NotificationMarkReadEvent(
-        type = notificationMarkReadDto.type,
-        createdAt = notificationMarkReadDto.created_at.date,
-        rawCreatedAt = notificationMarkReadDto.created_at.rawDate,
-        user = with(domainMapping) { notificationMarkReadDto.user.toDomain() },
-        cid = notificationMarkReadDto.cid,
-        channelType = notificationMarkReadDto.channel_type,
-        channelId = notificationMarkReadDto.channel_id,
-        lastReadMessageId = notificationMarkReadDto.last_read_message_id,
     )
 
     private val notificationMarkUnread = NotificationMarkUnreadEvent(
@@ -1424,7 +1388,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(globalUserBannedDto, globalUserBanned),
         Arguments.of(globalUserUnbannedDto, globalUserUnbanned),
         Arguments.of(healthDto, health),
-        Arguments.of(markAllReadDto, markAllRead),
         Arguments.of(memberAddedDto, memberAdded),
         Arguments.of(memberRemovedDto, memberRemoved),
         Arguments.of(memberUpdatedDto, memberUpdated),
@@ -1436,7 +1399,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
         Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),
         Arguments.of(notificationInvitedDto, notificationInvited),
-        Arguments.of(notificationMarkReadDto, notificationMarkRead),
         Arguments.of(notificationMarkUnreadDto, notificationMarkUnread),
         Arguments.of(notificationMessageNewDto, notificationMessageNew),
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
@@ -1667,6 +1629,55 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         team = null,
     )
 
+    private val notificationMarkReadGenerated = io.getstream.chat.android.network.models.NotificationMarkReadEvent(
+        createdAt = DATE,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        unreadCount = TOTAL_UNREAD_COUNT,
+        type = EventType.NOTIFICATION_MARK_READ,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+    )
+
+    private val notificationMarkReadExpected = NotificationMarkReadEvent(
+        type = EventType.NOTIFICATION_MARK_READ,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        threadId = null,
+        thread = null,
+        unreadThreads = null,
+        unreadThreadMessages = null,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+    )
+
+    private val markAllReadGenerated = io.getstream.chat.android.network.models.NotificationMarkReadEvent(
+        createdAt = DATE,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        unreadCount = TOTAL_UNREAD_COUNT,
+        type = EventType.NOTIFICATION_MARK_READ,
+        // cid absent => MarkAllReadEvent
+        user = SLIM_USER,
+    )
+
+    private val markAllReadExpected = MarkAllReadEvent(
+        type = EventType.NOTIFICATION_MARK_READ,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+    )
+
     @JvmStatic
     fun generatedArguments() = listOf(
         Arguments.of(messageNewGenerated, DATE_STRING, messageNewExpected),
@@ -1677,5 +1688,7 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(messageUpdatedGenerated, DATE_STRING, messageUpdatedExpected),
         Arguments.of(messageDeletedGenerated, DATE_STRING, messageDeletedExpected),
         Arguments.of(messageReadGenerated, DATE_STRING, messageReadExpected),
+        Arguments.of(notificationMarkReadGenerated, DATE_STRING, notificationMarkReadExpected),
+        Arguments.of(markAllReadGenerated, DATE_STRING, markAllReadExpected),
     )
 }

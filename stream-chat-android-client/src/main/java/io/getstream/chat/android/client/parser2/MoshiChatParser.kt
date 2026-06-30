@@ -65,6 +65,7 @@ import io.getstream.chat.android.network.models.WSClientEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
@@ -190,6 +191,7 @@ internal class MoshiChatParser(
             EventType.MESSAGE_UPDATED -> moshi.adapter(GeneratedMessageUpdatedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_DELETED -> moshi.adapter(GeneratedMessageDeletedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null
         } ?: return null
         return with(eventMapping) { event.toDomain(rawCreatedAt) }

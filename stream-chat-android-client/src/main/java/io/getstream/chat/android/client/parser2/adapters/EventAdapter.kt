@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventD
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
@@ -54,7 +53,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTrunca
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
@@ -116,9 +114,7 @@ internal class EventDtoAdapter(
     private val userStartWatchingEventAdapter = moshi.adapter(UserStartWatchingEventDto::class.java)
     private val userStopWatchingEventAdapter = moshi.adapter(UserStopWatchingEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
-    private val notificationMarkReadEventAdapter = moshi.adapter(NotificationMarkReadEventDto::class.java)
     private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
-    private val markAllReadEventAdapter = moshi.adapter(MarkAllReadEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationThreadMessageNewEventAdapter =
         moshi.adapter(NotificationThreadMessageNewEventDto::class.java)
@@ -190,10 +186,6 @@ internal class EventDtoAdapter(
             EventType.USER_WATCHING_START -> userStartWatchingEventAdapter
             EventType.USER_WATCHING_STOP -> userStopWatchingEventAdapter
             EventType.NOTIFICATION_ADDED_TO_CHANNEL -> notificationAddedToChannelEventAdapter
-            EventType.NOTIFICATION_MARK_READ -> when {
-                map.containsKey("cid") -> notificationMarkReadEventAdapter
-                else -> markAllReadEventAdapter
-            }
             EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter

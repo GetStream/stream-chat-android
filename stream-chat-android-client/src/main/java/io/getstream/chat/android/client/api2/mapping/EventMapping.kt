@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
@@ -53,7 +52,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTrunca
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.network.models.MessageNewEvent
@@ -61,6 +59,7 @@ import io.getstream.chat.android.network.models.WSClientEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
@@ -176,6 +175,7 @@ internal class EventMapping(
         is GeneratedMessageUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
+        is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
     }
 
@@ -204,7 +204,6 @@ internal class EventMapping(
             is GlobalUserBannedEventDto -> toDomain()
             is GlobalUserUnbannedEventDto -> toDomain()
             is HealthEventDto -> toDomain()
-            is MarkAllReadEventDto -> toDomain()
             is MemberAddedEventDto -> toDomain()
             is MemberRemovedEventDto -> toDomain()
             is MemberUpdatedEventDto -> toDomain()
@@ -216,7 +215,6 @@ internal class EventMapping(
             is NotificationInviteAcceptedEventDto -> toDomain()
             is NotificationInviteRejectedEventDto -> toDomain()
             is NotificationInvitedEventDto -> toDomain()
-            is NotificationMarkReadEventDto -> toDomain()
             is NotificationMarkUnreadEventDto -> toDomain()
             is NotificationMessageNewEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
@@ -623,23 +621,37 @@ internal class EventMapping(
     /**
      * Transforms [NotificationMarkReadEventDto] to [NotificationMarkReadEvent].
      */
-    private fun NotificationMarkReadEventDto.toDomain(): NotificationMarkReadEvent = with(domainMapping) {
-        NotificationMarkReadEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            threadId = thread_id,
-            thread = thread?.toDomain(),
-            unreadThreads = unread_threads,
-            unreadThreadMessages = unread_thread_messages,
-            lastReadMessageId = last_read_message_id,
-        )
+    // Wire `notification.mark_read` covers two domain events: with `cid` -> NotificationMarkReadEvent
+    // (per-channel mark), without `cid` -> MarkAllReadEvent (global, from `ChatClient.markAllRead()`).
+    private fun GeneratedNotificationMarkReadEvent.toDomain(rawCreatedAt: String?): ChatEvent = with(domainMapping) {
+        val channelCid = cid
+        if (channelCid != null) {
+            NotificationMarkReadEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+                cid = channelCid,
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                totalUnreadCount = totalUnreadCount,
+                unreadChannels = unreadChannels,
+                threadId = threadId,
+                thread = thread?.toDomain(),
+                unreadThreads = unreadThreads,
+                unreadThreadMessages = unreadThreadMessages,
+                lastReadMessageId = lastReadMessageId,
+            )
+        } else {
+            MarkAllReadEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                user = user?.toDomain() ?: User(),
+                totalUnreadCount = totalUnreadCount,
+                unreadChannels = unreadChannels,
+            )
+        }
     }
 
     /**
@@ -668,17 +680,6 @@ internal class EventMapping(
     /**
      * Transforms [MarkAllReadEventDto] to [MarkAllReadEvent].
      */
-    private fun MarkAllReadEventDto.toDomain(): MarkAllReadEvent = with(domainMapping) {
-        MarkAllReadEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-        )
-    }
-
     /**
      * Transforms [NotificationMessageNewEventDto] to [NotificationMessageNewEvent].
      */
