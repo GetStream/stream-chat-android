@@ -28,6 +28,7 @@ import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
+import io.getstream.chat.android.ui.common.images.internal.VideoThumbnailImageData
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing.Companion.defaultStreamCdnImageResizing
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
@@ -318,7 +319,10 @@ internal class QuotedMessageBodyBuilderTest {
                 QuotedMessageBody(
                     text = "Watch this",
                     iconId = R.drawable.stream_design_ic_video,
-                    videoPreviewData = "https://example.com/thumb.jpg",
+                    videoPreviewData = VideoThumbnailImageData(
+                        thumbnailUrl = "https://example.com/thumb.jpg",
+                        videoUrl = "https://example.com/video.mp4",
+                    ),
                 ),
             ),
             Arguments.of(
@@ -338,7 +342,10 @@ internal class QuotedMessageBodyBuilderTest {
                 QuotedMessageBody(
                     text = "Videos: 1",
                     iconId = R.drawable.stream_design_ic_video,
-                    videoPreviewData = "https://example.com/thumb.jpg",
+                    videoPreviewData = VideoThumbnailImageData(
+                        thumbnailUrl = "https://example.com/thumb.jpg",
+                        videoUrl = "https://example.com/video.mp4",
+                    ),
                 ),
             ),
             Arguments.of(

@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
+import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
@@ -221,7 +222,9 @@ internal class QuotedMessageBodyBuilder(
                 type == AttachmentType.VIDEO -> {
                     videoCount++
                     fileCount++
-                    mediaPreviewData = attachment.upload ?: attachment.thumbUrl
+                    val thumbnail = attachment.thumbUrl
+                        ?.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing)
+                    mediaPreviewData = attachment.videoThumbnailImageData(thumbnail) ?: attachment.upload
                 }
 
                 type == AttachmentType.AUDIO_RECORDING -> {

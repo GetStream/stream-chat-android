@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
+import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.result.Error
 import io.getstream.chat.android.ui.common.R as UiCommonR
@@ -148,8 +149,12 @@ internal fun ChannelMediaAttachmentsItem(
     item: ChannelAttachmentsViewState.Content.Item,
     onClick: () -> Unit,
 ) {
-    val data = item.attachment.upload
-        ?: if (item.attachment.isImage()) item.attachment.imageUrl else item.attachment.thumbUrl
+    val attachment = item.attachment
+    val data = attachment.upload ?: when {
+        attachment.isImage() -> attachment.imageUrl
+        attachment.isVideo() -> attachment.videoThumbnailImageData(attachment.thumbUrl)
+        else -> attachment.thumbUrl
+    }
     val isVideo = item.attachment.isVideo()
     val senderName = item.message.user.name
     val tileDescription = when {
