@@ -20,7 +20,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,7 +41,12 @@ internal fun MentionSuggestionList(
     onUserSelected: (User) -> Unit = {},
     onMentionSelected: (Mention) -> Unit = {},
 ) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(mentions) {
+        listState.scrollToItem(0)
+    }
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxWidth()
             .testTag("Stream_MentionSuggestionList"),
