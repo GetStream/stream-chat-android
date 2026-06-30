@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
+import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -76,7 +77,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
@@ -168,6 +168,7 @@ internal class EventMapping(
     internal fun WSClientEvent.toDomain(rawCreatedAt: String?): ChatEvent = when (this) {
         is MessageNewEvent -> toDomain(rawCreatedAt)
         is GeneratedTypingStartEvent -> toDomain(rawCreatedAt)
+        is GeneratedTypingStopEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
     }
 
@@ -221,7 +222,6 @@ internal class EventMapping(
             is ReactionDeletedEventDto -> toDomain()
             is ReactionNewEventDto -> toDomain()
             is ReactionUpdateEventDto -> toDomain()
-            is TypingStopEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is UserDeletedEventDto -> toDomain()
             is UserPresenceChangedEventDto -> toDomain()
@@ -818,19 +818,16 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [TypingStopEventDto] to [TypingStopEvent].
-     */
-    private fun TypingStopEventDto.toDomain(): TypingStopEvent = with(domainMapping) {
+    private fun GeneratedTypingStopEvent.toDomain(rawCreatedAt: String?): TypingStopEvent = with(domainMapping) {
         TypingStopEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            parentId = parent_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            user = user?.toDomain() ?: User(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
+            parentId = parentId,
         )
     }
 

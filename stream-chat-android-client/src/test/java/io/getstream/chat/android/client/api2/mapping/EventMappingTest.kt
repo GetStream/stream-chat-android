@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.WSClientEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
@@ -41,6 +42,15 @@ internal class EventMappingTest {
     fun testChatEventMapping(dto: ChatEventDto, expected: ChatEvent) {
         val actual = with(eventMapping) {
             dto.toDomain()
+        }
+        assertEquals(expected, actual)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.mapping.EventMappingTestArguments#generatedArguments")
+    fun testGeneratedEventMapping(event: WSClientEvent, rawCreatedAt: String, expected: ChatEvent) {
+        val actual = with(eventMapping) {
+            event.toDomain(rawCreatedAt)
         }
         assertEquals(expected, actual)
     }

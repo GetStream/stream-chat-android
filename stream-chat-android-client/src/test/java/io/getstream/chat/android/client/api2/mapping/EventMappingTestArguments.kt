@@ -71,7 +71,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
@@ -178,6 +177,32 @@ internal object EventMappingTestArguments {
     private const val DATE_STRING = "2020-06-29T06:14:28.000Z"
     private val EXACT_DATE = ExactDate(DATE, DATE_STRING)
     private val USER = Mother.randomDownstreamUserDto()
+    private val SLIM_USER = io.getstream.chat.android.network.models.UserResponseCommonFields(
+        banned = false,
+        createdAt = DATE,
+        id = USER.id,
+        language = USER.language,
+        online = USER.online,
+        role = USER.role,
+        updatedAt = DATE,
+        name = USER.name,
+        image = USER.image,
+        lastActive = DATE,
+    )
+    private val SLIM_USER_DOMAIN = io.getstream.chat.android.models.User(
+        id = SLIM_USER.id,
+        name = SLIM_USER.name ?: "",
+        image = SLIM_USER.image ?: "",
+        role = SLIM_USER.role,
+        invisible = false,
+        language = SLIM_USER.language,
+        banned = SLIM_USER.banned,
+        online = SLIM_USER.online,
+        createdAt = SLIM_USER.createdAt,
+        updatedAt = SLIM_USER.updatedAt,
+        lastActive = SLIM_USER.lastActive,
+        extraData = mutableMapOf(),
+    )
     private val OWN_USER = Mother.randomOwnUserResponse()
     private val CHANNEL_TYPE = randomString()
     private val CHANNEL_ID = randomString()
@@ -608,16 +633,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         user = USER,
         reaction = REACTION,
         message = MESSAGE,
-    )
-
-    private val typingStopDto = TypingStopEventDto(
-        type = EventType.TYPING_STOP,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        parent_id = randomString(),
     )
 
     private val unknownDto = UnknownEventDto(
@@ -1280,17 +1295,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         message = with(domainMapping) { reactionUpdateDto.message.toDomain() },
     )
 
-    private val typingStop = TypingStopEvent(
-        type = typingStopDto.type,
-        createdAt = typingStopDto.created_at.date,
-        rawCreatedAt = typingStopDto.created_at.rawDate,
-        cid = typingStopDto.cid,
-        channelType = typingStopDto.channel_type,
-        channelId = typingStopDto.channel_id,
-        user = with(domainMapping) { typingStopDto.user.toDomain() },
-        parentId = typingStopDto.parent_id,
-    )
-
     private val unknown = UnknownEvent(
         type = unknownDto.type,
         createdAt = unknownDto.created_at.date,
@@ -1565,7 +1569,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(reactionDeletedDto, reactionDeleted),
         Arguments.of(reactionNewDto, reactionNew),
         Arguments.of(reactionUpdateDto, reactionUpdate),
-        Arguments.of(typingStopDto, typingStop),
         Arguments.of(unknownDto, unknown),
         Arguments.of(userDeletedDto, userDeleted),
         Arguments.of(userPresenceChangedDto, userPresenceChanged),
@@ -1587,5 +1590,93 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
         Arguments.of(ioIndicatorClearDto, aiIndicatorClear),
         Arguments.of(userMessagesDeletedEventDto, userMessagesDeletedEvent),
+    )
+
+    private val messageNewGenerated = io.getstream.chat.android.network.models.MessageNewEvent(
+        createdAt = DATE,
+        messageId = MESSAGE_ID,
+        watcherCount = 0,
+        message = MESSAGE,
+        type = EventType.MESSAGE_NEW,
+        channelId = CHANNEL_ID,
+        channelMemberCount = CHANNEL_MEMBER_COUNT,
+        channelType = CHANNEL_TYPE,
+        cid = CID,
+        channelCustom = mapOf("name" to CHANNEL_NAME, "image" to CHANNEL_IMAGE),
+        user = SLIM_USER,
+    )
+
+    private val messageNewExpected = io.getstream.chat.android.client.events.NewMessageEvent(
+        type = EventType.MESSAGE_NEW,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) {
+            val channelInfo = ChannelInfo(
+                cid = CID,
+                id = CHANNEL_ID,
+                type = CHANNEL_TYPE,
+                memberCount = CHANNEL_MEMBER_COUNT,
+                name = CHANNEL_NAME,
+                image = CHANNEL_IMAGE,
+            )
+            MESSAGE.toDomain(channelInfo)
+        },
+        watcherCount = 0,
+        totalUnreadCount = 0,
+        unreadChannels = 0,
+        channelMessageCount = null,
+    )
+
+    private val typingStartGenerated = io.getstream.chat.android.network.models.TypingStartEvent(
+        createdAt = DATE,
+        type = EventType.TYPING_START,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        parentId = "parent-1",
+        user = SLIM_USER,
+    )
+
+    private val typingStartExpected = TypingStartEvent(
+        type = EventType.TYPING_START,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        parentId = "parent-1",
+    )
+
+    private val typingStopGenerated = io.getstream.chat.android.network.models.TypingStopEvent(
+        createdAt = DATE,
+        type = EventType.TYPING_STOP,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        parentId = "parent-1",
+        user = SLIM_USER,
+    )
+
+    private val typingStopExpected = TypingStopEvent(
+        type = EventType.TYPING_STOP,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        parentId = "parent-1",
+    )
+
+    @JvmStatic
+    fun generatedArguments() = listOf(
+        Arguments.of(messageNewGenerated, DATE_STRING, messageNewExpected),
+        Arguments.of(typingStartGenerated, DATE_STRING, typingStartExpected),
+        Arguments.of(typingStopGenerated, DATE_STRING, typingStopExpected),
     )
 }

@@ -74,7 +74,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
@@ -112,7 +111,6 @@ internal class EventDtoAdapter(
     private val messageUpdatedEventAdapter = moshi.adapter(MessageUpdatedEventDto::class.java)
     private val messageReadEventAdapter = moshi.adapter(MessageReadEventDto::class.java)
     private val messageDeliveredEventAdapter = moshi.adapter(MessageDeliveredEventDto::class.java)
-    private val typingStopEventAdapter = moshi.adapter(TypingStopEventDto::class.java)
     private val reactionNewEventAdapter = moshi.adapter(ReactionNewEventDto::class.java)
     private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
     private val reactionDeletedEventAdapter = moshi.adapter(ReactionDeletedEventDto::class.java)
@@ -193,7 +191,6 @@ internal class EventDtoAdapter(
                 else -> markAllReadEventAdapter
             }
             EventType.MESSAGE_DELIVERED -> messageDeliveredEventAdapter
-            EventType.TYPING_STOP -> typingStopEventAdapter
             EventType.REACTION_NEW -> reactionNewEventAdapter
             EventType.REACTION_UPDATED -> reactionUpdateEventAdapter
             EventType.REACTION_DELETED -> reactionDeletedEventAdapter

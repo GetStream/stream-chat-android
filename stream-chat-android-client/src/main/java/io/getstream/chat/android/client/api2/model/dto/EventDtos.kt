@@ -412,17 +412,6 @@ internal data class ReactionUpdateEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class TypingStopEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val parent_id: String?,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ChannelUserBannedEventDto(
     val type: String,
     val created_at: ExactDate,

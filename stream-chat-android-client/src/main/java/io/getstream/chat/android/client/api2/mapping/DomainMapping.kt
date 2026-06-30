@@ -375,7 +375,7 @@ internal class DomainMapping(
             extraData = custom.filterNonNullValues().toMutableMap(),
         ).let(userTransformer::transform)
 
-    /** Slim user shape (no `banned`, `privacy_settings`, `devices`); those domain fields stay at defaults. */
+    /** Slim user shape (no `privacy_settings`, `devices`); those domain fields stay at defaults. */
     internal fun io.getstream.chat.android.network.models.UserResponseCommonFields.toDomain(): User =
         User(
             id = id,
@@ -384,7 +384,7 @@ internal class DomainMapping(
             role = role,
             invisible = false,
             language = language,
-            banned = false,
+            banned = banned,
             online = online,
             createdAt = createdAt,
             deactivatedAt = deactivatedAt,
