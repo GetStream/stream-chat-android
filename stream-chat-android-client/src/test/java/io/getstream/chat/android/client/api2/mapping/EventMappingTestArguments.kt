@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
@@ -228,9 +227,9 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel_member_count = CHANNEL_MEMBER_COUNT,
-        channel_custom = DownstreamChannelCustomDto(
-            name = CHANNEL_NAME,
-            image = CHANNEL_IMAGE,
+        channel_custom = mapOf(
+            "name" to CHANNEL_NAME,
+            "image" to CHANNEL_IMAGE,
         ),
         message = MESSAGE,
     )
@@ -852,8 +851,8 @@ internal object EventMappingTestArguments {
                 id = newMessageDto.channel_id,
                 type = newMessageDto.channel_type,
                 memberCount = newMessageDto.channel_member_count ?: 0,
-                name = newMessageDto.channel_custom?.name,
-                image = newMessageDto.channel_custom?.image,
+                name = newMessageDto.channel_custom?.get("name") as? String,
+                image = newMessageDto.channel_custom?.get("image") as? String,
             )
             newMessageDto.message.toDomain(channelInfo)
         },

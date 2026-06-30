@@ -16,21 +16,4 @@
 
 package io.getstream.chat.android.client.api2.model.dto
 
-import com.squareup.moshi.JsonClass
-
 internal typealias DownstreamChannelDto = io.getstream.chat.android.network.models.ChannelResponse
-
-/**
- * Model holding custom channel fields delivered with `message.new` events.
- *
- * Note: It is currently relevant only for the [name] and [image] fields. If in the future we need to support more or
- * even custom fields, consider changing this DTO (to a Map<String, Any> for example).
- *
- * @param name The channel name (if available).
- * @param image The channel image (if available).
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamChannelCustomDto(
-    val name: String?,
-    val image: String?,
-)

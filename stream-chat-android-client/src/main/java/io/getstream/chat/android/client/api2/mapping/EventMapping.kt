@@ -474,8 +474,8 @@ internal class EventMapping(
             id = channel_id,
             type = channel_type,
             memberCount = channel_member_count ?: 0,
-            name = channel_custom?.name,
-            image = channel_custom?.image,
+            name = channel_custom?.get("name") as? String,
+            image = channel_custom?.get("image") as? String,
         )
         NewMessageEvent(
             type = type,
