@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -425,16 +424,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         channel_id = CHANNEL_ID,
         last_delivered_at = EXACT_DATE,
         last_delivered_message_id = LAST_DELIVERED_MESSAGE_ID,
-    )
-
-    private val messageReadDto = MessageReadEventDto(
-        type = EventType.MESSAGE_READ,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        last_read_message_id = LAST_READ_MESSAGE_ID,
     )
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
@@ -1001,18 +990,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
     )
 
-    private val messageRead = MessageReadEvent(
-        type = messageReadDto.type,
-        createdAt = messageReadDto.created_at.date,
-        rawCreatedAt = messageReadDto.created_at.rawDate,
-        cid = messageReadDto.cid,
-        channelType = messageReadDto.channel_type,
-        channelId = messageReadDto.channel_id,
-        user = with(domainMapping) { messageReadDto.user.toDomain() },
-        lastReadMessageId = messageReadDto.last_read_message_id,
-        team = messageReadDto.team,
-    )
-
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
         type = notificationAddedToChannelDto.type,
         createdAt = notificationAddedToChannelDto.created_at.date,
@@ -1452,7 +1429,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(memberRemovedDto, memberRemoved),
         Arguments.of(memberUpdatedDto, memberUpdated),
         Arguments.of(messageDeliveredDto, messageDelivered),
-        Arguments.of(messageReadDto, messageRead),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
@@ -1669,6 +1645,28 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         deletedForMe = DELETED_FOR_ME,
     )
 
+    private val messageReadGenerated = io.getstream.chat.android.network.models.MessageReadEvent(
+        createdAt = DATE,
+        type = EventType.MESSAGE_READ,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+    )
+
+    private val messageReadExpected = MessageReadEvent(
+        type = EventType.MESSAGE_READ,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        team = null,
+    )
+
     @JvmStatic
     fun generatedArguments() = listOf(
         Arguments.of(messageNewGenerated, DATE_STRING, messageNewExpected),
@@ -1678,5 +1676,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(reactionNewGenerated, DATE_STRING, reactionNewExpected),
         Arguments.of(messageUpdatedGenerated, DATE_STRING, messageUpdatedExpected),
         Arguments.of(messageDeletedGenerated, DATE_STRING, messageDeletedExpected),
+        Arguments.of(messageReadGenerated, DATE_STRING, messageReadExpected),
     )
 }
