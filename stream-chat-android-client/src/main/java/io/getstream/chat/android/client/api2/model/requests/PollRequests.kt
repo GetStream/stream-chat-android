@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.ExtraDataDto
 
 /**
  * Request body for creating a new poll.
@@ -43,7 +42,7 @@ internal data class CreatePollRequest(
     val options: List<UpstreamOptionDto>,
     val voting_visibility: String,
     val extraData: Map<String, Any>,
-) : ExtraDataDto {
+) {
 
     internal companion object {
         internal const val VOTING_VISIBILITY_PUBLIC = "public"
@@ -79,7 +78,7 @@ internal data class UpdatePollRequest(
     val options: List<UpstreamOptionDto>?,
     val voting_visibility: String?,
     val extraData: Map<String, Any>,
-) : ExtraDataDto
+)
 
 /**
  * Model representing a poll option to be sent upstream.
@@ -93,4 +92,4 @@ internal data class UpstreamOptionDto(
     val id: String? = null,
     val text: String,
     val extraData: Map<String, Any>,
-) : ExtraDataDto
+)

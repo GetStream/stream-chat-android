@@ -909,14 +909,7 @@ Lio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 PLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDto;
 PLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-Lio/getstream/chat/android/client/api2/model/dto/ErrorDetailDto;
-Lio/getstream/chat/android/client/api2/model/dto/ErrorDetailDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/ErrorDetailDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/ErrorDto;
-Lio/getstream/chat/android/client/api2/model/dto/ErrorDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/ErrorDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/ErrorEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/ExtraDataDto;
 Lio/getstream/chat/android/client/api2/model/dto/GlobalUserBannedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/GlobalUserBannedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/GlobalUserBannedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
