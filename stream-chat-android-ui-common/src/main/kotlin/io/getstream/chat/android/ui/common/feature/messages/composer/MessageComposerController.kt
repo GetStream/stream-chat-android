@@ -489,8 +489,22 @@ public class MessageComposerController(
         setMessageInputInternal(message.text, MessageInput.Source.Edit)
         _editModeMessage.value = fullMessage
         _editModeAttachments.value = attachments
+        restoreSelectedMentions(fullMessage)
         _messageActions.update { it + Edit(fullMessage) }
         syncAttachments()
+    }
+
+    private fun restoreSelectedMentions(message: Message) {
+        val mentions = mutableSetOf<Mention>()
+        if (message.mentionedChannel) mentions += Mention.Channel
+        if (message.mentionedHere) mentions += Mention.Here
+        message.mentionedUsers.mapTo(mentions, Mention::User)
+        message.mentionedRoles.mapTo(mentions, Mention::Role)
+        message.mentionedGroups.mapTo(mentions, Mention::Group)
+
+        selectedMentions.clear()
+        selectedMentions += mentions
+        _state.update { it.copy(selectedMentions = selectedMentions.toSet()) }
     }
 
     /**
@@ -639,6 +653,7 @@ public class MessageComposerController(
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
                 _editModeMessage.value = messageAction.message
                 _editModeAttachments.value = messageAction.message.attachments
+                restoreSelectedMentions(messageAction.message)
                 _messageActions.update { it + messageAction }
                 syncAttachments()
             }
@@ -655,6 +670,8 @@ public class MessageComposerController(
             setMessageInputInternal("", MessageInput.Source.Default)
             _editModeMessage.value = null
             _editModeAttachments.value = emptyList()
+            selectedMentions.clear()
+            _state.update { it.copy(selectedMentions = emptySet()) }
             syncAttachments()
         }
 

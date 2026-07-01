@@ -1736,6 +1736,96 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given edit mode for message with multiple mentions When one mention is removed Then the others are preserved`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val alice = User(id = "u1", name = "Alice")
+        val bob = User(id = "u2", name = "Bob")
+        val editedMessage = randomMessage(
+            cid = CID,
+            text = "Hey @Alice and @Bob",
+            mentionedUsers = listOf(alice, bob),
+            mentionedChannel = false,
+            mentionedHere = false,
+        )
+        controller.performMessageAction(Edit(editedMessage))
+
+        // When — only @Bob remains in the edited text
+        val message = controller.buildNewMessage("Hey there and @Bob")
+
+        // Then
+        assertEquals(listOf("u2"), message.mentionedUsersIds)
+    }
+
+    @Test
+    fun `Given edit mode for message with mentions of every type When text unchanged Then all mentions are preserved`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "u1", name = "Alice")
+        val group = UserGroup(id = "g1", name = "platform")
+        val editedMessage = randomMessage(
+            cid = CID,
+            text = "@Alice @channel @here @admin @platform hi",
+            mentionedUsers = listOf(user),
+            mentionedChannel = true,
+            mentionedHere = true,
+            mentionedRoles = listOf("admin"),
+            mentionedGroups = listOf(group),
+        )
+        controller.performMessageAction(Edit(editedMessage))
+
+        // When
+        val message = controller.buildNewMessage("@Alice @channel @here @admin @platform hi")
+
+        // Then
+        assertEquals(listOf("u1"), message.mentionedUsersIds)
+        assertTrue(message.mentionedChannel)
+        assertTrue(message.mentionedHere)
+        assertEquals(listOf("admin"), message.mentionedRoles)
+        assertEquals(listOf(group), message.mentionedGroups)
+    }
+
+    @Test
+    fun `Given edit mode mentions When edit dismissed Then mentions do not leak into next message`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val alice = User(id = "u1", name = "Alice")
+        val editedMessage = randomMessage(
+            cid = CID,
+            text = "Hey @Alice",
+            mentionedUsers = listOf(alice),
+            mentionedChannel = false,
+            mentionedHere = false,
+        )
+        controller.performMessageAction(Edit(editedMessage))
+
+        // When
+        controller.dismissMessageActions()
+        val message = controller.buildNewMessage("Hey @Alice")
+
+        // Then — the dismissed edit must not carry mentions into a fresh message
+        assertTrue(message.mentionedUsersIds.isEmpty())
+    }
+
+    @Test
     fun `Given an active command When clearData called Then activeCommand is null`() = runTest {
         // Given
         val command = randomCommand()
