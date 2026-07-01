@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTrunca
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -356,21 +355,6 @@ internal object EventMappingTestArguments {
         member = MEMBER,
     )
 
-    private val notificationMarkUnreadDto = NotificationMarkUnreadEventDto(
-        type = EventType.NOTIFICATION_MARK_UNREAD,
-        created_at = EXACT_DATE,
-        user = USER,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        first_unread_message_id = FIRST_UNREAD_MESSAGE_ID,
-        last_read_message_id = LAST_READ_MESSAGE_ID,
-        last_read_at = EXACT_DATE,
-        unread_messages = UNREAD_MESSAGES,
-        total_unread_count = TOTAL_UNREAD_COUNT,
-        unread_channels = UNREAD_CHANNELS,
-    )
-
     private val notificationMessageNewDto = NotificationMessageNewEventDto(
         type = EventType.NOTIFICATION_MESSAGE_NEW,
         created_at = EXACT_DATE,
@@ -622,21 +606,6 @@ internal object EventMappingTestArguments {
         member = with(domainMapping) { notificationInvitedDto.member.toDomain() },
     )
 
-    private val notificationMarkUnread = NotificationMarkUnreadEvent(
-        type = notificationMarkUnreadDto.type,
-        createdAt = notificationMarkUnreadDto.created_at.date,
-        rawCreatedAt = notificationMarkUnreadDto.created_at.rawDate,
-        user = with(domainMapping) { notificationMarkUnreadDto.user.toDomain() },
-        cid = notificationMarkUnreadDto.cid,
-        channelType = notificationMarkUnreadDto.channel_type,
-        channelId = notificationMarkUnreadDto.channel_id,
-        firstUnreadMessageId = notificationMarkUnreadDto.first_unread_message_id,
-        lastReadMessageId = notificationMarkUnreadDto.last_read_message_id,
-        lastReadMessageAt = notificationMarkUnreadDto.last_read_at.date,
-        unreadMessages = notificationMarkUnreadDto.unread_messages,
-        totalUnreadCount = notificationMarkUnreadDto.total_unread_count,
-        unreadChannels = notificationMarkUnreadDto.unread_channels,
-    )
 
     private val notificationMessageNew = NotificationMessageNewEvent(
         type = notificationMessageNewDto.type,
@@ -751,7 +720,6 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
         Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),
         Arguments.of(notificationInvitedDto, notificationInvited),
-        Arguments.of(notificationMarkUnreadDto, notificationMarkUnread),
         Arguments.of(notificationMessageNewDto, notificationMessageNew),
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
         Arguments.of(threadUpdatedDto, threadUpdated),
@@ -1463,6 +1431,37 @@ internal object EventMappingTestArguments {
         hardDelete = HARD_DELETE,
     )
 
+    private val notificationMarkUnreadGenerated = io.getstream.chat.android.network.models.NotificationMarkUnreadEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_MARK_UNREAD,
+        user = SLIM_USER,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        firstUnreadMessageId = FIRST_UNREAD_MESSAGE_ID,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        lastReadAt = DATE,
+        unreadMessages = UNREAD_MESSAGES,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+    )
+
+    private val notificationMarkUnreadExpected = NotificationMarkUnreadEvent(
+        type = EventType.NOTIFICATION_MARK_UNREAD,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        firstUnreadMessageId = FIRST_UNREAD_MESSAGE_ID,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        lastReadMessageAt = DATE,
+        unreadMessages = UNREAD_MESSAGES,
+    )
+
     private val notificationMutesUpdatedGenerated = io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent(
         createdAt = DATE,
         type = EventType.NOTIFICATION_MUTES_UPDATED,
@@ -1672,5 +1671,6 @@ internal object EventMappingTestArguments {
         Arguments.of(voteChangedGenerated, DATE_STRING, voteChangedExpected),
         Arguments.of(voteRemovedGenerated, DATE_STRING, voteRemovedExpected),
         Arguments.of(answerCastedGenerated, DATE_STRING, answerCastedExpected),
+        Arguments.of(notificationMarkUnreadGenerated, DATE_STRING, notificationMarkUnreadExpected),
     )
 }

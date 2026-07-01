@@ -85,6 +85,7 @@ import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMes
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
+import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -270,6 +271,7 @@ internal class MoshiChatParser(
             EventType.POLL_VOTE_CASTED -> moshi.adapter(GeneratedPollVoteCastedEvent::class.java).fromJson(raw)
             EventType.POLL_VOTE_CHANGED -> moshi.adapter(GeneratedPollVoteChangedEvent::class.java).fromJson(raw)
             EventType.POLL_VOTE_REMOVED -> moshi.adapter(GeneratedPollVoteRemovedEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_MARK_UNREAD -> moshi.adapter(GeneratedNotificationMarkUnreadEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

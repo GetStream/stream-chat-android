@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTrunca
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -140,6 +139,7 @@ import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMes
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
+import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -208,6 +208,7 @@ internal class EventMapping(
         is GeneratedPollVoteCastedEvent -> toDomain(rawCreatedAt)
         is GeneratedPollVoteChangedEvent -> toDomain(rawCreatedAt)
         is GeneratedPollVoteRemovedEvent -> toDomain(rawCreatedAt)
+        is GeneratedNotificationMarkUnreadEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -239,7 +240,6 @@ internal class EventMapping(
             is NotificationInviteAcceptedEventDto -> toDomain()
             is NotificationInviteRejectedEventDto -> toDomain()
             is NotificationInvitedEventDto -> toDomain()
-            is NotificationMarkUnreadEventDto -> toDomain()
             is NotificationMessageNewEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
             is ThreadUpdatedEventDto -> toDomain()
@@ -647,26 +647,23 @@ internal class EventMapping(
         }
     }
 
-    /**
-     * Transforms [NotificationMarkUnreadEventDto] to [NotificationMarkUnreadEvent].
-     */
-    private fun NotificationMarkUnreadEventDto.toDomain(): NotificationMarkUnreadEvent = with(domainMapping) {
+    private fun GeneratedNotificationMarkUnreadEvent.toDomain(rawCreatedAt: String?): NotificationMarkUnreadEvent = with(domainMapping) {
         NotificationMarkUnreadEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            firstUnreadMessageId = first_unread_message_id,
-            lastReadMessageId = last_read_message_id,
-            lastReadMessageAt = last_read_at.date,
-            unreadMessages = unread_messages,
-            threadId = thread_id,
-            unreadThreads = unread_threads,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            user = user?.toDomain() ?: User(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
+            totalUnreadCount = totalUnreadCount ?: 0,
+            unreadChannels = unreadChannels ?: 0,
+            firstUnreadMessageId = firstUnreadMessageId.orEmpty(),
+            lastReadMessageId = lastReadMessageId,
+            lastReadMessageAt = lastReadAt ?: java.util.Date(0),
+            unreadMessages = unreadMessages ?: 0,
+            threadId = threadId,
+            unreadThreads = unreadThreads ?: 0,
         )
     }
 
