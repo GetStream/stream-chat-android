@@ -22,8 +22,6 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -63,8 +61,6 @@ internal class EventDtoAdapter(
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val channelUpdatedByUserEventAdapter = moshi.adapter(ChannelUpdatedByUserEventDto::class.java)
-    private val channelUpdatedEventAdapter = moshi.adapter(ChannelUpdatedEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationThreadMessageNewEventAdapter =
@@ -99,10 +95,6 @@ internal class EventDtoAdapter(
                 else -> return null
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            EventType.CHANNEL_UPDATED -> when {
-                map.containsKey("user") -> channelUpdatedByUserEventAdapter
-                else -> channelUpdatedEventAdapter
-            }
             EventType.NOTIFICATION_ADDED_TO_CHANNEL -> notificationAddedToChannelEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter

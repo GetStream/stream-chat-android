@@ -17,8 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
@@ -211,27 +209,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val channelUpdatedByUserDto = ChannelUpdatedByUserEventDto(
-        type = EventType.CHANNEL_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
-        channel = CHANNEL,
-    )
-
-    private val channelUpdatedDto = ChannelUpdatedEventDto(
-        type = EventType.CHANNEL_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        message = MESSAGE,
-        channel = CHANNEL,
-    )
-
     private val channelUserBannedDto = ChannelUserBannedEventDto(
         type = EventType.USER_BANNED,
         created_at = EXACT_DATE,
@@ -416,36 +393,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: Domain models
 
-    private val channelUpdatedByUser = ChannelUpdatedByUserEvent(
-        type = channelUpdatedByUserDto.type,
-        createdAt = channelUpdatedByUserDto.created_at.date,
-        rawCreatedAt = channelUpdatedByUserDto.created_at.rawDate,
-        user = with(domainMapping) { channelUpdatedByUserDto.user.toDomain() },
-        cid = channelUpdatedByUserDto.cid,
-        channelType = channelUpdatedByUserDto.channel_type,
-        channelId = channelUpdatedByUserDto.channel_id,
-        message = with(domainMapping) {
-            channelUpdatedByUserDto.message?.toDomain(channelUpdatedByUserDto.channel.toChannelInfo())
-        },
-        channel = with(domainMapping) {
-            channelUpdatedByUserDto.channel.toDomain()
-        },
-    )
-
-    private val channelUpdated = ChannelUpdatedEvent(
-        type = channelUpdatedDto.type,
-        createdAt = channelUpdatedDto.created_at.date,
-        rawCreatedAt = channelUpdatedDto.created_at.rawDate,
-        cid = channelUpdatedDto.cid,
-        channelType = channelUpdatedDto.channel_type,
-        channelId = channelUpdatedDto.channel_id,
-        message = with(domainMapping) {
-            channelUpdatedDto.message?.toDomain(channelUpdatedDto.channel.toChannelInfo())
-        },
-        channel = with(domainMapping) {
-            channelUpdatedDto.channel.toDomain()
-        },
-    )
 
     private val channelUserBanned = ChannelUserBannedEvent(
         type = channelUserBannedDto.type,
@@ -679,8 +626,6 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(channelUpdatedByUserDto, channelUpdatedByUser),
-        Arguments.of(channelUpdatedDto, channelUpdated),
         Arguments.of(channelUserBannedDto, channelUserBanned),
         Arguments.of(channelUserUnbannedDto, channelUserUnbanned),
         Arguments.of(connectedDto, connected),
@@ -1406,6 +1351,51 @@ internal object EventMappingTestArguments {
         hardDelete = HARD_DELETE,
     )
 
+    private val channelUpdatedGenerated = io.getstream.chat.android.network.models.ChannelUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.CHANNEL_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        message = MESSAGE,
+        user = null,
+    )
+
+    private val channelUpdatedExpected = ChannelUpdatedEvent(
+        type = EventType.CHANNEL_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain(CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+    )
+
+    private val channelUpdatedByUserGenerated = io.getstream.chat.android.network.models.ChannelUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.CHANNEL_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        message = MESSAGE,
+        user = SLIM_USER,
+    )
+
+    private val channelUpdatedByUserExpected = ChannelUpdatedByUserEvent(
+        type = EventType.CHANNEL_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+        message = with(domainMapping) { MESSAGE.toDomain(CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+    )
+
     private val reactionUpdatedGenerated = io.getstream.chat.android.network.models.ReactionUpdatedEvent(
         createdAt = DATE,
         type = EventType.REACTION_UPDATED,
@@ -1672,5 +1662,7 @@ internal object EventMappingTestArguments {
         Arguments.of(answerCastedGenerated, DATE_STRING, answerCastedExpected),
         Arguments.of(notificationMarkUnreadGenerated, DATE_STRING, notificationMarkUnreadExpected),
         Arguments.of(reactionUpdatedGenerated, DATE_STRING, reactionUpdatedExpected),
+        Arguments.of(channelUpdatedGenerated, DATE_STRING, channelUpdatedExpected),
+        Arguments.of(channelUpdatedByUserGenerated, DATE_STRING, channelUpdatedByUserExpected),
     )
 }

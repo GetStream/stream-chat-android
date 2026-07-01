@@ -72,6 +72,7 @@ import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as Genera
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
+import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
@@ -252,6 +253,7 @@ internal class MoshiChatParser(
             EventType.USER_PRESENCE_CHANGED -> moshi.adapter(GeneratedUserPresenceChangedEvent::class.java).fromJson(raw)
             EventType.CHANNEL_DELETED -> moshi.adapter(GeneratedChannelDeletedEvent::class.java).fromJson(raw)
             EventType.CHANNEL_TRUNCATED -> moshi.adapter(GeneratedChannelTruncatedEvent::class.java).fromJson(raw)
+            EventType.CHANNEL_UPDATED -> moshi.adapter(GeneratedChannelUpdatedEvent::class.java).fromJson(raw)
             EventType.DRAFT_MESSAGE_UPDATED -> moshi.adapter(GeneratedDraftUpdatedEvent::class.java).fromJson(raw)
             EventType.DRAFT_MESSAGE_DELETED -> moshi.adapter(GeneratedDraftDeletedEvent::class.java).fromJson(raw)
             EventType.USER_UPDATED -> moshi.adapter(GeneratedUserUpdatedEvent::class.java).fromJson(raw)

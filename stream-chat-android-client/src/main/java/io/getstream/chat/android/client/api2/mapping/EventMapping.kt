@@ -18,8 +18,6 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -125,6 +123,7 @@ import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as Genera
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
+import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.HealthCheckEvent as GeneratedHealthCheckEvent
@@ -188,6 +187,7 @@ internal class EventMapping(
         is GeneratedUserPresenceChangedEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelTruncatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedChannelUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedDraftUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedDraftDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedUserUpdatedEvent -> toDomain(rawCreatedAt)
@@ -224,8 +224,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ChannelUpdatedByUserEventDto -> toDomain()
-            is ChannelUpdatedEventDto -> toDomain()
             is ChannelUserBannedEventDto -> toDomain()
             is ChannelUserUnbannedEventDto -> toDomain()
             is ConnectedEventDto -> toDomain()
@@ -294,37 +292,37 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [ChannelUpdatedEventDto] to [ChannelUpdatedEvent].
-     */
-    private fun ChannelUpdatedEventDto.toDomain(): ChannelUpdatedEvent = with(domainMapping) {
-        ChannelUpdatedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            message = message?.toDomain(channel.toChannelInfo()),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [ChannelUpdatedByUserEventDto] to [ChannelUpdatedByUserEvent].
-     */
-    private fun ChannelUpdatedByUserEventDto.toDomain(): ChannelUpdatedByUserEvent = with(domainMapping) {
-        ChannelUpdatedByUserEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            message = message?.toDomain(channel.toChannelInfo()),
-            channel = channel.toDomain(),
-        )
+    private fun GeneratedChannelUpdatedEvent.toDomain(rawCreatedAt: String?): ChatEvent = with(domainMapping) {
+        val safeCid = cid.orEmpty()
+        val safeType = channelType.orEmpty()
+        val safeId = channelId.orEmpty()
+        val domainChannel = channel.toDomain()
+        val domainMessage = message?.toDomain(channel.toChannelInfo())
+        val eventUser = user
+        if (eventUser != null) {
+            ChannelUpdatedByUserEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                cid = safeCid,
+                channelType = safeType,
+                channelId = safeId,
+                user = eventUser.toDomain(),
+                message = domainMessage,
+                channel = domainChannel,
+            )
+        } else {
+            ChannelUpdatedEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                cid = safeCid,
+                channelType = safeType,
+                channelId = safeId,
+                message = domainMessage,
+                channel = domainChannel,
+            )
+        }
     }
 
     /**
