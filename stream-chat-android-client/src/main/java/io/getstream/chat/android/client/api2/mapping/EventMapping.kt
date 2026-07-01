@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -148,6 +147,7 @@ import io.getstream.chat.android.network.models.PollVoteRemovedEvent as Generate
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
 import io.getstream.chat.android.network.models.ReactionUpdatedEvent as GeneratedReactionUpdatedEvent
+import io.getstream.chat.android.network.models.ThreadUpdatedEvent as GeneratedThreadUpdatedEvent
 import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
 import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
@@ -210,6 +210,7 @@ internal class EventMapping(
         is GeneratedPollVoteRemovedEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkUnreadEvent -> toDomain(rawCreatedAt)
         is GeneratedReactionUpdatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedThreadUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -241,7 +242,6 @@ internal class EventMapping(
             is NotificationInvitedEventDto -> toDomain()
             is NotificationMessageNewEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
-            is ThreadUpdatedEventDto -> toDomain()
             is NotificationRemovedFromChannelEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is NotificationReminderDueEventDto -> toDomain()
@@ -686,18 +686,15 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [ThreadUpdatedEventDto] to [ThreadUpdatedEvent].
-     */
-    private fun ThreadUpdatedEventDto.toDomain(): ThreadUpdatedEvent = with(domainMapping) {
+    private fun GeneratedThreadUpdatedEvent.toDomain(rawCreatedAt: String?): ThreadUpdatedEvent = with(domainMapping) {
         ThreadUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            thread = thread.toDomain(),
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
+            thread = thread!!.toDomain(),
         )
     }
 

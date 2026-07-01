@@ -110,16 +110,6 @@ internal data class NotificationMessageNewEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class ThreadUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val thread: DownstreamThreadInfoDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationThreadMessageNewEventDto(
     val type: String,
     val cid: String,

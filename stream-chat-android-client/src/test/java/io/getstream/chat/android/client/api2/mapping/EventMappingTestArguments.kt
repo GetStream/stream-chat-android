@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -353,15 +352,6 @@ internal object EventMappingTestArguments {
         unread_thread_messages = UNREAD_THREAD_MESSAGES,
     )
 
-    private val threadUpdatedDto = ThreadUpdatedEventDto(
-        type = EventType.THREAD_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        thread = THREAD_INFO,
-    )
-
     private val notificationRemovedFromChannelDto = NotificationRemovedFromChannelEventDto(
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
         created_at = EXACT_DATE,
@@ -574,16 +564,6 @@ internal object EventMappingTestArguments {
         unreadThreadMessages = notificationThreadMessageNewDto.unread_thread_messages,
     )
 
-    private val threadUpdated = ThreadUpdatedEvent(
-        type = threadUpdatedDto.type,
-        createdAt = threadUpdatedDto.created_at.date,
-        rawCreatedAt = threadUpdatedDto.created_at.rawDate,
-        cid = threadUpdatedDto.cid,
-        channelType = threadUpdatedDto.channel_type,
-        channelId = threadUpdatedDto.channel_id,
-        thread = with(domainMapping) { threadUpdatedDto.thread.toDomain() },
-    )
-
     private val notificationRemovedFromChannel = NotificationRemovedFromChannelEvent(
         type = notificationRemovedFromChannelDto.type,
         createdAt = notificationRemovedFromChannelDto.created_at.date,
@@ -643,7 +623,6 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationInvitedDto, notificationInvited),
         Arguments.of(notificationMessageNewDto, notificationMessageNew),
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
-        Arguments.of(threadUpdatedDto, threadUpdated),
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
         Arguments.of(unknownDto, unknown),
         Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
@@ -1396,6 +1375,25 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) { CHANNEL.toDomain() },
     )
 
+    private val threadUpdatedGenerated = io.getstream.chat.android.network.models.ThreadUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.THREAD_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        thread = THREAD_INFO,
+    )
+
+    private val threadUpdatedExpected = ThreadUpdatedEvent(
+        type = EventType.THREAD_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        thread = with(domainMapping) { THREAD_INFO.toDomain() },
+    )
+
     private val reactionUpdatedGenerated = io.getstream.chat.android.network.models.ReactionUpdatedEvent(
         createdAt = DATE,
         type = EventType.REACTION_UPDATED,
@@ -1664,5 +1662,6 @@ internal object EventMappingTestArguments {
         Arguments.of(reactionUpdatedGenerated, DATE_STRING, reactionUpdatedExpected),
         Arguments.of(channelUpdatedGenerated, DATE_STRING, channelUpdatedExpected),
         Arguments.of(channelUpdatedByUserGenerated, DATE_STRING, channelUpdatedByUserExpected),
+        Arguments.of(threadUpdatedGenerated, DATE_STRING, threadUpdatedExpected),
     )
 }
