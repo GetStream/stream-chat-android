@@ -61,7 +61,6 @@ import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
@@ -497,12 +496,6 @@ internal object EventMappingTestArguments {
 
     private val userDeletedDto = UserDeletedEventDto(
         type = EventType.USER_DELETED,
-        created_at = EXACT_DATE,
-        user = USER,
-    )
-
-    private val userPresenceChangedDto = UserPresenceChangedEventDto(
-        type = EventType.USER_PRESENCE_CHANGED,
         created_at = EXACT_DATE,
         user = USER,
     )
@@ -996,13 +989,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { userDeletedDto.user.toDomain() },
     )
 
-    private val userPresenceChanged = UserPresenceChangedEvent(
-        type = userPresenceChangedDto.type,
-        createdAt = userPresenceChangedDto.created_at.date,
-        rawCreatedAt = userPresenceChangedDto.created_at.rawDate,
-        user = with(domainMapping) { userPresenceChangedDto.user.toDomain() },
-    )
-
     private val userUpdated = UserUpdatedEvent(
         type = userUpdatedDto.type,
         createdAt = userUpdatedDto.created_at.date,
@@ -1222,7 +1208,6 @@ internal object EventMappingTestArguments {
         Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
         Arguments.of(userDeletedDto, userDeleted),
-        Arguments.of(userPresenceChangedDto, userPresenceChanged),
         Arguments.of(userUpdatedDto, userUpdated),
         Arguments.of(pollClosedDto, pollClosed),
         Arguments.of(pollDeletedDto, pollDeleted),
@@ -1622,6 +1607,19 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val userPresenceChangedGenerated = io.getstream.chat.android.network.models.UserPresenceChangedEvent(
+        createdAt = DATE,
+        type = EventType.USER_PRESENCE_CHANGED,
+        user = SLIM_USER,
+    )
+
+    private val userPresenceChangedExpected = UserPresenceChangedEvent(
+        type = EventType.USER_PRESENCE_CHANGED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+    )
+
     private val channelVisibleExpected = ChannelVisibleEvent(
         type = EventType.CHANNEL_VISIBLE,
         createdAt = DATE,
@@ -1685,5 +1683,6 @@ internal object EventMappingTestArguments {
         Arguments.of(userWatchingStopGenerated, DATE_STRING, userWatchingStopExpected),
         Arguments.of(channelHiddenGenerated, DATE_STRING, channelHiddenExpected),
         Arguments.of(channelVisibleGenerated, DATE_STRING, channelVisibleExpected),
+        Arguments.of(userPresenceChangedGenerated, DATE_STRING, userPresenceChangedExpected),
     )
 }

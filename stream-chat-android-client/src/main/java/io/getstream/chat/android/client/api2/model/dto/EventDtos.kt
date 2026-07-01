@@ -283,13 +283,6 @@ internal data class UserDeletedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class UserPresenceChangedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ChannelUserUnbannedEventDto(
     val type: String,
     val created_at: ExactDate,

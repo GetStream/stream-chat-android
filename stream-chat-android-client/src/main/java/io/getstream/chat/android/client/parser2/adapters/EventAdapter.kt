@@ -63,7 +63,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
@@ -114,7 +113,6 @@ internal class EventDtoAdapter(
     private val notificationChannelDeletedEventAdapter = moshi.adapter(NotificationChannelDeletedEventDto::class.java)
     private val notificationChannelTruncatedEventAdapter =
         moshi.adapter(NotificationChannelTruncatedEventDto::class.java)
-    private val userPresenceChangedEventAdapter = moshi.adapter(UserPresenceChangedEventDto::class.java)
     private val userUpdatedEventAdapter = moshi.adapter(UserUpdatedEventDto::class.java)
     private val userDeletedEventAdapter = moshi.adapter(UserDeletedEventDto::class.java)
     private val channelUserBannedEventAdapter = moshi.adapter(ChannelUserBannedEventDto::class.java)
@@ -174,7 +172,6 @@ internal class EventDtoAdapter(
             EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> notificationChannelMutesUpdatedEventAdapter
             EventType.NOTIFICATION_CHANNEL_DELETED -> notificationChannelDeletedEventAdapter
             EventType.NOTIFICATION_CHANNEL_TRUNCATED -> notificationChannelTruncatedEventAdapter
-            EventType.USER_PRESENCE_CHANGED -> userPresenceChangedEventAdapter
             EventType.USER_UPDATED -> userUpdatedEventAdapter
             EventType.USER_DELETED -> userDeletedEventAdapter
             EventType.USER_BANNED -> when {
