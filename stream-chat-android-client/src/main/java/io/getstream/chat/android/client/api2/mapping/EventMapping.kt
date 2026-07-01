@@ -31,8 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -148,6 +146,8 @@ import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedC
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
+import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
+import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
@@ -189,6 +189,8 @@ internal class EventMapping(
         is GeneratedUserPresenceChangedEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelTruncatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedDraftUpdatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedDraftDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -239,8 +241,6 @@ internal class EventMapping(
             is VoteChangedEventDto -> toDomain()
             is AnswerCastedEventDto -> toDomain()
             is VoteRemovedEventDto -> toDomain()
-            is DraftMessageDeletedEventDto -> toDomain()
-            is DraftMessageUpdatedEventDto -> toDomain()
             is ReminderCreatedEventDto -> toDomain()
             is ReminderUpdatedEventDto -> toDomain()
             is ReminderDeletedEventDto -> toDomain()
@@ -1098,27 +1098,21 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [DraftMessageUpdatedEventDto] to [DraftMessageUpdatedEvent].
-     */
-    private fun DraftMessageUpdatedEventDto.toDomain(): DraftMessageUpdatedEvent = with(domainMapping) {
-        return DraftMessageUpdatedEvent(
+    private fun GeneratedDraftUpdatedEvent.toDomain(rawCreatedAt: String?): DraftMessageUpdatedEvent = with(domainMapping) {
+        DraftMessageUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            draftMessage = draft.toDomain(),
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            draftMessage = draft!!.toDomain(),
         )
     }
 
-    /**
-     * Transforms [DraftMessageDeletedEventDto] to [DraftMessageDeletedEvent].
-     */
-    private fun DraftMessageDeletedEventDto.toDomain(): DraftMessageDeletedEvent = with(domainMapping) {
-        return DraftMessageDeletedEvent(
+    private fun GeneratedDraftDeletedEvent.toDomain(rawCreatedAt: String?): DraftMessageDeletedEvent = with(domainMapping) {
+        DraftMessageDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            draftMessage = draft.toDomain(),
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            draftMessage = draft!!.toDomain(),
         )
     }
 

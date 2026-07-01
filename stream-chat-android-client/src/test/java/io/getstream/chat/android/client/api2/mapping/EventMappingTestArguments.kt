@@ -29,8 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -222,18 +220,6 @@ internal object EventMappingTestArguments {
     private val DELETED_FOR_ME = randomBoolean()
 
     // BEGIN: DTO Models
-
-    private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
-        type = EventType.DRAFT_MESSAGE_UPDATED,
-        created_at = EXACT_DATE,
-        draft = DRAFT,
-    )
-
-    private val draftMessageDeletedDto = DraftMessageDeletedEventDto(
-        type = EventType.DRAFT_MESSAGE_DELETED,
-        created_at = EXACT_DATE,
-        draft = DRAFT,
-    )
 
     private val channelUpdatedByUserDto = ChannelUpdatedByUserEventDto(
         type = EventType.CHANNEL_UPDATED,
@@ -626,20 +612,6 @@ internal object EventMappingTestArguments {
     // END: DTO Models
 
     // BEGIN: Domain models
-
-    private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
-        type = draftMessageUpdatedDto.type,
-        createdAt = draftMessageUpdatedDto.created_at.date,
-        rawCreatedAt = draftMessageUpdatedDto.created_at.rawDate,
-        draftMessage = with(domainMapping) { draftMessageUpdatedDto.draft.toDomain() },
-    )
-
-    private val draftMessageDeletedEvent = DraftMessageDeletedEvent(
-        type = draftMessageDeletedDto.type,
-        createdAt = draftMessageDeletedDto.created_at.date,
-        rawCreatedAt = draftMessageDeletedDto.created_at.rawDate,
-        draftMessage = with(domainMapping) { draftMessageDeletedDto.draft.toDomain() },
-    )
 
     private val channelUpdatedByUser = ChannelUpdatedByUserEvent(
         type = channelUpdatedByUserDto.type,
@@ -1126,8 +1098,6 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
-        Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelUpdatedByUserDto, channelUpdatedByUser),
         Arguments.of(channelUpdatedDto, channelUpdated),
         Arguments.of(channelUserBannedDto, channelUserBanned),
@@ -1555,6 +1525,32 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val draftUpdatedGenerated = io.getstream.chat.android.network.models.DraftUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.DRAFT_MESSAGE_UPDATED,
+        draft = DRAFT,
+    )
+
+    private val draftUpdatedExpected = DraftMessageUpdatedEvent(
+        type = EventType.DRAFT_MESSAGE_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        draftMessage = with(domainMapping) { DRAFT.toDomain() },
+    )
+
+    private val draftDeletedGenerated = io.getstream.chat.android.network.models.DraftDeletedEvent(
+        createdAt = DATE,
+        type = EventType.DRAFT_MESSAGE_DELETED,
+        draft = DRAFT,
+    )
+
+    private val draftDeletedExpected = DraftMessageDeletedEvent(
+        type = EventType.DRAFT_MESSAGE_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        draftMessage = with(domainMapping) { DRAFT.toDomain() },
+    )
+
     private val channelDeletedGenerated = io.getstream.chat.android.network.models.ChannelDeletedEvent(
         createdAt = DATE,
         type = EventType.CHANNEL_DELETED,
@@ -1678,5 +1674,7 @@ internal object EventMappingTestArguments {
         Arguments.of(userPresenceChangedGenerated, DATE_STRING, userPresenceChangedExpected),
         Arguments.of(channelDeletedGenerated, DATE_STRING, channelDeletedExpected),
         Arguments.of(channelTruncatedGenerated, DATE_STRING, channelTruncatedExpected),
+        Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
+        Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
     )
 }
