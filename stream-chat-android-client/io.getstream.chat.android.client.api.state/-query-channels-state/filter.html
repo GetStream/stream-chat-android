@@ -38,7 +38,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">7.4.0
+        <div class="library-version" id="library-version">7.5.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -94,7 +94,7 @@
   <div class="cover ">
     <h1 class="cover"><span><span>filter</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="filter.html">filter</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a></div><p class="paragraph">The filter is associated with this query channels state.</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client/main"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="filter.html">filter</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a></div><p class="paragraph">The filter associated with this query channels state.</p><p class="paragraph">For grouped queries (states keyed by <code class="lang-kotlin">QueryChannelsIdentifier.Grouped</code>), this is a placeholder (<a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filters/neutral.html">io.getstream.chat.android.models.Filters.neutral</a>) — grouped lists are partitioned server-side and do not have a client-side filter. Do not rely on this value for grouped states.</p></div></div>
 </div>
     <div class="footer">
         <div class="footer--container">

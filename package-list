@@ -7,6 +7,7 @@ io.getstream.chat.android.client.api
 io.getstream.chat.android.client.api.event
 io.getstream.chat.android.client.api.models
 io.getstream.chat.android.client.api.state
+io.getstream.chat.android.client.api.state.querychannels
 io.getstream.chat.android.client.attachment
 io.getstream.chat.android.client.attachment.worker
 io.getstream.chat.android.client.audio
@@ -30,6 +31,7 @@ io.getstream.chat.android.client.internal.file
 io.getstream.chat.android.client.internal.offline.plugin.factory
 io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 io.getstream.chat.android.client.internal.offline.repository.domain.message.internal
+io.getstream.chat.android.client.internal.state.event.handler.grouped.internal
 io.getstream.chat.android.client.internal.state.plugin
 io.getstream.chat.android.client.internal.state.plugin.factory
 io.getstream.chat.android.client.internal.state.plugin.internal

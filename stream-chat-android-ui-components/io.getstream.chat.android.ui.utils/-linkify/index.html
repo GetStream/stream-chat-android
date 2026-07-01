@@ -38,7 +38,7 @@
             </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
         </button>
         <div class="navigation-controls--break ui-kit_mobile-only"></div>
-        <div class="library-version" id="library-version">7.4.0
+        <div class="library-version" id="library-version">7.5.0
         </div>
         <div class="navigation-controls">
         <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
@@ -93,24 +93,24 @@
   <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-components</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ui.utils</a><span class="delimiter">/</span><span class="current">Linkify</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Linkify</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Linkify</a></div><p class="paragraph">Linkify links the part of the text based on matching pattern.</p><p class="paragraph">This class is a simplified version of <a href="index.html">Linkify</a> and differs only in one following way It doesn't remove any existing URLSpan from the Spannable.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Linkify</a></div><p class="paragraph">Utility for linkifying message text: scans a <a href="https://developer.android.com/reference/kotlin/android/widget/TextView.html">TextView</a> for URLs, email addresses, and mention tokens (<code class="lang-kotlin">@user</code>, <code class="lang-kotlin">@channel</code>, <code class="lang-kotlin">@here</code>, role mentions) referenced by a <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a>, and applies clickable spans for each.</p><p class="paragraph">This class is a simplified version of <a href="index.html">Linkify</a> and differs only in one following way It doesn't remove any existing URLSpan from the Spannable.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="FUNCTION">
         <h2 class="tableheader">Functions</h2>
-        <div class="table"><a data-name="-67383275%2FFunctions%2F-1056597614" anchor-label="addLinks" id="-67383275%2FFunctions%2F-1056597614" data-filterable-set=":stream-chat-android-ui-components/main"></a>
+        <div class="table"><a data-name="621985751%2FFunctions%2F-1056597614" anchor-label="addLinks" id="621985751%2FFunctions%2F-1056597614" data-filterable-set=":stream-chat-android-ui-components/main"></a>
           <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ui-components/main" data-filterable-set=":stream-chat-android-ui-components/main">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="add-links.html"><span>add</span><wbr><span><span>Links</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-67383275%2FFunctions%2F-1056597614"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="621985751%2FFunctions%2F-1056597614"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-links.html"><span class="token function">addLinks</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">textView<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/widget/TextView.html">TextView</a><span class="token punctuation">, </span></span><span class="parameter ">mentionableUsers<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Scans the provided TextView and turns all occurrences of the link types into clickable links. If matches are found the movement method for the TextView is set to LinkMovementMethod.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-links.html"><span class="token function">addLinks</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">textView<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/widget/TextView.html">TextView</a><span class="token punctuation">, </span></span><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Scans the provided TextView and turns URLs, email addresses and every mention token present in <a href="add-links.html">message</a> into clickable links.</p></div></div></div>
                 </div>
               </div>
             </div>
