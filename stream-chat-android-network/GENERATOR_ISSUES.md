@@ -517,29 +517,81 @@ endpoints are repointed at chat-scoped paths.
 
 ---
 
-## 20. `member.user.language` required by spec but absent on the WS wire
+## 20. `UserResponseCommonFields.Language` non-pointer / no `omitempty`
 
-**Symptom:** Receiving any WS event whose payload nests a member with a user
-(`member_added`, `member_removed`, and likely `notification.added_to_channel`,
-`notification.invited`, etc.) crashes with
+**Symptom:** Receiving any WS event whose payload nests a user without a
+`language` field (`member_added`, `member_removed`, and likely the
+`notification.added_to_channel` / `notification.invited` family) crashes with
 `JsonDataException: Required value 'language' missing at $ at $.user at $.member`.
-The wire's `member.user` is a slim object that omits `language`.
 
-**Root cause:** `ChannelMemberResponse.user` is typed `UserResponse?`, and
-both `UserResponse.language` and `UserResponseCommonFields.language` are
-declared non-null in the spec. The Go marshaler appears to omit `language`
-on nested member.user payloads, so the generated codegen adapter rejects the
-JSON.
+**Root cause:** `commonpayloads/user.go:161` types `Language` as
+`string` with `json:"language"` (no `omitempty`). Per `spec.go`'s
+`FieldRequiredResponse`, a non-pointer string without `omitempty` becomes
+spec-required, so generated `UserResponse.language`,
+`UserResponseCommonFields.language`, and `UserResponsePrivacyFields.language`
+are all non-null. The Go marshaler omits `language` on nested member.user
+payloads on the wire, so codegen rejects the JSON.
 
-Pre-existing - the legacy hand-written `MemberAddedEventDto` / `MemberRemovedEventDto`
-also typed `member: DownstreamMemberDto` (= `ChannelMemberResponse`), so
-the same exception would have fired on the legacy path. The DTO migration
-to `GeneratedMemberAddedEvent` / `GeneratedMemberRemovedEvent` did not
-introduce this bug; it only made it observable while wiring up manual tests.
+This is a regression introduced on `openapi-generated` by commit
+`0b1556c955 Migrate DownstreamUserDto to generated UserResponse / OwnUserResponse / UserResponsePrivacyFields`.
+On `develop` the hand-written `DownstreamUserDto.language` was nullable, so
+member events parsed fine. The typealias to generated `UserResponse` made the
+field stricter than the wire.
 
-**Fix status:** Not fixed. Migration of member events proceeds; manual WS
-testing of these flows is blocked until the spec is corrected.
+**Fix status:** Local fix. Commit
+`temp: Add omitempty to UserResponseCommonFields.Language` (chat repo
+`chat-openapi-android` branch) adds `,omitempty` to the Go tag. Regenerated
+`UserResponse`, `UserResponseCommonFields`, and `UserResponsePrivacyFields`
+copied into `stream-chat-android-network`; downstream `.toDomain()` mappers
+default missing values via `.orEmpty()`.
 
-**Suggested upstream fix:** Make `language` nullable on `UserResponse` and
-`UserResponseCommonFields` (the wire reality), or have the Go marshaler
-populate a non-empty default for nested member.user.
+**Suggested upstream fix:** Either land the same `omitempty` upstream, or
+type `Language` as `*string` to match the wire reality.
+
+---
+
+## 21. `HasChannel.Channel` is spec-required but wire strips it on some events
+
+**Symptom:** Receiving certain WS events (observed live on `member.removed`
+via the compose-sample "remove member" flow) crashes with
+`JsonDataException: Required value 'channel' missing at $`. The wire omits
+`channel` even though the spec declares it required.
+
+**Root cause:** `lib/combined/events/event.go:102` declares
+`Channel payload.ChannelResponse \`json:"channel"\`` on `HasChannel`. Per
+`spec.go`'s `FieldRequiredResponse`, the non-pointer field without `omitempty`
+becomes spec-required. `HasChannel` is embedded (via `ChannelSupportEvent`)
+across ~22 event types — every `Reaction*`, `Member*`, `Channel*` variant,
+several `Notification*` variants, and `MessageWithChannelResponse`.
+
+The reaction events declare `CanHaveRestrictedVisibility() bool { return true }`
+and `member.removed` behaves similarly: the recipient's copy of the event has
+channel-scoped fields stripped when they no longer have visibility on the
+channel. So the wire really does omit `channel` for a subset of these events,
+per-recipient. `HasChannel` accurately describes the constructor argument,
+not what lands on the wire.
+
+Regression introduced on `openapi-generated` by migrating the affected event
+DTOs (`ReactionNewEventDto`, `MemberAddedEventDto`, etc.) to the generated
+types. Legacy hand-written DTOs never had a `channel` field, so parsing
+tolerated its absence.
+
+**Fix status:** Local fix. Commit `temp: Add omitempty to HasChannel.Channel`
+(chat repo `chat-openapi-android` branch) adds `,omitempty` on the Go tag.
+`,omitempty` on a non-pointer struct doesn't actually change what Go emits
+on the wire; the value here is that `spec.go`'s `FieldRequiredResponse` sees
+the tag and marks the field optional, so all 22 generated Kotlin event types
+get `channel: ChannelResponse? = null`. Currently only the 6 migrated events
+(`Member*`, `Reaction*`) are copied into `stream-chat-android-network`; the
+other 16 will pick up the same nullability when they get migrated.
+
+**Note:** This patch is semantically off — `HasChannel` still says "has
+channel" but we're telling the spec it's optional. Needs a follow-up with
+backend to decide the right shape (e.g. dedicated mixin for events whose
+channel gets stripped by visibility filtering, or teach the filter to leave
+`channel` in place).
+
+**Suggested upstream fix:** Redesign so restricted-visibility events use a
+proper optional-channel mixin instead of leaning on `omitempty` as a
+spec-only hint.
+
