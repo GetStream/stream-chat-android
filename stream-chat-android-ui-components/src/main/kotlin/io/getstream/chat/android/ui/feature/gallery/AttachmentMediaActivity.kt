@@ -36,6 +36,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
@@ -138,8 +139,9 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     @OptIn(UnstableApi::class)
     private fun createPlayer(): Player {
-        val cdn = ChatClient.instance().cdn
-        val dataSourceFactory = StreamMediaDataSource.factory(this, cdn)
+        val client = ChatClient.instance()
+        val videoCache = client.videoCache.takeIf { isVideoContent() }
+        val dataSourceFactory = StreamMediaDataSource.factory(this, client.cdn, videoCache)
         val player = ExoPlayer.Builder(this)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .build()
@@ -181,6 +183,14 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         binding.controls.setShowPreviousButton(false)
         binding.controls.show()
     }
+
+    /**
+     * Returns `true` when the playing attachment is confidently a video, so its bytes can be
+     * routed through the video cache. Any other content (audio, unknown mime/type) bypasses the
+     * cache.
+     */
+    private fun isVideoContent(): Boolean =
+        type == AttachmentType.VIDEO || mimeType?.startsWith("video/") == true
 
     /**
      * Displays a Toast with an error if there was an issue playing the video.
