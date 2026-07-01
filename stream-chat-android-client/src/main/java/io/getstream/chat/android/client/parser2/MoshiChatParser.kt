@@ -77,6 +77,9 @@ import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDr
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
+import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
+import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
+import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
 import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
@@ -244,6 +247,9 @@ internal class MoshiChatParser(
             EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> moshi.adapter(GeneratedNotificationChannelMutesUpdatedEvent::class.java).fromJson(raw)
             EventType.USER_DELETED -> moshi.adapter(GeneratedUserDeletedEvent::class.java).fromJson(raw)
             EventType.USER_MESSAGES_DELETED -> moshi.adapter(GeneratedUserMessagesDeletedEvent::class.java).fromJson(raw)
+            EventType.REMINDER_CREATED -> moshi.adapter(GeneratedReminderCreatedEvent::class.java).fromJson(raw)
+            EventType.REMINDER_UPDATED -> moshi.adapter(GeneratedReminderUpdatedEvent::class.java).fromJson(raw)
+            EventType.REMINDER_DELETED -> moshi.adapter(GeneratedReminderDeletedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

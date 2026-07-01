@@ -50,9 +50,6 @@ import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
@@ -146,6 +143,9 @@ import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDr
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
+import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
+import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
+import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
 import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
@@ -196,6 +196,9 @@ internal class EventMapping(
         is GeneratedNotificationChannelMutesUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedUserDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedUserMessagesDeletedEvent -> toDomain(rawCreatedAt)
+        is GeneratedReminderCreatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedReminderUpdatedEvent -> toDomain(rawCreatedAt)
+        is GeneratedReminderDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -242,9 +245,6 @@ internal class EventMapping(
             is VoteChangedEventDto -> toDomain()
             is AnswerCastedEventDto -> toDomain()
             is VoteRemovedEventDto -> toDomain()
-            is ReminderCreatedEventDto -> toDomain()
-            is ReminderUpdatedEventDto -> toDomain()
-            is ReminderDeletedEventDto -> toDomain()
             is NotificationReminderDueEventDto -> toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
@@ -1104,57 +1104,48 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [ReminderCreatedEventDto] to [ReminderCreatedEvent].
-     */
-    private fun ReminderCreatedEventDto.toDomain(): ReminderCreatedEvent = with(domainMapping) {
+    private fun GeneratedReminderCreatedEvent.toDomain(rawCreatedAt: String?): ReminderCreatedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderCreatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
-            reminder = reminder.toDomain(),
+            messageId = messageId,
+            userId = userId,
+            reminder = reminder!!.toDomain(),
         )
     }
 
-    /**
-     * Transforms [ReminderUpdatedEventDto] to [ReminderUpdatedEvent].
-     */
-    private fun ReminderUpdatedEventDto.toDomain(): ReminderUpdatedEvent = with(domainMapping) {
+    private fun GeneratedReminderUpdatedEvent.toDomain(rawCreatedAt: String?): ReminderUpdatedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
-            reminder = reminder.toDomain(),
+            messageId = messageId,
+            userId = userId,
+            reminder = reminder!!.toDomain(),
         )
     }
 
-    /**
-     * Transforms [ReminderDeletedEventDto] to [ReminderDeletedEvent].
-     */
-    private fun ReminderDeletedEventDto.toDomain(): ReminderDeletedEvent = with(domainMapping) {
+    private fun GeneratedReminderDeletedEvent.toDomain(rawCreatedAt: String?): ReminderDeletedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
-            reminder = reminder.toDomain(),
+            messageId = messageId,
+            userId = userId,
+            reminder = reminder!!.toDomain(),
         )
     }
 
