@@ -35,17 +35,6 @@ internal data class ChannelDeletedEventDto(
     val user: DownstreamUserDto?,
 ) : ChatEventDto()
 
-@JsonClass(generateAdapter = true)
-internal data class ChannelHiddenEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val channel: DownstreamChannelDto,
-    val clear_history: Boolean,
-) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class ChannelTruncatedEventDto(
@@ -79,17 +68,6 @@ internal data class ChannelUpdatedByUserEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val message: DownstreamMessageDto?,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ChannelVisibleEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
     val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 

@@ -22,13 +22,11 @@ import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
@@ -250,17 +248,6 @@ internal object EventMappingTestArguments {
         user = USER,
     )
 
-    private val channelHiddenDto = ChannelHiddenEventDto(
-        type = EventType.CHANNEL_HIDDEN,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        channel = CHANNEL,
-        clear_history = CLEAR_HISTORY,
-    )
-
     private val channelTruncatedDto = ChannelTruncatedEventDto(
         type = EventType.CHANNEL_TRUNCATED,
         created_at = EXACT_DATE,
@@ -310,16 +297,6 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        user = USER,
-    )
-
-    private val channelVisibleDto = ChannelVisibleEventDto(
-        type = EventType.CHANNEL_VISIBLE,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
         user = USER,
     )
 
@@ -705,18 +682,6 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) { channelDeletedDto.channel.toDomain() },
     )
 
-    private val channelHidden = ChannelHiddenEvent(
-        type = channelHiddenDto.type,
-        createdAt = channelHiddenDto.created_at.date,
-        rawCreatedAt = channelHiddenDto.created_at.rawDate,
-        user = with(domainMapping) { channelHiddenDto.user.toDomain() },
-        cid = channelHiddenDto.cid,
-        channelType = channelHiddenDto.channel_type,
-        channelId = channelHiddenDto.channel_id,
-        channel = with(domainMapping) { channelHiddenDto.channel.toDomain() },
-        clearHistory = channelHiddenDto.clear_history,
-    )
-
     private val channelTruncated = ChannelTruncatedEvent(
         type = channelTruncatedDto.type,
         createdAt = channelTruncatedDto.created_at.date,
@@ -784,17 +749,6 @@ internal object EventMappingTestArguments {
         cid = channelUserUnbannedDto.cid,
         channelType = channelUserUnbannedDto.channel_type,
         channelId = channelUserUnbannedDto.channel_id,
-    )
-
-    private val channelVisible = ChannelVisibleEvent(
-        type = channelVisibleDto.type,
-        createdAt = channelVisibleDto.created_at.date,
-        rawCreatedAt = channelVisibleDto.created_at.rawDate,
-        user = with(domainMapping) { channelVisibleDto.user.toDomain() },
-        cid = channelVisibleDto.cid,
-        channelType = channelVisibleDto.channel_type,
-        channel = with(domainMapping) { channelVisibleDto.channel.toDomain() },
-        channelId = channelVisibleDto.channel_id,
     )
 
     private val connected = ConnectedEvent(
@@ -1239,13 +1193,11 @@ internal object EventMappingTestArguments {
         Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelDeletedDto, channelDeleted),
-        Arguments.of(channelHiddenDto, channelHidden),
         Arguments.of(channelTruncatedDto, channelTruncated),
         Arguments.of(channelUpdatedByUserDto, channelUpdatedByUser),
         Arguments.of(channelUpdatedDto, channelUpdated),
         Arguments.of(channelUserBannedDto, channelUserBanned),
         Arguments.of(channelUserUnbannedDto, channelUserUnbanned),
-        Arguments.of(channelVisibleDto, channelVisible),
         Arguments.of(connectedDto, connected),
         Arguments.of(connectionErrorDto, connectionError),
         Arguments.of(connectingDto, connecting),
@@ -1637,6 +1589,50 @@ internal object EventMappingTestArguments {
         watcherCount = WATCHER_COUNT,
     )
 
+    private val channelHiddenGenerated = io.getstream.chat.android.network.models.ChannelHiddenEvent(
+        createdAt = DATE,
+        type = EventType.CHANNEL_HIDDEN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        user = SLIM_USER,
+        clearHistory = CLEAR_HISTORY,
+    )
+
+    private val channelHiddenExpected = ChannelHiddenEvent(
+        type = EventType.CHANNEL_HIDDEN,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+        clearHistory = CLEAR_HISTORY,
+    )
+
+    private val channelVisibleGenerated = io.getstream.chat.android.network.models.ChannelVisibleEvent(
+        createdAt = DATE,
+        type = EventType.CHANNEL_VISIBLE,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        user = SLIM_USER,
+    )
+
+    private val channelVisibleExpected = ChannelVisibleEvent(
+        type = EventType.CHANNEL_VISIBLE,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+        channelId = CHANNEL_ID,
+    )
+
     private val userWatchingStopExpected = UserStopWatchingEvent(
         type = EventType.USER_WATCHING_STOP,
         createdAt = DATE,
@@ -1687,5 +1683,7 @@ internal object EventMappingTestArguments {
         Arguments.of(memberUpdatedGenerated, DATE_STRING, memberUpdatedExpected),
         Arguments.of(userWatchingStartGenerated, DATE_STRING, userWatchingStartExpected),
         Arguments.of(userWatchingStopGenerated, DATE_STRING, userWatchingStopExpected),
+        Arguments.of(channelHiddenGenerated, DATE_STRING, channelHiddenExpected),
+        Arguments.of(channelVisibleGenerated, DATE_STRING, channelVisibleExpected),
     )
 }
