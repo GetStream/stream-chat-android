@@ -26,8 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
@@ -94,8 +92,6 @@ internal class EventDtoAdapter(
     private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
     private val channelUpdatedByUserEventAdapter = moshi.adapter(ChannelUpdatedByUserEventDto::class.java)
     private val channelUpdatedEventAdapter = moshi.adapter(ChannelUpdatedEventDto::class.java)
-    private val channelDeletedEventAdapter = moshi.adapter(ChannelDeletedEventDto::class.java)
-    private val channelTruncatedEventAdapter = moshi.adapter(ChannelTruncatedEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
@@ -157,8 +153,6 @@ internal class EventDtoAdapter(
                 map.containsKey("user") -> channelUpdatedByUserEventAdapter
                 else -> channelUpdatedEventAdapter
             }
-            EventType.CHANNEL_DELETED -> channelDeletedEventAdapter
-            EventType.CHANNEL_TRUNCATED -> channelTruncatedEventAdapter
             EventType.NOTIFICATION_ADDED_TO_CHANNEL -> notificationAddedToChannelEventAdapter
             EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter

@@ -22,8 +22,6 @@ import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
@@ -148,6 +146,8 @@ import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMem
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
+import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
@@ -187,6 +187,8 @@ internal class EventMapping(
         is GeneratedChannelHiddenEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelVisibleEvent -> toDomain(rawCreatedAt)
         is GeneratedUserPresenceChangedEvent -> toDomain(rawCreatedAt)
+        is GeneratedChannelDeletedEvent -> toDomain(rawCreatedAt)
+        is GeneratedChannelTruncatedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -201,8 +203,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ChannelDeletedEventDto -> toDomain()
-            is ChannelTruncatedEventDto -> toDomain()
             is ChannelUpdatedByUserEventDto -> toDomain()
             is ChannelUpdatedEventDto -> toDomain()
             is ChannelUserBannedEventDto -> toDomain()
@@ -252,17 +252,14 @@ internal class EventMapping(
         }
     }
 
-    /**
-     * Transforms [ChannelDeletedEventDto] to [ChannelDeletedEvent].
-     */
-    private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent = with(domainMapping) {
+    private fun GeneratedChannelDeletedEvent.toDomain(rawCreatedAt: String?): ChannelDeletedEvent = with(domainMapping) {
         ChannelDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
             channel = channel.toDomain(),
             user = user?.toDomain(),
         )
@@ -285,17 +282,14 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [ChannelTruncatedEventDto] to [ChannelTruncatedEvent].
-     */
-    private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent = with(domainMapping) {
+    private fun GeneratedChannelTruncatedEvent.toDomain(rawCreatedAt: String?): ChannelTruncatedEvent = with(domainMapping) {
         ChannelTruncatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            cid = cid.orEmpty(),
+            channelType = channelType.orEmpty(),
+            channelId = channelId.orEmpty(),
             user = user?.toDomain(),
             message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),

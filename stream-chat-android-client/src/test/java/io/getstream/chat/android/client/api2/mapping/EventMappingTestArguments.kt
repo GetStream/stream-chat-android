@@ -21,8 +21,6 @@ import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
@@ -235,27 +233,6 @@ internal object EventMappingTestArguments {
         type = EventType.DRAFT_MESSAGE_DELETED,
         created_at = EXACT_DATE,
         draft = DRAFT,
-    )
-
-    private val channelDeletedDto = ChannelDeletedEventDto(
-        type = EventType.CHANNEL_DELETED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        user = USER,
-    )
-
-    private val channelTruncatedDto = ChannelTruncatedEventDto(
-        type = EventType.CHANNEL_TRUNCATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
-        channel = CHANNEL,
     )
 
     private val channelUpdatedByUserDto = ChannelUpdatedByUserEventDto(
@@ -662,33 +639,6 @@ internal object EventMappingTestArguments {
         createdAt = draftMessageDeletedDto.created_at.date,
         rawCreatedAt = draftMessageDeletedDto.created_at.rawDate,
         draftMessage = with(domainMapping) { draftMessageDeletedDto.draft.toDomain() },
-    )
-
-    private val channelDeleted = ChannelDeletedEvent(
-        type = channelDeletedDto.type,
-        createdAt = channelDeletedDto.created_at.date,
-        rawCreatedAt = channelDeletedDto.created_at.rawDate,
-        user = with(domainMapping) { channelDeletedDto.user?.toDomain() },
-        cid = channelDeletedDto.cid,
-        channelType = channelDeletedDto.channel_type,
-        channelId = channelDeletedDto.channel_id,
-        channel = with(domainMapping) { channelDeletedDto.channel.toDomain() },
-    )
-
-    private val channelTruncated = ChannelTruncatedEvent(
-        type = channelTruncatedDto.type,
-        createdAt = channelTruncatedDto.created_at.date,
-        rawCreatedAt = channelTruncatedDto.created_at.rawDate,
-        user = with(domainMapping) { channelTruncatedDto.user?.toDomain() },
-        cid = channelTruncatedDto.cid,
-        channelType = channelTruncatedDto.channel_type,
-        channelId = channelTruncatedDto.channel_id,
-        message = with(domainMapping) {
-            channelTruncatedDto.message?.toDomain(channelTruncatedDto.channel.toChannelInfo())
-        },
-        channel = with(domainMapping) {
-            channelTruncatedDto.channel.toDomain()
-        },
     )
 
     private val channelUpdatedByUser = ChannelUpdatedByUserEvent(
@@ -1178,8 +1128,6 @@ internal object EventMappingTestArguments {
     fun arguments() = listOf(
         Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
-        Arguments.of(channelDeletedDto, channelDeleted),
-        Arguments.of(channelTruncatedDto, channelTruncated),
         Arguments.of(channelUpdatedByUserDto, channelUpdatedByUser),
         Arguments.of(channelUpdatedDto, channelUpdated),
         Arguments.of(channelUserBannedDto, channelUserBanned),
@@ -1607,6 +1555,50 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val channelDeletedGenerated = io.getstream.chat.android.network.models.ChannelDeletedEvent(
+        createdAt = DATE,
+        type = EventType.CHANNEL_DELETED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        user = SLIM_USER,
+    )
+
+    private val channelDeletedExpected = ChannelDeletedEvent(
+        type = EventType.CHANNEL_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+    )
+
+    private val channelTruncatedGenerated = io.getstream.chat.android.network.models.ChannelTruncatedEvent(
+        createdAt = DATE,
+        type = EventType.CHANNEL_TRUNCATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        user = SLIM_USER,
+        message = MESSAGE,
+    )
+
+    private val channelTruncatedExpected = ChannelTruncatedEvent(
+        type = EventType.CHANNEL_TRUNCATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain(CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+    )
+
     private val userPresenceChangedGenerated = io.getstream.chat.android.network.models.UserPresenceChangedEvent(
         createdAt = DATE,
         type = EventType.USER_PRESENCE_CHANGED,
@@ -1684,5 +1676,7 @@ internal object EventMappingTestArguments {
         Arguments.of(channelHiddenGenerated, DATE_STRING, channelHiddenExpected),
         Arguments.of(channelVisibleGenerated, DATE_STRING, channelVisibleExpected),
         Arguments.of(userPresenceChangedGenerated, DATE_STRING, userPresenceChangedExpected),
+        Arguments.of(channelDeletedGenerated, DATE_STRING, channelDeletedExpected),
+        Arguments.of(channelTruncatedGenerated, DATE_STRING, channelTruncatedExpected),
     )
 }
