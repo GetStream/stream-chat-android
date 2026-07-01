@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -147,6 +146,7 @@ import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
@@ -1571,7 +1571,7 @@ constructor(
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any>,
-    ): Call<ChatEvent> = with(eventMapping) {
+    ): Call<ChatEvent> {
         val map = mutableMapOf<Any, Any>("type" to eventType)
         map.putAll(extraData)
 
@@ -1580,7 +1580,7 @@ constructor(
             channelId = channelId,
             request = SendEventRequest(map),
         ).map { response ->
-            response.event.toDomain()
+            response.event
         }
     }
 

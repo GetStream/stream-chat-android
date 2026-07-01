@@ -17,10 +17,10 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
+import io.getstream.chat.android.client.events.ChatEvent
 
 @JsonClass(generateAdapter = true)
 internal data class EventResponse(
-    val event: ChatEventDto,
+    val event: ChatEvent,
     val duration: String,
 )

@@ -26,8 +26,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
@@ -66,6 +64,7 @@ import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
@@ -495,10 +494,11 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 EventResponse(
-                    event = HealthEventDto(
+                    event = HealthEvent(
                         type = EventType.HEALTH_CHECK,
-                        created_at = ExactDate(randomDate(), randomString()),
-                        connection_id = randomString(),
+                        createdAt = randomDate(),
+                        rawCreatedAt = randomString(),
+                        connectionId = randomString(),
                     ),
                     duration = randomString(),
                 ),

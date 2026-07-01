@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
@@ -107,7 +108,24 @@ internal class MoshiChatParser(
             .add(DownstreamPollOptionDtoAdapter)
             .add(CreatePollRequestAdapter)
             .add(UpstreamOptionDtoAdapter)
+            .add(ChatEvent::class.java, ChatEventJsonAdapter())
             .build()
+    }
+
+    // TODO: temporary while events are being migrated to generated DTOs. Routes any
+    // ChatEvent deserialization (e.g. EventResponse.event in REST responses) through the
+    // same 3-stage dispatch as parseAndProcessEvent so migrated event types are not
+    // dropped by the legacy ChatEventDto adapter. Remove once every event is generated
+    // and EventResponse can decode directly.
+    private inner class ChatEventJsonAdapter : JsonAdapter<ChatEvent>() {
+        override fun fromJson(reader: JsonReader): ChatEvent {
+            val raw = reader.nextSource().use { it.readUtf8() }
+            return parseAndProcessEvent(raw)
+        }
+
+        override fun toJson(writer: JsonWriter, value: ChatEvent?) {
+            error("Serializing ChatEvent is not supported")
+        }
     }
 
     private inline fun <reified T> Moshi.Builder.addAdapter(adapter: JsonAdapter<T>) = apply {
