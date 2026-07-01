@@ -72,8 +72,6 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
  * @param onPlaybackError Callback invoked when video playback encounters an error.
  * @param modifier Modifier to be applied to the player container.
  * @param thumbnailUrl Optional URL of the thumbnail image to display before playback starts.
- * @param useVideoCache Whether to route playback through the configured video cache. Pass `true`
- * only when the content is confidently a video — any other content bypasses the cache.
  */
 @OptIn(UnstableApi::class)
 @Composable
@@ -83,7 +81,6 @@ internal fun StreamMediaPlayerContent(
     onPlaybackError: (error: Throwable) -> Unit,
     modifier: Modifier = Modifier,
     thumbnailUrl: String? = null,
-    useVideoCache: Boolean = true,
 ) {
     val context = LocalContext.current
     var showThumbnail by remember { mutableStateOf(!playWhenReady) }
@@ -94,7 +91,6 @@ internal fun StreamMediaPlayerContent(
     LifecycleResumeEffect(Unit) {
         player = createPlayer(
             context = context,
-            useVideoCache = useVideoCache,
             onBuffering = onBuffering,
             onPlaybackError = onPlaybackError,
         )
@@ -192,22 +188,18 @@ internal fun MediaThumbnail(
  * Creates a player of type [ExoPlayer].
  *
  * @param context The context to use for creating the player.
- * @param useVideoCache Whether to wire the configured video cache into the data source pipeline.
- * Pass `true` only when the content is confidently a video — any other content bypasses the cache.
  * @param onBuffering Callback to be invoked when the player enters or exits buffering state.
  * @param onPlaybackError Callback to be invoked when a playback error occurs.
  */
 @OptIn(UnstableApi::class)
 internal fun createPlayer(
     context: Context,
-    useVideoCache: Boolean,
     onBuffering: (Boolean) -> Unit,
     onPlaybackError: (error: Throwable) -> Unit,
 ): Player {
     // Setup player
     val client = ChatClient.instance()
-    val videoCache = client.videoCache.takeIf { useVideoCache }
-    val dataSourceFactory = StreamMediaDataSource.factory(context, client.cdn, videoCache)
+    val dataSourceFactory = StreamMediaDataSource.factory(context, client.cdn, client.videoCache)
     val player = ExoPlayer.Builder(context)
         .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
         .build()

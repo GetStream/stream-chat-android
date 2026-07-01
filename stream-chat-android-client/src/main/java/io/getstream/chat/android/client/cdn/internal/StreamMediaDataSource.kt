@@ -43,15 +43,15 @@ public object StreamMediaDataSource {
      * When a [CDN] is provided, HTTP/HTTPS requests are transformed through [CDN.fileRequest]
      * for URL rewriting and header injection. Local URIs (file://, content://) pass through unchanged.
      *
-     * When a [videoCache] is provided, it wraps the resulting factory so video byte ranges are
-     * served from disk on subsequent reads. The cache layer is the outermost wrapper, keyed by the
-     * raw `dataSpec.uri`, so cache lookups are not affected by CDN URL rewriting.
+     * When a [videoCache] is provided, it wraps the resulting factory so bytes from any
+     * ExoPlayer-driven playback (video, audio, voice recordings) are served from disk on
+     * subsequent reads. The cache layer is the outermost wrapper, keyed by the `dataSpec.uri`
+     * with query parameters stripped, so cache lookups are unaffected by CDN URL rewriting and
+     * by rotating pre-signed query/signature values.
      *
      * @param context The context used to create the base data source.
      * @param cdn Optional custom CDN for transforming network requests.
-     * @param videoCache Optional disk cache for video playback. Callers should pass `null` for
-     * non-video content (e.g. audio attachments, voice recordings) so audio bytes do not occupy
-     * disk space in the video cache.
+     * @param videoCache Optional disk cache for ExoPlayer-driven playback (video and audio).
      */
     @OptIn(UnstableApi::class)
     public fun factory(

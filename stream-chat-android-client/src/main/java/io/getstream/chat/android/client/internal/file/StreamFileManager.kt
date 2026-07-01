@@ -239,17 +239,19 @@ public class StreamFileManager {
      * Clears all cached data including Stream cache, image cache,
      * and timestamped cache folders.
      *
+     * The video cache directory is owned by a live `SimpleCache` when the video cache is
+     * opted in, so it is cleared in-place by the owning `VideoMediaCache` at a higher layer
+     * (see `ChatClient.clearCacheAndTemporaryFiles`) rather than by deleting the directory here.
+     *
      * @param context Android context for cache directory access
      * @return [Result.Success] if all caches cleared successfully, or [Result.Failure] with an error
      */
     public fun clearAllCache(context: Context): Result<Unit> {
         val streamCacheResult = clearCache(context)
         val imageCacheResult = clearImageCache(context)
-        val videoCacheResult = clearVideoCache(context)
         val timestampedCacheResult = clearTimestampedCacheFolders(context)
         return streamCacheResult
             .flatMap { imageCacheResult }
-            .flatMap { videoCacheResult }
             .flatMap { timestampedCacheResult }
     }
 
@@ -356,6 +358,31 @@ public class StreamFileManager {
         }
     }
 
+    /**
+     * Deletes the video cache directory. Intended for the case where no live `VideoMediaCache`
+     * owns the directory; when a live cache is opted in, callers should clear its contents
+     * through the cache instance instead of deleting the directory out from under it.
+     *
+     * @param context Android context for cache directory access.
+     * @return [Result.Success] if the directory was cleared (or did not exist), or
+     * [Result.Failure] with an error.
+     */
+    @Suppress("TooGenericExceptionCaught")
+    internal fun clearVideoCache(context: Context): Result<Unit> {
+        return try {
+            val directory = getVideoCache(context)
+            if (!directory.exists()) {
+                Result.Success(Unit)
+            } else if (directory.deleteRecursively()) {
+                Result.Success(Unit)
+            } else {
+                Result.Failure(Error.GenericError("Could not clear video cache directory."))
+            }
+        } catch (e: Exception) {
+            Result.Failure(Error.ThrowableError("Could not clear video cache directory.", e))
+        }
+    }
+
     private fun createMediaFilename(prefix: String, extension: String): String {
         val dateFormat = SimpleDateFormat(EXTERNAL_DIR_TIMESTAMP_FORMAT, Locale.US)
         return "${prefix}_${dateFormat.format(Date().time)}.$extension"
@@ -435,22 +462,6 @@ public class StreamFileManager {
             }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not clear image cache directory.", e))
-        }
-    }
-
-    @Suppress("TooGenericExceptionCaught")
-    private fun clearVideoCache(context: Context): Result<Unit> {
-        return try {
-            val directory = getVideoCache(context)
-            if (!directory.exists()) {
-                Result.Success(Unit)
-            } else if (directory.deleteRecursively()) {
-                Result.Success(Unit)
-            } else {
-                Result.Failure(Error.GenericError("Could not clear video cache directory."))
-            }
-        } catch (e: Exception) {
-            Result.Failure(Error.ThrowableError("Could not clear video cache directory.", e))
         }
     }
 

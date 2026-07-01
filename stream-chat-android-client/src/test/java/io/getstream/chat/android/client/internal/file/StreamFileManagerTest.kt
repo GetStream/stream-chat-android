@@ -203,7 +203,33 @@ internal class StreamFileManagerTest {
     }
 
     @Test
-    fun `clearAllCache should clear stream cache, image cache, video cache, and timestamped folders`() = runTest {
+    fun `clearVideoCache should delete files in video cache directory`() = runTest {
+        val videoCache = streamFileManager.getVideoCache(context)
+        videoCache.mkdirs()
+        val file1 = File(videoCache, "video1_${randomString()}.mp4").apply { writeText("video1") }
+        val file2 = File(videoCache, "video2_${randomString()}.mp4").apply { writeText("video2") }
+        assertTrue(file1.exists())
+        assertTrue(file2.exists())
+
+        val result = streamFileManager.clearVideoCache(context)
+
+        assertTrue(result is Result.Success)
+        assertFalse(videoCache.exists())
+    }
+
+    @Test
+    fun `clearVideoCache should handle already empty cache gracefully`() = runTest {
+        // Ensure cache is clear
+        streamFileManager.clearVideoCache(context)
+
+        // Attempt to clear again
+        val result = streamFileManager.clearVideoCache(context)
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `clearAllCache should clear stream cache, image cache, and timestamped folders`() = runTest {
         // Create file in stream cache
         val streamFileName = "stream_${randomString()}.txt"
         streamFileManager.writeFileInCache(context, streamFileName, "content".byteInputStream())
@@ -217,16 +243,10 @@ internal class StreamFileManagerTest {
         imageCache.mkdirs()
         File(imageCache, "image.jpg").writeText("image")
 
-        // Create video cache directory
-        val videoCache = streamFileManager.getVideoCache(context)
-        videoCache.mkdirs()
-        File(videoCache, "video.mp4").writeText("video")
-
         // Verify files exist
         val streamCacheDir = File(context.cacheDir, "stream_cache")
         assertTrue(streamCacheDir.exists())
         assertTrue(imageCache.exists())
-        assertTrue(videoCache.exists())
 
         // Clear all caches
         val result = streamFileManager.clearAllCache(context)
@@ -234,7 +254,25 @@ internal class StreamFileManagerTest {
         assertTrue(result is Result.Success)
         assertFalse(streamCacheDir.exists())
         assertFalse(imageCache.exists())
-        assertFalse(videoCache.exists())
+    }
+
+    @Test
+    fun `clearAllCache should leave the video cache directory untouched`() = runTest {
+        // The video cache directory is owned by a live VideoMediaCache when opted in; clearAllCache
+        // must not delete it out from under the live SimpleCache. Callers handle video cache
+        // clearing at a higher layer (ChatClient.clearCacheAndTemporaryFiles).
+        val videoCache = streamFileManager.getVideoCache(context)
+        videoCache.mkdirs()
+        File(videoCache, "video.mp4").writeText("video")
+
+        val result = streamFileManager.clearAllCache(context)
+
+        assertTrue(result is Result.Success)
+        assertTrue(videoCache.exists())
+        assertTrue(File(videoCache, "video.mp4").exists())
+
+        // Cleanup
+        videoCache.deleteRecursively()
     }
 
     @Test

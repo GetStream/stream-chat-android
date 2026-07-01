@@ -1523,12 +1523,20 @@ internal constructor(
     public fun clearCacheAndTemporaryFiles(context: Context): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[clearCacheAndTemporaryFiles] Clearing all cache and temporary files" }
+            // Clear video cache: in-place via the live cache when opted in (keeps the SimpleCache
+            // alive so playback continues to work), or by deleting the directory when no live
+            // cache owns it.
+            val videoCacheResult = videoCache?.let {
+                it.clear()
+                Result.Success(Unit)
+            } ?: fileManager.clearVideoCache(context)
             // Clear all cache directories
             val cacheResult = fileManager.clearAllCache(context)
             // Clear external (temporary) storage files - always run regardless of cache result
             val externalStorageResult = fileManager.clearExternalStorage(context)
             // Return the first failure if any, otherwise success
             when {
+                videoCacheResult is Result.Failure -> videoCacheResult
                 cacheResult is Result.Failure -> cacheResult
                 externalStorageResult is Result.Failure -> externalStorageResult
                 else -> Result.Success(Unit)
@@ -5217,7 +5225,7 @@ internal constructor(
             val videoCache = cacheConfig?.video?.let {
                 VideoMediaCache.create(appContext, StreamFileManager().getVideoCache(appContext), it)
             }
-            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn)
+            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn, videoCache)
             val audioPlayer: AudioPlayer = StreamAudioPlayer(
                 mediaPlayer = NativeMediaPlayerImpl(mediaDataSourceFactory) {
                     ExoPlayer.Builder(appContext)

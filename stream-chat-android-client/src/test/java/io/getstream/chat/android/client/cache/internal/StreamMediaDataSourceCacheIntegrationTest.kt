@@ -31,6 +31,8 @@ import io.getstream.chat.android.client.cdn.CDNRequest
 import io.getstream.chat.android.client.cdn.internal.CDNDataSourceFactory
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -150,6 +152,41 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
     }
 
     /**
+     * `clear()` empties the cache in place: the on-disk video content is removed from the cache
+     * directory, subsequent reads miss and re-fetch upstream, but the underlying `SimpleCache`
+     * stays alive and can serve new writes.
+     */
+    @Test
+    fun `clear removes cached bytes from disk and keeps the cache functional`() {
+        val upstream = RecordingDataSourceFactory()
+        val factory = VideoCacheDataSourceFactory(cache, upstream)
+
+        // Populate the cache and confirm the bytes landed on disk.
+        readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_URL)))
+        assertEquals(1, upstream.openCount)
+        assertTrue("Cache should have tracked one key before clear", cache.cache.keys.isNotEmpty())
+        assertTrue("Cache should report non-zero size before clear", cache.cache.cacheSpace > 0L)
+        assertTrue(
+            "Cache directory should contain content files before clear",
+            cacheDir.walkTopDown().any { it.isFile && it.length() >= TOTAL_LENGTH },
+        )
+
+        cache.clear()
+
+        assertTrue("Cache should track zero keys after clear", cache.cache.keys.isEmpty())
+        assertEquals("Cache should report zero size after clear", 0L, cache.cache.cacheSpace)
+        assertFalse(
+            "Cache directory should no longer contain full-length content files after clear",
+            cacheDir.walkTopDown().any { it.isFile && it.length() >= TOTAL_LENGTH },
+        )
+
+        // Subsequent read must miss (cache is empty) and re-populate; the SimpleCache stays alive.
+        readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_URL)))
+        assertEquals("A read after clear should hit upstream again", 2, upstream.openCount)
+        assertTrue("Cache should be re-populated after the second read", cache.cache.keys.isNotEmpty())
+    }
+
+    /**
      * Verifies the LRU evictor is wired with [VideoCacheConfig.maxSizeBytes]. Three videos are
      * written into a cache sized to hold exactly two; the read between the second and third write
      * bumps the first video's recency so the second video becomes the least-recently-used and is
@@ -168,9 +205,16 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             val factory = VideoCacheDataSourceFactory(evictionCache, upstream)
 
             // Fill the cache to capacity, then bump A's recency, then push C in to force eviction.
+            // Space the operations out so each span's `lastTouchTimestamp` lands in a distinct
+            // millisecond; Media3's LeastRecentlyUsedCacheEvictor uses `System.currentTimeMillis()`
+            // and falls back to alphabetical key order on ties, which would pick A over B under
+            // load and make the assertions non-deterministic.
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
+            Thread.sleep(SPAN_SPACING_MS)
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_B_URL)))
+            Thread.sleep(SPAN_SPACING_MS)
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
+            Thread.sleep(SPAN_SPACING_MS)
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_C_URL)))
 
             assertEquals(
@@ -293,6 +337,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
         private const val VIDEO_C_URL = "https://stream.io/c.mp4"
         private const val TOTAL_LENGTH = 4096L
         private const val BUFFER_SIZE = 512
+        private const val SPAN_SPACING_MS = 5L
         private const val FILL_BYTE: Byte = 0xAB.toByte()
     }
 }

@@ -57,6 +57,28 @@ public class VideoMediaCache private constructor(
     private val logger by taggedLogger(TAG)
 
     /**
+     * Removes all cached content from the underlying [SimpleCache] while keeping the
+     * [SimpleCache] instance alive and its directory lock held. Subsequent playback continues to
+     * work against the same instance; the next open is a cache miss and re-fetches from the
+     * network.
+     *
+     * Use this to clear the cache in place. Deleting the cache directory from the outside while
+     * this [SimpleCache] is alive corrupts Media3's on-disk index and lock, so callers wanting to
+     * clear the video cache should call this instead of `deleteRecursively` on the directory.
+     */
+    internal fun clear() {
+        synchronized(instances) {
+            cache.keys.toSet().forEach { key ->
+                try {
+                    cache.removeResource(key)
+                } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                    logger.e(e) { "[clear] failed to remove cached resource for key '$key'" }
+                }
+            }
+        }
+    }
+
+    /**
      * Tears down the underlying [SimpleCache] and the [StandaloneDatabaseProvider] it owns, and
      * removes this instance from the process-wide [instances] registry so that a fresh
      * [VideoMediaCache] can be constructed for the same directory.

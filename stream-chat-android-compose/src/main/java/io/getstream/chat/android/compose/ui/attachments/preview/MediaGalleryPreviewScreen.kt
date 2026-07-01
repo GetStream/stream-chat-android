@@ -584,7 +584,6 @@ internal fun MediaGalleryPager(
                     if (!previewMode && player == null) {
                         player = createPlayer(
                             context = context,
-                            useVideoCache = true,
                             onBuffering = { isBuffering -> showBuffering = isBuffering },
                             onPlaybackError = onPlaybackError,
                         )

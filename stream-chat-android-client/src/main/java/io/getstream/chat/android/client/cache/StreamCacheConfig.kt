@@ -43,6 +43,10 @@ public data class StreamCacheConfig(
 public data class VideoCacheConfig(
     public val maxSizeBytes: Long = DEFAULT_MAX_SIZE_BYTES,
 ) {
+    init {
+        require(maxSizeBytes > 0) { "maxSizeBytes must be > 0, got $maxSizeBytes" }
+    }
+
     public companion object {
         /** Default cap of 150 MB. */
         public const val DEFAULT_MAX_SIZE_BYTES: Long = 150L * 1024 * 1024
