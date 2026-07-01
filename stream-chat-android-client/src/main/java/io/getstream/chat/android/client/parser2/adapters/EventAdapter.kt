@@ -66,8 +66,6 @@ import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
@@ -103,8 +101,6 @@ internal class EventDtoAdapter(
     private val channelDeletedEventAdapter = moshi.adapter(ChannelDeletedEventDto::class.java)
     private val channelVisibleEventAdapter = moshi.adapter(ChannelVisibleEventDto::class.java)
     private val channelTruncatedEventAdapter = moshi.adapter(ChannelTruncatedEventDto::class.java)
-    private val userStartWatchingEventAdapter = moshi.adapter(UserStartWatchingEventDto::class.java)
-    private val userStopWatchingEventAdapter = moshi.adapter(UserStopWatchingEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
@@ -171,8 +167,6 @@ internal class EventDtoAdapter(
             EventType.CHANNEL_DELETED -> channelDeletedEventAdapter
             EventType.CHANNEL_VISIBLE -> channelVisibleEventAdapter
             EventType.CHANNEL_TRUNCATED -> channelTruncatedEventAdapter
-            EventType.USER_WATCHING_START -> userStartWatchingEventAdapter
-            EventType.USER_WATCHING_STOP -> userStopWatchingEventAdapter
             EventType.NOTIFICATION_ADDED_TO_CHANNEL -> notificationAddedToChannelEventAdapter
             EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter

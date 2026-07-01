@@ -69,6 +69,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
+import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
@@ -216,6 +218,8 @@ internal class MoshiChatParser(
             EventType.MEMBER_ADDED -> moshi.adapter(GeneratedMemberAddedEvent::class.java).fromJson(raw)
             EventType.MEMBER_REMOVED -> moshi.adapter(GeneratedMemberRemovedEvent::class.java).fromJson(raw)
             EventType.MEMBER_UPDATED -> moshi.adapter(GeneratedMemberUpdatedEvent::class.java).fromJson(raw)
+            EventType.USER_WATCHING_START -> moshi.adapter(GeneratedUserWatchingStartEvent::class.java).fromJson(raw)
+            EventType.USER_WATCHING_STOP -> moshi.adapter(GeneratedUserWatchingStopEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

@@ -64,8 +64,6 @@ import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
@@ -530,26 +528,6 @@ internal object EventMappingTestArguments {
         type = EventType.USER_PRESENCE_CHANGED,
         created_at = EXACT_DATE,
         user = USER,
-    )
-
-    private val userStartWatchingDto = UserStartWatchingEventDto(
-        type = EventType.USER_WATCHING_START,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        watcher_count = WATCHER_COUNT,
-    )
-
-    private val userStopWatchingDto = UserStopWatchingEventDto(
-        type = EventType.USER_WATCHING_STOP,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        watcher_count = WATCHER_COUNT,
     )
 
     private val userUpdatedDto = UserUpdatedEventDto(
@@ -1071,28 +1049,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { userPresenceChangedDto.user.toDomain() },
     )
 
-    private val userStartWatching = UserStartWatchingEvent(
-        type = userStartWatchingDto.type,
-        createdAt = userStartWatchingDto.created_at.date,
-        rawCreatedAt = userStartWatchingDto.created_at.rawDate,
-        cid = userStartWatchingDto.cid,
-        channelType = userStartWatchingDto.channel_type,
-        channelId = userStartWatchingDto.channel_id,
-        user = with(domainMapping) { userStartWatchingDto.user.toDomain() },
-        watcherCount = userStartWatchingDto.watcher_count,
-    )
-
-    private val userStopWatching = UserStopWatchingEvent(
-        type = userStopWatchingDto.type,
-        createdAt = userStopWatchingDto.created_at.date,
-        rawCreatedAt = userStopWatchingDto.created_at.rawDate,
-        cid = userStopWatchingDto.cid,
-        channelType = userStopWatchingDto.channel_type,
-        channelId = userStopWatchingDto.channel_id,
-        user = with(domainMapping) { userStopWatchingDto.user.toDomain() },
-        watcherCount = userStopWatchingDto.watcher_count,
-    )
-
     private val userUpdated = UserUpdatedEvent(
         type = userUpdatedDto.type,
         createdAt = userUpdatedDto.created_at.date,
@@ -1315,8 +1271,6 @@ internal object EventMappingTestArguments {
         Arguments.of(unknownDto, unknown),
         Arguments.of(userDeletedDto, userDeleted),
         Arguments.of(userPresenceChangedDto, userPresenceChanged),
-        Arguments.of(userStartWatchingDto, userStartWatching),
-        Arguments.of(userStopWatchingDto, userStopWatching),
         Arguments.of(userUpdatedDto, userUpdated),
         Arguments.of(pollClosedDto, pollClosed),
         Arguments.of(pollDeletedDto, pollDeleted),
@@ -1652,6 +1606,48 @@ internal object EventMappingTestArguments {
         member = with(domainMapping) { MEMBER.toDomain() },
     )
 
+    private val userWatchingStartGenerated = io.getstream.chat.android.network.models.UserWatchingStartEvent(
+        createdAt = DATE,
+        type = EventType.USER_WATCHING_START,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        watcherCount = WATCHER_COUNT,
+    )
+
+    private val userWatchingStartExpected = UserStartWatchingEvent(
+        type = EventType.USER_WATCHING_START,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+        watcherCount = WATCHER_COUNT,
+    )
+
+    private val userWatchingStopGenerated = io.getstream.chat.android.network.models.UserWatchingStopEvent(
+        createdAt = DATE,
+        type = EventType.USER_WATCHING_STOP,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        watcherCount = WATCHER_COUNT,
+    )
+
+    private val userWatchingStopExpected = UserStopWatchingEvent(
+        type = EventType.USER_WATCHING_STOP,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+        watcherCount = WATCHER_COUNT,
+    )
+
     private val messageDeliveredExpected = MessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
         createdAt = DATE,
@@ -1689,5 +1685,7 @@ internal object EventMappingTestArguments {
         Arguments.of(memberAddedGenerated, DATE_STRING, memberAddedExpected),
         Arguments.of(memberRemovedGenerated, DATE_STRING, memberRemovedExpected),
         Arguments.of(memberUpdatedGenerated, DATE_STRING, memberUpdatedExpected),
+        Arguments.of(userWatchingStartGenerated, DATE_STRING, userWatchingStartExpected),
+        Arguments.of(userWatchingStopGenerated, DATE_STRING, userWatchingStopExpected),
     )
 }

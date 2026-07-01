@@ -312,28 +312,6 @@ internal data class UserPresenceChangedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class UserStartWatchingEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val watcher_count: Int = 0,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserStopWatchingEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val watcher_count: Int = 0,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ChannelUserUnbannedEventDto(
     val type: String,
     val created_at: ExactDate,
