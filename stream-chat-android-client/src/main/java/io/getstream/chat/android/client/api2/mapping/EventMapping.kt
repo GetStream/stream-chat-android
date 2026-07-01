@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
@@ -137,6 +136,7 @@ import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedC
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
+import io.getstream.chat.android.network.models.HealthCheckEvent as GeneratedHealthCheckEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
@@ -202,6 +202,7 @@ internal class EventMapping(
         is GeneratedAIIndicatorUpdateEvent -> toDomain(rawCreatedAt)
         is GeneratedAIIndicatorClearEvent -> toDomain(rawCreatedAt)
         is GeneratedAIIndicatorStopEvent -> toDomain(rawCreatedAt)
+        is GeneratedHealthCheckEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -227,7 +228,6 @@ internal class EventMapping(
             is ErrorEventDto -> toDomain()
             is GlobalUserBannedEventDto -> toDomain()
             is GlobalUserUnbannedEventDto -> toDomain()
-            is HealthEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
             is NotificationChannelDeletedEventDto -> toDomain()
             is NotificationChannelTruncatedEventDto -> toDomain()
@@ -345,12 +345,12 @@ internal class EventMapping(
         )
     }
 
-    private fun HealthEventDto.toDomain(): HealthEvent {
+    private fun GeneratedHealthCheckEvent.toDomain(rawCreatedAt: String?): HealthEvent {
         return HealthEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            connectionId = connectionId,
         )
     }
 

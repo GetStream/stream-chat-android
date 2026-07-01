@@ -48,13 +48,6 @@ internal data class ChannelUpdatedByUserEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class HealthEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val connection_id: String,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationAddedToChannelEventDto(
     val type: String,
     val created_at: ExactDate,

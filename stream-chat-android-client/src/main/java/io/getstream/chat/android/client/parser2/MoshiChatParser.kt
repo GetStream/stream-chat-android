@@ -75,6 +75,7 @@ import io.getstream.chat.android.network.models.ChannelTruncatedEvent as Generat
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
+import io.getstream.chat.android.network.models.HealthCheckEvent as GeneratedHealthCheckEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -256,6 +257,7 @@ internal class MoshiChatParser(
             EventType.AI_TYPING_INDICATOR_UPDATED -> moshi.adapter(GeneratedAIIndicatorUpdateEvent::class.java).fromJson(raw)
             EventType.AI_TYPING_INDICATOR_CLEAR -> moshi.adapter(GeneratedAIIndicatorClearEvent::class.java).fromJson(raw)
             EventType.AI_TYPING_INDICATOR_STOP -> moshi.adapter(GeneratedAIIndicatorStopEvent::class.java).fromJson(raw)
+            EventType.HEALTH_CHECK -> moshi.adapter(GeneratedHealthCheckEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

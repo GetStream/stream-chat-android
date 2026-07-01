@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
@@ -73,7 +72,6 @@ internal class EventDtoAdapter(
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
     private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
     private val channelUpdatedByUserEventAdapter = moshi.adapter(ChannelUpdatedByUserEventDto::class.java)
     private val channelUpdatedEventAdapter = moshi.adapter(ChannelUpdatedEventDto::class.java)
@@ -116,7 +114,7 @@ internal class EventDtoAdapter(
         val adapter = when (val type = map["type"] as? String) {
             EventType.HEALTH_CHECK -> when {
                 map.containsKey("me") -> connectedEventAdapter
-                else -> healthEventAdapter
+                else -> return null
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
             EventType.REACTION_UPDATED -> reactionUpdateEventAdapter

@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
@@ -302,12 +301,6 @@ internal object EventMappingTestArguments {
         type = EventType.USER_UNBANNED,
         created_at = EXACT_DATE,
         user = USER,
-    )
-
-    private val healthDto = HealthEventDto(
-        type = EventType.HEALTH_CHECK,
-        created_at = EXACT_DATE,
-        connection_id = CONNECTION_ID,
     )
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
@@ -620,13 +613,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { globalUserUnbannedDto.user.toDomain() },
     )
 
-    private val health = HealthEvent(
-        type = healthDto.type,
-        createdAt = healthDto.created_at.date,
-        rawCreatedAt = healthDto.created_at.rawDate,
-        connectionId = healthDto.connection_id,
-    )
-
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
         type = notificationAddedToChannelDto.type,
         createdAt = notificationAddedToChannelDto.created_at.date,
@@ -907,7 +893,6 @@ internal object EventMappingTestArguments {
         Arguments.of(errorDto, error),
         Arguments.of(globalUserBannedDto, globalUserBanned),
         Arguments.of(globalUserUnbannedDto, globalUserUnbanned),
-        Arguments.of(healthDto, health),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelTruncatedDto, notificationChannelTruncated),
@@ -1312,6 +1297,19 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val healthGenerated = io.getstream.chat.android.network.models.HealthCheckEvent(
+        createdAt = DATE,
+        type = EventType.HEALTH_CHECK,
+        connectionId = CONNECTION_ID,
+    )
+
+    private val healthExpected = HealthEvent(
+        type = EventType.HEALTH_CHECK,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        connectionId = CONNECTION_ID,
+    )
+
     private val aiIndicatorUpdateGenerated = io.getstream.chat.android.network.models.AIIndicatorUpdateEvent(
         createdAt = DATE,
         type = EventType.AI_TYPING_INDICATOR_UPDATED,
@@ -1677,5 +1675,6 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorUpdateGenerated, DATE_STRING, aiIndicatorUpdatedExpected),
         Arguments.of(aiIndicatorClearGenerated, DATE_STRING, aiIndicatorClearExpected),
         Arguments.of(aiIndicatorStopGenerated, DATE_STRING, aiIndicatorStopExpected),
+        Arguments.of(healthGenerated, DATE_STRING, healthExpected),
     )
 }
