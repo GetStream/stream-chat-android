@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -397,17 +396,6 @@ internal object EventMappingTestArguments {
         user = USER,
     )
 
-    private val reactionUpdateDto = ReactionUpdateEventDto(
-        type = EventType.REACTION_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        reaction = REACTION,
-        message = MESSAGE,
-    )
-
     private val unknownDto = UnknownEventDto(
         type = EventType.UNKNOWN,
         created_at = EXACT_DATE,
@@ -663,18 +651,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { notificationRemovedFromChannelDto.user?.toDomain() },
     )
 
-    private val reactionUpdate = ReactionUpdateEvent(
-        type = reactionUpdateDto.type,
-        createdAt = reactionUpdateDto.created_at.date,
-        rawCreatedAt = reactionUpdateDto.created_at.rawDate,
-        cid = reactionUpdateDto.cid,
-        channelType = reactionUpdateDto.channel_type,
-        channelId = reactionUpdateDto.channel_id,
-        user = with(domainMapping) { reactionUpdateDto.user.toDomain() },
-        reaction = with(domainMapping) { reactionUpdateDto.reaction.toDomain() },
-        message = with(domainMapping) { reactionUpdateDto.message.toDomain() },
-    )
-
     private val unknown = UnknownEvent(
         type = unknownDto.type,
         createdAt = unknownDto.created_at.date,
@@ -724,7 +700,6 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
         Arguments.of(threadUpdatedDto, threadUpdated),
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
-        Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
         Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
     )
@@ -1431,6 +1406,30 @@ internal object EventMappingTestArguments {
         hardDelete = HARD_DELETE,
     )
 
+    private val reactionUpdatedGenerated = io.getstream.chat.android.network.models.ReactionUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.REACTION_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+        message = MESSAGE,
+        messageId = MESSAGE.id,
+        reaction = REACTION,
+    )
+
+    private val reactionUpdatedExpected = ReactionUpdateEvent(
+        type = EventType.REACTION_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain() },
+        reaction = with(domainMapping) { REACTION.toDomain() },
+    )
+
     private val notificationMarkUnreadGenerated = io.getstream.chat.android.network.models.NotificationMarkUnreadEvent(
         createdAt = DATE,
         type = EventType.NOTIFICATION_MARK_UNREAD,
@@ -1672,5 +1671,6 @@ internal object EventMappingTestArguments {
         Arguments.of(voteRemovedGenerated, DATE_STRING, voteRemovedExpected),
         Arguments.of(answerCastedGenerated, DATE_STRING, answerCastedExpected),
         Arguments.of(notificationMarkUnreadGenerated, DATE_STRING, notificationMarkUnreadExpected),
+        Arguments.of(reactionUpdatedGenerated, DATE_STRING, reactionUpdatedExpected),
     )
 }

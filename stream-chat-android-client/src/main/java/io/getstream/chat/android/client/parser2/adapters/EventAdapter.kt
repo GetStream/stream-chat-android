@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
@@ -64,7 +63,6 @@ internal class EventDtoAdapter(
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
     private val channelUpdatedByUserEventAdapter = moshi.adapter(ChannelUpdatedByUserEventDto::class.java)
     private val channelUpdatedEventAdapter = moshi.adapter(ChannelUpdatedEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
@@ -101,7 +99,6 @@ internal class EventDtoAdapter(
                 else -> return null
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            EventType.REACTION_UPDATED -> reactionUpdateEventAdapter
             EventType.CHANNEL_UPDATED -> when {
                 map.containsKey("user") -> channelUpdatedByUserEventAdapter
                 else -> channelUpdatedEventAdapter
