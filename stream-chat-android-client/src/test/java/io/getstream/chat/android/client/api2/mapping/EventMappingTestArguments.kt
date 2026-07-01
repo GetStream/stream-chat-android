@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
@@ -40,15 +39,9 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -438,66 +431,6 @@ internal object EventMappingTestArguments {
         rawData = emptyMap<String, String>(),
     )
 
-    private val pollClosedDto = PollClosedEventDto(
-        type = EventType.POLL_CLOSED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-    )
-
-    private val pollDeletedDto = PollDeletedEventDto(
-        type = EventType.POLL_DELETED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-    )
-
-    private val pollUpdatedDto = PollUpdatedEventDto(
-        type = EventType.POLL_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-    )
-
-    private val voteCastedDto = VoteCastedEventDto(
-        type = EventType.POLL_VOTE_CASTED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-        poll_vote = POLL_VOTE,
-    )
-
-    private val voteChangedDto = VoteChangedEventDto(
-        type = EventType.POLL_VOTE_CHANGED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-        poll_vote = POLL_VOTE,
-    )
-
-    private val voteRemovedDto = VoteRemovedEventDto(
-        type = EventType.POLL_VOTE_REMOVED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-        poll_vote = POLL_VOTE,
-    )
-
-    private val answerCastedDto = AnswerCastedEventDto(
-        type = EventType.POLL_VOTE_CASTED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        message_id = MESSAGE_ID,
-        poll = POLL,
-        poll_vote = POLL_VOTE,
-    )
-
     private val notificationReminderDueDto = NotificationReminderDueEventDto(
         type = EventType.NOTIFICATION_REMINDER_DUE,
         created_at = EXACT_DATE,
@@ -781,87 +714,6 @@ internal object EventMappingTestArguments {
         rawData = unknownDto.rawData,
     )
 
-    private val pollClosed = PollClosedEvent(
-        type = pollClosedDto.type,
-        createdAt = pollClosedDto.created_at.date,
-        rawCreatedAt = pollClosedDto.created_at.rawDate,
-        cid = pollClosedDto.cid,
-        channelType = pollClosedDto.cid.split(":").first(),
-        channelId = pollClosedDto.cid.split(":").last(),
-        messageId = pollClosedDto.message_id,
-        poll = with(domainMapping) { pollClosedDto.poll.toDomain() },
-    )
-
-    private val pollDeleted = PollDeletedEvent(
-        type = pollDeletedDto.type,
-        createdAt = pollDeletedDto.created_at.date,
-        rawCreatedAt = pollDeletedDto.created_at.rawDate,
-        cid = pollDeletedDto.cid,
-        channelType = pollDeletedDto.cid.split(":").first(),
-        channelId = pollDeletedDto.cid.split(":").last(),
-        messageId = pollDeletedDto.message_id,
-        poll = with(domainMapping) { pollDeletedDto.poll.toDomain() },
-    )
-
-    private val pollUpdated = PollUpdatedEvent(
-        type = pollUpdatedDto.type,
-        createdAt = pollUpdatedDto.created_at.date,
-        rawCreatedAt = pollUpdatedDto.created_at.rawDate,
-        cid = pollUpdatedDto.cid,
-        channelType = pollUpdatedDto.cid.split(":").first(),
-        channelId = pollUpdatedDto.cid.split(":").last(),
-        messageId = pollUpdatedDto.message_id,
-        poll = with(domainMapping) { pollUpdatedDto.poll.toDomain() },
-    )
-
-    private val voteCasted = VoteCastedEvent(
-        type = voteCastedDto.type,
-        createdAt = voteCastedDto.created_at.date,
-        rawCreatedAt = voteCastedDto.created_at.rawDate,
-        cid = voteCastedDto.cid,
-        channelType = voteCastedDto.cid.split(":").first(),
-        channelId = voteCastedDto.cid.split(":").last(),
-        messageId = voteCastedDto.message_id,
-        poll = with(domainMapping) { voteCastedDto.poll.toDomain() },
-        newVote = with(domainMapping) { voteCastedDto.poll_vote.toDomain() },
-    )
-
-    private val voteChanged = VoteChangedEvent(
-        type = voteChangedDto.type,
-        createdAt = voteChangedDto.created_at.date,
-        rawCreatedAt = voteChangedDto.created_at.rawDate,
-        cid = voteChangedDto.cid,
-        channelType = voteChangedDto.cid.split(":").first(),
-        channelId = voteChangedDto.cid.split(":").last(),
-        messageId = voteChangedDto.message_id,
-        poll = with(domainMapping) { voteChangedDto.poll.toDomain() },
-        newVote = with(domainMapping) { voteChangedDto.poll_vote.toDomain() },
-    )
-
-    private val voteRemoved = VoteRemovedEvent(
-        type = voteRemovedDto.type,
-        createdAt = voteRemovedDto.created_at.date,
-        rawCreatedAt = voteRemovedDto.created_at.rawDate,
-        cid = voteRemovedDto.cid,
-        channelType = voteRemovedDto.cid.split(":").first(),
-        channelId = voteRemovedDto.cid.split(":").last(),
-        messageId = voteRemovedDto.message_id,
-        poll = with(domainMapping) { voteRemovedDto.poll.toDomain() },
-        removedVote = with(domainMapping) { voteRemovedDto.poll_vote.toDomain() },
-    )
-
-    private val answerCasted = AnswerCastedEvent(
-        type = answerCastedDto.type,
-        createdAt = answerCastedDto.created_at.date,
-        rawCreatedAt = answerCastedDto.created_at.rawDate,
-        cid = answerCastedDto.cid,
-        channelType = answerCastedDto.cid.split(":").first(),
-        channelId = answerCastedDto.cid.split(":").last(),
-        messageId = answerCastedDto.message_id,
-        poll = with(domainMapping) { answerCastedDto.poll.toDomain() },
-        newAnswer = with(domainMapping) { answerCastedDto.poll_vote.toAnswerDomain() },
-    )
-
     private val notificationReminderDueEvent = NotificationReminderDueEvent(
         type = notificationReminderDueDto.type,
         createdAt = notificationReminderDueDto.created_at.date,
@@ -906,13 +758,6 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
         Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
-        Arguments.of(pollClosedDto, pollClosed),
-        Arguments.of(pollDeletedDto, pollDeleted),
-        Arguments.of(pollUpdatedDto, pollUpdated),
-        Arguments.of(voteCastedDto, voteCasted),
-        Arguments.of(voteChangedDto, voteChanged),
-        Arguments.of(voteRemovedDto, voteRemoved),
-        Arguments.of(answerCastedDto, answerCasted),
         Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
     )
 
@@ -1297,6 +1142,150 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val POLL_VOTE_NON_ANSWER = POLL_VOTE.copy(isAnswer = false)
+    private val POLL_VOTE_ANSWER = POLL_VOTE.copy(isAnswer = true)
+
+    private val voteCastedGenerated = io.getstream.chat.android.network.models.PollVoteCastedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_VOTE_CASTED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+        pollVote = POLL_VOTE_NON_ANSWER,
+    )
+
+    private val voteCastedExpected = VoteCastedEvent(
+        type = EventType.POLL_VOTE_CASTED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+        newVote = with(domainMapping) { POLL_VOTE_NON_ANSWER.toDomain() },
+    )
+
+    private val voteChangedGenerated = io.getstream.chat.android.network.models.PollVoteChangedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_VOTE_CHANGED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+        pollVote = POLL_VOTE_NON_ANSWER,
+    )
+
+    private val voteChangedExpected = VoteChangedEvent(
+        type = EventType.POLL_VOTE_CHANGED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+        newVote = with(domainMapping) { POLL_VOTE_NON_ANSWER.toDomain() },
+    )
+
+    private val voteRemovedGenerated = io.getstream.chat.android.network.models.PollVoteRemovedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_VOTE_REMOVED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+        pollVote = POLL_VOTE,
+    )
+
+    private val voteRemovedExpected = VoteRemovedEvent(
+        type = EventType.POLL_VOTE_REMOVED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+        removedVote = with(domainMapping) { POLL_VOTE.toDomain() },
+    )
+
+    private val answerCastedGenerated = io.getstream.chat.android.network.models.PollVoteCastedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_VOTE_CASTED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+        pollVote = POLL_VOTE_ANSWER,
+    )
+
+    private val answerCastedExpected = AnswerCastedEvent(
+        type = EventType.POLL_VOTE_CASTED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+        newAnswer = with(domainMapping) { POLL_VOTE_ANSWER.toAnswerDomain() },
+    )
+
+    private val pollClosedGenerated = io.getstream.chat.android.network.models.PollClosedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_CLOSED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+    )
+
+    private val pollClosedExpected = PollClosedEvent(
+        type = EventType.POLL_CLOSED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+    )
+
+    private val pollDeletedGenerated = io.getstream.chat.android.network.models.PollDeletedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_DELETED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+    )
+
+    private val pollDeletedExpected = PollDeletedEvent(
+        type = EventType.POLL_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+    )
+
+    private val pollUpdatedGenerated = io.getstream.chat.android.network.models.PollUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.POLL_UPDATED,
+        cid = CID,
+        messageId = MESSAGE_ID,
+        poll = POLL,
+    )
+
+    private val pollUpdatedExpected = PollUpdatedEvent(
+        type = EventType.POLL_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CID.split(":").first(),
+        channelId = CID.split(":").last(),
+        messageId = MESSAGE_ID,
+        poll = with(domainMapping) { POLL.toDomain() },
+    )
+
     private val healthGenerated = io.getstream.chat.android.network.models.HealthCheckEvent(
         createdAt = DATE,
         type = EventType.HEALTH_CHECK,
@@ -1676,5 +1665,12 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorClearGenerated, DATE_STRING, aiIndicatorClearExpected),
         Arguments.of(aiIndicatorStopGenerated, DATE_STRING, aiIndicatorStopExpected),
         Arguments.of(healthGenerated, DATE_STRING, healthExpected),
+        Arguments.of(pollClosedGenerated, DATE_STRING, pollClosedExpected),
+        Arguments.of(pollDeletedGenerated, DATE_STRING, pollDeletedExpected),
+        Arguments.of(pollUpdatedGenerated, DATE_STRING, pollUpdatedExpected),
+        Arguments.of(voteCastedGenerated, DATE_STRING, voteCastedExpected),
+        Arguments.of(voteChangedGenerated, DATE_STRING, voteChangedExpected),
+        Arguments.of(voteRemovedGenerated, DATE_STRING, voteRemovedExpected),
+        Arguments.of(answerCastedGenerated, DATE_STRING, answerCastedExpected),
     )
 }

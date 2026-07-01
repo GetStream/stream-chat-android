@@ -86,6 +86,12 @@ import io.getstream.chat.android.network.models.MessageUpdatedEvent as Generated
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
+import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
+import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
+import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPollUpdatedEvent
+import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
+import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
+import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
 import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
@@ -258,6 +264,12 @@ internal class MoshiChatParser(
             EventType.AI_TYPING_INDICATOR_CLEAR -> moshi.adapter(GeneratedAIIndicatorClearEvent::class.java).fromJson(raw)
             EventType.AI_TYPING_INDICATOR_STOP -> moshi.adapter(GeneratedAIIndicatorStopEvent::class.java).fromJson(raw)
             EventType.HEALTH_CHECK -> moshi.adapter(GeneratedHealthCheckEvent::class.java).fromJson(raw)
+            EventType.POLL_CLOSED -> moshi.adapter(GeneratedPollClosedEvent::class.java).fromJson(raw)
+            EventType.POLL_DELETED -> moshi.adapter(GeneratedPollDeletedEvent::class.java).fromJson(raw)
+            EventType.POLL_UPDATED -> moshi.adapter(GeneratedPollUpdatedEvent::class.java).fromJson(raw)
+            EventType.POLL_VOTE_CASTED -> moshi.adapter(GeneratedPollVoteCastedEvent::class.java).fromJson(raw)
+            EventType.POLL_VOTE_CHANGED -> moshi.adapter(GeneratedPollVoteChangedEvent::class.java).fromJson(raw)
+            EventType.POLL_VOTE_REMOVED -> moshi.adapter(GeneratedPollVoteRemovedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

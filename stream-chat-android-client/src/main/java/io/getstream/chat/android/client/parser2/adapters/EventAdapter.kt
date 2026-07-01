@@ -22,7 +22,6 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
@@ -43,14 +42,8 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
@@ -93,13 +86,6 @@ internal class EventDtoAdapter(
     private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
     private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
-    private val pollUpdatedEventAdapter = moshi.adapter(PollUpdatedEventDto::class.java)
-    private val pollDeletedEventAdapter = moshi.adapter(PollDeletedEventDto::class.java)
-    private val pollClosedEventAdapter = moshi.adapter(PollClosedEventDto::class.java)
-    private val voteCastedEventAdapter = moshi.adapter(VoteCastedEventDto::class.java)
-    private val voteChangedEventAdapter = moshi.adapter(VoteChangedEventDto::class.java)
-    private val answerCastedEventAdapter = moshi.adapter(AnswerCastedEventDto::class.java)
-    private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
     private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
@@ -141,27 +127,12 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> channelUserUnbannedEventAdapter
                 else -> globalUserUnbannedEventAdapter
             }
-            EventType.POLL_UPDATED -> pollUpdatedEventAdapter
-            EventType.POLL_DELETED -> pollDeletedEventAdapter
-            EventType.POLL_CLOSED -> pollClosedEventAdapter
-            EventType.POLL_VOTE_CASTED -> when (map.containsAnswer()) {
-                true -> answerCastedEventAdapter
-                else -> voteCastedEventAdapter
-            }
-            EventType.POLL_VOTE_CHANGED -> when (map.containsAnswer()) {
-                true -> answerCastedEventAdapter
-                else -> voteChangedEventAdapter
-            }
-            EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
             EventType.NOTIFICATION_REMINDER_DUE -> notificationReminderDueEventAdapter
             else -> return null
         }
 
         return adapter.fromJsonValue(map)
     }
-
-    private fun Map<String, Any?>.containsAnswer(): Boolean =
-        (((this["poll_vote"] as? Map<String, Any?>)?.get("is_answer") as? Boolean) ?: false)
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
         error("Can't convert this event to Json $value")
