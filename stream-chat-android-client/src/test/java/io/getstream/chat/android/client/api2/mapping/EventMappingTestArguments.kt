@@ -57,7 +57,6 @@ import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
@@ -168,6 +167,17 @@ internal object EventMappingTestArguments {
         name = USER.name,
         image = USER.image,
         lastActive = DATE,
+    )
+    private val SLIM_PRIVACY_USER = io.getstream.chat.android.network.models.UserResponsePrivacyFields(
+        banned = false,
+        createdAt = DATE,
+        id = USER.id,
+        language = USER.language,
+        online = USER.online,
+        role = USER.role,
+        updatedAt = DATE,
+        name = USER.name,
+        image = USER.image,
     )
     private val SLIM_USER_DOMAIN = io.getstream.chat.android.models.User(
         id = SLIM_USER.id,
@@ -461,23 +471,6 @@ internal object EventMappingTestArguments {
         type = EventType.USER_DELETED,
         created_at = EXACT_DATE,
         user = USER,
-    )
-
-    private val userUpdatedDto = UserUpdatedEventDto(
-        type = EventType.USER_UPDATED,
-        created_at = EXACT_DATE,
-        user = io.getstream.chat.android.network.models.UserResponsePrivacyFields(
-            id = USER.id,
-            name = USER.name,
-            image = USER.image,
-            role = USER.role,
-            language = USER.language,
-            banned = USER.banned,
-            online = USER.online,
-            createdAt = USER.createdAt,
-            updatedAt = USER.updatedAt,
-            teams = USER.teams,
-        ),
     )
 
     private val pollClosedDto = PollClosedEventDto(
@@ -911,13 +904,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { userDeletedDto.user.toDomain() },
     )
 
-    private val userUpdated = UserUpdatedEvent(
-        type = userUpdatedDto.type,
-        createdAt = userUpdatedDto.created_at.date,
-        rawCreatedAt = userUpdatedDto.created_at.rawDate,
-        user = with(domainMapping) { userUpdatedDto.user.toDomain() },
-    )
-
     private val pollClosed = PollClosedEvent(
         type = pollClosedDto.type,
         createdAt = pollClosedDto.created_at.date,
@@ -1126,7 +1112,6 @@ internal object EventMappingTestArguments {
         Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
         Arguments.of(userDeletedDto, userDeleted),
-        Arguments.of(userUpdatedDto, userUpdated),
         Arguments.of(pollClosedDto, pollClosed),
         Arguments.of(pollDeletedDto, pollDeleted),
         Arguments.of(pollUpdatedDto, pollUpdated),
@@ -1525,6 +1510,19 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val userUpdatedGenerated = io.getstream.chat.android.network.models.UserUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.USER_UPDATED,
+        user = SLIM_PRIVACY_USER,
+    )
+
+    private val userUpdatedExpected = UserUpdatedEvent(
+        type = EventType.USER_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = with(domainMapping) { SLIM_PRIVACY_USER.toDomain() },
+    )
+
     private val draftUpdatedGenerated = io.getstream.chat.android.network.models.DraftUpdatedEvent(
         createdAt = DATE,
         type = EventType.DRAFT_MESSAGE_UPDATED,
@@ -1676,5 +1674,6 @@ internal object EventMappingTestArguments {
         Arguments.of(channelTruncatedGenerated, DATE_STRING, channelTruncatedExpected),
         Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
         Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
+        Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),
     )
 }

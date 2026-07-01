@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
@@ -148,6 +147,7 @@ import io.getstream.chat.android.network.models.ChannelDeletedEvent as Generated
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
+import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
@@ -191,6 +191,7 @@ internal class EventMapping(
         is GeneratedChannelTruncatedEvent -> toDomain(rawCreatedAt)
         is GeneratedDraftUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedDraftDeletedEvent -> toDomain(rawCreatedAt)
+        is GeneratedUserUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -233,7 +234,6 @@ internal class EventMapping(
             is ReactionUpdateEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is UserDeletedEventDto -> toDomain()
-            is UserUpdatedEventDto -> toDomain()
             is PollClosedEventDto -> toDomain()
             is PollDeletedEventDto -> toDomain()
             is PollUpdatedEventDto -> toDomain()
@@ -935,14 +935,11 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [UserUpdatedEventDto] to [UserUpdatedEvent].
-     */
-    private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent = with(domainMapping) {
+    private fun GeneratedUserUpdatedEvent.toDomain(rawCreatedAt: String?): UserUpdatedEvent = with(domainMapping) {
         UserUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
             user = user.toDomain(),
         )
     }

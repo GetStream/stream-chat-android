@@ -262,13 +262,6 @@ internal data class GlobalUserUnbannedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class UserUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: io.getstream.chat.android.network.models.UserResponsePrivacyFields,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class PollUpdatedEventDto(
     val type: String,
     val cid: String,
