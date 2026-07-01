@@ -53,8 +53,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
@@ -453,12 +451,6 @@ internal object EventMappingTestArguments {
         rawData = emptyMap<String, String>(),
     )
 
-    private val userDeletedDto = UserDeletedEventDto(
-        type = EventType.USER_DELETED,
-        created_at = EXACT_DATE,
-        user = USER,
-    )
-
     private val pollClosedDto = PollClosedEventDto(
         type = EventType.POLL_CLOSED,
         created_at = EXACT_DATE,
@@ -553,16 +545,6 @@ internal object EventMappingTestArguments {
         message_id = MESSAGE.id,
         user_id = USER.id,
         reminder = REMINDER,
-    )
-
-    private val userMessagesDeletedEventDto = UserMessagesDeletedEventDto(
-        type = EventType.USER_MESSAGES_DELETED,
-        created_at = EXACT_DATE,
-        user = USER,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        hard_delete = HARD_DELETE,
     )
 
     private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
@@ -869,13 +851,6 @@ internal object EventMappingTestArguments {
         rawData = unknownDto.rawData,
     )
 
-    private val userDeleted = UserDeletedEvent(
-        type = userDeletedDto.type,
-        createdAt = userDeletedDto.created_at.date,
-        rawCreatedAt = userDeletedDto.created_at.rawDate,
-        user = with(domainMapping) { userDeletedDto.user.toDomain() },
-    )
-
     private val pollClosed = PollClosedEvent(
         type = pollClosedDto.type,
         createdAt = pollClosedDto.created_at.date,
@@ -1037,17 +1012,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { ioIndicatorClearDto.user.toDomain() },
     )
 
-    private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
-        type = userMessagesDeletedEventDto.type,
-        createdAt = userMessagesDeletedEventDto.created_at.date,
-        rawCreatedAt = userMessagesDeletedEventDto.created_at.rawDate,
-        user = with(domainMapping) { userMessagesDeletedEventDto.user.toDomain() },
-        cid = userMessagesDeletedEventDto.cid,
-        channelType = userMessagesDeletedEventDto.channel_type,
-        channelId = userMessagesDeletedEventDto.channel_id,
-        hardDelete = userMessagesDeletedEventDto.hard_delete == true,
-    )
-
     // END: Domain models
 
     /**
@@ -1081,7 +1045,6 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
         Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
-        Arguments.of(userDeletedDto, userDeleted),
         Arguments.of(pollClosedDto, pollClosed),
         Arguments.of(pollDeletedDto, pollDeleted),
         Arguments.of(pollUpdatedDto, pollUpdated),
@@ -1096,7 +1059,6 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
         Arguments.of(ioIndicatorClearDto, aiIndicatorClear),
-        Arguments.of(userMessagesDeletedEventDto, userMessagesDeletedEvent),
     )
 
     private val messageNewGenerated = io.getstream.chat.android.network.models.MessageNewEvent(
@@ -1480,6 +1442,46 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val userDeletedGenerated = io.getstream.chat.android.network.models.UserDeletedEvent(
+        createdAt = DATE,
+        type = EventType.USER_DELETED,
+        user = SLIM_USER,
+        deleteConversation = "",
+        deleteConversationChannels = false,
+        deleteMessages = "",
+        deleteUser = "",
+        hardDelete = false,
+        markMessagesDeleted = false,
+    )
+
+    private val userDeletedExpected = UserDeletedEvent(
+        type = EventType.USER_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+    )
+
+    private val userMessagesDeletedGenerated = io.getstream.chat.android.network.models.UserMessagesDeletedEvent(
+        createdAt = DATE,
+        type = EventType.USER_MESSAGES_DELETED,
+        user = SLIM_USER,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        hardDelete = HARD_DELETE,
+    )
+
+    private val userMessagesDeletedExpected = UserMessagesDeletedEvent(
+        type = EventType.USER_MESSAGES_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        hardDelete = HARD_DELETE,
+    )
+
     private val notificationMutesUpdatedGenerated = io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent(
         createdAt = DATE,
         type = EventType.NOTIFICATION_MUTES_UPDATED,
@@ -1673,5 +1675,7 @@ internal object EventMappingTestArguments {
         Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),
         Arguments.of(notificationMutesUpdatedGenerated, DATE_STRING, notificationMutesUpdatedExpected),
         Arguments.of(notificationChannelMutesUpdatedGenerated, DATE_STRING, notificationChannelMutesUpdatedExpected),
+        Arguments.of(userDeletedGenerated, DATE_STRING, userDeletedExpected),
+        Arguments.of(userMessagesDeletedGenerated, DATE_STRING, userMessagesDeletedExpected),
     )
 }

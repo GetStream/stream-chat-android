@@ -55,8 +55,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
@@ -99,7 +97,6 @@ internal class EventDtoAdapter(
     private val notificationChannelDeletedEventAdapter = moshi.adapter(NotificationChannelDeletedEventDto::class.java)
     private val notificationChannelTruncatedEventAdapter =
         moshi.adapter(NotificationChannelTruncatedEventDto::class.java)
-    private val userDeletedEventAdapter = moshi.adapter(UserDeletedEventDto::class.java)
     private val channelUserBannedEventAdapter = moshi.adapter(ChannelUserBannedEventDto::class.java)
     private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
@@ -115,7 +112,6 @@ internal class EventDtoAdapter(
     private val reminderUpdatedEventAdapter = moshi.adapter(ReminderUpdatedEventDto::class.java)
     private val reminderDeletedEventAdapter = moshi.adapter(ReminderDeletedEventDto::class.java)
     private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
-    private val userMessagesDeletedEventAdapter = moshi.adapter(UserMessagesDeletedEventDto::class.java)
     private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
     private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
     private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
@@ -151,7 +147,6 @@ internal class EventDtoAdapter(
             EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> notificationRemovedFromChannelEventAdapter
             EventType.NOTIFICATION_CHANNEL_DELETED -> notificationChannelDeletedEventAdapter
             EventType.NOTIFICATION_CHANNEL_TRUNCATED -> notificationChannelTruncatedEventAdapter
-            EventType.USER_DELETED -> userDeletedEventAdapter
             EventType.USER_BANNED -> when {
                 map.containsKey("cid") -> channelUserBannedEventAdapter
                 else -> globalUserBannedEventAdapter
@@ -160,7 +155,6 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> channelUserUnbannedEventAdapter
                 else -> globalUserUnbannedEventAdapter
             }
-            EventType.USER_MESSAGES_DELETED -> userMessagesDeletedEventAdapter
             EventType.POLL_UPDATED -> pollUpdatedEventAdapter
             EventType.POLL_DELETED -> pollDeletedEventAdapter
             EventType.POLL_CLOSED -> pollClosedEventAdapter

@@ -224,13 +224,6 @@ internal data class GlobalUserBannedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class UserDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ChannelUserUnbannedEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -378,17 +371,6 @@ internal data class AIIndicatorStopEventDto(
     val cid: String,
     val user: DownstreamUserDto,
     val created_at: ExactDate,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserMessagesDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String?,
-    val channel_type: String?,
-    val channel_id: String?,
-    val hard_delete: Boolean?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
