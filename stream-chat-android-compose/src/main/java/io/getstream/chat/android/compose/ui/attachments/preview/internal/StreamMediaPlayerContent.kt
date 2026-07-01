@@ -101,10 +101,10 @@ internal fun StreamMediaPlayerContent(
     }
     // Prepare media
     LaunchedEffect(player, assetUrl) {
-        if (player != null && assetUrl != null) {
-            player?.setMediaItem(MediaItem.fromUri(assetUrl))
-            player?.prepare()
-            player?.playWhenReady = playWhenReady
+        val activePlayer = player
+        if (activePlayer != null && assetUrl != null) {
+            activePlayer.prepareIfNeeded(assetUrl)
+            activePlayer.playWhenReady = playWhenReady
         }
     }
     // Draw player
@@ -181,6 +181,27 @@ internal fun MediaThumbnail(
             contentDescription = stringResource(R.string.stream_compose_cd_play_button),
         )
     }
+}
+
+/**
+ * Sets [assetUrl] on this player and prepares it, unless the player is already prepared with the
+ * same URL.
+ *
+ * The prepare-effects that call this can fire more than once for the same media (e.g. during
+ * initial composition, when the effect keyed on the player and page runs again as those settle).
+ * Re-preparing an already-loaded URL starts a second, concurrent load of the same asset; when the
+ * video disk cache is enabled, the two loads contend on the same cache entry and can leave the
+ * file's head uncached, which breaks offline playback. Skipping the redundant prepare avoids that
+ * while still (re)preparing whenever the URL actually changes or the player was recreated.
+ *
+ * @param assetUrl The URL to play.
+ * @param startPositionMs Position to start playback from, in milliseconds.
+ */
+internal fun Player.prepareIfNeeded(assetUrl: String, startPositionMs: Long = 0L) {
+    val alreadyPrepared = currentMediaItem?.localConfiguration?.uri?.toString() == assetUrl
+    if (alreadyPrepared) return
+    setMediaItem(MediaItem.fromUri(assetUrl), startPositionMs)
+    prepare()
 }
 
 /**
