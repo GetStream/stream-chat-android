@@ -361,7 +361,7 @@ internal class DomainMapping(
             image = image ?: "",
             role = role,
             invisible = false,
-            language = language,
+            language = language.orEmpty(),
             banned = banned,
             online = online,
             createdAt = createdAt,
@@ -383,7 +383,7 @@ internal class DomainMapping(
             image = image ?: "",
             role = role,
             invisible = false,
-            language = language,
+            language = language.orEmpty(),
             banned = banned,
             online = online,
             createdAt = createdAt,
@@ -445,7 +445,7 @@ internal class DomainMapping(
             role = role,
             invisible = invisible ?: false,
             privacySettings = privacySettings?.toDomain(),
-            language = language,
+            language = language.orEmpty(),
             banned = banned,
             online = online,
             createdAt = createdAt,
@@ -658,7 +658,7 @@ internal class DomainMapping(
     internal fun String?.toVotingVisibility(): VotingVisibility = when (this) {
         null,
         "public",
-            -> VotingVisibility.PUBLIC
+        -> VotingVisibility.PUBLIC
 
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
@@ -881,7 +881,7 @@ internal class DomainMapping(
      */
     internal fun DownstreamThreadDto.toDomain(): Thread =
         Thread(
-           activeParticipantCount = activeParticipantCount,
+            activeParticipantCount = activeParticipantCount,
             cid = channelCid,
             channel = channel?.toDomain(),
             parentMessageId = parentMessageId,

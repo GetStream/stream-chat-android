@@ -18,14 +18,19 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport",
+    "UnusedImport"
 )
 
 package io.getstream.chat.android.network.models
 
-import com.squareup.moshi.Json
 import kotlin.collections.List
 import kotlin.collections.Map
+import com.squareup.moshi.FromJson
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.ToJson
 
 /**
  *
@@ -41,9 +46,6 @@ data class UserResponseCommonFields(
 
     @Json(name = "id")
     val id: kotlin.String,
-
-    @Json(name = "language")
-    val language: kotlin.String,
 
     @Json(name = "online")
     val online: kotlin.Boolean,
@@ -75,6 +77,9 @@ data class UserResponseCommonFields(
     @Json(name = "image")
     val image: kotlin.String? = null,
 
+    @Json(name = "language")
+    val language: kotlin.String? = null,
+
     @Json(name = "last_active")
     val lastActive: java.util.Date? = null,
 
@@ -85,5 +90,5 @@ data class UserResponseCommonFields(
     val revokeTokensIssuedBefore: java.util.Date? = null,
 
     @Json(name = "teams_role")
-    val teamsRole: kotlin.collections.Map<kotlin.String, kotlin.String>? = emptyMap(),
+    val teamsRole: kotlin.collections.Map<kotlin.String, kotlin.String>? = emptyMap()
 )

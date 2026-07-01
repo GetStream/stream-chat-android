@@ -42,9 +42,6 @@ data class UserResponse(
     @Json(name = "id")
     val id: kotlin.String,
 
-    @Json(name = "language")
-    val language: kotlin.String,
-
     @Json(name = "online")
     val online: kotlin.Boolean,
 
@@ -74,6 +71,9 @@ data class UserResponse(
 
     @Json(name = "image")
     val image: kotlin.String? = null,
+
+    @Json(name = "language")
+    val language: kotlin.String? = null,
 
     @Json(name = "last_active")
     val lastActive: java.util.Date? = null,

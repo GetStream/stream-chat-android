@@ -42,9 +42,6 @@ data class UserResponsePrivacyFields(
     @Json(name = "id")
     val id: kotlin.String,
 
-    @Json(name = "language")
-    val language: kotlin.String,
-
     @Json(name = "online")
     val online: kotlin.Boolean,
 
@@ -77,6 +74,9 @@ data class UserResponsePrivacyFields(
 
     @Json(name = "invisible")
     val invisible: kotlin.Boolean? = null,
+
+    @Json(name = "language")
+    val language: kotlin.String? = null,
 
     @Json(name = "last_active")
     val lastActive: java.util.Date? = null,
