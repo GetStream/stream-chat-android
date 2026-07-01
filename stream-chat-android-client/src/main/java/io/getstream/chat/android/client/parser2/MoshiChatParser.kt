@@ -74,6 +74,8 @@ import io.getstream.chat.android.network.models.ChannelDeletedEvent as Generated
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -236,6 +238,8 @@ internal class MoshiChatParser(
             EventType.DRAFT_MESSAGE_UPDATED -> moshi.adapter(GeneratedDraftUpdatedEvent::class.java).fromJson(raw)
             EventType.DRAFT_MESSAGE_DELETED -> moshi.adapter(GeneratedDraftDeletedEvent::class.java).fromJson(raw)
             EventType.USER_UPDATED -> moshi.adapter(GeneratedUserUpdatedEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_MUTES_UPDATED -> moshi.adapter(GeneratedNotificationMutesUpdatedEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> moshi.adapter(GeneratedNotificationChannelMutesUpdatedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null

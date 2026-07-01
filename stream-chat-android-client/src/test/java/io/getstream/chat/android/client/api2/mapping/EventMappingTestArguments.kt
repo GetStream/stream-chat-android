@@ -35,14 +35,12 @@ import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDt
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
@@ -339,12 +337,6 @@ internal object EventMappingTestArguments {
         channel = CHANNEL,
     )
 
-    private val notificationChannelMutesUpdatesDto = NotificationChannelMutesUpdatedEventDto(
-        type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
-        created_at = EXACT_DATE,
-        me = OWN_USER,
-    )
-
     private val notificationChannelTruncatedDto = NotificationChannelTruncatedEventDto(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
         created_at = EXACT_DATE,
@@ -430,12 +422,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         thread = THREAD_INFO,
-    )
-
-    private val notificationMutesUpdatedDto = NotificationMutesUpdatedEventDto(
-        type = EventType.NOTIFICATION_MUTES_UPDATED,
-        created_at = EXACT_DATE,
-        me = OWN_USER,
     )
 
     private val notificationRemovedFromChannelDto = NotificationRemovedFromChannelEventDto(
@@ -740,13 +726,6 @@ internal object EventMappingTestArguments {
         },
     )
 
-    private val notificationChannelMutesUpdates = NotificationChannelMutesUpdatedEvent(
-        type = notificationChannelMutesUpdatesDto.type,
-        createdAt = notificationChannelMutesUpdatesDto.created_at.date,
-        rawCreatedAt = notificationChannelMutesUpdatesDto.created_at.rawDate,
-        me = with(domainMapping) { notificationChannelMutesUpdatesDto.me.toDomain() },
-    )
-
     private val notificationChannelTruncated = NotificationChannelTruncatedEvent(
         type = notificationChannelTruncatedDto.type,
         createdAt = notificationChannelTruncatedDto.created_at.date,
@@ -854,13 +833,6 @@ internal object EventMappingTestArguments {
         channelType = threadUpdatedDto.channel_type,
         channelId = threadUpdatedDto.channel_id,
         thread = with(domainMapping) { threadUpdatedDto.thread.toDomain() },
-    )
-
-    private val notificationMutesUpdated = NotificationMutesUpdatedEvent(
-        type = notificationMutesUpdatedDto.type,
-        createdAt = notificationMutesUpdatedDto.created_at.date,
-        rawCreatedAt = notificationMutesUpdatedDto.created_at.rawDate,
-        me = with(domainMapping) { notificationMutesUpdatedDto.me.toDomain() },
     )
 
     private val notificationRemovedFromChannel = NotificationRemovedFromChannelEvent(
@@ -1098,7 +1070,6 @@ internal object EventMappingTestArguments {
         Arguments.of(healthDto, health),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
-        Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
         Arguments.of(notificationChannelTruncatedDto, notificationChannelTruncated),
         Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
         Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),
@@ -1107,7 +1078,6 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationMessageNewDto, notificationMessageNew),
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
         Arguments.of(threadUpdatedDto, threadUpdated),
-        Arguments.of(notificationMutesUpdatedDto, notificationMutesUpdated),
         Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
         Arguments.of(reactionUpdateDto, reactionUpdate),
         Arguments.of(unknownDto, unknown),
@@ -1510,6 +1480,32 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val notificationMutesUpdatedGenerated = io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_MUTES_UPDATED,
+        me = OWN_USER,
+    )
+
+    private val notificationMutesUpdatedExpected = NotificationMutesUpdatedEvent(
+        type = EventType.NOTIFICATION_MUTES_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        me = with(domainMapping) { OWN_USER.toDomain() },
+    )
+
+    private val notificationChannelMutesUpdatedGenerated = io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
+        me = OWN_USER,
+    )
+
+    private val notificationChannelMutesUpdatedExpected = NotificationChannelMutesUpdatedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        me = with(domainMapping) { OWN_USER.toDomain() },
+    )
+
     private val userUpdatedGenerated = io.getstream.chat.android.network.models.UserUpdatedEvent(
         createdAt = DATE,
         type = EventType.USER_UPDATED,
@@ -1675,5 +1671,7 @@ internal object EventMappingTestArguments {
         Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
         Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
         Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),
+        Arguments.of(notificationMutesUpdatedGenerated, DATE_STRING, notificationMutesUpdatedExpected),
+        Arguments.of(notificationChannelMutesUpdatedGenerated, DATE_STRING, notificationChannelMutesUpdatedExpected),
     )
 }

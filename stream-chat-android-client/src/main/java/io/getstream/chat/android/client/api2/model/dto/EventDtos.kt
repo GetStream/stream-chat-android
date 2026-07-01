@@ -80,13 +80,6 @@ internal data class NotificationChannelDeletedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationChannelMutesUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val me: OwnUserResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationChannelTruncatedEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -185,13 +178,6 @@ internal data class NotificationThreadMessageNewEventDto(
     val created_at: ExactDate,
     val unread_threads: Int,
     val unread_thread_messages: Int,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationMutesUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val me: OwnUserResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
