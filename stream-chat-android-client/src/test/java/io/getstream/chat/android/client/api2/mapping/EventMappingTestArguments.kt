@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
@@ -185,7 +184,7 @@ internal object EventMappingTestArguments {
         image = SLIM_USER.image ?: "",
         role = SLIM_USER.role,
         invisible = false,
-        language = SLIM_USER.language,
+        language = SLIM_USER.language.orEmpty(),
         banned = SLIM_USER.banned,
         online = SLIM_USER.online,
         createdAt = SLIM_USER.createdAt,
@@ -231,7 +230,7 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
+    private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         type = EventType.DRAFT_MESSAGE_UPDATED,
         created_at = EXACT_DATE,
         draft = DRAFT,
@@ -373,17 +372,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         created_at = EXACT_DATE,
         connection_id = CONNECTION_ID,
     )
-
-    private val memberUpdatedDto = MemberUpdatedEventDto(
-        type = EventType.MEMBER_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        member = MEMBER,
-    )
-
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
@@ -887,17 +875,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         connectionId = healthDto.connection_id,
     )
 
-    private val memberUpdated = MemberUpdatedEvent(
-        type = memberUpdatedDto.type,
-        createdAt = memberUpdatedDto.created_at.date,
-        rawCreatedAt = memberUpdatedDto.created_at.rawDate,
-        cid = memberUpdatedDto.cid,
-        channelType = memberUpdatedDto.channel_type,
-        channelId = memberUpdatedDto.channel_id,
-        user = with(domainMapping) { memberUpdatedDto.user.toDomain() },
-        member = with(domainMapping) { memberUpdatedDto.member.toDomain() },
-    )
-
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
         type = notificationAddedToChannelDto.type,
         createdAt = notificationAddedToChannelDto.created_at.date,
@@ -1321,7 +1298,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(globalUserBannedDto, globalUserBanned),
         Arguments.of(globalUserUnbannedDto, globalUserUnbanned),
         Arguments.of(healthDto, health),
-        Arguments.of(memberUpdatedDto, memberUpdated),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
@@ -1632,6 +1608,28 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         member = with(domainMapping) { MEMBER.toDomain() },
     )
 
+    private val memberUpdatedGenerated = io.getstream.chat.android.network.models.MemberUpdatedEvent(
+        createdAt = DATE,
+        type = EventType.MEMBER_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        member = MEMBER,
+        user = SLIM_USER,
+    )
+
+    private val memberUpdatedExpected = MemberUpdatedEvent(
+        type = EventType.MEMBER_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        member = with(domainMapping) { MEMBER.toDomain() },
+    )
+
     private val memberRemovedGenerated = io.getstream.chat.android.network.models.MemberRemovedEvent(
         createdAt = DATE,
         type = EventType.MEMBER_REMOVED,
@@ -1690,5 +1688,6 @@ private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
         Arguments.of(messageDeliveredGenerated, DATE_STRING, messageDeliveredExpected),
         Arguments.of(memberAddedGenerated, DATE_STRING, memberAddedExpected),
         Arguments.of(memberRemovedGenerated, DATE_STRING, memberRemovedExpected),
+        Arguments.of(memberUpdatedGenerated, DATE_STRING, memberUpdatedExpected),
     )
 }

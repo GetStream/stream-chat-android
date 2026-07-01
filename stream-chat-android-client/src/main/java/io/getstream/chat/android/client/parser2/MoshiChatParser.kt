@@ -63,9 +63,13 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
-import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
+import okio.Buffer
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
+import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
@@ -74,9 +78,6 @@ import io.getstream.chat.android.network.models.ReactionDeletedEvent as Generate
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
-import okio.Buffer
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class MoshiChatParser(
     private val eventMapping: EventMapping,
@@ -214,6 +215,7 @@ internal class MoshiChatParser(
             EventType.MESSAGE_DELIVERED -> moshi.adapter(GeneratedMessageDeliveredEvent::class.java).fromJson(raw)
             EventType.MEMBER_ADDED -> moshi.adapter(GeneratedMemberAddedEvent::class.java).fromJson(raw)
             EventType.MEMBER_REMOVED -> moshi.adapter(GeneratedMemberRemovedEvent::class.java).fromJson(raw)
+            EventType.MEMBER_UPDATED -> moshi.adapter(GeneratedMemberUpdatedEvent::class.java).fromJson(raw)
             EventType.MESSAGE_READ -> moshi.adapter(GeneratedMessageReadEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MARK_READ -> moshi.adapter(GeneratedNotificationMarkReadEvent::class.java).fromJson(raw)
             else -> null
