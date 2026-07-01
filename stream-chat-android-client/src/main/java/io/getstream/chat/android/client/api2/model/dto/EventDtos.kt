@@ -171,16 +171,6 @@ internal data class GlobalUserUnbannedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationReminderDueEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val message_id: String,
-    val user_id: String,
-    val cid: String,
-    val reminder: DownstreamReminderDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,

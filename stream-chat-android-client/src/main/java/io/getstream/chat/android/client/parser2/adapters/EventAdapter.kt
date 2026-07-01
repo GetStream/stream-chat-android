@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAccepte
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.models.EventType
@@ -76,7 +75,6 @@ internal class EventDtoAdapter(
     private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
     private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
-    private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -110,7 +108,6 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> channelUserUnbannedEventAdapter
                 else -> globalUserUnbannedEventAdapter
             }
-            EventType.NOTIFICATION_REMINDER_DUE -> notificationReminderDueEventAdapter
             else -> return null
         }
 
