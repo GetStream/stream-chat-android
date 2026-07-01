@@ -18,9 +18,6 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
@@ -132,35 +129,38 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.WSClientEvent
 import java.util.Date
-import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
-import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
-import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
-import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
+import io.getstream.chat.android.network.models.AIIndicatorClearEvent as GeneratedAIIndicatorClearEvent
+import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
+import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
+import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
-import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
-import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
-import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
-import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
-import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
-import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
-import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
-import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
-import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
+import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
+import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
-import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
-import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
+import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
 import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
+import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
+import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
+import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
 import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
+import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
+import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
+import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
+import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
+import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
+import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
 @Suppress("LargeClass")
 internal class EventMapping(
@@ -199,6 +199,9 @@ internal class EventMapping(
         is GeneratedReminderCreatedEvent -> toDomain(rawCreatedAt)
         is GeneratedReminderUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedReminderDeletedEvent -> toDomain(rawCreatedAt)
+        is GeneratedAIIndicatorUpdateEvent -> toDomain(rawCreatedAt)
+        is GeneratedAIIndicatorClearEvent -> toDomain(rawCreatedAt)
+        is GeneratedAIIndicatorStopEvent -> toDomain(rawCreatedAt)
         is GeneratedMessageReadEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationMarkReadEvent -> toDomain(rawCreatedAt)
         else -> error("Unmapped generated event ${this::class.simpleName}")
@@ -246,9 +249,6 @@ internal class EventMapping(
             is AnswerCastedEventDto -> toDomain()
             is VoteRemovedEventDto -> toDomain()
             is NotificationReminderDueEventDto -> toDomain()
-            is AIIndicatorUpdatedEventDto -> toDomain()
-            is AIIndicatorClearEventDto -> toDomain()
-            is AIIndicatorStopEventDto -> toDomain()
         }
     }
 
@@ -1180,53 +1180,47 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [AIIndicatorUpdatedEventDto] to [AIIndicatorUpdatedEvent].
-     */
-    private fun AIIndicatorUpdatedEventDto.toDomain(): AIIndicatorUpdatedEvent = with(domainMapping) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        return AIIndicatorUpdatedEvent(
+    private fun GeneratedAIIndicatorUpdateEvent.toDomain(rawCreatedAt: String?): AIIndicatorUpdatedEvent = with(domainMapping) {
+        val safeCid = cid.orEmpty()
+        val (parsedType, parsedId) = safeCid.cidToTypeAndId()
+        AIIndicatorUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            user = user.toDomain(),
-            channelType = channelType,
-            channelId = channelId,
-            aiState = ai_state,
-            messageId = message_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            cid = safeCid,
+            user = user?.toDomain() ?: User(),
+            channelType = channelType ?: parsedType,
+            channelId = channelId ?: parsedId,
+            aiState = aiState,
+            messageId = messageId,
         )
     }
 
-    /**
-     * Transforms [AIIndicatorClearEventDto] to [AIIndicatorClearEvent].
-     */
-    private fun AIIndicatorClearEventDto.toDomain(): AIIndicatorClearEvent = with(domainMapping) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        return AIIndicatorClearEvent(
+    private fun GeneratedAIIndicatorClearEvent.toDomain(rawCreatedAt: String?): AIIndicatorClearEvent = with(domainMapping) {
+        val safeCid = cid.orEmpty()
+        val (parsedType, parsedId) = safeCid.cidToTypeAndId()
+        AIIndicatorClearEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channelType,
-            channelId = channelId,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            user = user?.toDomain() ?: User(),
+            cid = safeCid,
+            channelType = channelType ?: parsedType,
+            channelId = channelId ?: parsedId,
         )
     }
 
-    /**
-     * Transforms [AIIndicatorStopEventDto] to [AIIndicatorStopEvent].
-     */
-    private fun AIIndicatorStopEventDto.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        return AIIndicatorStopEvent(
+    private fun GeneratedAIIndicatorStopEvent.toDomain(rawCreatedAt: String?): AIIndicatorStopEvent = with(domainMapping) {
+        val safeCid = cid.orEmpty()
+        val (parsedType, parsedId) = safeCid.cidToTypeAndId()
+        AIIndicatorStopEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            user = user.toDomain(),
-            channelType = channelType,
-            channelId = channelId,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            cid = safeCid,
+            user = user?.toDomain() ?: User(),
+            channelType = channelType ?: parsedType,
+            channelId = channelId ?: parsedId,
         )
     }
 

@@ -67,5 +67,4 @@ internal object MemberDtoTestData {
         banned = false,
         custom = emptyMap(),
     )
-
 }

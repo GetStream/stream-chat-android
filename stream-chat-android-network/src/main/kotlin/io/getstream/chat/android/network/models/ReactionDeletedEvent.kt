@@ -18,26 +18,21 @@
     "ArrayInDataClass",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "UnusedImport",
 )
 
 package io.getstream.chat.android.network.models
 
+import com.squareup.moshi.Json
 import kotlin.collections.List
 import kotlin.collections.Map
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
-import com.squareup.moshi.ToJson
 
 /**
  * Emitted when a reaction is deleted from a message.
  */
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-data class ReactionDeletedEvent (
+data class ReactionDeletedEvent(
     @Json(name = "created_at")
     val createdAt: java.util.Date,
 
@@ -87,16 +82,15 @@ data class ReactionDeletedEvent (
     val reaction: io.getstream.chat.android.network.models.ReactionResponse? = null,
 
     @Json(name = "user")
-    val user: io.getstream.chat.android.network.models.UserResponseCommonFields? = null
-)
-: io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent
-{
-    
+    val user: io.getstream.chat.android.network.models.UserResponseCommonFields? = null,
+) :
+    io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent {
+
     override fun getWSClientEventType(): kotlin.String {
         return type
     }
 
     override fun getWSEventType(): kotlin.String {
         return type
-    }    
+    }
 }

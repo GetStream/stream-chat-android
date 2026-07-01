@@ -318,32 +318,6 @@ internal data class NotificationReminderDueEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class AIIndicatorUpdatedEventDto(
-    val type: String,
-    val ai_state: String,
-    val cid: String,
-    val user: DownstreamUserDto,
-    val created_at: ExactDate,
-    val message_id: String,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class AIIndicatorClearEventDto(
-    val type: String,
-    val cid: String,
-    val user: DownstreamUserDto,
-    val created_at: ExactDate,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class AIIndicatorStopEventDto(
-    val type: String,
-    val cid: String,
-    val user: DownstreamUserDto,
-    val created_at: ExactDate,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,

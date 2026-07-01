@@ -52,6 +52,9 @@ data class AIIndicatorStopEvent(
 
     @Json(name = "received_at")
     val receivedAt: java.util.Date? = null,
+
+    @Json(name = "user")
+    val user: io.getstream.chat.android.network.models.UserResponseCommonFields? = null,
 ) :
     io.getstream.chat.android.network.models.WSClientEvent, io.getstream.chat.android.network.models.WSEvent {
 

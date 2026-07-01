@@ -22,9 +22,6 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
@@ -106,9 +103,6 @@ internal class EventDtoAdapter(
     private val answerCastedEventAdapter = moshi.adapter(AnswerCastedEventDto::class.java)
     private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
     private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
-    private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
-    private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
-    private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -162,9 +156,6 @@ internal class EventDtoAdapter(
             }
             EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
             EventType.NOTIFICATION_REMINDER_DUE -> notificationReminderDueEventAdapter
-            EventType.AI_TYPING_INDICATOR_UPDATED -> aiTypingIndicatorUpdatedEventAdapter
-            EventType.AI_TYPING_INDICATOR_CLEAR -> aiTypingIndicatorClearEventAdapter
-            EventType.AI_TYPING_INDICATOR_STOP -> aiTypingIndicatorStopEventAdapter
             else -> return null
         }
 

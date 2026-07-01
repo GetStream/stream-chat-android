@@ -17,9 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
@@ -508,7 +505,6 @@ internal object EventMappingTestArguments {
         poll_vote = POLL_VOTE,
     )
 
-
     private val notificationReminderDueDto = NotificationReminderDueEventDto(
         type = EventType.NOTIFICATION_REMINDER_DUE,
         created_at = EXACT_DATE,
@@ -516,29 +512,6 @@ internal object EventMappingTestArguments {
         message_id = MESSAGE.id,
         user_id = USER.id,
         reminder = REMINDER,
-    )
-
-    private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
-        type = EventType.AI_TYPING_INDICATOR_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        user = USER,
-        message_id = AI_MESSAGE_ID,
-        ai_state = AI_STATE,
-    )
-
-    private val aiIndicatorStopDto = AIIndicatorStopEventDto(
-        type = EventType.AI_TYPING_INDICATOR_STOP,
-        created_at = EXACT_DATE,
-        cid = CID,
-        user = USER,
-    )
-
-    private val ioIndicatorClearDto = AIIndicatorClearEventDto(
-        type = EventType.AI_TYPING_INDICATOR_CLEAR,
-        created_at = EXACT_DATE,
-        cid = CID,
-        user = USER,
     )
 
     // END: DTO Models
@@ -915,38 +888,6 @@ internal object EventMappingTestArguments {
         reminder = with(domainMapping) { notificationReminderDueDto.reminder.toDomain() },
     )
 
-    private val aiIndicatorUpdated = AIIndicatorUpdatedEvent(
-        type = aiIndicatorUpdatedDto.type,
-        createdAt = aiIndicatorUpdatedDto.created_at.date,
-        rawCreatedAt = aiIndicatorUpdatedDto.created_at.rawDate,
-        cid = aiIndicatorUpdatedDto.cid,
-        channelType = aiIndicatorUpdatedDto.cid.split(":").first(),
-        channelId = aiIndicatorUpdatedDto.cid.split(":").last(),
-        user = with(domainMapping) { aiIndicatorUpdatedDto.user.toDomain() },
-        messageId = aiIndicatorUpdatedDto.message_id,
-        aiState = aiIndicatorUpdatedDto.ai_state,
-    )
-
-    private val aiIndicatorStop = AIIndicatorStopEvent(
-        type = aiIndicatorStopDto.type,
-        createdAt = aiIndicatorStopDto.created_at.date,
-        rawCreatedAt = aiIndicatorStopDto.created_at.rawDate,
-        cid = aiIndicatorStopDto.cid,
-        channelType = aiIndicatorStopDto.cid.split(":").first(),
-        channelId = aiIndicatorStopDto.cid.split(":").last(),
-        user = with(domainMapping) { aiIndicatorStopDto.user.toDomain() },
-    )
-
-    private val aiIndicatorClear = AIIndicatorClearEvent(
-        type = ioIndicatorClearDto.type,
-        createdAt = ioIndicatorClearDto.created_at.date,
-        rawCreatedAt = ioIndicatorClearDto.created_at.rawDate,
-        cid = ioIndicatorClearDto.cid,
-        channelType = ioIndicatorClearDto.cid.split(":").first(),
-        channelId = ioIndicatorClearDto.cid.split(":").last(),
-        user = with(domainMapping) { ioIndicatorClearDto.user.toDomain() },
-    )
-
     // END: Domain models
 
     /**
@@ -988,9 +929,6 @@ internal object EventMappingTestArguments {
         Arguments.of(voteRemovedDto, voteRemoved),
         Arguments.of(answerCastedDto, answerCasted),
         Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
-        Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
-        Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
-        Arguments.of(ioIndicatorClearDto, aiIndicatorClear),
     )
 
     private val messageNewGenerated = io.getstream.chat.android.network.models.MessageNewEvent(
@@ -1374,6 +1312,67 @@ internal object EventMappingTestArguments {
         user = SLIM_USER,
     )
 
+    private val aiIndicatorUpdateGenerated = io.getstream.chat.android.network.models.AIIndicatorUpdateEvent(
+        createdAt = DATE,
+        type = EventType.AI_TYPING_INDICATOR_UPDATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        messageId = AI_MESSAGE_ID,
+        aiState = AI_STATE,
+        user = SLIM_USER,
+    )
+
+    private val aiIndicatorUpdatedExpected = AIIndicatorUpdatedEvent(
+        type = EventType.AI_TYPING_INDICATOR_UPDATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+        messageId = AI_MESSAGE_ID,
+        aiState = AI_STATE,
+    )
+
+    private val aiIndicatorClearGenerated = io.getstream.chat.android.network.models.AIIndicatorClearEvent(
+        createdAt = DATE,
+        type = EventType.AI_TYPING_INDICATOR_CLEAR,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+    )
+
+    private val aiIndicatorClearExpected = AIIndicatorClearEvent(
+        type = EventType.AI_TYPING_INDICATOR_CLEAR,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+    )
+
+    private val aiIndicatorStopGenerated = io.getstream.chat.android.network.models.AIIndicatorStopEvent(
+        createdAt = DATE,
+        type = EventType.AI_TYPING_INDICATOR_STOP,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER,
+    )
+
+    private val aiIndicatorStopExpected = AIIndicatorStopEvent(
+        type = EventType.AI_TYPING_INDICATOR_STOP,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+    )
+
     private val reminderCreatedGenerated = io.getstream.chat.android.network.models.ReminderCreatedEvent(
         createdAt = DATE,
         type = EventType.REMINDER_CREATED,
@@ -1675,5 +1674,8 @@ internal object EventMappingTestArguments {
         Arguments.of(reminderCreatedGenerated, DATE_STRING, reminderCreatedExpected),
         Arguments.of(reminderUpdatedGenerated, DATE_STRING, reminderUpdatedExpected),
         Arguments.of(reminderDeletedGenerated, DATE_STRING, reminderDeletedExpected),
+        Arguments.of(aiIndicatorUpdateGenerated, DATE_STRING, aiIndicatorUpdatedExpected),
+        Arguments.of(aiIndicatorClearGenerated, DATE_STRING, aiIndicatorClearExpected),
+        Arguments.of(aiIndicatorStopGenerated, DATE_STRING, aiIndicatorStopExpected),
     )
 }

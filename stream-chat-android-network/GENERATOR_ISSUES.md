@@ -595,3 +595,36 @@ channel gets stripped by visibility filtering, or teach the filter to leave
 proper optional-channel mixin instead of leaning on `omitempty` as a
 spec-only hint.
 
+---
+
+## 22. `AIIndicator*Event` types omit `user` in spec but legacy DTO/domain required it
+
+**Symptom:** Generated `AIIndicatorUpdateEvent`, `AIIndicatorClearEvent`, and
+`AIIndicatorStopEvent` have no `user` field. Legacy hand-written DTOs typed
+`user: DownstreamUserDto` non-null and the domain events declare
+`user: User` non-null. The migration cannot populate the domain `user` from
+the generated event.
+
+**Root cause:** `lib/combined/events/ai_indicator.go` defines each event by
+embedding `ChannelCIDSupportEvent`, whose only user-related field is
+`UserID string \`json:"-"\`` on the base `Event` struct. That tag suppresses
+UserID from the JSON output, so the spec doesn't emit any user property.
+Legacy Android nonetheless expected a full `user` object. Either the wire
+enriches these events with a user via a middleware not visible in the
+struct definition, or legacy AI-indicator parsing quietly failed to
+UnknownEvent when the field was absent.
+
+The `sendEvent` REST probe with `ai_indicator.update` confirms the wire
+carries `"user": {...}` in both the REST echo and the WS broadcast, even
+though the Go struct doesn't declare it.
+
+**Fix status:** Local fix. Commit
+`temp: Add HasOptionalUserCommonFields to AI indicator events` (chat repo
+`chat-openapi-android` branch) embeds `HasOptionalUserCommonFields` on
+each of the three AI indicator Go structs, matching `TypingStartEvent`'s
+pattern. Regenerated `AIIndicator{Update,Clear,Stop}Event.kt` copied into
+`stream-chat-android-network`; mappers now propagate the real user.
+
+**Suggested upstream fix:** Land the same mixin embedding upstream so the
+spec matches what the WS actually delivers.
+
