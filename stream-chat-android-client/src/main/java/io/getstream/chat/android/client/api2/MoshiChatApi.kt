@@ -47,20 +47,15 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
-import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
@@ -169,17 +164,20 @@ import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
+import io.getstream.chat.android.network.models.ChannelInputRequest as GeneratedChannelInputRequest
+import io.getstream.chat.android.network.models.ChannelMemberRequest as GeneratedChannelMemberRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest as GeneratedCreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.EventRequest as GeneratedEventRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
+import io.getstream.chat.android.network.models.MessageRequest as GeneratedMessageRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest as GeneratedPollOptionRequest
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.network.models.SendEventRequest as GeneratedSendEventRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
-import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
+import io.getstream.chat.android.network.models.UpdateChannelRequest as GeneratedUpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest as GeneratedUpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
@@ -1047,9 +1045,9 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = with(dtoMapping) {
-                UpdateChannelRequest(
-                    extraData,
-                    updateMessage?.toDto(),
+                GeneratedUpdateChannelRequest(
+                    data = GeneratedChannelInputRequest(custom = extraData),
+                    message = updateMessage?.toDto(),
                 )
             },
         ).map(this::flattenChannel)
@@ -1107,7 +1105,7 @@ constructor(
         return channelApi.rejectInvite(
             channelType = channelType,
             channelId = channelId,
-            body = RejectInviteRequest(rejectInvite = true),
+            body = GeneratedUpdateChannelRequest(rejectInvite = true),
         ).map(this::flattenChannel)
     }
 
@@ -1119,7 +1117,10 @@ constructor(
         return channelApi.acceptInvite(
             channelType = channelType,
             channelId = channelId,
-            body = AcceptInviteRequest.create(userId = userId, message = message),
+            body = GeneratedUpdateChannelRequest(
+                acceptInvite = true,
+                message = message?.let { GeneratedMessageRequest(text = it) },
+            ),
         ).map(this::flattenChannel)
     }
 
@@ -1188,12 +1189,12 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = with(dtoMapping) {
-                AddMembersRequest(
-                    add_members = members.map { it.toDto() },
+                GeneratedUpdateChannelRequest(
+                    addMembers = members.map { it.toDto() },
                     message = systemMessage?.toDto(),
-                    hide_history = hideHistory,
-                    hide_history_before = hideHistoryBefore,
-                    skip_push = skipPush,
+                    hideHistory = hideHistory,
+                    hideHistoryBefore = hideHistoryBefore,
+                    skipPush = skipPush,
                 )
             },
         ).map(this::flattenChannel)
@@ -1210,10 +1211,10 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = with(dtoMapping) {
-                RemoveMembersRequest(
-                    members,
-                    systemMessage?.toDto(),
-                    skipPush,
+                GeneratedUpdateChannelRequest(
+                    removeMembers = members,
+                    message = systemMessage?.toDto(),
+                    skipPush = skipPush,
                 )
             },
         ).map(this::flattenChannel)
@@ -1230,10 +1231,10 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = with(dtoMapping) {
-                InviteMembersRequest(
-                    members,
-                    systemMessage?.toDto(),
-                    skipPush,
+                GeneratedUpdateChannelRequest(
+                    invites = members.map { GeneratedChannelMemberRequest(userId = it) },
+                    message = systemMessage?.toDto(),
+                    skipPush = skipPush,
                 )
             },
         ).map(this::flattenChannel)
