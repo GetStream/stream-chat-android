@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
@@ -31,6 +30,7 @@ import retrofit2.http.GET
 import retrofit2.http.OPTIONS
 import retrofit2.http.POST
 import retrofit2.http.Query
+import io.getstream.chat.android.network.models.QueryMembersPayload as QueryMembersRequest
 import io.getstream.chat.android.network.models.SearchPayload as SearchMessagesRequest
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse as UnreadDto
 

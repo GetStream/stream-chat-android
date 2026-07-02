@@ -134,6 +134,7 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryMembersPayload as GeneratedQueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
@@ -1552,13 +1553,13 @@ constructor(
         members: List<Member>,
     ): Call<List<Member>> {
         val request = with(dtoMapping) {
-            io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
+            GeneratedQueryMembersPayload(
                 type = channelType,
                 id = channelId,
-                filter_conditions = filter.toMap(),
+                filterConditions = filter.toMap(),
                 offset = offset,
                 limit = limit,
-                sort = sort.toDto(),
+                sort = sort.toSortParams(),
                 members = members.map { it.toDto() },
             )
         }
