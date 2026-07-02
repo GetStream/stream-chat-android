@@ -19,7 +19,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
@@ -235,7 +234,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ConnectedEventDto -> toDomain()
             is ConnectionErrorEventDto -> toDomain()
             is ConnectingEventDto -> toDomain()
             is DisconnectedEventDto -> toDomain()
@@ -337,13 +335,24 @@ internal class EventMapping(
         )
     }
 
-    private fun GeneratedHealthCheckEvent.toDomain(rawCreatedAt: String?): HealthEvent {
-        return HealthEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt.orEmpty(),
-            connectionId = connectionId,
-        )
+    private fun GeneratedHealthCheckEvent.toDomain(rawCreatedAt: String?): ChatEvent = with(domainMapping) {
+        val ownUser = me
+        if (ownUser != null) {
+            ConnectedEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                me = ownUser.toDomain(),
+                connectionId = connectionId,
+            )
+        } else {
+            HealthEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                connectionId = connectionId,
+            )
+        }
     }
 
     /**
@@ -1163,20 +1172,7 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [ConnectedEventDto] to [ConnectedEvent].
-     */
-    private fun ConnectedEventDto.toDomain(): ConnectedEvent = with(domainMapping) {
-        ConnectedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            me = me.toDomain(),
-            connectionId = connection_id,
-        )
-    }
-
-    private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
+private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
         return ConnectionErrorEvent(
             type = type,
             createdAt = created_at.date,

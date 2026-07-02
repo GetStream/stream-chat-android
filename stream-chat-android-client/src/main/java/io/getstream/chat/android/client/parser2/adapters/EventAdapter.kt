@@ -23,7 +23,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
@@ -44,7 +43,6 @@ internal class EventDtoAdapter(
     private val mapAdapter: JsonAdapter<MutableMap<String, Any?>> =
         moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
 
-    private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
@@ -57,10 +55,6 @@ internal class EventDtoAdapter(
         val map: Map<String, Any?> = mapAdapter.fromJson(reader)!!.filterValues { it != null }
 
         val adapter = when (val type = map["type"] as? String) {
-            EventType.HEALTH_CHECK -> when {
-                map.containsKey("me") -> connectedEventAdapter
-                else -> return null
-            }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
             else -> return null
         }

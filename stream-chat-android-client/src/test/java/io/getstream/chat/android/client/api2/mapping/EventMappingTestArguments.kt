@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
@@ -194,13 +193,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val connectedDto = ConnectedEventDto(
-        type = EventType.CONNECTION_CONNECTING,
-        created_at = EXACT_DATE,
-        me = OWN_USER,
-        connection_id = CONNECTION_ID,
-    )
-
     private val connectionErrorDto = ConnectionErrorEventDto(
         type = EventType.CONNECTION_ERROR,
         created_at = EXACT_DATE,
@@ -235,14 +227,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: Domain models
 
-
-    private val connected = ConnectedEvent(
-        type = connectedDto.type,
-        createdAt = connectedDto.created_at.date,
-        rawCreatedAt = connectedDto.created_at.rawDate,
-        me = with(domainMapping) { connectedDto.me.toDomain() },
-        connectionId = connectedDto.connection_id,
-    )
 
     private val connectionError = ConnectionErrorEvent(
         type = connectionErrorDto.type,
@@ -287,7 +271,6 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(connectedDto, connected),
         Arguments.of(connectionErrorDto, connectionError),
         Arguments.of(connectingDto, connecting),
         Arguments.of(disconnectedDto, disconnected),
@@ -830,6 +813,21 @@ internal object EventMappingTestArguments {
         type = EventType.HEALTH_CHECK,
         createdAt = DATE,
         rawCreatedAt = DATE_STRING,
+        connectionId = CONNECTION_ID,
+    )
+
+    private val connectedGenerated = io.getstream.chat.android.network.models.HealthCheckEvent(
+        createdAt = DATE,
+        type = EventType.HEALTH_CHECK,
+        connectionId = CONNECTION_ID,
+        me = OWN_USER,
+    )
+
+    private val connectedExpected = ConnectedEvent(
+        type = EventType.HEALTH_CHECK,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        me = with(domainMapping) { OWN_USER.toDomain() },
         connectionId = CONNECTION_ID,
     )
 
@@ -1631,6 +1629,7 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorClearGenerated, DATE_STRING, aiIndicatorClearExpected),
         Arguments.of(aiIndicatorStopGenerated, DATE_STRING, aiIndicatorStopExpected),
         Arguments.of(healthGenerated, DATE_STRING, healthExpected),
+        Arguments.of(connectedGenerated, DATE_STRING, connectedExpected),
         Arguments.of(pollClosedGenerated, DATE_STRING, pollClosedExpected),
         Arguments.of(pollDeletedGenerated, DATE_STRING, pollDeletedExpected),
         Arguments.of(pollUpdatedGenerated, DATE_STRING, pollUpdatedExpected),
