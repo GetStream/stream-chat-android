@@ -55,8 +55,8 @@ import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadResponse
+import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
+import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
@@ -827,27 +827,30 @@ internal object MoshiChatApiTestArguments {
     private fun threadResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                ThreadResponse(
+                GetThreadResponse(
                     thread = Mother.randomDownstreamThreadDto(),
                     duration = randomString(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun threadInfoResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                ThreadInfoResponse(
+                UpdateThreadPartialResponse(
                     thread = Mother.randomDownstreamThreadInfoDto(),
                     duration = randomString(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ThreadInfoResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(
+            RetroError<UpdateThreadPartialResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
     )
 
     private fun pollResponseArguments() = listOf(

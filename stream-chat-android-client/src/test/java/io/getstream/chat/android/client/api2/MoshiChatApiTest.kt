@@ -82,8 +82,8 @@ import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadResponse
+import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
+import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -2275,7 +2275,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getThreadInput")
-    fun testGetThread(call: RetrofitCall<ThreadResponse>, expected: KClass<*>) = runTest {
+    fun testGetThread(call: RetrofitCall<GetThreadResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ThreadsApi>()
         whenever(api.getThread(any(), any(), any())).doReturn(call)
@@ -2297,7 +2297,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateThreadInput")
-    fun testPartialUpdateThread(call: RetrofitCall<ThreadInfoResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdateThread(call: RetrofitCall<UpdateThreadPartialResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ThreadsApi>()
         whenever(api.partialUpdateThread(any(), any())).doReturn(call)

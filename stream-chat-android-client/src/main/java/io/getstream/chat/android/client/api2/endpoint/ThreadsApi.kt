@@ -19,8 +19,8 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadResponse
+import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
+import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.QueryThreadsRequest
 import retrofit2.http.Body
@@ -52,7 +52,7 @@ internal interface ThreadsApi {
         @Path("message_id") messageId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @QueryMap options: Map<String, String>,
-    ): RetrofitCall<ThreadResponse>
+    ): RetrofitCall<GetThreadResponse>
 
     /**
      * [REST documentation](https://getstream.github.io/protocol/#/product%3Achat/UpdateThreadPartial)
@@ -61,5 +61,5 @@ internal interface ThreadsApi {
     fun partialUpdateThread(
         @Path("message_id") messageId: String,
         @Body body: PartialUpdateThreadRequest,
-    ): RetrofitCall<ThreadInfoResponse>
+    ): RetrofitCall<UpdateThreadPartialResponse>
 }
