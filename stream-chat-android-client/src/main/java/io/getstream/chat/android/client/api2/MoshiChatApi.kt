@@ -67,7 +67,7 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.network.models.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse

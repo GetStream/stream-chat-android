@@ -1135,7 +1135,6 @@ Lio/getstream/chat/android/client/api2/model/requests/UpdateChannelPartialReques
 Lio/getstream/chat/android/client/api2/model/requests/UpdateChannelRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateCooldownRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateMemberPartialRequest;
-Lio/getstream/chat/android/client/api2/model/requests/UpdateUsersRequest;
 Lio/getstream/chat/android/client/api2/model/response/AppDto;
 HSPLio/getstream/chat/android/client/api2/model/response/AppDto;-><init>(Ljava/lang/String;Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;)V
 HSPLio/getstream/chat/android/client/api2/model/response/AppDto;->getFile_upload_config()Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;

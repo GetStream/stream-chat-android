@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
