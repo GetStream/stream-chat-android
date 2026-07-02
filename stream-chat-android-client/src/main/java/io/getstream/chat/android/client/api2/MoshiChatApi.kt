@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesReques
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
@@ -172,10 +171,12 @@ import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteR
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest as GeneratedCreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
+import io.getstream.chat.android.network.models.EventRequest as GeneratedEventRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest as GeneratedPollOptionRequest
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
+import io.getstream.chat.android.network.models.SendEventRequest as GeneratedSendEventRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
@@ -1576,13 +1577,14 @@ constructor(
         channelId: String,
         extraData: Map<Any, Any>,
     ): Call<ChatEvent> {
-        val map = mutableMapOf<Any, Any>("type" to eventType)
-        map.putAll(extraData)
+        val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
         return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
-            request = SendEventRequest(map),
+            request = GeneratedSendEventRequest(
+                event = GeneratedEventRequest(type = eventType, custom = custom),
+            ),
         ).map { response ->
             response.event
         }

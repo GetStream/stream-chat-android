@@ -45,7 +45,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -196,11 +195,13 @@ import io.getstream.chat.android.network.models.ChatPreferencesResponse as Downs
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest as GeneratedCreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
+import io.getstream.chat.android.network.models.EventRequest as GeneratedEventRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest as GeneratedPollOptionRequest
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
+import io.getstream.chat.android.network.models.SendEventRequest as GeneratedSendEventRequest
 import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
@@ -2210,8 +2211,8 @@ internal class MoshiChatApiTest {
         val extraData = emptyMap<Any, Any>()
         val result = sut.sendEvent(eventType, channelType, channelId, extraData).await()
         // then
-        val expectedRequest = SendEventRequest(
-            event = extraData + mapOf("type" to eventType),
+        val expectedRequest = GeneratedSendEventRequest(
+            event = GeneratedEventRequest(type = eventType, custom = emptyMap()),
         )
         result `should be instance of` expected
         verify(api, times(1)).sendEvent(channelType, channelId, expectedRequest)
