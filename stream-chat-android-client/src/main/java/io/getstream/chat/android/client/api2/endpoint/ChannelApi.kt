@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
@@ -71,7 +71,7 @@ internal interface ChannelApi {
     @POST("/channels/read")
     fun markAllRead(
         @Body map: Map<String, String> = emptyMap(),
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/channels/{type}/{id}")
     fun updateChannel(
@@ -157,7 +157,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: HideChannelRequest,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/channels/{type}/{id}/truncate")
     fun truncateChannel(
@@ -179,14 +179,14 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body request: MarkReadRequest,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/channels/{type}/{id}/unread")
     fun markUnread(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body request: MarkUnreadRequest,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/channels/{type}/{id}/show")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
@@ -194,7 +194,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: Map<Any, Any>,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/channels/{type}/{id}/stop-watching")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
@@ -203,7 +203,7 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: Map<Any, Any>,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @GET("/channels/{type}/{id}/pinned_messages")
     fun getPinnedMessages(
@@ -215,5 +215,5 @@ internal interface ChannelApi {
     @POST("/channels/delivered")
     fun markDelivered(
         @Body request: MarkDeliveredRequest,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 }

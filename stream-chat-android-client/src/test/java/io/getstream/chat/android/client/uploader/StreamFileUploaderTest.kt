@@ -20,7 +20,7 @@ import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.Mother.randomUploadFileResponse
 import io.getstream.chat.android.client.api.RetrofitCdnApi
-import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
@@ -203,7 +203,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should call api delete file when deleting file`() {
         whenever(retrofitCdnApi.deleteFile(any(), any(), any())).thenReturn(
-            RetroSuccess(CompletableResponse()).toRetrofitCall(),
+            RetroSuccess(Response(duration = "")).toRetrofitCall(),
         )
 
         streamFileUploader.deleteFile(channelType, channelId, userId, url)
@@ -218,7 +218,7 @@ internal class StreamFileUploaderTest {
     @Test
     fun `Should call api delete image when deleting image`() {
         whenever(retrofitCdnApi.deleteImage(any(), any(), any())).thenReturn(
-            RetroSuccess(CompletableResponse()).toRetrofitCall(),
+            RetroSuccess(Response(duration = "")).toRetrofitCall(),
         )
 
         streamFileUploader.deleteImage(channelType, channelId, userId, url)
@@ -310,7 +310,7 @@ internal class StreamFileUploaderTest {
     fun `Should delete file with url`() {
         val url = randomString()
         whenever(retrofitCdnApi.deleteFile(url = url)) doReturn
-            RetroSuccess(CompletableResponse(duration = randomString())).toRetrofitCall()
+            RetroSuccess(Response(duration = randomString())).toRetrofitCall()
 
         val result = streamFileUploader.deleteFile(url)
 
@@ -321,7 +321,7 @@ internal class StreamFileUploaderTest {
     fun `Should delete image with url`() {
         val url = randomString()
         whenever(retrofitCdnApi.deleteImage(url = url)) doReturn
-            RetroSuccess(CompletableResponse(duration = randomString())).toRetrofitCall()
+            RetroSuccess(Response(duration = randomString())).toRetrofitCall()
 
         val result = streamFileUploader.deleteImage(url)
 

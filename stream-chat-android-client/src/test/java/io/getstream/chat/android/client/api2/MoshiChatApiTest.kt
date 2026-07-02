@@ -53,7 +53,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -263,7 +263,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
-    fun testDeleteDraftMessage(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteDraftMessage(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.deleteDraftMessage(any(), any(), any())).doReturn(call)
@@ -502,7 +502,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#addDeviceInput")
-    fun testAddDevice(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testAddDevice(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<DeviceApi>()
         whenever(api.addDevices(any())).doReturn(call)
@@ -524,7 +524,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteDeviceInput")
-    fun testDeleteDevice(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteDevice(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<DeviceApi>()
         whenever(api.deleteDevice(any())).doReturn(call)
@@ -607,7 +607,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteCurrentUserInput")
-    fun testUnmuteCurrentUser(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testUnmuteCurrentUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ModerationApi>()
         whenever(api.unmuteUser(any())).doReturn(call)
@@ -631,7 +631,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteUserInput")
-    fun testUnmuteUser(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testUnmuteUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ModerationApi>()
         whenever(api.unmuteUser(any())).doReturn(call)
@@ -656,7 +656,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#muteChannelInput")
-    fun testMuteChannel(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testMuteChannel(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ModerationApi>()
         whenever(api.muteChannel(any())).doReturn(call)
@@ -679,7 +679,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteChannelInput")
-    fun testUnmuteChannel(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testUnmuteChannel(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ModerationApi>()
         whenever(api.unmuteChannel(any())).doReturn(call)
@@ -1093,7 +1093,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#banUserInput")
-    fun testBanUser(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testBanUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ModerationApi>()
         whenever(api.banUser(any())).doReturn(call)
@@ -1123,7 +1123,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unbanUserInput")
-    fun testUnbanUser(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testUnbanUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ModerationApi>()
         whenever(api.unbanUser(any(), any(), any(), any())).doReturn(call)
@@ -1225,7 +1225,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#stopWatchingInput")
-    fun testStopWatching(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testStopWatching(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.stopWatching(any(), any(), any(), any())).doReturn(call)
@@ -1313,7 +1313,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#showChannelInput")
-    fun testShowChannel(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testShowChannel(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.showChannel(any(), any(), any())).doReturn(call)
@@ -1332,7 +1332,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#hideChannelInput")
-    fun testHideChannel(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testHideChannel(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.hideChannel(any(), any(), any())).doReturn(call)
@@ -1431,7 +1431,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markReadInput")
-    fun testMarkRead(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testMarkRead(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.markRead(any(), any(), any())).doReturn(call)
@@ -1451,7 +1451,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markDeliveredInput")
-    fun testMarkDelivered(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testMarkDelivered(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.markDelivered(any())).doReturn(call)
@@ -1476,7 +1476,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markThreadReadInput")
-    fun testMarkThreadRead(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testMarkThreadRead(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.markRead(any(), any(), any())).doReturn(call)
@@ -1496,7 +1496,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markUnreadInput")
-    fun testMarkUnread(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testMarkUnread(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.markUnread(any(), any(), any())).doReturn(call)
@@ -1519,7 +1519,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markAllReadInput")
-    fun testMarkAllRead(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testMarkAllRead(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.markAllRead()).doReturn(call)
@@ -2452,7 +2452,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deletePollOptionInput")
-    fun testDeletePollOption(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testDeletePollOption(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<PollsApi>()
         whenever(api.deletePollOption(any(), any())).doReturn(call)
@@ -2582,7 +2582,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deletePollInput")
-    fun testDeletePoll(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testDeletePoll(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<PollsApi>()
         whenever(api.deletePoll(any())).doReturn(call)
@@ -2690,7 +2690,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteReminderInput")
-    fun testDeleteReminder(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteReminder(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.deleteReminder(any())).doReturn(call)
@@ -3151,7 +3151,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteUserGroupInput")
-    fun testDeleteUserGroup(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteUserGroup(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(api.deleteUserGroup(id = any(), teamId = anyOrNull())).doReturn(call)
         val sut = Fixture().withUserGroupApi(api).get()

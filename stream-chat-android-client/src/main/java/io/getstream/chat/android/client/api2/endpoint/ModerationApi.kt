@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
@@ -41,13 +41,13 @@ internal interface ModerationApi {
     fun muteUser(@Body body: MuteUserRequest): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
-    fun unmuteUser(@Body body: MuteUserRequest): RetrofitCall<CompletableResponse>
+    fun unmuteUser(@Body body: MuteUserRequest): RetrofitCall<Response>
 
     @POST("/moderation/mute/channel")
-    fun muteChannel(@Body body: MuteChannelRequest): RetrofitCall<CompletableResponse>
+    fun muteChannel(@Body body: MuteChannelRequest): RetrofitCall<Response>
 
     @POST("/moderation/unmute/channel")
-    fun unmuteChannel(@Body body: MuteChannelRequest): RetrofitCall<CompletableResponse>
+    fun unmuteChannel(@Body body: MuteChannelRequest): RetrofitCall<Response>
 
     @POST("/moderation/flag")
     fun flag(@Body body: FlagRequest): RetrofitCall<FlagResponse>
@@ -56,7 +56,7 @@ internal interface ModerationApi {
     fun unflag(@Body body: Map<String, String>): RetrofitCall<FlagResponse>
 
     @POST("/moderation/ban")
-    fun banUser(@Body body: BanUserRequest): RetrofitCall<CompletableResponse>
+    fun banUser(@Body body: BanUserRequest): RetrofitCall<Response>
 
     @DELETE("/moderation/ban")
     fun unbanUser(
@@ -64,7 +64,7 @@ internal interface ModerationApi {
         @Query("type") channelType: String,
         @Query("id") channelId: String,
         @Query("shadow") shadow: Boolean,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @GET("/query_banned_users")
     fun queryBannedUsers(

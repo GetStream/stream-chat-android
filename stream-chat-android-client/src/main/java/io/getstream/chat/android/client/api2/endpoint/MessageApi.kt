@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
@@ -69,7 +69,7 @@ internal interface MessageApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query("parent_id") parentId: String?,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/drafts/query")
     fun queryDraftMessages(

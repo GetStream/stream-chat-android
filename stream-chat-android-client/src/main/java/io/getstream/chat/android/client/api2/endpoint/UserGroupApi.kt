@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -72,7 +72,7 @@ internal interface UserGroupApi {
     fun deleteUserGroup(
         @Path("id") id: String,
         @Query("team_id") teamId: String? = null,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/usergroups/{id}/members")
     fun addUserGroupMembers(
