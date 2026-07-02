@@ -647,7 +647,6 @@ Lio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 HPLio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/dto/ConfigDto;
 HPLio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-Lio/getstream/chat/android/client/api2/model/dto/ConnectingEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/DeviceDto;
 HPLio/getstream/chat/android/client/api2/model/dto/DeviceDto;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 HSPLio/getstream/chat/android/client/api2/model/dto/DeviceDto;->getId()Ljava/lang/String;
@@ -659,7 +658,6 @@ HPLio/getstream/chat/android/client/api2/model/dto/DeviceDtoJsonAdapter;->fromJs
 HSPLio/getstream/chat/android/client/api2/model/dto/DeviceDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 HPLio/getstream/chat/android/client/api2/model/dto/DeviceDtoJsonAdapter;->toJson(Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/client/api2/model/dto/DeviceDto;)V
 PLio/getstream/chat/android/client/api2/model/dto/DeviceDtoJsonAdapter;->toJson(Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
-Lio/getstream/chat/android/client/api2/model/dto/DisconnectedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/DownstreamChannelDto;
 HPLio/getstream/chat/android/client/api2/model/dto/DownstreamChannelDto;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/api2/model/dto/ConfigDto;Lio/getstream/chat/android/client/api2/model/dto/DownstreamUserDto;Ljava/lang/String;ILjava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/api2/model/dto/DownstreamMemberDto;Ljava/util/Map;)V
 HPLio/getstream/chat/android/client/api2/model/dto/DownstreamChannelDto;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/api2/model/dto/ConfigDto;Lio/getstream/chat/android/client/api2/model/dto/DownstreamUserDto;Ljava/lang/String;ILjava/util/List;Ljava/util/List;Lio/getstream/chat/android/client/api2/model/dto/DownstreamMemberDto;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -889,7 +887,6 @@ Lio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 PLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDto;
 PLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-Lio/getstream/chat/android/client/api2/model/dto/ErrorEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/HealthEventDto;
 HPLio/getstream/chat/android/client/api2/model/dto/HealthEventDto;-><init>(Ljava/lang/String;Lio/getstream/chat/android/client/api2/model/dto/utils/internal/ExactDate;Ljava/lang/String;)V
 PLio/getstream/chat/android/client/api2/model/dto/HealthEventDto;->getConnection_id()Ljava/lang/String;

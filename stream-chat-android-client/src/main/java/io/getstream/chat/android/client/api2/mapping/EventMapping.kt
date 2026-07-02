@@ -19,9 +19,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
-import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -235,9 +232,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ConnectingEventDto -> toDomain()
-            is DisconnectedEventDto -> toDomain()
-            is ErrorEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
         }
     }
@@ -1180,31 +1174,6 @@ internal class EventMapping(
             connectionId = connectionId,
             error = error.toDomain(),
         )
-
-    private fun ConnectingEventDto.toDomain(): ConnectingEvent {
-        return ConnectingEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
-
-    private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
-        return DisconnectedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
-
-    private fun ErrorEventDto.toDomain(): ErrorEvent {
-        return ErrorEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            error = error,
-        )
-    }
 
     /**
      * Transforms [UnknownEventDto] to [UnknownEvent].

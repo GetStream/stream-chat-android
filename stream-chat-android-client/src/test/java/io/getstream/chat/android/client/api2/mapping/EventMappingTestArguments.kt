@@ -17,9 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
-import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -192,22 +189,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val connectingDto = ConnectingEventDto(
-        type = EventType.CONNECTION_CONNECTING,
-        created_at = EXACT_DATE,
-    )
-
-    private val disconnectedDto = DisconnectedEventDto(
-        type = EventType.CONNECTION_DISCONNECTED,
-        created_at = EXACT_DATE,
-    )
-
-    private val errorDto = ErrorEventDto(
-        type = EventType.CONNECTION_ERROR,
-        created_at = EXACT_DATE,
-        error = GENERIC_ERROR,
-    )
-
     private val unknownDto = UnknownEventDto(
         type = EventType.UNKNOWN,
         created_at = EXACT_DATE,
@@ -219,25 +200,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: Domain models
 
-
-    private val connecting = ConnectingEvent(
-        type = connectingDto.type,
-        createdAt = connectingDto.created_at.date,
-        rawCreatedAt = connectingDto.created_at.rawDate,
-    )
-
-    private val disconnected = DisconnectedEvent(
-        type = disconnectedDto.type,
-        createdAt = disconnectedDto.created_at.date,
-        rawCreatedAt = disconnectedDto.created_at.rawDate,
-    )
-
-    val error = ErrorEvent(
-        type = errorDto.type,
-        createdAt = errorDto.created_at.date,
-        rawCreatedAt = errorDto.created_at.rawDate,
-        error = errorDto.error,
-    )
 
     private val unknown = UnknownEvent(
         type = unknownDto.type,
@@ -255,9 +217,6 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(connectingDto, connecting),
-        Arguments.of(disconnectedDto, disconnected),
-        Arguments.of(errorDto, error),
         Arguments.of(unknownDto, unknown),
     )
 
