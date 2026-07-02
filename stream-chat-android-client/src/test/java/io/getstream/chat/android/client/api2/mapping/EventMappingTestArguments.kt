@@ -23,8 +23,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
@@ -243,24 +241,6 @@ internal object EventMappingTestArguments {
         member = MEMBER,
     )
 
-    private val notificationChannelDeletedDto = NotificationChannelDeletedEventDto(
-        type = EventType.NOTIFICATION_CHANNEL_DELETED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-    )
-
-    private val notificationChannelTruncatedDto = NotificationChannelTruncatedEventDto(
-        type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-    )
-
     private val notificationInviteAcceptedDto = NotificationInviteAcceptedEventDto(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
         created_at = EXACT_DATE,
@@ -386,30 +366,6 @@ internal object EventMappingTestArguments {
         member = with(domainMapping) { notificationAddedToChannelDto.member.toDomain() },
     )
 
-    private val notificationChannelDeleted = NotificationChannelDeletedEvent(
-        type = notificationChannelDeletedDto.type,
-        createdAt = notificationChannelDeletedDto.created_at.date,
-        rawCreatedAt = notificationChannelDeletedDto.created_at.rawDate,
-        cid = notificationChannelDeletedDto.cid,
-        channelType = notificationChannelDeletedDto.channel_type,
-        channelId = notificationChannelDeletedDto.channel_id,
-        channel = with(domainMapping) {
-            notificationChannelDeletedDto.channel.toDomain()
-        },
-    )
-
-    private val notificationChannelTruncated = NotificationChannelTruncatedEvent(
-        type = notificationChannelTruncatedDto.type,
-        createdAt = notificationChannelTruncatedDto.created_at.date,
-        rawCreatedAt = notificationChannelTruncatedDto.created_at.rawDate,
-        cid = notificationChannelTruncatedDto.cid,
-        channelType = notificationChannelTruncatedDto.channel_type,
-        channelId = notificationChannelTruncatedDto.channel_id,
-        channel = with(domainMapping) {
-            notificationChannelTruncatedDto.channel.toDomain()
-        },
-    )
-
     private val notificationInviteAccepted = NotificationInviteAcceptedEvent(
         type = notificationInviteAcceptedDto.type,
         createdAt = notificationInviteAcceptedDto.created_at.date,
@@ -518,8 +474,6 @@ internal object EventMappingTestArguments {
         Arguments.of(disconnectedDto, disconnected),
         Arguments.of(errorDto, error),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
-        Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
-        Arguments.of(notificationChannelTruncatedDto, notificationChannelTruncated),
         Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
         Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),
         Arguments.of(notificationInvitedDto, notificationInvited),
@@ -1548,6 +1502,44 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) { CHANNEL.toDomain() },
     )
 
+    private val notificationChannelDeletedGenerated = io.getstream.chat.android.network.models.NotificationChannelDeletedEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_CHANNEL_DELETED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+    )
+
+    private val notificationChannelDeletedExpected = NotificationChannelDeletedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_DELETED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+    )
+
+    private val notificationChannelTruncatedGenerated = io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+    )
+
+    private val notificationChannelTruncatedExpected = NotificationChannelTruncatedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+    )
+
     private val userPresenceChangedGenerated = io.getstream.chat.android.network.models.UserPresenceChangedEvent(
         createdAt = DATE,
         type = EventType.USER_PRESENCE_CHANGED,
@@ -1627,6 +1619,8 @@ internal object EventMappingTestArguments {
         Arguments.of(userPresenceChangedGenerated, DATE_STRING, userPresenceChangedExpected),
         Arguments.of(channelDeletedGenerated, DATE_STRING, channelDeletedExpected),
         Arguments.of(channelTruncatedGenerated, DATE_STRING, channelTruncatedExpected),
+        Arguments.of(notificationChannelDeletedGenerated, DATE_STRING, notificationChannelDeletedExpected),
+        Arguments.of(notificationChannelTruncatedGenerated, DATE_STRING, notificationChannelTruncatedExpected),
         Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
         Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
         Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),

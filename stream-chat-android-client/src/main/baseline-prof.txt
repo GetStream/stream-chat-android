@@ -952,15 +952,9 @@ HSPLio/getstream/chat/android/client/api2/model/dto/NewMessageEventDtoJsonAdapte
 Lio/getstream/chat/android/client/api2/model/dto/NotificationAddedToChannelEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationAddedToChannelEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationAddedToChannelEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelDeletedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelDeletedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationChannelDeletedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelTruncatedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelTruncatedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationChannelTruncatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/NotificationInviteAcceptedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationInviteAcceptedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationInviteAcceptedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V

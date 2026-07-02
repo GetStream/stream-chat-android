@@ -84,7 +84,9 @@ import io.getstream.chat.android.network.models.MessageDeletedEvent as Generated
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
@@ -265,6 +267,8 @@ internal class MoshiChatParser(
             EventType.USER_UNBANNED -> moshi.adapter(GeneratedUserUnbannedEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_MUTES_UPDATED -> moshi.adapter(GeneratedNotificationMutesUpdatedEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> moshi.adapter(GeneratedNotificationChannelMutesUpdatedEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_CHANNEL_DELETED -> moshi.adapter(GeneratedNotificationChannelDeletedEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_CHANNEL_TRUNCATED -> moshi.adapter(GeneratedNotificationChannelTruncatedEvent::class.java).fromJson(raw)
             EventType.USER_DELETED -> moshi.adapter(GeneratedUserDeletedEvent::class.java).fromJson(raw)
             EventType.USER_MESSAGES_DELETED -> moshi.adapter(GeneratedUserMessagesDeletedEvent::class.java).fromJson(raw)
             EventType.REMINDER_CREATED -> moshi.adapter(GeneratedReminderCreatedEvent::class.java).fromJson(raw)
