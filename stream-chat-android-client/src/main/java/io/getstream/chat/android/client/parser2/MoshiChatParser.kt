@@ -70,6 +70,7 @@ import io.getstream.chat.android.network.models.AIIndicatorClearEvent as Generat
 import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
 import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ConnectionErrorEvent as GeneratedConnectionErrorEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
@@ -292,6 +293,7 @@ internal class MoshiChatParser(
             EventType.AI_TYPING_INDICATOR_CLEAR -> moshi.adapter(GeneratedAIIndicatorClearEvent::class.java).fromJson(raw)
             EventType.AI_TYPING_INDICATOR_STOP -> moshi.adapter(GeneratedAIIndicatorStopEvent::class.java).fromJson(raw)
             EventType.HEALTH_CHECK -> moshi.adapter(GeneratedHealthCheckEvent::class.java).fromJson(raw)
+            EventType.CONNECTION_ERROR -> moshi.adapter(GeneratedConnectionErrorEvent::class.java).fromJson(raw)
             EventType.POLL_CLOSED -> moshi.adapter(GeneratedPollClosedEvent::class.java).fromJson(raw)
             EventType.POLL_DELETED -> moshi.adapter(GeneratedPollDeletedEvent::class.java).fromJson(raw)
             EventType.POLL_UPDATED -> moshi.adapter(GeneratedPollUpdatedEvent::class.java).fromJson(raw)

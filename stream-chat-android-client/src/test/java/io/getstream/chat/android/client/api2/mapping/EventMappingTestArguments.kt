@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -193,13 +192,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val connectionErrorDto = ConnectionErrorEventDto(
-        type = EventType.CONNECTION_ERROR,
-        created_at = EXACT_DATE,
-        connection_id = CONNECTION_ID,
-        error = ERROR,
-    )
-
     private val connectingDto = ConnectingEventDto(
         type = EventType.CONNECTION_CONNECTING,
         created_at = EXACT_DATE,
@@ -227,14 +219,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: Domain models
 
-
-    private val connectionError = ConnectionErrorEvent(
-        type = connectionErrorDto.type,
-        createdAt = connectionErrorDto.created_at.date,
-        rawCreatedAt = connectionErrorDto.created_at.rawDate,
-        connectionId = connectionErrorDto.connection_id,
-        error = connectionErrorDto.error.toDomain(),
-    )
 
     private val connecting = ConnectingEvent(
         type = connectingDto.type,
@@ -271,7 +255,6 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(connectionErrorDto, connectionError),
         Arguments.of(connectingDto, connecting),
         Arguments.of(disconnectedDto, disconnected),
         Arguments.of(errorDto, error),
@@ -829,6 +812,21 @@ internal object EventMappingTestArguments {
         rawCreatedAt = DATE_STRING,
         me = with(domainMapping) { OWN_USER.toDomain() },
         connectionId = CONNECTION_ID,
+    )
+
+    private val connectionErrorGenerated = io.getstream.chat.android.network.models.ConnectionErrorEvent(
+        connectionId = CONNECTION_ID,
+        createdAt = DATE,
+        error = ERROR,
+        type = EventType.CONNECTION_ERROR,
+    )
+
+    private val connectionErrorExpected = ConnectionErrorEvent(
+        type = EventType.CONNECTION_ERROR,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        connectionId = CONNECTION_ID,
+        error = ERROR.toDomain(),
     )
 
     private val aiIndicatorUpdateGenerated = io.getstream.chat.android.network.models.AIIndicatorUpdateEvent(
@@ -1630,6 +1628,7 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorStopGenerated, DATE_STRING, aiIndicatorStopExpected),
         Arguments.of(healthGenerated, DATE_STRING, healthExpected),
         Arguments.of(connectedGenerated, DATE_STRING, connectedExpected),
+        Arguments.of(connectionErrorGenerated, DATE_STRING, connectionErrorExpected),
         Arguments.of(pollClosedGenerated, DATE_STRING, pollClosedExpected),
         Arguments.of(pollDeletedGenerated, DATE_STRING, pollDeletedExpected),
         Arguments.of(pollUpdatedGenerated, DATE_STRING, pollUpdatedExpected),

@@ -20,7 +20,6 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -105,6 +104,7 @@ import io.getstream.chat.android.network.models.AIIndicatorClearEvent as Generat
 import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
 import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ConnectionErrorEvent as GeneratedConnectionErrorEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
@@ -183,6 +183,7 @@ internal class EventMapping(
         is GeneratedChannelVisibleEvent -> toDomain(rawCreatedAt)
         is GeneratedUserPresenceChangedEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelDeletedEvent -> toDomain(rawCreatedAt)
+        is GeneratedConnectionErrorEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelTruncatedEvent -> toDomain(rawCreatedAt)
         is GeneratedChannelUpdatedEvent -> toDomain(rawCreatedAt)
         is GeneratedDraftUpdatedEvent -> toDomain(rawCreatedAt)
@@ -234,7 +235,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ConnectionErrorEventDto -> toDomain()
             is ConnectingEventDto -> toDomain()
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
@@ -1172,15 +1172,14 @@ internal class EventMapping(
         )
     }
 
-private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
-        return ConnectionErrorEvent(
+    private fun GeneratedConnectionErrorEvent.toDomain(rawCreatedAt: String?): ConnectionErrorEvent =
+        ConnectionErrorEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt.orEmpty(),
+            connectionId = connectionId,
             error = error.toDomain(),
         )
-    }
 
     private fun ConnectingEventDto.toDomain(): ConnectingEvent {
         return ConnectingEvent(

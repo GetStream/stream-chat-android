@@ -20,46 +20,27 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
 internal class EventAdapterFactory : JsonAdapter.Factory {
     override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? {
         return when (type.rawType) {
-            ChatEventDto::class.java -> EventDtoAdapter(moshi)
+            ChatEventDto::class.java -> EventDtoAdapter()
             else -> null
         }
     }
 }
 
-internal class EventDtoAdapter(
-    private val moshi: Moshi,
-) : JsonAdapter<ChatEventDto>() {
-
-    private val mapAdapter: JsonAdapter<MutableMap<String, Any?>> =
-        moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
-
-    private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-
-    @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
+internal class EventDtoAdapter : JsonAdapter<ChatEventDto>() {
     override fun fromJson(reader: JsonReader): ChatEventDto? {
         if (reader.peek() == JsonReader.Token.NULL) {
             reader.nextNull<Nothing?>()
             return null
         }
-
-        val map: Map<String, Any?> = mapAdapter.fromJson(reader)!!.filterValues { it != null }
-
-        val adapter = when (val type = map["type"] as? String) {
-            EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            else -> return null
-        }
-
-        return adapter.fromJsonValue(map)
+        reader.skipValue()
+        return null
     }
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {

@@ -648,9 +648,6 @@ HSPLio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;-><init
 HPLio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/dto/ConfigDto;
 HPLio/getstream/chat/android/client/api2/model/dto/ConfigDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 Lio/getstream/chat/android/client/api2/model/dto/ConnectingEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/ConnectionErrorEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/ConnectionErrorEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/ConnectionErrorEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/DeviceDto;
 HPLio/getstream/chat/android/client/api2/model/dto/DeviceDto;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 HSPLio/getstream/chat/android/client/api2/model/dto/DeviceDto;->getId()Ljava/lang/String;
