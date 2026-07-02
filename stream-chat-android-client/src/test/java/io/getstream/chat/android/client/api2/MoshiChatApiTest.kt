@@ -78,7 +78,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryRemindersRespon
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
-import io.getstream.chat.android.client.api2.model.response.ReminderResponse
+import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -2652,7 +2652,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createReminderInput")
-    fun testCreateReminder(call: RetrofitCall<ReminderResponse>, expected: KClass<*>) = runTest {
+    fun testCreateReminder(call: RetrofitCall<UpdateReminderResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.createReminder(any(), any())).doReturn(call)
@@ -2671,7 +2671,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateReminderInput")
-    fun testUpdateReminder(call: RetrofitCall<ReminderResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateReminder(call: RetrofitCall<UpdateReminderResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.updateReminder(any(), any())).doReturn(call)
