@@ -112,6 +112,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -189,6 +190,7 @@ import kotlin.reflect.KClass
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest as GeneratedChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
@@ -2104,14 +2106,14 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannel(channelType, channelId, query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            data = query.data,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
+        val expectedPayload = GeneratedChannelGetOrCreateRequest(
             state = query.state,
             watch = query.watch,
             presence = query.presence,
+            messages = query.messages.toMessagePaginationParams(),
+            watchers = query.watchers.toPaginationParams(),
+            members = query.members.toPaginationParams(),
+            data = query.data.takeIf { it.isNotEmpty() }?.let { ChannelInput(custom = it) },
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannel(channelType, connectionId, expectedPayload)
@@ -2135,14 +2137,14 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannel(channelType, channelId, query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            data = query.data,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
+        val expectedPayload = GeneratedChannelGetOrCreateRequest(
             state = query.state,
             watch = query.watch,
             presence = query.presence,
+            messages = query.messages.toMessagePaginationParams(),
+            watchers = query.watchers.toPaginationParams(),
+            members = query.members.toPaginationParams(),
+            data = query.data.takeIf { it.isNotEmpty() }?.let { ChannelInput(custom = it) },
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannel(channelType, channelId, connectionId, expectedPayload)

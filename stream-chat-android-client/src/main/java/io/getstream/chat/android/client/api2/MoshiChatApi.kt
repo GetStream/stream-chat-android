@@ -127,9 +127,10 @@ import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.QueryDraftsRequest
-import io.getstream.chat.android.network.models.QueryMembersPayload as GeneratedQueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
@@ -164,6 +165,8 @@ import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest as GeneratedChannelGetOrCreateRequest
+import io.getstream.chat.android.network.models.ChannelInput as GeneratedChannelInput
 import io.getstream.chat.android.network.models.ChannelInputRequest as GeneratedChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest as GeneratedChannelMemberRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
@@ -175,6 +178,7 @@ import io.getstream.chat.android.network.models.MessageRequest as GeneratedMessa
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest as GeneratedPollOptionRequest
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
+import io.getstream.chat.android.network.models.QueryMembersPayload as GeneratedQueryMembersPayload
 import io.getstream.chat.android.network.models.SendEventRequest as GeneratedSendEventRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest as GeneratedUpdateChannelRequest
@@ -1482,14 +1486,14 @@ constructor(
     }
 
     override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
+        val request = GeneratedChannelGetOrCreateRequest(
             state = query.state,
             watch = query.watch,
             presence = query.presence,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
-            data = query.data,
+            messages = query.messages.toMessagePaginationParams(),
+            watchers = query.watchers.toPaginationParams(),
+            members = query.members.toPaginationParams(),
+            data = query.data.takeIf { it.isNotEmpty() }?.let { GeneratedChannelInput(custom = it) },
         )
 
         val lazyQueryChannelCall = {
@@ -1962,3 +1966,21 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
             direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
         )
     }
+
+internal fun Map<String, Any>.toPaginationParams(): PaginationParams? = takeIf { it.isNotEmpty() }?.let {
+    PaginationParams(
+        limit = (it["limit"] as? Number)?.toInt(),
+        offset = (it["offset"] as? Number)?.toInt(),
+    )
+}
+
+internal fun Map<String, Any>.toMessagePaginationParams(): MessagePaginationParams? = takeIf { it.isNotEmpty() }?.let {
+    MessagePaginationParams(
+        limit = (it["limit"] as? Number)?.toInt(),
+        idGt = it["id_gt"] as? String,
+        idGte = it["id_gte"] as? String,
+        idLt = it["id_lt"] as? String,
+        idLte = it["id_lte"] as? String,
+        idAround = it["id_around"] as? String,
+    )
+}

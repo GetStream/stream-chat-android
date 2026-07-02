@@ -16,15 +16,18 @@
 
 package io.getstream.chat.android.client.api2.optimisation.hash
 
-import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
+import io.getstream.chat.android.client.api2.toMessagePaginationParams
+import io.getstream.chat.android.client.api2.toPaginationParams
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+import io.getstream.chat.android.network.models.ChannelInput
 
 /**
- * A unique identifier of [QueryChannelRequest] per channel.
+ * A unique identifier of [ChannelGetOrCreateRequest] per channel.
  */
 internal data class ChannelQueryKey(
     val channelType: String,
     val channelId: String,
-    val queryKey: QueryChannelRequest,
+    val queryKey: ChannelGetOrCreateRequest,
 ) {
 
     companion object {
@@ -36,14 +39,14 @@ internal data class ChannelQueryKey(
             return ChannelQueryKey(
                 channelType = channelType,
                 channelId = channelId,
-                queryKey = QueryChannelRequest(
+                queryKey = ChannelGetOrCreateRequest(
                     state = query.state,
                     watch = query.watch,
                     presence = query.presence,
-                    messages = query.messages,
-                    watchers = query.watchers,
-                    members = query.members,
-                    data = query.data,
+                    messages = query.messages.toMessagePaginationParams(),
+                    watchers = query.watchers.toPaginationParams(),
+                    members = query.members.toPaginationParams(),
+                    data = query.data.takeIf { it.isNotEmpty() }?.let { ChannelInput(custom = it) },
                 ),
             )
         }
