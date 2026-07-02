@@ -245,9 +245,10 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     @OptIn(UnstableApi::class)
     private fun createMediaSourceFactory(): MediaSource.Factory {
-        val cdn = ChatClient.instance().cdn
+        val client = ChatClient.instance()
         val headers = ChatUI.videoHeadersProvider.getVideoRequestHeaders(assetUrl ?: "")
-        val baseDataSourceFactory = StreamMediaDataSource.factory(requireContext(), cdn)
+        val baseDataSourceFactory =
+            StreamMediaDataSource.factory(requireContext(), client.cdn, client.videoCache)
         val dataSourceFactory = ResolvingDataSource.Factory(baseDataSourceFactory) { dataSpec ->
             dataSpec.withAdditionalHeaders(headers)
         }
