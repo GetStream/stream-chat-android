@@ -48,14 +48,15 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
+import io.getstream.chat.android.client.parser2.adapters.GeneratedCreatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.GeneratedCreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.GeneratedPollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.GeneratedPollOptionRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.GeneratedUpdatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.GeneratedUpdatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.OwnUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.UpstreamOptionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UserResponseCommonFieldsAdapter
@@ -158,7 +159,8 @@ internal class MoshiChatParser(
             .add(GeneratedPollOptionInputAdapter)
             .add(GeneratedUpdatePollRequestAdapter)
             .add(GeneratedPollOptionRequestAdapter)
-            .add(UpstreamOptionDtoAdapter)
+            .add(GeneratedCreatePollOptionRequestAdapter)
+            .add(GeneratedUpdatePollOptionRequestAdapter)
             .add(ChatEvent::class.java, ChatEventJsonAdapter())
             .build()
     }

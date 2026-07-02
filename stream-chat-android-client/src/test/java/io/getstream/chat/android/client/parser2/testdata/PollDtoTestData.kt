@@ -17,12 +17,13 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
+import io.getstream.chat.android.network.models.CreatePollOptionRequest as GeneratedCreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
+import io.getstream.chat.android.network.models.UpdatePollOptionRequest as GeneratedUpdatePollOptionRequest
 
 internal object PollDtoTestData {
 
@@ -173,33 +174,51 @@ internal object PollDtoTestData {
         custom = emptyMap(),
     )
 
-    // UpstreamOptionDto Test Data
+    // CreatePollOptionRequest / UpdatePollOptionRequest Test Data
 
     @Language("JSON")
-    val upstreamOptionJson =
+    val createPollOptionRequestJson =
         """{
           "text": "option",
           "customKey1": "customValue1",
           "customKey2": 42.0
         }""".withoutWhitespace()
 
-    val upstreamOption = UpstreamOptionDto(
+    val createPollOptionRequest = GeneratedCreatePollOptionRequest(
         text = "option",
-        extraData = mapOf(
+        custom = mapOf(
             "customKey1" to "customValue1",
             "customKey2" to 42.0, // JSON numbers are parsed as Double
         ),
     )
 
     @Language("JSON")
-    val upstreamOptionJsonWithoutExtraData =
+    val createPollOptionRequestJsonWithoutExtraData =
         """{
           "text": "option"
         }""".withoutWhitespace()
 
-    val upstreamOptionWithoutExtraData = UpstreamOptionDto(
+    val createPollOptionRequestWithoutExtraData = GeneratedCreatePollOptionRequest(
         text = "option",
-        extraData = emptyMap(),
+        custom = emptyMap(),
+    )
+
+    @Language("JSON")
+    val updatePollOptionRequestJson =
+        """{
+          "id": "option-id",
+          "text": "option",
+          "customKey1": "customValue1",
+          "customKey2": 42.0
+        }""".withoutWhitespace()
+
+    val updatePollOptionRequest = GeneratedUpdatePollOptionRequest(
+        id = "option-id",
+        text = "option",
+        custom = mapOf(
+            "customKey1" to "customValue1",
+            "customKey2" to 42.0, // JSON numbers are parsed as Double
+        ),
     )
 
     // CreatePollRequest Test Data

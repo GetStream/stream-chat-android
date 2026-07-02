@@ -20,18 +20,24 @@ import io.getstream.chat.android.client.parser2.testdata.PollDtoTestData
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class UpstreamOptionDtoAdapterTest {
+internal class PollOptionRequestAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
-    fun `Serialize UpstreamOptionDto with custom fields`() {
-        val json = parser.toJson(PollDtoTestData.upstreamOption)
-        Assertions.assertEquals(PollDtoTestData.upstreamOptionJson, json)
+    fun `Serialize CreatePollOptionRequest with custom fields`() {
+        val json = parser.toJson(PollDtoTestData.createPollOptionRequest)
+        Assertions.assertEquals(PollDtoTestData.createPollOptionRequestJson, json)
     }
 
     @Test
-    fun `Serialize UpstreamOptionDto without custom fields`() {
-        val json = parser.toJson(PollDtoTestData.upstreamOptionWithoutExtraData)
-        Assertions.assertEquals(PollDtoTestData.upstreamOptionJsonWithoutExtraData, json)
+    fun `Serialize CreatePollOptionRequest without custom fields`() {
+        val json = parser.toJson(PollDtoTestData.createPollOptionRequestWithoutExtraData)
+        Assertions.assertEquals(PollDtoTestData.createPollOptionRequestJsonWithoutExtraData, json)
+    }
+
+    @Test
+    fun `Serialize UpdatePollOptionRequest with custom fields`() {
+        val json = parser.toJson(PollDtoTestData.updatePollOptionRequest)
+        Assertions.assertEquals(PollDtoTestData.updatePollOptionRequestJson, json)
     }
 }

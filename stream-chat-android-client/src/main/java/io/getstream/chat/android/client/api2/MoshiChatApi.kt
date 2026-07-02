@@ -63,7 +63,6 @@ import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -171,6 +170,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSe
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
+import io.getstream.chat.android.network.models.CreatePollOptionRequest as GeneratedCreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
@@ -179,6 +179,7 @@ import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamP
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
+import io.getstream.chat.android.network.models.UpdatePollOptionRequest as GeneratedUpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest as GeneratedUpdatePollRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
@@ -1733,18 +1734,18 @@ constructor(
     }
 
     override fun createPollOption(pollId: String, option: PollOption): Call<PollOption> {
-        val body = UpstreamOptionDto(
+        val body = GeneratedCreatePollOptionRequest(
             text = option.text,
-            extraData = option.extraData,
+            custom = option.extraData,
         )
         return pollsApi.createPollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
     }
 
     override fun updatePollOption(pollId: String, option: PollOption): Call<PollOption> {
-        val body = UpstreamOptionDto(
-            id = option.id,
+        val body = GeneratedUpdatePollOptionRequest(
+            id = option.id.orEmpty(),
             text = option.text,
-            extraData = option.extraData,
+            custom = option.extraData,
         )
         return pollsApi.updatePollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
     }
