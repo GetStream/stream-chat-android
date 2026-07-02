@@ -76,9 +76,17 @@ internal class ChatClientTest {
         val createdAt = Date()
         val rawCreatedAt = StreamDateFormatter().format(createdAt)
 
-        val eventA = EventArguments.randomEvent()
-        val eventB = EventArguments.randomEvent()
-        val eventC = EventArguments.randomEvent()
+        val eventA: ChatEvent
+        val eventB: ChatEvent
+        val eventC: ChatEvent
+
+        init {
+            val distinctEvents = generateSequence(EventArguments::randomEvent)
+                .distinctBy { it::class }.take(3).toList()
+            eventA = distinctEvents[0]
+            eventB = distinctEvents[1]
+            eventC = distinctEvents[2]
+        }
 
         val eventD = UnknownEvent("d", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
         val eventE = UnknownEvent("e", createdAt, rawCreatedAt, null, mapOf<Any, Any>("cid" to "myCid"))
