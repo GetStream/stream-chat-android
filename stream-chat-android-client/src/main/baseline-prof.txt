@@ -975,15 +975,9 @@ PLio/getstream/chat/android/client/api2/model/dto/NotificationMarkReadEventDtoJs
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMarkUnreadEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMarkUnreadEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationMarkUnreadEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationMessageNewEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationMessageNewEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationMessageNewEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMutesUpdatedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMutesUpdatedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationMutesUpdatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationThreadMessageNewEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationThreadMessageNewEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationThreadMessageNewEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/PollClosedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/PollClosedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/PollClosedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V

@@ -22,8 +22,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -226,28 +224,6 @@ internal object EventMappingTestArguments {
         error = GENERIC_ERROR,
     )
 
-    private val notificationMessageNewDto = NotificationMessageNewEventDto(
-        type = EventType.NOTIFICATION_MESSAGE_NEW,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        message = MESSAGE,
-        channel = CHANNEL,
-    )
-
-    private val notificationThreadMessageNewDto = NotificationThreadMessageNewEventDto(
-        type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        message = MESSAGE,
-        channel = CHANNEL,
-        unread_threads = UNREAD_THREADS,
-        unread_thread_messages = UNREAD_THREAD_MESSAGES,
-    )
-
     private val unknownDto = UnknownEventDto(
         type = EventType.UNKNOWN,
         created_at = EXACT_DATE,
@@ -295,38 +271,6 @@ internal object EventMappingTestArguments {
         error = errorDto.error,
     )
 
-    private val notificationMessageNew = NotificationMessageNewEvent(
-        type = notificationMessageNewDto.type,
-        createdAt = notificationMessageNewDto.created_at.date,
-        rawCreatedAt = notificationMessageNewDto.created_at.rawDate,
-        cid = notificationMessageNewDto.cid,
-        channelType = notificationMessageNewDto.channel_type,
-        channelId = notificationMessageNewDto.channel_id,
-        message = with(domainMapping) {
-            notificationMessageNewDto.message.toDomain(notificationMessageNewDto.channel.toChannelInfo())
-        },
-        channel = with(domainMapping) {
-            notificationMessageNewDto.channel.toDomain()
-        },
-    )
-
-    private val notificationThreadMessageNew = NotificationThreadMessageNewEvent(
-        type = notificationThreadMessageNewDto.type,
-        createdAt = notificationThreadMessageNewDto.created_at.date,
-        rawCreatedAt = notificationThreadMessageNewDto.created_at.rawDate,
-        cid = notificationThreadMessageNewDto.cid,
-        channelType = notificationThreadMessageNewDto.channel_type,
-        channelId = notificationThreadMessageNewDto.channel_id,
-        message = with(domainMapping) {
-            notificationThreadMessageNewDto.message.toDomain(notificationThreadMessageNewDto.channel.toChannelInfo())
-        },
-        channel = with(domainMapping) {
-            notificationThreadMessageNewDto.channel.toDomain()
-        },
-        unreadThreads = notificationThreadMessageNewDto.unread_threads,
-        unreadThreadMessages = notificationThreadMessageNewDto.unread_thread_messages,
-    )
-
     private val unknown = UnknownEvent(
         type = unknownDto.type,
         createdAt = unknownDto.created_at.date,
@@ -348,8 +292,6 @@ internal object EventMappingTestArguments {
         Arguments.of(connectingDto, connecting),
         Arguments.of(disconnectedDto, disconnected),
         Arguments.of(errorDto, error),
-        Arguments.of(notificationMessageNewDto, notificationMessageNew),
-        Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
         Arguments.of(unknownDto, unknown),
     )
 
@@ -1527,6 +1469,62 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) { CHANNEL.toDomain() },
     )
 
+    private val notificationMessageNewGenerated = io.getstream.chat.android.network.models.NotificationNewMessageEvent(
+        createdAt = DATE,
+        messageId = MESSAGE_ID,
+        watcherCount = WATCHER_COUNT,
+        type = EventType.NOTIFICATION_MESSAGE_NEW,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        message = MESSAGE,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        unreadCount = TOTAL_UNREAD_COUNT,
+    )
+
+    private val notificationMessageNewExpected = NotificationMessageNewEvent(
+        type = EventType.NOTIFICATION_MESSAGE_NEW,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+        message = with(domainMapping) { MESSAGE.toDomain(CHANNEL.toChannelInfo()) },
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+    )
+
+    private val notificationThreadMessageNewGenerated = io.getstream.chat.android.network.models.NotificationThreadMessageNewEvent(
+        createdAt = DATE,
+        messageId = MESSAGE_ID,
+        threadId = MESSAGE_ID,
+        watcherCount = WATCHER_COUNT,
+        type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        message = MESSAGE,
+        unreadThreads = UNREAD_THREADS,
+        unreadThreadMessages = UNREAD_THREAD_MESSAGES,
+    )
+
+    private val notificationThreadMessageNewExpected = NotificationThreadMessageNewEvent(
+        type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { MESSAGE.toDomain(CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        unreadThreads = UNREAD_THREADS,
+        unreadThreadMessages = UNREAD_THREAD_MESSAGES,
+    )
+
     private val userPresenceChangedGenerated = io.getstream.chat.android.network.models.UserPresenceChangedEvent(
         createdAt = DATE,
         type = EventType.USER_PRESENCE_CHANGED,
@@ -1613,6 +1611,8 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationInvitedGenerated, DATE_STRING, notificationInvitedExpected),
         Arguments.of(notificationInviteAcceptedGenerated, DATE_STRING, notificationInviteAcceptedExpected),
         Arguments.of(notificationInviteRejectedGenerated, DATE_STRING, notificationInviteRejectedExpected),
+        Arguments.of(notificationMessageNewGenerated, DATE_STRING, notificationMessageNewExpected),
+        Arguments.of(notificationThreadMessageNewGenerated, DATE_STRING, notificationThreadMessageNewExpected),
         Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
         Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
         Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),

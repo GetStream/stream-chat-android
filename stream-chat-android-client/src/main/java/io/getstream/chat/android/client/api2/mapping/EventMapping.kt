@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -132,7 +130,9 @@ import io.getstream.chat.android.network.models.NotificationChannelTruncatedEven
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
 import io.getstream.chat.android.network.models.NotificationRemovedFromChannelEvent as GeneratedNotificationRemovedFromChannelEvent
+import io.getstream.chat.android.network.models.NotificationThreadMessageNewEvent as GeneratedNotificationThreadMessageNewEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
 import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPollUpdatedEvent
@@ -200,6 +200,8 @@ internal class EventMapping(
         is GeneratedNotificationInvitedEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationInviteAcceptedEvent -> toDomain(rawCreatedAt)
         is GeneratedNotificationInviteRejectedEvent -> toDomain(rawCreatedAt)
+        is GeneratedNotificationNewMessageEvent -> toDomain(rawCreatedAt)
+        is GeneratedNotificationThreadMessageNewEvent -> toDomain(rawCreatedAt)
         is GeneratedUserDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedUserMessagesDeletedEvent -> toDomain(rawCreatedAt)
         is GeneratedReminderCreatedEvent -> toDomain(rawCreatedAt)
@@ -238,8 +240,6 @@ internal class EventMapping(
             is ConnectingEventDto -> toDomain()
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
-            is NotificationMessageNewEventDto -> toDomain()
-            is NotificationThreadMessageNewEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
         }
     }
@@ -651,23 +651,21 @@ internal class EventMapping(
     /**
      * Transforms [MarkAllReadEventDto] to [MarkAllReadEvent].
      */
-    /**
-     * Transforms [NotificationMessageNewEventDto] to [NotificationMessageNewEvent].
-     */
-    private fun NotificationMessageNewEventDto.toDomain(): NotificationMessageNewEvent = with(domainMapping) {
-        NotificationMessageNewEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(),
-            message = message.toDomain(channel.toChannelInfo()),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-        )
-    }
+    private fun GeneratedNotificationNewMessageEvent.toDomain(rawCreatedAt: String?): NotificationMessageNewEvent =
+        with(domainMapping) {
+            NotificationMessageNewEvent(
+                type = type,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                cid = cid.orEmpty(),
+                channelType = channelType.orEmpty(),
+                channelId = channelId.orEmpty(),
+                channel = channel.toDomain(),
+                message = message.toDomain(channel.toChannelInfo()),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+            )
+        }
 
     private fun GeneratedThreadUpdatedEvent.toDomain(rawCreatedAt: String?): ThreadUpdatedEvent = with(domainMapping) {
         ThreadUpdatedEvent(
@@ -681,22 +679,19 @@ internal class EventMapping(
         )
     }
 
-    /**
-     * Transforms [NotificationThreadMessageNewEventDto] to [NotificationThreadMessageNewEvent].
-     */
-    private fun NotificationThreadMessageNewEventDto.toDomain(): NotificationThreadMessageNewEvent =
+    private fun GeneratedNotificationThreadMessageNewEvent.toDomain(rawCreatedAt: String?): NotificationThreadMessageNewEvent =
         with(domainMapping) {
             NotificationThreadMessageNewEvent(
                 type = type,
-                cid = cid,
-                channelId = channel_id,
-                channelType = channel_type,
+                cid = cid.orEmpty(),
+                channelId = channelId.orEmpty(),
+                channelType = channelType.orEmpty(),
                 message = message.toDomain(channel.toChannelInfo()),
                 channel = channel.toDomain(),
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                unreadThreads = unread_threads,
-                unreadThreadMessages = unread_thread_messages,
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt.orEmpty(),
+                unreadThreads = unreadThreads ?: 0,
+                unreadThreadMessages = unreadThreadMessages ?: 0,
             )
         }
 

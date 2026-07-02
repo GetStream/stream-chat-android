@@ -25,8 +25,6 @@ import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
@@ -48,9 +46,6 @@ internal class EventDtoAdapter(
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
-    private val notificationThreadMessageNewEventAdapter =
-        moshi.adapter(NotificationThreadMessageNewEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -67,8 +62,6 @@ internal class EventDtoAdapter(
                 else -> return null
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
-            EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter
             else -> return null
         }
 
