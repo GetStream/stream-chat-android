@@ -51,7 +51,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRe
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
@@ -1720,7 +1720,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#blockUserInput")
-    fun testBlockUser(call: RetrofitCall<BlockUserResponse>, expected: KClass<*>) = runTest {
+    fun testBlockUser(call: RetrofitCall<BlockUsersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserApi>()
         whenever(api.blockUser(any())).doReturn(call)

@@ -49,7 +49,7 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
@@ -1084,14 +1084,16 @@ internal object Mother {
         blockedUser = blockedUser,
     )
 
-    fun randomBlockUserResponse(
+    fun randomBlockUsersResponse(
         blockedByUserId: String = randomString(),
         blockedUserId: String = randomString(),
         createdAt: Date = randomDate(),
-    ): BlockUserResponse = BlockUserResponse(
-        blocked_by_user_id = blockedByUserId,
-        blocked_user_id = blockedUserId,
-        created_at = createdAt,
+        duration: String = randomString(),
+    ): BlockUsersResponse = BlockUsersResponse(
+        blockedByUserId = blockedByUserId,
+        blockedUserId = blockedUserId,
+        createdAt = createdAt,
+        duration = duration,
     )
 
     fun randomUnblockUsersResponse(duration: String = randomString()): UnblockUsersResponse =

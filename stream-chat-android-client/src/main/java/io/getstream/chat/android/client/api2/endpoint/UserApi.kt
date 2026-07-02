@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -51,7 +51,7 @@ internal interface UserApi {
 
     @POST("/users/block")
     @JvmSuppressWildcards
-    fun blockUser(@Body body: BlockUserRequest): RetrofitCall<BlockUserResponse>
+    fun blockUser(@Body body: BlockUserRequest): RetrofitCall<BlockUsersResponse>
 
     @POST("/users/unblock")
     fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUsersResponse>

@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.Mother.randomAnswerDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
 import io.getstream.chat.android.client.Mother.randomBannedUserResponse
-import io.getstream.chat.android.client.Mother.randomBlockUserResponse
+import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
 import io.getstream.chat.android.client.Mother.randomDeviceDto
@@ -931,14 +931,14 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `BlockUserResponse is correctly mapped to UserBlock`() {
-        val blockUserResponse = randomBlockUserResponse()
+    fun `BlockUsersResponse is correctly mapped to UserBlock`() {
+        val blockUsersResponse = randomBlockUsersResponse()
         val sut = Fixture().get()
-        val userBlock = with(sut) { blockUserResponse.toDomain() }
+        val userBlock = with(sut) { blockUsersResponse.toDomain() }
         val expected = UserBlock(
-            blockedBy = blockUserResponse.blocked_by_user_id,
-            userId = blockUserResponse.blocked_user_id,
-            blockedAt = blockUserResponse.created_at,
+            blockedBy = blockUsersResponse.blockedByUserId,
+            userId = blockUsersResponse.blockedUserId,
+            blockedAt = blockUsersResponse.createdAt,
         )
         assertEquals(expected, userBlock)
     }
