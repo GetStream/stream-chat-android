@@ -59,7 +59,7 @@ import io.getstream.chat.android.client.api2.model.response.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
-import io.getstream.chat.android.client.api2.model.response.TokenResponse
+import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
@@ -405,8 +405,8 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun getGuestUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomTokenResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<TokenResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(Mother.randomCreateGuestResponse()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<CreateGuestResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
