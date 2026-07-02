@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.network.models.Response
-import io.getstream.chat.android.client.api2.model.response.DevicesResponse
+import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -221,10 +221,12 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun getDevicesInput() = listOf(
         Arguments.of(
-            RetroSuccess(DevicesResponse(listOf(Mother.randomDeviceDto()))).toRetrofitCall(),
+            RetroSuccess(
+                ListDevicesResponse(duration = "", devices = listOf(Mother.randomDeviceDto())),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<DevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<ListDevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

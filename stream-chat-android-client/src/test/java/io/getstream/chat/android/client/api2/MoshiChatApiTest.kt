@@ -54,7 +54,7 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.network.models.Response
-import io.getstream.chat.android.client.api2.model.response.DevicesResponse
+import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -541,7 +541,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getDevicesInput")
-    fun testGetDevices(call: RetrofitCall<DevicesResponse>, expected: KClass<*>) = runTest {
+    fun testGetDevices(call: RetrofitCall<ListDevicesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<DeviceApi>()
         whenever(api.getDevices()).doReturn(call)
