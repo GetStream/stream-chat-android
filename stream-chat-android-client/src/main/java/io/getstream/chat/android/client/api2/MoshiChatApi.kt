@@ -66,7 +66,7 @@ import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
+import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -335,8 +335,8 @@ constructor(
             messageId = message.id,
             message = UpdateMessageRequest(
                 message = with(dtoMapping) { message.toDto() },
-                skip_enrich_url = message.skipEnrichUrl,
-                skip_push = message.skipPushNotification,
+                skipEnrichUrl = message.skipEnrichUrl,
+                skipPush = message.skipPushNotification,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
