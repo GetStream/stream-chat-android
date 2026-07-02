@@ -70,7 +70,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -80,6 +79,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGa
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryPhotosMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryVideoPage
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.createPlayer
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.prepareIfNeeded
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -569,8 +569,7 @@ internal fun MediaGalleryPager(
                         ?.second
                         ?: 0L
                     savedPlaybackState = null
-                    activePlayer.setMediaItem(MediaItem.fromUri(assetUrl), startPosition)
-                    activePlayer.prepare()
+                    activePlayer.prepareIfNeeded(assetUrl, startPosition)
                 }
             }
         }

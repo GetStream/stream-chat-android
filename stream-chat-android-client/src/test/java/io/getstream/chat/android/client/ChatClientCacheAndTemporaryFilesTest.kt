@@ -70,6 +70,11 @@ internal class ChatClientCacheAndTemporaryFilesTest {
         imageCache.mkdirs()
         File(imageCache, "image.jpg").writeText("image")
 
+        // Create files in video cache
+        val videoCache = streamFileManager.getVideoCache(context)
+        videoCache.mkdirs()
+        File(videoCache, "video.mp4").writeText("video")
+
         // Create files in timestamped cache
         streamFileManager.writeFileInTimestampedCache(context, "timestamped_${randomString()}.txt", "content".byteInputStream())
 
@@ -89,6 +94,7 @@ internal class ChatClientCacheAndTemporaryFilesTest {
         val streamCacheDir = File(context.cacheDir, "stream_cache")
         assertTrue(streamCacheDir.exists())
         assertTrue(imageCache.exists())
+        assertTrue(videoCache.exists())
         assertTrue(photoFile.exists())
         assertTrue(videoFile.exists())
 
@@ -99,6 +105,7 @@ internal class ChatClientCacheAndTemporaryFilesTest {
         assertTrue(result is Result.Success)
         assertFalse(streamCacheDir.exists())
         assertFalse(imageCache.exists())
+        assertFalse(videoCache.exists())
         assertFalse(photoFile.exists())
         assertFalse(videoFile.exists())
     }
