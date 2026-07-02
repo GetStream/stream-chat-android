@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.network.models.Response
 import okhttp3.MultipartBody
 import retrofit2.http.DELETE
 import retrofit2.http.Multipart

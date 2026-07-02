@@ -20,12 +20,12 @@ import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.Mother.randomUploadFileResponse
 import io.getstream.chat.android.client.api.RetrofitCdnApi
-import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error

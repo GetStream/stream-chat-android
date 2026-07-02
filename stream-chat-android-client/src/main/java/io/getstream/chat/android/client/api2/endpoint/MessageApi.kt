@@ -18,9 +18,6 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.network.models.Response
-import io.getstream.chat.android.network.models.SendMessageRequest
-import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
@@ -32,7 +29,10 @@ import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequ
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
+import io.getstream.chat.android.network.models.UpdateMessageRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

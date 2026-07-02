@@ -1129,7 +1129,6 @@ PLio/getstream/chat/android/client/api2/model/requests/SendEventRequest;-><init>
 PLio/getstream/chat/android/client/api2/model/requests/SendEventRequestJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/requests/SuggestPollOptionRequest;
 Lio/getstream/chat/android/client/api2/model/requests/SyncHistoryRequest;
-Lio/getstream/chat/android/client/api2/model/requests/TruncateChannelRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UnblockUserRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateChannelPartialRequest;
 Lio/getstream/chat/android/client/api2/model/requests/UpdateChannelRequest;

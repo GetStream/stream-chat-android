@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.network.models.Response
-import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

@@ -32,12 +32,9 @@ import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -199,7 +196,6 @@ internal object EventMappingTestArguments {
     // END: DTO Models
 
     // BEGIN: Domain models
-
 
     private val unknown = UnknownEvent(
         type = unknownDto.type,

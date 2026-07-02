@@ -19,10 +19,10 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
-import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
-import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.QueryThreadsRequest
+import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
