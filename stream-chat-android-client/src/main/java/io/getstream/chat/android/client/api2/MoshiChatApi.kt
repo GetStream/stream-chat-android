@@ -61,7 +61,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequ
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
+import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
@@ -264,8 +264,8 @@ constructor(
         channelId = channelId,
         message = SendMessageRequest(
             message = with(dtoMapping) { message.toDto() },
-            skip_push = message.skipPushNotification,
-            skip_enrich_url = message.skipEnrichUrl,
+            skipPush = message.skipPushNotification,
+            skipEnrichUrl = message.skipEnrichUrl,
         ),
     ).mapDomain { response ->
         response.message.toDomain()
