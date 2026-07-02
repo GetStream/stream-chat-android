@@ -25,12 +25,10 @@ import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
@@ -53,15 +51,12 @@ internal class EventDtoAdapter(
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationThreadMessageNewEventAdapter =
         moshi.adapter(NotificationThreadMessageNewEventDto::class.java)
     private val notificationInvitedEventAdapter = moshi.adapter(NotificationInvitedEventDto::class.java)
     private val notificationInviteAcceptedEventAdapter = moshi.adapter(NotificationInviteAcceptedEventDto::class.java)
     private val notificationInviteRejectedEventAdapter = moshi.adapter(NotificationInviteRejectedEventDto::class.java)
-    private val notificationRemovedFromChannelEventAdapter =
-        moshi.adapter(NotificationRemovedFromChannelEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -78,13 +73,11 @@ internal class EventDtoAdapter(
                 else -> return null
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL -> notificationAddedToChannelEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter
             EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
             EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter
             EventType.NOTIFICATION_INVITE_REJECTED -> notificationInviteRejectedEventAdapter
-            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> notificationRemovedFromChannelEventAdapter
             else -> return null
         }
 

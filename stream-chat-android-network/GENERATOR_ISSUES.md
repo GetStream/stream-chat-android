@@ -628,3 +628,42 @@ pattern. Regenerated `AIIndicator{Update,Clear,Stop}Event.kt` copied into
 **Suggested upstream fix:** Land the same mixin embedding upstream so the
 spec matches what the WS actually delivers.
 
+## 23. `NotificationAddedToChannelEvent` omits `unread_count` / `total_unread_count` / `unread_channels`
+
+**Symptom:** the wire always carries `unread_count`, `total_unread_count`,
+and `unread_channels` at the top level of `notification.added_to_channel`,
+but the generated `NotificationAddedToChannelEvent` (and the OpenAPI spec
+it derives from) declares none of them. Legacy Android read
+`total_unread_count` and `unread_channels` into the domain event, so
+migrating to the generated model without patching would silently zero
+those fields.
+
+**Root cause:** `lib/combined/events/channel_member.go` declares the
+struct as `ChannelSupportEvent + HasMemberFields` and nothing else. The
+unread fields are injected at broadcast time by the WS engine's
+`withUnreadCounts` option (see `OnBroadcastToUnsubscribedMembers` /
+`enrichCountsForUser`), which post-processes the serialized JSON via
+`sjson.SetBytes`. Because the injection happens outside the typed
+struct, the spec generator has no visibility into those fields — same
+class of gap as issue #22 (runtime side effects invisible to the spec).
+
+The `notifyMembersMatcher` routes `notification.added_to_channel`
+unconditionally through the unread-injection path (as long as AppPK,
+UserIDs, and CID are populated, which they always are in normal
+add-member flow), so the three fields are always on the wire.
+
+**Fix status:** Local fix. Commit
+`temp: declare unread fields on NotificationAddedToChannelEvent struct`
+(chat repo `chat-openapi-android` branch) adds `UnreadCount`,
+`TotalUnreadCount`, `UnreadChannels` as `int` fields on the Go struct so
+the generator picks them up. Regenerated
+`NotificationAddedToChannelEvent.kt` copied into
+`stream-chat-android-network`; the mapper now propagates the real
+counts.
+
+**Suggested upstream fix:** Either declare these fields on the struct
+(the struct fields carry zero values that are overwritten by the WS
+engine's `sjson.SetBytes` injection, so behavior is unchanged) or expose
+a `HasUnreadCounts`-style embed and reuse it on all notification events
+that go through the unread-injection path.
+

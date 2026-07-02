@@ -25,19 +25,6 @@ import java.util.Date
 internal sealed class ChatEventDto
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationAddedToChannelEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val member: DownstreamMemberDto,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationInviteAcceptedEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -96,18 +83,6 @@ internal data class NotificationThreadMessageNewEventDto(
     val created_at: ExactDate,
     val unread_threads: Int,
     val unread_thread_messages: Int,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationRemovedFromChannelEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto?,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val member: DownstreamMemberDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

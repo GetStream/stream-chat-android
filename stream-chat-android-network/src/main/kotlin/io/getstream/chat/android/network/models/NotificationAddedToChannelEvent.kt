@@ -35,8 +35,14 @@ data class NotificationAddedToChannelEvent(
     @Json(name = "created_at")
     val createdAt: java.util.Date,
 
-    @Json(name = "channel")
-    val channel: io.getstream.chat.android.network.models.ChannelResponse,
+    @Json(name = "total_unread_count")
+    val totalUnreadCount: kotlin.Int,
+
+    @Json(name = "unread_channels")
+    val unreadChannels: kotlin.Int,
+
+    @Json(name = "unread_count")
+    val unreadCount: kotlin.Int,
 
     @Json(name = "custom")
     val custom: kotlin.collections.Map<kotlin.String, Any?> = emptyMap(),
@@ -67,6 +73,9 @@ data class NotificationAddedToChannelEvent(
 
     @Json(name = "team")
     val team: kotlin.String? = null,
+
+    @Json(name = "channel")
+    val channel: io.getstream.chat.android.network.models.ChannelResponse? = null,
 
     @Json(name = "channel_custom")
     val channelCustom: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),

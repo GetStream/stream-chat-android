@@ -22,12 +22,10 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -231,16 +229,6 @@ internal object EventMappingTestArguments {
         error = GENERIC_ERROR,
     )
 
-    private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
-        type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        member = MEMBER,
-    )
-
     private val notificationInviteAcceptedDto = NotificationInviteAcceptedEventDto(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
         created_at = EXACT_DATE,
@@ -295,17 +283,6 @@ internal object EventMappingTestArguments {
         unread_thread_messages = UNREAD_THREAD_MESSAGES,
     )
 
-    private val notificationRemovedFromChannelDto = NotificationRemovedFromChannelEventDto(
-        type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        member = MEMBER,
-        user = USER,
-    )
-
     private val unknownDto = UnknownEventDto(
         type = EventType.UNKNOWN,
         created_at = EXACT_DATE,
@@ -351,19 +328,6 @@ internal object EventMappingTestArguments {
         createdAt = errorDto.created_at.date,
         rawCreatedAt = errorDto.created_at.rawDate,
         error = errorDto.error,
-    )
-
-    private val notificationAddedToChannel = NotificationAddedToChannelEvent(
-        type = notificationAddedToChannelDto.type,
-        createdAt = notificationAddedToChannelDto.created_at.date,
-        rawCreatedAt = notificationAddedToChannelDto.created_at.rawDate,
-        cid = notificationAddedToChannelDto.cid,
-        channelType = notificationAddedToChannelDto.channel_type,
-        channelId = notificationAddedToChannelDto.channel_id,
-        channel = with(domainMapping) {
-            notificationAddedToChannelDto.channel.toDomain()
-        },
-        member = with(domainMapping) { notificationAddedToChannelDto.member.toDomain() },
     )
 
     private val notificationInviteAccepted = NotificationInviteAcceptedEvent(
@@ -438,20 +402,6 @@ internal object EventMappingTestArguments {
         unreadThreadMessages = notificationThreadMessageNewDto.unread_thread_messages,
     )
 
-    private val notificationRemovedFromChannel = NotificationRemovedFromChannelEvent(
-        type = notificationRemovedFromChannelDto.type,
-        createdAt = notificationRemovedFromChannelDto.created_at.date,
-        rawCreatedAt = notificationRemovedFromChannelDto.created_at.rawDate,
-        cid = notificationRemovedFromChannelDto.cid,
-        channelType = notificationRemovedFromChannelDto.channel_type,
-        channelId = notificationRemovedFromChannelDto.channel_id,
-        channel = with(domainMapping) {
-            notificationRemovedFromChannelDto.channel.toDomain()
-        },
-        member = with(domainMapping) { notificationRemovedFromChannelDto.member.toDomain() },
-        user = with(domainMapping) { notificationRemovedFromChannelDto.user?.toDomain() },
-    )
-
     private val unknown = UnknownEvent(
         type = unknownDto.type,
         createdAt = unknownDto.created_at.date,
@@ -473,13 +423,11 @@ internal object EventMappingTestArguments {
         Arguments.of(connectingDto, connecting),
         Arguments.of(disconnectedDto, disconnected),
         Arguments.of(errorDto, error),
-        Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
         Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),
         Arguments.of(notificationInvitedDto, notificationInvited),
         Arguments.of(notificationMessageNewDto, notificationMessageNew),
         Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
-        Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
         Arguments.of(unknownDto, unknown),
     )
 
@@ -1540,6 +1488,55 @@ internal object EventMappingTestArguments {
         channel = with(domainMapping) { CHANNEL.toDomain() },
     )
 
+    private val notificationAddedToChannelGenerated = io.getstream.chat.android.network.models.NotificationAddedToChannelEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        member = MEMBER,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        unreadCount = TOTAL_UNREAD_COUNT,
+    )
+
+    private val notificationAddedToChannelExpected = NotificationAddedToChannelEvent(
+        type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+    )
+
+    private val notificationRemovedFromChannelGenerated = io.getstream.chat.android.network.models.NotificationRemovedFromChannelEvent(
+        createdAt = DATE,
+        type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = CHANNEL,
+        member = MEMBER,
+        user = SLIM_USER,
+    )
+
+    private val notificationRemovedFromChannelExpected = NotificationRemovedFromChannelEvent(
+        type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { CHANNEL.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
+        user = SLIM_USER_DOMAIN,
+    )
+
     private val userPresenceChangedGenerated = io.getstream.chat.android.network.models.UserPresenceChangedEvent(
         createdAt = DATE,
         type = EventType.USER_PRESENCE_CHANGED,
@@ -1621,6 +1618,8 @@ internal object EventMappingTestArguments {
         Arguments.of(channelTruncatedGenerated, DATE_STRING, channelTruncatedExpected),
         Arguments.of(notificationChannelDeletedGenerated, DATE_STRING, notificationChannelDeletedExpected),
         Arguments.of(notificationChannelTruncatedGenerated, DATE_STRING, notificationChannelTruncatedExpected),
+        Arguments.of(notificationAddedToChannelGenerated, DATE_STRING, notificationAddedToChannelExpected),
+        Arguments.of(notificationRemovedFromChannelGenerated, DATE_STRING, notificationRemovedFromChannelExpected),
         Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
         Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
         Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),

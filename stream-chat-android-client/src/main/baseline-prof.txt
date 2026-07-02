@@ -949,9 +949,6 @@ HSPLio/getstream/chat/android/client/api2/model/dto/MessageUpdatedEventDtoJsonAd
 Lio/getstream/chat/android/client/api2/model/dto/NewMessageEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NewMessageEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NewMessageEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationAddedToChannelEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationAddedToChannelEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationAddedToChannelEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
@@ -993,9 +990,6 @@ HSPLio/getstream/chat/android/client/api2/model/dto/NotificationMessageNewEventD
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMutesUpdatedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMutesUpdatedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationMutesUpdatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationRemovedFromChannelEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationRemovedFromChannelEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationRemovedFromChannelEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/NotificationThreadMessageNewEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationThreadMessageNewEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationThreadMessageNewEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V

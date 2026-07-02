@@ -84,12 +84,14 @@ import io.getstream.chat.android.network.models.MessageDeletedEvent as Generated
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent as GeneratedNotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationRemovedFromChannelEvent as GeneratedNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
 import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPollUpdatedEvent
@@ -269,6 +271,8 @@ internal class MoshiChatParser(
             EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> moshi.adapter(GeneratedNotificationChannelMutesUpdatedEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_CHANNEL_DELETED -> moshi.adapter(GeneratedNotificationChannelDeletedEvent::class.java).fromJson(raw)
             EventType.NOTIFICATION_CHANNEL_TRUNCATED -> moshi.adapter(GeneratedNotificationChannelTruncatedEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_ADDED_TO_CHANNEL -> moshi.adapter(GeneratedNotificationAddedToChannelEvent::class.java).fromJson(raw)
+            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> moshi.adapter(GeneratedNotificationRemovedFromChannelEvent::class.java).fromJson(raw)
             EventType.USER_DELETED -> moshi.adapter(GeneratedUserDeletedEvent::class.java).fromJson(raw)
             EventType.USER_MESSAGES_DELETED -> moshi.adapter(GeneratedUserMessagesDeletedEvent::class.java).fromJson(raw)
             EventType.REMINDER_CREATED -> moshi.adapter(GeneratedReminderCreatedEvent::class.java).fromJson(raw)
