@@ -339,7 +339,8 @@ private const val HeaderTraversalIndex = -1f
 private const val ListTraversalIndex = 0f
 private const val ComposerTraversalIndex = 1f
 
-// Marks the receiver as a screen-reader traversal region at the given reading-order index.
+// The index is deliberately not mirrored as a zIndex (unlike the message list items): that
+// would reorder the Scaffold slot drawing, and TalkBack handles this slot/reading-order divergence.
 private fun Modifier.traversalRegion(index: Float): Modifier =
     semantics {
         isTraversalGroup = true
