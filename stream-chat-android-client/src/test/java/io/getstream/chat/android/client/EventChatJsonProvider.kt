@@ -222,6 +222,7 @@ internal fun createNotificationAddedToChannelEventStringJson() =
             "member": ${createMemberJsonString()},
             "total_unread_count": 4,
             "unread_channels": 5,
+            "unread_count": 4,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -289,6 +290,7 @@ internal fun createNotificationInvitedEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()},
+            "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -338,6 +340,7 @@ internal fun createNotificationMessageNewEventStringJson() =
             "channel_id": "channelId",
             "channel": ${createChannelJsonString()},
             "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
@@ -398,6 +401,7 @@ internal fun createReactionUpdateEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "message": ${createMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
@@ -455,7 +459,13 @@ internal fun createUserDeletedEventStringJson() =
     createChatEventStringJson(
         "user.deleted",
         """
-            "user": ${createUserJsonString()}
+            "user": ${createUserJsonString()},
+            "delete_conversation": "soft",
+            "delete_conversation_channels": false,
+            "delete_messages": "soft",
+            "delete_user": "soft",
+            "hard_delete": false,
+            "mark_messages_deleted": false
         """.trimIndent(),
     )
 
@@ -636,6 +646,9 @@ internal fun createNotificationThreadMessageNewEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "message": ${createMessageJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "thread_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "watcher_count": 3,
             "channel": ${createChannelJsonString()},
             "unread_threads": 1,
             "unread_thread_messages": 2
