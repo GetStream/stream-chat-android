@@ -50,7 +50,6 @@ import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -175,11 +174,13 @@ import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDevice
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
+import io.getstream.chat.android.network.models.PollOptionRequest as GeneratedPollOptionRequest
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
+import io.getstream.chat.android.network.models.UpdatePollRequest as GeneratedUpdatePollRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest as PartialUpdateUserDto
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
@@ -1808,27 +1809,27 @@ constructor(
     }
 
     override fun updatePoll(request: UpdatePollRequest): Call<Poll> {
-        val body = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
-            allow_answers = request.allowAnswers,
-            allow_user_suggested_options = request.allowUserSuggestedOptions,
+        val body = GeneratedUpdatePollRequest(
+            allowAnswers = request.allowAnswers,
+            allowUserSuggestedOptions = request.allowUserSuggestedOptions,
             description = request.description,
-            enforce_unique_vote = request.enforceUniqueVote,
+            enforceUniqueVote = request.enforceUniqueVote,
             id = request.id,
-            is_closed = request.isClosed,
-            max_votes_allowed = request.maxVotesAllowed,
+            isClosed = request.isClosed,
+            maxVotesAllowed = request.maxVotesAllowed,
             name = request.name,
             options = request.options?.map {
-                UpstreamOptionDto(
-                    id = it.id,
+                GeneratedPollOptionRequest(
+                    id = it.id.orEmpty(),
                     text = it.text,
-                    extraData = it.extraData,
+                    custom = it.extraData,
                 )
             },
-            voting_visibility = when (request.votingVisibility) {
-                VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
-                VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+            votingVisibility = when (request.votingVisibility) {
+                VotingVisibility.PUBLIC -> GeneratedUpdatePollRequest.VotingVisibility.Public
+                VotingVisibility.ANONYMOUS -> GeneratedUpdatePollRequest.VotingVisibility.Anonymous
             },
-            extraData = request.extraData,
+            custom = request.extraData,
         )
         return pollsApi.updatePoll(body).mapDomain { it.poll.toDomain() }
     }

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
@@ -29,6 +28,7 @@ import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

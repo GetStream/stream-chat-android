@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
@@ -199,6 +198,7 @@ import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDevice
 import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
 import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
+import io.getstream.chat.android.network.models.PollOptionRequest as GeneratedPollOptionRequest
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
@@ -206,6 +206,7 @@ import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUs
 import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest as PartialUpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest as PartialUpdatePollRequest
+import io.getstream.chat.android.network.models.UpdatePollRequest as GeneratedUpdatePollRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest as PartialUpdateThreadRequest
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest as PartialUpdateUserDto
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest as PartialUpdateUsersRequest
@@ -2542,24 +2543,24 @@ internal class MoshiChatApiTest {
         )
         val result = sut.updatePoll(request).await()
         // then
-        val expectedBody = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
+        val expectedBody = GeneratedUpdatePollRequest(
             id = pollId,
             name = name,
             description = description,
             options = options.map {
-                UpstreamOptionDto(
-                    id = it.id,
+                GeneratedPollOptionRequest(
+                    id = it.id.orEmpty(),
                     text = it.text,
-                    extraData = it.extraData,
+                    custom = it.extraData,
                 )
             },
-            voting_visibility = CreatePollRequest.VOTING_VISIBILITY_PUBLIC,
-            enforce_unique_vote = enforceUniqueVote,
-            max_votes_allowed = maxVotesAllowed,
-            allow_user_suggested_options = allowUserSuggestedOptions,
-            allow_answers = allowAnswers,
-            is_closed = isClosed,
-            extraData = extraData,
+            votingVisibility = GeneratedUpdatePollRequest.VotingVisibility.Public,
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            isClosed = isClosed,
+            custom = extraData,
         )
         result `should be instance of` expected
         verify(api, times(1)).updatePoll(expectedBody)
