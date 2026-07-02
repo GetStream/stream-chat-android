@@ -22,8 +22,9 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
+import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
+import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PollOptionResponseData as DownstreamPollOptionDto
 
 /**
@@ -79,22 +80,49 @@ internal object DownstreamPollOptionDtoAdapter :
 }
 
 /**
- * Serializer for [CreatePollRequest] that handles the [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto]
- * implementation.
+ * Serializer for the generated [GeneratedCreatePollRequest]. Flattens the `custom` map (wire key
+ * `Custom`) to the root of the poll object, matching the backend's inlined extra-fields contract.
  */
-internal object CreatePollRequestAdapter : CustomObjectDtoAdapter<CreatePollRequest>(CreatePollRequest::class) {
+internal object GeneratedCreatePollRequestAdapter :
+    CustomObjectDtoAdapter<GeneratedCreatePollRequest>(
+        kClass = GeneratedCreatePollRequest::class,
+        extraDataPropertyName = "Custom",
+    ) {
 
     @FromJson
     @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): CreatePollRequest = error("Can't parse this from Json")
+    fun fromJson(jsonReader: JsonReader): GeneratedCreatePollRequest = error("Can't parse this from Json")
 
     @ToJson
     fun toJson(
         jsonWriter: JsonWriter,
-        request: CreatePollRequest?,
+        request: GeneratedCreatePollRequest?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
-        requestAdapter: JsonAdapter<CreatePollRequest>,
+        requestAdapter: JsonAdapter<GeneratedCreatePollRequest>,
     ) = serializeWithExtraData(jsonWriter, request, mapAdapter, requestAdapter)
+}
+
+/**
+ * Serializer for the generated [GeneratedPollOptionInput]. Flattens the `custom` map to the root of
+ * the option object, matching the backend's inlined extra-fields contract.
+ */
+internal object GeneratedPollOptionInputAdapter :
+    CustomObjectDtoAdapter<GeneratedPollOptionInput>(
+        kClass = GeneratedPollOptionInput::class,
+        extraDataPropertyName = "custom",
+    ) {
+
+    @FromJson
+    @Suppress("UNUSED_PARAMETER")
+    fun fromJson(jsonReader: JsonReader): GeneratedPollOptionInput = error("Can't parse this from Json")
+
+    @ToJson
+    fun toJson(
+        jsonWriter: JsonWriter,
+        option: GeneratedPollOptionInput?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        optionAdapter: JsonAdapter<GeneratedPollOptionInput>,
+    ) = serializeWithExtraData(jsonWriter, option, mapAdapter, optionAdapter)
 }
 
 /**

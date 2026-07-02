@@ -196,7 +196,9 @@ import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteR
 import io.getstream.chat.android.network.models.ChatPreferencesInput as UpstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse as DownstreamChatPreferencesDto
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
+import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
+import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.network.models.PushPreferencesResponse as DownstreamPushPreferenceDto
 import io.getstream.chat.android.network.models.SharedLocationResponseData as DownstreamLocationDto
@@ -2481,24 +2483,24 @@ internal class MoshiChatApiTest {
         val pollConfig = randomPollConfig()
         val result = sut.createPoll(pollConfig).await()
         // then
-        val expectedBody = CreatePollRequest(
+        val expectedBody = GeneratedCreatePollRequest(
             name = pollConfig.name,
             description = pollConfig.description,
             options = pollConfig.optionsWithExtraData.map {
-                UpstreamOptionDto(
+                GeneratedPollOptionInput(
                     text = it.text,
-                    extraData = it.extraData,
+                    custom = it.extraData,
                 )
             },
-            voting_visibility = when (pollConfig.votingVisibility) {
-                VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
-                VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+            votingVisibility = when (pollConfig.votingVisibility) {
+                VotingVisibility.PUBLIC -> GeneratedCreatePollRequest.VotingVisibility.Public
+                VotingVisibility.ANONYMOUS -> GeneratedCreatePollRequest.VotingVisibility.Anonymous
             },
-            enforce_unique_vote = pollConfig.enforceUniqueVote,
-            max_votes_allowed = pollConfig.maxVotesAllowed,
-            allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-            allow_answers = pollConfig.allowAnswers,
-            extraData = pollConfig.extraData,
+            enforceUniqueVote = pollConfig.enforceUniqueVote,
+            maxVotesAllowed = pollConfig.maxVotesAllowed,
+            allowUserSuggestedOptions = pollConfig.allowUserSuggestedOptions,
+            allowAnswers = pollConfig.allowAnswers,
+            custom = pollConfig.extraData,
         )
         result `should be instance of` expected
         verify(api, times(1)).createPoll(expectedBody)

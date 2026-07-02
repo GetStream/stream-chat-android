@@ -172,7 +172,9 @@ import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSe
 import io.getstream.chat.android.network.models.BlockUsersRequest as BlockUserRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest as PollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest as AddDeviceRequest
+import io.getstream.chat.android.network.models.CreatePollRequest as GeneratedCreatePollRequest
 import io.getstream.chat.android.network.models.MessageActionRequest as SendActionRequest
+import io.getstream.chat.android.network.models.PollOptionInput as GeneratedPollOptionInput
 import io.getstream.chat.android.network.models.PushPreferenceInput as UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.network.models.UnblockUsersRequest as UnblockUserRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest as RejectInviteRequest
@@ -1783,24 +1785,24 @@ constructor(
 
     override fun createPoll(createPollParams: CreatePollParams): Call<Poll> {
         return pollsApi.createPoll(
-            CreatePollRequest(
-                allow_answers = createPollParams.allowAnswers,
-                allow_user_suggested_options = createPollParams.allowUserSuggestedOptions,
+            GeneratedCreatePollRequest(
+                allowAnswers = createPollParams.allowAnswers,
+                allowUserSuggestedOptions = createPollParams.allowUserSuggestedOptions,
                 description = createPollParams.description,
-                enforce_unique_vote = createPollParams.enforceUniqueVote,
-                max_votes_allowed = createPollParams.maxVotesAllowed,
+                enforceUniqueVote = createPollParams.enforceUniqueVote,
+                maxVotesAllowed = createPollParams.maxVotesAllowed,
                 name = createPollParams.name,
                 options = createPollParams.optionsWithExtraData.map {
-                    UpstreamOptionDto(
+                    GeneratedPollOptionInput(
                         text = it.text,
-                        extraData = it.extraData,
+                        custom = it.extraData,
                     )
                 },
-                voting_visibility = when (createPollParams.votingVisibility) {
-                    VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
-                    VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+                votingVisibility = when (createPollParams.votingVisibility) {
+                    VotingVisibility.PUBLIC -> GeneratedCreatePollRequest.VotingVisibility.Public
+                    VotingVisibility.ANONYMOUS -> GeneratedCreatePollRequest.VotingVisibility.Anonymous
                 },
-                extraData = createPollParams.extraData,
+                custom = createPollParams.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
     }

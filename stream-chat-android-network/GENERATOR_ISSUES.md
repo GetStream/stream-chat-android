@@ -667,3 +667,35 @@ engine's `sjson.SetBytes` injection, so behavior is unchanged) or expose
 a `HasUnreadCounts`-style embed and reuse it on all notification events
 that go through the unread-injection path.
 
+
+## 24. `CreatePollRequest` / `UpdatePollRequest` emit a bogus capital-C `Custom` property
+
+**Symptom:** the generated `CreatePollRequest` and `UpdatePollRequest` carry
+a field `@Json(name = "Custom")` (capital C) instead of the expected inlined
+custom fields. Compare `PollOptionInput`, which correctly emits
+`@Json(name = "custom")` (lowercase).
+
+**Root cause:** in `lib/combined/controllers/common/payload/polls/create_poll.go`
+the struct field is declared `Custom jsonextra.ExtraFields` with **no json
+tag** (contrast `PollOptionInput.Custom jsonextra.ExtraFields` `json:"custom"`
+on the same file). With no tag, Go reflection falls back to the field name
+`Custom`, and the OpenAPI generator emits that verbatim as a property. Worse,
+`jsonextra.ExtraFields` is meant to *inline/flatten* its map at the parent
+object level at runtime, so the correct spec representation is
+`additionalProperties`-style flattening, not a nested `Custom` object at all.
+
+**Impact on migration:** the legacy hand-written `CreatePollRequest` /
+`UpstreamOptionDto` flatten their `extraData` to root via explicit
+`CustomObjectDtoAdapter` wrappers registered in `MoshiChatParser`
+(`CreatePollRequestAdapter`, `UpstreamOptionDtoAdapter`). Migrating to the
+generated types would serialize custom poll data as a nested `"Custom": {...}`
+object (wrong key, wrong nesting) and break the create/update-poll wire
+contract. Blocks the poll-request migration until fixed.
+
+**Fix status:** not yet patched. Deferred with the poll-request migration.
+
+**Suggested upstream fix:** give the `Custom` field on `CreatePollRequest`
+and `UpdatePollRequest` the same treatment as everywhere else custom fields
+flatten (tag it so the generator recognizes it as inlined extra fields, the
+way `jsonextra.ExtraFields` behaves at runtime), so the generated model
+exposes flattened custom data rather than a literal `Custom` property.
