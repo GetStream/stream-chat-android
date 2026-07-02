@@ -201,7 +201,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.compose.util.LocalIsImeAnimating
+import io.getstream.chat.android.compose.util.isImeAnimating
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -907,9 +907,9 @@ public interface ChatComponentFactory {
      * The default message list item modifier for styling.
      *
      * Uses `Modifier.animateItem` for fade in/out and placement transitions. The placement
-     * animation is disabled while the IME is animating (via [LocalIsImeAnimating]) so items
-     * don't slide during the keyboard open/close window; it resumes for normal list changes
-     * (insertions, deletions, height changes).
+     * animation is disabled while the IME is animating so items don't slide during the
+     * keyboard open/close window; it resumes for normal list changes (insertions, deletions,
+     * height changes).
      */
     @Composable
     public fun LazyItemScope.messageListItemModifier(): Modifier =
@@ -917,7 +917,7 @@ public interface ChatComponentFactory {
         // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
         when {
             LocalInspectionMode.current -> Modifier
-            LocalIsImeAnimating.current -> Modifier.animateItem(placementSpec = null)
+            isImeAnimating() -> Modifier.animateItem(placementSpec = null)
             else -> Modifier.animateItem()
         }
 
