@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
@@ -49,7 +50,9 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.util.LocalIsImeAnimating
 import io.getstream.chat.android.compose.util.isAppInForegroundAsState
+import io.getstream.chat.android.compose.util.rememberIsImeAnimating
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -144,77 +147,80 @@ public fun Messages(
     val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
 
     val density = LocalDensity.current
+    val isImeAnimating = rememberIsImeAnimating()
 
     Box(modifier = modifier) {
-        LazyColumn(
-            modifier = Modifier
-                .testTag("Stream_Messages")
-                .fillMaxSize()
-                .onSizeChanged {
-                    val bottomPadding = contentPadding.calculateBottomPadding()
-                    val topPadding = contentPadding.calculateTopPadding()
+        CompositionLocalProvider(LocalIsImeAnimating provides isImeAnimating) {
+            LazyColumn(
+                modifier = Modifier
+                    .testTag("Stream_Messages")
+                    .fillMaxSize()
+                    .onSizeChanged {
+                        val bottomPadding = contentPadding.calculateBottomPadding()
+                        val topPadding = contentPadding.calculateTopPadding()
 
-                    val paddingPixels = with(density) {
-                        bottomPadding.roundToPx() + topPadding.roundToPx()
-                    }
-
-                    val parentSize = IntSize(
-                        width = it.width,
-                        height = it.height + paddingPixels,
-                    )
-                    messagesLazyListState.updateParentSize(parentSize)
-                },
-            state = lazyListState,
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = messagesState.getVerticalArrangement(
-                messagesVerticalArrangement = verticalArrangement,
-                threadsVerticalArrangement = threadsVerticalArrangement,
-                threadMessagesStart = threadMessagesStart,
-            ),
-            reverseLayout = true,
-            contentPadding = contentPadding,
-        ) {
-            footerContent?.let { content ->
-                item {
-                    content.invoke()
-                }
-            }
-
-            if (isLoadingMoreNewMessages && !endOfNewMessages) {
-                item {
-                    loadingMoreContent()
-                }
-            }
-
-            itemsIndexed(
-                items = messages,
-                key = { _, item -> item.id },
-            ) { index, item ->
-                val messageItemModifier =
-                    if (item is MessageItemState && item.focusState == MessageFocused) {
-                        Modifier.onSizeChanged {
-                            messagesLazyListState.updateFocusedMessageSize(it)
+                        val paddingPixels = with(density) {
+                            bottomPadding.roundToPx() + topPadding.roundToPx()
                         }
-                    } else {
-                        Modifier
+
+                        val parentSize = IntSize(
+                            width = it.width,
+                            height = it.height + paddingPixels,
+                        )
+                        messagesLazyListState.updateParentSize(parentSize)
+                    },
+                state = lazyListState,
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = messagesState.getVerticalArrangement(
+                    messagesVerticalArrangement = verticalArrangement,
+                    threadsVerticalArrangement = threadsVerticalArrangement,
+                    threadMessagesStart = threadMessagesStart,
+                ),
+                reverseLayout = true,
+                contentPadding = contentPadding,
+            ) {
+                footerContent?.let { content ->
+                    item {
+                        content.invoke()
                     }
-
-                val itemModifier = itemModifier(index, item)
-                val finalItemModifier = messageItemModifier.then(itemModifier)
-                Box(modifier = finalItemModifier) {
-                    itemContent(item)
                 }
-            }
 
-            if (isLoadingMoreOldMessages && !endOfOldMessages) {
-                item {
-                    loadingMoreContent()
+                if (isLoadingMoreNewMessages && !endOfNewMessages) {
+                    item {
+                        loadingMoreContent()
+                    }
                 }
-            }
 
-            headerContent?.let { content ->
-                item {
-                    content.invoke()
+                itemsIndexed(
+                    items = messages,
+                    key = { _, item -> item.id },
+                ) { index, item ->
+                    val messageItemModifier =
+                        if (item is MessageItemState && item.focusState == MessageFocused) {
+                            Modifier.onSizeChanged {
+                                messagesLazyListState.updateFocusedMessageSize(it)
+                            }
+                        } else {
+                            Modifier
+                        }
+
+                    val itemModifier = itemModifier(index, item)
+                    val finalItemModifier = messageItemModifier.then(itemModifier)
+                    Box(modifier = finalItemModifier) {
+                        itemContent(item)
+                    }
+                }
+
+                if (isLoadingMoreOldMessages && !endOfOldMessages) {
+                    item {
+                        loadingMoreContent()
+                    }
+                }
+
+                headerContent?.let { content ->
+                    item {
+                        content.invoke()
+                    }
                 }
             }
         }
