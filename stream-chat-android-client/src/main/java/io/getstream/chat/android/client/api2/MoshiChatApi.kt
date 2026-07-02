@@ -1246,7 +1246,7 @@ constructor(
             userId = userId,
             body = UpdateMemberPartialRequest(set = set, unset = unset),
         ).mapDomain { response ->
-            response.channel_member.toDomain()
+            response.channelMember!!.toDomain()
         }
     }
 

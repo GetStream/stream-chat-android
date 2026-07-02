@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -73,6 +72,7 @@ import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 import io.getstream.chat.android.randomBoolean
@@ -355,7 +355,9 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun partialUpdateMemberInput() = listOf(
         Arguments.of(
-            RetroSuccess(UpdateMemberPartialResponse(Mother.randomDownstreamMemberDto())).toRetrofitCall(),
+            RetroSuccess(
+                UpdateMemberPartialResponse(duration = "", channelMember = Mother.randomDownstreamMemberDto()),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
