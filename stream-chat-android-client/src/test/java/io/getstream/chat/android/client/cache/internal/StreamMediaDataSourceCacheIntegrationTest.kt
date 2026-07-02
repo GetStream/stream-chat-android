@@ -187,6 +187,53 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
     }
 
     /**
+     * `clearAll()` fans out over every live cache in the process registry and empties each in
+     * place. Here the single registered cache (created in [setUp]) is populated with real bytes;
+     * after `clearAll()` its content is gone, the call reports it cleared something (`true`), and
+     * the still-alive `SimpleCache` can serve a fresh write.
+     */
+    @Test
+    fun `clearAll empties the live cache in place and reports it cleared`() {
+        // Arrange: write real bytes into the cache registered in setUp() and confirm they landed.
+        val upstream = RecordingDataSourceFactory()
+        val factory = VideoCacheDataSourceFactory(cache, upstream)
+        populateCache(factory, VIDEO_URL)
+        assertEquals("Precondition: one upstream fetch populated the cache", 1, upstream.openCount)
+        assertTrue("Precondition: cache tracks the written key", cache.cache.keys.isNotEmpty())
+        assertTrue("Precondition: cache reports non-zero size", cache.cache.cacheSpace > 0L)
+
+        // Act: clear every live cache in the process.
+        val cleared = VideoMediaCache.clearAll()
+
+        // Assert: it reported clearing a live cache, and this cache is now empty.
+        assertTrue("clearAll should report that a live cache was cleared", cleared)
+        assertTrue("Cache should track zero keys after clearAll", cache.cache.keys.isEmpty())
+        assertEquals("Cache should report zero size after clearAll", 0L, cache.cache.cacheSpace)
+
+        // Assert: the SimpleCache stays alive, so a subsequent read re-fetches and re-populates.
+        populateCache(factory, VIDEO_URL)
+        assertEquals("A read after clearAll should hit upstream again", 2, upstream.openCount)
+        assertTrue("Cache should be re-populated after the second read", cache.cache.keys.isNotEmpty())
+    }
+
+    /**
+     * When no live cache is registered in the process (e.g. the app never opted in, or a prior
+     * cache was released), `clearAll()` has nothing to empty and reports `false` — the signal
+     * `ChatClient` uses to fall back to deleting the cache directory from disk.
+     */
+    @Test
+    fun `clearAll reports nothing to clear when no live cache is registered`() {
+        // Arrange: release the only registered cache so the process registry is empty.
+        cache.release()
+
+        // Act + Assert.
+        assertFalse("clearAll should report nothing was cleared on an empty registry", VideoMediaCache.clearAll())
+
+        // Recreate so tearDown() releases a live instance and unlocks the directory for the next test.
+        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())
+    }
+
+    /**
      * Verifies the LRU evictor is wired with [VideoCacheConfig.maxSizeBytes]. Three videos are
      * written into a cache sized to hold exactly two; the read between the second and third write
      * bumps the first video's recency so the second video becomes the least-recently-used and is
@@ -238,6 +285,11 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             evictionCache.release()
             evictionDir.deleteRecursively()
         }
+    }
+
+    /** Reads [url] through [factory] once, writing its bytes into the wrapped cache. */
+    private fun populateCache(factory: VideoCacheDataSourceFactory, url: String) {
+        readFully(factory.createDataSource(), DataSpec(Uri.parse(url)))
     }
 
     private fun readFully(source: DataSource, spec: DataSpec) {

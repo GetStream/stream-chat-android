@@ -111,6 +111,20 @@ public class VideoMediaCache private constructor(
         private val logger by taggedLogger(TAG)
 
         /**
+         * Clears every live [VideoMediaCache] in this process in place (see [clear]), keeping each
+         * [SimpleCache] and its directory lock alive. Returns `true` if at least one live cache was
+         * cleared, `false` if the registry was empty (no cache directory is owned in this process).
+         *
+         * Callers use the return value to decide whether it is safe to delete the cache directory
+         * from disk: deleting a directory owned by a live [SimpleCache] corrupts Media3's on-disk
+         * index and lock.
+         */
+        internal fun clearAll(): Boolean = synchronized(instances) {
+            instances.values.forEach { it.clear() }
+            instances.isNotEmpty()
+        }
+
+        /**
          * Returns a [VideoMediaCache] backed by the [SimpleCache] at [cacheDir]. If an instance
          * for that absolute directory path already exists in this process, that instance is
          * returned and [config] is ignored beyond the first call; this prevents a second
