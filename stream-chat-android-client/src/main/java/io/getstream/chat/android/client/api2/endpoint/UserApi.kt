@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRe
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
+import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
@@ -57,7 +57,7 @@ internal interface UserApi {
     fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUsersResponse>
 
     @GET("/users/block")
-    fun queryBlockedUsers(): RetrofitCall<QueryBlockedUsersResponse>
+    fun queryBlockedUsers(): RetrofitCall<GetBlockedUsersResponse>
 
     @PATCH("/users")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
