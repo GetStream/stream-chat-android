@@ -604,12 +604,6 @@ HSPLio/getstream/chat/android/client/api2/model/dto/ChannelUpdatedByUserEventDto
 Lio/getstream/chat/android/client/api2/model/dto/ChannelUpdatedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/ChannelUpdatedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/ChannelUpdatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/ChannelUserBannedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/ChannelUserBannedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/ChannelUserBannedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/ChannelUserUnbannedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/ChannelUserUnbannedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/ChannelUserUnbannedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/ChannelVisibleEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/ChannelVisibleEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/ChannelVisibleEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
@@ -910,12 +904,6 @@ HSPLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter
 PLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDto;
 PLio/getstream/chat/android/client/api2/model/dto/DownstreamVoteDtoJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 Lio/getstream/chat/android/client/api2/model/dto/ErrorEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/GlobalUserBannedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/GlobalUserBannedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/GlobalUserBannedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/GlobalUserUnbannedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/GlobalUserUnbannedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/GlobalUserUnbannedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/HealthEventDto;
 HPLio/getstream/chat/android/client/api2/model/dto/HealthEventDto;-><init>(Ljava/lang/String;Lio/getstream/chat/android/client/api2/model/dto/utils/internal/ExactDate;Ljava/lang/String;)V
 PLio/getstream/chat/android/client/api2/model/dto/HealthEventDto;->getConnection_id()Ljava/lang/String;

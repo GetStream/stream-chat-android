@@ -22,13 +22,9 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
@@ -71,10 +67,6 @@ internal class EventDtoAdapter(
     private val notificationChannelDeletedEventAdapter = moshi.adapter(NotificationChannelDeletedEventDto::class.java)
     private val notificationChannelTruncatedEventAdapter =
         moshi.adapter(NotificationChannelTruncatedEventDto::class.java)
-    private val channelUserBannedEventAdapter = moshi.adapter(ChannelUserBannedEventDto::class.java)
-    private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
-    private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
-    private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -100,14 +92,6 @@ internal class EventDtoAdapter(
             EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> notificationRemovedFromChannelEventAdapter
             EventType.NOTIFICATION_CHANNEL_DELETED -> notificationChannelDeletedEventAdapter
             EventType.NOTIFICATION_CHANNEL_TRUNCATED -> notificationChannelTruncatedEventAdapter
-            EventType.USER_BANNED -> when {
-                map.containsKey("cid") -> channelUserBannedEventAdapter
-                else -> globalUserBannedEventAdapter
-            }
-            EventType.USER_UNBANNED -> when {
-                map.containsKey("cid") -> channelUserUnbannedEventAdapter
-                else -> globalUserUnbannedEventAdapter
-            }
             else -> return null
         }
 

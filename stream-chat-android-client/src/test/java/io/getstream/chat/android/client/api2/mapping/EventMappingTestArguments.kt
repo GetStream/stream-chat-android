@@ -17,15 +17,11 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
@@ -207,26 +203,6 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val channelUserBannedDto = ChannelUserBannedEventDto(
-        type = EventType.USER_BANNED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        expiration = DATE,
-        shadow = SHADOW_BAN,
-    )
-
-    private val channelUserUnbannedDto = ChannelUserUnbannedEventDto(
-        type = EventType.USER_UNBANNED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-    )
-
     private val connectedDto = ConnectedEventDto(
         type = EventType.CONNECTION_CONNECTING,
         created_at = EXACT_DATE,
@@ -255,18 +231,6 @@ internal object EventMappingTestArguments {
         type = EventType.CONNECTION_ERROR,
         created_at = EXACT_DATE,
         error = GENERIC_ERROR,
-    )
-
-    private val globalUserBannedDto = GlobalUserBannedEventDto(
-        type = EventType.USER_BANNED,
-        created_at = EXACT_DATE,
-        user = USER,
-    )
-
-    private val globalUserUnbannedDto = GlobalUserUnbannedEventDto(
-        type = EventType.USER_UNBANNED,
-        created_at = EXACT_DATE,
-        user = USER,
     )
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
@@ -374,28 +338,6 @@ internal object EventMappingTestArguments {
     // BEGIN: Domain models
 
 
-    private val channelUserBanned = ChannelUserBannedEvent(
-        type = channelUserBannedDto.type,
-        createdAt = channelUserBannedDto.created_at.date,
-        rawCreatedAt = channelUserBannedDto.created_at.rawDate,
-        user = with(domainMapping) { channelUserBannedDto.user.toDomain() },
-        cid = channelUserBannedDto.cid,
-        channelType = channelUserBannedDto.channel_type,
-        channelId = channelUserBannedDto.channel_id,
-        expiration = channelUserBannedDto.expiration,
-        shadow = channelUserBannedDto.shadow ?: false,
-    )
-
-    private val channelUserUnbanned = ChannelUserUnbannedEvent(
-        type = channelUserUnbannedDto.type,
-        createdAt = channelUserUnbannedDto.created_at.date,
-        rawCreatedAt = channelUserUnbannedDto.created_at.rawDate,
-        user = with(domainMapping) { channelUserUnbannedDto.user.toDomain() },
-        cid = channelUserUnbannedDto.cid,
-        channelType = channelUserUnbannedDto.channel_type,
-        channelId = channelUserUnbannedDto.channel_id,
-    )
-
     private val connected = ConnectedEvent(
         type = connectedDto.type,
         createdAt = connectedDto.created_at.date,
@@ -429,20 +371,6 @@ internal object EventMappingTestArguments {
         createdAt = errorDto.created_at.date,
         rawCreatedAt = errorDto.created_at.rawDate,
         error = errorDto.error,
-    )
-
-    private val globalUserBanned = GlobalUserBannedEvent(
-        type = globalUserBannedDto.type,
-        createdAt = globalUserBannedDto.created_at.date,
-        rawCreatedAt = globalUserBannedDto.created_at.rawDate,
-        user = with(domainMapping) { globalUserBannedDto.user.toDomain() },
-    )
-
-    private val globalUserUnbanned = GlobalUserUnbannedEvent(
-        type = globalUserUnbannedDto.type,
-        createdAt = globalUserUnbannedDto.created_at.date,
-        rawCreatedAt = globalUserUnbannedDto.created_at.rawDate,
-        user = with(domainMapping) { globalUserUnbannedDto.user.toDomain() },
     )
 
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
@@ -584,15 +512,11 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(channelUserBannedDto, channelUserBanned),
-        Arguments.of(channelUserUnbannedDto, channelUserUnbanned),
         Arguments.of(connectedDto, connected),
         Arguments.of(connectionErrorDto, connectionError),
         Arguments.of(connectingDto, connecting),
         Arguments.of(disconnectedDto, disconnected),
         Arguments.of(errorDto, error),
-        Arguments.of(globalUserBannedDto, globalUserBanned),
-        Arguments.of(globalUserUnbannedDto, globalUserUnbanned),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelTruncatedDto, notificationChannelTruncated),
@@ -1486,6 +1410,74 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { SLIM_PRIVACY_USER.toDomain() },
     )
 
+    private val channelUserBannedGenerated = io.getstream.chat.android.network.models.UserBannedEvent(
+        createdAt = DATE,
+        type = EventType.USER_BANNED,
+        user = SLIM_USER,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        expiration = DATE,
+        shadow = SHADOW_BAN,
+    )
+
+    private val channelUserBannedExpected = ChannelUserBannedEvent(
+        type = EventType.USER_BANNED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = SLIM_USER_DOMAIN,
+        expiration = DATE,
+        shadow = SHADOW_BAN,
+    )
+
+    private val globalUserBannedGenerated = io.getstream.chat.android.network.models.UserBannedEvent(
+        createdAt = DATE,
+        type = EventType.USER_BANNED,
+        user = SLIM_USER,
+    )
+
+    private val globalUserBannedExpected = GlobalUserBannedEvent(
+        type = EventType.USER_BANNED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+    )
+
+    private val channelUserUnbannedGenerated = io.getstream.chat.android.network.models.UserUnbannedEvent(
+        createdAt = DATE,
+        type = EventType.USER_UNBANNED,
+        user = SLIM_USER,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+    )
+
+    private val channelUserUnbannedExpected = ChannelUserUnbannedEvent(
+        type = EventType.USER_UNBANNED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+    )
+
+    private val globalUserUnbannedGenerated = io.getstream.chat.android.network.models.UserUnbannedEvent(
+        createdAt = DATE,
+        type = EventType.USER_UNBANNED,
+        user = SLIM_USER,
+    )
+
+    private val globalUserUnbannedExpected = GlobalUserUnbannedEvent(
+        type = EventType.USER_UNBANNED,
+        createdAt = DATE,
+        rawCreatedAt = DATE_STRING,
+        user = SLIM_USER_DOMAIN,
+    )
+
     private val draftUpdatedGenerated = io.getstream.chat.android.network.models.DraftUpdatedEvent(
         createdAt = DATE,
         type = EventType.DRAFT_MESSAGE_UPDATED,
@@ -1638,6 +1630,10 @@ internal object EventMappingTestArguments {
         Arguments.of(draftUpdatedGenerated, DATE_STRING, draftUpdatedExpected),
         Arguments.of(draftDeletedGenerated, DATE_STRING, draftDeletedExpected),
         Arguments.of(userUpdatedGenerated, DATE_STRING, userUpdatedExpected),
+        Arguments.of(channelUserBannedGenerated, DATE_STRING, channelUserBannedExpected),
+        Arguments.of(globalUserBannedGenerated, DATE_STRING, globalUserBannedExpected),
+        Arguments.of(channelUserUnbannedGenerated, DATE_STRING, channelUserUnbannedExpected),
+        Arguments.of(globalUserUnbannedGenerated, DATE_STRING, globalUserUnbannedExpected),
         Arguments.of(notificationMutesUpdatedGenerated, DATE_STRING, notificationMutesUpdatedExpected),
         Arguments.of(notificationChannelMutesUpdatedGenerated, DATE_STRING, notificationChannelMutesUpdatedExpected),
         Arguments.of(userDeletedGenerated, DATE_STRING, userDeletedExpected),
