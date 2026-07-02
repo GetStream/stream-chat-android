@@ -25,41 +25,6 @@ import java.util.Date
 internal sealed class ChatEventDto
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationInviteAcceptedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val member: DownstreamMemberDto,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationInviteRejectedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val member: DownstreamMemberDto,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationInvitedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val member: DownstreamMemberDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationMessageNewEventDto(
     val type: String,
     val created_at: ExactDate,

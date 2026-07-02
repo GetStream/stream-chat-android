@@ -952,15 +952,6 @@ HSPLio/getstream/chat/android/client/api2/model/dto/NewMessageEventDtoJsonAdapte
 Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDto;
 Lio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDtoJsonAdapter;
 HSPLio/getstream/chat/android/client/api2/model/dto/NotificationChannelMutesUpdatedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationInviteAcceptedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationInviteAcceptedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationInviteAcceptedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationInviteRejectedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationInviteRejectedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationInviteRejectedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-Lio/getstream/chat/android/client/api2/model/dto/NotificationInvitedEventDto;
-Lio/getstream/chat/android/client/api2/model/dto/NotificationInvitedEventDtoJsonAdapter;
-HSPLio/getstream/chat/android/client/api2/model/dto/NotificationInvitedEventDtoJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/dto/NotificationMarkReadEventDto;
 PLio/getstream/chat/android/client/api2/model/dto/NotificationMarkReadEventDto;-><init>(Ljava/lang/String;Lio/getstream/chat/android/client/api2/model/dto/utils/internal/ExactDate;Lio/getstream/chat/android/client/api2/model/dto/DownstreamUserDto;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;Lio/getstream/chat/android/client/api2/model/dto/DownstreamThreadInfoDto;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;)V
 PLio/getstream/chat/android/client/api2/model/dto/NotificationMarkReadEventDto;-><init>(Ljava/lang/String;Lio/getstream/chat/android/client/api2/model/dto/utils/internal/ExactDate;Lio/getstream/chat/android/client/api2/model/dto/DownstreamUserDto;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;Lio/getstream/chat/android/client/api2/model/dto/DownstreamThreadInfoDto;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
