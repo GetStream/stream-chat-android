@@ -86,7 +86,7 @@ import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
@@ -1738,7 +1738,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unblockUserInput")
-    fun testUnblockUser(call: RetrofitCall<UnblockUserResponse>, expected: KClass<*>) = runTest {
+    fun testUnblockUser(call: RetrofitCall<UnblockUsersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserApi>()
         whenever(api.unblockUser(any())).doReturn(call)

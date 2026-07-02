@@ -57,7 +57,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollVotesRespon
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
-import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -1094,8 +1094,8 @@ internal object Mother {
         created_at = createdAt,
     )
 
-    fun randomUnblockUserResponse(duration: String = randomString()): UnblockUserResponse =
-        UnblockUserResponse(duration)
+    fun randomUnblockUsersResponse(duration: String = randomString()): UnblockUsersResponse =
+        UnblockUsersResponse(duration)
 
     fun randomCreateGuestResponse(
         user: DownstreamUserDto = randomDownstreamUserDto(),

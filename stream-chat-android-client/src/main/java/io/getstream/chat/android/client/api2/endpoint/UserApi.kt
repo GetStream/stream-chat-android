@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -54,7 +54,7 @@ internal interface UserApi {
     fun blockUser(@Body body: BlockUserRequest): RetrofitCall<BlockUserResponse>
 
     @POST("/users/unblock")
-    fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUserResponse>
+    fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUsersResponse>
 
     @GET("/users/block")
     fun queryBlockedUsers(): RetrofitCall<QueryBlockedUsersResponse>

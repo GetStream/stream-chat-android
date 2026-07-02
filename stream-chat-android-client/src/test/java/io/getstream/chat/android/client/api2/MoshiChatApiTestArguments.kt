@@ -60,6 +60,7 @@ import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
@@ -384,8 +385,8 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun unblockUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomUnblockUserResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<BlockUserResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(Mother.randomUnblockUsersResponse()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<UnblockUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
