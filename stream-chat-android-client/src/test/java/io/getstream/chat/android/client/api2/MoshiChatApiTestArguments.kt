@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollVotesRespon
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -71,6 +70,7 @@ import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
+import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateReminderResponse
@@ -203,10 +203,16 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun sendReactionInput() = listOf(
         Arguments.of(
-            RetroSuccess(ReactionResponse(Mother.randomDownstreamReactionDto())).toRetrofitCall(),
+            RetroSuccess(
+                SendReactionResponse(
+                    duration = "",
+                    message = randomDownstreamMessageDto(),
+                    reaction = Mother.randomDownstreamReactionDto(),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<SendReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

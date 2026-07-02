@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -133,6 +132,7 @@ import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
+import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
@@ -472,7 +472,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendReactionInput")
-    fun testSendReaction(call: RetrofitCall<ReactionResponse>, expected: KClass<*>) = runTest {
+    fun testSendReaction(call: RetrofitCall<SendReactionResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.sendReaction(any(), any())).doReturn(call)

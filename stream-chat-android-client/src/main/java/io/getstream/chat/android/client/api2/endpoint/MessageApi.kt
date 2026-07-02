@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -32,6 +31,7 @@ import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
+import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.UpdateMessageRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -120,7 +120,7 @@ internal interface MessageApi {
     fun sendReaction(
         @Path("id") messageId: String,
         @Body request: SendReactionRequest,
-    ): RetrofitCall<ReactionResponse>
+    ): RetrofitCall<SendReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")
     fun deleteReaction(
