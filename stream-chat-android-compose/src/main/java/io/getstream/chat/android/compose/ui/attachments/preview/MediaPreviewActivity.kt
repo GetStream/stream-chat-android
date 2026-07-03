@@ -184,7 +184,6 @@ public class MediaPreviewActivity : AppCompatActivity() {
          * @param url The URL of the media file.
          * @param title The name of the media file.
          */
-        @JvmOverloads
         public fun getIntent(
             context: Context,
             url: String,
