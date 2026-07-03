@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesRe
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
@@ -68,6 +67,7 @@ import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
+import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SendReactionResponse
@@ -191,6 +191,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 QueryReactionsResponse(
+                    duration = randomString(),
                     reactions = listOf(Mother.randomDownstreamReactionDto()),
                     next = randomString(),
                 ),
