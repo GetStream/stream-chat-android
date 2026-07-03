@@ -1243,10 +1243,6 @@ Lio/getstream/chat/android/client/api2/model/response/ChannelResponseJsonAdapter
 HSPLio/getstream/chat/android/client/api2/model/response/ChannelResponseJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 HPLio/getstream/chat/android/client/api2/model/response/ChannelResponseJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/response/ChannelResponse;
 HPLio/getstream/chat/android/client/api2/model/response/ChannelResponseJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-PLio/getstream/chat/android/client/api2/model/response/CompletableResponse;-><init>(Ljava/lang/String;)V
-PLio/getstream/chat/android/client/api2/model/response/CompletableResponseJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
-PLio/getstream/chat/android/client/api2/model/response/CompletableResponseJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/client/api2/model/response/CompletableResponse;
-PLio/getstream/chat/android/client/api2/model/response/CompletableResponseJsonAdapter;->fromJson(Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 PLio/getstream/chat/android/client/api2/model/response/EventResponseJsonAdapter;-><init>(Lcom/squareup/moshi/Moshi;)V
 Lio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;
 HSPLio/getstream/chat/android/client/api2/model/response/FileUploadConfigDto;-><init>(Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/lang/Long;)V

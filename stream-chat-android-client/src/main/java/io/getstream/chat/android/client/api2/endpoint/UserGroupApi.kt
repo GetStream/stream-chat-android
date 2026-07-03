@@ -21,10 +21,10 @@ import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersR
 import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -72,7 +72,7 @@ internal interface UserGroupApi {
     fun deleteUserGroup(
         @Path("id") id: String,
         @Query("team_id") teamId: String? = null,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     @POST("/usergroups/{id}/members")
     fun addUserGroupMembers(
