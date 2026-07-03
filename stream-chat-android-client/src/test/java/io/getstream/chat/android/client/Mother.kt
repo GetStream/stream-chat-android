@@ -51,8 +51,6 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -80,6 +78,8 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.PollVotesResponse
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -231,7 +231,8 @@ internal object Mother {
     fun randomQueryDraftMessagesResponse(
         drafts: List<DownstreamDraftDto> = (0 until positiveRandomInt(10)).map { randomDownstreamDraftDto() },
         next: String? = randomString(),
-    ): QueryDraftMessagesResponse = QueryDraftMessagesResponse(
+    ): QueryDraftsResponse = QueryDraftsResponse(
+        duration = randomString(),
         drafts = drafts,
         next = next,
     )
@@ -1276,7 +1277,8 @@ internal object Mother {
         votes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
         next: String? = randomString(),
         prev: String? = randomString(),
-    ): QueryPollVotesResponse = QueryPollVotesResponse(
+    ): PollVotesResponse = PollVotesResponse(
+        duration = randomString(),
         votes = votes,
         next = next,
         prev = prev,

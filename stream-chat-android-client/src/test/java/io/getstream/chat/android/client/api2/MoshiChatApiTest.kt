@@ -56,9 +56,6 @@ import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilt
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -117,10 +114,13 @@ import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
+import io.getstream.chat.android.network.models.PollVotesResponse
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryPollsResponse
@@ -286,7 +286,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
-    fun testQueryDraftMessage(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
+    fun testQueryDraftMessage(call: RetrofitCall<QueryDraftsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.queryDraftMessages(any())).doReturn(call)
@@ -305,7 +305,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
-    fun testQueryDrafts(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
+    fun testQueryDrafts(call: RetrofitCall<QueryDraftsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.queryDrafts(any())).doReturn(call)
@@ -2179,7 +2179,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryMembersInput")
-    fun testQueryMembers(call: RetrofitCall<QueryMembersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryMembers(call: RetrofitCall<MembersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<GeneralApi>()
         whenever(api.queryMembers(any())).doReturn(call)
@@ -2635,7 +2635,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryPollVotesInput")
-    fun testQueryPollVotes(call: RetrofitCall<QueryPollVotesResponse>, expected: KClass<*>) = runTest {
+    fun testQueryPollVotes(call: RetrofitCall<PollVotesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<PollsApi>()
         val pollId = randomString()

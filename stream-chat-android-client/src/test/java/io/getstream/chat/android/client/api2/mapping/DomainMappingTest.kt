@@ -1028,7 +1028,7 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `QueryPollVotesResponse is correctly mapped to QueryPollVotesResult`() {
+    fun `PollVotesResponse is correctly mapped to QueryPollVotesResult`() {
         val input = randomQueryPollVotesResponse()
         val sut = Fixture().get()
         val result = with(sut) { input.toDomain() }

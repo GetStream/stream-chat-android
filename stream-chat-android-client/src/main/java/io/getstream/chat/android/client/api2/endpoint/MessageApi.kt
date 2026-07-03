@@ -20,12 +20,12 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.GetManyMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.Response
@@ -74,13 +74,13 @@ internal interface MessageApi {
     @POST("/drafts/query")
     fun queryDraftMessages(
         @Body request: QueryDraftMessagesRequest,
-    ): RetrofitCall<QueryDraftMessagesResponse>
+    ): RetrofitCall<QueryDraftsResponse>
 
     /**
      * Queries draft messages for the current user.
      */
     @POST("/drafts/query")
-    fun queryDrafts(@Body body: QueryDraftsRequest): RetrofitCall<QueryDraftMessagesResponse>
+    fun queryDrafts(@Body body: QueryDraftsRequest): RetrofitCall<QueryDraftsResponse>
 
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>

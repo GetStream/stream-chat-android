@@ -36,9 +36,6 @@ import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
@@ -62,9 +59,12 @@ import io.getstream.chat.android.network.models.GetManyMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
+import io.getstream.chat.android.network.models.PollVotesResponse
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryThreadsResponse
@@ -110,7 +110,7 @@ internal object MoshiChatApiTestArguments {
             RetroSuccess(Mother.randomQueryDraftMessagesResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<QueryDraftMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<QueryDraftsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -500,10 +500,12 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryMembersInput() = listOf(
         Arguments.of(
-            RetroSuccess(QueryMembersResponse(listOf(Mother.randomDownstreamMemberDto()))).toRetrofitCall(),
+            RetroSuccess(
+                MembersResponse(duration = randomString(), members = listOf(Mother.randomDownstreamMemberDto())),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<QueryMembersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<MembersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -605,7 +607,7 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<QueryPollVotesResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<PollVotesResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
