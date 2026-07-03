@@ -46,9 +46,11 @@ internal class MediaAttachmentPreviewHandlerTest {
         fun generateAttachmentsInput() = listOf(
             Arguments.of(Attachment(), false),
             Arguments.of(Attachment(assetUrl = randomString()), false),
-            Arguments.of(Attachment(assetUrl = randomString(), type = randomString()), false),
+            // Non-media type/mimeType must use fixed values, not randomString(): a random string can
+            // contain a media token (e.g. "wav", "mp3", "video") and flip canHandle() to true.
+            Arguments.of(Attachment(assetUrl = randomString(), type = AttachmentType.FILE), false),
             Arguments.of(
-                Attachment(assetUrl = randomString(), type = randomString(), mimeType = randomString()),
+                Attachment(assetUrl = randomString(), type = AttachmentType.FILE, mimeType = "text/plain"),
                 false,
             ),
             Arguments.of(
