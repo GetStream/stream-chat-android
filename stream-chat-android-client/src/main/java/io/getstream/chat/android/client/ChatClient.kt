@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.attachment.prepareForUpload
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamAudioPlayer
+import io.getstream.chat.android.client.cache.internal.VideoMediaCache
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -304,6 +305,8 @@ internal constructor(
     internal val messageReceiptManager: MessageReceiptManager,
     @InternalStreamChatApi
     public val cdn: CDN? = null,
+    @InternalStreamChatApi
+    public val videoCache: VideoMediaCache? = null,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -1511,12 +1514,22 @@ internal constructor(
     public fun clearCacheAndTemporaryFiles(context: Context): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[clearCacheAndTemporaryFiles] Clearing all cache and temporary files" }
+            // Clear video cache: in-place via any live cache in the process (keeps the SimpleCache
+            // alive so playback continues to work), or by deleting the directory when no live cache
+            // owns it. The registry is process-wide, so this covers caches from a prior ChatClient
+            // build even if the current client was built without a cacheConfig.
+            val videoCacheResult = if (VideoMediaCache.clearAll()) {
+                Result.Success(Unit)
+            } else {
+                fileManager.clearVideoCache(context)
+            }
             // Clear all cache directories
             val cacheResult = fileManager.clearAllCache(context)
             // Clear external (temporary) storage files - always run regardless of cache result
             val externalStorageResult = fileManager.clearExternalStorage(context)
             // Return the first failure if any, otherwise success
             when {
+                videoCacheResult is Result.Failure -> videoCacheResult
                 cacheResult is Result.Failure -> cacheResult
                 externalStorageResult is Result.Failure -> externalStorageResult
                 else -> Result.Success(Unit)
@@ -5274,7 +5287,10 @@ internal constructor(
             val api = module.api()
             val appSettingsManager = AppSettingManager(api)
 
-            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn)
+            val videoCache = chatClientConfig.cacheConfig.video?.let {
+                VideoMediaCache.create(appContext, StreamFileManager().getVideoCache(appContext), it)
+            }
+            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn, videoCache)
             val audioPlayer: AudioPlayer = StreamAudioPlayer(
                 mediaPlayer = NativeMediaPlayerImpl(mediaDataSourceFactory) {
                     ExoPlayer.Builder(appContext)
@@ -5332,6 +5348,7 @@ internal constructor(
                     api = api,
                 ),
                 cdn = cdn,
+                videoCache = videoCache,
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,

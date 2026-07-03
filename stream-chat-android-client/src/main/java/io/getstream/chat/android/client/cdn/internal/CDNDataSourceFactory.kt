@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.cdn.internal
 
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
@@ -36,7 +37,7 @@ import kotlinx.coroutines.runBlocking
  * @param cdn The CDN used to transform file request URLs and headers.
  * @param upstreamFactory The factory for creating the upstream data source that performs the actual HTTP requests.
  */
-@UnstableApi
+@OptIn(UnstableApi::class)
 internal class CDNDataSourceFactory(
     private val cdn: CDN,
     private val upstreamFactory: DataSource.Factory = DefaultHttpDataSource.Factory(),
@@ -54,7 +55,7 @@ internal class CDNDataSourceFactory(
  * [CDN.fileRequest] is a suspend function and is called via [runBlocking] on [Dispatchers.IO].
  * This is safe because ExoPlayer always calls [open] from its loader thread, never the main thread.
  */
-@UnstableApi
+@OptIn(UnstableApi::class)
 private class CDNDataSource(
     private val cdn: CDN,
     private val upstream: DataSource,
