@@ -45,6 +45,6 @@ public sealed interface ChannelInfoMemberViewState {
         val capabilities: Set<String>,
         val isMuted: Boolean,
         val isBlocked: Boolean,
-        val isOwner: Boolean,
+        val isOwner: Boolean = false,
     ) : ChannelInfoMemberViewState
 }
