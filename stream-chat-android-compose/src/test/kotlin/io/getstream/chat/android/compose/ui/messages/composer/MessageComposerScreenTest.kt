@@ -17,6 +17,10 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import androidx.annotation.UiThread
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
@@ -140,6 +144,48 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
 
         composeTestRule.onNodeWithTag(ComposerInputTestTag).assertIsEnabled()
         composeTestRule.onNodeWithTag("Stream_ComposerAttachmentsButton").assertIsEnabled()
+    }
+
+    @Test
+    @UiThread
+    fun `audio recording hint is rendered by the composer`() {
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(MessageComposerState())
+        val hintHost = SnackbarHostState()
+        val hintMessage = "Hold to record. Release to save."
+
+        composeTestRule.setContent {
+            ChatTheme {
+                CompositionLocalProvider(LocalMessageComposerRecordingHintHostState provides hintHost) {
+                    MessageComposer(viewModel = mockViewModel)
+                }
+                LaunchedEffect(Unit) { hintHost.showSnackbar(hintMessage, duration = SnackbarDuration.Indefinite) }
+            }
+        }
+
+        // The composer, not the mic button, renders the hint from the provided host, so it anchors
+        // above the composer.
+        composeTestRule.onNodeWithText(hintMessage).assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `audio recording permission rationale is rendered by the composer`() {
+        whenever(mockViewModel.messageComposerState) doReturn MutableStateFlow(MessageComposerState())
+        val rationaleHost = SnackbarHostState()
+        val rationaleMessage = "Microphone permission is required."
+
+        composeTestRule.setContent {
+            ChatTheme {
+                CompositionLocalProvider(LocalMessageComposerRecordingRationaleHostState provides rationaleHost) {
+                    MessageComposer(viewModel = mockViewModel)
+                }
+                LaunchedEffect(Unit) {
+                    rationaleHost.showSnackbar(rationaleMessage, duration = SnackbarDuration.Indefinite)
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithText(rationaleMessage).assertExists()
     }
 
     @Test
