@@ -51,7 +51,6 @@ import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
@@ -60,7 +59,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -111,6 +109,8 @@ import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
+import io.getstream.chat.android.network.models.GetManyMessagesResponse
+import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
@@ -426,7 +426,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getReactionsInput")
-    fun testGetReactions(call: RetrofitCall<ReactionsResponse>, expected: KClass<*>) = runTest {
+    fun testGetReactions(call: RetrofitCall<GetReactionsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getReactions(any(), any(), any())).doReturn(call)
@@ -1253,7 +1253,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPinnedMessagesInput")
-    fun testGetPinnedMessages(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+    fun testGetPinnedMessages(call: RetrofitCall<GetManyMessagesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.getPinnedMessages(any(), any(), any())).doReturn(call)
@@ -1634,7 +1634,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getNewerRepliesInput")
-    fun testGetNewerReplies(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+    fun testGetNewerReplies(call: RetrofitCall<GetManyMessagesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getNewerReplies(any(), any(), any())).doReturn(call)
@@ -1653,7 +1653,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesInput")
-    fun testGetReplies(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+    fun testGetReplies(call: RetrofitCall<GetManyMessagesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getReplies(any(), any())).doReturn(call)
@@ -1671,7 +1671,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesMoreInput")
-    fun testGetRepliesMore(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+    fun testGetRepliesMore(call: RetrofitCall<GetManyMessagesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getRepliesMore(any(), any(), any())).doReturn(call)

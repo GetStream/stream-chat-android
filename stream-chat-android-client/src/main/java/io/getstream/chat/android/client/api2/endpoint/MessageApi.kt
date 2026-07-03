@@ -20,11 +20,11 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.GetManyMessagesResponse
+import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
@@ -133,7 +133,7 @@ internal interface MessageApi {
         @Path("id") messageId: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
-    ): RetrofitCall<ReactionsResponse>
+    ): RetrofitCall<GetReactionsResponse>
 
     @POST("/messages/{id}/reactions")
     fun queryReactions(
@@ -151,19 +151,19 @@ internal interface MessageApi {
     fun getReplies(
         @Path("parent_id") messageId: String,
         @Query("limit") limit: Int,
-    ): RetrofitCall<MessagesResponse>
+    ): RetrofitCall<GetManyMessagesResponse>
 
     @GET("/messages/{parent_id}/replies?sort=[{\"field\":\"created_at\",\"direction\":1}]")
     fun getNewerReplies(
         @Path("parent_id") parentId: String,
         @Query("limit") limit: Int,
         @Query("id_gt") lastId: String?,
-    ): RetrofitCall<MessagesResponse>
+    ): RetrofitCall<GetManyMessagesResponse>
 
     @GET("/messages/{parent_id}/replies")
     fun getRepliesMore(
         @Path("parent_id") messageId: String,
         @Query("limit") limit: Int,
         @Query("id_lt") firstId: String,
-    ): RetrofitCall<MessagesResponse>
+    ): RetrofitCall<GetManyMessagesResponse>
 }

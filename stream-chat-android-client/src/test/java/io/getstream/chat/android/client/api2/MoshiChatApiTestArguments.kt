@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
@@ -40,7 +39,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
@@ -60,6 +58,8 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
+import io.getstream.chat.android.network.models.GetManyMessagesResponse
+import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
@@ -180,10 +180,15 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun getReactionsInput() = listOf(
         Arguments.of(
-            RetroSuccess(ReactionsResponse(listOf(Mother.randomDownstreamReactionDto()))).toRetrofitCall(),
+            RetroSuccess(
+                GetReactionsResponse(
+                    duration = randomString(),
+                    reactions = listOf(Mother.randomDownstreamReactionDto()),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -802,10 +807,15 @@ internal object MoshiChatApiTestArguments {
 
     private fun messagesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(MessagesResponse(listOf(randomDownstreamMessageDto()))).toRetrofitCall(),
+            RetroSuccess(
+                GetManyMessagesResponse(
+                    duration = randomString(),
+                    messages = listOf(randomDownstreamMessageDto()),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<MessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetManyMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun updateUsersResponseArguments(): List<Arguments> {
