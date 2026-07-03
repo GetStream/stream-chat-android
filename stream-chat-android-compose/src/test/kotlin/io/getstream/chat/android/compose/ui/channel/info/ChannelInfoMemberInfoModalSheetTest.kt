@@ -42,4 +42,22 @@ internal class ChannelInfoMemberInfoModalSheetTest : PaparazziComposeTest {
     fun `not banned member in dark mode`() = snapshot(isInDarkMode = true) {
         ChannelInfoMemberInfoSheet(banned = false)
     }
+
+    @Test
+    fun `muted member with role`() = snapshot {
+        ChannelInfoMemberInfoSheet(banned = false, muted = true, channelRole = "VIP")
+    }
+
+    @Test
+    fun `muted member with role in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelInfoMemberInfoSheet(banned = false, muted = true, channelRole = "VIP")
+    }
+
+    @Test
+    fun `owner member`() = snapshot { ChannelInfoMemberInfoSheet(banned = false, isOwner = true) }
+
+    @Test
+    fun `owner member in dark mode`() = snapshot(isInDarkMode = true) {
+        ChannelInfoMemberInfoSheet(banned = false, isOwner = true)
+    }
 }

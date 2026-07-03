@@ -77,6 +77,7 @@ internal class ChannelInfoMemberViewControllerTest {
                     capabilities = emptySet(),
                     isMuted = false,
                     isBlocked = false,
+                    isOwner = false,
                 ),
                 awaitItem(),
             )
@@ -102,6 +103,7 @@ internal class ChannelInfoMemberViewControllerTest {
                     capabilities = emptySet(),
                     isMuted = false,
                     isBlocked = false,
+                    isOwner = false,
                 ),
                 awaitItem(),
             )
@@ -123,6 +125,7 @@ internal class ChannelInfoMemberViewControllerTest {
                     ),
                     isMuted = false,
                     isBlocked = false,
+                    isOwner = false,
                 ),
                 awaitItem(),
             )
@@ -140,6 +143,7 @@ internal class ChannelInfoMemberViewControllerTest {
                     ),
                     isMuted = false,
                     isBlocked = false,
+                    isOwner = false,
                 ),
                 awaitItem(),
             )
