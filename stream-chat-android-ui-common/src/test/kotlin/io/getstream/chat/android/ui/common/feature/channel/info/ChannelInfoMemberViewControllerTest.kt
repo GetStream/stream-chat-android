@@ -201,6 +201,21 @@ internal class ChannelInfoMemberViewControllerTest {
     }
 
     @Test
+    fun `owner state is reflected`() = runTest {
+        val member = randomMember()
+        val channel = randomChannel(createdBy = member.user, members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1)
+
+            val content = awaitItem() as ChannelInfoMemberViewState.Content
+            assertEquals(true, content.isOwner)
+        }
+    }
+
+    @Test
     fun `message member click with no distinct channel`() = runTest {
         val member = randomMember()
         val fixture = Fixture().given(memberId = member.getUserId())
