@@ -23,9 +23,32 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
+
+internal object FullUserResponseAdapter :
+    CustomObjectDtoAdapter<FullUserResponse>(
+        kClass = FullUserResponse::class,
+        extraDataPropertyName = "custom",
+    ) {
+
+    @FromJson
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        userAdapter: JsonAdapter<FullUserResponse>,
+    ): FullUserResponse? = parseWithExtraData(jsonReader, mapAdapter, userAdapter)
+
+    @ToJson
+    fun toJson(
+        jsonWriter: JsonWriter,
+        value: FullUserResponse?,
+        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
+        userAdapter: JsonAdapter<FullUserResponse>,
+    ) = serializeWithExtraData(jsonWriter, value, mapAdapter, userAdapter)
+}
 
 internal object DownstreamUserDtoAdapter :
     CustomObjectDtoAdapter<DownstreamUserDto>(

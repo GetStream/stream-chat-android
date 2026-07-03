@@ -58,7 +58,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
@@ -141,6 +140,7 @@ import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.positiveRandomInt

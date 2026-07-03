@@ -448,6 +448,25 @@ internal object Mother {
         custom = extraData,
     )
 
+    fun randomFullUserResponse(
+        id: String = randomString(),
+    ): io.getstream.chat.android.network.models.FullUserResponse =
+        io.getstream.chat.android.network.models.FullUserResponse(
+            id = id,
+            role = randomString(),
+            language = randomString(),
+            banned = randomBoolean(),
+            online = randomBoolean(),
+            invisible = randomBoolean(),
+            shadowBanned = randomBoolean(),
+            totalUnreadCount = randomInt(),
+            unreadChannels = randomInt(),
+            unreadCount = randomInt(),
+            unreadThreads = randomInt(),
+            createdAt = randomDate(),
+            updatedAt = randomDate(),
+        )
+
     fun randomDownstreamChannelDto(
         cid: String = randomString(),
         id: String = randomString(),

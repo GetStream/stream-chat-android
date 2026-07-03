@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResp
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
-import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
@@ -75,6 +74,7 @@ import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
+import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
@@ -822,8 +822,12 @@ internal object MoshiChatApiTestArguments {
 
     private fun updateUsersResponseArguments(): List<Arguments> {
         val userId = randomString()
-        val user = Mother.randomDownstreamUserDto()
-        val response = UpdateUsersResponse(mapOf(userId to user))
+        val user = Mother.randomFullUserResponse(id = userId)
+        val response = UpdateUsersResponse(
+            duration = randomString(),
+            membershipDeletionTaskId = randomString(),
+            users = mapOf(userId to user),
+        )
         return listOf(
             Arguments.of(RetroSuccess(response).toRetrofitCall(), Result.Success::class),
             Arguments.of(RetroError<UpdateUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),

@@ -397,6 +397,27 @@ internal class DomainMapping(
             extraData = custom.filterNonNullValues().toMutableMap(),
         ).let(userTransformer::transform)
 
+    internal fun io.getstream.chat.android.network.models.FullUserResponse.toDomain(): User =
+        User(
+            id = id,
+            name = name ?: "",
+            image = image ?: "",
+            role = role,
+            invisible = false,
+            language = language.orEmpty(),
+            banned = banned,
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds.orEmpty(),
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.filterNonNullValues().toMutableMap(),
+        ).let(userTransformer::transform)
+
     /**
      * Transforms [OwnUserResponse] to [User]. The full own-user shape the server sends in
      * connect, mute responses, and notification events. Includes devices, mutes,
