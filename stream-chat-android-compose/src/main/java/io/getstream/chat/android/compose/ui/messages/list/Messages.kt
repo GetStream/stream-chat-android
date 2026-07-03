@@ -46,8 +46,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -168,6 +172,10 @@ internal fun Messages(
                 .graphicsLayer { clip = false }
                 .testTag("Stream_Messages")
                 .fillMaxSize()
+                // Scope the screen-reader ordering of the lazy items to the list itself, so the
+                // explicit traversal indices below compete only with each other and not with
+                // overlaid helper content such as the scroll-to-bottom button.
+                .semantics { isTraversalGroup = true }
                 .onSizeChanged {
                     val bottomPadding = contentPadding.calculateBottomPadding()
                     val topPadding = contentPadding.calculateTopPadding()
@@ -191,15 +199,23 @@ internal fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
+            // reverseLayout composes items bottom-up, which breaks the geometric ordering
+            // heuristic screen readers rely on. Order every lazy item explicitly instead:
+            // message items are read by descending index (index 0 is the newest message at the
+            // visual bottom), and the fixed items around them follow their visual position.
             footerContent?.let { content ->
                 item {
-                    content.invoke()
+                    Box(modifier = Modifier.itemTraversalOrder(FooterTraversalIndex)) {
+                        content.invoke()
+                    }
                 }
             }
 
             if (isLoadingMoreNewMessages && !endOfNewMessages) {
                 item {
-                    loadingMoreContent()
+                    Box(modifier = Modifier.itemTraversalOrder(LoadingNewerTraversalIndex)) {
+                        loadingMoreContent()
+                    }
                 }
             }
 
@@ -217,7 +233,9 @@ internal fun Messages(
                     }
 
                 val itemModifier = itemModifier(index, item)
-                val finalItemModifier = messageItemModifier.then(itemModifier)
+                val finalItemModifier = messageItemModifier
+                    .then(itemModifier)
+                    .itemTraversalOrder(-index.toFloat())
                 Box(modifier = finalItemModifier) {
                     itemContent(item)
                 }
@@ -225,13 +243,17 @@ internal fun Messages(
 
             if (isLoadingMoreOldMessages && !endOfOldMessages) {
                 item {
-                    loadingMoreContent()
+                    Box(modifier = Modifier.itemTraversalOrder(-messages.size.toFloat())) {
+                        loadingMoreContent()
+                    }
                 }
             }
 
             headerContent?.let { content ->
                 item {
-                    content.invoke()
+                    Box(modifier = Modifier.itemTraversalOrder(-messages.size.toFloat() - 1)) {
+                        content.invoke()
+                    }
                 }
             }
         }
@@ -294,6 +316,25 @@ internal fun Messages(
         }
     }
 }
+
+// Screen-reader order for the fixed lazy items, relative to the message items at -index..0:
+// the loading-newer indicator and the footer sit visually below the newest message (index 0).
+private const val LoadingNewerTraversalIndex = 1f
+private const val FooterTraversalIndex = 2f
+
+/**
+ * Positions a lazy item in the screen-reader reading order of the message list.
+ * Grouping keeps the focus stops inside one item contiguous, so traversal never interleaves
+ * the stops of two messages.
+ */
+private fun Modifier.itemTraversalOrder(index: Float): Modifier =
+    // zIndex mirrors traversalIndex so the semantics tree order equals the reading order.
+    // TalkBack needs that agreement to traverse this reversed list (see ACCESSIBILITY.md).
+    zIndex(index)
+        .semantics {
+            isTraversalGroup = true
+            traversalIndex = index
+        }
 
 /**
  * Returns a vertical arrangement for the message list based on the current state,
