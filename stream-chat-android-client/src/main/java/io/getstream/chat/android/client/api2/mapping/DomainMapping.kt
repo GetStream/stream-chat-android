@@ -45,8 +45,6 @@ import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -120,6 +118,8 @@ import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.MentionedUserGroupResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentDto
