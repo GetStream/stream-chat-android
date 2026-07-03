@@ -1722,14 +1722,14 @@ constructor(
             messageId,
             pollId,
             PollVoteRequest(vote),
-        ).mapDomain { it.vote.toDomain() }
+        ).mapDomain { requireNotNull(it.vote).toDomain() }
 
     override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
         pollsApi.removePollVote(
             messageId,
             pollId,
             voteId,
-        ).mapDomain { it.vote.toDomain() }
+        ).mapDomain { requireNotNull(it.vote).toDomain() }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
         val request = PartialUpdatePollRequest(set = set, unset = unset)
