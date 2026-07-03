@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequ
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -100,6 +99,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.des
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ChannelInput
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -254,7 +254,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
-    fun testCreateDraftMessage(call: RetrofitCall<DraftMessageResponse>, expected: KClass<*>) = runTest {
+    fun testCreateDraftMessage(call: RetrofitCall<CreateDraftResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)

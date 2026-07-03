@@ -49,7 +49,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -78,6 +77,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
@@ -226,7 +226,7 @@ internal object Mother {
 
     fun randomDraftMessageResponse(
         draft: DownstreamDraftDto = randomDownstreamDraftDto(),
-    ): DraftMessageResponse = DraftMessageResponse(draft)
+    ): CreateDraftResponse = CreateDraftResponse(duration = randomString(), draft = draft)
 
     fun randomQueryDraftMessagesResponse(
         drafts: List<DownstreamDraftDto> = (0 until positiveRandomInt(10)).map { randomDownstreamDraftDto() },

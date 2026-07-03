@@ -18,10 +18,10 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.GetManyMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
@@ -62,7 +62,7 @@ internal interface MessageApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body message: SendMessageRequest,
-    ): RetrofitCall<DraftMessageResponse>
+    ): RetrofitCall<CreateDraftResponse>
 
     @DELETE("/channels/{type}/{id}/draft")
     fun deleteDraftMessage(
