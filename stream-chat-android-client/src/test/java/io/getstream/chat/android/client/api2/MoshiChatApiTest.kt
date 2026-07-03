@@ -50,7 +50,6 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
@@ -81,7 +80,6 @@ import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
@@ -92,7 +90,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreference
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
@@ -128,7 +125,6 @@ import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
 import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
@@ -168,7 +164,11 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.network.models.BlockUsersRequest
+import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.UnblockUsersRequest
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -1727,7 +1727,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#blockUserInput")
-    fun testBlockUser(call: RetrofitCall<BlockUserResponse>, expected: KClass<*>) = runTest {
+    fun testBlockUser(call: RetrofitCall<BlockUsersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserApi>()
         whenever(api.blockUser(any())).doReturn(call)
@@ -1738,14 +1738,14 @@ internal class MoshiChatApiTest {
         val targetId = randomString()
         val result = sut.blockUser(targetId).await()
         // then
-        val expectedBody = BlockUserRequest(targetId)
+        val expectedBody = BlockUsersRequest(targetId)
         result `should be instance of` expected
         verify(api, times(1)).blockUser(expectedBody)
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unblockUserInput")
-    fun testUnblockUser(call: RetrofitCall<UnblockUserResponse>, expected: KClass<*>) = runTest {
+    fun testUnblockUser(call: RetrofitCall<UnblockUsersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserApi>()
         whenever(api.unblockUser(any())).doReturn(call)
@@ -1756,7 +1756,7 @@ internal class MoshiChatApiTest {
         val targetId = randomString()
         val result = sut.unblockUser(targetId).await()
         // then
-        val expectedBody = UnblockUserRequest(targetId)
+        val expectedBody = UnblockUsersRequest(targetId)
         result `should be instance of` expected
         verify(api, times(1)).unblockUser(expectedBody)
     }

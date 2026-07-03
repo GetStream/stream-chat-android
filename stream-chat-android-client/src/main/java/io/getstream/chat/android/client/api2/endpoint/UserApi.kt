@@ -20,19 +20,19 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.BlockUsersRequest
+import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.UnblockUsersRequest
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -51,10 +51,10 @@ internal interface UserApi {
 
     @POST("/users/block")
     @JvmSuppressWildcards
-    fun blockUser(@Body body: BlockUserRequest): RetrofitCall<BlockUserResponse>
+    fun blockUser(@Body body: BlockUsersRequest): RetrofitCall<BlockUsersResponse>
 
     @POST("/users/unblock")
-    fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUserResponse>
+    fun unblockUser(@Body body: UnblockUsersRequest): RetrofitCall<UnblockUsersResponse>
 
     @GET("/users/block")
     fun queryBlockedUsers(): RetrofitCall<QueryBlockedUsersResponse>
