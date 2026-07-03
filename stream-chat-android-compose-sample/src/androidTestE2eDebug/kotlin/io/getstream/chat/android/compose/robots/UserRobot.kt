@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.uiautomator.tapOnScreenCenter
 import io.getstream.chat.android.compose.uiautomator.typeText
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
+import io.getstream.chat.android.compose.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -76,8 +77,7 @@ class UserRobot {
     }
 
     fun openContextMenu(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppear()
-        val messages = MessageList.messages.findObjects()
+        val messages = MessageList.messages.waitToAppearBottomUp()
         val message = if (messages.size < messageCellIndex + 1) messages.last() else messages[messageCellIndex]
         message.longPress()
         return this
@@ -198,7 +198,7 @@ class UserRobot {
     }
 
     fun tapOnMessage(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppear(withIndex = messageCellIndex).click()
+        MessageList.messages.waitToAppearBottomUp(withIndex = messageCellIndex).click()
         return this
     }
 
@@ -270,7 +270,7 @@ class UserRobot {
 
     fun swipeMessage(messageCellIndex: Int = 0): UserRobot {
         val percent = 0.5f
-        val message = MessageList.messages.waitToAppear(withIndex = messageCellIndex)
+        val message = MessageList.messages.waitToAppearBottomUp(withIndex = messageCellIndex)
         val rect = message.visibleBounds
         device.swipe(
             rect.left, // startX

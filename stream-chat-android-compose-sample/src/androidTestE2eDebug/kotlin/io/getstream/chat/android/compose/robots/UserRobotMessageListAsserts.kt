@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitForCount
 import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
+import io.getstream.chat.android.compose.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -151,15 +152,15 @@ fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed:
 }
 
 fun UserRobot.assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: Boolean): UserRobot {
-    val cellHeight = MessageListPage.MessageList.messages.waitToAppear(withIndex = 0).height
-    val messageText = Message.text.findObject().text
+    val cellHeight = MessageListPage.MessageList.messages.waitToAppearBottomUp(withIndex = 0).height
+    val messageText = Message.text.waitToAppearBottomUp(withIndex = 0).text
     val newLine = "new line"
     val newText = if (linesCountShouldBeIncreased) "ok\n${messageText}\n$newLine" else newLine
 
     editMessage(newText)
     assertMessage(newText)
 
-    val updatedCellHeight = MessageListPage.MessageList.messages.findObjects().first().height
+    val updatedCellHeight = MessageListPage.MessageList.messages.waitToAppearBottomUp(withIndex = 0).height
     if (linesCountShouldBeIncreased) {
         assertTrue(cellHeight < updatedCellHeight)
     } else {
