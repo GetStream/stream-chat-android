@@ -63,8 +63,10 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
@@ -516,7 +518,18 @@ private fun MessageContentWithReactions(
     Layout(
         modifier = Modifier.zIndex(1f),
         content = {
-            if (reactions != null) reactions()
+            if (reactions != null) {
+                // Pin the reactions bubble to its tree position (drawn last, zIndex 1) so the
+                // traversal order matches the semantics tree order TalkBack needs (see ACCESSIBILITY.md).
+                Box(
+                    modifier = Modifier.semantics {
+                        isTraversalGroup = true
+                        traversalIndex = 1f
+                    },
+                ) {
+                    reactions()
+                }
+            }
             content()
         },
     ) { measurables, constraints ->
