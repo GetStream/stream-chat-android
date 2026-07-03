@@ -1746,7 +1746,7 @@ constructor(
             text = option.text,
             custom = option.extraData,
         )
-        return pollsApi.createPollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
+        return pollsApi.createPollOption(pollId, body).mapDomain { it.pollOption.toPollOption() }
     }
 
     override fun updatePollOption(pollId: String, option: PollOption): Call<PollOption> {
@@ -1755,7 +1755,7 @@ constructor(
             text = option.text,
             custom = option.extraData,
         )
-        return pollsApi.updatePollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
+        return pollsApi.updatePollOption(pollId, body).mapDomain { it.pollOption.toPollOption() }
     }
 
     override fun deletePollOption(pollId: String, optionId: String): Call<Unit> {

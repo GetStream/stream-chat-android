@@ -35,8 +35,6 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
-import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
-import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
@@ -67,6 +65,8 @@ import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.PollOptionResponse
+import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
@@ -879,7 +879,7 @@ internal object MoshiChatApiTestArguments {
             RetroSuccess(
                 PollOptionResponse(
                     duration = randomString(),
-                    poll_option = Mother.randomDownstreamOptionDto(),
+                    pollOption = Mother.randomDownstreamOptionDto(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
