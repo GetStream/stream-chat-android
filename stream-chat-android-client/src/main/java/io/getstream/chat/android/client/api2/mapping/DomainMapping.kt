@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamRoleDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -139,6 +138,7 @@ import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.Role as RoleDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -980,12 +980,12 @@ internal class DomainMapping(
         createdAt = created_at,
     )
 
-    internal fun DownstreamRoleDto.toDomain(): Role = Role(
+    internal fun RoleDto.toDomain(): Role = Role(
         name = name,
         custom = custom,
         scopes = scopes,
-        createdAt = created_at,
-        updatedAt = updated_at,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     private companion object {
