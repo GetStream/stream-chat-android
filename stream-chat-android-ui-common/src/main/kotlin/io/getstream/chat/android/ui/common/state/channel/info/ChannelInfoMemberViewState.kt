@@ -38,11 +38,13 @@ public sealed interface ChannelInfoMemberViewState {
      * @param capabilities The set of own capabilities in the channel.
      * @param isMuted Whether the member's user is muted by the current user.
      * @param isBlocked Whether the member's user is blocked by the current user.
+     * @param isOwner Whether the member is the channel owner (its creator).
      */
     public data class Content(
         val member: Member,
         val capabilities: Set<String>,
         val isMuted: Boolean,
         val isBlocked: Boolean,
+        val isOwner: Boolean = false,
     ) : ChannelInfoMemberViewState
 }

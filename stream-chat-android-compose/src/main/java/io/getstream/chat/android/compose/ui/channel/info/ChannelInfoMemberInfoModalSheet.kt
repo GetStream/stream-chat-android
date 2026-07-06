@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.channel.info
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -35,10 +37,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.StreamCardBottomSheet
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -46,6 +51,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.avatarPresenceIndi
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberInfoModalSheetTopBarParams
 import io.getstream.chat.android.compose.ui.theme.ChannelInfoMemberOptionItemParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.GroupChannelInfoMemberTrailingContentParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
@@ -122,7 +128,11 @@ private fun ChannelInfoMemberInfoModalSheetContent(
         )
         Column(modifier = Modifier.fillMaxWidth()) {
             ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(
-                params = ChannelInfoMemberInfoModalSheetTopBarParams(member = content.member),
+                params = ChannelInfoMemberInfoModalSheetTopBarParams(
+                    member = content.member,
+                    isMuted = content.isMuted,
+                    isOwner = content.isOwner,
+                ),
             )
             actions.forEach { action ->
                 ChatTheme.componentFactory.ChannelInfoMemberOptionItem(
@@ -134,7 +144,7 @@ private fun ChannelInfoMemberInfoModalSheetContent(
 }
 
 @Composable
-internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
+internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member, isMuted: Boolean, isOwner: Boolean) {
     val context = LocalContext.current
     val user = member.user
     Row(
@@ -160,13 +170,7 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
                 .padding(start = StreamTokens.spacingSm)
                 .weight(1f),
         ) {
-            Text(
-                text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.headingSmall,
-                color = ChatTheme.colors.textPrimary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            ChannelInfoMemberInfoModalSheetName(member = member, isMuted = isMuted, isOwner = isOwner)
             Text(
                 text = user.getLastSeenText(context),
                 style = ChatTheme.typography.captionDefault,
@@ -184,6 +188,37 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ChannelInfoMemberInfoModalSheetName(member: Member, isMuted: Boolean, isOwner: Boolean) {
+    val user = member.user
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.weight(1f, fill = false),
+            text = user.name.takeIf(String::isNotBlank) ?: user.id,
+            style = ChatTheme.typography.headingSmall,
+            color = ChatTheme.colors.textPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (isMuted) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_design_ic_mute),
+                contentDescription = stringResource(id = R.string.stream_compose_channel_item_muted),
+                tint = ChatTheme.colors.textTertiary,
+            )
+        }
+        ChatTheme.componentFactory.GroupChannelInfoMemberTrailingContent(
+            params = GroupChannelInfoMemberTrailingContentParams(
+                member = member,
+                isOwner = isOwner,
+            ),
+        )
     }
 }
 
@@ -229,9 +264,34 @@ private fun ChannelInfoMemberInfoSheetNotBannedPreview() {
     }
 }
 
+@Preview
+@Composable
+private fun ChannelInfoMemberInfoSheetMutedPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelInfoMemberInfoSheet(banned = false, muted = true, channelRole = "VIP")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoMemberInfoSheetOwnerPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChannelInfoMemberInfoSheet(banned = false, isOwner = true)
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ChannelInfoMemberInfoSheet(banned: Boolean) {
+internal fun ChannelInfoMemberInfoSheet(
+    banned: Boolean,
+    muted: Boolean = false,
+    isOwner: Boolean = false,
+    channelRole: String? = null,
+) {
     val user = PreviewUserData.user1.copy(lastActive = Date())
     val member = if (banned) {
         Member(
@@ -242,7 +302,7 @@ internal fun ChannelInfoMemberInfoSheet(banned: Boolean) {
             }.time,
         )
     } else {
-        Member(user)
+        Member(user = user, channelRole = channelRole)
     }
 
     StreamCardBottomSheet(onDismissRequest = {}) {
@@ -253,8 +313,9 @@ internal fun ChannelInfoMemberInfoSheet(banned: Boolean) {
                     ChannelCapabilities.BAN_CHANNEL_MEMBERS,
                     ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
                 ),
-                isMuted = false,
+                isMuted = muted,
                 isBlocked = false,
+                isOwner = isOwner,
             ),
             onViewAction = {},
         )

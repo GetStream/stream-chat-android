@@ -99,6 +99,7 @@ public class ChannelInfoMemberViewController(
                 capabilities = data.channelData.ownCapabilities,
                 isMuted = data.mutedUsers.any { it.target?.id == memberId },
                 isBlocked = data.blockedUserIds.contains(memberId),
+                isOwner = data.channelData.createdBy.id == memberId,
             )
         }.stateIn(
             scope = scope,
