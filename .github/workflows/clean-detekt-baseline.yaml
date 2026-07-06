@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-    pull-requests: read
+  pull-requests: read
 
 jobs:
   clean_detekt_baseline_files:

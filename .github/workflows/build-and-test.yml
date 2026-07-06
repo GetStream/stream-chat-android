@@ -12,7 +12,7 @@ concurrency:
 
 permissions:
   contents: read
-    pull-requests: read
+  pull-requests: read
 
 jobs:
   debug_build:
