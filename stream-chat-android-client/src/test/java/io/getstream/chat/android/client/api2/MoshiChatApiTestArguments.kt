@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -79,6 +78,7 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
@@ -750,12 +750,12 @@ internal object MoshiChatApiTestArguments {
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<CompletableResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<Response>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun completableResponseArguments() = listOf(
-        Arguments.of(RetroSuccess(CompletableResponse("")).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<CompletableResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(Response("")).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<Response>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun uploadedFileArguments() = listOf(
