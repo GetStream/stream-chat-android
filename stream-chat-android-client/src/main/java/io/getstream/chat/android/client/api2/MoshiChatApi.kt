@@ -59,12 +59,10 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -91,7 +89,6 @@ import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
@@ -168,7 +165,10 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
+import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -732,7 +732,7 @@ constructor(
     ): Call<Unit> {
         return moderationApi.muteChannel(
             body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
+                channelCids = listOf("$channelType:$channelId"),
                 expiration = expiration,
             ),
         ).toUnitCall()
@@ -744,7 +744,7 @@ constructor(
     ): Call<Unit> {
         return moderationApi.unmuteChannel(
             body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
+                channelCids = listOf("$channelType:$channelId"),
                 expiration = null,
             ),
         ).toUnitCall()
@@ -1075,7 +1075,7 @@ constructor(
         return channelApi.updateChannelPartial(
             channelType = channelType,
             channelId = channelId,
-            body = UpdateChannelPartialRequest(set, unset),
+            body = UpdateChannelPartialRequest(set = set, unset = unset),
         ).map(this::flattenChannel)
     }
 
