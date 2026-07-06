@@ -6,6 +6,10 @@ concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+    pull-requests: read
+
 jobs:
   base-android-ci:
     uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@v0.13.1

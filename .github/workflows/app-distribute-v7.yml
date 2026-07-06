@@ -9,6 +9,9 @@ on:
       - v7
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build_compose_sample_app:
     name: Build and Distribute Compose Sample App

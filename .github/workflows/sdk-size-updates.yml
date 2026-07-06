@@ -11,6 +11,9 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
+permissions:
+  pull-requests: write
+
 jobs:
   update-sdk-sizes:
     uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@v0.13.1

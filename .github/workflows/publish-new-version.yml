@@ -23,6 +23,9 @@ concurrency:
   group: release
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
   pre_release_check:
     name: Pre release check
