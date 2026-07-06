@@ -35,6 +35,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerRecordingRationaleHostState
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -55,7 +56,6 @@ internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
                 statusProvider = { PermissionStatus.Granted },
                 launchPermissionRequest = {},
                 showRationale = {},
-                rationaleSnackbarHostState = SnackbarHostState(),
             )
         }
     }
@@ -81,7 +81,6 @@ internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
             statusProvider = { state.status },
             launchPermissionRequest = { state.launchPermissionRequest() },
             showRationale = { rationaleState.show() },
-            rationaleSnackbarHostState = rationaleState.snackbarHostState,
         )
     }
 }
@@ -91,7 +90,6 @@ internal class AudioRecordingPermission(
     private val statusProvider: () -> PermissionStatus,
     val launchPermissionRequest: () -> Unit,
     val showRationale: () -> Unit,
-    val rationaleSnackbarHostState: SnackbarHostState,
 ) {
     /** Current permission status, read fresh on every access. */
     val status: PermissionStatus get() = statusProvider()
@@ -138,7 +136,8 @@ private class PermissionRationaleState(
 
 @Composable
 private fun rememberPermissionRationale(): PermissionRationaleState {
-    val snackbarHostState = remember { SnackbarHostState() }
+    // Use the host provided by the composer so the rationale popup is anchored above the composer.
+    val snackbarHostState = LocalMessageComposerRecordingRationaleHostState.current ?: remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val message = stringResource(UiCommonR.string.stream_ui_message_composer_permission_audio_record_message)
