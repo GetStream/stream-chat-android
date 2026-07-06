@@ -62,8 +62,6 @@ import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
@@ -168,6 +166,8 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.MarkReadRequest
+import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -1148,7 +1148,7 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            request = MarkReadRequest(message_id = messageId),
+            request = MarkReadRequest(messageId = messageId),
         ).toUnitCall()
     }
 
@@ -1161,7 +1161,7 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            request = MarkReadRequest(thread_id = threadId),
+            request = MarkReadRequest(threadId = threadId),
         ).toUnitCall()
     }
 
@@ -1173,9 +1173,9 @@ constructor(
         threadId: String?,
     ): Call<Unit> {
         val request = MarkUnreadRequest(
-            message_id = messageId,
-            message_timestamp = messageTimestamp,
-            thread_id = threadId,
+            messageId = messageId,
+            messageTimestamp = messageTimestamp,
+            threadId = threadId,
         )
         return channelApi.markUnread(channelType, channelId, request).toUnitCall()
     }
