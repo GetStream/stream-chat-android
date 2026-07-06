@@ -326,26 +326,26 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `AppSettingsResponse is correctly mapped to AppSettings`() {
+    fun `GetApplicationResponse is correctly mapped to AppSettings`() {
         val response = randomAppSettingsResponse()
         val sut = Fixture().get()
         val expected = AppSettings(
             app = App(
                 name = response.app.name,
                 fileUploadConfig = FileUploadConfig(
-                    allowedMimeTypes = response.app.file_upload_config.allowed_mime_types,
-                    blockedMimeTypes = response.app.file_upload_config.blocked_mime_types,
-                    allowedFileExtensions = response.app.file_upload_config.allowed_file_extensions,
-                    blockedFileExtensions = response.app.file_upload_config.blocked_file_extensions,
-                    sizeLimitInBytes = response.app.file_upload_config.size_limit
+                    allowedMimeTypes = response.app.fileUploadConfig.allowedMimeTypes,
+                    blockedMimeTypes = response.app.fileUploadConfig.blockedMimeTypes,
+                    allowedFileExtensions = response.app.fileUploadConfig.allowedFileExtensions,
+                    blockedFileExtensions = response.app.fileUploadConfig.blockedFileExtensions,
+                    sizeLimitInBytes = response.app.fileUploadConfig.sizeLimit.toLong().takeUnless { it <= 0 }
                         ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
                 ),
                 imageUploadConfig = FileUploadConfig(
-                    allowedMimeTypes = response.app.image_upload_config.allowed_mime_types,
-                    blockedMimeTypes = response.app.image_upload_config.blocked_mime_types,
-                    allowedFileExtensions = response.app.image_upload_config.allowed_file_extensions,
-                    blockedFileExtensions = response.app.image_upload_config.blocked_file_extensions,
-                    sizeLimitInBytes = response.app.image_upload_config.size_limit
+                    allowedMimeTypes = response.app.imageUploadConfig.allowedMimeTypes,
+                    blockedMimeTypes = response.app.imageUploadConfig.blockedMimeTypes,
+                    allowedFileExtensions = response.app.imageUploadConfig.allowedFileExtensions,
+                    blockedFileExtensions = response.app.imageUploadConfig.blockedFileExtensions,
+                    sizeLimitInBytes = response.app.imageUploadConfig.sizeLimit.toLong().takeUnless { it <= 0 }
                         ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
                 ),
             ),

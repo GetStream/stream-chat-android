@@ -61,7 +61,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownReques
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
-import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -146,6 +145,7 @@ import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
@@ -233,7 +233,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#appSettingsInput")
-    fun testAppSettings(call: RetrofitCall<AppSettingsResponse>, expected: KClass<*>) = runTest {
+    fun testAppSettings(call: RetrofitCall<GetApplicationResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ConfigApi>()
         whenever(api.getAppSettings()).doReturn(call)
