@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.testdata.DeviceTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.DeviceResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -41,18 +41,18 @@ internal class DeviceParsingTest {
 
     private val deviceAdapter = DeviceAdapter()
 
-    // region DTO path (JSON → DeviceDto → Device)
+    // region DTO path (JSON → DeviceResponse → Device)
 
     @Test
     fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(DeviceTestData.jsonAllFields, DeviceDto::class.java)
+        val dto = parser.fromJson(DeviceTestData.jsonAllFields, DeviceResponse::class.java)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedDeviceAllFields, device)
     }
 
     @Test
     fun `DTO path - deserializes with optional field missing`() {
-        val dto = parser.fromJson(DeviceTestData.jsonOptionalFieldMissing, DeviceDto::class.java)
+        val dto = parser.fromJson(DeviceTestData.jsonOptionalFieldMissing, DeviceResponse::class.java)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedDeviceOptionalMissing, device)
     }
@@ -79,7 +79,7 @@ internal class DeviceParsingTest {
 
     @Test
     fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(DeviceTestData.jsonWithExplicitNulls, DeviceDto::class.java)
+        val dto = parser.fromJson(DeviceTestData.jsonWithExplicitNulls, DeviceResponse::class.java)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedWithExplicitNulls, device)
     }
@@ -97,7 +97,7 @@ internal class DeviceParsingTest {
     @Test
     fun `DTO path - throws on missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(DeviceTestData.jsonMissingId, DeviceDto::class.java)
+            parser.fromJson(DeviceTestData.jsonMissingId, DeviceResponse::class.java)
         }
     }
 
@@ -111,7 +111,7 @@ internal class DeviceParsingTest {
     @Test
     fun `DTO path - throws on missing push_provider`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(DeviceTestData.jsonMissingPushProvider, DeviceDto::class.java)
+            parser.fromJson(DeviceTestData.jsonMissingPushProvider, DeviceResponse::class.java)
         }
     }
 

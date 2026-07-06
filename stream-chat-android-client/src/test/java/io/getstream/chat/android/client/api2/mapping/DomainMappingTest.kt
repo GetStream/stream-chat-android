@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomChannelInfoDto
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
-import io.getstream.chat.android.client.Mother.randomDeviceDto
+import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelUserRead
@@ -709,14 +709,14 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DeviceDto is correctly mapped to Device`() {
-        val deviceDto = randomDeviceDto()
+    fun `DeviceResponse is correctly mapped to Device`() {
+        val deviceDto = randomDeviceResponse()
         val sut = Fixture().get()
         val device = with(sut) { deviceDto.toDomain() }
         val expected = Device(
             token = deviceDto.id,
-            pushProvider = PushProvider.fromKey(deviceDto.id),
-            providerName = deviceDto.push_provider_name,
+            pushProvider = PushProvider.fromKey(deviceDto.pushProvider),
+            providerName = deviceDto.pushProviderName,
         )
         assertEquals(expected, device)
     }

@@ -47,7 +47,9 @@ internal object UserTestData {
                 {
                     "id": "device1",
                     "push_provider": "firebase",
-                    "push_provider_name": "Firebase"
+                    "push_provider_name": "Firebase",
+                    "created_at": "2020-01-01T00:00:00.000Z",
+                    "user_id": "user1"
                 }
             ],
             "online": true,
