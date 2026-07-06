@@ -70,7 +70,6 @@ import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
@@ -79,7 +78,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
-import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -104,6 +102,8 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
@@ -1066,18 +1066,20 @@ internal object Mother {
         created_at = createdAt,
     )
 
-    fun randomBlockUserResponse(
+    fun randomBlockUsersResponse(
         blockedByUserId: String = randomString(),
         blockedUserId: String = randomString(),
         createdAt: Date = randomDate(),
-    ): BlockUserResponse = BlockUserResponse(
-        blocked_by_user_id = blockedByUserId,
-        blocked_user_id = blockedUserId,
-        created_at = createdAt,
+        duration: String = randomString(),
+    ): BlockUsersResponse = BlockUsersResponse(
+        blockedByUserId = blockedByUserId,
+        blockedUserId = blockedUserId,
+        createdAt = createdAt,
+        duration = duration,
     )
 
-    fun randomUnblockUserResponse(duration: String = randomString()): UnblockUserResponse =
-        UnblockUserResponse(duration)
+    fun randomUnblockUsersResponse(duration: String = randomString()): UnblockUsersResponse =
+        UnblockUsersResponse(duration)
 
     fun randomTokenResponse(
         user: DownstreamUserDto = randomDownstreamUserDto(),

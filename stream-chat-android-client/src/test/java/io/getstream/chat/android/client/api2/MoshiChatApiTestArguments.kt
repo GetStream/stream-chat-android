@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -78,7 +77,9 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
@@ -382,14 +383,14 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun blockUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomBlockUserResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<BlockUserResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(Mother.randomBlockUsersResponse()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<BlockUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
     fun unblockUserInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomUnblockUserResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<BlockUserResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(Mother.randomUnblockUsersResponse()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<UnblockUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

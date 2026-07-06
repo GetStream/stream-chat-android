@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Model representing the response from blocking a user.
  *
- * @param blocked_by_user_id The ID of the user who blocked the other user.
- * @param blocked_user_id The ID of the user who was blocked.
- * @param created_at The date when the block was created.
  */
-@JsonClass(generateAdapter = true)
-internal data class BlockUserResponse(
-    val blocked_by_user_id: String,
-    val blocked_user_id: String,
-    val created_at: Date,
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class BlockUsersRequest(
+    @Json(name = "blocked_user_id")
+    val blockedUserId: kotlin.String,
 )
