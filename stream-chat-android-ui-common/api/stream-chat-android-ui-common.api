@@ -1565,19 +1565,22 @@ public abstract interface class io/getstream/chat/android/ui/common/state/channe
 
 public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZ)V
+	public fun <init> (Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZZ)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Member;
 	public final fun component2 ()Ljava/util/Set;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
-	public final fun copy (Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZ)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content;Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content;
+	public final fun component5 ()Z
+	public final fun copy (Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZZ)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content;Lio/getstream/chat/android/models/Member;Ljava/util/Set;ZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState$Content;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCapabilities ()Ljava/util/Set;
 	public final fun getMember ()Lio/getstream/chat/android/models/Member;
 	public fun hashCode ()I
 	public final fun isBlocked ()Z
 	public final fun isMuted ()Z
+	public final fun isOwner ()Z
 	public fun toString ()Ljava/lang/String;
 }
 

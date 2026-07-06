@@ -2891,6 +2891,8 @@ public interface ChatComponentFactory {
     public fun ChannelInfoMemberInfoModalSheetTopBar(params: ChannelInfoMemberInfoModalSheetTopBarParams) {
         io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberInfoModalSheetTopBar(
             member = params.member,
+            isMuted = params.isMuted,
+            isOwner = params.isOwner,
         )
     }
 
