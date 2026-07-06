@@ -2170,9 +2170,13 @@ public data class ChannelInfoScreenModalParams(
  * Parameters for [ChatComponentFactory.ChannelInfoMemberInfoModalSheetTopBar].
  *
  * @param member The member to display.
+ * @param isMuted Whether the member is muted by the current user.
+ * @param isOwner Whether the member is the channel owner (its creator).
  */
 public data class ChannelInfoMemberInfoModalSheetTopBarParams(
     val member: Member,
+    val isMuted: Boolean = false,
+    val isOwner: Boolean = false,
 )
 
 /**
