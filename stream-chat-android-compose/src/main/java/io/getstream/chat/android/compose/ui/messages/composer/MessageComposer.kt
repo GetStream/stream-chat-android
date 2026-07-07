@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -54,6 +55,8 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.ui.theme.LocalChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingHintParams
+import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingPermissionRationaleParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerInputParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerLeadingContentParams
 import io.getstream.chat.android.compose.ui.theme.MessageComposerParams
@@ -228,6 +231,22 @@ internal val LocalMessageComposerSnackbarHostState =
     staticCompositionLocalOf<SnackbarHostState?> { null }
 
 /**
+ * Hands the audio recording hint's [SnackbarHostState] from the composer to the mic button, so the
+ * hint popup is rendered by the composer (anchored above it) while the mic button drives showing and
+ * dismissing it. This keeps the hint anchored to the composer's top rather than the mic button,
+ * which sits lower when the composer is taller (e.g. the "Also send in Channel" row in a thread).
+ */
+internal val LocalMessageComposerRecordingHintHostState =
+    staticCompositionLocalOf<SnackbarHostState?> { null }
+
+/**
+ * Hands the audio recording permission rationale's [SnackbarHostState] from the composer to the mic
+ * button, for the same reason as [LocalMessageComposerRecordingHintHostState].
+ */
+internal val LocalMessageComposerRecordingRationaleHostState =
+    staticCompositionLocalOf<SnackbarHostState?> { null }
+
+/**
  * Clean version of the [MessageComposer] that doesn't rely on ViewModels, so the user can provide a
  * manual way to handle and represent data and various operations.
  *
@@ -311,6 +330,10 @@ public fun MessageComposer(
     }
     val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = LocalMessageComposerSnackbarHostState.current ?: remember { SnackbarHostState() }
+    val recordingHintHostState =
+        LocalMessageComposerRecordingHintHostState.current ?: remember { SnackbarHostState() }
+    val recordingRationaleHostState =
+        LocalMessageComposerRecordingRationaleHostState.current ?: remember { SnackbarHostState() }
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -339,46 +362,93 @@ public fun MessageComposer(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = StreamTokens.spacingMd,
-                    end = StreamTokens.spacingMd,
-                    top = if (ChatTheme.config.composer.floatingStyleEnabled) {
-                        0.dp
-                    } else {
-                        StreamTokens.spacingMd
-                    },
-                    bottom = StreamTokens.spacingMd,
-                ),
-            verticalAlignment = Bottom,
+        CompositionLocalProvider(
+            LocalMessageComposerRecordingHintHostState provides recordingHintHostState,
+            LocalMessageComposerRecordingRationaleHostState provides recordingRationaleHostState,
         ) {
-            ChatTheme.componentFactory.MessageComposerLeadingContent(
-                params = MessageComposerLeadingContentParams(
-                    state = messageComposerState,
-                    isAttachmentPickerVisible = isAttachmentPickerVisible,
-                    onAttachmentsClick = onAttachmentsClick,
-                    onAttachmentsClickLabel = attachmentsActionLabel,
-                ),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        top = if (ChatTheme.config.composer.floatingStyleEnabled) {
+                            0.dp
+                        } else {
+                            StreamTokens.spacingMd
+                        },
+                        bottom = StreamTokens.spacingMd,
+                    ),
+                verticalAlignment = Bottom,
+            ) {
+                ChatTheme.componentFactory.MessageComposerLeadingContent(
+                    params = MessageComposerLeadingContentParams(
+                        state = messageComposerState,
+                        isAttachmentPickerVisible = isAttachmentPickerVisible,
+                        onAttachmentsClick = onAttachmentsClick,
+                        onAttachmentsClickLabel = attachmentsActionLabel,
+                    ),
+                )
 
-            input(messageComposerState)
+                input(messageComposerState)
 
-            ChatTheme.componentFactory.MessageComposerTrailingContent(
-                params = MessageComposerTrailingContentParams(
-                    state = messageComposerState,
-                ),
-            )
+                ChatTheme.componentFactory.MessageComposerTrailingContent(
+                    params = MessageComposerTrailingContentParams(
+                        state = messageComposerState,
+                    ),
+                )
 
-            if (snackbarHostState.currentSnackbarData != null) {
-                SnackbarPopup(hostState = snackbarHostState) { snackbarData ->
-                    ChatTheme.componentFactory.MessageComposerSnackbar(
-                        params = MessageComposerSnackbarParams(data = snackbarData),
-                    )
-                }
+                // Snackbars are children of the composer row so they anchor above the composer.
+                MessageComposerSnackbars(
+                    snackbarHostState = snackbarHostState,
+                    recordingHintHostState = recordingHintHostState,
+                    recordingRationaleHostState = recordingRationaleHostState,
+                )
             }
         }
+    }
+}
+
+/**
+ * The snackbars shown above the composer: the event-driven composer snackbar, the audio recording
+ * hint, and the audio recording permission rationale. All are rendered inside the composer row so
+ * they anchor above the composer; the two recording ones are driven by the mic button via their
+ * composition locals.
+ */
+@Composable
+private fun MessageComposerSnackbars(
+    snackbarHostState: SnackbarHostState,
+    recordingHintHostState: SnackbarHostState,
+    recordingRationaleHostState: SnackbarHostState,
+) {
+    ComposerSnackbar(snackbarHostState) { snackbarData ->
+        ChatTheme.componentFactory.MessageComposerSnackbar(
+            params = MessageComposerSnackbarParams(data = snackbarData),
+        )
+    }
+    ComposerSnackbar(recordingHintHostState) { snackbarData ->
+        ChatTheme.componentFactory.MessageComposerAudioRecordingHint(
+            params = MessageComposerAudioRecordingHintParams(snackbarData),
+        )
+    }
+    ComposerSnackbar(recordingRationaleHostState) { snackbarData ->
+        ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(
+            params = MessageComposerAudioRecordingPermissionRationaleParams(snackbarData),
+        )
+    }
+}
+
+/**
+ * A composer snackbar rendered only while [hostState] has data, so the popup measures its real size
+ * and anchors above the composer instead of appearing at a zero-size spot.
+ */
+@Composable
+private fun ComposerSnackbar(
+    hostState: SnackbarHostState,
+    snackbar: @Composable (SnackbarData) -> Unit,
+) {
+    if (hostState.currentSnackbarData != null) {
+        SnackbarPopup(hostState = hostState, snackbar = snackbar)
     }
 }
 

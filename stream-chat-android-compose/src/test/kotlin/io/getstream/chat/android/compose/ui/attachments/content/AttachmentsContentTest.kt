@@ -121,6 +121,20 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `audio record reply without caption`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentReplyNoCaptionContent()
+        }
+    }
+
+    @Test
+    fun `audio record reply with caption`() {
+        snapshotWithDarkMode {
+            AudioRecordAttachmentReplyCaptionContent()
+        }
+    }
+
+    @Test
     fun `unsupported attachment content`() {
         snapshotWithDarkMode {
             Column {

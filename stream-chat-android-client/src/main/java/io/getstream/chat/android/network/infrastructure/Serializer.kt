@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
-
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
-internal data class CompletableResponse(
-    val duration: String,
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
 )
+
+package io.getstream.chat.android.network.infrastructure
+
+import com.squareup.moshi.Moshi
+
+internal object Serializer {
+    @JvmStatic
+    internal val moshiBuilder: Moshi.Builder = Moshi.Builder()
+        .add(io.getstream.chat.android.network.infrastructure.IsoDateAdapter())
+        .addLast(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
+
+    @JvmStatic
+    internal val moshi: Moshi by lazy {
+        moshiBuilder.build()
+    }
+}
