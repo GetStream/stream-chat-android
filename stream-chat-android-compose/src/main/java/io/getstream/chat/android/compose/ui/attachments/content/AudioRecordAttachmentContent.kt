@@ -71,7 +71,6 @@ import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.senderAwareDescription
-import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
@@ -132,7 +131,6 @@ private fun AudioRecordAttachmentContentItems(
             attachment.isAudioRecording() && attachmentUrl != null
         }
 
-    val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
     val hasCaption = attachmentState.message.text.isNotEmpty()
     // Mirror the multi-attachment grid: a non-clickable wrapper carries the "Voice message" label
     // (and the sender when this is the sender-bearing attachment) so the message row announces it,
@@ -146,7 +144,7 @@ private fun AudioRecordAttachmentContentItems(
         },
     ) {
         Column(
-            modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) },
+            modifier = modifier.applyIf(hasCaption) { padding(MessageStyling.messageSectionPadding) },
             verticalArrangement = Arrangement.spacedBy(MessageStyling.sectionsDistance),
         ) {
             audioRecordings.forEach { audioRecording ->
