@@ -33,10 +33,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -57,6 +62,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -120,7 +126,9 @@ public fun GiphyAttachmentContent(
 
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
 
-    val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode)
+    var downloadedRatio by remember(key1 = previewUrl) { mutableStateOf<Float?>(null) }
+
+    val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode, downloadedRatio)
 
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     val giphyTitle = attachment.title?.takeIf(String::isNotBlank)
@@ -170,12 +178,38 @@ public fun GiphyAttachmentContent(
                     )
                 },
         ) {
-            StreamAsyncImage(
-                data = giphyInfo?.url ?: attachment.giphyFallbackPreviewUrl,
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = giphyTitle,
-                contentScale = contentScale,
-            )
+            if (giphyInfo == null) {
+                StreamAsyncImage(
+                    data = attachment.giphyFallbackPreviewUrl,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = contentScale,
+                ) { imageState ->
+                    val painter = imageState.painter
+                    val intrinsicSize = painter?.intrinsicSize
+                    LaunchedEffect(intrinsicSize) {
+                        if (intrinsicSize != null && intrinsicSize.isSpecified && intrinsicSize.height > 0f) {
+                            downloadedRatio = intrinsicSize.width / intrinsicSize.height
+                        }
+                    }
+                    if (painter == null) {
+                        ShimmerProgressIndicator(modifier = Modifier.matchParentSize())
+                    } else {
+                        Image(
+                            painter = painter,
+                            contentDescription = giphyTitle,
+                            modifier = Modifier.matchParentSize(),
+                            contentScale = contentScale,
+                        )
+                    }
+                }
+            } else {
+                StreamAsyncImage(
+                    data = giphyInfo.url,
+                    modifier = Modifier.fillMaxSize(),
+                    contentDescription = giphyTitle,
+                    contentScale = contentScale,
+                )
+            }
 
             GiphyLabel(
                 Modifier
@@ -190,6 +224,7 @@ public fun GiphyAttachmentContent(
 private fun calculateSize(
     giphyInfo: GiphyInfo?,
     giphySizingMode: GiphySizingMode,
+    downloadedRatio: Float?,
 ): DpSize {
     val density = LocalDensity.current
 
@@ -199,7 +234,7 @@ private fun calculateSize(
     val width = 250.dp
     val height = 200.dp
 
-    val giphyDimensions: DpSize = remember(giphyInfo, density, maxWidth, width, maxHeight, height) {
+    val giphyDimensions: DpSize = remember(giphyInfo, downloadedRatio, density, maxWidth, width, maxHeight, height) {
         if (giphyInfo != null) {
             with(density) {
                 val giphyWidth = giphyInfo.width.toDp()
@@ -227,8 +262,16 @@ private fun calculateSize(
                     )
                 }
             }
+        } else if (downloadedRatio == null) {
+            val side = minOf(maxWidth, maxHeight)
+            DpSize(side, side)
         } else {
-            DpSize(maxWidth, maxHeight)
+            calculateResultingDimensions(
+                maxWidth = maxWidth,
+                maxHeight = maxHeight,
+                giphyWidth = downloadedRatio.dp,
+                giphyHeight = 1.dp,
+            )
         }
     }
     return giphyDimensions
