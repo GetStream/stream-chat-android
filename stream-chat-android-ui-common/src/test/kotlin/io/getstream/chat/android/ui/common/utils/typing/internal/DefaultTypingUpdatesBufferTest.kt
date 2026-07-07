@@ -65,10 +65,12 @@ internal class DefaultTypingUpdatesBufferTest {
         fixture.buffer.onKeystroke("a")
         runCurrent()
         repeat(3) {
-            advanceTimeBy(900)
+            // Keep each keystroke gap below the stop threshold so no stop event fires.
+            advanceTimeBy(BUFFER_TYPING_UPDATES_INTERVAL - 100)
             runCurrent()
             fixture.buffer.onKeystroke("a".repeat(it + 2))
         }
+        // 3 * 900 + 400 = 3100ms, just past the periodic send boundary.
         advanceTimeBy(400)
         runCurrent()
 
@@ -132,5 +134,10 @@ internal class DefaultTypingUpdatesBufferTest {
          * Mirrors DEFAULT_SEND_TYPING_UPDATES_INTERVAL in [DefaultTypingUpdatesBuffer].
          */
         private const val SEND_TYPING_UPDATES_INTERVAL = 3000L
+
+        /**
+         * Mirrors DEFAULT_BUFFER_TYPING_UPDATES_INTERVAL in [DefaultTypingUpdatesBuffer].
+         */
+        private const val BUFFER_TYPING_UPDATES_INTERVAL = 1000L
     }
 }

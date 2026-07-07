@@ -20,8 +20,9 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.randomString
-import io.getstream.log.SilentStreamLogger
+import io.getstream.log.Priority
 import io.getstream.log.StreamLog
+import io.getstream.log.StreamLogger
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -39,6 +40,7 @@ import okio.GzipSource
 import okio.buffer
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldThrow
 import org.junit.After
 import org.junit.Before
@@ -48,15 +50,19 @@ import java.io.IOException
 internal class HttpLoggingInterceptorTest {
 
     private val interceptor = HttpLoggingInterceptor()
+    private val logger = RecordingStreamLogger()
 
     @Before
     fun setUp() {
-        StreamLog.install(SilentStreamLogger)
+        StreamLog.install(logger)
+        StreamLog.setValidator { _, _ -> true }
     }
 
     @After
     fun tearDown() {
         StreamLog.unInstall()
+        // Restore the default error-only validator so the permissive one does not leak to other tests.
+        StreamLog.setValidator { priority, _ -> priority.level >= Priority.ERROR.level }
     }
 
     @Test
@@ -76,7 +82,7 @@ internal class HttpLoggingInterceptorTest {
         val response = interceptor.intercept(chain)
 
         response.code shouldBeEqualTo 200
-        response.body!!.string() shouldBeEqualTo "{}"
+        requireNotNull(response.body).string() shouldBeEqualTo "{}"
     }
 
     @Test
@@ -103,6 +109,7 @@ internal class HttpLoggingInterceptorTest {
         val response = interceptor.intercept(chain)
 
         response.code shouldBeEqualTo 200
+        logger.messages shouldContain "--> END POST (encoded body omitted)"
     }
 
     @Test
@@ -116,6 +123,7 @@ internal class HttpLoggingInterceptorTest {
         val response = interceptor.intercept(chain)
 
         response.code shouldBeEqualTo 200
+        logger.messages shouldContain "--> END POST (binary 3-byte body omitted)"
     }
 
     @Test
@@ -129,6 +137,7 @@ internal class HttpLoggingInterceptorTest {
         val response = interceptor.intercept(chain)
 
         response.code shouldBeEqualTo 200
+        logger.messages shouldContain "--> END POST (duplex request body omitted)"
     }
 
     @Test
@@ -142,6 +151,7 @@ internal class HttpLoggingInterceptorTest {
         val response = interceptor.intercept(chain)
 
         response.code shouldBeEqualTo 200
+        logger.messages shouldContain "--> END POST (one-shot body omitted)"
     }
 
     @Test
@@ -160,6 +170,7 @@ internal class HttpLoggingInterceptorTest {
         val response = interceptor.intercept(chain)
 
         response.code shouldBeEqualTo 200
+        logger.messages shouldContain "<-- END HTTP (binary 3-byte body omitted)"
     }
 
     @Test
@@ -235,5 +246,13 @@ internal class HttpLoggingInterceptorTest {
         private val delegate: FakeChain = FakeChain(FakeResponse(200)),
     ) : Interceptor.Chain by delegate {
         override fun proceed(request: Request): Response = throw IOException("failure")
+    }
+
+    private class RecordingStreamLogger : StreamLogger {
+        val messages = mutableListOf<String>()
+
+        override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
+            messages += message
+        }
     }
 }

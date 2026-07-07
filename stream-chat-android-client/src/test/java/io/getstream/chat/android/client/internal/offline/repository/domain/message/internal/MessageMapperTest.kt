@@ -253,6 +253,11 @@ internal class MessageMapperTest {
     fun `Should map Message to ReplyMessageEntity correctly`() = runTest {
         val message = randomMessage(
             attachments = listOf(randomAttachment()),
+            mentionedUsers = listOf(randomUser()),
+        ).copy(
+            // Diverge from the fixture default (mentioned user ids) so a mapping swap between
+            // remoteMentionedUserIds and mentionedUsersId fails the test.
+            mentionedUsersIds = listOf(randomString()),
         )
 
         val expectedReplyMessageEntity = ReplyMessageEntity(
@@ -329,7 +334,7 @@ internal class MessageMapperTest {
             updatedLocallyAt = randomDate(),
             deletedAt = randomDate(),
             remoteMentionedUserIds = listOf(mentionedUser.id),
-            mentionedUsersId = listOf(mentionedUser.id),
+            mentionedUsersId = listOf(randomString()),
             mentionedHere = randomBoolean(),
             mentionedChannel = randomBoolean(),
             mentionedRoles = listOf(randomString()),
