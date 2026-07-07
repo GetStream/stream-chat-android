@@ -46,19 +46,12 @@ internal class MessageReminderTest {
     }
 
     @Test
-    fun `builder copy constructor should copy every field except cid and messageId`() {
+    fun `builder copy constructor should copy every field`() {
         val reminder = randomMessageReminder()
 
         val built = MessageReminder.Builder(reminder).build()
 
-        assertEquals(reminder.remindAt, built.remindAt)
-        assertEquals(reminder.channel, built.channel)
-        assertEquals(reminder.message, built.message)
-        assertEquals(reminder.createdAt, built.createdAt)
-        assertEquals(reminder.updatedAt, built.updatedAt)
-        // The copy constructor does not carry cid and messageId; they fall back to empty strings.
-        assertEquals("", built.cid)
-        assertEquals("", built.messageId)
+        assertEquals(reminder, built)
     }
 
     @Test
