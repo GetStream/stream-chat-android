@@ -302,6 +302,8 @@ private fun GiphyLabel(modifier: Modifier) {
             text = stringResource(R.string.stream_compose_giphy_label),
             style = ChatTheme.typography.metadataEmphasis,
             color = colors.badgeTextOnAccent,
+            maxLines = 1,
+            softWrap = false,
         )
     }
 }
