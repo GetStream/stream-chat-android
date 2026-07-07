@@ -76,6 +76,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Attachment.UploadState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -94,16 +95,45 @@ public fun AudioRecordAttachmentContent(
     viewModelFactory: AudioPlayerViewModelFactory,
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
+    val playerState by viewModel.state.collectAsStateWithLifecycle()
 
+    AudioRecordAttachmentContentItems(
+        modifier = modifier,
+        attachmentState = attachmentState,
+        playerState = playerState,
+        onPlayToggleClick = viewModel::playOrPause,
+        onPlaySpeedClick = viewModel::changeSpeed,
+        onThumbDragStart = viewModel::startSeek,
+        onThumbDragStop = viewModel::seekTo,
+    )
+
+    // Cleanup: Pause any playing tracks in onPause.
+    LifecycleEventEffect(event = Lifecycle.Event.ON_PAUSE) {
+        // Important: This effect is disposed when the parent composable is disposed. A side effect of this is that if
+        // the AudioRecordAttachmentContent is shown in LazyList, and is scrolled away, the effect is disposed and the
+        // lifecycle event is not received. Therefore, the audio needs to be paused higher in the hierarchy.
+        viewModel.pause()
+    }
+}
+
+@Composable
+private fun AudioRecordAttachmentContentItems(
+    attachmentState: AttachmentState,
+    playerState: AudioPlayerState,
+    modifier: Modifier = Modifier,
+    onPlayToggleClick: (Attachment) -> Unit = {},
+    onPlaySpeedClick: (Attachment) -> Unit = {},
+    onThumbDragStart: (Attachment) -> Unit = {},
+    onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
+) {
     val audioRecordings = attachmentState.message.attachments
         .filter { attachment ->
             val attachmentUrl = attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
             attachment.isAudioRecording() && attachmentUrl != null
         }
 
-    val playerState by viewModel.state.collectAsStateWithLifecycle()
-
     val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
+    val hasCaption = attachmentState.message.text.isNotEmpty()
     // Mirror the multi-attachment grid: a non-clickable wrapper carries the "Voice message" label
     // (and the sender when this is the sender-bearing attachment) so the message row announces it,
     // while the playback controls stay individually focusable.
@@ -121,7 +151,7 @@ public fun AudioRecordAttachmentContent(
         ) {
             audioRecordings.forEach { audioRecording ->
                 AudioRecordAttachmentContentItem(
-                    modifier = Modifier.applyIf(!shouldBeFullSize) {
+                    modifier = Modifier.applyIf(hasCaption) {
                         background(
                             MessageStyling.attachmentBackgroundColor(attachmentState.isMine),
                             RoundedCornerShape(StreamTokens.radiusLg),
@@ -130,21 +160,13 @@ public fun AudioRecordAttachmentContent(
                     attachment = audioRecording,
                     playerState = playerState,
                     isMine = attachmentState.isMine,
-                    onPlayToggleClick = viewModel::playOrPause,
-                    onPlaySpeedClick = viewModel::changeSpeed,
-                    onThumbDragStart = viewModel::startSeek,
-                    onThumbDragStop = viewModel::seekTo,
+                    onPlayToggleClick = onPlayToggleClick,
+                    onPlaySpeedClick = onPlaySpeedClick,
+                    onThumbDragStart = onThumbDragStart,
+                    onThumbDragStop = onThumbDragStop,
                 )
             }
         }
-    }
-
-    // Cleanup: Pause any playing tracks in onPause.
-    LifecycleEventEffect(event = Lifecycle.Event.ON_PAUSE) {
-        // Important: This effect is disposed when the parent composable is disposed. A side effect of this is that if
-        // the AudioRecordAttachmentContent is shown in LazyList, and is scrolled away, the effect is disposed and the
-        // lifecycle event is not received. Therefore, the audio needs to be paused higher in the hierarchy.
-        viewModel.pause()
     }
 }
 
@@ -349,9 +371,11 @@ private fun UploadProgressIndicator(
 private fun progressFraction(state: UploadState.InProgress): Float =
     if (state.totalBytes > 0) (state.bytesUploaded / state.totalBytes.toFloat()) else 0f
 
+private const val PreviewAudioAssetUrl = "preview://audio"
+
 @Composable
 internal fun AudioRecordAttachmentContentItemPlayback() {
-    val previewUri = "preview://audio"
+    val previewUri = PreviewAudioAssetUrl
     AudioRecordAttachmentContentItem(
         attachment = PreviewAttachmentData.attachmentAudioRecording1.copy(assetUrl = previewUri),
         playerState = AudioPlayerState(
@@ -369,7 +393,7 @@ internal fun AudioRecordAttachmentContentItemPlayback() {
 internal fun AudioRecordAttachmentContentItemUploading() {
     AudioRecordAttachmentContentItem(
         attachment = PreviewAttachmentData.attachmentAudioRecording1.copy(
-            assetUrl = "preview://audio",
+            assetUrl = PreviewAudioAssetUrl,
             uploadState = UploadState.InProgress(
                 bytesUploaded = 2_400_000,
                 totalBytes = 4_000_000,
@@ -381,7 +405,7 @@ internal fun AudioRecordAttachmentContentItemUploading() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun AudioRecordAttachmentContentItemPreview() {
+private fun AudioRecordAttachmentContentItemPreview() {
     ChatPreviewTheme {
         AudioRecordAttachmentContentItemPlayback()
     }
@@ -389,8 +413,48 @@ internal fun AudioRecordAttachmentContentItemPreview() {
 
 @Preview(showBackground = true)
 @Composable
-internal fun AudioRecordAttachmentContentItemUploadingPreview() {
+private fun AudioRecordAttachmentContentItemUploadingPreview() {
     ChatPreviewTheme {
         AudioRecordAttachmentContentItemUploading()
+    }
+}
+
+@Composable
+internal fun AudioRecordAttachmentReplyNoCaptionContent() {
+    AudioRecordAttachmentReplyContent(hasCaption = false)
+}
+
+@Composable
+internal fun AudioRecordAttachmentReplyCaptionContent() {
+    AudioRecordAttachmentReplyContent(hasCaption = true)
+}
+
+@Composable
+private fun AudioRecordAttachmentReplyContent(hasCaption: Boolean) {
+    val attachment = PreviewAttachmentData.attachmentAudioRecording1.copy(assetUrl = PreviewAudioAssetUrl)
+    val message = Message(
+        text = if (hasCaption) "Caption" else "",
+        attachments = listOf(attachment),
+        replyTo = Message(),
+    )
+    AudioRecordAttachmentContentItems(
+        attachmentState = AttachmentState(message = message),
+        playerState = AudioPlayerState(getRecordingUri = Attachment::assetUrl),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AudioRecordAttachmentReplyNoCaptionPreview() {
+    ChatPreviewTheme {
+        AudioRecordAttachmentReplyNoCaptionContent()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AudioRecordAttachmentReplyCaptionPreview() {
+    ChatPreviewTheme {
+        AudioRecordAttachmentReplyCaptionContent()
     }
 }
