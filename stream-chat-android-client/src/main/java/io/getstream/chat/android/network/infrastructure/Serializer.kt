@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
+
+package io.getstream.chat.android.network.infrastructure
 
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.MultiMapJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 
-internal val moshi: Moshi = Moshi.Builder()
-    .add(IsoDateAdapter())
-    .add(KotlinJsonAdapterFactory())
-    .add(MultiMapJsonAdapter.FACTORY)
-    .build()
+internal object Serializer {
+    @JvmStatic
+    internal val moshiBuilder: Moshi.Builder = Moshi.Builder()
+        .add(io.getstream.chat.android.network.infrastructure.IsoDateAdapter())
+        .addLast(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
+
+    @JvmStatic
+    internal val moshi: Moshi by lazy {
+        moshiBuilder.build()
+    }
+}

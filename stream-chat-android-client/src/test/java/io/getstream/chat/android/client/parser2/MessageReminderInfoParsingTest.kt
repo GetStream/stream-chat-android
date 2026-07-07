@@ -20,12 +20,12 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageReminderInfoAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageReminderInfoTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -42,7 +42,7 @@ internal class MessageReminderInfoParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private val moshi = Moshi.Builder().add(DateAdapter()).build()
+    private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
     private val adapter = MessageReminderInfoAdapter(dateAdapter)
 
