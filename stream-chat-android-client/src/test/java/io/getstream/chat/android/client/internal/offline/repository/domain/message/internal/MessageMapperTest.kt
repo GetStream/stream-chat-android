@@ -328,7 +328,7 @@ internal class MessageMapperTest {
             updatedAt = randomDate(),
             updatedLocallyAt = randomDate(),
             deletedAt = randomDate(),
-            remoteMentionedUserIds = listOf(randomString()),
+            remoteMentionedUserIds = listOf(mentionedUser.id),
             mentionedUsersId = listOf(mentionedUser.id),
             mentionedHere = randomBoolean(),
             mentionedChannel = randomBoolean(),

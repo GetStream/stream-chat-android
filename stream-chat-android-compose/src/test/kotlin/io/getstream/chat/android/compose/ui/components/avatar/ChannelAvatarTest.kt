@@ -27,6 +27,7 @@ internal class ChannelAvatarTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
+        // Extra-tall canvas to fit all avatar variant rows: 4000px at the native 440dpi, converted to hdpi.
         deviceConfig = PIXEL_4A_HDPI.copy(screenHeight = 2182),
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
