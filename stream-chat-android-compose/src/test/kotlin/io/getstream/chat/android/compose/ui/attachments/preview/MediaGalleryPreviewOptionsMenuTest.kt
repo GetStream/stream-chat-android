@@ -17,8 +17,9 @@
 package io.getstream.chat.android.compose.ui.attachments.preview
 
 import androidx.compose.runtime.Composable
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryOptionsConfig
 import io.getstream.chat.android.models.ConnectionState
@@ -30,7 +31,10 @@ import org.junit.Test
 internal class MediaGalleryPreviewOptionsMenuTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(
+        deviceConfig = PIXEL_2_HDPI,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
     fun `media gallery options menu for own user`() = snapshot {

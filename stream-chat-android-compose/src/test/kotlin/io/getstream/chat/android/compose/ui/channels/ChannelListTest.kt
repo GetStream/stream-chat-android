@@ -18,11 +18,12 @@ package io.getstream.chat.android.compose.ui.channels
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
+import io.getstream.chat.android.compose.ui.PIXEL_4A_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.models.Member
@@ -35,7 +36,10 @@ import org.junit.Test
 internal class ChannelListTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val paparazzi = Paparazzi(
+        deviceConfig = PIXEL_4A_HDPI,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
     fun `empty channels`() {
