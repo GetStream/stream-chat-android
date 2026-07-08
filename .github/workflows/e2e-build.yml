@@ -12,17 +12,15 @@ env:
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
   BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
-
-permissions:
-  contents: read
-
 jobs:
   build:
     name: ${{ inputs.app }} apks
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v7.0.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/gradle-cache@main
