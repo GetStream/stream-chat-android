@@ -73,7 +73,6 @@ import io.getstream.chat.android.client.api2.model.requests.QueryRemindersReques
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
@@ -166,6 +165,7 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
@@ -1718,11 +1718,8 @@ internal class MoshiChatApiTest {
         val request = Mother.randomSendActionRequest()
         val result = sut.sendAction(request).await()
         // then
-        val expectedRequest = SendActionRequest(
-            channel_id = request.channelId,
-            message_id = request.messageId,
-            type = request.type,
-            form_data = request.formData,
+        val expectedRequest = MessageActionRequest(
+            formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
         )
         result `should be instance of` expected
         verify(api, times(1)).sendAction(request.messageId, expectedRequest)

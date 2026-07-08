@@ -81,7 +81,6 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
@@ -168,6 +167,7 @@ import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
@@ -1357,11 +1357,8 @@ constructor(
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
         return messageApi.sendAction(
             messageId = request.messageId,
-            request = SendActionRequest(
-                channel_id = request.channelId,
-                message_id = request.messageId,
-                type = request.type,
-                form_data = request.formData,
+            request = MessageActionRequest(
+                formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
             ),
         ).mapDomain { response ->
             response.message.toDomain()
