@@ -55,6 +55,12 @@ baselineProfile {
     }
 }
 
+// Paparazzi renders and compresses every snapshot in the forked test worker, which defaults to a
+// 512 MB heap. Raise it so recordPaparazziDebug / verifyPaparazziDebug do not run out of memory.
+tasks.withType<Test>().configureEach {
+    maxHeapSize = "4g"
+}
+
 tasks.withType<KotlinCompile> {
     compilerOptions.freeCompilerArgs.addAll(
         listOf(
