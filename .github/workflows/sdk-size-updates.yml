@@ -10,13 +10,11 @@ on:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
-
-permissions:
-  pull-requests: write
-
 jobs:
   update-sdk-sizes:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@v0.13.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@8c5fbade4ee9c06a0a979bcb0866e64669254f73
+    permissions:
+      pull-requests: write
     with:
       modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose"
       metrics-project: "stream-chat-android-metrics"
