@@ -58,7 +58,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
@@ -171,6 +170,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
@@ -363,10 +363,10 @@ constructor(
     ): Call<Message> {
         return messageApi.partialUpdateMessage(
             messageId = messageId,
-            body = PartialUpdateMessageRequest(
+            body = UpdateMessagePartialRequest(
                 set = set.toDto(),
                 unset = unset,
-                skip_enrich_url = skipEnrichUrl,
+                skipEnrichUrl = skipEnrichUrl,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
