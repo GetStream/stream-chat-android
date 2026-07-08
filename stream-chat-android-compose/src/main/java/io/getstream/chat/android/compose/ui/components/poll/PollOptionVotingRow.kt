@@ -43,7 +43,7 @@ import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
@@ -128,50 +128,62 @@ internal fun PollOptionVotingRow(
                     }
             },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         if (!poll.closed) {
             RadioCheck(
-                modifier = Modifier.semantics { hideFromAccessibility() },
+                modifier = Modifier
+                    .padding(vertical = StreamTokens.spacing2xs)
+                    .semantics { hideFromAccessibility() },
                 checked = checked,
                 onCheckedChange = onToggle,
                 borderColor = style.outlineColor,
             )
         }
 
+        val avatarSize = AvatarSize.ExtraSmall
+
         Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
-            Row(Modifier.heightIn(min = AvatarSize.ExtraSmall)) {
+            Row(verticalAlignment = Alignment.Top) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = option.text,
-                    style = ChatTheme.typography.captionDefault,
+                    // Keep the full line box on every line (including a single line) so the gap
+                    // to the progress bar stays consistent regardless of how many lines the
+                    // option wraps to.
+                    style = ChatTheme.typography.captionDefault.copy(
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Proportional,
+                            trim = LineHeightStyle.Trim.None,
+                        ),
+                    ),
                     color = style.textColor,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
                 )
-
-                if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
-                    UserAvatarStack(
-                        overlap = StreamTokens.spacingXs,
-                        users = users.take(MaxStackedAvatars),
-                        avatarSize = AvatarSize.ExtraSmall,
-                        modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
-                    )
-                }
 
                 val voteCountDescription = pluralStringResource(
                     R.plurals.stream_compose_poll_vote_counts,
                     voteCount,
                     voteCount,
                 )
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .semantics { contentDescription = voteCountDescription },
-                    text = voteCount.toString(),
-                    style = ChatTheme.typography.metadataDefault,
-                    color = style.textColor,
-                )
+                Row(
+                    modifier = Modifier.heightIn(min = avatarSize),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
+                        UserAvatarStack(
+                            overlap = StreamTokens.spacingXs,
+                            users = users.take(MaxStackedAvatars),
+                            avatarSize = avatarSize,
+                            modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.semantics { contentDescription = voteCountDescription },
+                        text = voteCount.toString(),
+                        style = ChatTheme.typography.metadataDefault,
+                        color = style.textColor,
+                    )
+                }
             }
 
             val progress by animateFloatAsState(
