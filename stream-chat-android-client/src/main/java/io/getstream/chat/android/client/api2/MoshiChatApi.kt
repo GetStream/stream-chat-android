@@ -63,7 +63,6 @@ import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesReques
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -144,6 +143,7 @@ import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -173,6 +173,7 @@ import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
@@ -1948,14 +1949,14 @@ constructor(
     override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.createReminder(
             messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
+            body = CreateReminderRequest(remindAt = remindAt),
         ).mapDomain { it.reminder.toDomain() }
     }
 
     override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.updateReminder(
             messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
+            body = UpdateReminderRequest(remindAt = remindAt),
         ).mapDomain { it.reminder.toDomain() }
     }
 

@@ -56,7 +56,8 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRe
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
+import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
@@ -143,6 +144,7 @@ import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -177,6 +179,7 @@ import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
@@ -2859,7 +2862,7 @@ internal class MoshiChatApiTest {
         val remindAt = randomDate()
         val result = sut.createReminder(messageId, remindAt).await()
         // then
-        val expectedBody = ReminderRequest(remind_at = remindAt)
+        val expectedBody = CreateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
         verify(api, times(1)).createReminder(messageId, expectedBody)
     }
@@ -2878,7 +2881,7 @@ internal class MoshiChatApiTest {
         val remindAt = randomDate()
         val result = sut.updateReminder(messageId, remindAt).await()
         // then
-        val expectedBody = ReminderRequest(remind_at = remindAt)
+        val expectedBody = UpdateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
         verify(api, times(1)).updateReminder(messageId, expectedBody)
     }
