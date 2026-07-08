@@ -7,9 +7,11 @@ on:
       - completed
 jobs:
   build_ui_components_sample_app:
+    permissions:
+      contents: read
+      id-token: write
     name: Build and push to S3
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
