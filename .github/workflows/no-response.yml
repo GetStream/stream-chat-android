@@ -6,6 +6,7 @@ on:
   schedule:
     # Every midnight
     - cron: '0 0 * * *'
+
 jobs:
   noResponse:
     permissions:
