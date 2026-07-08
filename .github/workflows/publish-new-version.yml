@@ -26,18 +26,15 @@ jobs:
   pre_release_check:
     permissions:
       contents: read
-      contents: read
     name: Pre release check
     runs-on: ubuntu-24.04
     environment: 'publish'
-      contents: read
     steps:
       - name: Check
         id: pre_release_check_step
         run: echo "Pre release check"
   publish:
     permissions:
-      contents: read
       contents: read
       contents: write
     needs: pre_release_check
