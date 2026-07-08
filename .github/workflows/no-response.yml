@@ -8,8 +8,11 @@ on:
     - cron: '0 0 * * *'
 jobs:
   noResponse:
-    runs-on: ubuntu-22.04
     permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    runs-on: ubuntu-22.04
       issues: write
       pull-requests: write
     steps:
