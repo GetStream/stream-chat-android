@@ -118,6 +118,7 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
  * @param contentDescription The description to use for the image.
  * @param modifier Modifier for styling.
  * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
+ * @param onState Optional listener invoked when the image loading state changes.
  */
 @Composable
 internal fun StreamAsyncImage(
@@ -125,6 +126,7 @@ internal fun StreamAsyncImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
+    onState: ((AsyncImagePainter.State) -> Unit)? = null,
 ) {
     StreamAsyncImage(
         imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -133,6 +135,7 @@ internal fun StreamAsyncImage(
         modifier = modifier,
         contentDescription = contentDescription,
         contentScale = contentScale,
+        onState = onState,
     )
 }
 
@@ -147,6 +150,7 @@ internal fun StreamAsyncImage(
  * @param contentDescription The description to use for the image.
  * @param modifier Modifier for styling.
  * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
+ * @param onState Optional listener invoked when the image loading state changes.
  */
 @Composable
 internal fun StreamAsyncImage(
@@ -154,12 +158,16 @@ internal fun StreamAsyncImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Fit,
+    onState: ((AsyncImagePainter.State) -> Unit)? = null,
 ) {
     StreamAsyncImage(
         imageRequest = imageRequest,
         modifier = modifier,
         contentScale = contentScale,
     ) { state ->
+        if (onState != null) {
+            LaunchedEffect(state) { onState(state) }
+        }
         val painter = state.painter
         if (painter == null) {
             ShimmerProgressIndicator(

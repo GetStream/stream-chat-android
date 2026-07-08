@@ -33,10 +33,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -178,6 +181,8 @@ public fun GiphyAttachmentContent(
     val width = ChatTheme.dimens.attachmentsContentGiphyWidth
     val height = ChatTheme.dimens.attachmentsContentGiphyHeight
 
+    var downloadedRatio by remember(attachment.giphyFallbackPreviewUrl) { mutableStateOf<Float?>(null) }
+
     val giphyDimensions: DpSize by remember(key1 = giphyInfo) {
         derivedStateOf {
             if (giphyInfo != null) {
@@ -208,7 +213,18 @@ public fun GiphyAttachmentContent(
                     }
                 }
             } else {
-                DpSize(maxWidth, maxHeight)
+                val ratio = downloadedRatio
+                if (ratio == null) {
+                    val side = minOf(maxWidth, maxHeight)
+                    DpSize(side, side)
+                } else {
+                    calculateResultingDimensions(
+                        maxWidth = maxWidth,
+                        maxHeight = maxHeight,
+                        giphyWidth = ratio.dp,
+                        giphyHeight = 1.dp,
+                    )
+                }
             }
         }
     }
@@ -235,9 +251,19 @@ public fun GiphyAttachmentContent(
     ) {
         StreamAsyncImage(
             data = giphyInfo?.url ?: attachment.giphyFallbackPreviewUrl,
-            modifier = Modifier.fillMaxSize(),
             contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
             contentScale = contentScale,
+            onState = if (giphyInfo == null) {
+                { imageState ->
+                    val intrinsicSize = imageState.painter?.intrinsicSize
+                    if (intrinsicSize != null && intrinsicSize.isSpecified && intrinsicSize.height > 0f) {
+                        downloadedRatio = intrinsicSize.width / intrinsicSize.height
+                    }
+                }
+            } else {
+                null
+            },
         )
 
         Image(
