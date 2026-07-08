@@ -24,19 +24,19 @@ internal object DeviceTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"id":"token1","push_provider":"firebase","push_provider_name":"myProvider"}"""
+        """{"id":"token1","push_provider":"firebase","push_provider_name":"myProvider","created_at":"2020-06-10T11:04:31.000Z","user_id":"userId"}"""
 
     @Language("JSON")
     val jsonOptionalFieldMissing =
-        """{"id":"token1","push_provider":"firebase"}"""
+        """{"id":"token1","push_provider":"firebase","created_at":"2020-06-10T11:04:31.000Z","user_id":"userId"}"""
 
     @Language("JSON")
     val jsonMissingId =
-        """{"push_provider":"firebase","push_provider_name":"myProvider"}"""
+        """{"push_provider":"firebase","push_provider_name":"myProvider","created_at":"2020-06-10T11:04:31.000Z","user_id":"userId"}"""
 
     @Language("JSON")
     val jsonMissingPushProvider =
-        """{"id":"token1","push_provider_name":"myProvider"}"""
+        """{"id":"token1","push_provider_name":"myProvider","created_at":"2020-06-10T11:04:31.000Z","user_id":"userId"}"""
 
     val expectedDeviceAllFields = Device(
         token = "token1",
@@ -52,7 +52,7 @@ internal object DeviceTestData {
 
     @Language("JSON")
     val jsonWithExplicitNulls =
-        """{"id":"token1","push_provider":"firebase","push_provider_name":null}"""
+        """{"id":"token1","push_provider":"firebase","push_provider_name":null,"created_at":"2020-06-10T11:04:31.000Z","user_id":"userId"}"""
 
     val expectedWithExplicitNulls = Device(
         token = "token1",

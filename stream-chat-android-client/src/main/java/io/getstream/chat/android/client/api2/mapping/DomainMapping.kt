@@ -137,6 +137,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.DeviceResponse
 import java.util.Date
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -689,8 +690,14 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DeviceDto] to [Device].
+     * Transforms [DeviceResponse] to [Device].
      */
+    internal fun DeviceResponse.toDomain(): Device = Device(
+        token = id,
+        pushProvider = PushProvider.fromKey(pushProvider),
+        providerName = pushProviderName,
+    )
+
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
         pushProvider = PushProvider.fromKey(push_provider),

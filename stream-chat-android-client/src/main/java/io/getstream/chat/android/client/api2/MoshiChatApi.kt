@@ -50,7 +50,6 @@ import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
@@ -168,6 +167,7 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersRequest
+import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -468,10 +468,10 @@ constructor(
 
     override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
-            request = AddDeviceRequest(
-                device.token,
-                device.pushProvider.key,
-                device.providerName,
+            request = CreateDeviceRequest(
+                id = device.token,
+                pushProvider = CreateDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+                pushProviderName = device.providerName,
             ),
         ).toUnitCall()
     }
