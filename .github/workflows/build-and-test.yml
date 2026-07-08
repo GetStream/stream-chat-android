@@ -14,18 +14,22 @@ jobs:
     permissions:
       actions: write
       contents: read
+      actions: write
+      contents: read
     name: Debug build
     runs-on: ubuntu-22.04
       contents: read
       pull-requests: read
     steps:
       - name: Check out code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: Build
         run: ./gradlew assembleDebug
   release_build:
     permissions:
+      actions: write
+      contents: read
       actions: write
       contents: read
     name: Release build
@@ -34,12 +38,14 @@ jobs:
       pull-requests: read
     steps:
       - name: Check out code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: Build
         run: ./gradlew assembleRelease
   tests:
     permissions:
+      actions: write
+      contents: read
       actions: write
       contents: read
     name: Tests
@@ -48,7 +54,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Check out code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 0 # fetch all history for sonar analysis
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
@@ -69,13 +75,15 @@ jobs:
     permissions:
       actions: write
       contents: read
+      actions: write
+      contents: read
     name: Size Check XML
     runs-on: ubuntu-22.04
       contents: read
       pull-requests: read
     steps:
       - name: Check out code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: build demo debug
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
@@ -89,13 +97,15 @@ jobs:
     permissions:
       actions: write
       contents: read
+      actions: write
+      contents: read
     name: Size Check Compose
     runs-on: ubuntu-22.04
       contents: read
       pull-requests: read
     steps:
       - name: Check out code
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: build debug
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
