@@ -15,7 +15,6 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
-
 env:
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
@@ -29,12 +28,8 @@ jobs:
       actions: write
       contents: read
       pull-requests: read
-      actions: write
-      contents: read
-      pull-requests: read
     name: Build
     uses: ./.github/workflows/e2e-build.yml
-      contents: read
     with:
       app: compose
     secrets: inherit
@@ -43,14 +38,10 @@ jobs:
       actions: write
       contents: read
       pull-requests: read
-      actions: write
-      contents: read
-      pull-requests: read
     name: Launch Allure TestOps
     runs-on: ubuntu-24.04
     needs: build-compose-apks
     outputs:
-      contents: read
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -64,16 +55,12 @@ jobs:
       actions: write
       contents: read
       pull-requests: read
-      actions: write
-      contents: read
-      pull-requests: read
     name: Test compose
     runs-on: ubuntu-24.04
     needs:
       - build-compose-apks
       - allure_testops_launch
     strategy:
-      contents: read
       matrix:
         include:
           - batch: 0
