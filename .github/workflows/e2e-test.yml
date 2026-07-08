@@ -25,19 +25,25 @@ env:
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 jobs:
   build-compose-apks:
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
     name: Build
     uses: ./.github/workflows/e2e-build.yml
-    permissions:
       contents: read
     with:
       app: compose
     secrets: inherit
   allure_testops_launch:
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
     name: Launch Allure TestOps
     runs-on: ubuntu-24.04
     needs: build-compose-apks
     outputs:
-    permissions:
       contents: read
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
@@ -48,13 +54,16 @@ jobs:
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}
   run-compose-tests:
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
     name: Test compose
     runs-on: ubuntu-24.04
     needs:
       - build-compose-apks
       - allure_testops_launch
     strategy:
-    permissions:
       contents: read
       matrix:
         include:
