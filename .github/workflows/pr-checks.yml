@@ -5,29 +5,36 @@ on: [ pull_request ]
 concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
-
-permissions:
-  contents: read
-  pull-requests: read
-
 jobs:
   base-android-ci:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@v0.13.1
-    secrets: inherit
-
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@8c5fbade4ee9c06a0a979bcb0866e64669254f73
+    permissions:
+      contents: read
+      pull-requests: read
+    secrets:
+      BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
+      BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
+      BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
+      BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   detekt:
     name: Detekt
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
       - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@v0.13.1
       - name: Detekt
         run: ./gradlew detekt
-
   rubocop:
     name: Rubocop
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - run: bundle exec fastlane rubocop
