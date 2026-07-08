@@ -11,9 +11,11 @@ concurrency:
   cancel-in-progress: true
 jobs:
   debug_build:
+    permissions:
+      actions: write
+      contents: read
     name: Debug build
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
@@ -23,9 +25,11 @@ jobs:
       - name: Build
         run: ./gradlew assembleDebug
   release_build:
+    permissions:
+      actions: write
+      contents: read
     name: Release build
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
@@ -35,9 +39,11 @@ jobs:
       - name: Build
         run: ./gradlew assembleRelease
   tests:
+    permissions:
+      actions: write
+      contents: read
     name: Tests
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
@@ -60,9 +66,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   size_check_xml:
+    permissions:
+      actions: write
+      contents: read
     name: Size Check XML
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
@@ -78,9 +86,11 @@ jobs:
           emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
           build_type: debug
   size_check_compose:
+    permissions:
+      actions: write
+      contents: read
     name: Size Check Compose
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
