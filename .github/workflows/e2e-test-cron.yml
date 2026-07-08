@@ -17,7 +17,6 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
-
 env:
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
@@ -29,24 +28,18 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Build
     uses: ./.github/workflows/e2e-build.yml
-      contents: read
     with:
       app: compose
   run-compose-tests-nightly:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Test compose
     runs-on: ubuntu-24.04
     needs: build-compose-apks
     strategy:
-      contents: read
       matrix:
         include:
           - android_api_level: 35
@@ -104,13 +97,10 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Slack Report
     runs-on: ubuntu-latest
     needs: [build-compose-apks, run-compose-tests-nightly]
     if: failure() && github.event_name == 'schedule'
-      contents: read
     steps:
       - uses: 8398a7/action-slack@v3
         with:
