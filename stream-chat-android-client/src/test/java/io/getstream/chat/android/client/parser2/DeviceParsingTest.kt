@@ -28,6 +28,9 @@ import io.getstream.chat.android.network.models.DeviceResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 internal class DeviceParsingTest {
 
@@ -127,29 +130,39 @@ internal class DeviceParsingTest {
 
     // region Request path (CreateDeviceRequest / PushProvider enum)
 
-    @Test
-    fun `Request path - serializes typed PushProvider to its wire string`() {
-        val json = parser.toJson(DeviceTestData.createDeviceRequest)
-        assertEquals(DeviceTestData.createDeviceRequestJson, json)
+    @ParameterizedTest
+    @MethodSource("pushProviders")
+    fun `Request path - serializes each PushProvider to its wire string`(
+        wire: String,
+        provider: CreateDeviceRequest.PushProvider,
+    ) {
+        val json = parser.toJson(CreateDeviceRequest(id = "token1", pushProvider = provider))
+        assertEquals("""{"id":"token1","push_provider":"$wire"}""", json)
     }
 
-    @Test
-    fun `Request path - deserializes known push_provider to the typed PushProvider`() {
+    @ParameterizedTest
+    @MethodSource("pushProviders")
+    fun `Request path - deserializes each push_provider to the typed PushProvider`(
+        wire: String,
+        provider: CreateDeviceRequest.PushProvider,
+    ) {
         val request = parser.fromJson(
-            DeviceTestData.createDeviceRequestJsonKnownProvider,
+            """{"id":"token1","push_provider":"$wire"}""",
             CreateDeviceRequest::class.java,
         )
-        assertEquals(CreateDeviceRequest.PushProvider.Huawei, request.pushProvider)
-    }
-
-    @Test
-    fun `Request path - deserializes unknown push_provider to PushProvider Unknown`() {
-        val request = parser.fromJson(
-            DeviceTestData.createDeviceRequestJsonUnknownProvider,
-            CreateDeviceRequest::class.java,
-        )
-        assertEquals(CreateDeviceRequest.PushProvider.Unknown("newfangled"), request.pushProvider)
+        assertEquals(provider, request.pushProvider)
     }
 
     // endregion
+
+    companion object {
+        @JvmStatic
+        fun pushProviders() = listOf(
+            Arguments.of("firebase", CreateDeviceRequest.PushProvider.Firebase),
+            Arguments.of("apn", CreateDeviceRequest.PushProvider.Apn),
+            Arguments.of("huawei", CreateDeviceRequest.PushProvider.Huawei),
+            Arguments.of("xiaomi", CreateDeviceRequest.PushProvider.Xiaomi),
+            Arguments.of("newfangled", CreateDeviceRequest.PushProvider.Unknown("newfangled")),
+        )
+    }
 }
