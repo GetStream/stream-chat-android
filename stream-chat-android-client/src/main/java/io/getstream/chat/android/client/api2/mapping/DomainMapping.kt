@@ -626,8 +626,9 @@ internal class DomainMapping(
      * Transforms the OG/link-preview [GetOGResponse] to an [Attachment].
      */
     internal fun GetOGResponse.toDomain(): Attachment {
-        // OpenAPI spec doesn't declare file_size/image/mime_type/name; wire ships them at root
-        // and our adapter sweeps them into `custom` (see GENERATOR_ISSUES.md #9).
+        // The spec doesn't declare file_size/image/mime_type/name, but the wire ships them at the
+        // response root; GetOGResponseAdapter gathers undeclared root fields into `custom`, so we
+        // extract them back out here.
         val extras = custom.toMutableMap()
         val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
         val image = extras.remove("image") as? String

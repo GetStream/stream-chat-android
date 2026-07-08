@@ -161,8 +161,8 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.des
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
-import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.Response
