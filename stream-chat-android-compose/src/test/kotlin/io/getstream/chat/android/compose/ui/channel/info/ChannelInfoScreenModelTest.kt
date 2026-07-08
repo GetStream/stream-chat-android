@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import org.junit.Rule
@@ -28,7 +28,7 @@ internal class ChannelInfoScreenModelTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_2,
+        deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
 

@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal.suggestions
 
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -29,13 +29,13 @@ internal class MentionSuggestionListTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_2,
+        deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
 
     @Test
     fun `mention suggestion list`() {
-        snapshotWithDarkModeRow {
+        snapshotWithDarkMode {
             MentionSuggestionList(
                 mentions = listOf(
                     Mention.Channel,

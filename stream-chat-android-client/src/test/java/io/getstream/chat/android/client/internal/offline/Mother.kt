@@ -23,11 +23,16 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.chann
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.UploadStateEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.AnswerEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.LocationEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MessageEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MessageInnerEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.OptionEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReactionGroupEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReminderInfoEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.VoteEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadEntity
@@ -48,6 +53,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomDateBefore
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomDouble
 import io.getstream.chat.android.randomInt
@@ -199,6 +205,102 @@ internal fun randomMessageEntity(
     attachments = attachments,
     latestReactions = latestReactions,
     ownReactions = ownReactions,
+)
+
+internal fun randomAttachmentEntity(
+    id: String = randomString(),
+    messageId: String = randomString(),
+    authorName: String? = randomStringOrNull(),
+    titleLink: String? = randomStringOrNull(),
+    authorLink: String? = randomStringOrNull(),
+    thumbUrl: String? = randomStringOrNull(),
+    imageUrl: String? = randomStringOrNull(),
+    assetUrl: String? = randomStringOrNull(),
+    ogUrl: String? = randomStringOrNull(),
+    mimeType: String? = randomStringOrNull(),
+    fileSize: Int = randomInt(),
+    title: String? = randomStringOrNull(),
+    text: String? = randomStringOrNull(),
+    type: String? = randomStringOrNull(),
+    image: String? = randomStringOrNull(),
+    name: String? = randomStringOrNull(),
+    fallback: String? = randomStringOrNull(),
+    uploadFilePath: String? = randomStringOrNull(),
+    originalHeight: Int? = randomInt(),
+    originalWidth: Int? = randomInt(),
+    uploadState: UploadStateEntity? = null,
+    extraData: Map<String, Any> = emptyMap(),
+): AttachmentEntity = AttachmentEntity(
+    id = id,
+    messageId = messageId,
+    authorName = authorName,
+    titleLink = titleLink,
+    authorLink = authorLink,
+    thumbUrl = thumbUrl,
+    imageUrl = imageUrl,
+    assetUrl = assetUrl,
+    ogUrl = ogUrl,
+    mimeType = mimeType,
+    fileSize = fileSize,
+    title = title,
+    text = text,
+    type = type,
+    image = image,
+    name = name,
+    fallback = fallback,
+    uploadFilePath = uploadFilePath,
+    originalHeight = originalHeight,
+    originalWidth = originalWidth,
+    uploadState = uploadState,
+    extraData = extraData,
+)
+
+internal fun randomReplyAttachmentEntity(
+    id: String = randomString(),
+    messageId: String = randomString(),
+    authorName: String? = randomStringOrNull(),
+    titleLink: String? = randomStringOrNull(),
+    authorLink: String? = randomStringOrNull(),
+    thumbUrl: String? = randomStringOrNull(),
+    imageUrl: String? = randomStringOrNull(),
+    assetUrl: String? = randomStringOrNull(),
+    ogUrl: String? = randomStringOrNull(),
+    mimeType: String? = randomStringOrNull(),
+    fileSize: Int = randomInt(),
+    title: String? = randomStringOrNull(),
+    text: String? = randomStringOrNull(),
+    type: String? = randomStringOrNull(),
+    image: String? = randomStringOrNull(),
+    name: String? = randomStringOrNull(),
+    fallback: String? = randomStringOrNull(),
+    uploadFilePath: String? = randomStringOrNull(),
+    originalHeight: Int? = randomInt(),
+    originalWidth: Int? = randomInt(),
+    uploadState: UploadStateEntity? = null,
+    extraData: Map<String, Any> = emptyMap(),
+): ReplyAttachmentEntity = ReplyAttachmentEntity(
+    id = id,
+    messageId = messageId,
+    authorName = authorName,
+    titleLink = titleLink,
+    authorLink = authorLink,
+    thumbUrl = thumbUrl,
+    imageUrl = imageUrl,
+    assetUrl = assetUrl,
+    ogUrl = ogUrl,
+    mimeType = mimeType,
+    fileSize = fileSize,
+    title = title,
+    text = text,
+    type = type,
+    image = image,
+    name = name,
+    fallback = fallback,
+    uploadFilePath = uploadFilePath,
+    originalHeight = originalHeight,
+    originalWidth = originalWidth,
+    uploadState = uploadState,
+    extraData = extraData,
 )
 
 internal fun randomReminderInfoEntity(
@@ -393,4 +495,46 @@ internal fun randomChannelEntity(
     membership = membership,
     activeLiveLocations = activeLiveLocations,
     messageCount = messageCount,
+)
+
+internal fun randomAnswerEntity(
+    id: String = randomString(),
+    pollId: String = randomString(),
+    text: String = randomString(),
+    createdAt: Date = randomDateBefore(Date()),
+    updatedAt: Date = randomDateBefore(Date()),
+    userId: String? = randomStringOrNull(),
+): AnswerEntity = AnswerEntity(
+    id = id,
+    pollId = pollId,
+    text = text,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    userId = userId,
+)
+
+internal fun randomOptionEntity(
+    id: String = randomString(),
+    text: String = randomString(),
+    extraData: Map<String, Any> = mapOf(randomString() to randomString()),
+): OptionEntity = OptionEntity(
+    id = id,
+    text = text,
+    extraData = extraData,
+)
+
+internal fun randomVoteEntity(
+    id: String = randomString(),
+    pollId: String = randomString(),
+    optionId: String = randomString(),
+    createdAt: Date = randomDateBefore(Date()),
+    updatedAt: Date = randomDateBefore(Date()),
+    userId: String? = randomStringOrNull(),
+): VoteEntity = VoteEntity(
+    id = id,
+    pollId = pollId,
+    optionId = optionId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    userId = userId,
 )
