@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRe
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -78,6 +77,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.positiveRandomInt
@@ -225,10 +225,12 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun getDevicesInput() = listOf(
         Arguments.of(
-            RetroSuccess(DevicesResponse(listOf(Mother.randomDeviceDto()))).toRetrofitCall(),
+            RetroSuccess(
+                ListDevicesResponse(duration = randomString(), devices = listOf(Mother.randomDeviceResponse())),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<DevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<ListDevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

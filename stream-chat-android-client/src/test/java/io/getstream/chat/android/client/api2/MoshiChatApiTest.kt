@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
@@ -91,7 +90,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -166,6 +164,8 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -517,10 +517,10 @@ internal class MoshiChatApiTest {
         val device = randomDevice()
         val result = sut.addDevice(device).await()
         // then
-        val expectedRequest = AddDeviceRequest(
+        val expectedRequest = CreateDeviceRequest(
             id = device.token,
-            push_provider = device.pushProvider.key,
-            push_provider_name = device.providerName,
+            pushProvider = CreateDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+            pushProviderName = device.providerName,
         )
         result `should be instance of` expected
         verify(api, times(1)).addDevices(expectedRequest)
@@ -545,7 +545,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getDevicesInput")
-    fun testGetDevices(call: RetrofitCall<DevicesResponse>, expected: KClass<*>) = runTest {
+    fun testGetDevices(call: RetrofitCall<ListDevicesResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<DeviceApi>()
         whenever(api.getDevices()).doReturn(call)

@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
-import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -31,10 +31,10 @@ import retrofit2.http.Query
 internal interface DeviceApi {
 
     @GET("/devices")
-    fun getDevices(): RetrofitCall<DevicesResponse>
+    fun getDevices(): RetrofitCall<ListDevicesResponse>
 
     @POST("/devices")
-    fun addDevices(@Body request: AddDeviceRequest): RetrofitCall<Response>
+    fun addDevices(@Body request: CreateDeviceRequest): RetrofitCall<Response>
 
     @DELETE("/devices")
     fun deleteDevice(@Query("id") id: String): RetrofitCall<Response>

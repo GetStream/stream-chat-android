@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class DevicesResponse(
-    val devices: List<DeviceDto>,
+import com.squareup.moshi.Json
+import kotlin.collections.List
+
+/**
+ * List devices response
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class ListDevicesResponse(
+    @Json(name = "duration")
+    val duration: kotlin.String,
+
+    @Json(name = "devices")
+    val devices: kotlin.collections.List<io.getstream.chat.android.network.models.DeviceResponse> = emptyList(),
 )

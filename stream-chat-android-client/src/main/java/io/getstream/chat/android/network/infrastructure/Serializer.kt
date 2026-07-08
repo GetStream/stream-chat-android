@@ -28,6 +28,7 @@ import com.squareup.moshi.Moshi
 internal object Serializer {
     @JvmStatic
     internal val moshiBuilder: Moshi.Builder = Moshi.Builder()
+        .add(io.getstream.chat.android.network.models.CreateDeviceRequest.PushProvider.PushProviderAdapter())
         .add(io.getstream.chat.android.network.infrastructure.IsoDateAdapter())
         .addLast(com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory())
 

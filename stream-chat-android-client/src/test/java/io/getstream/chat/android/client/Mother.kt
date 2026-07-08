@@ -103,6 +103,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
@@ -832,6 +833,20 @@ internal object Mother {
         description = description,
         args = args,
         set = set,
+    )
+
+    fun randomDeviceResponse(
+        id: String = randomString(),
+        pushProvider: String = randomString(),
+        pushProviderName: String = randomString(),
+        createdAt: Date = randomDate(),
+        userId: String = randomString(),
+    ): DeviceResponse = DeviceResponse(
+        createdAt = createdAt,
+        id = id,
+        pushProvider = pushProvider,
+        userId = userId,
+        pushProviderName = pushProviderName,
     )
 
     fun randomDeviceDto(

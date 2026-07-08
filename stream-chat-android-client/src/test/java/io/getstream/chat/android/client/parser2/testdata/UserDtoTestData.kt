@@ -158,7 +158,9 @@ internal object UserDtoTestData {
              {
               "id": "deviceId",
               "push_provider": "provider",
-              "push_provider_name": "provider_name"
+              "push_provider_name": "provider_name",
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "user_id": "userId"
              }
             ],
             "online": true,
@@ -212,7 +214,11 @@ internal object UserDtoTestData {
             language = "language",
             role = "owner",
             devices = listOf(
-                DeviceDto(id = "deviceId", push_provider = "provider", push_provider_name = "provider_name"),
+                DeviceDto(
+                    id = "deviceId",
+                    push_provider = "provider",
+                    push_provider_name = "provider_name",
+                ),
             ),
             online = true,
             updated_at = Date(1591787071588),
@@ -326,7 +332,13 @@ internal object UserDtoTestData {
             ),
         ),
         banned = false,
-        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", push_provider_name = "provider_name")),
+        devices = listOf(
+            DeviceDto(
+                id = "deviceId",
+                push_provider = "provider",
+                push_provider_name = "provider_name",
+            ),
+        ),
         teams = listOf("team1", "team2"),
         teams_role = mapOf(
             "team1" to "owner",
