@@ -18,11 +18,13 @@ package io.getstream.chat.android.compose.ui.channels
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.channels.list.Channels
 import io.getstream.chat.android.compose.ui.channels.list.WrapperItemContent
@@ -34,33 +36,48 @@ import org.junit.Test
 internal class ChannelsTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(
+        deviceConfig = PIXEL_2_HDPI,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
     fun `loaded channels`() {
         snapshot {
-            Channels(
-                modifier = Modifier.fillMaxSize(),
-                channelsState = ChannelsState(
-                    isLoading = false,
-                    channelItems = listOf(
-                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
-                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
-                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
-                    ),
-                ),
-                lazyListState = rememberLazyListState(),
-                itemContent = { itemState ->
-                    WrapperItemContent(
-                        itemState = itemState,
-                        currentUser = PreviewUserData.user1,
-                        onChannelClick = {},
-                        onChannelLongClick = {},
-                        onSearchResultClick = {},
-                    )
-                },
-                onLastItemReached = {},
-            )
+            LoadedChannels()
         }
+    }
+
+    @Test
+    fun `loaded channels in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            LoadedChannels()
+        }
+    }
+
+    @Composable
+    private fun LoadedChannels() {
+        Channels(
+            modifier = Modifier.fillMaxSize(),
+            channelsState = ChannelsState(
+                isLoading = false,
+                channelItems = listOf(
+                    ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
+                    ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
+                    ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
+                ),
+            ),
+            lazyListState = rememberLazyListState(),
+            itemContent = { itemState ->
+                WrapperItemContent(
+                    itemState = itemState,
+                    currentUser = PreviewUserData.user1,
+                    onChannelClick = {},
+                    onChannelLongClick = {},
+                    onSearchResultClick = {},
+                )
+            },
+            onLastItemReached = {},
+        )
     }
 }
