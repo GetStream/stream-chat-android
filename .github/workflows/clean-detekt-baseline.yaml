@@ -6,9 +6,11 @@ on:
     - cron: "0 0 * * *"
 jobs:
   clean_detekt_baseline_files:
+    permissions:
+      contents: read
+      pull-requests: write
     name: Clean Detekt Baseline Files
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
