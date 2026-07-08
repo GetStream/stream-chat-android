@@ -61,7 +61,6 @@ import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequ
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
@@ -143,6 +142,7 @@ import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
@@ -161,6 +161,7 @@ import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -1670,13 +1671,14 @@ constructor(
         channelId: String,
         extraData: Map<Any, Any>,
     ): Call<ChatEvent> = with(eventMapping) {
-        val map = mutableMapOf<Any, Any>("type" to eventType)
-        map.putAll(extraData)
+        val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
         return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
-            request = SendEventRequest(map),
+            request = SendEventRequest(
+                event = EventRequest(type = eventType, custom = custom),
+            ),
         ).map { response ->
             response.event.toDomain()
         }

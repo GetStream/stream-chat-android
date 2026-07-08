@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
@@ -142,6 +141,7 @@ import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
@@ -166,6 +166,7 @@ import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -2355,7 +2356,7 @@ internal class MoshiChatApiTest {
         val result = sut.sendEvent(eventType, channelType, channelId, extraData).await()
         // then
         val expectedRequest = SendEventRequest(
-            event = extraData + mapOf("type" to eventType),
+            event = EventRequest(type = eventType, custom = emptyMap()),
         )
         result `should be instance of` expected
         verify(api, times(1)).sendEvent(channelType, channelId, expectedRequest)
