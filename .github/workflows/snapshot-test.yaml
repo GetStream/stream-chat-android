@@ -16,9 +16,12 @@ env:
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 jobs:
   run_snapshot_tests:
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
     name: Run
     runs-on: ubuntu-24.04
-    permissions:
       contents: read
       pull-requests: read
     steps:
