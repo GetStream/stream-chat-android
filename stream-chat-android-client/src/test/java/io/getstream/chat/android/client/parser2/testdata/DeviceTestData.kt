@@ -18,9 +18,24 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.network.models.CreateDeviceRequest
 import org.intellij.lang.annotations.Language
 
 internal object DeviceTestData {
+
+    val createDeviceRequest = CreateDeviceRequest(
+        id = "token1",
+        pushProvider = CreateDeviceRequest.PushProvider.Firebase,
+    )
+
+    @Language("JSON")
+    val createDeviceRequestJson = """{"id":"token1","push_provider":"firebase"}"""
+
+    @Language("JSON")
+    val createDeviceRequestJsonKnownProvider = """{"id":"token1","push_provider":"huawei"}"""
+
+    @Language("JSON")
+    val createDeviceRequestJsonUnknownProvider = """{"id":"token1","push_provider":"newfangled"}"""
 
     @Language("JSON")
     val jsonAllFields =

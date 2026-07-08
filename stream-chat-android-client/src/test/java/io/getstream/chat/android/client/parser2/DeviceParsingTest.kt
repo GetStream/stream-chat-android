@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.parser2.testdata.DeviceTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.DeviceResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -120,6 +121,34 @@ internal class DeviceParsingTest {
         assertThrows<JsonDataException> {
             deviceAdapter.fromJson(DeviceTestData.jsonMissingPushProvider)
         }
+    }
+
+    // endregion
+
+    // region Request path (CreateDeviceRequest / PushProvider enum)
+
+    @Test
+    fun `Request path - serializes typed PushProvider to its wire string`() {
+        val json = parser.toJson(DeviceTestData.createDeviceRequest)
+        assertEquals(DeviceTestData.createDeviceRequestJson, json)
+    }
+
+    @Test
+    fun `Request path - deserializes known push_provider to the typed PushProvider`() {
+        val request = parser.fromJson(
+            DeviceTestData.createDeviceRequestJsonKnownProvider,
+            CreateDeviceRequest::class.java,
+        )
+        assertEquals(CreateDeviceRequest.PushProvider.Huawei, request.pushProvider)
+    }
+
+    @Test
+    fun `Request path - deserializes unknown push_provider to PushProvider Unknown`() {
+        val request = parser.fromJson(
+            DeviceTestData.createDeviceRequestJsonUnknownProvider,
+            CreateDeviceRequest::class.java,
+        )
+        assertEquals(CreateDeviceRequest.PushProvider.Unknown("newfangled"), request.pushProvider)
     }
 
     // endregion
