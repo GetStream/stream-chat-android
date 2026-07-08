@@ -14,12 +14,8 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Debug build
     runs-on: ubuntu-22.04
-      contents: read
-      pull-requests: read
     steps:
       - name: Check out code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -30,12 +26,8 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Release build
     runs-on: ubuntu-22.04
-      contents: read
-      pull-requests: read
     steps:
       - name: Check out code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -46,12 +38,8 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Tests
     runs-on: ubuntu-22.04
-      contents: read
-      pull-requests: read
     steps:
       - name: Check out code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -75,12 +63,8 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Size Check XML
     runs-on: ubuntu-22.04
-      contents: read
-      pull-requests: read
     steps:
       - name: Check out code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -97,12 +81,8 @@ jobs:
     permissions:
       actions: write
       contents: read
-      actions: write
-      contents: read
     name: Size Check Compose
     runs-on: ubuntu-22.04
-      contents: read
-      pull-requests: read
     steps:
       - name: Check out code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
