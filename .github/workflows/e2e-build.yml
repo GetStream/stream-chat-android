@@ -14,9 +14,11 @@ env:
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
 jobs:
   build:
+    permissions:
+      actions: write
+      contents: read
     name: ${{ inputs.app }} apks
     runs-on: ubuntu-24.04
-    permissions:
       contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
