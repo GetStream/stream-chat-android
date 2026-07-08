@@ -5,6 +5,7 @@ on: [ pull_request ]
 concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
+
 jobs:
   base-android-ci:
     permissions:
