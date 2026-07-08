@@ -5,6 +5,7 @@ on:
     workflows: ["ReleasePost", "PublishHotfix"]
     types:
       - completed
+
 jobs:
   build_ui_components_sample_app:
     permissions:
