@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +55,6 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
@@ -183,7 +181,7 @@ public fun GiphyAttachmentContent(
     val width = ChatTheme.dimens.attachmentsContentGiphyWidth
     val height = ChatTheme.dimens.attachmentsContentGiphyHeight
 
-    var downloadedRatio by remember(previewUrl) { mutableStateOf<Float?>(null) }
+    var downloadedRatio by remember(attachment.giphyFallbackPreviewUrl) { mutableStateOf<Float?>(null) }
 
     val giphyDimensions: DpSize by remember(key1 = giphyInfo) {
         derivedStateOf {
@@ -251,38 +249,22 @@ public fun GiphyAttachmentContent(
                 onLongClick = { onLongItemClick(message) },
             ),
     ) {
-        if (giphyInfo == null) {
-            StreamAsyncImage(
-                data = attachment.giphyFallbackPreviewUrl,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = contentScale,
-            ) { imageState ->
-                val painter = imageState.painter
-                val intrinsicSize = painter?.intrinsicSize
-                LaunchedEffect(intrinsicSize) {
+        StreamAsyncImage(
+            data = giphyInfo?.url ?: attachment.giphyFallbackPreviewUrl,
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = contentScale,
+            onState = if (giphyInfo == null) {
+                { imageState ->
+                    val intrinsicSize = imageState.painter?.intrinsicSize
                     if (intrinsicSize != null && intrinsicSize.isSpecified && intrinsicSize.height > 0f) {
                         downloadedRatio = intrinsicSize.width / intrinsicSize.height
                     }
                 }
-                if (painter == null) {
-                    ShimmerProgressIndicator(modifier = Modifier.matchParentSize())
-                } else {
-                    Image(
-                        painter = painter,
-                        contentDescription = null,
-                        modifier = Modifier.matchParentSize(),
-                        contentScale = contentScale,
-                    )
-                }
-            }
-        } else {
-            StreamAsyncImage(
-                data = giphyInfo.url,
-                modifier = Modifier.fillMaxSize(),
-                contentDescription = null,
-                contentScale = contentScale,
-            )
-        }
+            } else {
+                null
+            },
+        )
 
         Image(
             modifier = Modifier
