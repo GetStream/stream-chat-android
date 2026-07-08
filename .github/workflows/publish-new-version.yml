@@ -22,15 +22,13 @@ on:
 concurrency:
   group: release
   cancel-in-progress: false
-
-permissions:
-  contents: read
-
 jobs:
   pre_release_check:
     name: Pre release check
     runs-on: ubuntu-24.04
     environment: 'publish'
+    permissions:
+      contents: read
     steps:
       - name: Check
         id: pre_release_check_step
@@ -39,7 +37,7 @@ jobs:
     permissions:
       contents: write
     needs: pre_release_check
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@v0.13.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@8c5fbade4ee9c06a0a979bcb0866e64669254f73
     with:
       bump: ${{ inputs.bump }}
       suffix: ${{ inputs.suffix }}
