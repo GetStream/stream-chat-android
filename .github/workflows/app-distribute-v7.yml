@@ -10,9 +10,10 @@ on:
   workflow_dispatch:
 jobs:
   build_compose_sample_app:
+    permissions:
+      contents: read
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-24.04
-    permissions:
       contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
