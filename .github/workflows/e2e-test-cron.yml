@@ -29,6 +29,8 @@ jobs:
     permissions:
       actions: write
       contents: read
+      actions: write
+      contents: read
     name: Build
     uses: ./.github/workflows/e2e-build.yml
       contents: read
@@ -36,6 +38,8 @@ jobs:
       app: compose
   run-compose-tests-nightly:
     permissions:
+      actions: write
+      contents: read
       actions: write
       contents: read
     name: Test compose
@@ -55,7 +59,7 @@ jobs:
     env:
       ANDROID_API_LEVEL: ${{ matrix.android_api_level }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: actions/download-artifact@v8.0.1
         continue-on-error: true
         with:
@@ -98,6 +102,8 @@ jobs:
           path: fastlane/stream-chat-test-mock-server/logs/*
   slack:
     permissions:
+      actions: write
+      contents: read
       actions: write
       contents: read
     name: Slack Report
