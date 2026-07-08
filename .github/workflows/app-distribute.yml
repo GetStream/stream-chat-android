@@ -7,9 +7,11 @@ on:
       - main
 jobs:
   build_ui_components_sample_app:
+    permissions:
+      actions: write
+      contents: read
     name: Build and Distribute UI Components Sample App
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
@@ -40,9 +42,11 @@ jobs:
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk
   build_compose_sample_app:
+    permissions:
+      actions: write
+      contents: read
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-22.04
-    permissions:
       contents: read
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
