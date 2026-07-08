@@ -10,11 +10,13 @@ jobs:
     permissions:
       actions: write
       contents: read
+      actions: write
+      contents: read
     name: Build and Distribute UI Components Sample App
     runs-on: ubuntu-22.04
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: Prepare environment
         env:
@@ -45,11 +47,13 @@ jobs:
     permissions:
       actions: write
       contents: read
+      actions: write
+      contents: read
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-22.04
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: Prepare environment
         env:
