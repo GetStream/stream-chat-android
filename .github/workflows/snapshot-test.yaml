@@ -14,19 +14,17 @@ on:
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
-
-permissions:
-  contents: read
-  pull-requests: read
-
 jobs:
   run_snapshot_tests:
     name: Run
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Check out code
-        uses: actions/checkout@v7.0.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
