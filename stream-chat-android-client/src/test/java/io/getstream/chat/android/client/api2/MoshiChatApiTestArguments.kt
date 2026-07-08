@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -77,6 +76,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -421,8 +421,8 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun ogInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomAttachmentDto()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<AttachmentDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(GetOGResponse(duration = randomString())).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<GetOGResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

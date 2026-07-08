@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
@@ -163,6 +162,7 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.Response
@@ -1842,7 +1842,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#ogInput")
-    fun testOg(call: RetrofitCall<AttachmentDto>, expected: KClass<*>) = runTest {
+    fun testOg(call: RetrofitCall<GetOGResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<OpenGraphApi>()
         whenever(api.get(any())).doReturn(call)

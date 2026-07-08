@@ -79,6 +79,7 @@ import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
@@ -138,6 +139,9 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.ImageData
+import io.getstream.chat.android.network.models.Images
 import java.util.Date
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -619,6 +623,44 @@ internal class DomainMapping(
         )
 
     /**
+     * Transforms the OG/link-preview [GetOGResponse] to an [Attachment].
+     */
+    internal fun GetOGResponse.toDomain(): Attachment {
+        // OpenAPI spec doesn't declare file_size/image/mime_type/name; wire ships them at root
+        // and our adapter sweeps them into `custom` (see GENERATOR_ISSUES.md #9).
+        val extras = custom.toMutableMap()
+        val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
+        val image = extras.remove("image") as? String
+        val mimeType = extras.remove("mime_type") as? String
+        val name = extras.remove("name") as? String
+        val extraData = mutableMapOf<String, Any>()
+        for ((k, v) in extras) if (v != null) extraData[k] = v
+        // UI reads Giphy data from extraData["giphy"]; the generated DTO splits it out into a
+        // typed `giphy: Images` field, so re-emit it in the legacy nested-map shape.
+        giphy?.let { extraData[AttachmentType.GIPHY] = it.toLegacyMap() }
+        return Attachment(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            authorLink = authorLink,
+            fallback = fallback,
+            fileSize = fileSize,
+            image = image,
+            imageUrl = imageUrl,
+            mimeType = mimeType,
+            name = name,
+            ogUrl = ogScrapeUrl,
+            text = text,
+            thumbUrl = thumbUrl,
+            title = title,
+            titleLink = titleLink,
+            type = type,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            extraData = extraData,
+        )
+    }
+
+    /**
      * Transforms [BannedUserResponse] to [BannedUser].
      */
     internal fun BannedUserResponse.toDomain(): BannedUser {
@@ -993,3 +1035,21 @@ internal class DomainMapping(
         private const val FIELD_LAST_UPDATED = "last_updated"
     }
 }
+
+private fun Images.toLegacyMap(): Map<String, Map<String, String>> = mapOf(
+    "original" to original.toLegacyMap(),
+    "fixed_height" to fixedHeight.toLegacyMap(),
+    "fixed_height_downsampled" to fixedHeightDownsampled.toLegacyMap(),
+    "fixed_height_still" to fixedHeightStill.toLegacyMap(),
+    "fixed_width" to fixedWidth.toLegacyMap(),
+    "fixed_width_downsampled" to fixedWidthDownsampled.toLegacyMap(),
+    "fixed_width_still" to fixedWidthStill.toLegacyMap(),
+)
+
+private fun ImageData.toLegacyMap(): Map<String, String> = mapOf(
+    "url" to url,
+    "width" to width,
+    "height" to height,
+    "size" to size,
+    "frames" to frames,
+)

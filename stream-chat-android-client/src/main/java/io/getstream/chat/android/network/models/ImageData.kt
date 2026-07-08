@@ -14,21 +14,35 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.endpoint
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api.QueryParams
-import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.GetOGResponse
-import retrofit2.http.GET
-import retrofit2.http.Query
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * API for open graph data.
+ *
  */
-@AuthenticatedApi
-internal interface OpenGraphApi {
 
-    @GET("/og")
-    fun get(@Query(QueryParams.URL) url: String): RetrofitCall<GetOGResponse>
-}
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class ImageData(
+    @Json(name = "frames")
+    internal val frames: String,
+
+    @Json(name = "height")
+    internal val height: String,
+
+    @Json(name = "size")
+    internal val size: String,
+
+    @Json(name = "url")
+    internal val url: String,
+
+    @Json(name = "width")
+    internal val width: String,
+)
