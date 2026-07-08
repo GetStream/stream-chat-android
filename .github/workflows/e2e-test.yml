@@ -15,8 +15,6 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
 
 env:
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
@@ -25,29 +23,30 @@ env:
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
-
 jobs:
   build-compose-apks:
     name: Build
     uses: ./.github/workflows/e2e-build.yml
+    permissions:
+      contents: read
     with:
       app: compose
     secrets: inherit
-
   allure_testops_launch:
     name: Launch Allure TestOps
     runs-on: ubuntu-24.04
     needs: build-compose-apks
     outputs:
+    permissions:
+      contents: read
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/allure-launch@main
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}
-
   run-compose-tests:
     name: Test compose
     runs-on: ubuntu-24.04
@@ -55,6 +54,8 @@ jobs:
       - build-compose-apks
       - allure_testops_launch
     strategy:
+    permissions:
+      contents: read
       matrix:
         include:
           - batch: 0
@@ -65,12 +66,12 @@ jobs:
       ANDROID_API_LEVEL: 34
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     steps:
-      - uses: actions/checkout@v7.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
       - uses: actions/download-artifact@v8.0.1
         continue-on-error: true
         with:
           name: apks
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Run tests
