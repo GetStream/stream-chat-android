@@ -9,19 +9,17 @@ env:
   BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-permissions:
-  contents: read
-
 jobs:
   test-backend-integration:
     name: Test Backend Integration
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       ANDROID_API_LEVEL: 34
     steps:
-      - uses: actions/checkout@v7.0.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Run tests
