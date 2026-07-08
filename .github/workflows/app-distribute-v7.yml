@@ -12,11 +12,12 @@ jobs:
   build_compose_sample_app:
     permissions:
       contents: read
+      contents: read
     name: Build and Distribute Compose Sample App
     runs-on: ubuntu-24.04
       contents: read
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - name: Prepare environment
         env:
