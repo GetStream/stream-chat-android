@@ -55,11 +55,9 @@ import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -79,7 +77,6 @@ import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
@@ -165,10 +162,13 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.des
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -674,7 +674,7 @@ internal class MoshiChatApiTest {
         val result = sut.muteChannel(channelType, channelId, expiration).await()
         // then
         val expectedRequest = MuteChannelRequest(
-            channel_cid = "$channelType:$channelId",
+            channelCids = listOf("$channelType:$channelId"),
             expiration = expiration,
         )
         result `should be instance of` expected
@@ -696,7 +696,7 @@ internal class MoshiChatApiTest {
         val result = sut.unmuteChannel(channelType, channelId).await()
         // then
         val expectedRequest = MuteChannelRequest(
-            channel_cid = "$channelType:$channelId",
+            channelCids = listOf("$channelType:$channelId"),
             expiration = null,
         )
         result `should be instance of` expected
