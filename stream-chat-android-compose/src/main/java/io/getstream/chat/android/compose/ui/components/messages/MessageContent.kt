@@ -303,7 +303,9 @@ internal fun DefaultMessageRegularContent(
             )
         }
 
-        if (!info.displaysFullSizeAttachment) {
+        val recordingSuppliesBottomPadding =
+            info.hasRecordings && !info.hasUnknown && message.text.isEmpty()
+        if (!info.displaysFullSizeAttachment && !recordingSuppliesBottomPadding) {
             Spacer(Modifier.height(MessageStyling.contentPadding))
         }
     }

@@ -19,10 +19,10 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.PATCH
@@ -77,5 +77,5 @@ internal interface RemindersApi {
     @DELETE("/messages/{id}/reminders")
     fun deleteReminder(
         @Path("id") messageId: String,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 }

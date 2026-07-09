@@ -18,15 +18,19 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.testdata.DeviceTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.DeviceResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 internal class DeviceParsingTest {
 
@@ -41,18 +45,18 @@ internal class DeviceParsingTest {
 
     private val deviceAdapter = DeviceAdapter()
 
-    // region DTO path (JSON → DeviceDto → Device)
+    // region DTO path (JSON → DeviceResponse → Device)
 
     @Test
     fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(DeviceTestData.jsonAllFields, DeviceDto::class.java)
+        val dto = parser.fromJson(DeviceTestData.jsonAllFields, DeviceResponse::class.java)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedDeviceAllFields, device)
     }
 
     @Test
     fun `DTO path - deserializes with optional field missing`() {
-        val dto = parser.fromJson(DeviceTestData.jsonOptionalFieldMissing, DeviceDto::class.java)
+        val dto = parser.fromJson(DeviceTestData.jsonOptionalFieldMissing, DeviceResponse::class.java)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedDeviceOptionalMissing, device)
     }
@@ -79,7 +83,7 @@ internal class DeviceParsingTest {
 
     @Test
     fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(DeviceTestData.jsonWithExplicitNulls, DeviceDto::class.java)
+        val dto = parser.fromJson(DeviceTestData.jsonWithExplicitNulls, DeviceResponse::class.java)
         val device = with(domainMapping) { dto.toDomain() }
         assertEquals(DeviceTestData.expectedWithExplicitNulls, device)
     }
@@ -97,7 +101,7 @@ internal class DeviceParsingTest {
     @Test
     fun `DTO path - throws on missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(DeviceTestData.jsonMissingId, DeviceDto::class.java)
+            parser.fromJson(DeviceTestData.jsonMissingId, DeviceResponse::class.java)
         }
     }
 
@@ -111,7 +115,7 @@ internal class DeviceParsingTest {
     @Test
     fun `DTO path - throws on missing push_provider`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(DeviceTestData.jsonMissingPushProvider, DeviceDto::class.java)
+            parser.fromJson(DeviceTestData.jsonMissingPushProvider, DeviceResponse::class.java)
         }
     }
 
@@ -123,4 +127,42 @@ internal class DeviceParsingTest {
     }
 
     // endregion
+
+    // region Request path (CreateDeviceRequest / PushProvider enum)
+
+    @ParameterizedTest
+    @MethodSource("pushProviders")
+    fun `Request path - serializes each PushProvider to its wire string`(
+        wire: String,
+        provider: CreateDeviceRequest.PushProvider,
+    ) {
+        val json = parser.toJson(CreateDeviceRequest(id = "token1", pushProvider = provider))
+        assertEquals("""{"id":"token1","push_provider":"$wire"}""", json)
+    }
+
+    @ParameterizedTest
+    @MethodSource("pushProviders")
+    fun `Request path - deserializes each push_provider to the typed PushProvider`(
+        wire: String,
+        provider: CreateDeviceRequest.PushProvider,
+    ) {
+        val request = parser.fromJson(
+            """{"id":"token1","push_provider":"$wire"}""",
+            CreateDeviceRequest::class.java,
+        )
+        assertEquals(provider, request.pushProvider)
+    }
+
+    // endregion
+
+    companion object {
+        @JvmStatic
+        fun pushProviders() = listOf(
+            Arguments.of("firebase", CreateDeviceRequest.PushProvider.Firebase),
+            Arguments.of("apn", CreateDeviceRequest.PushProvider.Apn),
+            Arguments.of("huawei", CreateDeviceRequest.PushProvider.Huawei),
+            Arguments.of("xiaomi", CreateDeviceRequest.PushProvider.Xiaomi),
+            Arguments.of("newfangled", CreateDeviceRequest.PushProvider.Unknown("newfangled")),
+        )
+    }
 }

@@ -16,8 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.permission
 
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
@@ -29,7 +30,10 @@ internal class RequiredPermissionTest : PaparazziComposeTest {
     val testCoroutineRule = TestCoroutineRule()
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.Companion.PIXEL_2)
+    override val paparazzi = Paparazzi(
+        deviceConfig = PIXEL_2_HDPI,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
     fun `required media storage permission`() {

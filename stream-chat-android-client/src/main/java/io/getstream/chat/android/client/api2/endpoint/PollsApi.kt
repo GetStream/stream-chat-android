@@ -24,13 +24,13 @@ import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesReques
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
-import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -76,7 +76,7 @@ internal interface PollsApi {
      * @param pollId The ID of the poll to delete.
      */
     @DELETE("/polls/{poll_id}")
-    fun deletePoll(@Path("poll_id") pollId: String): RetrofitCall<CompletableResponse>
+    fun deletePoll(@Path("poll_id") pollId: String): RetrofitCall<Response>
 
     /**
      * Retrieves a poll by its ID.
@@ -148,7 +148,7 @@ internal interface PollsApi {
     fun deletePollOption(
         @Path("poll_id") pollId: String,
         @Path("option_id") optionId: String,
-    ): RetrofitCall<CompletableResponse>
+    ): RetrofitCall<Response>
 
     // MISSING: Get poll option
 

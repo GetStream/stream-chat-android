@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.components.button
 
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.ScreenOrientation
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +28,7 @@ internal class StreamButtonTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_2.copy(orientation = ScreenOrientation.LANDSCAPE),
+        deviceConfig = PIXEL_2_HDPI.copy(orientation = ScreenOrientation.LANDSCAPE),
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
 

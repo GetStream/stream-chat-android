@@ -2040,6 +2040,54 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
+    fun `Given a parentMessageId When created Then it starts in that thread and loads the thread draft`() = runTest {
+        // Opening directly for a thread must show the final thread state from the first frame (no
+        // jump during the opening transition) and load the thread draft, not the channel one.
+        val parentMessage = randomMessage(cid = CID)
+        val threadDraft = DraftMessage(cid = CID, parentId = parentMessage.id, text = "thread draft")
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState(
+                channelDrafts = mapOf(CID to DraftMessage(cid = CID, text = "channel draft")),
+                threadDrafts = mapOf(parentMessage.id to threadDraft),
+            )
+            .givenChannelState()
+            .givenDraftMessageStubs()
+            .get(parentMessageId = parentMessage.id)
+        advanceUntilIdle()
+
+        val mode = controller.state.value.messageMode
+        assertTrue(mode is MessageMode.MessageThread)
+        assertEquals(parentMessage.id, (mode as MessageMode.MessageThread).parentMessage.id)
+        assertEquals("thread draft", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a stubbed thread When the loaded parent arrives Then the full message replaces the stub`() = runTest {
+        // The composer starts with an id-only parent stub; when the list provides the fully loaded
+        // parent it must replace the stub so state exposes the real message, not the placeholder.
+        val parentMessage = randomMessage(cid = CID, text = "parent text")
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .givenDraftMessageStubs()
+            .get(parentMessageId = parentMessage.id)
+        advanceUntilIdle()
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        advanceUntilIdle()
+
+        val mode = controller.state.value.messageMode
+        assertTrue(mode is MessageMode.MessageThread)
+        assertEquals(parentMessage, (mode as MessageMode.MessageThread).parentMessage)
+    }
+
+    @Test
     fun `Given activeCommandEnabled false When draft is saved Then command and args are not persisted`() = runTest {
         // Given — legacy mode with a command active in state (legacy keeps slash inside text).
         val giphyCommand = randomCommand(name = "giphy")
@@ -2959,7 +3007,7 @@ internal class MessageComposerControllerTest {
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
         }
 
-        fun get(): MessageComposerController {
+        fun get(parentMessageId: String? = null): MessageComposerController {
             whenever(chatClient.inheritScope(any())) doReturn inheritedScope
             whenever(chatClient.searchUserGroups(any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())) doReturn
                 emptyList<UserGroup>().asCall()
@@ -2976,6 +3024,7 @@ internal class MessageComposerControllerTest {
                 config = config,
                 globalState = MutableStateFlow(globalState),
                 savedStateHandle = savedStateHandle,
+                initialParentMessageId = parentMessageId,
             )
         }
     }

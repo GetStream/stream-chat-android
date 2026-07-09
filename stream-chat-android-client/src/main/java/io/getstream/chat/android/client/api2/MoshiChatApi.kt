@@ -50,11 +50,9 @@ import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
@@ -93,7 +91,6 @@ import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
@@ -169,6 +166,9 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.BlockUsersRequest
+import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -468,10 +468,10 @@ constructor(
 
     override fun addDevice(device: Device): Call<Unit> {
         return deviceApi.addDevices(
-            request = AddDeviceRequest(
-                device.token,
-                device.pushProvider.key,
-                device.providerName,
+            request = CreateDeviceRequest(
+                id = device.token,
+                pushProvider = CreateDeviceRequest.PushProvider.fromString(device.pushProvider.key),
+                pushProviderName = device.providerName,
             ),
         ).toUnitCall()
     }
@@ -1362,7 +1362,7 @@ constructor(
 
     override fun blockUser(userId: String): Call<UserBlock> {
         return userApi.blockUser(
-            body = BlockUserRequest(userId),
+            body = BlockUsersRequest(userId),
         ).mapDomain { response ->
             response.toDomain()
         }
@@ -1374,7 +1374,7 @@ constructor(
         }
 
     override fun unblockUser(userId: String): Call<Unit> {
-        return userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
+        return userApi.unblockUser(body = UnblockUsersRequest(userId)).toUnitCall()
     }
 
     override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {

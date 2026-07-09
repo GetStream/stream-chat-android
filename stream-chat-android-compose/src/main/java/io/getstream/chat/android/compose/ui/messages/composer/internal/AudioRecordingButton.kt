@@ -70,14 +70,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.messages.composer.LocalMessageComposerRecordingHintHostState
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingFloatingLockIconParams
-import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingHintParams
-import io.getstream.chat.android.compose.ui.theme.MessageComposerAudioRecordingPermissionRationaleParams
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -360,38 +358,8 @@ private fun MicButtonGestureArea(
             MicButtonVisual(interactionSource = interactionSource)
         }
     }
-
-    RecordingSnackbars(
-        hintHostState = hint.snackbarHostState,
-        rationaleHostState = permissionState.rationaleSnackbarHostState,
-    )
-}
-
-@Composable
-private fun RecordingSnackbars(
-    hintHostState: SnackbarHostState,
-    rationaleHostState: SnackbarHostState,
-) {
-    if (hintHostState.currentSnackbarData != null) {
-        SnackbarPopup(
-            hostState = hintHostState,
-            snackbar = {
-                ChatTheme.componentFactory.MessageComposerAudioRecordingHint(
-                    params = MessageComposerAudioRecordingHintParams(it),
-                )
-            },
-        )
-    }
-    if (rationaleHostState.currentSnackbarData != null) {
-        SnackbarPopup(
-            hostState = rationaleHostState,
-            snackbar = {
-                ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(
-                    params = MessageComposerAudioRecordingPermissionRationaleParams(it),
-                )
-            },
-        )
-    }
+    // The recording hint and permission rationale popups are rendered by the composer (anchored
+    // above it); the mic button only drives them via the hoisted hosts.
 }
 
 /** Emits press/release interactions on [interactionSource] while [isPressed] is true. */
@@ -467,7 +435,8 @@ private class RecordingHintState(
 
 @Composable
 private fun rememberRecordingHint(): RecordingHintState {
-    val snackbarHostState = remember { SnackbarHostState() }
+    // Use the host provided by the composer so the hint popup is anchored above the composer.
+    val snackbarHostState = LocalMessageComposerRecordingHintHostState.current ?: remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete
     val message = stringResource(

@@ -66,7 +66,6 @@ import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
-import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
@@ -137,6 +136,8 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.DeviceResponse
 import java.util.Date
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -689,8 +690,14 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DeviceDto] to [Device].
+     * Transforms [DeviceResponse] to [Device].
      */
+    internal fun DeviceResponse.toDomain(): Device = Device(
+        token = id,
+        pushProvider = PushProvider.fromKey(pushProvider),
+        providerName = pushProviderName,
+    )
+
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
         pushProvider = PushProvider.fromKey(push_provider),
@@ -850,12 +857,12 @@ internal class DomainMapping(
     internal fun List<DownstreamUserBlockDto>.toDomain(): List<UserBlock> = map { it.toDomain() }
 
     /**
-     * Transforms [BlockUserResponse] into [UserBlock].
+     * Transforms [BlockUsersResponse] into [UserBlock].
      */
-    internal fun BlockUserResponse.toDomain(): UserBlock = UserBlock(
-        blockedBy = blocked_by_user_id,
-        userId = blocked_user_id,
-        blockedAt = created_at,
+    internal fun BlockUsersResponse.toDomain(): UserBlock = UserBlock(
+        blockedBy = blockedByUserId,
+        userId = blockedUserId,
+        blockedAt = createdAt,
     )
 
     /**
