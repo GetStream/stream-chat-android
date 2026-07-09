@@ -16,26 +16,8 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
-import android.graphics.Point
-import android.graphics.Rect
 import androidx.test.uiautomator.UiObject2
-
-public fun Rect.bottomPoint(): Point {
-    val x = right - ((right - left) / 2)
-    val y = bottom
-    return Point(x, y)
-}
-
-public fun Rect.leftPoint(): Point {
-    val x = left
-    val y = bottom - ((bottom - top) / 2)
-    return Point(x, y)
-}
-
-public fun Long.toSeconds(): Int = (this / 1000).toInt()
 
 public val Int.seconds: Long get() = (this * 1000).toLong()
 
 public val UiObject2.height: Int get() = visibleBounds.height()
-
-public val UiObject2.width: Int get() = visibleBounds.width()

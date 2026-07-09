@@ -29,10 +29,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-public fun UiDevice.stopApp() {
-    executeShellCommand("pm clear $packageName")
-}
-
 public fun UiDevice.typeText(text: String) {
     executeShellCommand("input text '$text'")
 }
