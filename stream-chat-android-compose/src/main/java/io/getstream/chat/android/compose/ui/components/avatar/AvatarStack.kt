@@ -34,6 +34,12 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
+ * Width of the border drawn around each avatar in a [UserAvatarStack]. Each avatar therefore
+ * occupies `avatarSize + AvatarStackBorderSize` in both dimensions.
+ */
+internal val AvatarStackBorderSize = 2.dp
+
+/**
  * A composable that displays a stack of user avatars. The avatars can overlap.
  *
  * @param overlap The amount of overlap between avatars.
@@ -52,7 +58,6 @@ internal fun UserAvatarStack(
 ) {
     val componentFactory = ChatTheme.componentFactory
     val colors = ChatTheme.colors
-    val borderSize = 2.dp
 
     Row(
         modifier,
@@ -63,9 +68,9 @@ internal fun UserAvatarStack(
             componentFactory.UserAvatar(
                 params = UserAvatarParams(
                     modifier = Modifier
-                        .size(avatarSize + borderSize)
-                        .border(borderSize, colors.borderCoreOnInverse, CircleShape)
-                        .padding(borderSize),
+                        .size(avatarSize + AvatarStackBorderSize)
+                        .border(AvatarStackBorderSize, colors.borderCoreOnInverse, CircleShape)
+                        .padding(AvatarStackBorderSize),
                     user = user,
                 ),
             )
