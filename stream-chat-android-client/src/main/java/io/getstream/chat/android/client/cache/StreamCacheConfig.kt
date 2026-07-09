@@ -36,6 +36,9 @@ public data class StreamCacheConfig(
  * enabled, replaying or seeking within a previously watched video reuses cached byte ranges
  * instead of re-downloading from the CDN.
  *
+ * Cache entries are keyed by URL path only; query parameters are stripped. URLs that differ
+ * only in their query string share the same cache entry.
+ *
  * @param maxSizeBytes Soft cap on cache size; LRU eviction kicks in once exceeded. Files larger
  * than this cap are not effectively cached. Size [maxSizeBytes] to comfortably exceed the
  * largest expected video.
