@@ -31,6 +31,10 @@ import androidx.compose.ui.platform.LocalDensity
  * animation and converge again once it settles. Reading them synchronously in composition
  * means the value flips on the same frame the animation starts, avoiding a one-frame lag
  * that a coroutine-based debounce approach would incur at the transition edges.
+ *
+ * On some OEM ROMs (e.g. Xiaomi/MIUI) that do not dispatch IME inset animations,
+ * `source` and `target` always report the same value, so this function always returns
+ * `false` and the placement-animation suppression silently degrades to a no-op.
  */
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
