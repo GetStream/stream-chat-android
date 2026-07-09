@@ -19,11 +19,11 @@ package io.getstream.chat.android.e2e.test.rules
 import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
 import androidx.test.platform.app.InstrumentationRegistry
-import io.getstream.chat.android.compose.uiautomator.allureLogcat
-import io.getstream.chat.android.compose.uiautomator.allureScreenrecord
-import io.getstream.chat.android.compose.uiautomator.allureScreenshot
-import io.getstream.chat.android.compose.uiautomator.allureWindowHierarchy
-import io.getstream.chat.android.compose.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.allureLogcat
+import io.getstream.chat.android.e2e.test.uiautomator.allureScreenrecord
+import io.getstream.chat.android.e2e.test.uiautomator.allureScreenshot
+import io.getstream.chat.android.e2e.test.uiautomator.allureWindowHierarchy
+import io.getstream.chat.android.e2e.test.uiautomator.device
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement

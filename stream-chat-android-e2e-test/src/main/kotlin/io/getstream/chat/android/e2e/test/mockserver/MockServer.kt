@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.e2e.test.mockserver
 
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request

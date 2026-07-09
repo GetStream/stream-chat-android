@@ -19,9 +19,9 @@ package io.getstream.chat.android.compose.tests
 import io.getstream.chat.android.compose.robots.assertComposerText
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
-import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
