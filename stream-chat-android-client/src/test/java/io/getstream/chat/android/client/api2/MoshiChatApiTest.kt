@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
@@ -172,6 +171,7 @@ import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.VoteData
@@ -2445,7 +2445,7 @@ internal class MoshiChatApiTest {
         val unset = emptyList<String>()
         val result = sut.partialUpdateThread(messageId, set, unset).await()
         // then
-        val expectedBody = PartialUpdateThreadRequest(set, unset)
+        val expectedBody = UpdateThreadPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateThread(messageId, expectedBody)
     }
