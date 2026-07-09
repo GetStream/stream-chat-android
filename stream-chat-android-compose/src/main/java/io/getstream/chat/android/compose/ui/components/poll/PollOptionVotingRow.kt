@@ -160,7 +160,10 @@ internal fun PollOptionVotingRow(
         val votesMinHeight = if (showsAvatars) avatarSize + AvatarStackBorderSize else avatarSize
 
         Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
-            Row(verticalAlignment = Alignment.Top) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+                verticalAlignment = Alignment.Top,
+            ) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = option.text,
@@ -190,7 +193,7 @@ internal fun PollOptionVotingRow(
                             overlap = StreamTokens.spacingXs,
                             users = users.take(MaxStackedAvatars),
                             avatarSize = avatarSize,
-                            modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
+                            modifier = Modifier.padding(end = StreamTokens.spacing2xs),
                         )
                     }
                     Text(

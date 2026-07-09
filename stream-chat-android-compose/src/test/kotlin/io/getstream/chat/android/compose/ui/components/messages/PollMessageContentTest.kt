@@ -63,18 +63,18 @@ internal class PollMessageContentTest : PaparazziComposeTest {
 
     @Test
     fun `poll content with long option text`() {
+        // The first long option has voter avatars; the second long option has none, so the
+        // no-avatar case (vote count kept off the wrapped text) is covered too.
+        val longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
+            "eiusmod tempor incididunt ut labore et dolore magna aliqua"
         val poll = PreviewPollData.poll1.let { poll ->
+            val noVotesOptionId = poll.options[1].id
             poll.copy(
                 options = poll.options.mapIndexed { index, option ->
-                    if (index == 0) {
-                        option.copy(
-                            text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do " +
-                                "eiusmod tempor incididunt ut labore et dolore magna aliqua",
-                        )
-                    } else {
-                        option
-                    }
+                    if (index < 2) option.copy(text = longText) else option
                 },
+                votes = poll.votes.filterNot { it.optionId == noVotesOptionId },
+                voteCountsByOption = poll.voteCountsByOption - noVotesOptionId,
             )
         }
         snapshotWithDarkMode {
