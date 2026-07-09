@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -34,6 +33,7 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

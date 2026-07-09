@@ -77,7 +77,6 @@ import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannels
 import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -167,6 +166,8 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.log.taggedLogger
@@ -431,7 +432,7 @@ constructor(
             filter = filter?.toMap(),
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return messageApi.queryReactions(messageId, body).mapDomain {
             QueryReactionsResult(
@@ -2009,3 +2010,11 @@ constructor(
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
 }
+
+internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
+    toDto().map {
+        SortParamRequest(
+            field = it[QuerySorter.KEY_FIELD_NAME] as? String,
+            direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
+        )
+    }
