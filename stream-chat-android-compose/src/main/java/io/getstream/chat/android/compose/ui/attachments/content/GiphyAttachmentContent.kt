@@ -305,7 +305,7 @@ private fun GiphyLabel(modifier: Modifier) {
  *
  * @return The resulting resized dimensions.
  */
-private fun calculateResultingDimensions(
+internal fun calculateResultingDimensions(
     maxWidth: Dp,
     maxHeight: Dp,
     giphyWidth: Dp,
