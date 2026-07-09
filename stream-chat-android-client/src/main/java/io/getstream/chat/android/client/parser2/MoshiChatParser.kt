@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
-import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
@@ -53,6 +52,7 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdap
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.network.infrastructure.Serializer
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -63,8 +63,7 @@ internal class MoshiChatParser(
 ) : ChatParser {
 
     private val moshi: Moshi by lazy {
-        Moshi.Builder()
-            .addAdapter(DateAdapter())
+        Serializer.moshi.newBuilder()
             .addAdapter(ExactDateAdapter())
             .add(EventAdapterFactory())
             .add(DownstreamMessageDtoAdapter)

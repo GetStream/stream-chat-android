@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
-import app.cash.paparazzi.DeviceConfig
+import androidx.compose.runtime.Composable
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -27,7 +29,10 @@ import org.junit.Test
 internal class MediaGalleryPreviewScreenTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(
+        deviceConfig = PIXEL_2_HDPI,
+        renderingMode = SessionParams.RenderingMode.SHRINK,
+    )
 
     @Test
     fun `media gallery header offline`() = snapshotWithDarkMode {
@@ -110,84 +115,71 @@ internal class MediaGalleryPreviewScreenTest : PaparazziComposeTest {
 
     @Test
     fun `media gallery screen offline`() = snapshot {
-        val message = PreviewMessageData.messageWithUserAndAttachment
-        MediaGalleryPreviewScreen(
-            message = message,
-            connectionState = ConnectionState.Offline,
-            currentUser = message.user,
-            selectedAttachmentUrl = null,
-            promptedAttachment = null,
-            isSharingInProgress = false,
-            isShowingOptions = false,
-            isShowingGallery = false,
-            onOptionClick = { _, _ -> },
-            onRequestShareAttachment = {},
-        )
+        MediaGalleryScreen(connectionState = ConnectionState.Offline)
+    }
+
+    @Test
+    fun `media gallery screen offline in dark mode`() = snapshot(isInDarkMode = true) {
+        MediaGalleryScreen(connectionState = ConnectionState.Offline)
     }
 
     @Test
     fun `media gallery screen connected`() = snapshot {
-        val message = PreviewMessageData.messageWithUserAndAttachment
-        MediaGalleryPreviewScreen(
-            message = message,
-            connectionState = ConnectionState.Connected,
-            currentUser = message.user,
-            selectedAttachmentUrl = null,
-            promptedAttachment = null,
-            isSharingInProgress = false,
-            isShowingOptions = false,
-            isShowingGallery = false,
-            onOptionClick = { _, _ -> },
-            onRequestShareAttachment = {},
-        )
+        MediaGalleryScreen()
+    }
+
+    @Test
+    fun `media gallery screen connected in dark mode`() = snapshot(isInDarkMode = true) {
+        MediaGalleryScreen()
     }
 
     @Test
     fun `media gallery screen with options menu`() = snapshot {
-        val message = PreviewMessageData.messageWithUserAndAttachment
-        MediaGalleryPreviewScreen(
-            message = message,
-            connectionState = ConnectionState.Connected,
-            currentUser = message.user,
-            selectedAttachmentUrl = null,
-            promptedAttachment = null,
-            isSharingInProgress = false,
-            isShowingOptions = true,
-            isShowingGallery = false,
-            onOptionClick = { _, _ -> },
-            onRequestShareAttachment = {},
-        )
+        MediaGalleryScreen(isShowingOptions = true)
+    }
+
+    @Test
+    fun `media gallery screen with options menu in dark mode`() = snapshot(isInDarkMode = true) {
+        MediaGalleryScreen(isShowingOptions = true)
     }
 
     @Test
     fun `media gallery screen with share large file prompt`() = snapshot {
-        val message = PreviewMessageData.messageWithUserAndAttachment
-        MediaGalleryPreviewScreen(
-            message = message,
-            connectionState = ConnectionState.Connected,
-            currentUser = message.user,
-            selectedAttachmentUrl = null,
-            promptedAttachment = message.attachments[0],
-            isSharingInProgress = false,
-            isShowingOptions = false,
-            isShowingGallery = false,
-            onOptionClick = { _, _ -> },
-            onRequestShareAttachment = {},
-        )
+        MediaGalleryScreen(promptShareAttachment = true)
+    }
+
+    @Test
+    fun `media gallery screen with share large file prompt in dark mode`() = snapshot(isInDarkMode = true) {
+        MediaGalleryScreen(promptShareAttachment = true)
     }
 
     @Test
     fun `media gallery screen with gallery bottom sheet`() = snapshot {
+        MediaGalleryScreen(isShowingGallery = true)
+    }
+
+    @Test
+    fun `media gallery screen with gallery bottom sheet in dark mode`() = snapshot(isInDarkMode = true) {
+        MediaGalleryScreen(isShowingGallery = true)
+    }
+
+    @Composable
+    private fun MediaGalleryScreen(
+        connectionState: ConnectionState = ConnectionState.Connected,
+        promptShareAttachment: Boolean = false,
+        isShowingOptions: Boolean = false,
+        isShowingGallery: Boolean = false,
+    ) {
         val message = PreviewMessageData.messageWithUserAndAttachment
         MediaGalleryPreviewScreen(
             message = message,
-            connectionState = ConnectionState.Connected,
+            connectionState = connectionState,
             currentUser = message.user,
             selectedAttachmentUrl = null,
-            promptedAttachment = null,
+            promptedAttachment = message.attachments.first().takeIf { promptShareAttachment },
             isSharingInProgress = false,
-            isShowingOptions = false,
-            isShowingGallery = true,
+            isShowingOptions = isShowingOptions,
+            isShowingGallery = isShowingGallery,
             onOptionClick = { _, _ -> },
             onRequestShareAttachment = {},
         )

@@ -95,8 +95,10 @@ public data class MessageReminder(
          */
         public constructor(reminder: MessageReminder) : this() {
             remindAt = reminder.remindAt
-            message = reminder.message
+            cid = reminder.cid
             channel = reminder.channel
+            messageId = reminder.messageId
+            message = reminder.message
             createdAt = reminder.createdAt
             updatedAt = reminder.updatedAt
         }

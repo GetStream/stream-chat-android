@@ -116,6 +116,8 @@ import java.util.regex.Pattern
  * @param globalState A flow emitting the current [GlobalState].
  * @param savedStateHandle Handle used to persist and restore picker selections and edit-mode state
  * across process death (e.g. caused by opening the system file picker while editing a message).
+ * @param initialParentMessageId The ID of the parent [Message] to open the composer directly in a
+ * thread, starting it in thread mode. `null` opens the composer in the channel.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -130,6 +132,7 @@ public class MessageComposerController(
     private val config: Config = Config(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
     savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    initialParentMessageId: String? = null,
 ) {
 
     private val channelType = channelCid.cidToTypeAndId().first
@@ -266,7 +269,15 @@ public class MessageComposerController(
 
     private val sessionRepository = ComposerSessionRepository(savedStateHandle)
 
-    private val _state = MutableStateFlow(MessageComposerState())
+    // Render the final thread state from the first frame, so the composer does not change during the
+    // opening transition and its initial draft fetch targets the thread, not the channel.
+    private val _state = MutableStateFlow(
+        MessageComposerState(
+            messageMode = initialParentMessageId
+                ?.let { MessageMode.MessageThread(parentMessage = Message(id = it)) }
+                ?: MessageMode.Normal,
+        ),
+    )
 
     /** Full message composer state holding all the required information. */
     public val state: StateFlow<MessageComposerState> = _state.asStateFlow()
@@ -600,9 +611,11 @@ public class MessageComposerController(
      */
     public fun setMessageMode(messageMode: MessageMode) {
         val previousMode = _state.value.messageMode
+        _state.update { it.copy(messageMode = messageMode) }
+        // The mode is refreshed above so the fully loaded thread parent replaces the id-only stub,
+        // but an unchanged logical mode does not need its draft saved and reloaded.
         if (isSameMessageMode(previousMode, messageMode)) return
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            _state.update { it.copy(messageMode = messageMode) }
             saveDraftMessage(previousMode)
             fetchDraftMessage(messageMode)
         }

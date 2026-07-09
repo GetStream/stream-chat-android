@@ -42,10 +42,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.resources.Density
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import org.junit.Rule
+
+/**
+ * [DeviceConfig.PIXEL_2] geometry (411x731dp) at hdpi. The dp layout is identical to the
+ * Pixel 2, but rendering at 1.5x keeps the golden files small, which speeds up comparisons.
+ */
+internal val PIXEL_2_HDPI = DeviceConfig.PIXEL_2.atHdpi()
+
+/**
+ * [DeviceConfig.PIXEL_4A] geometry (392x850dp) at hdpi, for snapshots that need a taller screen.
+ */
+internal val PIXEL_4A_HDPI = DeviceConfig.PIXEL_4A.atHdpi()
+
+/**
+ * A copy of this device with the same dp geometry rendered at 1.5x instead of the native density.
+ */
+private fun DeviceConfig.atHdpi(): DeviceConfig = copy(
+    screenWidth = screenWidth * Density.HIGH.dpiValue / density.dpiValue,
+    screenHeight = screenHeight * Density.HIGH.dpiValue / density.dpiValue,
+    xdpi = Density.HIGH.dpiValue,
+    ydpi = Density.HIGH.dpiValue,
+    density = Density.HIGH,
+)
 
 internal interface PaparazziComposeTest : MockedChatClientTest {
 
@@ -83,7 +107,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                     ChatTheme(isInDarkMode = true) {
                         Box(
                             modifier = Modifier
-                                .weight(.5f)
+                                .weight(weight = .5f, fill = false)
                                 .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
@@ -93,7 +117,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                     ChatTheme(isInDarkMode = false) {
                         Box(
                             modifier = Modifier
-                                .weight(.5f)
+                                .weight(weight = .5f, fill = false)
                                 .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
@@ -115,7 +139,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                     ChatTheme(isInDarkMode = true) {
                         Box(
                             modifier = Modifier
-                                .weight(.5f)
+                                .weight(weight = .5f, fill = false)
                                 .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
@@ -125,7 +149,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                     ChatTheme(isInDarkMode = false) {
                         Box(
                             modifier = Modifier
-                                .weight(.5f)
+                                .weight(weight = .5f, fill = false)
                                 .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {

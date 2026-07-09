@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
-import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.ui.PIXEL_4A_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +27,8 @@ internal class ChannelAvatarTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_4A.copy(screenHeight = 4000),
+        // Extra-tall canvas to fit all avatar variant rows: 4000px at the native 440dpi, converted to hdpi.
+        deviceConfig = PIXEL_4A_HDPI.copy(screenHeight = 2182),
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
 

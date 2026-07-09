@@ -94,8 +94,8 @@ public data class ComposerOptions(
  * @param context Android context used to access system services and device storage.
  * @param channelId The current channel ID, to load the messages from.
  * @param messageId The message id to which we want to scroll to when opening the message list.
- * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
- * message we want to scroll to is not in a thread, you can pass in a null value.
+ * @param parentMessageId The ID of the parent [Message] to open the screen directly in a thread: the message list is
+ * scoped to that thread and the composer starts in thread mode. Pass `null` to open the channel.
  * @param autoTranslationEnabled Whether auto-translation of messages is enabled.
  * @param chatClient The client to use for API calls.
  * @param clientState The current state of the SDK.
@@ -184,6 +184,7 @@ public class ChannelViewModelFactory(
                         activeCommandEnabled = true,
                     ),
                     savedStateHandle = savedStateHandle ?: SavedStateHandle(),
+                    initialParentMessageId = parentMessageId,
                 ),
                 storageHelper = storageHelper,
             )
