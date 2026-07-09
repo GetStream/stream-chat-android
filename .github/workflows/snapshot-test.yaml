@@ -19,7 +19,7 @@ jobs:
   run_snapshot_tests:
     permissions:
       actions: write
-      contents: read
+      contents: write
       pull-requests: write
     name: Run
     runs-on: ubuntu-24.04
