@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -305,6 +306,7 @@ private fun GiphyLabel(modifier: Modifier) {
  *
  * @return The resulting resized dimensions.
  */
+@VisibleForTesting
 internal fun calculateResultingDimensions(
     maxWidth: Dp,
     maxHeight: Dp,
