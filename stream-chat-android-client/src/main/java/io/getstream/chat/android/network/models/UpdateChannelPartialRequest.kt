@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class HideChannelRequest(
-    val clear_history: Boolean,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateChannelPartialRequest(
+    @Json(name = "unset")
+    internal val unset: List<String>? = emptyList(),
+
+    @Json(name = "set")
+    internal val set: Map<String, Any?>? = emptyMap(),
 )

@@ -21,7 +21,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -225,51 +224,52 @@ private fun PollMessageContent(
         content = poll.name,
         isReply = message.replyTo != null,
     )
-    Column(
-        modifier = Modifier
-            .passiveRipple()
-            .padding(StreamTokens.spacingMd),
-    ) {
-        Text(
-            modifier = Modifier.semantics { contentDescription = senderAwareName },
-            text = poll.name,
-            style = typography.bodyEmphasis,
-            color = style.textColor,
-        )
-
-        Text(
-            modifier = Modifier.padding(top = StreamTokens.spacing2xs),
-            text = poll.getSubtitle(context),
-            style = typography.captionDefault,
-            color = style.textColor,
-        )
-
-        poll.options.take(PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS).forEachIndexed { index, option ->
-            val padding = PaddingValues(
-                top = if (index > 0) StreamTokens.spacingLg else StreamTokens.spacingMd,
-                bottom = if (index == poll.options.size - 1) StreamTokens.spacingLg else 0.dp,
+    Column(modifier = Modifier.passiveRipple()) {
+        Column(
+            modifier = Modifier.padding(StreamTokens.spacingMd),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        ) {
+            Text(
+                modifier = Modifier.semantics { contentDescription = senderAwareName },
+                text = poll.name,
+                style = typography.bodyEmphasis,
+                color = style.textColor,
             )
-            val voteCount = poll.voteCountsByOption[option.id] ?: 0
 
-            PollOptionVotingRow(
-                modifier = Modifier.padding(padding),
-                poll = poll,
-                option = option,
-                voteCount = voteCount,
-                users = remember(poll.votes, option) { poll.getVotes(option).mapNotNull(Vote::user) },
-                totalVoteCount = poll.voteCountsByOption.values.sum(),
-                checked = poll.ownVotes.any { it.optionId == option.id },
-                style = style,
-                onCastVote = { onCastVote.invoke(option) },
-                onRemoveVote = {
-                    poll.ownVotes.firstOrNull { it.optionId == option.id }
-                        ?.let(onRemoveVote)
-                },
-                onLongClick = { onLongItemClick(message) },
+            Text(
+                text = poll.getSubtitle(context),
+                style = typography.captionDefault,
+                color = style.textColor,
             )
         }
 
+        Column(
+            modifier = Modifier.padding(horizontal = StreamTokens.spacingXs),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
+        ) {
+            poll.options.take(PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS).forEach { option ->
+                val voteCount = poll.voteCountsByOption[option.id] ?: 0
+
+                PollOptionVotingRow(
+                    poll = poll,
+                    option = option,
+                    voteCount = voteCount,
+                    users = remember(poll.votes, option) { poll.getVotes(option).mapNotNull(Vote::user) },
+                    totalVoteCount = poll.voteCountsByOption.values.sum(),
+                    checked = poll.ownVotes.any { it.optionId == option.id },
+                    style = style,
+                    onCastVote = { onCastVote.invoke(option) },
+                    onRemoveVote = {
+                        poll.ownVotes.firstOrNull { it.optionId == option.id }
+                            ?.let(onRemoveVote)
+                    },
+                    onLongClick = { onLongItemClick(message) },
+                )
+            }
+        }
+
         PollButtons(
+            modifier = Modifier.padding(StreamTokens.spacingMd),
             poll = poll,
             style = style,
             selectPoll = selectPoll,
@@ -293,11 +293,15 @@ private fun PollButtons(
     showAddAnswerDialog: MutableState<Boolean>,
     isMine: Boolean,
     onClosePoll: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val outlinedButtonStyle = StreamButtonStyleDefaults.secondaryOutline.copy(borderColor = style.outlineColor)
     val ghostButtonStyle = StreamButtonStyleDefaults.secondaryGhost
 
-    Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
         if (poll.options.size > PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS) {
             PollOptionButton(
                 text = stringResource(id = UiCommonR.string.stream_ui_poll_action_see_all, poll.options.size),

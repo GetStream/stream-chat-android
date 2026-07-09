@@ -188,7 +188,7 @@ private fun PollMoreOptionsItemList(
             horizontal = StreamTokens.spacingXs,
             vertical = StreamTokens.spacingMd,
         ),
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
     ) {
         poll.options.forEach { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
@@ -223,7 +223,6 @@ private fun PollMoreOptionItem(
 ) {
     val colors = ChatTheme.colors
     PollOptionVotingRow(
-        modifier = Modifier.padding(StreamTokens.spacingXs),
         poll = poll,
         option = option,
         voteCount = voteCount,
