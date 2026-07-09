@@ -76,7 +76,6 @@ import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannels
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
-import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -167,6 +166,7 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
@@ -445,10 +445,10 @@ constructor(
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> {
         return messageApi.sendReaction(
             messageId = reaction.messageId,
-            request = ReactionRequest(
+            request = SendReactionRequest(
                 reaction = with(dtoMapping) { reaction.toDto() },
-                enforce_unique = enforceUnique,
-                skip_push = skipPush,
+                enforceUnique = enforceUnique,
+                skipPush = skipPush,
             ),
         ).mapDomain { response ->
             response.reaction.toDomain()

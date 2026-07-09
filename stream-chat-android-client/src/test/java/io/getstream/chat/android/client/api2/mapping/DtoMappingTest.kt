@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MessageTransformer
@@ -40,6 +39,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.ReactionRequest
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
@@ -243,16 +243,14 @@ internal class DtoMappingTest {
         val reaction = randomReaction()
         val mapping = Fixture().get()
         val dto = with(mapping) { reaction.toDto() }
-        val expected = UpstreamReactionDto(
-            created_at = reaction.createdAt,
-            message_id = reaction.messageId,
-            score = reaction.score,
+        val expected = ReactionRequest(
             type = reaction.type,
-            updated_at = reaction.updatedAt,
-            user = reaction.user?.let { with(mapping) { it.toDto() } },
-            user_id = reaction.userId,
-            extraData = reaction.extraData,
-            emoji_code = reaction.emojiCode,
+            createdAt = reaction.createdAt,
+            score = reaction.score,
+            updatedAt = reaction.updatedAt,
+            custom = reaction.emojiCode
+                ?.let { reaction.extraData + ("emoji_code" to it) }
+                ?: reaction.extraData,
         )
         dto shouldBeEqualTo expected
     }
