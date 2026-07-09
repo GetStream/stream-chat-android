@@ -60,7 +60,6 @@ import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
@@ -171,6 +170,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
@@ -1813,7 +1813,7 @@ constructor(
         ).mapDomain { it.vote.toDomain() }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
-        val request = PartialUpdatePollRequest(set, unset)
+        val request = UpdatePollPartialRequest(set = set, unset = unset)
         return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
     }
 

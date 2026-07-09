@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
@@ -171,6 +170,7 @@ import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.VoteData
@@ -2523,7 +2523,7 @@ internal class MoshiChatApiTest {
         val unset = listOf("custom_property")
         val result = sut.partialUpdatePoll(pollId, set, unset).await()
         // then
-        val expectedRequest = PartialUpdatePollRequest(set, unset)
+        val expectedRequest = UpdatePollPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
         verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
@@ -2541,7 +2541,7 @@ internal class MoshiChatApiTest {
         val pollId = randomString()
         val result = sut.closePoll(pollId).await()
         // then
-        val expectedRequest = PartialUpdatePollRequest(set = mapOf("is_closed" to true))
+        val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true))
         result `should be instance of` expected
         verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
