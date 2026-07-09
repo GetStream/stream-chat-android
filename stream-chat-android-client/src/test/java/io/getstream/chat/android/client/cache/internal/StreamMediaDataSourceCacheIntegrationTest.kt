@@ -246,7 +246,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             context,
             evictionDir,
             VideoCacheConfig(maxSizeBytes = 2 * TOTAL_LENGTH),
-        )
+        )!!
         try {
             val upstream = RecordingDataSourceFactory()
             val factory = VideoCacheDataSourceFactory(evictionCache, upstream)
