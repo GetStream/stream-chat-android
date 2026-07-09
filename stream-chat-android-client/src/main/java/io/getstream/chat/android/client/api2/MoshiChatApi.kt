@@ -60,9 +60,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -88,7 +85,6 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
@@ -161,18 +157,19 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
-import io.getstream.chat.android.network.models.MuteChannelRequest
-import io.getstream.chat.android.network.models.DeliveredMessagePayload
-import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -1266,7 +1263,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             userId = userId,
-            body = UpdateMemberPartialRequest(set, unset),
+            body = UpdateMemberPartialRequest(set = set, unset = unset),
         ).mapDomain { response ->
             response.channel_member.toDomain()
         }
