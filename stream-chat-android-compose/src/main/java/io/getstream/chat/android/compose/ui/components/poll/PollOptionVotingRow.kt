@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.poll
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,8 +30,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +50,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarStackBorderSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -109,13 +113,17 @@ internal fun PollOptionVotingRow(
             onRemoveVote()
         }
     }
+    val interactionSource = remember(::MutableInteractionSource)
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(StreamTokens.radiusLg))
             .applyIf(!poll.closed) {
                 // The toggle's own gesture handling would otherwise consume the long-press as a
                 // tap, so forward it to the message's actions-menu handler.
                 combinedClickable(
+                    interactionSource = interactionSource,
+                    indication = ripple(),
                     role = toggleRole,
                     onClick = { onToggle(!checked) },
                     onLongClick = onLongClick,
@@ -126,7 +134,10 @@ internal fun PollOptionVotingRow(
                     .semantics {
                         toggleableState = if (checked) ToggleableState.On else ToggleableState.Off
                     }
-            },
+            }
+            // Inset the option content so the clickable/ripple frame wraps the whole option
+            // (radio, text, votes and progress bar) with a consistent padding.
+            .padding(StreamTokens.spacingXs),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.Top,
     ) {
@@ -142,6 +153,11 @@ internal fun PollOptionVotingRow(
         }
 
         val avatarSize = AvatarSize.ExtraSmall
+        // A voter avatar renders at avatarSize + AvatarStackBorderSize. Reserve that height for the
+        // votes area on non-anonymous polls so options with a voter avatar and options without one
+        // keep the same height.
+        val showsAvatars = poll.votingVisibility != VotingVisibility.ANONYMOUS
+        val votesMinHeight = if (showsAvatars) avatarSize + AvatarStackBorderSize else avatarSize
 
         Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
             Row(verticalAlignment = Alignment.Top) {
@@ -166,10 +182,10 @@ internal fun PollOptionVotingRow(
                     voteCount,
                 )
                 Row(
-                    modifier = Modifier.heightIn(min = avatarSize),
+                    modifier = Modifier.heightIn(min = votesMinHeight),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
+                    if (users.isNotEmpty() && showsAvatars) {
                         UserAvatarStack(
                             overlap = StreamTokens.spacingXs,
                             users = users.take(MaxStackedAvatars),

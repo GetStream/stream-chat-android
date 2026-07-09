@@ -98,6 +98,38 @@ internal class PollMessageContentTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `poll content with mixed vote states`() {
+        // Only the first option has a voter avatar; the others have none. All options must keep
+        // the same height so a voter avatar does not make its option taller.
+        val poll = PreviewPollData.poll1.let { poll ->
+            val votedOptionId = poll.options.first().id
+            poll.copy(
+                options = poll.options.map { it.copy(text = "Amsterdam") },
+                votes = poll.votes.filter { it.optionId == votedOptionId },
+                voteCountsByOption = mapOf(votedOptionId to 3),
+            )
+        }
+        snapshotWithDarkMode {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                PollMessageContent(
+                    modifier = Modifier,
+                    onCastVote = { _, _, _ -> },
+                    onRemoveVote = { _, _, _ -> },
+                    selectPoll = { _, _, _ -> },
+                    onAddAnswer = { _, _, _ -> },
+                    onClosePoll = {},
+                    onAddPollOption = { _, _ -> },
+                    messageItem = MessageItemState(
+                        message = PreviewMessageData.messageWithPoll.copy(poll = poll),
+                        isMine = true,
+                        ownCapabilities = ChannelCapabilities.toSet(),
+                    ),
+                )
+            }
+        }
+    }
+
+    @Test
     fun `error poll content`() {
         snapshotWithDarkMode {
             Box(modifier = Modifier.fillMaxWidth()) {
