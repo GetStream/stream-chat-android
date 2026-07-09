@@ -63,7 +63,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
     @Before
     fun setUp() {
         cacheDir.deleteRecursively()
-        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())
+        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())!!
     }
 
     @After
@@ -230,7 +230,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
         assertFalse("clearAll should report nothing was cleared on an empty registry", VideoMediaCache.clearAll())
 
         // Recreate so tearDown() releases a live instance and unlocks the directory for the next test.
-        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())
+        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())!!
     }
 
     /**
@@ -246,7 +246,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             context,
             evictionDir,
             VideoCacheConfig(maxSizeBytes = 2 * TOTAL_LENGTH),
-        )
+        )!!
         try {
             val upstream = RecordingDataSourceFactory()
             val factory = VideoCacheDataSourceFactory(evictionCache, upstream)
@@ -255,7 +255,8 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             // Space the operations out so each span's `lastTouchTimestamp` lands in a distinct
             // millisecond; Media3's LeastRecentlyUsedCacheEvictor uses `System.currentTimeMillis()`
             // and falls back to alphabetical key order on ties, which would pick A over B under
-            // load and make the assertions non-deterministic.
+            // load and make the assertions non-deterministic. The sleeps are wall-clock dependent;
+            // if this test becomes flaky on a slow runner, increase SPAN_SPACING_MS.
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
             Thread.sleep(SPAN_SPACING_MS)
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_B_URL)))

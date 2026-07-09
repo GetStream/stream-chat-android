@@ -125,17 +125,18 @@ public class VideoMediaCache private constructor(
         }
 
         /**
-         * Returns a [VideoMediaCache] backed by the [SimpleCache] at [cacheDir]. If an instance
-         * for that absolute directory path already exists in this process, that instance is
-         * returned and [config] is ignored beyond the first call; this prevents a second
-         * [SimpleCache] from being constructed against the same directory (which would throw).
+         * Returns a [VideoMediaCache] backed by the [SimpleCache] at [cacheDir], or `null` if
+         * [SimpleCache] construction fails (e.g. a stale directory lock left by a prior crash).
+         * If an instance for that absolute directory path already exists in this process, that
+         * instance is returned and [config] is ignored beyond the first call; this prevents a
+         * second [SimpleCache] from being constructed against the same directory (which would throw).
          *
          * @param appContext Application context used to construct the [StandaloneDatabaseProvider].
          * @param cacheDir Directory that backs the [SimpleCache]. Created if it does not exist.
          * @param config Cache configuration. Honored only on the first call for [cacheDir].
          */
         @JvmStatic
-        public fun create(appContext: Context, cacheDir: File, config: VideoCacheConfig): VideoMediaCache =
+        public fun create(appContext: Context, cacheDir: File, config: VideoCacheConfig): VideoMediaCache? =
             synchronized(instances) {
                 cacheDir.mkdirs()
                 val key = cacheDir.absolutePath
@@ -146,13 +147,18 @@ public class VideoMediaCache private constructor(
                     }
                     return@synchronized existing
                 }
-                val dbProvider = StandaloneDatabaseProvider(appContext)
-                val simpleCache = SimpleCache(
-                    cacheDir,
-                    LeastRecentlyUsedCacheEvictor(config.maxSizeBytes),
-                    dbProvider,
-                )
-                VideoMediaCache(simpleCache, dbProvider, key).also { instances[key] = it }
+                try {
+                    val dbProvider = StandaloneDatabaseProvider(appContext)
+                    val simpleCache = SimpleCache(
+                        cacheDir,
+                        LeastRecentlyUsedCacheEvictor(config.maxSizeBytes),
+                        dbProvider,
+                    )
+                    VideoMediaCache(simpleCache, dbProvider, key).also { instances[key] = it }
+                } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                    logger.e(e) { "[create] Failed to construct SimpleCache at '$key'; video caching disabled." }
+                    null
+                }
             }
     }
 }

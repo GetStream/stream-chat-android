@@ -45,7 +45,7 @@ internal class VideoMediaCacheTest {
     @Before
     fun setUp() {
         cacheDir.deleteRecursively()
-        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())
+        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())!!
     }
 
     @After
@@ -84,7 +84,7 @@ internal class VideoMediaCacheTest {
         assertTrue("Expected a different instance after release", recreated !== cache)
         // Reassign so @After releases the recreated instance and Media3's SimpleCache
         // unlocks the directory; otherwise the next test's setUp would throw.
-        cache = recreated
+        cache = recreated!!
     }
 
     private companion object {
