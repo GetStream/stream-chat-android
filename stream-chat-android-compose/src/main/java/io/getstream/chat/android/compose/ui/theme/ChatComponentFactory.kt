@@ -169,6 +169,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItem
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.topBorder
+import io.getstream.chat.android.compose.util.isImeAnimating
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -857,14 +858,19 @@ public interface ChatComponentFactory {
     /**
      * The default message list item modifier for styling.
      *
+     * Uses `Modifier.animateItem` for fade in/out and placement transitions. The placement
+     * animation is disabled while the IME is animating so items don't slide during the
+     * keyboard open/close window; it resumes for normal list changes (insertions, deletions,
+     * height changes).
+     *
      * @param params Parameters for this component.
      */
     @Composable
     public fun LazyItemScope.messageListItemModifier(params: MessageListItemModifierParams): Modifier =
-        if (LocalInspectionMode.current) {
-            Modifier
-        } else {
-            Modifier.animateItem()
+        when {
+            LocalInspectionMode.current -> Modifier
+            isImeAnimating() -> Modifier.animateItem(placementSpec = null)
+            else -> Modifier.animateItem()
         }
 
     /**

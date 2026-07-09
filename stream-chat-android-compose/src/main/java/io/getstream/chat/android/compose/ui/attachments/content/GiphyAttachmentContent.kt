@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,10 +34,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
@@ -120,7 +125,9 @@ public fun GiphyAttachmentContent(
 
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
 
-    val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode)
+    var downloadedRatio by remember(key1 = attachment.giphyFallbackPreviewUrl) { mutableStateOf<Float?>(null) }
+
+    val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode, downloadedRatio)
 
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     val giphyTitle = attachment.title?.takeIf(String::isNotBlank)
@@ -172,9 +179,19 @@ public fun GiphyAttachmentContent(
         ) {
             StreamAsyncImage(
                 data = giphyInfo?.url ?: attachment.giphyFallbackPreviewUrl,
-                modifier = Modifier.fillMaxSize(),
                 contentDescription = giphyTitle,
+                modifier = Modifier.fillMaxSize(),
                 contentScale = contentScale,
+                onState = if (giphyInfo == null) {
+                    { imageState ->
+                        val intrinsicSize = imageState.painter?.intrinsicSize
+                        if (intrinsicSize != null && intrinsicSize.isSpecified && intrinsicSize.height > 0f) {
+                            downloadedRatio = intrinsicSize.width / intrinsicSize.height
+                        }
+                    }
+                } else {
+                    null
+                },
             )
 
             GiphyLabel(
@@ -190,6 +207,7 @@ public fun GiphyAttachmentContent(
 private fun calculateSize(
     giphyInfo: GiphyInfo?,
     giphySizingMode: GiphySizingMode,
+    downloadedRatio: Float?,
 ): DpSize {
     val density = LocalDensity.current
 
@@ -199,7 +217,7 @@ private fun calculateSize(
     val width = 250.dp
     val height = 200.dp
 
-    val giphyDimensions: DpSize = remember(giphyInfo, density, maxWidth, width, maxHeight, height) {
+    val giphyDimensions: DpSize = remember(giphyInfo, downloadedRatio, density, maxWidth, width, maxHeight, height) {
         if (giphyInfo != null) {
             with(density) {
                 val giphyWidth = giphyInfo.width.toDp()
@@ -227,8 +245,16 @@ private fun calculateSize(
                     )
                 }
             }
+        } else if (downloadedRatio == null) {
+            val side = minOf(maxWidth, maxHeight)
+            DpSize(side, side)
         } else {
-            DpSize(maxWidth, maxHeight)
+            calculateResultingDimensions(
+                maxWidth = maxWidth,
+                maxHeight = maxHeight,
+                giphyWidth = downloadedRatio.dp,
+                giphyHeight = 1.dp,
+            )
         }
     }
     return giphyDimensions
@@ -259,6 +285,8 @@ private fun GiphyLabel(modifier: Modifier) {
             text = stringResource(R.string.stream_compose_giphy_label),
             style = ChatTheme.typography.metadataEmphasis,
             color = colors.badgeTextOnAccent,
+            maxLines = 1,
+            softWrap = false,
         )
     }
 }
@@ -278,7 +306,8 @@ private fun GiphyLabel(modifier: Modifier) {
  *
  * @return The resulting resized dimensions.
  */
-private fun calculateResultingDimensions(
+@VisibleForTesting
+internal fun calculateResultingDimensions(
     maxWidth: Dp,
     maxHeight: Dp,
     giphyWidth: Dp,
