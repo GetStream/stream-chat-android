@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.dto
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class DownstreamRoleDto(
-    val name: String,
-    val custom: Boolean = false,
-    val scopes: List<String> = emptyList(),
-    val created_at: Date? = null,
-    val updated_at: Date? = null,
+import com.squareup.moshi.Json
+import kotlin.collections.List
+
+/**
+ *
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class SearchRolesResponse(
+    @Json(name = "duration")
+    val duration: kotlin.String,
+
+    @Json(name = "roles")
+    val roles: kotlin.collections.List<io.getstream.chat.android.network.models.Role> = emptyList(),
 )
