@@ -19,6 +19,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+          persist-credentials: false
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Prepare signing environment
         env:
@@ -26,7 +28,6 @@ jobs:
           RELEASE_KEYSTORE_PROPERTIES: ${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
         run: |
-          git fetch --unshallow || true
           echo "$RELEASE_KEYSTORE" > .sign/release.keystore.asc
           gpg -d --passphrase "$PASSPHRASE" --batch .sign/release.keystore.asc > .sign/release.keystore
           echo "$RELEASE_KEYSTORE_PROPERTIES" > .sign/keystore.properties.asc
@@ -36,7 +37,8 @@ jobs:
       - name: Attach APK to release under a constant name
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          gh release upload "${{ github.event.release.tag_name }}" \
+          gh release upload "$RELEASE_TAG" \
             "stream-chat-android-compose-sample/build/outputs/apk/demo/release/stream-chat-android-compose-sample-demo-release.apk#stream-chat-android-sample.apk" \
             --clobber
