@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollReq
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
@@ -95,7 +94,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
-import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -161,6 +159,7 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersRequest
+import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
@@ -170,6 +169,7 @@ import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.VoteData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -1752,7 +1752,7 @@ constructor(
     ): Call<Vote> = castVote(
         messageId = messageId,
         pollId = pollId,
-        vote = UpstreamVoteDto(option_id = optionId),
+        vote = VoteData(optionId = optionId),
     )
 
     override fun castPollAnswer(
@@ -1762,18 +1762,18 @@ constructor(
     ): Call<Vote> = castVote(
         messageId = messageId,
         pollId = pollId,
-        vote = UpstreamVoteDto(answer_text = answer),
+        vote = VoteData(answerText = answer),
     )
 
     private fun castVote(
         messageId: String,
         pollId: String,
-        vote: UpstreamVoteDto,
+        vote: VoteData,
     ): Call<Vote> =
         pollsApi.castPollVote(
             messageId,
             pollId,
-            PollVoteRequest(vote),
+            CastPollVoteRequest(vote),
         ).mapDomain { it.vote.toDomain() }
 
     override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
