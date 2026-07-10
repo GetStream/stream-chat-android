@@ -24,65 +24,110 @@ import io.getstream.chat.android.e2e.test.uiautomator.allureScreenrecord
 import io.getstream.chat.android.e2e.test.uiautomator.allureScreenshot
 import io.getstream.chat.android.e2e.test.uiautomator.allureWindowHierarchy
 import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.qameta.allure.kotlin.Allure
+import io.qameta.allure.kotlin.model.Stage
+import io.qameta.allure.kotlin.model.TestResult
+import io.qameta.allure.kotlin.util.ResultsUtils
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import java.io.File
+import java.util.UUID
 
-/** Annotation to retry a specific failed test. **/
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
-public annotation class Retry(val count: Int)
-
-/** Rule to retry all failed tests. **/
+/**
+ * Rule to retry failed tests up to [count] attempts.
+ *
+ * Each failed attempt that is retried is written as its own Allure result sharing the real
+ * test's historyId, so Allure TestOps groups the attempts as retries and can flag the test
+ * as flaky. Screen recording only runs on retry attempts: the first attempt of a healthy
+ * test passes, and recording it would be paid for and discarded on every test.
+ */
 public class RetryRule(private val count: Int) : TestRule {
 
-    override fun apply(base: Statement, description: Description): Statement = statement(
-        base,
-        description,
-    )
+    override fun apply(base: Statement, description: Description): Statement = object : Statement() {
+        @Throws(Throwable::class)
+        override fun evaluate() {
+            val testName = description.displayName
+            val databaseOperations = DatabaseOperations()
+            var caughtThrowable: Throwable? = null
 
-    private fun statement(base: Statement, description: Description): Statement {
-        return object : Statement() {
-            @Throws(Throwable::class)
-            override fun evaluate() {
-                val testName = description.displayName
-                val retryAnnotation: Retry? = description.getAnnotation(Retry::class.java)
-                val retryCount = retryAnnotation?.count ?: count
-                val databaseOperations = DatabaseOperations()
-                var caughtThrowable: Throwable? = null
-                lateinit var videoFilePath: String
-                lateinit var recordingThread: Thread
-
-                for (i in 0 until retryCount) {
-                    try {
-                        System.err.println("$testName: run #${i + 1} started.")
-                        device.executeShellCommand("logcat -c")
-                        videoFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/$testName.mp4"
+            for (attempt in 1..count) {
+                val recordVideo = attempt > 1
+                val videoFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/$testName.mp4"
+                var recordingThread: Thread? = null
+                val startMillis = System.currentTimeMillis()
+                try {
+                    System.err.println("$testName: run #$attempt started.")
+                    device.executeShellCommand("logcat -c")
+                    if (recordVideo) {
                         recordingThread = startVideoRecording(videoFilePath)
-                        base.evaluate()
-                        stopVideoRecording(videoFilePath, recordingThread)
-                        return
-                    } catch (t: Throwable) {
-                        System.err.println("$testName: run #${i + 1} failed.")
-                        caughtThrowable = t
-                        databaseOperations.clearDatabases()
-                        stopVideoRecording(videoFilePath, recordingThread)
-                        device.allureLogcat(name = "logcat_${i + 1}")
-                        device.allureScreenshot(name = "screenshot_${i + 1}")
-                        device.allureWindowHierarchy(name = "hierarchy_${i + 1}")
-                        device.allureScreenrecord(
-                            name = "record_${i + 1}",
-                            file = File(videoFilePath),
-                        )
-                    } finally {
+                    }
+                    base.evaluate()
+                    recordingThread?.let { stopVideoRecording(videoFilePath, it) }
+                    return
+                } catch (t: Throwable) {
+                    System.err.println("$testName: run #$attempt failed.")
+                    caughtThrowable = t
+                    databaseOperations.clearDatabases()
+                    recordingThread?.let { stopVideoRecording(videoFilePath, it) }
+                    device.allureLogcat(name = "logcat_$attempt")
+                    device.allureScreenshot(name = "screenshot_$attempt")
+                    device.allureWindowHierarchy(name = "hierarchy_$attempt")
+                    recordingThread?.let {
+                        device.allureScreenrecord(name = "record_$attempt", file = File(videoFilePath))
+                    }
+                    if (attempt < count) {
+                        writeFailedAttemptResult(t, startMillis)
+                    }
+                } finally {
+                    if (recordingThread != null) {
                         device.executeShellCommand("rm $videoFilePath")
                     }
                 }
-
-                throw caughtThrowable ?: IllegalStateException()
             }
+
+            throw caughtThrowable ?: IllegalStateException("$testName failed without a captured error")
         }
+    }
+
+    /**
+     * Writes the failed attempt as a separate, already-finished Allure result. The current
+     * (real) result keeps running; its accumulated steps and attachments are moved to the
+     * attempt result so each result describes exactly one attempt.
+     */
+    private fun writeFailedAttemptResult(error: Throwable, startMillis: Long) {
+        val lifecycle = Allure.lifecycle
+        val attemptResult = TestResult(uuid = UUID.randomUUID().toString())
+        var populated = false
+        lifecycle.updateTestCase { current ->
+            attemptResult.historyId = current.historyId
+            attemptResult.testCaseId = current.testCaseId
+            attemptResult.fullName = current.fullName
+            attemptResult.name = current.name
+            attemptResult.description = current.description
+            attemptResult.labels.addAll(current.labels)
+            attemptResult.links.addAll(current.links)
+            attemptResult.parameters.addAll(current.parameters)
+            attemptResult.steps.addAll(current.steps)
+            attemptResult.attachments.addAll(current.attachments)
+            current.steps.clear()
+            current.attachments.clear()
+            populated = true
+        }
+        if (!populated) {
+            return
+        }
+        with(attemptResult) {
+            status = ResultsUtils.getStatus(error)
+            statusDetails = ResultsUtils.getStatusDetails(error)
+            start = startMillis
+            stop = System.currentTimeMillis()
+        }
+        // scheduleTestCase stores the result by reference and does not touch the thread context,
+        // so the running test stays current. It resets the stage, hence FINISHED is set after.
+        lifecycle.scheduleTestCase(attemptResult)
+        attemptResult.stage = Stage.FINISHED
+        lifecycle.writeTestCase(attemptResult.uuid)
     }
 
     private fun startVideoRecording(remoteVideoPath: String): Thread {
@@ -126,29 +171,24 @@ public class RetryRule(private val count: Int) : TestRule {
     }
 }
 
-public open class DatabaseOperations {
+private class DatabaseOperations {
 
-    public open fun clearDatabases() {
-        val databaseOperations = DatabaseOperations()
-        val dbFiles = databaseOperations.getAllDatabaseFiles().filterNot {
-            shouldIgnoreFile(
-                it.path,
-            )
-        }
-        dbFiles.forEach { clearDatabase(it, databaseOperations) }
+    fun clearDatabases() {
+        getAllDatabaseFiles()
+            .filterNot(::shouldIgnoreFile)
+            .forEach(::clearDatabase)
     }
 
-    private fun shouldIgnoreFile(path: String): Boolean {
+    private fun shouldIgnoreFile(file: File): Boolean {
         val ignoredSuffixes = arrayOf("-journal", "-shm", "-uid", "-wal")
-        return ignoredSuffixes.any { path.endsWith(it) }
+        return ignoredSuffixes.any { file.path.endsWith(it) }
     }
 
-    private fun clearDatabase(dbFile: File, dbOperations: DatabaseOperations) {
-        dbOperations.openDatabase(dbFile).use { database ->
-            val tablesToClear = dbOperations.getTableNames(
-                database,
-            ).filterNot { it == "room_master_table" }
-            tablesToClear.forEach { dbOperations.deleteTableContent(database, it) }
+    private fun clearDatabase(dbFile: File) {
+        openDatabase(dbFile).use { database ->
+            getTableNames(database)
+                .filterNot { it == "room_master_table" }
+                .forEach { deleteTableContent(database, it) }
         }
     }
 
