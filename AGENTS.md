@@ -56,6 +56,13 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 - For concurrency-sensitive logic (uploads, sync, message state), add deterministic tests using `runTest` + virtual time.
 - Update baseline profiles (`baseline-prof.txt`) when start-up or scroll performance changes significantly.
 
+### End-to-end (E2E) tests
+E2E tests run a sample app against the mock server (`stream-chat-test-mock-server`) with UiAutomator, driven by fastlane and reported to Allure. Code is split by whether it knows the app under test, and the dependency flows one way: the sample depends on the module, never the reverse.
+- `stream-chat-android-e2e-test/` holds app-agnostic infrastructure, reusable by any sample: the mock server client, the outside-world robots (`ParticipantRobot` for the second user, `BackendRobot` for server controls like tokens and cooldown), the JUnit `RetryRule`, and the low-level UiAutomator toolkit (device access, waits, selectors). Package root: `io.getstream.chat.android.e2e.test.*`.
+- `{app}-sample/src/androidTest<Flavor>/` holds everything tied to that app's UI: the Page Objects (resource-id selectors), the `UserRobot` that drives the app under test plus its assertion extensions, the test classes, and the app-specific `StreamTestCase` base.
+- Rule of thumb: new code that references app screens or resource ids goes in the sample; mock-server, lifecycle, or device helpers that any app could reuse go in the module.
+- Today only `stream-chat-android-compose-sample` has E2E tests.
+
 ## Documentation & comments
 - Update module README, `docs/`, or API docs when altering setup, themes, or sample flows.
 - Log deprecations or behavioural shifts in release notes via appropriate PR labels.

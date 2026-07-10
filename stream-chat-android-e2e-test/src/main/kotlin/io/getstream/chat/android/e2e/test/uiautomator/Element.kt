@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.uiautomator
+package io.getstream.chat.android.e2e.test.uiautomator
 
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiObject2
