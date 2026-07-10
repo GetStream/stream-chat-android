@@ -62,7 +62,6 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollReq
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
@@ -82,7 +81,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
-import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
@@ -159,6 +157,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
@@ -169,6 +168,7 @@ import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.VoteData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -2440,7 +2440,7 @@ internal class MoshiChatApiTest {
         val optionId = randomString()
         val result = sut.castPollVote(messageId, pollId, optionId).await()
         // then
-        val expectedVote = PollVoteRequest(UpstreamVoteDto(option_id = optionId))
+        val expectedVote = CastPollVoteRequest(VoteData(optionId = optionId))
         result `should be instance of` expected
         verify(api, times(1)).castPollVote(messageId, pollId, expectedVote)
     }
@@ -2460,7 +2460,7 @@ internal class MoshiChatApiTest {
         val answer = randomString()
         val result = sut.castPollAnswer(messageId, pollId, answer).await()
         // then
-        val expectedAnswer = PollVoteRequest(UpstreamVoteDto(answer_text = answer))
+        val expectedAnswer = CastPollVoteRequest(VoteData(answerText = answer))
         result `should be instance of` expected
         verify(api, times(1)).castPollVote(messageId, pollId, expectedAnswer)
     }
