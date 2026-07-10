@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.uiautomator
+package io.getstream.chat.android.e2e.test.uiautomator
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,10 +28,6 @@ import io.qameta.allure.kotlin.Allure
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
-
-public fun UiDevice.stopApp() {
-    executeShellCommand("pm clear $packageName")
-}
 
 public fun UiDevice.typeText(text: String) {
     executeShellCommand("input text '$text'")

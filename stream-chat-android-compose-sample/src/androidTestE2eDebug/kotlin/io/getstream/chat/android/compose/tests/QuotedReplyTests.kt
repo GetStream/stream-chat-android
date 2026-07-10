@@ -26,8 +26,8 @@ import io.getstream.chat.android.compose.robots.assertScrollToBottomButton
 import io.getstream.chat.android.compose.robots.assertThreadReplyLabel
 import io.getstream.chat.android.compose.robots.assertThreadReplyLabelAvatars
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
-import io.getstream.chat.android.compose.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore

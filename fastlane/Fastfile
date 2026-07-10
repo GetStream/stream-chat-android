@@ -151,7 +151,12 @@ private_lane :batch_tests do |options|
     install(tool: :test_parser)
     sh("java -jar test-parser.jar #{options[:test_apk_path]} ./")
     test_names = File.read('AllTests.txt').split
-    current_batch = test_names.each_slice((test_names.size.to_f / options[:batch_count].to_i).ceil).to_a[options[:batch].to_i]
+    batch = options[:batch].to_i
+    batch_count = options[:batch_count].to_i
+    # Round-robin split always yields exactly batch_count groups. Slicing by a rounded-up
+    # size can yield fewer groups than batch_count, making the last batch nil and crashing.
+    current_batch = test_names.select.with_index { |_, i| i % batch_count == batch }
+    UI.user_error!("Batch #{batch} is empty: #{test_names.size} tests cannot fill #{batch_count} batches") if current_batch.empty?
     "-e class #{current_batch.join(',')}"
   else
     ''
