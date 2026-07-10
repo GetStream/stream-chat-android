@@ -101,7 +101,7 @@ class ReactionsTests : StreamTestCase() {
             userRobot.addReaction(type = ReactionType.LOL)
         }
         step("AND user removes the reaction") {
-            userRobot.deleteReaction(type = ReactionType.LOL).sleep(5000)
+            userRobot.deleteReaction(type = ReactionType.LOL)
         }
         step("THEN the reaction is removed") {
             userRobot.assertReaction(type = ReactionType.LOL, isDisplayed = false)
