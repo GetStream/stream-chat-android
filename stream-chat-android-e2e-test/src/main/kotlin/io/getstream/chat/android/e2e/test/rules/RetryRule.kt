@@ -77,7 +77,7 @@ public class RetryRule(private val count: Int) : TestRule {
                         device.allureScreenrecord(name = "record_$attempt", file = File(videoFilePath))
                     }
                     if (attempt < count) {
-                        writeFailedAttemptResult(t, startMillis)
+                        writeFailedAttemptResult(attempt, t, startMillis)
                     }
                 } finally {
                     if (recordingThread != null) {
@@ -95,10 +95,11 @@ public class RetryRule(private val count: Int) : TestRule {
      * (real) result keeps running; its accumulated steps and attachments are moved to the
      * attempt result so each result describes exactly one attempt.
      */
-    private fun writeFailedAttemptResult(error: Throwable, startMillis: Long) {
+    private fun writeFailedAttemptResult(attempt: Int, error: Throwable, startMillis: Long) {
         val lifecycle = Allure.lifecycle
         val attemptResult = TestResult(uuid = UUID.randomUUID().toString())
         var populated = false
+        var realStart: Long? = null
         lifecycle.updateTestCase { current ->
             attemptResult.historyId = current.historyId
             attemptResult.testCaseId = current.testCaseId
@@ -112,6 +113,7 @@ public class RetryRule(private val count: Int) : TestRule {
             attemptResult.attachments.addAll(current.attachments)
             current.steps.clear()
             current.attachments.clear()
+            realStart = current.start
             populated = true
         }
         if (!populated) {
@@ -120,7 +122,11 @@ public class RetryRule(private val count: Int) : TestRule {
         with(attemptResult) {
             status = ResultsUtils.getStatus(error)
             statusDetails = ResultsUtils.getStatusDetails(error)
-            start = startMillis
+            // TestOps shows the same-historyId result with the latest start as the launch's
+            // current one and lists the rest as retries. The real result starts a few ms before
+            // any attempt, so each attempt's start is shifted just below it, keeping attempt
+            // order and leaving the real (final) result current.
+            start = realStart?.let { it - (count - attempt) } ?: startMillis
             stop = System.currentTimeMillis()
         }
         // scheduleTestCase stores the result by reference and does not touch the thread context,
