@@ -59,8 +59,6 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadR
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
@@ -161,6 +159,8 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
@@ -2751,7 +2751,7 @@ internal class MoshiChatApiTest {
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toSortParams(),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryPolls(expectedBody)
@@ -2778,7 +2778,7 @@ internal class MoshiChatApiTest {
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toSortParams(),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryPollVotes(pollId, expectedBody)
