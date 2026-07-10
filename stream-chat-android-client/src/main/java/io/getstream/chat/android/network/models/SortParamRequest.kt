@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Request for querying reactions on a message.
  *
- * @property filter The filter criteria.
- * @property limit The maximum number of reactions to return.
- * @property next The pagination token for fetching the next set of results.
- * @property sort The sorting criteria to apply.
  */
-@JsonClass(generateAdapter = true)
-internal data class QueryReactionsRequest(
-    val filter: Map<*, *>? = null,
-    val limit: Int? = null,
-    val next: String? = null,
-    val sort: List<Map<String, Any>>? = null,
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class SortParamRequest(
+    @Json(name = "direction")
+    val direction: kotlin.Int? = null,
+
+    @Json(name = "field")
+    val field: kotlin.String? = null,
+
+    @Json(name = "type")
+    val type: kotlin.String? = null,
 )
