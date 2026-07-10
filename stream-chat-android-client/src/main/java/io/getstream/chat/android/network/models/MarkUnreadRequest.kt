@@ -14,12 +14,29 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class MarkReadRequest(
-    val message_id: String = "",
-    val thread_id: String? = null,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class MarkUnreadRequest(
+    @Json(name = "message_id")
+    internal val messageId: String? = null,
+
+    @Json(name = "message_timestamp")
+    internal val messageTimestamp: java.util.Date? = null,
+
+    @Json(name = "thread_id")
+    internal val threadId: String? = null,
 )
