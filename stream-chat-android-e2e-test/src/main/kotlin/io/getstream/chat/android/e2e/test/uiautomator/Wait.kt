@@ -67,6 +67,27 @@ public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = default
     )
 }
 
+/**
+ * Waits up to [timeOutMillis] for an object matching this selector to be displayed and reports
+ * the outcome. The visibility check happens inside the poll: reads on a returned node race
+ * recomposition, because the node can be recycled between the wait and the read.
+ *
+ * @param timeOutMillis Maximum time to keep polling before reporting `false`.
+ */
+public fun BySelector.waitDisplayed(timeOutMillis: Long = defaultTimeout): Boolean {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (System.currentTimeMillis() < endTime) {
+        try {
+            if (device.findObject(this)?.isDisplayed() == true) {
+                return true
+            }
+        } catch (_: StaleObjectException) {
+        }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    return false
+}
+
 private fun BySelector.currentObjectOrNull(): UiObject2? = try {
     device.findObject(this)
 } catch (_: StaleObjectException) {
