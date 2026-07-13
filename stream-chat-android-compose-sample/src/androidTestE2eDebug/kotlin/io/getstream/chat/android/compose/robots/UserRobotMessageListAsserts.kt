@@ -28,6 +28,7 @@ import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import io.getstream.chat.android.e2e.test.uiautomator.defaultTimeout
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObject
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
@@ -36,7 +37,6 @@ import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.isEnabled
 import io.getstream.chat.android.e2e.test.uiautomator.retryOnStaleObjectException
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
-import io.getstream.chat.android.e2e.test.uiautomator.wait
 import io.getstream.chat.android.e2e.test.uiautomator.waitForCount
 import io.getstream.chat.android.e2e.test.uiautomator.waitForText
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
@@ -51,11 +51,11 @@ import org.junit.Assert.assertTrue
  * Asserts the selector's visibility with a bounded wait: waits for it to appear when
  * [isDisplayed] is `true`, or to disappear when `false`, then asserts the final state.
  */
-private fun assertVisibility(selector: BySelector, isDisplayed: Boolean) {
+private fun assertVisibility(selector: BySelector, isDisplayed: Boolean, timeOutMillis: Long = defaultTimeout) {
     if (isDisplayed) {
-        assertTrue(selector.waitToAppear().isDisplayed())
+        assertTrue(selector.waitToAppear(timeOutMillis).isDisplayed())
     } else {
-        assertFalse(selector.waitToDisappear().isDisplayed())
+        assertFalse(selector.waitToDisappear(timeOutMillis).isDisplayed())
     }
 }
 
@@ -91,25 +91,25 @@ fun UserRobot.assertMessageTimestamps(count: Int): UserRobot {
 fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: Int? = null): UserRobot {
     when (status) {
         MessageDeliveryStatus.READ -> {
-            assertTrue(Message.deliveryStatusIsRead.wait(30.seconds).isDisplayed())
+            assertVisibility(Message.deliveryStatusIsRead, isDisplayed = true, timeOutMillis = 30.seconds)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsRead.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.PENDING -> {
-            assertTrue(Message.deliveryStatusIsPending.wait().isDisplayed())
+            assertVisibility(Message.deliveryStatusIsPending, isDisplayed = true)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsPending.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.SENT -> {
-            assertTrue(Message.deliveryStatusIsSent.wait().isDisplayed())
+            assertVisibility(Message.deliveryStatusIsSent, isDisplayed = true)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsSent.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.FAILED -> {
-            assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
+            assertVisibility(Message.deliveryStatusIsFailed, isDisplayed = true)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsFailed.waitForCount(count).size)
             }
@@ -124,11 +124,7 @@ fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: 
 }
 
 fun UserRobot.assertMessageFailedIcon(isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
-    } else {
-        assertFalse(Message.deliveryStatusIsFailed.waitToDisappear().isDisplayed())
-    }
+    assertVisibility(Message.deliveryStatusIsFailed, isDisplayed)
     return this
 }
 
