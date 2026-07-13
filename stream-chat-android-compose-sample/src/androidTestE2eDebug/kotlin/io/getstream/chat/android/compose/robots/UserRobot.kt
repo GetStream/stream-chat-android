@@ -31,7 +31,6 @@ import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.defaultTimeout
 import io.getstream.chat.android.e2e.test.uiautomator.device
-import io.getstream.chat.android.e2e.test.uiautomator.findObject
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
@@ -302,7 +301,7 @@ class UserRobot {
             // so the command prefix is set together with the message text.
             Composer.giphyButton.waitToAppear().click()
             typeText("/giphy $giphyMessageText")
-            Composer.sendButton.findObject().click()
+            tapOnSendButton()
         } else {
             sendMessage("/giphy $giphyMessageText")
         }
