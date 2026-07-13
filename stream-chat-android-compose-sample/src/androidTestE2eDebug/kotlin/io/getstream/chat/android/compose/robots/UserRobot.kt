@@ -119,6 +119,27 @@ class UserRobot {
         return this
     }
 
+    /**
+     * Taps whichever confirm button the composer is showing. Selecting a command suggestion
+     * activates command mode, where the trailing button is the save button instead of the
+     * send button; with the sample's configuration both build the same message.
+     */
+    private fun tapOnComposerConfirmButton(): UserRobot {
+        val endTime = System.currentTimeMillis() + defaultTimeout
+        while (System.currentTimeMillis() < endTime) {
+            Composer.sendButton.findObjects().firstOrNull()?.let {
+                it.click()
+                return this
+            }
+            Composer.saveButton.findObjects().firstOrNull()?.let {
+                it.click()
+                return this
+            }
+            Thread.sleep(50)
+        }
+        error("Neither the send nor the save composer button appeared within ${defaultTimeout}ms")
+    }
+
     fun tapOnLinkPreviewCancelButton(): UserRobot {
         Composer.linkPreviewCancelButton.waitToAppear().click()
         return this
@@ -301,7 +322,7 @@ class UserRobot {
             // so the command prefix is set together with the message text.
             Composer.giphyButton.waitToAppear().click()
             typeText("/giphy $giphyMessageText")
-            tapOnSendButton()
+            tapOnComposerConfirmButton()
         } else {
             sendMessage("/giphy $giphyMessageText")
         }
