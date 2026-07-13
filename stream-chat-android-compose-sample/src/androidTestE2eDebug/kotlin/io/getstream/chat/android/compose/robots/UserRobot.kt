@@ -283,7 +283,9 @@ class UserRobot {
     }
 
     fun openComposerCommands(): UserRobot {
-        Composer.commandsButton.waitToAppear().click()
+        // The composer redesign removed the dedicated commands button; typing '/' in the
+        // input field opens the command suggestion list.
+        typeText("/")
         return this
     }
 
@@ -296,9 +298,10 @@ class UserRobot {
         val giphyMessageText = "G" // any message text will result in sending a giphy
         if (useComposerCommand) {
             openComposerCommands()
+            // Selecting the suggestion prefills '/giphy '; typeText replaces the whole input,
+            // so the command prefix is set together with the message text.
             Composer.giphyButton.waitToAppear().click()
-            Composer.inputField.findObject().click()
-            device.typeText(giphyMessageText)
+            typeText("/giphy $giphyMessageText")
             Composer.sendButton.findObject().click()
         } else {
             sendMessage("/giphy $giphyMessageText")
