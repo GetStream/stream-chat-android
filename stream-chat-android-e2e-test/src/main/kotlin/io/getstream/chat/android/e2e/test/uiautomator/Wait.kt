@@ -28,13 +28,21 @@ public fun sleep(timeOutMillis: Long = defaultTimeout) {
 /**
  * Waits up to [timeOutMillis] for an object matching this selector and returns it.
  *
+ * Repeatedly reads [findObject] on an interval rather than waiting once and reading once: under
+ * active recomposition the node the wait just saw can be recycled before a single read reaches
+ * it, which surfaced as spurious "timed out" failures within a few hundred ms. Stale reads are
+ * absorbed and retried.
+ *
  * @param timeOutMillis Maximum time to wait before failing.
  * @throws IllegalStateException when the timeout elapses without a matching object.
  */
 public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObject2 {
-    wait(timeOutMillis)
-    return device.findObject(this)
-        ?: error("waitToAppear timed out after ${timeOutMillis}ms; no object matched selector: $this")
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (System.currentTimeMillis() < endTime) {
+        currentObjectOrNull()?.let { return it }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    error("waitToAppear timed out after ${timeOutMillis}ms; no object matched selector: $this")
 }
 
 /**
@@ -45,13 +53,30 @@ public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObje
  * @throws IllegalStateException when the timeout elapses without enough matching objects.
  */
 public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = defaultTimeout): UiObject2 {
-    wait(timeOutMillis)
-    val objects = device.findObjects(this)
-    return objects.getOrNull(withIndex)
-        ?: error(
-            "waitToAppear(withIndex=$withIndex) timed out after ${timeOutMillis}ms; " +
-                "only ${objects.size} objects matched selector: $this",
-        )
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    var lastCount = 0
+    while (System.currentTimeMillis() < endTime) {
+        val objects = currentObjectsOrEmpty()
+        lastCount = objects.size
+        objects.getOrNull(withIndex)?.let { return it }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    error(
+        "waitToAppear(withIndex=$withIndex) timed out after ${timeOutMillis}ms; " +
+            "only $lastCount objects matched selector: $this",
+    )
+}
+
+private fun BySelector.currentObjectOrNull(): UiObject2? = try {
+    device.findObject(this)
+} catch (_: StaleObjectException) {
+    null
+}
+
+private fun BySelector.currentObjectsOrEmpty(): List<UiObject2> = try {
+    device.findObjects(this)
+} catch (_: StaleObjectException) {
+    emptyList()
 }
 
 public fun BySelector.wait(timeOutMillis: Long = defaultTimeout): BySelector {
