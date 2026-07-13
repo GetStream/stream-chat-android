@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceD
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamRoleDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -124,6 +123,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import io.getstream.chat.android.network.models.Role as RoleDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -1425,18 +1425,18 @@ internal object Mother {
         updated_at = updatedAt,
     )
 
-    fun randomDownstreamRoleDto(
+    fun randomRoleDto(
         name: String = randomString(),
         custom: Boolean = randomBoolean(),
         scopes: List<String> = emptyList(),
-        createdAt: Date? = randomDate(),
-        updatedAt: Date? = randomDate(),
-    ): DownstreamRoleDto = DownstreamRoleDto(
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): RoleDto = RoleDto(
         name = name,
         custom = custom,
         scopes = scopes,
-        created_at = createdAt,
-        updated_at = updatedAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }
 

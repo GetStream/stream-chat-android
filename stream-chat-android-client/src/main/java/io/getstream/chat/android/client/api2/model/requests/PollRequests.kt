@@ -96,16 +96,6 @@ internal data class UpstreamOptionDto(
 ) : ExtraDataDto
 
 /**
- * Used for voting on a poll.
- *
- * @property vote the vote object.
- */
-@JsonClass(generateAdapter = true)
-internal data class PollVoteRequest(
-    val vote: UpstreamVoteDto,
-)
-
-/**
  * Used for updating a poll.
  *
  * @property set the fields to set.
@@ -115,15 +105,4 @@ internal data class PollVoteRequest(
 internal data class PartialUpdatePollRequest(
     val set: Map<String, Any> = emptyMap(),
     val unset: List<String> = emptyList(),
-)
-
-/**
- * Used for voting on a poll.
- *
- * @property option_id the text of the answer.
- */
-@JsonClass(generateAdapter = true)
-internal data class UpstreamVoteDto(
-    val option_id: String? = null,
-    val answer_text: String? = null,
 )

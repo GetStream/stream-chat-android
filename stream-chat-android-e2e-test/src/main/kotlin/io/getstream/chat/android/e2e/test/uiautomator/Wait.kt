@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.uiautomator
+package io.getstream.chat.android.e2e.test.uiautomator
 
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.StaleObjectException
@@ -105,20 +105,10 @@ private fun BySelector.currentTextOrNull(): String? = try {
 
 public fun BySelector.waitForCount(count: Int, timeOutMillis: Long = defaultTimeout): List<UiObject2> {
     val endTime = System.currentTimeMillis() + timeOutMillis
-    var elements: List<UiObject2> = emptyList()
-    var success = false
-    while (!success && System.currentTimeMillis() < endTime) {
+    var elements: List<UiObject2> = findObjects()
+    while (elements.size != count && System.currentTimeMillis() < endTime) {
+        Thread.sleep(POLL_INTERVAL_MILLIS)
         elements = findObjects()
-        success = elements.size == count
     }
     return elements
-}
-
-public fun UiObject2.waitForTextToChange(text: String, timeOutMillis: Long = defaultTimeout): UiObject2 {
-    val endTime = System.currentTimeMillis() + timeOutMillis
-    var textChanged = false
-    while (!textChanged && System.currentTimeMillis() < endTime) {
-        textChanged = this.text != text
-    }
-    return this
 }

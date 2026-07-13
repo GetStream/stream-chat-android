@@ -58,7 +58,6 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.SearchRolesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
@@ -79,6 +78,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -950,7 +950,7 @@ internal object MoshiChatApiTestArguments {
     fun searchRolesInput() = listOf(
         Arguments.of(
             RetroSuccess(
-                SearchRolesResponse(roles = listOf(Mother.randomDownstreamRoleDto())),
+                SearchRolesResponse(duration = randomString(), roles = listOf(Mother.randomRoleDto())),
             ).toRetrofitCall(),
             Result.Success::class,
         ),

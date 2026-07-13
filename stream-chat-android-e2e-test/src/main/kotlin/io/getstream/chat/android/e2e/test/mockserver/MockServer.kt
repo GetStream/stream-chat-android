@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.e2e.test.mockserver
 
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -25,7 +25,6 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
-import org.junit.Assert.fail
 
 public const val forbiddenWord: String = "wth"
 
@@ -71,8 +70,7 @@ public class MockServer(testName: String) {
             return okHttp.newCall(request).execute()
         } catch (e: Exception) {
             device.enableInternetConnection()
-            fail(e.message)
+            throw AssertionError(e.message, e)
         }
-        return Response.Builder().build()
     }
 }

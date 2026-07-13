@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.e2e.test.robots
 
-import io.getstream.chat.android.compose.uiautomator.defaultTimeout
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -51,12 +50,7 @@ public class ParticipantRobot(
         return this
     }
 
-    public fun sleep(timeOutMillis: Long = defaultTimeout): ParticipantRobot {
-        io.getstream.chat.android.compose.uiautomator.sleep(timeOutMillis)
-        return this
-    }
-
-    public fun readMessage(parentId: String? = null): ParticipantRobot {
+    public fun readMessage(): ParticipantRobot {
         mockServer.postRequest("participant/read")
         return this
     }
@@ -136,12 +130,12 @@ public class ParticipantRobot(
         return this
     }
 
-    public fun pinMesage(): ParticipantRobot {
+    public fun pinMessage(): ParticipantRobot {
         mockServer.postRequest("participant/message?action=pin")
         return this
     }
 
-    public fun unpinMesage(): ParticipantRobot {
+    public fun unpinMessage(): ParticipantRobot {
         mockServer.postRequest("participant/message?action=unpin")
         return this
     }

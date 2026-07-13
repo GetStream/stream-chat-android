@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.uiautomator
+package io.getstream.chat.android.e2e.test.uiautomator
 
 import android.app.Instrumentation
 import android.content.Context
-import android.content.res.AssetManager
 import android.content.res.Resources
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -44,11 +43,6 @@ public val appContext: Context get() = InstrumentationRegistry.getInstrumentatio
 public val testContext: Context get() = InstrumentationRegistry.getInstrumentation().context
 
 /**
- * AssetManager for androidTest environment.
- */
-public val testAssets: AssetManager = testContext.assets
-
-/**
  * Test runner instrumentation.
  */
 public val instrumentation: Instrumentation get() = InstrumentationRegistry.getInstrumentation()
@@ -62,13 +56,3 @@ public val resources: Resources get() = appContext.resources
  * Application package name.
  */
 public val packageName: String get() = appContext.packageName.removeSuffix(".test")
-
-/**
- * Get name of the resource by id.
- */
-public infix fun Resources.nameOf(viewId: Int): String = getResourceName(viewId)
-
-/**
- * Get string value of the resource by id.
- */
-public infix fun Context.stringOf(stringResId: Int): String = getString(stringResId)
