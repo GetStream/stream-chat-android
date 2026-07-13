@@ -39,7 +39,6 @@ io.getstream.chat.android.client.logger
 io.getstream.chat.android.client.notifications
 io.getstream.chat.android.client.notifications.handler
 io.getstream.chat.android.client.notifications.parser
-io.getstream.chat.android.client.parser2.adapters
 io.getstream.chat.android.client.parser2.adapters.internal
 io.getstream.chat.android.client.persistance.repository
 io.getstream.chat.android.client.persistance.repository.factory
