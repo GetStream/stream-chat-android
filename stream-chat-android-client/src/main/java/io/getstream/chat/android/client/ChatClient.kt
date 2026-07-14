@@ -1514,15 +1514,15 @@ internal constructor(
     public fun clearCacheAndTemporaryFiles(context: Context): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[clearCacheAndTemporaryFiles] Clearing all cache and temporary files" }
-            // Clear video cache: in-place via any live cache in the process (keeps the SimpleCache
-            // alive so playback continues to work), or by deleting the directory when no live cache
-            // owns it. The registry is process-wide, so this covers caches from a prior ChatClient
-            // build even if the current client was built without a cacheConfig.
-            val videoCacheResult = if (VideoMediaCache.clearAll()) {
-                Result.Success(Unit)
-            } else {
-                fileManager.clearVideoCache(context)
-            }
+            // Clear the video cache for its directory atomically: if a live cache owns the
+            // directory, clear it in place (keeps the SimpleCache alive so playback continues to
+            // work); otherwise delete the directory from disk. Deciding and deleting under the
+            // registry lock prevents a concurrent client build from registering a new cache for the
+            // directory mid-delete, which would corrupt Media3's on-disk index and lock.
+            val videoCacheResult = VideoMediaCache.clearOrDelete(
+                cacheDir = fileManager.getVideoCache(context),
+                deleteOnDisk = { fileManager.clearVideoCache(context) },
+            )
             // Clear all cache directories
             val cacheResult = fileManager.clearAllCache(context)
             // Clear external (temporary) storage files - always run regardless of cache result
