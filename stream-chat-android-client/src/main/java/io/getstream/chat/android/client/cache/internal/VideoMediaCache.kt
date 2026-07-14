@@ -26,6 +26,7 @@ import androidx.media3.datasource.cache.SimpleCache
 import io.getstream.chat.android.client.cache.VideoCacheConfig
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import java.io.File
 
 /**
@@ -111,18 +112,27 @@ public class VideoMediaCache private constructor(
         private val logger by taggedLogger(TAG)
 
         /**
-         * Clears every live [VideoMediaCache] in this process in place (see [clear]), keeping each
-         * [SimpleCache] and its directory lock alive. Returns `true` if at least one live cache was
-         * cleared, `false` if the registry was empty (no cache directory is owned in this process).
+         * Clears the video cache backing [cacheDir] atomically under the registry lock.
          *
-         * Callers use the return value to decide whether it is safe to delete the cache directory
-         * from disk: deleting a directory owned by a live [SimpleCache] corrupts Media3's on-disk
-         * index and lock.
+         * If a live [VideoMediaCache] owns [cacheDir], clears it in place (see [clear]) so the
+         * [SimpleCache] and its directory lock stay alive and playback keeps working. Otherwise runs
+         * [deleteOnDisk] to remove the directory from disk. The "is a cache live?" check and the
+         * delete happen under the same lock, so a concurrent [create] cannot register a new cache
+         * for [cacheDir] between them — which would otherwise let the delete corrupt Media3's
+         * on-disk index and lock.
+         *
+         * @param cacheDir Directory whose video cache should be cleared, used to look up any live
+         * cache that owns it. Must resolve to the same directory that [deleteOnDisk] removes.
+         * @param deleteOnDisk Deletes the cache directory from disk. Invoked only when no live cache
+         * owns [cacheDir].
          */
-        internal fun clearAll(): Boolean = synchronized(instances) {
-            instances.values.forEach { it.clear() }
-            instances.isNotEmpty()
-        }
+        internal fun clearOrDelete(cacheDir: File, deleteOnDisk: () -> Result<Unit>): Result<Unit> =
+            synchronized(instances) {
+                instances[cacheDir.absolutePath]?.let { live ->
+                    live.clear()
+                    Result.Success(Unit)
+                } ?: deleteOnDisk()
+            }
 
         /**
          * Returns a [VideoMediaCache] backed by the [SimpleCache] at [cacheDir], or `null` if
