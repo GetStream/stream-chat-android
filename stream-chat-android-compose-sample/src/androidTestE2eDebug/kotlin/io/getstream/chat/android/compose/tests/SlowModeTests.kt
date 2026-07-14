@@ -17,9 +17,13 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertComposerIsDisabledInSlowMode
+import io.getstream.chat.android.compose.robots.assertCooldownIsNotShown
 import io.getstream.chat.android.compose.robots.assertCooldownIsShown
+import io.getstream.chat.android.compose.robots.assertQuotedMessage
+import io.getstream.chat.android.compose.robots.assertThreadIsOpen
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 class SlowModeTests : StreamTestCase() {
@@ -28,6 +32,8 @@ class SlowModeTests : StreamTestCase() {
 
     private val cooldownDuration = 15
     private val message = "message"
+    private val replyMessage = "reply message"
+    private val editedMessage = "edited message"
 
     @Test
     fun test_cooldownIsShownWhenNewMessageIsSent() {
@@ -60,6 +66,93 @@ class SlowModeTests : StreamTestCase() {
             userRobot
                 .assertCooldownIsShown()
                 .assertComposerIsDisabledInSlowMode()
+        }
+    }
+
+    @AllureId("5788")
+    @Test
+    fun test_slowModeIsActiveAndCooldownIsShown_whenAMessageIsReplied() {
+        step("GIVEN slow mode is enabled on the channel") {
+            backendRobot.setCooldown(enabled = true, duration = cooldownDuration)
+        }
+        step("AND user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends a new message") {
+            participantRobot.sendMessage(message)
+        }
+        step("WHEN user replies to the message") {
+            userRobot.quoteMessage(replyMessage)
+        }
+        step("THEN slow mode is active and the cooldown is shown") {
+            userRobot.assertCooldownIsShown()
+        }
+        step("AND the reply is sent") {
+            userRobot.assertQuotedMessage(text = replyMessage, quote = message)
+        }
+    }
+
+    @AllureId("5790")
+    @Test
+    fun test_aMessageCantBeReplied_whenSlowModeIsActiveAndCooldownIsShown() {
+        step("GIVEN slow mode is enabled on the channel") {
+            backendRobot.setCooldown(enabled = true, duration = cooldownDuration)
+        }
+        step("AND user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(message)
+        }
+        step("WHEN user selects reply to the message from the context menu") {
+            userRobot.selectReplyFromContextMenu()
+        }
+        step("THEN the cooldown is shown and the composer is locked") {
+            userRobot
+                .assertCooldownIsShown()
+                .assertComposerIsDisabledInSlowMode()
+        }
+    }
+
+    @AllureId("5791")
+    @Test
+    fun test_slowModeContinuesActiveAndCooldownIsShownInThreadMessage_whenSlowModeIsActiveAndCooldownIsShownInChannel() {
+        step("GIVEN slow mode is enabled on the channel") {
+            backendRobot.setCooldown(enabled = true, duration = cooldownDuration)
+        }
+        step("AND user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(message)
+        }
+        step("WHEN user opens the thread on the message") {
+            userRobot.openThread()
+        }
+        step("THEN the cooldown is shown and the composer is locked in the thread") {
+            userRobot
+                .assertThreadIsOpen()
+                .assertCooldownIsShown()
+                .assertComposerIsDisabledInSlowMode()
+        }
+    }
+
+    @AllureId("5794")
+    @Test
+    fun test_slowModeIsNotActiveAndCooldownIsNotShown_whenAMessageIsEdited() {
+        step("GIVEN slow mode is enabled on a channel with a message") {
+            backendRobot
+                .generateChannels(channelsCount = 1, messagesCount = 1)
+                .setCooldown(enabled = true, duration = cooldownDuration)
+        }
+        step("AND user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN user edits the message") {
+            userRobot.editMessage(editedMessage)
+        }
+        step("THEN slow mode is not active and the cooldown is not shown") {
+            userRobot.assertCooldownIsNotShown()
         }
     }
 }

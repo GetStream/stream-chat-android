@@ -201,9 +201,14 @@ class UserRobot {
     }
 
     fun quoteMessage(text: String, messageCellIndex: Int = 0): UserRobot {
+        selectReplyFromContextMenu(messageCellIndex)
+        sendMessage(text)
+        return this
+    }
+
+    fun selectReplyFromContextMenu(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.reply.waitToAppear().click()
-        sendMessage(text)
         return this
     }
 
