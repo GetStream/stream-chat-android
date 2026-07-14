@@ -154,7 +154,6 @@ class GiphyTests : StreamTestCase() {
     }
 
     @AllureId("5823")
-    @Ignore("https://linear.app/stream/issue/AND-1018")
     @Test
     fun test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() {
         step("GIVEN user opens a channel") {

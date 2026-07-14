@@ -24,8 +24,8 @@ import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
 import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import io.getstream.chat.android.e2e.test.uiautomator.goToBackground
 import io.getstream.chat.android.e2e.test.uiautomator.goToForeground
-import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
+import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
@@ -238,12 +238,12 @@ class AuthTests : StreamTestCase() {
     }
 
     private fun UserRobot.assertConnectionStatus(): UserRobot {
-        assertTrue(JwtPage.statusConnected.waitToAppear(15.seconds).isDisplayed())
+        assertTrue(JwtPage.statusConnected.waitDisplayed(15.seconds))
         return this
     }
 
     private fun UserRobot.assertTokenHasExpired(): UserRobot {
-        assertTrue(JwtPage.statusOffline.waitToAppear(15.seconds).isDisplayed())
+        assertTrue(JwtPage.statusOffline.waitDisplayed(15.seconds))
         return this
     }
 
