@@ -28,10 +28,8 @@ public fun sleep(timeOutMillis: Long = defaultTimeout) {
 /**
  * Waits up to [timeOutMillis] for an object matching this selector and returns it.
  *
- * Repeatedly reads [findObject] on an interval rather than waiting once and reading once: under
- * active recomposition the node the wait just saw can be recycled before a single read reaches
- * it, which surfaced as spurious "timed out" failures within a few hundred ms. Stale reads are
- * absorbed and retried.
+ * Stale reads during the lookup are absorbed and retried until the timeout;
+ * [StaleObjectException] never escapes.
  *
  * @param timeOutMillis Maximum time to wait before failing.
  * @throws IllegalStateException when the timeout elapses without a matching object.
@@ -69,8 +67,8 @@ public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = default
 
 /**
  * Waits up to [timeOutMillis] for an object matching this selector to be displayed and reports
- * the outcome. The visibility check happens inside the poll: reads on a returned node race
- * recomposition, because the node can be recycled between the wait and the read.
+ * the outcome. Stale reads during the lookup are absorbed and retried until the timeout;
+ * [StaleObjectException] never escapes.
  *
  * @param timeOutMillis Maximum time to keep polling before reporting `false`.
  */
@@ -112,9 +110,9 @@ public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout): ByS
 
 /**
  * Waits for an object matching this selector whose text matches [expectedText]. Returns the
- * matched text, or the last observed text on timeout. Never throws — recompositions and
- * mid-poll node recycling are absorbed internally, so callers should wrap the result in an
- * assertion to surface mismatch/timeout.
+ * matched text, or the last observed text on timeout. Never throws: stale reads are absorbed
+ * and retried, so callers should wrap the result in an assertion to surface a mismatch or
+ * timeout.
  *
  * @param expectedText The text to match.
  * @param mustBeEqual When `true`, requires exact match; otherwise a substring match.
