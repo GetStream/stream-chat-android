@@ -17,6 +17,7 @@
 package io.getstream.chat.android.e2e.test.uiautomator
 
 import androidx.test.uiautomator.BySelector
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiObject2
 
 /**
@@ -25,11 +26,24 @@ import androidx.test.uiautomator.UiObject2
  * (oldest-first), so lookups that mean "index 0 = the newest message at the visual bottom"
  * sort by on-screen position instead of relying on the enumeration order.
  *
- * @param timeOutMillis Maximum time to wait before returning whatever matched.
+ * Stale reads during the lookup are absorbed and retried until the timeout;
+ * [StaleObjectException] never escapes.
+ *
+ * @param timeOutMillis Maximum time to wait before returning an empty list.
  */
 public fun BySelector.waitToAppearBottomUp(timeOutMillis: Long = defaultTimeout): List<UiObject2> {
-    wait(timeOutMillis)
-    return device.findObjects(this).sortedByDescending { it.visibleBounds.top }
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (System.currentTimeMillis() < endTime) {
+        try {
+            val objects = device.findObjects(this)
+            if (objects.isNotEmpty()) {
+                return objects.sortedByDescending { it.visibleBounds.top }
+            }
+        } catch (_: StaleObjectException) {
+        }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    return emptyList()
 }
 
 /**

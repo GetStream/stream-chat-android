@@ -137,7 +137,7 @@ public fun BySelector.waitForText(
     return lastText
 }
 
-private const val POLL_INTERVAL_MILLIS = 50L
+internal const val POLL_INTERVAL_MILLIS = 50L
 
 // Call [device] directly — [findObject] lies about nullability and NPEs when the selector hasn't
 // matched yet, which is the normal case during polling.
