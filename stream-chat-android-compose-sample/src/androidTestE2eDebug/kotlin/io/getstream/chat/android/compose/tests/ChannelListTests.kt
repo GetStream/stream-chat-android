@@ -22,6 +22,7 @@ import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.getstream.chat.android.compose.robots.assertMessagePreviewTimestamp
 import io.getstream.chat.android.compose.robots.assertScrollToBottomButton
+import io.getstream.chat.android.compose.robots.assertScrollToBottomButtonUnreadCount
 import io.getstream.chat.android.compose.robots.assertSystemMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
@@ -295,6 +296,7 @@ class ChannelListTests : StreamTestCase() {
                 .assertSystemMessage(message)
                 .assertMessageCount(0)
                 .assertScrollToBottomButton(isDisplayed = false)
+                .assertScrollToBottomButtonUnreadCount(0)
         }
         step("WHEN user goes back to the channel list") {
             userRobot.tapOnBackButton()
@@ -322,6 +324,7 @@ class ChannelListTests : StreamTestCase() {
                 .assertMessageCount(0)
                 .assertSystemMessage("Channel truncated", isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = false)
+                .assertScrollToBottomButtonUnreadCount(0)
         }
         step("WHEN user goes back to the channel list") {
             userRobot.tapOnBackButton()

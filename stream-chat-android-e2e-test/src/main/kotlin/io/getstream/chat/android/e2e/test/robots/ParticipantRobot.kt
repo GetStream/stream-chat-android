@@ -64,6 +64,20 @@ public class ParticipantRobot(
         return this
     }
 
+    /**
+     * Sends [count] messages named `"$text-1"` through `"$text-$count"`, spaced 300ms apart.
+     *
+     * @param text The base text of every message; the one-based index is appended after a dash.
+     * @param count How many messages to send.
+     */
+    public fun sendMultipleMessages(text: String, count: Int): ParticipantRobot {
+        repeat(count) { index ->
+            sendMessage("$text-${index + 1}")
+            Thread.sleep(MULTIPLE_MESSAGES_INTERVAL_MILLIS)
+        }
+        return this
+    }
+
     public fun sendMessageInThread(text: String, alsoSendInChannel: Boolean = false): ParticipantRobot {
         mockServer.postRequest(
             "participant/message?thread=true&thread_and_channel=$alsoSendInChannel",
@@ -192,3 +206,5 @@ public class ParticipantRobot(
         return this
     }
 }
+
+private const val MULTIPLE_MESSAGES_INTERVAL_MILLIS = 300L

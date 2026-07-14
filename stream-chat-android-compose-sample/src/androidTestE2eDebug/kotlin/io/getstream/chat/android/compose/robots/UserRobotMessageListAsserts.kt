@@ -266,6 +266,21 @@ fun UserRobot.assertMessageCount(count: Int): UserRobot {
     return this
 }
 
+fun UserRobot.assertComposerAttachmentsButton(isDisplayed: Boolean = true): UserRobot {
+    assertVisibility(Composer.attachmentsButton, isDisplayed)
+    return this
+}
+
+fun UserRobot.assertScrollToBottomButtonUnreadCount(count: Int): UserRobot {
+    val badge = MessageListPage.MessageList.scrollToBottomButtonUnreadCount
+    if (count > 0) {
+        assertEquals(count.toString(), badge.waitForText(count.toString()))
+    } else {
+        assertFalse(badge.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
 fun UserRobot.assertThreadIsOpen(): UserRobot {
     assertTrue(ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitDisplayed())
     return this

@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertAlsoInTheChannelLabelInChannel
 import io.getstream.chat.android.compose.robots.assertAlsoInTheChannelLabelInThread
+import io.getstream.chat.android.compose.robots.assertComposerAttachmentsButton
 import io.getstream.chat.android.compose.robots.assertComposerCommandsMenu
 import io.getstream.chat.android.compose.robots.assertComposerMentionsMenu
 import io.getstream.chat.android.compose.robots.assertComposerSize
@@ -242,6 +243,26 @@ class MessageListTests : StreamTestCase() {
         }
     }
 
+    @AllureId("5720")
+    @Test
+    fun test_addingCommandHidesAttachmentsButton() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND user observes the attachments button") {
+            userRobot.assertComposerAttachmentsButton(isDisplayed = true)
+        }
+        step("WHEN user selects the giphy command from the suggestions") {
+            userRobot
+                .openComposerCommands()
+                .assertComposerCommandsMenu(isDisplayed = true)
+                .tapOnGiphyCommandSuggestion()
+        }
+        step("THEN the attachments button disappears") {
+            userRobot.assertComposerAttachmentsButton(isDisplayed = false)
+        }
+    }
+
     // MARK: Typing indicator
 
     @AllureId("5702")
@@ -432,6 +453,54 @@ class MessageListTests : StreamTestCase() {
         step("THEN message list is scrolled down") {
             userRobot
                 .assertMessage(sampleText)
+                .assertScrollToBottomButton(isDisplayed = false)
+        }
+    }
+
+    @AllureId("5795")
+    @Test
+    fun test_messageListScrollsDown_whenUserTapsOnScrollToBottomButton() {
+        val newMessage = "New message"
+
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 30)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(newMessage)
+        }
+        step("WHEN user scrolls up") {
+            userRobot.scrollMessageListUp()
+        }
+        step("AND user taps on the scroll to bottom button") {
+            userRobot.tapOnScrollToBottomButton()
+        }
+        step("THEN message list is scrolled down") {
+            userRobot
+                .assertMessage(newMessage)
+                .assertScrollToBottomButton(isDisplayed = false)
+        }
+    }
+
+    @AllureId("5831")
+    @Test
+    fun test_reloadsSkippedMessages_whenScrolledToTheBottom() {
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 30)
+            userRobot.login().openChannel()
+        }
+        step("AND user scrolls up") {
+            userRobot.scrollMessageListUp()
+        }
+        step("AND participant sends some messages") {
+            participantRobot.sendMultipleMessages("Some message", count = 16)
+        }
+        step("WHEN user scrolls to the bottom") {
+            userRobot.tapOnScrollToBottomButton()
+        }
+        step("THEN skipped messages are reloaded") {
+            userRobot
+                .assertMessage("Some message-16")
                 .assertScrollToBottomButton(isDisplayed = false)
         }
     }
