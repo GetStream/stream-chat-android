@@ -157,8 +157,9 @@ public class VideoMediaCache private constructor(
                     }
                     return@synchronized existing
                 }
+                var dbProvider: StandaloneDatabaseProvider? = null
                 try {
-                    val dbProvider = StandaloneDatabaseProvider(appContext)
+                    dbProvider = StandaloneDatabaseProvider(appContext)
                     val simpleCache = SimpleCache(
                         cacheDir,
                         LeastRecentlyUsedCacheEvictor(config.maxSizeBytes),
@@ -167,6 +168,13 @@ public class VideoMediaCache private constructor(
                     VideoMediaCache(simpleCache, dbProvider, key).also { instances[key] = it }
                 } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                     logger.e(e) { "[create] Failed to construct SimpleCache at '$key'; video caching disabled." }
+                    // SimpleCache construction failed, so no VideoMediaCache owns the provider that
+                    // was opened just above. Close it here to avoid leaking the database connection.
+                    try {
+                        dbProvider?.close()
+                    } catch (@Suppress("TooGenericExceptionCaught") closeError: Exception) {
+                        logger.e(closeError) { "[create] Failed to close StandaloneDatabaseProvider after failed init" }
+                    }
                     null
                 }
             }
