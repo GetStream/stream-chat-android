@@ -139,8 +139,8 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     @OptIn(UnstableApi::class)
     private fun createPlayer(): Player {
-        val cdn = ChatClient.instance().cdn
-        val dataSourceFactory = StreamMediaDataSource.factory(this, cdn)
+        val client = ChatClient.instance()
+        val dataSourceFactory = StreamMediaDataSource.factory(this, client.cdn, client.videoCache)
         val player = ExoPlayer.Builder(this)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .build()
