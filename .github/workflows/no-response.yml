@@ -9,6 +9,10 @@ on:
 
 jobs:
   noResponse:
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
     runs-on: ubuntu-22.04
     steps:
       - uses: lee-dohm/no-response@v0.5.0

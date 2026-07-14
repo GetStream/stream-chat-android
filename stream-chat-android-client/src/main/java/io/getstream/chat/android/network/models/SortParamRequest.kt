@@ -14,10 +14,29 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.e2e.test.uiautomator
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import androidx.test.uiautomator.UiObject2
+package io.getstream.chat.android.network.models
 
-public val Int.seconds: Long get() = (this * 1000).toLong()
+import com.squareup.moshi.Json
 
-public val UiObject2.height: Int get() = visibleBounds.height()
+/**
+ *
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class SortParamRequest(
+    @Json(name = "direction")
+    val direction: kotlin.Int? = null,
+
+    @Json(name = "field")
+    val field: kotlin.String? = null,
+
+    @Json(name = "type")
+    val type: kotlin.String? = null,
+)

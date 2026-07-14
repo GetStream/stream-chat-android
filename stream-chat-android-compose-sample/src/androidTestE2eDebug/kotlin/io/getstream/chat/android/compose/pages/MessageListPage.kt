@@ -135,21 +135,9 @@ open class MessageListPage {
 
                 companion object {
                     val reactions get() = By.res("Stream_MessageReaction")
-                    private val like get() = By.res("Stream_MessageReaction_${ReactionType.LIKE.reaction}")
-                    private val love get() = By.res("Stream_MessageReaction_${ReactionType.LOVE.reaction}")
-                    private val lol get() = By.res("Stream_MessageReaction_${ReactionType.LOL.reaction}")
-                    private val wow get() = By.res("Stream_MessageReaction_${ReactionType.WOW.reaction}")
-                    private val sad get() = By.res("Stream_MessageReaction_${ReactionType.SAD.reaction}")
 
-                    fun reaction(type: ReactionType): BySelector {
-                        return when (type) {
-                            ReactionType.LIKE -> like
-                            ReactionType.LOVE -> love
-                            ReactionType.LOL -> lol
-                            ReactionType.SAD -> sad
-                            ReactionType.WOW -> wow
-                        }
-                    }
+                    fun reaction(type: ReactionType): BySelector =
+                        By.res("Stream_MessageReaction_${type.reaction}")
                 }
             }
 
@@ -182,21 +170,8 @@ open class MessageListPage {
                 class ReactionsView {
 
                     companion object {
-                        private val like get() = By.res("Stream_Reaction_${ReactionType.LIKE.reaction}")
-                        private val love get() = By.res("Stream_Reaction_${ReactionType.LOVE.reaction}")
-                        private val lol get() = By.res("Stream_Reaction_${ReactionType.LOL.reaction}")
-                        private val wow get() = By.res("Stream_Reaction_${ReactionType.WOW.reaction}")
-                        private val sad get() = By.res("Stream_Reaction_${ReactionType.SAD.reaction}")
-
-                        fun reaction(type: ReactionType): BySelector {
-                            return when (type) {
-                                ReactionType.LIKE -> like
-                                ReactionType.LOVE -> love
-                                ReactionType.LOL -> lol
-                                ReactionType.SAD -> sad
-                                ReactionType.WOW -> wow
-                            }
-                        }
+                        fun reaction(type: ReactionType): BySelector =
+                            By.res("Stream_Reaction_${type.reaction}")
                     }
                 }
             }

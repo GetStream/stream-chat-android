@@ -19,12 +19,12 @@ package io.getstream.chat.android.compose.tests
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.robots.assertReaction
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
-import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
-import io.getstream.chat.android.compose.uiautomator.seconds
-import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.seconds
+import io.getstream.chat.android.e2e.test.uiautomator.wait
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
@@ -101,7 +101,7 @@ class ReactionsTests : StreamTestCase() {
             userRobot.addReaction(type = ReactionType.LOL)
         }
         step("AND user removes the reaction") {
-            userRobot.deleteReaction(type = ReactionType.LOL).sleep(5000)
+            userRobot.deleteReaction(type = ReactionType.LOL)
         }
         step("THEN the reaction is removed") {
             userRobot.assertReaction(type = ReactionType.LOL, isDisplayed = false)

@@ -26,28 +26,28 @@ import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
 import io.getstream.chat.android.compose.pages.ThreadPage
-import io.getstream.chat.android.compose.uiautomator.defaultTimeout
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.findObject
-import io.getstream.chat.android.compose.uiautomator.findObjects
-import io.getstream.chat.android.compose.uiautomator.isDisplayed
-import io.getstream.chat.android.compose.uiautomator.longPress
-import io.getstream.chat.android.compose.uiautomator.swipeDown
-import io.getstream.chat.android.compose.uiautomator.swipeUp
-import io.getstream.chat.android.compose.uiautomator.tapOnScreenCenter
-import io.getstream.chat.android.compose.uiautomator.typeText
-import io.getstream.chat.android.compose.uiautomator.wait
-import io.getstream.chat.android.compose.uiautomator.waitToAppear
-import io.getstream.chat.android.compose.uiautomator.waitToAppearBottomUp
-import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
+import io.getstream.chat.android.e2e.test.uiautomator.defaultTimeout
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.findObject
+import io.getstream.chat.android.e2e.test.uiautomator.findObjects
+import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.longPress
+import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
+import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
+import io.getstream.chat.android.e2e.test.uiautomator.tapOnScreenCenter
+import io.getstream.chat.android.e2e.test.uiautomator.typeText
+import io.getstream.chat.android.e2e.test.uiautomator.wait
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
+import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 
 class UserRobot {
 
     fun sleep(timeOutMillis: Long = defaultTimeout): UserRobot {
-        io.getstream.chat.android.compose.uiautomator.sleep(timeOutMillis)
+        io.getstream.chat.android.e2e.test.uiautomator.sleep(timeOutMillis)
         return this
     }
 

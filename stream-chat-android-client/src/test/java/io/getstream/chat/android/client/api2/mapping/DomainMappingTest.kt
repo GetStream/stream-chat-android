@@ -45,7 +45,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
-import io.getstream.chat.android.client.Mother.randomDownstreamRoleDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadParticipantDto
@@ -57,6 +56,7 @@ import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
+import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
@@ -948,16 +948,16 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamRoleDto is correctly mapped to Role`() {
-        val dto = randomDownstreamRoleDto()
+    fun `RoleDto is correctly mapped to Role`() {
+        val dto = randomRoleDto()
         val sut = Fixture().get()
         val role = with(sut) { dto.toDomain() }
         val expected = Role(
             name = dto.name,
             custom = dto.custom,
             scopes = dto.scopes,
-            createdAt = dto.created_at,
-            updatedAt = dto.updated_at,
+            createdAt = dto.createdAt,
+            updatedAt = dto.updatedAt,
         )
         assertEquals(expected, role)
     }

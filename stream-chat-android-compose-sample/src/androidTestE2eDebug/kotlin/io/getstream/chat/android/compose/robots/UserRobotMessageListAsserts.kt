@@ -18,33 +18,46 @@ package io.getstream.chat.android.compose.robots
 
 import android.annotation.SuppressLint
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.pages.MessageListPage
 import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.pages.ThreadPage
-import io.getstream.chat.android.compose.uiautomator.appContext
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.findObject
-import io.getstream.chat.android.compose.uiautomator.findObjects
-import io.getstream.chat.android.compose.uiautomator.height
-import io.getstream.chat.android.compose.uiautomator.isDisplayed
-import io.getstream.chat.android.compose.uiautomator.isEnabled
-import io.getstream.chat.android.compose.uiautomator.retryOnStaleObjectException
-import io.getstream.chat.android.compose.uiautomator.seconds
-import io.getstream.chat.android.compose.uiautomator.wait
-import io.getstream.chat.android.compose.uiautomator.waitForCount
-import io.getstream.chat.android.compose.uiautomator.waitForText
-import io.getstream.chat.android.compose.uiautomator.waitToAppear
-import io.getstream.chat.android.compose.uiautomator.waitToAppearBottomUp
-import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.findObject
+import io.getstream.chat.android.e2e.test.uiautomator.findObjects
+import io.getstream.chat.android.e2e.test.uiautomator.height
+import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.isEnabled
+import io.getstream.chat.android.e2e.test.uiautomator.retryOnStaleObjectException
+import io.getstream.chat.android.e2e.test.uiautomator.seconds
+import io.getstream.chat.android.e2e.test.uiautomator.wait
+import io.getstream.chat.android.e2e.test.uiautomator.waitForCount
+import io.getstream.chat.android.e2e.test.uiautomator.waitForText
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
+import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
+
+/**
+ * Asserts the selector's visibility with a bounded wait: waits for it to appear when
+ * [isDisplayed] is `true`, or to disappear when `false`, then asserts the final state.
+ */
+private fun assertVisibility(selector: BySelector, isDisplayed: Boolean) {
+    if (isDisplayed) {
+        assertTrue(selector.waitToAppear().isDisplayed())
+    } else {
+        assertFalse(selector.waitToDisappear().isDisplayed())
+    }
+}
 
 fun UserRobot.assertMessage(
     text: String,
@@ -190,20 +203,12 @@ fun UserRobot.assertComposerSize(isChangeable: Boolean): UserRobot {
 }
 
 fun UserRobot.assertTypingIndicator(isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(MessageListPage.MessageList.typingIndicator.waitToAppear().isDisplayed())
-    } else {
-        assertFalse(MessageListPage.MessageList.typingIndicator.waitToDisappear().isDisplayed())
-    }
+    assertVisibility(MessageListPage.MessageList.typingIndicator, isDisplayed)
     return this
 }
 
 fun UserRobot.assertAttachmentsMenu(isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(MessageListPage.AttachmentPicker.view.waitToAppear().isDisplayed())
-    } else {
-        assertFalse(MessageListPage.AttachmentPicker.view.waitToDisappear().isDisplayed())
-    }
+    assertVisibility(MessageListPage.AttachmentPicker.view, isDisplayed)
     return this
 }
 
@@ -219,11 +224,7 @@ fun UserRobot.assertComposerCommandsMenu(isDisplayed: Boolean): UserRobot {
 }
 
 fun UserRobot.assertComposerMentionsMenu(isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(Composer.userSuggestion.waitToAppear().isDisplayed())
-    } else {
-        assertFalse(Composer.userSuggestion.waitToDisappear().isDisplayed())
-    }
+    assertVisibility(Composer.userSuggestion, isDisplayed)
     return this
 }
 
@@ -259,11 +260,7 @@ fun UserRobot.assertComposerIsDisabledInSlowMode(): UserRobot {
 }
 
 fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(MessageListPage.MessageList.scrollToBottomButton.waitToAppear().isDisplayed())
-    } else {
-        assertFalse(MessageListPage.MessageList.scrollToBottomButton.waitToDisappear().isDisplayed())
-    }
+    assertVisibility(MessageListPage.MessageList.scrollToBottomButton, isDisplayed)
     return this
 }
 
@@ -326,11 +323,7 @@ fun UserRobot.assertGiphyButtons(areDisplayed: Boolean = true): UserRobot {
 }
 
 fun UserRobot.assertSystemMessage(text: String, isDisplayed: Boolean = true): UserRobot {
-    if (isDisplayed) {
-        By.text(text).waitToAppear().isDisplayed()
-    } else {
-        By.text(text).waitToDisappear().isDisplayed()
-    }
+    assertVisibility(By.text(text), isDisplayed)
     return this
 }
 
@@ -343,11 +336,7 @@ fun UserRobot.assertInvalidCommandMessage(text: String, isDisplayed: Boolean = t
 }
 
 fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(Message.Reactions.reaction(type).waitToAppear().isDisplayed())
-    } else {
-        assertFalse(Message.Reactions.reaction(type).waitToDisappear().isDisplayed())
-    }
+    assertVisibility(Message.Reactions.reaction(type), isDisplayed)
     return this
 }
 
