@@ -261,6 +261,11 @@ fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
     return this
 }
 
+fun UserRobot.assertMessageCount(count: Int): UserRobot {
+    assertEquals(count, MessageListPage.MessageList.messages.waitForCount(count).size)
+    return this
+}
+
 fun UserRobot.assertThreadIsOpen(): UserRobot {
     assertTrue(ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitDisplayed())
     return this

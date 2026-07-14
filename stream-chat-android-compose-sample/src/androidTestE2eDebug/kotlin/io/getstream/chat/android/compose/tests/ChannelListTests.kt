@@ -17,9 +17,12 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelAvatar
+import io.getstream.chat.android.compose.robots.assertMessageCount
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.getstream.chat.android.compose.robots.assertMessagePreviewTimestamp
+import io.getstream.chat.android.compose.robots.assertScrollToBottomButton
+import io.getstream.chat.android.compose.robots.assertSystemMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.uiautomator.device
@@ -272,6 +275,62 @@ class ChannelListTests : StreamTestCase() {
         }
         step("AND the message timestamp is shown") {
             userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
+        }
+    }
+
+    @AllureId("5797")
+    @Test
+    fun test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithMessage() {
+        val message = "Channel truncated"
+
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 42)
+            userRobot.login().openChannel()
+        }
+        step("WHEN the channel is truncated with a system message") {
+            backendRobot.truncateChannel(withMessage = true)
+        }
+        step("THEN user observes only the system message") {
+            userRobot
+                .assertSystemMessage(message)
+                .assertMessageCount(0)
+                .assertScrollToBottomButton(isDisplayed = false)
+        }
+        step("WHEN user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        step("THEN the channel preview shows the system message") {
+            userRobot.assertMessageInChannelPreview(message, fromCurrentUser = true)
+        }
+        step("AND the message timestamp is shown") {
+            userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
+        }
+    }
+
+    @AllureId("5827")
+    @Test
+    fun test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithoutMessage() {
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 42)
+            userRobot.login().openChannel()
+        }
+        step("WHEN the channel is truncated without a system message") {
+            backendRobot.truncateChannel(withMessage = false)
+        }
+        step("THEN user observes an empty message list") {
+            userRobot
+                .assertMessageCount(0)
+                .assertSystemMessage("Channel truncated", isDisplayed = false)
+                .assertScrollToBottomButton(isDisplayed = false)
+        }
+        step("WHEN user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        step("THEN the channel preview is empty") {
+            userRobot.assertMessageInChannelPreview("No messages yet")
+        }
+        step("AND the message timestamp is hidden") {
+            userRobot.assertMessagePreviewTimestamp(isDisplayed = false)
         }
     }
 }

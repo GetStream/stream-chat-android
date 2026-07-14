@@ -62,6 +62,17 @@ public class BackendRobot(
         return this
     }
 
+    /**
+     * Truncates the currently open channel on the server side. The app under test receives
+     * the `channel.truncated` websocket event.
+     *
+     * @param withMessage When `true`, the truncation also delivers a "Channel truncated" system message.
+     */
+    public fun truncateChannel(withMessage: Boolean): BackendRobot {
+        mockServer.postRequest("truncate_channel?with_message=$withMessage")
+        return this
+    }
+
     public fun revokeToken(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/revoke_token?duration=$duration")
