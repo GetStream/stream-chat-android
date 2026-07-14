@@ -28,13 +28,19 @@ public fun sleep(timeOutMillis: Long = defaultTimeout) {
 /**
  * Waits up to [timeOutMillis] for an object matching this selector and returns it.
  *
+ * Stale reads during the lookup are absorbed and retried until the timeout;
+ * [StaleObjectException] never escapes.
+ *
  * @param timeOutMillis Maximum time to wait before failing.
  * @throws IllegalStateException when the timeout elapses without a matching object.
  */
 public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObject2 {
-    wait(timeOutMillis)
-    return device.findObject(this)
-        ?: error("waitToAppear timed out after ${timeOutMillis}ms; no object matched selector: $this")
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (System.currentTimeMillis() < endTime) {
+        currentObjectOrNull()?.let { return it }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    error("waitToAppear timed out after ${timeOutMillis}ms; no object matched selector: $this")
 }
 
 /**
@@ -45,13 +51,51 @@ public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObje
  * @throws IllegalStateException when the timeout elapses without enough matching objects.
  */
 public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = defaultTimeout): UiObject2 {
-    wait(timeOutMillis)
-    val objects = device.findObjects(this)
-    return objects.getOrNull(withIndex)
-        ?: error(
-            "waitToAppear(withIndex=$withIndex) timed out after ${timeOutMillis}ms; " +
-                "only ${objects.size} objects matched selector: $this",
-        )
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    var lastCount = 0
+    while (System.currentTimeMillis() < endTime) {
+        val objects = currentObjectsOrEmpty()
+        lastCount = objects.size
+        objects.getOrNull(withIndex)?.let { return it }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    error(
+        "waitToAppear(withIndex=$withIndex) timed out after ${timeOutMillis}ms; " +
+            "only $lastCount objects matched selector: $this",
+    )
+}
+
+/**
+ * Waits up to [timeOutMillis] for an object matching this selector to be displayed and reports
+ * the outcome. Stale reads during the lookup are absorbed and retried until the timeout;
+ * [StaleObjectException] never escapes.
+ *
+ * @param timeOutMillis Maximum time to keep polling before reporting `false`.
+ */
+public fun BySelector.waitDisplayed(timeOutMillis: Long = defaultTimeout): Boolean {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (System.currentTimeMillis() < endTime) {
+        try {
+            if (device.findObject(this)?.isDisplayed() == true) {
+                return true
+            }
+        } catch (_: StaleObjectException) {
+        }
+        Thread.sleep(POLL_INTERVAL_MILLIS)
+    }
+    return false
+}
+
+private fun BySelector.currentObjectOrNull(): UiObject2? = try {
+    device.findObject(this)
+} catch (_: StaleObjectException) {
+    null
+}
+
+private fun BySelector.currentObjectsOrEmpty(): List<UiObject2> = try {
+    device.findObjects(this)
+} catch (_: StaleObjectException) {
+    emptyList()
 }
 
 public fun BySelector.wait(timeOutMillis: Long = defaultTimeout): BySelector {
@@ -66,9 +110,9 @@ public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout): ByS
 
 /**
  * Waits for an object matching this selector whose text matches [expectedText]. Returns the
- * matched text, or the last observed text on timeout. Never throws — recompositions and
- * mid-poll node recycling are absorbed internally, so callers should wrap the result in an
- * assertion to surface mismatch/timeout.
+ * matched text, or the last observed text on timeout. Never throws: stale reads are absorbed
+ * and retried, so callers should wrap the result in an assertion to surface a mismatch or
+ * timeout.
  *
  * @param expectedText The text to match.
  * @param mustBeEqual When `true`, requires exact match; otherwise a substring match.
@@ -93,7 +137,7 @@ public fun BySelector.waitForText(
     return lastText
 }
 
-private const val POLL_INTERVAL_MILLIS = 50L
+internal const val POLL_INTERVAL_MILLIS = 50L
 
 // Call [device] directly — [findObject] lies about nullability and NPEs when the selector hasn't
 // matched yet, which is the normal case during polling.

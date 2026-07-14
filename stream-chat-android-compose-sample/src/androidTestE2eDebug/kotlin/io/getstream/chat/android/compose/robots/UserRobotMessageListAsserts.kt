@@ -28,6 +28,7 @@ import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import io.getstream.chat.android.e2e.test.uiautomator.defaultTimeout
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObject
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
@@ -36,7 +37,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.isEnabled
 import io.getstream.chat.android.e2e.test.uiautomator.retryOnStaleObjectException
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
-import io.getstream.chat.android.e2e.test.uiautomator.wait
+import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitForCount
 import io.getstream.chat.android.e2e.test.uiautomator.waitForText
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
@@ -51,11 +52,11 @@ import org.junit.Assert.assertTrue
  * Asserts the selector's visibility with a bounded wait: waits for it to appear when
  * [isDisplayed] is `true`, or to disappear when `false`, then asserts the final state.
  */
-private fun assertVisibility(selector: BySelector, isDisplayed: Boolean) {
+private fun assertVisibility(selector: BySelector, isDisplayed: Boolean, timeOutMillis: Long = defaultTimeout) {
     if (isDisplayed) {
-        assertTrue(selector.waitToAppear().isDisplayed())
+        assertTrue(selector.waitDisplayed(timeOutMillis))
     } else {
-        assertFalse(selector.waitToDisappear().isDisplayed())
+        assertFalse(selector.waitToDisappear(timeOutMillis).isDisplayed())
     }
 }
 
@@ -67,7 +68,7 @@ fun UserRobot.assertMessage(
     if (isDisplayed) {
         val textLocator = (if (isClickable) Message.clickableText else Message.text)
             .text(text)
-        assertTrue(textLocator.waitToAppear().isDisplayed())
+        assertTrue(textLocator.waitDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
         MessageListPage.MessageList.messages.findObjects().forEach {
@@ -91,25 +92,25 @@ fun UserRobot.assertMessageTimestamps(count: Int): UserRobot {
 fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: Int? = null): UserRobot {
     when (status) {
         MessageDeliveryStatus.READ -> {
-            assertTrue(Message.deliveryStatusIsRead.wait(30.seconds).isDisplayed())
+            assertVisibility(Message.deliveryStatusIsRead, isDisplayed = true, timeOutMillis = 30.seconds)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsRead.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.PENDING -> {
-            assertTrue(Message.deliveryStatusIsPending.wait().isDisplayed())
+            assertVisibility(Message.deliveryStatusIsPending, isDisplayed = true)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsPending.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.SENT -> {
-            assertTrue(Message.deliveryStatusIsSent.wait().isDisplayed())
+            assertVisibility(Message.deliveryStatusIsSent, isDisplayed = true)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsSent.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.FAILED -> {
-            assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
+            assertVisibility(Message.deliveryStatusIsFailed, isDisplayed = true)
             if (count != null) {
                 assertEquals(count, Message.deliveryStatusIsFailed.waitForCount(count).size)
             }
@@ -124,11 +125,7 @@ fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: 
 }
 
 fun UserRobot.assertMessageFailedIcon(isDisplayed: Boolean): UserRobot {
-    if (isDisplayed) {
-        assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
-    } else {
-        assertFalse(Message.deliveryStatusIsFailed.waitToDisappear().isDisplayed())
-    }
+    assertVisibility(Message.deliveryStatusIsFailed, isDisplayed)
     return this
 }
 
@@ -214,7 +211,7 @@ fun UserRobot.assertAttachmentsMenu(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertComposerCommandsMenu(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.commandSuggestionList.waitToAppear().isDisplayed())
+        assertTrue(Composer.commandSuggestionList.waitDisplayed())
         assertTrue(Composer.commandSuggestionListTitle.isDisplayed())
     } else {
         assertFalse(Composer.commandSuggestionList.waitToDisappear().isDisplayed())
@@ -243,7 +240,7 @@ fun UserRobot.assertComposerText(expectedText: String): UserRobot {
 }
 
 fun UserRobot.assertCooldownIsShown(): UserRobot {
-    assertTrue(Composer.cooldownIndicator.waitToAppear().isDisplayed())
+    assertTrue(Composer.cooldownIndicator.waitDisplayed())
     assertFalse(Composer.sendButton.isDisplayed())
     return this
 }
@@ -265,7 +262,7 @@ fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
 }
 
 fun UserRobot.assertThreadIsOpen(): UserRobot {
-    assertTrue(ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToAppear().isDisplayed())
+    assertTrue(ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitDisplayed())
     return this
 }
 
@@ -300,9 +297,7 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
 
 fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
-        device.retryOnStaleObjectException {
-            assertTrue(Message.giphy.waitToAppear().isDisplayed())
-        }
+        assertTrue(Message.giphy.waitDisplayed())
     } else {
         assertFalse(Message.giphy.waitToDisappear().isDisplayed())
     }
@@ -311,7 +306,7 @@ fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
 
 fun UserRobot.assertGiphyButtons(areDisplayed: Boolean = true): UserRobot {
     if (areDisplayed) {
-        assertTrue(Message.GiphyButtons.send.waitToAppear().isDisplayed())
+        assertTrue(Message.GiphyButtons.send.waitDisplayed())
         assertTrue(Message.GiphyButtons.cancel.findObject().isDisplayed())
         assertTrue(Message.GiphyButtons.shuffle.findObject().isDisplayed())
     } else {
@@ -393,7 +388,7 @@ fun UserRobot.assertVideo(isDisplayed: Boolean, count: Int = 1): UserRobot {
     if (isDisplayed) {
         assertEquals(count, Message.video.waitForCount(count).size)
         if (count != 1) {
-            assertTrue(Message.columnWithMultipleMediaAttachments.waitToAppear().isDisplayed())
+            assertTrue(Message.columnWithMultipleMediaAttachments.waitDisplayed())
         }
     } else {
         assertFalse(Message.video.waitToDisappear().isDisplayed())
@@ -433,7 +428,7 @@ fun UserRobot.assertMediaAttachmentInPreview(isDisplayed: Boolean, count: Int = 
 
 fun UserRobot.assertFileAttachmentInPreview(isDisplayed: Boolean, count: Int = 1): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.fileName.waitToAppear().isDisplayed())
+        assertTrue(Composer.fileName.waitDisplayed())
         assertTrue(Composer.fileSize.isDisplayed())
         assertTrue(Composer.fileImage.isDisplayed())
         assertTrue(Composer.attachmentCancelIcon.isDisplayed())
@@ -451,7 +446,7 @@ fun UserRobot.assertFileAttachmentInPreview(isDisplayed: Boolean, count: Int = 1
 
 fun UserRobot.assertLinkPreviewInMessageList(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Message.linkPreviewImage.waitToAppear().isDisplayed())
+        assertTrue(Message.linkPreviewImage.waitDisplayed())
         assertTrue(Message.linkPreviewTitle.isDisplayed())
         assertTrue(Message.linkPreviewDescription.isDisplayed())
     } else {
@@ -464,7 +459,7 @@ fun UserRobot.assertLinkPreviewInMessageList(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Composer.linkPreviewImage.waitToAppear().isDisplayed())
+        assertTrue(Composer.linkPreviewImage.waitDisplayed())
         assertTrue(Composer.linkPreviewTitle.isDisplayed())
         assertTrue(Composer.linkPreviewDescription.isDisplayed())
     } else {

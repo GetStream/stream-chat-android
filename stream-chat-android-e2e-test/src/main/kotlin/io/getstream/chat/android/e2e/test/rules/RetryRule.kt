@@ -53,7 +53,10 @@ public class RetryRule(private val count: Int) : TestRule {
 
             for (attempt in 1..count) {
                 val recordVideo = attempt > 1
-                val videoFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/$testName.mp4"
+                // methodName, not displayName: the display name contains parentheses, which
+                // break when the recording commands go through the device shell.
+                val videoFilePath =
+                    "${Environment.getExternalStorageDirectory().absolutePath}/${description.methodName}.mp4"
                 var recordingThread: Thread? = null
                 val startMillis = System.currentTimeMillis()
                 try {
@@ -63,17 +66,17 @@ public class RetryRule(private val count: Int) : TestRule {
                         recordingThread = startVideoRecording(videoFilePath)
                     }
                     base.evaluate()
-                    recordingThread?.let { stopVideoRecording(videoFilePath, it) }
+                    recordingThread?.let { stopRecordingSafely(testName, videoFilePath, it) }
                     return
                 } catch (t: Throwable) {
                     System.err.println("$testName: run #$attempt failed.")
                     caughtThrowable = t
                     databaseOperations.clearDatabases()
-                    recordingThread?.let { stopVideoRecording(videoFilePath, it) }
+                    val recordingStopped = recordingThread?.let { stopRecordingSafely(testName, videoFilePath, it) }
                     device.allureLogcat(name = "logcat_$attempt")
                     device.allureScreenshot(name = "screenshot_$attempt")
                     device.allureWindowHierarchy(name = "hierarchy_$attempt")
-                    recordingThread?.let {
+                    if (recordingStopped == true) {
                         device.allureScreenrecord(name = "record_$attempt", file = File(videoFilePath))
                     }
                     if (attempt < count) {
@@ -135,6 +138,16 @@ public class RetryRule(private val count: Int) : TestRule {
         attemptResult.stage = Stage.FINISHED
         lifecycle.writeTestCase(attemptResult.uuid)
     }
+
+    /**
+     * Stops the recording without failing the test: a recording infrastructure problem must
+     * not change the test result or skip the failure reporting. Returns whether the recording
+     * was stopped and its file is usable.
+     */
+    private fun stopRecordingSafely(testName: String, videoFilePath: String, thread: Thread): Boolean =
+        runCatching { stopVideoRecording(videoFilePath, thread) }
+            .onFailure { System.err.println("$testName: stopping the screen recording failed: $it") }
+            .isSuccess
 
     private fun startVideoRecording(remoteVideoPath: String): Thread {
         return Thread {
