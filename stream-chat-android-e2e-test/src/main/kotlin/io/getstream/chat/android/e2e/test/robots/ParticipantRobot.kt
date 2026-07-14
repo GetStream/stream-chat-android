@@ -28,6 +28,7 @@ public class ParticipantRobot(
 
     public companion object {
         public const val name: String = "Count Dooku"
+        public const val id: String = "count_dooku"
     }
 
     public fun startTyping(): ParticipantRobot {
