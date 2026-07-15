@@ -18,9 +18,7 @@ package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
 import io.getstream.chat.android.e2e.test.uiautomator.device
-import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
-import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
@@ -35,11 +33,13 @@ fun UserRobot.assertPushNotification(text: String): UserRobot {
 }
 
 /**
- * Opens the notification shade, asserts no notification with [text] is shown, and closes it.
+ * Opens the notification shade, asserts no notification with [text] appears within the
+ * delivery window, and closes it. Polls for the full timeout so the assertion cannot pass
+ * before the push has had time to be delivered and rendered.
  */
 fun UserRobot.assertPushNotificationDoesNotAppear(text: String): UserRobot {
     openNotificationShade()
-    assertFalse(By.text(text).waitToDisappear().isDisplayed())
+    assertFalse(By.text(text).waitDisplayed())
     device.pressBack()
     return this
 }
