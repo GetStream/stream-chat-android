@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.cache.VideoCacheConfig
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.client.cdn.CDNRequest
 import io.getstream.chat.android.client.cdn.internal.CDNDataSourceFactory
+import io.getstream.result.Result
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -63,7 +64,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
     @Before
     fun setUp() {
         cacheDir.deleteRecursively()
-        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())
+        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())!!
     }
 
     @After
@@ -187,13 +188,13 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
     }
 
     /**
-     * `clearAll()` fans out over every live cache in the process registry and empties each in
-     * place. Here the single registered cache (created in [setUp]) is populated with real bytes;
-     * after `clearAll()` its content is gone, the call reports it cleared something (`true`), and
-     * the still-alive `SimpleCache` can serve a fresh write.
+     * When a live [VideoMediaCache] owns the directory, `clearOrDelete` empties it in place (see
+     * [VideoMediaCache.clear]) and never runs the on-disk delete. Here the single registered cache
+     * (created in [setUp]) is populated with real bytes; after `clearOrDelete` its content is gone,
+     * the delete lambda was not invoked, and the still-alive `SimpleCache` can serve a fresh write.
      */
     @Test
-    fun `clearAll empties the live cache in place and reports it cleared`() {
+    fun `clearOrDelete empties the live cache in place and skips the on-disk delete`() {
         // Arrange: write real bytes into the cache registered in setUp() and confirm they landed.
         val upstream = RecordingDataSourceFactory()
         val factory = VideoCacheDataSourceFactory(cache, upstream)
@@ -202,35 +203,52 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
         assertTrue("Precondition: cache tracks the written key", cache.cache.keys.isNotEmpty())
         assertTrue("Precondition: cache reports non-zero size", cache.cache.cacheSpace > 0L)
 
-        // Act: clear every live cache in the process.
-        val cleared = VideoMediaCache.clearAll()
+        // Act: clear the directory owned by the live cache; the on-disk delete must not run.
+        var deleteInvoked = false
+        val result = VideoMediaCache.clearOrDelete(cacheDir) {
+            deleteInvoked = true
+            Result.Success(Unit)
+        }
 
-        // Assert: it reported clearing a live cache, and this cache is now empty.
-        assertTrue("clearAll should report that a live cache was cleared", cleared)
-        assertTrue("Cache should track zero keys after clearAll", cache.cache.keys.isEmpty())
-        assertEquals("Cache should report zero size after clearAll", 0L, cache.cache.cacheSpace)
+        // Assert: cleared in place, delete skipped, and this cache is now empty.
+        assertTrue("clearOrDelete should succeed", result is Result.Success)
+        assertFalse("On-disk delete must be skipped when a live cache owns the directory", deleteInvoked)
+        assertTrue("Cache should track zero keys after clearOrDelete", cache.cache.keys.isEmpty())
+        assertEquals("Cache should report zero size after clearOrDelete", 0L, cache.cache.cacheSpace)
 
         // Assert: the SimpleCache stays alive, so a subsequent read re-fetches and re-populates.
         populateCache(factory, VIDEO_URL)
-        assertEquals("A read after clearAll should hit upstream again", 2, upstream.openCount)
+        assertEquals("A read after clearOrDelete should hit upstream again", 2, upstream.openCount)
         assertTrue("Cache should be re-populated after the second read", cache.cache.keys.isNotEmpty())
     }
 
     /**
-     * When no live cache is registered in the process (e.g. the app never opted in, or a prior
-     * cache was released), `clearAll()` has nothing to empty and reports `false` — the signal
-     * `ChatClient` uses to fall back to deleting the cache directory from disk.
+     * When no live cache owns the directory (e.g. the app never opted in, or a prior cache was
+     * released), `clearOrDelete` runs the on-disk delete against that directory instead of clearing
+     * a live cache in place.
      */
     @Test
-    fun `clearAll reports nothing to clear when no live cache is registered`() {
-        // Arrange: release the only registered cache so the process registry is empty.
+    fun `clearOrDelete deletes on disk when no live cache owns the directory`() {
+        // Arrange: release the only registered cache so no live cache owns cacheDir, and confirm
+        // the directory still exists on disk.
         cache.release()
+        assertTrue("Precondition: cache directory exists on disk", cacheDir.exists())
 
-        // Act + Assert.
-        assertFalse("clearAll should report nothing was cleared on an empty registry", VideoMediaCache.clearAll())
+        // Act: clear the now-unowned directory; the delete lambda should run.
+        var deleteInvoked = false
+        val result = VideoMediaCache.clearOrDelete(cacheDir) {
+            deleteInvoked = true
+            cacheDir.deleteRecursively()
+            Result.Success(Unit)
+        }
+
+        // Assert: the delete ran and removed the directory from disk.
+        assertTrue("clearOrDelete should succeed", result is Result.Success)
+        assertTrue("Delete lambda should run when no live cache owns the directory", deleteInvoked)
+        assertFalse("Cache directory should be gone after clearOrDelete", cacheDir.exists())
 
         // Recreate so tearDown() releases a live instance and unlocks the directory for the next test.
-        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())
+        cache = VideoMediaCache.create(context, cacheDir, VideoCacheConfig())!!
     }
 
     /**
@@ -246,7 +264,7 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             context,
             evictionDir,
             VideoCacheConfig(maxSizeBytes = 2 * TOTAL_LENGTH),
-        )
+        )!!
         try {
             val upstream = RecordingDataSourceFactory()
             val factory = VideoCacheDataSourceFactory(evictionCache, upstream)
@@ -255,7 +273,8 @@ internal class StreamMediaDataSourceCacheIntegrationTest {
             // Space the operations out so each span's `lastTouchTimestamp` lands in a distinct
             // millisecond; Media3's LeastRecentlyUsedCacheEvictor uses `System.currentTimeMillis()`
             // and falls back to alphabetical key order on ties, which would pick A over B under
-            // load and make the assertions non-deterministic.
+            // load and make the assertions non-deterministic. The sleeps are wall-clock dependent;
+            // if this test becomes flaky on a slow runner, increase SPAN_SPACING_MS.
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_A_URL)))
             Thread.sleep(SPAN_SPACING_MS)
             readFully(factory.createDataSource(), DataSpec(Uri.parse(VIDEO_B_URL)))
