@@ -71,9 +71,7 @@ fun UserRobot.assertMessage(
         assertTrue(textLocator.waitDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
-        MessageListPage.MessageList.messages.findObjects().forEach {
-            assertTrue(it.text != text)
-        }
+        assertFalse(Message.text.text(text).waitToDisappear().isDisplayed())
     }
     return this
 }
@@ -150,14 +148,16 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
     return this
 }
 
-fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
+fun UserRobot.assertQuotedMessage(text: String? = null, quote: String = "", isDisplayed: Boolean = true): UserRobot {
     val quotedMessageInList = Message.quotedMessage.hasAncestor(MessageListPage.MessageList.messages)
     if (isDisplayed) {
         assertEquals(quote, quotedMessageInList.waitForText(quote))
     } else {
         assertFalse(quotedMessageInList.waitToDisappear().isDisplayed())
     }
-    assertMessage(text, isDisplayed = isDisplayed)
+    if (text != null) {
+        assertMessage(text, isDisplayed = isDisplayed)
+    }
     return this
 }
 

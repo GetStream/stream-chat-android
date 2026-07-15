@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertDeletedMessage
+import io.getstream.chat.android.compose.robots.assertFile
 import io.getstream.chat.android.compose.robots.assertGiphyImage
 import io.getstream.chat.android.compose.robots.assertInvalidCommandMessage
 import io.getstream.chat.android.compose.robots.assertMessage
@@ -40,6 +41,7 @@ class QuotedReplyTests : StreamTestCase() {
     private val sampleText = "Test message"
     private var quoteReply = "Alright"
     private val messagesCount = 30
+    private val firstMessage = "1"
 
     @AllureId("5923")
     @Test
@@ -96,7 +98,6 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5684")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenUserAddsQuotedReply() {
         step("GIVEN user opens the channel") {
@@ -105,12 +106,12 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("WHEN user adds a quoted reply to message") {
             userRobot
-                .scrollMessageListUp(times = 3)
-                .quoteMessage(quoteReply, messageCellIndex = messagesCount - 1)
+                .scrollMessageListUp(times = 8)
+                .quoteMessage(quoteReply, quotedMessageText = firstMessage)
         }
         step("THEN user observes the quote reply in message list") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = true)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -118,7 +119,7 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = false)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
@@ -126,7 +127,6 @@ class QuotedReplyTests : StreamTestCase() {
     @AllureId("5685")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message() {
-        val firstMessage = 1.toString()
         step("GIVEN user opens the channel") {
             backendRobot.generateChannels(channelsCount = 1, messagesCount = messagesCount)
             userRobot.login().openChannel()
@@ -150,7 +150,6 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5865")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_File() {
         step("GIVEN user opens the channel") {
@@ -162,7 +161,8 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user observes the quote reply in message list") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = true)
+                .assertFile(isDisplayed = true)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -170,13 +170,12 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = false)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
 
     @AllureId("5866")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy() {
         step("GIVEN user opens the channel") {
@@ -189,7 +188,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("THEN user observes the quote reply in message list") {
             userRobot
                 .assertGiphyImage(isDisplayed = true)
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = true)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -198,7 +197,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("THEN user is scrolled up to the quote") {
             userRobot
                 .assertGiphyImage(isDisplayed = false)
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = false)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
@@ -364,7 +363,6 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5892")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenUserAddsQuotedReply_InThread() {
         step("GIVEN user opens the channel") {
@@ -374,12 +372,12 @@ class QuotedReplyTests : StreamTestCase() {
         step("WHEN user adds a quoted reply to message in thread") {
             userRobot
                 .openThread()
-                .scrollMessageListUp(times = 3)
-                .quoteMessage(quoteReply, messageCellIndex = messagesCount - 1)
+                .scrollMessageListUp(times = 8)
+                .quoteMessage(quoteReply, quotedMessageText = firstMessage)
         }
         step("THEN user observes the quote reply in thread") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = true)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -387,13 +385,13 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = false)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
 
     @AllureId("5893")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
+    @Ignore("https://linear.app/stream/issue/AND-960")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message_InThread() {
         step("GIVEN user opens the channel") {
@@ -425,7 +423,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5894")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
+    @Ignore("https://linear.app/stream/issue/AND-960")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_File_InThread() {
         step("GIVEN user opens the channel") {
@@ -443,7 +441,8 @@ class QuotedReplyTests : StreamTestCase() {
         step("THEN user observes the quote reply in thread") {
             userRobot
                 .openThread()
-                .assertQuotedMessage(text = quoteReply, quote = sampleText, isDisplayed = true)
+                .assertFile(isDisplayed = true)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -451,13 +450,13 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = sampleText, isDisplayed = false)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
 
     @AllureId("5895")
-    @Ignore("https://linear.app/stream/issue/AND-1312")
+    @Ignore("https://linear.app/stream/issue/AND-960")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() {
         step("GIVEN user opens the channel") {
@@ -476,7 +475,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot
                 .openThread()
                 .assertGiphyImage(isDisplayed = true)
-                .assertQuotedMessage(text = quoteReply, quote = sampleText, isDisplayed = true)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -485,7 +484,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("THEN user is scrolled up to the quote") {
             userRobot
                 .assertGiphyImage(isDisplayed = false)
-                .assertQuotedMessage(text = quoteReply, quote = sampleText, isDisplayed = false)
+                .assertQuotedMessage(quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }

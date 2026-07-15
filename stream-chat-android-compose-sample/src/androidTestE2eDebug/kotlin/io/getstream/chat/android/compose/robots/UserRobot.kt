@@ -211,6 +211,13 @@ class UserRobot {
         return this
     }
 
+    fun quoteMessage(text: String, quotedMessageText: String): UserRobot {
+        openContextMenu(quotedMessageText)
+        ContextMenu.reply.waitToAppear().click()
+        sendMessage(text)
+        return this
+    }
+
     fun openThread(messageCellIndex: Int = 0, usingContextMenu: Boolean = true): UserRobot {
         if (usingContextMenu) {
             openContextMenu(messageCellIndex)
