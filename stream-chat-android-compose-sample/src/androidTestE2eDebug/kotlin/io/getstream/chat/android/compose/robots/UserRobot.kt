@@ -201,9 +201,14 @@ class UserRobot {
     }
 
     fun quoteMessage(text: String, messageCellIndex: Int = 0): UserRobot {
+        selectReplyFromContextMenu(messageCellIndex)
+        sendMessage(text)
+        return this
+    }
+
+    fun selectReplyFromContextMenu(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.reply.waitToAppear().click()
-        sendMessage(text)
         return this
     }
 
@@ -314,13 +319,18 @@ class UserRobot {
         return this
     }
 
+    fun tapOnGiphyCommandSuggestion(): UserRobot {
+        Composer.giphyButton.waitToAppear().click()
+        return this
+    }
+
     fun uploadGiphy(useComposerCommand: Boolean = false, send: Boolean = true): UserRobot {
         val giphyMessageText = "G" // any message text will result in sending a giphy
         if (useComposerCommand) {
             openComposerCommands()
             // Selecting the suggestion prefills '/giphy '; typeText replaces the whole input,
             // so the command prefix is set together with the message text.
-            Composer.giphyButton.waitToAppear().click()
+            tapOnGiphyCommandSuggestion()
             typeText("/giphy $giphyMessageText")
             tapOnComposerConfirmButton()
         } else {

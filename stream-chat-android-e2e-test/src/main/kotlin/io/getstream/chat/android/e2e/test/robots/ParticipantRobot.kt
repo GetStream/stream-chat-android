@@ -28,6 +28,7 @@ public class ParticipantRobot(
 
     public companion object {
         public const val name: String = "Count Dooku"
+        public const val id: String = "count_dooku"
     }
 
     public fun startTyping(): ParticipantRobot {
@@ -61,6 +62,20 @@ public class ParticipantRobot(
             endpoint += "?delay=$delay"
         }
         mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
+        return this
+    }
+
+    /**
+     * Sends [count] messages named `"$text-1"` through `"$text-$count"`, spaced 300ms apart.
+     *
+     * @param text The base text of every message; the one-based index is appended after a dash.
+     * @param count How many messages to send.
+     */
+    public fun sendMultipleMessages(text: String, count: Int): ParticipantRobot {
+        repeat(count) { index ->
+            sendMessage("$text-${index + 1}")
+            Thread.sleep(MULTIPLE_MESSAGES_INTERVAL_MILLIS)
+        }
         return this
     }
 
@@ -192,3 +207,5 @@ public class ParticipantRobot(
         return this
     }
 }
+
+private const val MULTIPLE_MESSAGES_INTERVAL_MILLIS = 300L
