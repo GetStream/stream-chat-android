@@ -96,7 +96,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5684")
-    @Ignore("https://linear.app/stream/issue/AND-76")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenUserAddsQuotedReply() {
         step("GIVEN user opens the channel") {
@@ -150,7 +150,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5865")
-    @Ignore("https://linear.app/stream/issue/AND-266")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_File() {
         step("GIVEN user opens the channel") {
@@ -176,7 +176,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5866")
-    @Ignore("https://linear.app/stream/issue/AND-266")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy() {
         step("GIVEN user opens the channel") {
@@ -364,7 +364,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5892")
-    @Ignore("https://linear.app/stream/issue/AND-76")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenUserAddsQuotedReply_InThread() {
         step("GIVEN user opens the channel") {
@@ -393,7 +393,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5893")
-    @Ignore("https://linear.app/stream/issue/AND-960")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message_InThread() {
         step("GIVEN user opens the channel") {
@@ -425,7 +425,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5894")
-    @Ignore("https://linear.app/stream/issue/AND-266")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_File_InThread() {
         step("GIVEN user opens the channel") {
@@ -457,7 +457,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5895")
-    @Ignore("https://linear.app/stream/issue/AND-266")
+    @Ignore("https://linear.app/stream/issue/AND-1312")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() {
         step("GIVEN user opens the channel") {

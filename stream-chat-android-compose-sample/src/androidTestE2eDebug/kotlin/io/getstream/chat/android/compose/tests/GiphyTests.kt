@@ -27,7 +27,6 @@ import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class GiphyTests : StreamTestCase() {
@@ -119,7 +118,6 @@ class GiphyTests : StreamTestCase() {
     }
 
     @AllureId("5787")
-    @Ignore("https://linear.app/stream/issue/AND-218")
     @Test
     fun test_channelListNotModified_whenEphemeralMessageShown() {
         step("GIVEN user opens a channel") {
@@ -132,12 +130,11 @@ class GiphyTests : StreamTestCase() {
             userRobot.tapOnBackButton()
         }
         step("THEN message is not added to the channel list") {
-            userRobot.assertMessageInChannelPreview("No messages", fromCurrentUser = false)
+            userRobot.assertMessageInChannelPreview("No messages yet")
         }
     }
 
     @AllureId("5782")
-    @Ignore("https://linear.app/stream/issue/AND-245")
     @Test
     fun test_deliveryStatusHidden_whenEphemeralMessageShown() {
         step("GIVEN user opens a channel") {

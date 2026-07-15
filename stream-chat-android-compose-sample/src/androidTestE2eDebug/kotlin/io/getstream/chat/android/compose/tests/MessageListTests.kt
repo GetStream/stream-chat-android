@@ -223,26 +223,6 @@ class MessageListTests : StreamTestCase() {
         }
     }
 
-    @Ignore("https://linear.app/stream/issue/AND-181")
-    @AllureId("5717")
-    @Test
-    fun test_commandsMenuCloses_whenUserTapsOnMessageList() {
-        step("GIVEN user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        step("AND user opens attachments menu") {
-            userRobot
-                .openComposerCommands()
-                .assertComposerCommandsMenu(isDisplayed = true)
-        }
-        step("WHEN user taps on message list") {
-            userRobot.tapOnMessageList()
-        }
-        step("THEN command suggestions disappear") {
-            userRobot.assertComposerCommandsMenu(isDisplayed = false)
-        }
-    }
-
     @AllureId("5720")
     @Test
     fun test_addingCommandHidesAttachmentsButton() {
@@ -391,7 +371,6 @@ class MessageListTests : StreamTestCase() {
 
     // MARK: Scrolling
 
-    @Ignore("https://linear.app/stream/issue/AND-76")
     @AllureId("5792")
     @Test
     fun test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() {
@@ -906,7 +885,6 @@ class MessageListTests : StreamTestCase() {
     }
 
     @AllureId("6608")
-    @Ignore("https://linear.app/stream/issue/AND-212")
     @Test
     fun test_messageRendersTimestampAgain_whenMessageLastInGroupIsSoftDeleted() {
         step("GIVEN user opens the channel") {
