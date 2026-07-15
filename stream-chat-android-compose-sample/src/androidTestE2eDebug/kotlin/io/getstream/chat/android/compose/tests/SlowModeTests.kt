@@ -30,7 +30,9 @@ class SlowModeTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.UserLogin
 
-    private val cooldownDuration = 15
+    // Long enough that the cooldown cannot expire between the message send and the assert
+    // on a slow CI emulator; no test waits for the cooldown to end.
+    private val cooldownDuration = 60
     private val message = "message"
     private val replyMessage = "reply message"
     private val editedMessage = "edited message"
