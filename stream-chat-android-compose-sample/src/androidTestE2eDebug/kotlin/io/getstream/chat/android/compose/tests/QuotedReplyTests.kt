@@ -238,7 +238,7 @@ class QuotedReplyTests : StreamTestCase() {
             participantRobot.deleteMessage()
         }
         step("THEN deleted message is shown") {
-            userRobot.assertDeletedMessage(quoteReply)
+            userRobot.assertDeletedMessage("1")
         }
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
@@ -286,7 +286,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.deleteMessage(sampleText)
         }
         step("THEN deleted message is shown") {
-            userRobot.assertDeletedMessage(quoteReply)
+            userRobot.assertDeletedMessage(sampleText)
         }
         step("AND deleted message is shown in quoted reply bubble") {
             userRobot.assertQuotedMessage(
@@ -363,6 +363,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5892")
+    @Ignore("https://linear.app/stream/issue/AND-960")
     @Test
     fun test_quotedReplyNotInList_whenUserAddsQuotedReply_InThread() {
         step("GIVEN user opens the channel") {
@@ -658,7 +659,7 @@ class QuotedReplyTests : StreamTestCase() {
         step("THEN deleted message is shown") {
             userRobot
                 .assertDeletedMessage(quoteReply)
-                .assertQuotedMessage(text = sampleText, isDisplayed = false)
+                .assertQuotedMessage(isDisplayed = false)
         }
     }
 

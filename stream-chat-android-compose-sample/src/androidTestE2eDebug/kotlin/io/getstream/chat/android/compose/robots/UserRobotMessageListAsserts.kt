@@ -65,13 +65,12 @@ fun UserRobot.assertMessage(
     isDisplayed: Boolean = true,
     isClickable: Boolean = false,
 ): UserRobot {
+    val textLocator = (if (isClickable) Message.clickableText else Message.text).text(text)
     if (isDisplayed) {
-        val textLocator = (if (isClickable) Message.clickableText else Message.text)
-            .text(text)
         assertTrue(textLocator.waitDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
-        assertFalse(Message.text.text(text).waitToDisappear().isDisplayed())
+        assertFalse(textLocator.waitToDisappear().isDisplayed())
     }
     return this
 }
