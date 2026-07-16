@@ -63,7 +63,7 @@ public class ParticipantRobot(
      * @param rest Optional payload degradation, matching the mock server's `rest` values.
      */
     public fun sendPushNotification(component: String, rest: String? = null): ParticipantRobot {
-        var endpoint = "participant/push?component=$component"
+        var endpoint = "participant/push?platform=android&component=$component"
         if (rest != null) {
             endpoint += "&rest=$rest"
         }
