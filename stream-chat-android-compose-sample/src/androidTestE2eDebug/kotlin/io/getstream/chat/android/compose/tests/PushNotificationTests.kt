@@ -139,6 +139,22 @@ class PushNotificationTests : StreamTestCase() {
         }
     }
 
+    /**
+     * Verifies a push notification is still delivered and opens the message when the payload's
+     * optional values are degraded but its required keys stay valid.
+     *
+     * [rest] selects how the mock server degrades the payload:
+     * - `null`: omits the optional title and body
+     * - `empty`: sends an empty title and body
+     * - `incorrect_type`: sends a wrong-type title and junk badge fields
+     * - `incorrect_data`: sends out-of-range badge fields
+     *
+     * In all of these the required keys (`version`, `sender`, `type`, `message_id`, `cid`) stay
+     * valid, so the client accepts the push, shows it, and opens the message on tap. Payloads that
+     * break a required key are covered by [test_pushNotification_requiredValuesAreInvalid].
+     *
+     * @param rest The mock server's payload-degradation mode.
+     */
     private fun assertPushNotificationWithDegradedPayload(rest: String) {
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
