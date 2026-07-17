@@ -56,6 +56,21 @@ public class ParticipantRobot(
         return this
     }
 
+    /**
+     * Delivers a push notification for the last message to the Android app under test.
+     *
+     * @param component The broadcast receiver component of the app under test.
+     * @param rest Optional payload degradation, matching the mock server's `rest` values.
+     */
+    public fun sendPushNotification(component: String, rest: String? = null): ParticipantRobot {
+        var endpoint = "participant/push?platform=android&component=$component"
+        if (rest != null) {
+            endpoint += "&rest=$rest"
+        }
+        mockServer.postRequest(endpoint)
+        return this
+    }
+
     public fun sendMessage(text: String, delay: Int = 0): ParticipantRobot {
         var endpoint = "participant/message"
         if (delay > 0) {

@@ -108,6 +108,16 @@ class UserRobot {
         return this
     }
 
+    fun openNotificationShade(): UserRobot {
+        device.openNotification()
+        return this
+    }
+
+    fun tapOnPushNotification(text: String): UserRobot {
+        By.text(text).waitToAppear().click()
+        return this
+    }
+
     fun tapOnBackButton(): UserRobot {
         MessageListPage.Header.backButton.waitToAppear().click()
         return this

@@ -21,5 +21,9 @@
             android:exported="true"
             >
         </activity>
+
+        <receiver
+            android:name=".push.PushTestReceiver"
+            android:exported="true" />
     </application>
 </manifest>
