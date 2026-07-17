@@ -32,7 +32,6 @@ import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class ChannelListTests : StreamTestCase() {
@@ -133,7 +132,6 @@ class ChannelListTests : StreamTestCase() {
     }
 
     @AllureId("5796")
-    @Ignore("https://linear.app/stream/issue/AND-218")
     @Test
     fun test_channelPreviewShowsNoMessages_whenChannelIsEmpty() {
         step("WHEN user opens channel list") {
@@ -142,8 +140,8 @@ class ChannelListTests : StreamTestCase() {
         step("AND the channel has no messages") {
             // No actions required as the channel is empty by default
         }
-        step("THEN the channel preview shows No messages") {
-            userRobot.assertMessageInChannelPreview("No messages", fromCurrentUser = false)
+        step("THEN the channel preview shows the empty state") {
+            userRobot.assertMessageInChannelPreview("No messages yet")
         }
         step("AND the message timestamp is hidden") {
             userRobot.assertMessagePreviewTimestamp(isDisplayed = false)
@@ -151,9 +149,8 @@ class ChannelListTests : StreamTestCase() {
     }
 
     @AllureId("5798")
-    @Ignore("https://linear.app/stream/issue/AND-218")
     @Test
-    fun test_channelPreviewShowsNoMessages_whenTheOnlyMessageInChannelIsDeleted() {
+    fun test_channelPreviewShowsMessageDeleted_whenTheOnlyMessageInChannelIsDeleted() {
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -166,11 +163,11 @@ class ChannelListTests : StreamTestCase() {
         step("WHEN user goes back to the channel list") {
             userRobot.tapOnBackButton()
         }
-        step("THEN the channel preview shows No messages") {
-            userRobot.assertMessageInChannelPreview("No messages", fromCurrentUser = false)
+        step("THEN the channel preview shows the deleted message placeholder") {
+            userRobot.assertMessageInChannelPreview("\uFFFD Message deleted", fromCurrentUser = false)
         }
-        step("AND the message timestamp is hidden") {
-            userRobot.assertMessagePreviewTimestamp(isDisplayed = false)
+        step("AND the message timestamp is shown") {
+            userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
         }
     }
 

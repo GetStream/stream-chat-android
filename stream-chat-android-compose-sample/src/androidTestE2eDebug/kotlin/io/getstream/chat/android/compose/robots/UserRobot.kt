@@ -36,7 +36,6 @@ import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
 import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
 import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
-import io.getstream.chat.android.e2e.test.uiautomator.tapOnScreenCenter
 import io.getstream.chat.android.e2e.test.uiautomator.typeText
 import io.getstream.chat.android.e2e.test.uiautomator.wait
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
@@ -209,6 +208,13 @@ class UserRobot {
     fun selectReplyFromContextMenu(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.reply.waitToAppear().click()
+        return this
+    }
+
+    fun quoteMessage(text: String, quotedMessageText: String): UserRobot {
+        openContextMenu(quotedMessageText)
+        ContextMenu.reply.waitToAppear().click()
+        sendMessage(text)
         return this
     }
 
@@ -407,9 +413,5 @@ class UserRobot {
             Composer.sendButton.waitToAppear().click()
         }
         return this
-    }
-
-    fun tapOnMessageList() {
-        device.tapOnScreenCenter()
     }
 }

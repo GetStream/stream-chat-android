@@ -397,7 +397,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5774")
-    @Ignore("https://linear.app/stream/issue/AND-255")
     @Test
     fun test_singleCheckmarkShownForMessageInPreview_whenThreadReplyFailedToBeSent() {
         step("GIVEN user opens the channel") {
