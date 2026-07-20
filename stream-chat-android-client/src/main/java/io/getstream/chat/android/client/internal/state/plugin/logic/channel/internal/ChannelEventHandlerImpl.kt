@@ -271,6 +271,8 @@ internal class ChannelEventHandlerImpl(
 
             is MemberRemovedEvent -> {
                 state.removeMember(event)
+                // A removed member no longer counts as a reader of the channel
+                state.removeRead(event.member.getUserId())
                 // Remove the channel.membership if the current user is removed from the channel
                 if (event.member.getUserId() == getCurrentUserId()) {
                     state.deleteMembership()

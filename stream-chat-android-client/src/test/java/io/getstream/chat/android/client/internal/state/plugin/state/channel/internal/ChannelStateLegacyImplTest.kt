@@ -786,6 +786,33 @@ internal class ChannelStateLegacyImplTest {
         assertEquals(delivered, userRead)
     }
 
+    @Test
+    fun `deleteRead should remove read state for the given user`() = runTest {
+        val user = randomUser()
+        val otherUser = randomUser()
+        channelState.upsertReads(
+            listOf(
+                randomChannelUserRead(user),
+                randomChannelUserRead(otherUser),
+            ),
+        )
+
+        channelState.deleteRead(user.id)
+
+        assertNull(channelState.reads.value.find { it.user.id == user.id })
+        assertNotNull(channelState.reads.value.find { it.user.id == otherUser.id })
+    }
+
+    @Test
+    fun `deleteRead should do nothing when the user has no read state`() = runTest {
+        val user = randomUser()
+        channelState.upsertReads(listOf(randomChannelUserRead(user)))
+
+        channelState.deleteRead(randomString())
+
+        assertEquals(1, channelState.reads.value.size)
+    }
+
     private fun ChannelStateLegacyImpl.assertPinnedMessagesSizeEqualsTo(size: Int) {
         require(pinnedMessages.value.size == size) {
             "pinnedMessages should have $size items, but was ${pinnedMessages.value.size}"

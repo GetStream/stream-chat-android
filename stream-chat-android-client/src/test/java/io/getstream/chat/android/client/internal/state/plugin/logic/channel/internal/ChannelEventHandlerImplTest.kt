@@ -703,17 +703,19 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).removeMember(event)
+        verify(state).removeRead(member.getUserId())
         verify(state).deleteMembership()
     }
 
     @Test
-    fun `When MemberRemovedEvent for other user is handled, Then only member is deleted`() {
+    fun `When MemberRemovedEvent for other user is handled, Then member and its read state are deleted`() {
         val member = randomMember(user = randomUser(id = randomString()))
         val event = randomMemberRemovedEvent(cid = cid, member = member)
 
         handler.handle(event)
 
         verify(state).removeMember(event)
+        verify(state).removeRead(member.getUserId())
         verify(state, never()).deleteMembership()
     }
 

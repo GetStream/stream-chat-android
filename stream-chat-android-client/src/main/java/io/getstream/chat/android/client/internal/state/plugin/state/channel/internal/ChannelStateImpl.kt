@@ -1166,6 +1166,15 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Removes the read state of the given user, so they no longer count as a reader of the channel.
+     *
+     * @param userId The id of the user whose read state should be removed.
+     */
+    fun removeRead(userId: UserId) {
+        _reads.update { current -> current - userId }
+    }
+
+    /**
      * Updates the delivered status for a user's read state.
      *
      * @param read The [ChannelUserRead] containing the delivered status to update.
