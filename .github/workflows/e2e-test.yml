@@ -80,23 +80,11 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - name: Diagnose API ${{ env.ANDROID_API_LEVEL }} SDK availability
-        run: |
-          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
-          # Refresh command-line tools so sdkmanager can see newly published packages.
-          yes | "$SDKMANAGER" --install "cmdline-tools;latest" > /dev/null 2>&1 || true
-          echo "::group::stable channel packages matching android-${ANDROID_API_LEVEL}"
-          "$SDKMANAGER" --channel=0 --list 2>/dev/null | grep -i "android-${ANDROID_API_LEVEL}" || echo "NONE on stable"
-          echo "::endgroup::"
-          echo "::group::canary channel packages matching android-${ANDROID_API_LEVEL}"
-          "$SDKMANAGER" --channel=3 --list 2>/dev/null | grep -i "android-${ANDROID_API_LEVEL}" || echo "NONE on canary"
-          echo "::endgroup::"
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 45
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
-          target: google_apis_ps16k
           disable-animations: true
           profile: pixel
           arch : x86_64
