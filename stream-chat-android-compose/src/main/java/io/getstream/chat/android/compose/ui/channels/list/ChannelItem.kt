@@ -87,6 +87,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import java.util.Date
 
@@ -767,6 +768,54 @@ internal fun ChannelItemDraftMessage() {
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages,
         draftMessage = DraftMessage(text = "message"),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemDeletedLastMessagePreview() {
+    ChatTheme {
+        ChannelItemDeletedLastMessage()
+    }
+}
+
+/**
+ * The newest message is deleted while an older regular message exists,
+ * so the preview shows the deleted placeholder.
+ */
+@Composable
+internal fun ChannelItemDeletedLastMessage() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = listOf(
+                PreviewMessageData.message1,
+                PreviewMessageData.message2.copy(deletedAt = Date()),
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemOnlyDeletedMessagePreview() {
+    ChatTheme {
+        ChannelItemOnlyDeletedMessage()
+    }
+}
+
+/**
+ * The only message in the channel is deleted, so the preview shows the deleted placeholder.
+ */
+@Composable
+internal fun ChannelItemOnlyDeletedMessage() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = listOf(
+                PreviewMessageData.message1.copy(deletedAt = Date()),
+            ),
+        ),
     )
 }
 
