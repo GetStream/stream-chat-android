@@ -42,6 +42,8 @@ public fun Channel.getLastMessage(currentUser: User?): Message? = getPreviewMess
 /**
  * Returns channel's last regular or system message, **including deleted messages**.
  * Used by the channel list to show "Message deleted" when the last message was deleted.
+ * When several messages share the same creation time, the one closest to the end of
+ * [Channel.messages] wins, since the list keeps insertion order for equal timestamps.
  */
 internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message? {
     // Consider last pending message (if available)
@@ -57,7 +59,15 @@ internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
         .filter { it.isRegular() || it.isSystem() || it.isDeleted() }
-        .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
+        // Backends with second-precision timestamps can produce equal creation times,
+        // so on a tie the later element wins as the newer message
+        .reduceOrNull { latest, message ->
+            if (message.getCreatedAtOrDefault(NEVER) >= latest.getCreatedAtOrDefault(NEVER)) {
+                message
+            } else {
+                latest
+            }
+        }
 }
 
 /**

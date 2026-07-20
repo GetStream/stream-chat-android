@@ -31,45 +31,57 @@ import java.util.Date
 @OptIn(InternalStreamChatApi::class)
 public object PreviewMessageData {
 
+    private const val CREATION_GAP_MILLIS = 1_000L
+    private var lastCreatedAt = Date()
+
+    /**
+     * Returns a creation date one second after the previous one, so the relative order of the
+     * sample messages is deterministic instead of depending on initialization timing.
+     */
+    private fun nextCreatedAt(): Date {
+        lastCreatedAt = Date(lastCreatedAt.time + CREATION_GAP_MILLIS)
+        return lastCreatedAt
+    }
+
     public val message1: Message = Message(
         id = "message-1",
         text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
     )
 
     public val message2: Message = Message(
         id = "message-2",
         text = "Aenean commodo ligula eget dolor.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
     )
 
     public val message3: Message = Message(
         id = "message-3",
         text = "Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
     )
 
     public val message4: Message = Message(
         id = "message-4",
         text = "Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
     )
 
     public val message5: Message = Message(
         id = "message-5",
         text = "Nulla consequat massa quis enim.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
     )
 
     public val messageWithOwnReaction: Message = Message(
         id = "message-with-own-reaction",
         text = "Pellentesque leo dui, finibus et nibh et, congue aliquam lectus",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
         ownReactions = mutableListOf(Reaction(messageId = "message-with-own-reaction", type = "haha")),
         reactionGroups = mutableMapOf(
@@ -86,13 +98,13 @@ public object PreviewMessageData {
     public val messageWithError: Message = Message(
         id = "message-with-error",
         text = "Lorem ipsum dolor sqit amet, consectetuer adipiscing elit.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.ERROR,
     )
 
     public val messageWithPoll: Message = Message(
         id = "message-with-poll",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
         poll = PreviewPollData.poll1,
     )
@@ -106,7 +118,7 @@ public object PreviewMessageData {
     public val messageWithMention: Message = Message(
         id = "message-with-mention",
         text = "@André Rêgo adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
         type = MessageType.REGULAR,
         mentionedUsers = listOf(PreviewUserData.user7),
     )
@@ -120,7 +132,7 @@ public object PreviewMessageData {
             PreviewAttachmentData.attachmentImage1,
             PreviewAttachmentData.attachmentVideo1,
         ),
-        createdAt = Date(),
+        createdAt = nextCreatedAt(),
     )
 
     public val draftMessage: DraftMessage = DraftMessage(

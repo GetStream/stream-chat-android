@@ -20,6 +20,7 @@ import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDeletedLastMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDraftMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageDeliveredStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessagePendingStatus
@@ -31,6 +32,7 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedPinned
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedPinnedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemNoMessages
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemOnlyDeletedMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemPinned
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemPinnedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
@@ -140,6 +142,20 @@ internal class ChannelItemTest : PaparazziComposeTest {
     fun `draft message`() {
         snapshotWithDarkMode {
             ChannelItemDraftMessage()
+        }
+    }
+
+    @Test
+    fun `deleted last message`() {
+        snapshotWithDarkMode {
+            ChannelItemDeletedLastMessage()
+        }
+    }
+
+    @Test
+    fun `only deleted message`() {
+        snapshotWithDarkMode {
+            ChannelItemOnlyDeletedMessage()
         }
     }
 }
