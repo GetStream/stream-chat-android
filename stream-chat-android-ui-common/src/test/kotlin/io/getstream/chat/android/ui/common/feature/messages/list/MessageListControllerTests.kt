@@ -285,6 +285,32 @@ internal class MessageListControllerTests {
         messagesCount `should be equal to` 10
     }
 
+    @Test
+    fun `When read events are disabled in the channel config Should propagate it to message items`() = runTest {
+        val messagesState = MutableStateFlow(listOf(randomMessage()))
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState, config = Config(readEventsEnabled = false))
+            .get()
+
+        val messageItem = controller.messageListState.value.messageItems.filterIsInstance<MessageItemState>().first()
+        messageItem.readEventsEnabled `should be equal to` false
+    }
+
+    @Test
+    fun `When delivery events are disabled in the channel config Should propagate it to message items`() = runTest {
+        val messagesState = MutableStateFlow(listOf(randomMessage()))
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState, config = Config(deliveryEventsEnabled = false))
+            .get()
+
+        val messageItem = controller.messageListState.value.messageItems.filterIsInstance<MessageItemState>().first()
+        messageItem.deliveryEventsEnabled `should be equal to` false
+    }
+
     // footer visibility
     @Test
     fun `When footer visibility is with time difference When message is after specified time Show message footer`() =
@@ -1320,10 +1346,11 @@ internal class MessageListControllerTests {
             typingUsers: List<User> = listOf(),
             typingState: StateFlow<TypingEvent> = MutableStateFlow(TypingEvent(cid, typingUsers)),
             read: StateFlow<ChannelUserRead?> = MutableStateFlow(randomChannelUserRead(lastReadMessageId = null)),
+            config: Config = Config(),
         ) = apply {
             whenever(channelState.cid) doReturn CID
             whenever(channelState.channelData) doReturn channelDataState
-            whenever(channelState.channelConfig) doReturn MutableStateFlow(Config())
+            whenever(channelState.channelConfig) doReturn MutableStateFlow(config)
             whenever(channelState.members) doReturn membersState
             whenever(channelState.membersCount) doReturn membersCountState
             whenever(channelState.watchers) doReturn watchersState

@@ -507,7 +507,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5759")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenMessageIsSentAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -555,7 +554,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5762")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenMessageReadByParticipantAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -574,7 +572,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5763")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenNewParticipantAddedAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -596,7 +593,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5764")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenParticipantIsRemovedAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -618,7 +614,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5765")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHiddenForMessagesInGroup_whenReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -637,7 +632,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5766")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenMessageIsDeletedAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -659,7 +653,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5771")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHiddenInPreview_whenMessageIsSentAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
