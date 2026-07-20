@@ -664,7 +664,6 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("6791")
-    @Ignore("https://linear.app/stream/issue/AND-272")
     @Test
     fun test_originalQuoteIsDeletedByUser_deletedMessageIsShown_InThread() {
         step("GIVEN user opens the channel") {
