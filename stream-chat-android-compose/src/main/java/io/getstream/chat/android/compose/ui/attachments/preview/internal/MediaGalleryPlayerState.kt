@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
@@ -124,8 +123,7 @@ internal fun GalleryMediaEffect(
                     } else {
                         0L
                     }
-                    player.setMediaItem(MediaItem.fromUri(assetUrl), startPosition)
-                    player.prepare()
+                    player.prepareIfNeeded(assetUrl, startPosition)
                 }
             }
             lastPreparedPage = currentPage

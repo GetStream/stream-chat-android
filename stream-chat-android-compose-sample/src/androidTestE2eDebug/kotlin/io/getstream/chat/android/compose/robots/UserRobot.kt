@@ -31,13 +31,11 @@ import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.defaultTimeout
 import io.getstream.chat.android.e2e.test.uiautomator.device
-import io.getstream.chat.android.e2e.test.uiautomator.findObject
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
 import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
 import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
-import io.getstream.chat.android.e2e.test.uiautomator.tapOnScreenCenter
 import io.getstream.chat.android.e2e.test.uiautomator.typeText
 import io.getstream.chat.android.e2e.test.uiautomator.wait
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
@@ -110,6 +108,16 @@ class UserRobot {
         return this
     }
 
+    fun openNotificationShade(): UserRobot {
+        device.openNotification()
+        return this
+    }
+
+    fun tapOnPushNotification(text: String): UserRobot {
+        By.text(text).waitToAppear().click()
+        return this
+    }
+
     fun tapOnBackButton(): UserRobot {
         MessageListPage.Header.backButton.waitToAppear().click()
         return this
@@ -118,6 +126,27 @@ class UserRobot {
     fun tapOnSendButton(): UserRobot {
         Composer.sendButton.waitToAppear().click()
         return this
+    }
+
+    /**
+     * Taps whichever confirm button the composer is showing. Selecting a command suggestion
+     * activates command mode, where the trailing button is the save button instead of the
+     * send button; with the sample's configuration both build the same message.
+     */
+    private fun tapOnComposerConfirmButton(): UserRobot {
+        val endTime = System.currentTimeMillis() + defaultTimeout
+        while (System.currentTimeMillis() < endTime) {
+            Composer.sendButton.findObjects().firstOrNull()?.let {
+                it.click()
+                return this
+            }
+            Composer.saveButton.findObjects().firstOrNull()?.let {
+                it.click()
+                return this
+            }
+            Thread.sleep(50)
+        }
+        error("Neither the send nor the save composer button appeared within ${defaultTimeout}ms")
     }
 
     fun tapOnLinkPreviewCancelButton(): UserRobot {
@@ -181,7 +210,19 @@ class UserRobot {
     }
 
     fun quoteMessage(text: String, messageCellIndex: Int = 0): UserRobot {
+        selectReplyFromContextMenu(messageCellIndex)
+        sendMessage(text)
+        return this
+    }
+
+    fun selectReplyFromContextMenu(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
+        ContextMenu.reply.waitToAppear().click()
+        return this
+    }
+
+    fun quoteMessage(text: String, quotedMessageText: String): UserRobot {
+        openContextMenu(quotedMessageText)
         ContextMenu.reply.waitToAppear().click()
         sendMessage(text)
         return this
@@ -283,7 +324,9 @@ class UserRobot {
     }
 
     fun openComposerCommands(): UserRobot {
-        Composer.commandsButton.waitToAppear().click()
+        // The composer redesign removed the dedicated commands button; typing '/' in the
+        // input field opens the command suggestion list.
+        typeText("/")
         return this
     }
 
@@ -292,14 +335,20 @@ class UserRobot {
         return this
     }
 
+    fun tapOnGiphyCommandSuggestion(): UserRobot {
+        Composer.giphyButton.waitToAppear().click()
+        return this
+    }
+
     fun uploadGiphy(useComposerCommand: Boolean = false, send: Boolean = true): UserRobot {
         val giphyMessageText = "G" // any message text will result in sending a giphy
         if (useComposerCommand) {
             openComposerCommands()
-            Composer.giphyButton.waitToAppear().click()
-            Composer.inputField.findObject().click()
-            device.typeText(giphyMessageText)
-            Composer.sendButton.findObject().click()
+            // Selecting the suggestion prefills '/giphy '; typeText replaces the whole input,
+            // so the command prefix is set together with the message text.
+            tapOnGiphyCommandSuggestion()
+            typeText("/giphy $giphyMessageText")
+            tapOnComposerConfirmButton()
         } else {
             sendMessage("/giphy $giphyMessageText")
         }
@@ -374,9 +423,5 @@ class UserRobot {
             Composer.sendButton.waitToAppear().click()
         }
         return this
-    }
-
-    fun tapOnMessageList() {
-        device.tapOnScreenCenter()
     }
 }

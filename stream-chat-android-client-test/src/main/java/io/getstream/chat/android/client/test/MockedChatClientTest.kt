@@ -62,6 +62,10 @@ interface MockedChatClientTest {
         whenever(MockChatClient.clientState) doReturn MockClientState
         whenever(MockChatClient.inheritScope(any())) doReturn
             TestScope() + CoroutineExceptionHandler { _, _ -> }
+        // RETURNS_MOCKS would otherwise hand out mock instances for nullable getters that
+        // production code reads opportunistically (e.g. opt-in features). Stub them to null
+        // so default behaviour matches the unconfigured path.
+        whenever(MockChatClient.videoCache) doReturn null
     }
 
     @After

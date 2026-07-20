@@ -59,6 +59,9 @@ abstract class StreamTestCase {
             backendRobot = BackendRobot(mockServer)
             participantRobot = ParticipantRobot(mockServer)
         }
+        // Start from a clean device state: a prior test may have left the notification
+        // shade open, which would cover the app and break this test's first interaction.
+        device.pressHome()
         startApp()
         grantAppPermissions()
     }

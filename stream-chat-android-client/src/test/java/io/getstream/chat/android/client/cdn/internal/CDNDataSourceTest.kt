@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.cdn.internal
 
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DataSpec
@@ -33,7 +34,7 @@ import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 internal class CDNDataSourceTest {
@@ -205,7 +206,7 @@ internal class CDNDataSourceTest {
     /**
      * A simple fake [DataSource] that records the [DataSpec] passed to [open].
      */
-    @UnstableApi
+    @OptIn(UnstableApi::class)
     private class FakeDataSource : DataSource {
         var lastOpenedDataSpec: DataSpec? = null
 

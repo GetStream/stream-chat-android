@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.cache.StreamCacheConfig
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.TimeDuration
 
@@ -85,6 +86,9 @@ import io.getstream.chat.android.models.TimeDuration
  * fall back to the default DTO-based parser, so behavior is preserved for events the fast path does not yet handle.
  * Currently supported event types: `message.new`. Disabled by default. The set of supported event types may grow over
  * time.
+ *
+ * @param cacheConfig Configuration for the SDK's user-configurable on-disk caches. By default all caches are off. See
+ * [StreamCacheConfig] for the available cache types and their options.
  */
 public data class ChatClientConfig @JvmOverloads constructor(
     public val offlineEnabled: Boolean = true,
@@ -96,6 +100,7 @@ public data class ChatClientConfig @JvmOverloads constructor(
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
     public val useLegacyChannelLogic: Boolean = false,
     public val fastEventParsing: Boolean = false,
+    public val cacheConfig: StreamCacheConfig = StreamCacheConfig(),
 )
 
 /**
