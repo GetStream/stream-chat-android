@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 
 class ChannelListPage {
@@ -47,7 +48,10 @@ class ChannelListPage {
                 val deliveryStatusIsRead = Message.deliveryStatusIsRead
                 val deliveryStatusIsPending = Message.deliveryStatusIsPending
                 val deliveryStatusIsSent = Message.deliveryStatusIsSent
-                val deliveryStatusIsFailed = Message.deliveryStatusIsFailed
+
+                // The channel preview renders the failed state via MessageReadStatusIcon,
+                // unlike the message list, which uses its own failed icon
+                val deliveryStatusIsFailed: BySelector = By.res("Stream_MessageReadStatus_isError")
                 val unreadCountIndicator = By.res("Stream_UnreadCountIndicator")
                 val timestamp = By.res("Stream_Timestamp")
                 val typingIndicator = By.res("Stream_ChannelListTypingIndicator")

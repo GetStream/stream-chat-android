@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.tests
 
+import io.getstream.chat.android.compose.robots.assertFailedMessageDeliveryStatusInPreview
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
@@ -334,7 +335,7 @@ class MessageDeliveryStatusTests : StreamTestCase() {
             userRobot.moveToChannelListFromMessageList()
         }
         step("THEN last message delivery status in the channel preview shows failed icon") {
-            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.FAILED)
+            userRobot.assertFailedMessageDeliveryStatusInPreview()
         }
     }
 
