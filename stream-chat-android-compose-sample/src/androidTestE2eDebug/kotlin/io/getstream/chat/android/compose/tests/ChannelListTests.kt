@@ -17,9 +17,13 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelAvatar
+import io.getstream.chat.android.compose.robots.assertMessageCount
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.getstream.chat.android.compose.robots.assertMessagePreviewTimestamp
+import io.getstream.chat.android.compose.robots.assertScrollToBottomButton
+import io.getstream.chat.android.compose.robots.assertScrollToBottomButtonUnreadCount
+import io.getstream.chat.android.compose.robots.assertSystemMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.uiautomator.device
@@ -28,7 +32,6 @@ import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class ChannelListTests : StreamTestCase() {
@@ -129,7 +132,6 @@ class ChannelListTests : StreamTestCase() {
     }
 
     @AllureId("5796")
-    @Ignore("https://linear.app/stream/issue/AND-218")
     @Test
     fun test_channelPreviewShowsNoMessages_whenChannelIsEmpty() {
         step("WHEN user opens channel list") {
@@ -138,8 +140,8 @@ class ChannelListTests : StreamTestCase() {
         step("AND the channel has no messages") {
             // No actions required as the channel is empty by default
         }
-        step("THEN the channel preview shows No messages") {
-            userRobot.assertMessageInChannelPreview("No messages", fromCurrentUser = false)
+        step("THEN the channel preview shows the empty state") {
+            userRobot.assertMessageInChannelPreview("No messages yet")
         }
         step("AND the message timestamp is hidden") {
             userRobot.assertMessagePreviewTimestamp(isDisplayed = false)
@@ -147,9 +149,8 @@ class ChannelListTests : StreamTestCase() {
     }
 
     @AllureId("5798")
-    @Ignore("https://linear.app/stream/issue/AND-218")
     @Test
-    fun test_channelPreviewShowsNoMessages_whenTheOnlyMessageInChannelIsDeleted() {
+    fun test_channelPreviewShowsMessageDeleted_whenTheOnlyMessageInChannelIsDeleted() {
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -162,11 +163,11 @@ class ChannelListTests : StreamTestCase() {
         step("WHEN user goes back to the channel list") {
             userRobot.tapOnBackButton()
         }
-        step("THEN the channel preview shows No messages") {
-            userRobot.assertMessageInChannelPreview("No messages", fromCurrentUser = false)
+        step("THEN the channel preview shows the deleted message placeholder") {
+            userRobot.assertMessageInChannelPreview("\uFFFD Message deleted", fromCurrentUser = false)
         }
-        step("AND the message timestamp is hidden") {
-            userRobot.assertMessagePreviewTimestamp(isDisplayed = false)
+        step("AND the message timestamp is shown") {
+            userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
         }
     }
 
@@ -272,6 +273,64 @@ class ChannelListTests : StreamTestCase() {
         }
         step("AND the message timestamp is shown") {
             userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
+        }
+    }
+
+    @AllureId("5797")
+    @Test
+    fun test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithMessage() {
+        val message = "Channel truncated"
+
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 42)
+            userRobot.login().openChannel()
+        }
+        step("WHEN the channel is truncated with a system message") {
+            backendRobot.truncateChannel(withMessage = true)
+        }
+        step("THEN user observes only the system message") {
+            userRobot
+                .assertSystemMessage(message)
+                .assertMessageCount(0)
+                .assertScrollToBottomButton(isDisplayed = false)
+                .assertScrollToBottomButtonUnreadCount(0)
+        }
+        step("WHEN user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        step("THEN the channel preview shows the system message") {
+            userRobot.assertMessageInChannelPreview(message, fromCurrentUser = true)
+        }
+        step("AND the message timestamp is shown") {
+            userRobot.assertMessagePreviewTimestamp(isDisplayed = true)
+        }
+    }
+
+    @AllureId("5827")
+    @Test
+    fun test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithoutMessage() {
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 42)
+            userRobot.login().openChannel()
+        }
+        step("WHEN the channel is truncated without a system message") {
+            backendRobot.truncateChannel(withMessage = false)
+        }
+        step("THEN user observes an empty message list") {
+            userRobot
+                .assertMessageCount(0)
+                .assertSystemMessage("Channel truncated", isDisplayed = false)
+                .assertScrollToBottomButton(isDisplayed = false)
+                .assertScrollToBottomButtonUnreadCount(0)
+        }
+        step("WHEN user goes back to the channel list") {
+            userRobot.tapOnBackButton()
+        }
+        step("THEN the channel preview is empty") {
+            userRobot.assertMessageInChannelPreview("No messages yet")
+        }
+        step("AND the message timestamp is hidden") {
+            userRobot.assertMessagePreviewTimestamp(isDisplayed = false)
         }
     }
 }

@@ -65,7 +65,6 @@ open class MessageListPage {
             val cooldownIndicator get() = By.res("Stream_ComposerCooldownIndicator")
             val saveButton get() = By.res("Stream_ComposerSaveButton")
             val recordAudioButton get() = By.res("Stream_ComposerAudioRecordingButton")
-            val commandsButton get() = By.res("Stream_ComposerCommandsButton")
             val commandSuggestionList get() = By.res("Stream_CommandSuggestionList")
             val commandSuggestionListTitle get() = By.res("Stream_CommandSuggestionListTitle")
             val userSuggestion get() = By.res("Stream_SuggestionItem")
@@ -96,6 +95,7 @@ open class MessageListPage {
             val unreadMessagesBadge get() = By.res("Stream_UnreadMessagesBadge")
             val typingIndicator get() = By.res("Stream_MessageListTypingIndicator")
             val scrollToBottomButton get() = By.res("Stream_ScrollToBottomButton")
+            val scrollToBottomButtonUnreadCount get() = By.res("Stream_ScrollToBottomButtonUnreadCount")
             val systemMessage get() = By.res("Stream_SystemMessage")
         }
 

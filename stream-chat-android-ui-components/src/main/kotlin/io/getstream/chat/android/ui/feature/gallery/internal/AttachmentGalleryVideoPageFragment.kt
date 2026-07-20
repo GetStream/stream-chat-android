@@ -243,8 +243,8 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     @OptIn(UnstableApi::class)
     private fun createMediaSourceFactory(): MediaSource.Factory {
-        val cdn = ChatClient.instance().cdn
-        val dataSourceFactory = StreamMediaDataSource.factory(requireContext(), cdn)
+        val client = ChatClient.instance()
+        val dataSourceFactory = StreamMediaDataSource.factory(requireContext(), client.cdn, client.videoCache)
         return DefaultMediaSourceFactory(requireContext())
             .setDataSourceFactory(dataSourceFactory)
     }

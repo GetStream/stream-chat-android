@@ -24,6 +24,9 @@ import io.getstream.chat.android.compose.robots.assertMediaAttachmentInPreview
 import io.getstream.chat.android.compose.robots.assertVideo
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
+import io.getstream.chat.android.e2e.test.uiautomator.device
+import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
+import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
@@ -195,6 +198,28 @@ class AttachmentsTests : StreamTestCase() {
         }
         step("THEN user can see uploaded file") {
             userRobot.assertFile(isDisplayed = true)
+        }
+    }
+
+    @AllureId("5928")
+    @Test
+    fun test_imageUploadRecovers_whenUserComesBackOnline() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND user goes offline") {
+            device.disableInternetConnection()
+        }
+        step("WHEN user sends an image while offline") {
+            userRobot
+                .attachFile(type = AttachmentType.IMAGE)
+                .tapOnSendButton()
+        }
+        step("AND user comes back online") {
+            device.enableInternetConnection()
+        }
+        step("THEN the image is uploaded") {
+            userRobot.assertImage(isDisplayed = true)
         }
     }
 }
