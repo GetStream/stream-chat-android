@@ -43,8 +43,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - android_api_level: 37
-          - android_api_level: 36
           - android_api_level: 35
           - android_api_level: 34
           - android_api_level: 33
@@ -55,7 +53,7 @@ jobs:
     env:
       ANDROID_API_LEVEL: ${{ matrix.android_api_level }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/download-artifact@v8.0.1
         continue-on-error: true
         with:
