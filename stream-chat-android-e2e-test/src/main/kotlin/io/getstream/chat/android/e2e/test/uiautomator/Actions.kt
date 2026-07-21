@@ -29,10 +29,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-public fun UiDevice.typeText(text: String) {
-    executeShellCommand("input text '$text'")
-}
-
 public fun UiObject2.typeText(text: String): UiObject2 {
     this.text = text
     return this

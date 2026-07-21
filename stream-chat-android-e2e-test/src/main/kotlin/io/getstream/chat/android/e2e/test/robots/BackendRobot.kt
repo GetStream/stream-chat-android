@@ -62,6 +62,50 @@ public class BackendRobot(
         return this
     }
 
+    /**
+     * Truncates the currently open channel on the server side. The app under test receives
+     * the `channel.truncated` websocket event.
+     *
+     * @param withMessage When `true`, the truncation also delivers a "Channel truncated" system message.
+     */
+    public fun truncateChannel(withMessage: Boolean): BackendRobot {
+        mockServer.postRequest("truncate_channel?with_message=$withMessage")
+        return this
+    }
+
+    /**
+     * Enables or disables read events on every channel. Call before the channel is opened.
+     *
+     * @param enabled Whether the channel config reports `read_events`.
+     */
+    public fun setReadEvents(enabled: Boolean): BackendRobot {
+        waitForMockServerToStart()
+        mockServer.postRequest("config/read_events?value=$enabled")
+        return this
+    }
+
+    /**
+     * Adds a member to the currently open channel on the server side. The app under test
+     * receives the `member.added` and `channel.updated` websocket events.
+     *
+     * @param userId The id of the user to add.
+     */
+    public fun addMember(userId: String): BackendRobot {
+        mockServer.postRequest("add_member?user_id=$userId")
+        return this
+    }
+
+    /**
+     * Removes a member from the currently open channel on the server side. The app under test
+     * receives the `member.removed` and `channel.updated` websocket events.
+     *
+     * @param userId The id of the user to remove.
+     */
+    public fun removeMember(userId: String): BackendRobot {
+        mockServer.postRequest("remove_member?user_id=$userId")
+        return this
+    }
+
     public fun revokeToken(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/revoke_token?duration=$duration")

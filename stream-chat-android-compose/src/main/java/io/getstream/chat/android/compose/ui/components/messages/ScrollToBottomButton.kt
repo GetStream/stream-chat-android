@@ -96,7 +96,9 @@ internal fun ScrollToBottomButton(
                     contentColor = ChatTheme.colors.badgeTextOnAccent,
                 ) {
                     Text(
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = StreamTokens.spacing3xs),
+                        modifier = Modifier
+                            .padding(horizontal = 6.dp, vertical = StreamTokens.spacing3xs)
+                            .testTag("Stream_ScrollToBottomButtonUnreadCount"),
                         text = count.toString(),
                         style = ChatTheme.typography.metadataEmphasis,
                     )

@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.tests
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore
@@ -396,7 +397,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5774")
-    @Ignore("https://linear.app/stream/issue/AND-255")
     @Test
     fun test_singleCheckmarkShownForMessageInPreview_whenThreadReplyFailedToBeSent() {
         step("GIVEN user opens the channel") {
@@ -457,6 +457,222 @@ class MessageDeliveryStatusTests : StreamTestCase() {
             userRobot.moveToChannelListFromMessageList()
         }
         step("THEN delivery status is hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5746")
+    @Ignore("https://linear.app/stream/issue/AND-1310")
+    @Test
+    fun test_readByDecremented_whenParticipantIsRemoved() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("AND participant reads the message") {
+            participantRobot.readMessage()
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.READ)
+        }
+        step("WHEN participant is removed from the channel") {
+            backendRobot.removeMember(ParticipantRobot.id)
+        }
+        step("THEN user observes a single checkmark below the message") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
+    }
+
+    @AllureId("5756")
+    @Ignore("https://linear.app/stream/issue/AND-1310")
+    @Test
+    fun test_readByDecrementedInThreadReply_whenParticipantIsRemoved() {
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1)
+            userRobot.login().openChannel()
+        }
+        step("AND user replies to message in thread") {
+            userRobot.openThread().sendMessage(sampleText)
+        }
+        step("AND participant reads the thread reply") {
+            participantRobot.readMessage()
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.READ)
+        }
+        step("WHEN participant is removed from the channel") {
+            backendRobot.removeMember(ParticipantRobot.id)
+        }
+        step("THEN user observes a single checkmark below the thread reply") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
+    }
+
+    @AllureId("5759")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHidden_whenMessageIsSentAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("WHEN user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("THEN delivery status is hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5760")
+    @Test
+    fun test_deliveryStatusShowsClocks_whenMessageIsInPendingStateAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("WHEN user sends a new message that is gonna freeze") {
+            backendRobot.freezeNewMessages()
+            userRobot.sendMessage("pending message")
+        }
+        step("THEN message delivery status shows clocks") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.PENDING)
+        }
+    }
+
+    @AllureId("5761")
+    @Test
+    fun test_errorIndicatorShown_whenMessageFailedToBeSentAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("WHEN user sends a new message that is gonna fail") {
+            backendRobot.failNewMessages()
+            userRobot.sendMessage("failed message")
+        }
+        step("THEN error indicator is shown for the message") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.FAILED)
+        }
+    }
+
+    @AllureId("5762")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHidden_whenMessageReadByParticipantAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("WHEN participant reads the message") {
+            participantRobot.readMessage()
+        }
+        step("THEN delivery status is hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5763")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHidden_whenNewParticipantAddedAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("AND participant reads the message") {
+            participantRobot.readMessage()
+        }
+        step("WHEN a new participant is added to the channel") {
+            backendRobot.addMember("leia_organa")
+        }
+        step("THEN delivery status is hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5764")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHidden_whenParticipantIsRemovedAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("AND participant reads the message") {
+            participantRobot.readMessage()
+        }
+        step("WHEN participant is removed from the channel") {
+            backendRobot.removeMember(ParticipantRobot.id)
+        }
+        step("THEN delivery status is hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5765")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHiddenForMessagesInGroup_whenReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("WHEN user sends another message") {
+            userRobot.sendMessage("second message")
+        }
+        step("THEN delivery status is hidden for all messages") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5766")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHidden_whenMessageIsDeletedAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("AND delivery status is hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+        step("WHEN user deletes the message") {
+            userRobot.deleteMessage()
+        }
+        step("THEN delivery status stays hidden") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
+        }
+    }
+
+    @AllureId("5771")
+    @Ignore("https://linear.app/stream/issue/AND-1309")
+    @Test
+    fun test_deliveryStatusHiddenInPreview_whenMessageIsSentAndReadEventsIsDisabled() {
+        step("GIVEN read events are disabled and user opens the channel") {
+            backendRobot.setReadEvents(enabled = false)
+            userRobot.login().openChannel()
+        }
+        step("AND user sends a new message") {
+            userRobot.sendMessage(sampleText)
+        }
+        step("WHEN user returns to the channel list") {
+            userRobot.moveToChannelListFromMessageList()
+        }
+        step("THEN delivery status is hidden in the channel preview") {
             userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
         }
     }
