@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -33,7 +34,9 @@ import kotlinx.coroutines.launch
 class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
+
         lifecycleScope.launch {
             // The harness always launches with BASE_URL; a launch without it comes from a
             // notification tap, where the already initialized client must stay untouched.
