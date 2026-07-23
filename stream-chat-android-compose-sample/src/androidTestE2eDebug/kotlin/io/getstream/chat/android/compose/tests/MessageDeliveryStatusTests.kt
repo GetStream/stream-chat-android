@@ -462,7 +462,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5746")
-    @Ignore("https://linear.app/stream/issue/AND-1310")
     @Test
     fun test_readByDecremented_whenParticipantIsRemoved() {
         step("GIVEN user opens the channel") {
@@ -484,7 +483,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5756")
-    @Ignore("https://linear.app/stream/issue/AND-1310")
     @Test
     fun test_readByDecrementedInThreadReply_whenParticipantIsRemoved() {
         step("GIVEN user opens the channel") {

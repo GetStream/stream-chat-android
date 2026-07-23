@@ -185,6 +185,8 @@ internal class ChannelEventHandlerLegacyImpl(
 
             is MemberRemovedEvent -> {
                 stateLogic.deleteMember(event.member)
+                // A removed member no longer counts as a reader of the channel
+                stateLogic.deleteRead(event.member.getUserId())
                 // Remove the channel.membership if the current user is removed from the channel
                 if (event.member.getUserId() == getCurrentUserId()) {
                     stateLogic.removeMembership()

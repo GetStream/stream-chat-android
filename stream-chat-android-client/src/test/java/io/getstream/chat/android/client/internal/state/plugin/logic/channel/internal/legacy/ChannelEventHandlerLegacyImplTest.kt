@@ -450,17 +450,19 @@ internal class ChannelEventHandlerLegacyImplTest {
         handler.handle(event)
 
         verify(stateLogic).deleteMember(member)
+        verify(stateLogic).deleteRead(member.getUserId())
         verify(stateLogic).removeMembership()
     }
 
     @Test
-    fun `When MemberRemovedEvent for other user is handled, Then only member is deleted`() {
+    fun `When MemberRemovedEvent for other user is handled, Then member and its read state are deleted`() {
         val member = randomMember(user = randomUser(id = randomString()))
         val event = randomMemberRemovedEvent(cid = cid, member = member)
 
         handler.handle(event)
 
         verify(stateLogic).deleteMember(member)
+        verify(stateLogic).deleteRead(member.getUserId())
         verify(stateLogic, never()).removeMembership()
     }
 

@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
@@ -349,6 +350,27 @@ internal class ChannelExtensionsTests {
         result.memberCount shouldBeEqualTo 1
         result.members shouldContain memberToKeep
         result.members shouldNotContain memberToRemove
+    }
+
+    @Test
+    fun `removeMember should remove the member's read state`() {
+        // given
+        val memberToRemove = randomMember(user = randomUser(id = "user-to-remove"))
+        val memberToKeep = randomMember(user = randomUser(id = "user-to-keep"))
+        val readToRemove = randomChannelUserRead(user = memberToRemove.user)
+        val readToKeep = randomChannelUserRead(user = memberToKeep.user)
+        val channel = randomChannel(
+            members = listOf(memberToRemove, memberToKeep),
+            memberCount = 2,
+            read = listOf(readToRemove, readToKeep),
+        )
+
+        // when
+        val result = channel.removeMember("user-to-remove")
+
+        // then
+        result.read shouldContain readToKeep
+        result.read shouldNotContain readToRemove
     }
 
     @Test
