@@ -20,7 +20,9 @@ import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.client.test.randomAnswerCastedEvent
+import io.getstream.chat.android.client.test.randomMessageDeletedEvent
 import io.getstream.chat.android.client.test.randomMessageUpdateEvent
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationReminderDueEvent
 import io.getstream.chat.android.client.test.randomPollClosedEvent
 import io.getstream.chat.android.client.test.randomPollDeletedEvent
@@ -387,6 +389,72 @@ internal class ThreadLogicTest {
             poll = eventPoll,
         )
         verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent When handleMessageEvents is called Should update quoted message references`() {
+        // given
+        val updatedMessage = randomMessage(replyMessageId = null, poll = null, ownReactions = emptyList())
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.messages).doReturn(MutableStateFlow(emptyList()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        val expectedMessage = updatedMessage.copy(replyTo = null)
+        verify(threadStateLogic, times(1)).updateQuotedMessageReferences(expectedMessage)
+        verify(threadStateLogic, never()).deleteQuotedMessageReferences(any())
+    }
+
+    @Test
+    fun `Given soft delete MessageDeletedEvent When handleMessageEvents is called Should update quoted message references`() {
+        // given
+        val deletedMessage = randomMessage(ownReactions = emptyList())
+        val event = randomMessageDeletedEvent(message = deletedMessage, hardDelete = false)
+
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        verify(threadStateLogic, times(1)).updateQuotedMessageReferences(deletedMessage)
+        verify(threadStateLogic, never()).deleteQuotedMessageReferences(any())
+    }
+
+    @Test
+    fun `Given hard delete MessageDeletedEvent When handleMessageEvents is called Should delete quoted message references`() {
+        // given
+        val deletedMessage = randomMessage(ownReactions = emptyList())
+        val event = randomMessageDeletedEvent(message = deletedMessage, hardDelete = true)
+
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        verify(threadStateLogic, times(1)).deleteQuotedMessageReferences(deletedMessage.id)
+        verify(threadStateLogic, never()).updateQuotedMessageReferences(any())
+    }
+
+    @Test
+    fun `Given NewMessageEvent When handleMessageEvents is called Should not touch quoted message references`() {
+        // given
+        val message = randomMessage()
+        val event = randomNewMessageEvent(message = message)
+
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        verify(threadStateLogic, never()).updateQuotedMessageReferences(any())
+        verify(threadStateLogic, never()).deleteQuotedMessageReferences(any())
     }
 
     @Test

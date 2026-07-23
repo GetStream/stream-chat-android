@@ -658,6 +658,40 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
 
     // endregion
 
+    @Nested
+    inner class RemoveRead {
+
+        @Test
+        fun `removeRead should remove read state for the given user`() = runTest {
+            // given
+            val user1 = randomUser(id = "user_1")
+            val user2 = randomUser(id = "user_2")
+            channelState.updateReads(
+                listOf(
+                    createRead(user1, unreadMessages = 0, lastRead = Date(1000)),
+                    createRead(user2, unreadMessages = 0, lastRead = Date(2000)),
+                ),
+            )
+            // when
+            channelState.removeRead("user_1")
+            // then
+            val reads = channelState.reads.value
+            assertEquals(1, reads.size)
+            assertEquals("user_2", reads.first().user.id)
+        }
+
+        @Test
+        fun `removeRead should do nothing when the user has no read state`() = runTest {
+            // given
+            val user = randomUser(id = "user_1")
+            channelState.updateRead(createRead(user, unreadMessages = 0, lastRead = Date(1000)))
+            // when
+            channelState.removeRead("unknown_user")
+            // then
+            assertEquals(1, channelState.reads.value.size)
+        }
+    }
+
     // region ReadsStateFlow
 
     @Nested

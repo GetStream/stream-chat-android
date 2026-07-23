@@ -266,6 +266,15 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Deletes the read state of the given user, so they no longer count as a reader of the channel.
+     *
+     * @param userId The id of the user whose read state should be deleted.
+     */
+    fun deleteRead(userId: String) {
+        mutableState.deleteRead(userId)
+    }
+
+    /**
      * Updates the list of typing users.
      * The method is responsible for adding/removing typing users, sorting the list and updating both
      * [ChannelState] and [MutableGlobalState].

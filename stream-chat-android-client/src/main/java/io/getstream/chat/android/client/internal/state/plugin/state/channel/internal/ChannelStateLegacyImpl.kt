@@ -563,6 +563,17 @@ internal class ChannelStateLegacyImpl(
     }
 
     /**
+     * Deletes the read state of the given user, so they no longer count as a reader of the channel.
+     *
+     * @param userId The id of the user whose read state should be deleted.
+     */
+    fun deleteRead(userId: String) {
+        _rawReads?.apply {
+            value = value - userId
+        }
+    }
+
+    /**
      * Upsert the delivered status for a specific user's read.
      */
     fun upsertDelivered(read: ChannelUserRead) {

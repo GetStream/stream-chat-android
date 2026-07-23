@@ -105,6 +105,7 @@ public fun Channel.updateLastMessage(
 
 /**
  * Removes member from the [Channel.members] and aligns [Channel.memberCount].
+ * Also removes the member's read state from [Channel.read], as a removed member no longer counts as a reader.
  *
  * @param memberUserId User id of the removed member.
  */
@@ -112,6 +113,7 @@ public fun Channel.updateLastMessage(
 public fun Channel.removeMember(memberUserId: String?): Channel = copy(
     members = members.filterNot { it.user.id == memberUserId },
     memberCount = memberCount - (1.takeIf { members.any { it.user.id == memberUserId } } ?: 0),
+    read = read.filterNot { it.user.id == memberUserId },
 )
 
 /**

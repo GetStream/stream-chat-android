@@ -44,6 +44,11 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
     return this
 }
 
+fun UserRobot.assertFailedMessageDeliveryStatusInPreview(): UserRobot {
+    assertTrue(Channel.deliveryStatusIsFailed.waitDisplayed())
+    return this
+}
+
 fun UserRobot.assertMessagePreviewTimestamp(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
         assertTrue(Channel.timestamp.waitDisplayed())
