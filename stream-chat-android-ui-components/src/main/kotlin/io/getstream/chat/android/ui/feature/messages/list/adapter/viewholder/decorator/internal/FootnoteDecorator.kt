@@ -390,9 +390,9 @@ internal class FootnoteDecorator(
             -> itemStyle.iconIndicatorPendingSync
 
             SyncStatus.COMPLETED -> when {
-                data.isMessageRead -> itemStyle.iconIndicatorRead
-                data.isMessageDelivered -> itemStyle.iconIndicatorDelivered
-                else -> itemStyle.iconIndicatorSent
+                data.isMessageRead -> itemStyle.iconIndicatorRead.takeIf { data.readEventsEnabled }
+                data.isMessageDelivered -> itemStyle.iconIndicatorDelivered.takeIf { data.deliveryEventsEnabled }
+                else -> itemStyle.iconIndicatorSent.takeIf { data.readEventsEnabled }
             }
 
             else -> null

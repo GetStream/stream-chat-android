@@ -63,6 +63,8 @@ public fun MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
         isMessageDelivered = isMessageDelivered,
+        readEventsEnabled = channel.config.readEventsEnabled,
+        deliveryEventsEnabled = channel.config.deliveryEventsEnabled,
     )
 }
 
@@ -73,6 +75,10 @@ public fun MessageReadStatusIcon(
  * @param isMessageRead If the message is read by any member.
  * @param isMessageDelivered If the message is delivered to any member.
  * @param modifier Modifier for styling.
+ * @param readEventsEnabled If read events are enabled for the channel. When disabled, the sent and read
+ * icons are not shown.
+ * @param deliveryEventsEnabled If delivery events are enabled for the channel. When disabled, the delivered
+ * icon is not shown.
  */
 @Composable
 public fun MessageReadStatusIcon(
@@ -80,6 +86,8 @@ public fun MessageReadStatusIcon(
     isMessageRead: Boolean,
     modifier: Modifier = Modifier,
     isMessageDelivered: Boolean = false,
+    readEventsEnabled: Boolean = true,
+    deliveryEventsEnabled: Boolean = true,
     isReadIcon: @Composable () -> Unit = { IsReadIcon(modifier = modifier) },
     isPendingIcon: @Composable () -> Unit = { IsPendingIcon(modifier = modifier) },
     isSentIcon: @Composable () -> Unit = { IsSentIcon(modifier = modifier) },
@@ -94,9 +102,9 @@ public fun MessageReadStatusIcon(
         -> isPendingIcon()
 
         SyncStatus.COMPLETED -> when {
-            isMessageRead -> isReadIcon()
-            isMessageDelivered -> isDeliveredIcon()
-            else -> isSentIcon()
+            isMessageRead -> if (readEventsEnabled) isReadIcon()
+            isMessageDelivered -> if (deliveryEventsEnabled) isDeliveredIcon()
+            else -> if (readEventsEnabled) isSentIcon()
         }
 
         SyncStatus.FAILED_PERMANENTLY -> IsErrorIcon(modifier = modifier)

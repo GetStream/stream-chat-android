@@ -71,6 +71,8 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * the message was auto-translated).
  * @param ownCapabilities The capabilities of the current user in the channel.
  * @param isPreviewMode Whether the message is displayed as a preview (e.g. inside the selected message menu).
+ * @param readEventsEnabled Whether read events are enabled for the channel.
+ * @param deliveryEventsEnabled Whether delivery events are enabled for the channel.
  */
 public data class MessageItemState(
     public override val message: Message = Message(),
@@ -87,6 +89,8 @@ public data class MessageItemState(
     public val showOriginalText: Boolean = false,
     public val ownCapabilities: Set<String>,
     public val isPreviewMode: Boolean = false,
+    public val readEventsEnabled: Boolean = true,
+    public val deliveryEventsEnabled: Boolean = true,
 ) : HasMessageListItemState()
 
 /**
