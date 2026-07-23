@@ -361,11 +361,11 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             val lastMessageWasDelivered = channel.deliveredReadsOf(lastMessage).isNotEmpty()
 
             if (lastMessageWasRead) {
-                style.indicatorReadIcon
+                style.indicatorReadIcon.takeIf { channel.config.readEventsEnabled }
             } else if (lastMessageWasDelivered) {
-                style.indicatorDeliveredIcon
+                style.indicatorDeliveredIcon.takeIf { channel.config.deliveryEventsEnabled }
             } else {
-                style.indicatorSentIcon
+                style.indicatorSentIcon.takeIf { channel.config.readEventsEnabled }
             }
         }
 

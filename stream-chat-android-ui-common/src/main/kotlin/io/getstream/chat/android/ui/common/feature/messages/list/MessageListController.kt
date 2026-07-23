@@ -905,6 +905,7 @@ public class MessageListController(
     ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
+        val channelConfig = channelState.value?.channelConfig?.value
         val groupedMessages = mutableListOf<MessageListItemState>()
         val membersMap = members.associateBy { it.user.id }
         val sortedReads = reads
@@ -1006,6 +1007,8 @@ public class MessageListController(
                         focusState = if (isMessageFocused) MessageFocused else null,
                         ownCapabilities = ownCapabilities,
                         showOriginalText = messagesInOriginalLanguage.contains(message.id),
+                        readEventsEnabled = channelConfig?.readEventsEnabled ?: true,
+                        deliveryEventsEnabled = channelConfig?.deliveryEventsEnabled ?: true,
                     ),
                 )
             }
