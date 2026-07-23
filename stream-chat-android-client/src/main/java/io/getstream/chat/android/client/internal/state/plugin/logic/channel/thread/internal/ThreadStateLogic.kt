@@ -64,6 +64,32 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
         )
     }
 
+    /**
+     * Updates each thread message that quotes the given message with its new content.
+     *
+     * @param quotedMessage The message whose quoting messages should be updated.
+     */
+    fun updateQuotedMessageReferences(quotedMessage: Message) {
+        updateQuotingMessages(quotedMessage.id) { it.copy(replyTo = quotedMessage) }
+    }
+
+    /**
+     * Clears the quoted message reference from each thread message quoting the given message.
+     *
+     * @param quotedMessageId The ID of the quoted message to remove references for.
+     */
+    fun deleteQuotedMessageReferences(quotedMessageId: String) {
+        updateQuotingMessages(quotedMessageId) { it.copy(replyTo = null) }
+    }
+
+    private fun updateQuotingMessages(quotedMessageId: String, update: (Message) -> Message) {
+        val quotingMessages = mutableState.rawMessage.value.values
+            .filter { it.replyTo?.id == quotedMessageId || it.replyMessageId == quotedMessageId }
+        if (quotingMessages.isNotEmpty()) {
+            mutableState.upsertMessages(quotingMessages.map(update))
+        }
+    }
+
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
         return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
             (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()

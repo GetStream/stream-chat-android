@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
@@ -501,6 +502,30 @@ public fun randomMessageUpdateEvent(
     channelType = channelType,
     channelId = channelId,
     message = message,
+)
+
+public fun randomMessageDeletedEvent(
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    message: Message = randomMessage(),
+    hardDelete: Boolean = randomBoolean(),
+    deletedForMe: Boolean = false,
+    channelMessageCount: Int? = positiveRandomInt(),
+): MessageDeletedEvent = MessageDeletedEvent(
+    type = EventType.MESSAGE_DELETED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    message = message,
+    hardDelete = hardDelete,
+    deletedForMe = deletedForMe,
+    channelMessageCount = channelMessageCount,
 )
 
 public fun randomChannelUpdatedEvent(

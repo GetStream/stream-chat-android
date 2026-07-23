@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasPoll
 import io.getstream.chat.android.client.events.HasReminder
+import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
@@ -121,6 +122,17 @@ internal class ThreadLogic(
                 }
             }
         upsertMessages(messages)
+        events.zip(messages).forEach { (event, message) ->
+            when (event) {
+                is MessageUpdatedEvent -> threadStateLogic.updateQuotedMessageReferences(message)
+                is MessageDeletedEvent -> if (event.hardDelete) {
+                    threadStateLogic.deleteQuotedMessageReferences(message.id)
+                } else {
+                    threadStateLogic.updateQuotedMessageReferences(message)
+                }
+                else -> Unit
+            }
+        }
     }
 
     internal fun handleReminderEvents(events: List<HasReminder>) {
