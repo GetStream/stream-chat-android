@@ -301,6 +301,9 @@ class MessageListTests : StreamTestCase() {
         step("AND user goes to background") {
             device.goToBackground()
         }
+        step("AND user's WebSocket connection is closed") {
+            backendRobot.waitForWebSocketDisconnection()
+        }
         step("WHEN participant sends a new message") {
             participantRobot.sendMessage(sampleText)
         }
@@ -355,6 +358,9 @@ class MessageListTests : StreamTestCase() {
         }
         step("AND user goes to the background") {
             device.goToBackground()
+        }
+        step("AND user's WebSocket connection is closed") {
+            backendRobot.waitForWebSocketDisconnection()
         }
         step("WHEN participant sends a new message") {
             participantRobot.sendMessage(sampleText)
