@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.tests
 
+import io.getstream.chat.android.compose.robots.assertFailedMessageDeliveryStatusInPreview
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
@@ -320,7 +321,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5769")
-    @Ignore("https://linear.app/stream/issue/AND-256")
     @Test
     fun test_errorIndicatorShownInPreview_whenMessageFailedToBeSent() {
         step("GIVEN user opens the channel") {
@@ -335,7 +335,7 @@ class MessageDeliveryStatusTests : StreamTestCase() {
             userRobot.moveToChannelListFromMessageList()
         }
         step("THEN last message delivery status in the channel preview shows failed icon") {
-            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.FAILED)
+            userRobot.assertFailedMessageDeliveryStatusInPreview()
         }
     }
 
