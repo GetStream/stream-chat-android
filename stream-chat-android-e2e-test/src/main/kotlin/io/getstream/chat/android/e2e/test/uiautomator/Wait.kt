@@ -47,7 +47,9 @@ public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObje
  * Waits up to [timeOutMillis] for an object matching this selector and clicks it. When the click
  * lands on a node that went stale between the find and the click (e.g. because the containing
  * list refreshed), the object is re-found and the click retried until the timeout, after which
- * the last [StaleObjectException] escapes.
+ * the last [StaleObjectException] escapes. A retry started just before the deadline is granted
+ * one final poll interval past it, so the last re-find is a real attempt instead of an
+ * immediate timeout.
  *
  * @param timeOutMillis Maximum time to wait before failing.
  * @throws IllegalStateException when the timeout elapses without a matching object.
