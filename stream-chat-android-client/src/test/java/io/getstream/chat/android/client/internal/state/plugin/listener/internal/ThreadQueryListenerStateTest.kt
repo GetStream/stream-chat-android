@@ -190,6 +190,20 @@ internal class ThreadQueryListenerStateTest {
     }
 
     @Test
+    fun `given an empty page around a reply, both ends are reached`() = runTest {
+        threadQueryListenerState.onGetRepliesAroundResult(
+            Result.Success(emptyList()),
+            message.id,
+            randomString(),
+            30,
+        )
+
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).upsertMessages(emptyList())
+    }
+
+    @Test
     fun `given the page around a reply is smaller than the limit, both ends are reached`() = runTest {
         threadQueryListenerState.onGetRepliesAroundResult(
             Result.Success(messageList),
