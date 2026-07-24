@@ -1683,6 +1683,25 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesAroundInput")
+    fun testGetRepliesAround(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.getRepliesAround(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val parentId = randomString()
+        val aroundId = randomString()
+        val limit = randomInt()
+        val result = sut.getRepliesAround(parentId, aroundId, limit).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).getRepliesAround(parentId, limit, aroundId)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendActionInput")
     fun testSendAction(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
         // given
