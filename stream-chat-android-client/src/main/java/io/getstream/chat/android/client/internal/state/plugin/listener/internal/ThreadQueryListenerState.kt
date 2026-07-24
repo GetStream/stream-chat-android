@@ -60,6 +60,8 @@ internal class ThreadQueryListenerState(
     override suspend fun onGetRepliesResult(result: Result<List<Message>>, parentId: String, limit: Int) {
         val threadLogic = logic.thread(parentId)
         threadLogic.setLoading(false)
+        // The initial page contains the newest replies, so the newer end is already loaded.
+        result.onSuccess { threadLogic.setEndOfNewerMessages(true) }
         onResult(threadLogic, result, limit)
     }
 
@@ -96,6 +98,53 @@ internal class ThreadQueryListenerState(
             threadLogic.upsertMessages(messages)
         }
         threadLogic.setLoading(false)
+    }
+
+    override suspend fun onGetRepliesAroundRequest(parentId: String, aroundId: String, limit: Int) {
+        val threadLogic = logic.thread(parentId)
+        threadLogic.setLoading(true)
+        // Jumping to a mid-page means the newest page may no longer be loaded.
+        threadLogic.setEndOfNewerMessages(false)
+    }
+
+    override suspend fun onGetRepliesAroundResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ) {
+        val threadLogic = logic.thread(parentId)
+        threadLogic.setLoading(false)
+        result.onSuccess { messages ->
+            threadLogic.updateOldestMessageInThread(messages)
+            threadLogic.updateNewestMessageInThread(messages)
+            setEndFlagsFromAroundPage(threadLogic, messages, aroundId)
+            if (messages.size < limit) {
+                threadLogic.setEndOfOlderMessages(true)
+                threadLogic.setEndOfNewerMessages(true)
+            }
+            threadLogic.upsertMessages(messages)
+        }
+    }
+
+    /**
+     * The position of [aroundId] inside the page tells which end of the thread the page covers:
+     * in the middle - both older and newer pages remain, in the first half - the oldest page is
+     * loaded, in the second half - the newest page is loaded. When [aroundId] is not in the page,
+     * the jump targeted the parent message, so the page starts at the oldest replies.
+     */
+    private fun setEndFlagsFromAroundPage(threadLogic: ThreadLogic, messages: List<Message>, aroundId: String) {
+        if (messages.isEmpty()) return
+        val midPoint = Math.round(messages.size / 2.0).toInt() - 1
+        val secondHalf = messages.subList(midPoint + 1, messages.size)
+        when {
+            messages[midPoint].id == aroundId -> {
+                threadLogic.setEndOfOlderMessages(false)
+                threadLogic.setEndOfNewerMessages(false)
+            }
+            secondHalf.any { it.id == aroundId } -> threadLogic.setEndOfNewerMessages(true)
+            else -> threadLogic.setEndOfOlderMessages(true)
+        }
     }
 
     private fun onResult(threadLogic: ThreadLogic, result: Result<List<Message>>, limit: Int) {

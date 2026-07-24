@@ -107,6 +107,7 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).run {
             setLoading(false)
+            setEndOfNewerMessages(true)
             upsertMessages(messageList)
             setEndOfOlderMessages(false)
         }
@@ -123,4 +124,87 @@ internal class ThreadQueryListenerStateTest {
             setEndOfOlderMessages(false)
         }
     }
+
+    @Test
+    fun `given a request for replies around a reply is made, loading starts and the newer end is reset`() =
+        runTest {
+            threadQueryListenerState.onGetRepliesAroundRequest(message.id, randomString(), randomInt())
+
+            verify(threadLogic).setLoading(true)
+            verify(threadLogic).setEndOfNewerMessages(false)
+        }
+
+    @Test
+    fun `given the reply around which the page was loaded is in the middle, neither end is reached`() = runTest {
+        val messages = List(5) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[2].id, 5)
+
+        verify(threadLogic).run {
+            setLoading(false)
+            updateOldestMessageInThread(messages)
+            updateNewestMessageInThread(messages)
+            setEndOfOlderMessages(false)
+            setEndOfNewerMessages(false)
+            upsertMessages(messages)
+        }
+        verify(threadLogic, never()).setEndOfOlderMessages(true)
+        verify(threadLogic, never()).setEndOfNewerMessages(true)
+    }
+
+    @Test
+    fun `given the reply around which the page was loaded is in the second half, the newer end is reached`() =
+        runTest {
+            val messages = List(5) { randomMessage() }
+
+            threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[4].id, 5)
+
+            verify(threadLogic).setEndOfNewerMessages(true)
+            verify(threadLogic, never()).setEndOfOlderMessages(true)
+        }
+
+    @Test
+    fun `given the reply around which the page was loaded is in the first half, the older end is reached`() = runTest {
+        val messages = List(5) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[0].id, 5)
+
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic, never()).setEndOfNewerMessages(true)
+    }
+
+    @Test
+    fun `given the page around a reply is smaller than the limit, both ends are reached`() = runTest {
+        threadQueryListenerState.onGetRepliesAroundResult(
+            Result.Success(messageList),
+            message.id,
+            messageList[1].id,
+            30,
+        )
+
+        verify(threadLogic).run {
+            setLoading(false)
+            setEndOfOlderMessages(true)
+            setEndOfNewerMessages(true)
+            upsertMessages(messageList)
+        }
+    }
+
+    @Test
+    fun `given response for replies around a reply is failure, the state should NOT be updated in the SDK`() =
+        runTest {
+            threadQueryListenerState.onGetRepliesAroundResult(
+                Result.Failure(Error.GenericError("")),
+                message.id,
+                randomString(),
+                30,
+            )
+
+            verify(threadLogic).setLoading(false)
+
+            verify(threadLogic, never()).run {
+                upsertMessages(messageList)
+                setEndOfOlderMessages(true)
+            }
+        }
 }

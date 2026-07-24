@@ -144,6 +144,37 @@ internal class DistinctChatApiTest {
     }
 
     @Test
+    fun `When calling getRepliesAround with same arguments, Then same instance of Call is returned`() {
+        // given
+        val distinctChatApi = DistinctChatApi(TestScope(), mock())
+        val parentId = randomString()
+        val aroundId = randomString()
+        val limit = randomInt()
+        // when
+        val call1 = distinctChatApi.getRepliesAround(parentId, aroundId, limit)
+        val call2 = distinctChatApi.getRepliesAround(parentId, aroundId, limit)
+        // then
+        // verify same instance of call is reused
+        Assert.assertTrue(call1 === call2)
+    }
+
+    @Test
+    fun `When calling getRepliesAround with different arguments, Then different instance of Call is returned`() {
+        // given
+        val distinctChatApi = DistinctChatApi(TestScope(), mock())
+        val parentId = randomString()
+        val aroundId1 = randomString()
+        val aroundId2 = randomString()
+        val limit = randomInt()
+        // when
+        val call1 = distinctChatApi.getRepliesAround(parentId, aroundId1, limit)
+        val call2 = distinctChatApi.getRepliesAround(parentId, aroundId2, limit)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
+
+    @Test
     fun `When calling getReplies with same arguments, Then same instance of Call is returned`() {
         // given
         val distinctChatApi = DistinctChatApi(TestScope(), mock())
