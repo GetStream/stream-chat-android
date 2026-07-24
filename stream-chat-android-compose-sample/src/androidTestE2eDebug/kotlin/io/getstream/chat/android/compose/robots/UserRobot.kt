@@ -39,6 +39,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
 import io.getstream.chat.android.e2e.test.uiautomator.typeText
 import io.getstream.chat.android.e2e.test.uiautomator.wait
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 
@@ -392,12 +393,11 @@ class UserRobot {
             AttachmentPicker.findFilesButton.waitToAppear().click()
 
             if (!AttachmentPicker.downloadsView.isDisplayed()) {
-                AttachmentPicker.rootsButton.waitToAppear().click()
+                AttachmentPicker.rootsButton.waitToAppearAndClick()
                 val documentsUiPackageName = device.currentPackageName
                 By.text("Downloads")
                     .hasAncestor(By.res("$documentsUiPackageName:id/roots_list"))
-                    .waitToAppear()
-                    .click()
+                    .waitToAppearAndClick()
             }
 
             val attachment = if (it == 0) {
@@ -405,7 +405,7 @@ class UserRobot {
             } else {
                 if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
             }
-            attachment.waitToAppear().click()
+            attachment.waitToAppearAndClick()
         }
 
         return this
