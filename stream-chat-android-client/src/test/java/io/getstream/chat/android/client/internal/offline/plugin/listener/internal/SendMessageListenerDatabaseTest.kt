@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -79,6 +80,56 @@ internal class SendMessageListenerDatabaseTest {
         verify(messageRepository).insertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            },
+        )
+    }
+
+    @Test
+    fun `when send fails because the message id already exists, message should be stored as completed`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn null
+
+        val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+        val duplicateError = Error.NetworkError(
+            message = "a message with ID ${testMessage.id} already exists",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+
+        sendMessageListenerDatabase.onMessageSendResult(
+            result = Result.Failure(duplicateError),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(messageRepository).insertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+    }
+
+    @Test
+    fun `when send fails with another validation error, message should be stored as failed permanently`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn null
+
+        val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+        val validationError = Error.NetworkError(
+            message = "message text is too long",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+
+        sendMessageListenerDatabase.onMessageSendResult(
+            result = Result.Failure(validationError),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(messageRepository).insertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
             },
         )
     }
