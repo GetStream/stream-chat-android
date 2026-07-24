@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -27,7 +26,6 @@ import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -44,11 +42,8 @@ internal class ThreadQueryListenerStateTest {
     private val logic: LogicRegistry = mock {
         on(it.thread(message.id)) doReturn threadLogic
     }
-    private val messageRepository: MessageRepository = mock {
-        onBlocking { it.selectMessagesForThread(any(), any()) } doReturn messageList
-    }
 
-    private val threadQueryListenerState = ThreadQueryListenerState(logic, messageRepository)
+    private val threadQueryListenerState = ThreadQueryListenerState(logic)
 
     @Test
     fun `given a request is already running, new requests are not allowed`() = runTest {
@@ -162,6 +157,27 @@ internal class ThreadQueryListenerStateTest {
             verify(threadLogic).setEndOfNewerMessages(true)
             verify(threadLogic, never()).setEndOfOlderMessages(true)
         }
+
+    @Test
+    fun `given an even page around a reply, both central positions count as the middle`() = runTest {
+        val messages = List(30) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[14].id, 30)
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[15].id, 30)
+
+        verify(threadLogic, never()).setEndOfOlderMessages(true)
+        verify(threadLogic, never()).setEndOfNewerMessages(true)
+    }
+
+    @Test
+    fun `given an even page around a reply, a target after the central positions reaches the newer end`() = runTest {
+        val messages = List(30) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[16].id, 30)
+
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic, never()).setEndOfOlderMessages(true)
+    }
 
     @Test
     fun `given the reply around which the page was loaded is in the first half, the older end is reached`() = runTest {

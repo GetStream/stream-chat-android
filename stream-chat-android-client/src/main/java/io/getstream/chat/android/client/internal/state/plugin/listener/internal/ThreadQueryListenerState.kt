@@ -18,23 +18,20 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlin.math.roundToInt
 
 /**
- * ThreadQueryListenerState handles both state in the SDK. It uses, if available, the database
- * to update the state.
+ * ThreadQueryListenerState handles the thread state updates in the SDK.
  *
- * @param logic [LogicRegistry] Optional class to handle state updates
- * @param messageRepository [MessageRepository] Optional to handle database updates related to messages
+ * @param logic [LogicRegistry] to access the thread state to be updated.
  */
 internal class ThreadQueryListenerState(
     private val logic: LogicRegistry,
-    private val messageRepository: MessageRepository,
 ) : ThreadQueryListener {
 
     private val logger by taggedLogger("Chat:ThreadQueryListener")
@@ -132,13 +129,18 @@ internal class ThreadQueryListenerState(
      * in the middle - both older and newer pages remain, in the first half - the oldest page is
      * loaded, in the second half - the newest page is loaded. When [aroundId] is not in the page,
      * the jump targeted the parent message, so the page starts at the oldest replies.
+     * An even-sized page has two central positions and a centered response can place the target
+     * on either of them, so both count as the middle.
      */
     private fun setEndFlagsFromAroundPage(threadLogic: ThreadLogic, messages: List<Message>, aroundId: String) {
         if (messages.isEmpty()) return
-        val midPoint = Math.round(messages.size / 2.0).toInt() - 1
-        val secondHalf = messages.subList(midPoint + 1, messages.size)
+        val midPoint = (messages.size / 2.0).roundToInt() - 1
+        val middleSize = if (messages.size % 2 == 0) 2 else 1
+        val middleEnd = (midPoint + middleSize).coerceAtMost(messages.size)
+        val middle = messages.subList(midPoint, middleEnd)
+        val secondHalf = messages.subList(middleEnd, messages.size)
         when {
-            messages[midPoint].id == aroundId -> {
+            middle.any { it.id == aroundId } -> {
                 threadLogic.setEndOfOlderMessages(false)
                 threadLogic.setEndOfNewerMessages(false)
             }
