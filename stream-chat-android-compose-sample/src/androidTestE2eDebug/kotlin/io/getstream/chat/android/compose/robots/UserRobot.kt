@@ -188,6 +188,12 @@ class UserRobot {
         return this
     }
 
+    fun copyMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.copy.waitToAppear().click()
+        return this
+    }
+
     fun pinMessage(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.pin.waitToAppear().click()

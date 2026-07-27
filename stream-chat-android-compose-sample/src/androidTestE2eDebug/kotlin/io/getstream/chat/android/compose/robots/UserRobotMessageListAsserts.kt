@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.robots
 
 import android.annotation.SuppressLint
+import android.content.ClipboardManager
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.R
@@ -311,6 +312,12 @@ fun UserRobot.assertAlsoInTheChannelLabelInChannel(): UserRobot {
 fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
     val expectedLabel = appContext.getString(R.string.stream_compose_also_sent_to_channel)
     assertEquals(expectedLabel, Message.messageHeaderLabel.waitForText(expectedLabel))
+    return this
+}
+
+fun UserRobot.assertMessageCopied(text: String): UserRobot {
+    val clipboard = appContext.getSystemService(ClipboardManager::class.java)
+    assertEquals(text, clipboard.primaryClip?.getItemAt(0)?.text?.toString())
     return this
 }
 
