@@ -88,6 +88,8 @@ open class MessageListPage {
             val typingIndicator get() = By.res("Stream_MessageListTypingIndicator")
             val scrollToBottomButton get() = By.res("Stream_ScrollToBottomButton")
             val scrollToBottomButtonUnreadCount get() = By.res("Stream_ScrollToBottomButtonUnreadCount")
+            val scrollToFirstUnreadButton get() = By.res("Stream_ScrollToFirstUnreadButton")
+            val scrollToFirstUnreadDismissIcon get() = By.res("Stream_ScrollToFirstUnreadButton_Dismiss")
         }
 
         class Message {

@@ -282,6 +282,16 @@ class UserRobot {
         return this
     }
 
+    fun tapOnScrollToFirstUnreadButton(): UserRobot {
+        MessageList.scrollToFirstUnreadButton.waitToAppear().click()
+        return this
+    }
+
+    fun dismissUnreadIndicator(): UserRobot {
+        MessageList.scrollToFirstUnreadDismissIcon.waitToAppear().click()
+        return this
+    }
+
     fun sendMessageInThread(
         text: String,
         alsoSendInChannel: Boolean = false,

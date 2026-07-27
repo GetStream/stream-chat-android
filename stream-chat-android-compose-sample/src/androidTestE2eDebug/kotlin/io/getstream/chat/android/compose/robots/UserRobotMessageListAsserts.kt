@@ -315,6 +315,33 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
     return this
 }
 
+fun UserRobot.assertUnreadSeparator(unreadCount: Int, isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        val expectedText = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_message_list_unread_separator,
+            unreadCount,
+            unreadCount,
+        )
+        assertEquals(expectedText, MessageListPage.MessageList.unreadMessagesBadge.waitForText(expectedText))
+    } else {
+        assertVisibility(MessageListPage.MessageList.unreadMessagesBadge, isDisplayed = false)
+    }
+    return this
+}
+
+fun UserRobot.assertScrollToFirstUnreadButton(unreadCount: Int? = null, isDisplayed: Boolean = true): UserRobot {
+    assertVisibility(MessageListPage.MessageList.scrollToFirstUnreadButton, isDisplayed)
+    if (isDisplayed && unreadCount != null) {
+        val expectedText = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_scroll_to_first_unread_count,
+            unreadCount,
+            unreadCount,
+        )
+        assertTrue(By.text(expectedText).waitDisplayed())
+    }
+    return this
+}
+
 fun UserRobot.assertMessageCopied(text: String): UserRobot {
     val clipboard = appContext.getSystemService(ClipboardManager::class.java)
     assertEquals(text, clipboard.primaryClip?.getItemAt(0)?.text?.toString())
