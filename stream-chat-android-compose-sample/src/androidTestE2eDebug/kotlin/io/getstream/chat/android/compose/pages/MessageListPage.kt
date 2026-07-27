@@ -154,6 +154,7 @@ open class MessageListPage {
                     val unpin get() = By.res("Stream_ContextMenu_Unpin from this Chat")
                     val block get() = By.res("Stream_ContextMenu_Block user")
                     val delete get() = By.res("Stream_ContextMenu_Delete Message")
+                    val showMoreReactions = By.desc("Show more reactions")
                     val ok = By.text("OK")
                 }
 

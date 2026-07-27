@@ -71,6 +71,43 @@ class ReactionsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11451")
+    @Test
+    fun test_userAddsReactionUsingExtendedReactionsPicker() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user adds the reaction using the extended reactions picker") {
+            userRobot.toggleReactionUsingExtendedPicker(type = ReactionType.LOL)
+        }
+        step("THEN the reaction is added") {
+            userRobot.assertReaction(type = ReactionType.LOL, isDisplayed = true)
+        }
+    }
+
+    @AllureId("11452")
+    @Test
+    fun test_userRemovesReactionUsingExtendedReactionsPicker() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user adds the reaction using the extended reactions picker") {
+            userRobot.toggleReactionUsingExtendedPicker(type = ReactionType.LOL)
+        }
+        step("WHEN user selects the same reaction in the extended reactions picker") {
+            userRobot.toggleReactionUsingExtendedPicker(type = ReactionType.LOL)
+        }
+        step("THEN the reaction is removed") {
+            userRobot.assertReaction(type = ReactionType.LOL, isDisplayed = false)
+        }
+    }
+
     @AllureId("5676")
     @Test
     fun test_reactionIsAdded_whenReactingToParticipantsMessage() {

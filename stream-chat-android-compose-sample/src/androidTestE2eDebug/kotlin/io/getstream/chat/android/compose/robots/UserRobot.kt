@@ -217,6 +217,17 @@ class UserRobot {
         return this
     }
 
+    /**
+     * Adds or removes a reaction through the extended reactions picker sheet. Selecting a type
+     * the user has already reacted with removes that reaction.
+     */
+    fun toggleReactionUsingExtendedPicker(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.showMoreReactions.waitToAppear().click()
+        ContextMenu.ReactionsView.reaction(type).waitToAppear().click()
+        return this
+    }
+
     fun deleteReaction(type: ReactionType, usingContextMenu: Boolean = true, messageCellIndex: Int = 0): UserRobot {
         if (usingContextMenu) {
             addReaction(type, messageCellIndex)
