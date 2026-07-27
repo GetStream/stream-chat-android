@@ -127,6 +127,7 @@ open class MessageListPage {
 
                 companion object {
                     val reactions get() = By.res("Stream_MessageReaction")
+                    val reactionAuthor get() = By.res("Stream_ReactionAuthor")
 
                     fun reaction(type: ReactionType): BySelector =
                         By.res("Stream_MessageReaction_${type.reaction}")

@@ -404,7 +404,7 @@ fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobo
 }
 
 fun UserRobot.assertReactionAuthor(name: String): UserRobot {
-    assertTrue(By.text(name).waitDisplayed())
+    assertTrue(Message.Reactions.reactionAuthor.hasDescendant(By.text(name)).waitDisplayed())
     return this
 }
 
