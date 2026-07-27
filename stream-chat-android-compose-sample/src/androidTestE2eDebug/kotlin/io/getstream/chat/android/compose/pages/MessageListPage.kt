@@ -32,18 +32,10 @@ open class MessageListPage {
         }
     }
 
-    class MembersList {
-
-        companion object {
-            val members get() = By.res("Stream_MembersList")
-        }
-    }
-
     class AttachmentPicker {
 
         companion object {
             val view get() = By.res("Stream_AttachmentsPicker")
-            val sendButton get() = By.res("Stream_AttachmentPickerSendButton")
             val filesTab get() = By.res("Stream_AttachmentPickerFilesTab")
             val mediaCaptureTab get() = By.res("Stream_AttachmentPickerMediaCaptureTab")
             val pollsTab get() = By.res("Stream_AttachmentPickerPollsTab")
@@ -64,7 +56,7 @@ open class MessageListPage {
             val sendButton get() = By.res("Stream_ComposerSendButton")
             val cooldownIndicator get() = By.res("Stream_ComposerCooldownIndicator")
             val saveButton get() = By.res("Stream_ComposerSaveButton")
-            val recordAudioButton get() = By.res("Stream_ComposerAudioRecordingButton")
+            val recordAudioButton get() = By.res("Stream_ComposerRecordAudioButton")
             val commandSuggestionList get() = By.res("Stream_CommandSuggestionList")
             val commandSuggestionListTitle get() = By.res("Stream_CommandSuggestionListTitle")
             val userSuggestion get() = By.res("Stream_SuggestionItem")
@@ -89,14 +81,13 @@ open class MessageListPage {
     class MessageList {
 
         companion object {
-            val messageList get() = By.res("Stream_MessageList")
+            val messageList get() = By.res("Stream_Messages")
             val messages get() = By.res("Stream_MessageCell")
             val dateSeparator get() = By.res("Stream_MessageDateSeparator")
             val unreadMessagesBadge get() = By.res("Stream_UnreadMessagesBadge")
             val typingIndicator get() = By.res("Stream_MessageListTypingIndicator")
             val scrollToBottomButton get() = By.res("Stream_ScrollToBottomButton")
             val scrollToBottomButtonUnreadCount get() = By.res("Stream_ScrollToBottomButtonUnreadCount")
-            val systemMessage get() = By.res("Stream_SystemMessage")
         }
 
         class Message {
@@ -123,7 +114,6 @@ open class MessageListPage {
                 val fileImage get() = By.res("Stream_FileAttachmentImage")
                 val fileName get() = By.res("Stream_FileAttachmentName")
                 val fileSize get() = By.res("Stream_FileAttachmentSize")
-                val fileDownloadButton get() = By.res("Stream_FileAttachmentDownloadButton")
                 val columnWithMultipleFileAttachments get() = By.res("Stream_MultipleFileAttachmentsColumn")
                 val giphy get() = By.res("Stream_GiphyContent")
                 val linkPreviewImage get() = By.res("Stream_LinkAttachmentPreview")

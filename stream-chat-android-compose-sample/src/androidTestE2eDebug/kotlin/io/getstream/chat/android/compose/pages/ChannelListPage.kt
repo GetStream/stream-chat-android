@@ -27,7 +27,7 @@ class ChannelListPage {
         companion object {
             val userAvatar = By.res("Stream_UserAvatar")
             val searchField = By.res("Stream_SearchInput")
-            val createChannelButton = "Stream_CreateChannelIcon"
+            val createChannelButton = By.res("Stream_CreateChannelIcon")
         }
     }
 
@@ -42,7 +42,6 @@ class ChannelListPage {
 
             companion object {
                 val avatar = By.res("Stream_ChannelAvatar")
-                val initialsAvatar = By.res("Stream_InitialsAvatar")
                 val name = By.res("Stream_ChannelName")
                 val messagePreview = By.res("Stream_MessagePreview")
                 val deliveryStatusIsRead = Message.deliveryStatusIsRead
