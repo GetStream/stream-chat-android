@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.tests
 
+import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessagePinnedLabel
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
+import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
@@ -74,6 +76,9 @@ class PinnedMessagesTests : StreamTestCase() {
         step("WHEN user sends the message") {
             userRobot.sendMessage(sampleText)
         }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
         step("AND participant pins the message") {
             participantRobot.pinMessage()
         }
@@ -90,6 +95,9 @@ class PinnedMessagesTests : StreamTestCase() {
         }
         step("AND user sends the message") {
             userRobot.sendMessage(sampleText)
+        }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND participant pins the message") {
             participantRobot.pinMessage()
