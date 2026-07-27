@@ -403,6 +403,11 @@ fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobo
     return this
 }
 
+fun UserRobot.assertReactionAuthor(name: String): UserRobot {
+    assertTrue(By.text(name).waitDisplayed())
+    return this
+}
+
 @SuppressLint("ResourceType")
 fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): UserRobot {
     if (inThread) {
