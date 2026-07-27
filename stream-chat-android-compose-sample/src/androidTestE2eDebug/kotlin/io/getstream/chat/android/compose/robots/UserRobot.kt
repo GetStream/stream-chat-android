@@ -217,6 +217,11 @@ class UserRobot {
         return this
     }
 
+    fun tapOnMessageReaction(): UserRobot {
+        Message.Reactions.reactions.waitToAppear().click()
+        return this
+    }
+
     /**
      * Adds or removes a reaction through the extended reactions picker sheet. Selecting a type
      * the user has already reacted with removes that reaction.
@@ -345,6 +350,37 @@ class UserRobot {
 
     fun scrollMessageListUp(times: Int = 3): UserRobot {
         scrollChannelListUp(times = times) // Reusing the channel list scroll
+        return this
+    }
+
+    fun openChannelMenu(channelCellIndex: Int = 0): UserRobot {
+        ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].longPress()
+        return this
+    }
+
+    /** Swipes a channel item right to left to reveal the swipe actions behind it. */
+    fun swipeChannel(channelCellIndex: Int = 0): UserRobot {
+        val percent = 0.5f
+        val channel = ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex]
+        val rect = channel.visibleBounds
+        val startX = (rect.right - (rect.width() * 0.1)).toInt()
+        device.swipe(
+            startX, // startX
+            rect.centerY(), // startY
+            (startX - (rect.width() * percent)).toInt(), // endX
+            rect.centerY(), // endY
+            20, // steps
+        )
+        return this
+    }
+
+    fun tapOnMoreSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.more.waitToAppear().click()
+        return this
+    }
+
+    fun tapOnViewChannelInfo(): UserRobot {
+        ChannelListPage.ChannelMenu.viewInfo.waitToAppear().click()
         return this
     }
 

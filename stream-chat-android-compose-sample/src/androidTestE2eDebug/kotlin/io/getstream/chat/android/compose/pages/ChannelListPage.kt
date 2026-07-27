@@ -38,6 +38,14 @@ class ChannelListPage {
             val channelList = By.res("Stream_ChannelList")
         }
 
+        class SwipeActions {
+
+            companion object {
+                val mute = By.desc("Mute")
+                val more = By.desc("More")
+            }
+        }
+
         class Channel {
 
             companion object {
@@ -56,6 +64,15 @@ class ChannelListPage {
                 val typingIndicator = By.res("Stream_ChannelListTypingIndicator")
                 val mutedIcon = By.res("Stream_ChannelMutedIcon")
             }
+        }
+    }
+
+    class ChannelMenu {
+
+        companion object {
+            val viewInfo = By.res("Stream_ContextMenu_View info")
+            val leaveGroup = By.res("Stream_ContextMenu_Leave group")
+            val deleteGroup = By.res("Stream_ContextMenu_Delete Group")
         }
     }
 }
