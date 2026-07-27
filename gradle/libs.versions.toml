@@ -1,7 +1,7 @@
 [versions]
-compileSdk = "35"
-targetSdk = "34"
-sampleTargetSdk = "35"
+compileSdk = "37"
+targetSdk = "37"
+sampleTargetSdk = "37"
 minSdk = "21"
 allureKotlin = "2.4.0"
 androidGradlePlugin = "8.10.1"
