@@ -314,6 +314,21 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
     return this
 }
 
+/**
+ * Asserts the "Pinned by X" label above a message. [pinnedBy] is the name shown in the label;
+ * `null` expects the current user's label ("Pinned by You").
+ */
+fun UserRobot.assertMessagePinnedLabel(pinnedBy: String? = null, isDisplayed: Boolean = true): UserRobot {
+    val pinnedByName = pinnedBy ?: appContext.getString(R.string.stream_compose_message_list_you)
+    val expectedLabel = appContext.getString(R.string.stream_compose_pinned_to_channel_by, pinnedByName)
+    if (isDisplayed) {
+        assertEquals(expectedLabel, Message.messageHeaderLabel.waitForText(expectedLabel))
+    } else {
+        assertVisibility(Message.messageHeaderLabel.text(expectedLabel), isDisplayed = false)
+    }
+    return this
+}
+
 fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
         assertTrue(Message.giphy.waitDisplayed())

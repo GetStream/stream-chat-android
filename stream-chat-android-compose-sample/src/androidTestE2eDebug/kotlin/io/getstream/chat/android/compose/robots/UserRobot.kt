@@ -188,6 +188,18 @@ class UserRobot {
         return this
     }
 
+    fun pinMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.pin.waitToAppear().click()
+        return this
+    }
+
+    fun unpinMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.unpin.waitToAppear().click()
+        return this
+    }
+
     fun clearComposer(): UserRobot {
         Composer.inputField.waitToAppear().clear()
         return this
