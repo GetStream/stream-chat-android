@@ -75,6 +75,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -385,9 +386,11 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     val offset = messagesLazyListState.focusedMessageOffset
 
     LaunchedEffect(focusedItemIndex, offset) {
-        if (focusedItemIndex != -1 &&
-            !lazyListState.isScrollInProgress
-        ) {
+        if (focusedItemIndex != -1) {
+            // The tap on a quoted message often lands while the list is still settling from a
+            // previous scroll. Wait the scroll out instead of dropping the jump: the focused
+            // state is consumed either way, so a dropped jump would never be retried.
+            snapshotFlow { lazyListState.isScrollInProgress }.first { inProgress -> !inProgress }
             lazyListState.animateScrollToItem(focusedItemIndex, offset)
         }
     }
