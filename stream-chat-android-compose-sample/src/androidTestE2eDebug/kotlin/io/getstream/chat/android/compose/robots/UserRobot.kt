@@ -186,6 +186,12 @@ class UserRobot {
         return this
     }
 
+    fun markMessageAsUnread(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.markAsUnread.waitToAppear().click()
+        return this
+    }
+
     fun pinMessage(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.pin.waitToAppearAndClick()
