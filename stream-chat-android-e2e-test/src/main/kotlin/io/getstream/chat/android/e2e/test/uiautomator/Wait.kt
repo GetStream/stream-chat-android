@@ -67,6 +67,28 @@ public fun BySelector.waitToAppearAndClick(timeOutMillis: Long = defaultTimeout)
 }
 
 /**
+ * Waits up to [timeOutMillis] for objects matching this selector and clicks the one at
+ * [withIndex]. When the click lands on a node that went stale between the find and the click
+ * (e.g. because the containing list refreshed), the object is re-found and the click retried
+ * until the timeout, after which the last [StaleObjectException] escapes.
+ *
+ * @param withIndex The zero-based index of the object to click.
+ * @param timeOutMillis Maximum time to wait before failing.
+ * @throws IllegalStateException when the timeout elapses without enough matching objects.
+ */
+public fun BySelector.waitToAppearAndClick(withIndex: Int, timeOutMillis: Long = defaultTimeout) {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (true) {
+        try {
+            waitToAppear(withIndex, maxOf(endTime - System.currentTimeMillis(), POLL_INTERVAL_MILLIS)).click()
+            return
+        } catch (e: StaleObjectException) {
+            if (System.currentTimeMillis() >= endTime) throw e
+        }
+    }
+}
+
+/**
  * Waits up to [timeOutMillis] for objects matching this selector and returns the one at [withIndex].
  *
  * @param withIndex The zero-based index of the object to return.
