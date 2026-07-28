@@ -27,7 +27,7 @@ class ChannelListPage {
         companion object {
             val userAvatar = By.res("Stream_UserAvatar")
             val searchField = By.res("Stream_SearchInput")
-            val createChannelButton = "Stream_CreateChannelIcon"
+            val createChannelButton = By.res("Stream_CreateChannelIcon")
         }
     }
 
@@ -38,11 +38,18 @@ class ChannelListPage {
             val channelList = By.res("Stream_ChannelList")
         }
 
+        class SwipeActions {
+
+            companion object {
+                val mute = By.desc("Mute")
+                val more = By.desc("More")
+            }
+        }
+
         class Channel {
 
             companion object {
                 val avatar = By.res("Stream_ChannelAvatar")
-                val initialsAvatar = By.res("Stream_InitialsAvatar")
                 val name = By.res("Stream_ChannelName")
                 val messagePreview = By.res("Stream_MessagePreview")
                 val deliveryStatusIsRead = Message.deliveryStatusIsRead
@@ -57,6 +64,15 @@ class ChannelListPage {
                 val typingIndicator = By.res("Stream_ChannelListTypingIndicator")
                 val mutedIcon = By.res("Stream_ChannelMutedIcon")
             }
+        }
+    }
+
+    class ChannelMenu {
+
+        companion object {
+            val viewInfo = By.res("Stream_ContextMenu_View info")
+            val leaveGroup = By.res("Stream_ContextMenu_Leave group")
+            val deleteGroup = By.res("Stream_ContextMenu_Delete Group")
         }
     }
 }
