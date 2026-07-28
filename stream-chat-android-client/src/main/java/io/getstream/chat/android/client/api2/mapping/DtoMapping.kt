@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.models.Attachment
@@ -51,6 +50,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.ReactionRequest
 
 internal class DtoMapping(
     private val messageTransformer: MessageTransformer,
@@ -202,18 +202,14 @@ internal class DtoMapping(
     )
 
     /**
-     * Maps the domain [Reaction] model to a network [UpstreamReactionDto].
+     * Maps the domain [Reaction] model to a network [ReactionRequest].
      */
-    internal fun Reaction.toDto(): UpstreamReactionDto = UpstreamReactionDto(
-        created_at = createdAt,
-        message_id = messageId,
-        score = score,
+    internal fun Reaction.toDto(): ReactionRequest = ReactionRequest(
         type = type,
-        updated_at = updatedAt,
-        user = user?.toDto(),
-        user_id = userId,
-        emoji_code = emojiCode,
-        extraData = extraData,
+        createdAt = createdAt,
+        score = score,
+        updatedAt = updatedAt,
+        custom = if (emojiCode != null) extraData + ("emoji_code" to emojiCode) else extraData,
     )
 
     /**

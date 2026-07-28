@@ -47,4 +47,11 @@ internal class DownstreamReactionDtoAdapterTest {
             parser.toJson(downstreamReaction)
         }.shouldThrow(RuntimeException::class)
     }
+
+    @Test
+    fun `Custom field that shadows a data class function name is kept in extraData`() {
+        val json = """{"message_id":"m","score":1,"type":"like","user_id":"u","copy":"kept"}"""
+        val reaction = parser.fromJson(json, DownstreamReactionDto::class.java)
+        reaction.extraData["copy"] shouldBeEqualTo "kept"
+    }
 }
