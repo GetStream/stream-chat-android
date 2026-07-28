@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
+import io.getstream.chat.android.network.models.ReactionRequest
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -81,45 +81,32 @@ internal object ReactionDtoTestData {
     @Language("JSON")
     val upstreamJsonWithoutExtraData =
         """{
-          "message_id": "messageId",
           "score": 0,
-          "type": "love",
-          "user_id": "userId"
+          "type": "love"
         }""".withoutWhitespace()
-    val upstreamReactionWithoutExtraData = UpstreamReactionDto(
-        created_at = null,
-        message_id = "messageId",
-        score = 0,
+    val upstreamReactionWithoutExtraData = ReactionRequest(
         type = "love",
-        updated_at = null,
-        user = null,
-        user_id = "userId",
-        emoji_code = null,
-        extraData = emptyMap(),
+        createdAt = null,
+        score = 0,
+        updatedAt = null,
+        custom = emptyMap(),
     )
 
     @Language("JSON")
     val upstreamJson =
         """{
           "created_at": "2020-06-10T11:04:31.000Z",
-          "message_id": "messageId",
           "score": 4,
           "type": "love",
           "updated_at": "2020-06-10T11:04:31.588Z",
-          "user": ${UserDtoTestData.upstreamJson},
-          "user_id": "userId",
           "emoji_code": "👍",
           "other_score": 42
         }""".withoutWhitespace()
-    val upstreamReaction = UpstreamReactionDto(
-        created_at = Date(1591787071000),
-        message_id = "messageId",
-        score = 4,
+    val upstreamReaction = ReactionRequest(
         type = "love",
-        updated_at = Date(1591787071588),
-        user = UserDtoTestData.upstreamUser,
-        user_id = "userId",
-        emoji_code = "👍",
-        extraData = mapOf("other_score" to 42),
+        createdAt = Date(1591787071000),
+        score = 4,
+        updatedAt = Date(1591787071588),
+        custom = mapOf("other_score" to 42, "emoji_code" to "👍"),
     )
 }

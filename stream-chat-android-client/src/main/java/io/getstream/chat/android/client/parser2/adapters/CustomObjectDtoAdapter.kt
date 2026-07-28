@@ -16,28 +16,35 @@
 
 package io.getstream.chat.android.client.parser2.adapters
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.primaryConstructor
 
 /**
  * Base class for implementing Moshi adapters that support our API's dynamic
  * JSON models.
+ *
+ * [extraDataPropertyName] names the property that holds the overflow map (`extraData` or `custom`).
  */
-internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KClass<Value>) {
-
-    private companion object {
-        private const val EXTRA_DATA = "extraData"
-    }
+internal open class CustomObjectDtoAdapter<Value : Any>(
+    private val kClass: KClass<Value>,
+    private val extraDataPropertyName: String = "extraData",
+) {
 
     /**
-     * Names of the declared properties that are inside the [Value] type being
-     * handled. These will not be copied into extraData when parsing with
-     * [parseWithExtraData].
+     * Wire-format names of the declared properties on [Value]. These will not be copied into the
+     * overflow map when parsing with [parseWithExtraData]. Reads `@Json(name = ...)` first so
+     * camelCase properties map to their snake_case wire names, falling back to the Kotlin
+     * parameter name when `@Json` is absent.
      */
     private val memberNames: List<String> by lazy {
-        kClass.members.map { member -> member.name }.minus(EXTRA_DATA)
+        kClass.primaryConstructor?.parameters.orEmpty().mapNotNull { param ->
+            (param.findAnnotation<Json>()?.name ?: param.name)?.takeIf { it != extraDataPropertyName }
+        }
     }
 
     /**
@@ -60,9 +67,9 @@ internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KCla
 
         val extraData = mutableMapOf<String, Any>()
 
-        // Save the value of the literal "extraData" field at the root of the object, if present
-        map[EXTRA_DATA]?.let { explicitExtraData ->
-            extraData[EXTRA_DATA] = explicitExtraData
+        // Save the value of the literal extraData field at the root of the object, if present
+        map[extraDataPropertyName]?.let { explicitExtraData ->
+            extraData[extraDataPropertyName] = explicitExtraData
         }
 
         // Save the values of non-member fields as extra data
@@ -72,8 +79,8 @@ internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KCla
             }
         }
 
-        // Replace original "extraData" with the newly collected values
-        map[EXTRA_DATA] = extraData
+        // Replace original extraData with the newly collected values
+        map[extraDataPropertyName] = extraData
 
         // Parse output value object from the transformed Map
         return valueAdapter.fromJsonValue(map)!!
@@ -99,14 +106,14 @@ internal open class CustomObjectDtoAdapter<Value : Any>(private val kClass: KCla
         // Convert input value into a Map
         val map: MutableMap<String, Any?> = valueAdapter.toJsonValue(value) as MutableMap<String, Any?>
 
-        // Grab real "extraData" property's value
-        val extraData = map[EXTRA_DATA] as Map<String, Any?>
+        // Grab real extraData property's value
+        val extraData = map[extraDataPropertyName] as? Map<String, Any?>
 
-        // Remove literal "extraData" field from Map
-        map.remove(EXTRA_DATA)
+        // Remove literal extraData field from Map
+        map.remove(extraDataPropertyName)
 
-        // Merge all values from "extraData" property back into the Map as top level fields
-        map.putAll(extraData)
+        // Merge all values from the extraData property back into the Map as top level fields
+        extraData?.let(map::putAll)
 
         // Write Map to output
         mapAdapter.toJson(jsonWriter, map)
