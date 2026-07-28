@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
 import io.getstream.chat.android.client.api2.optimisation.hash.GetNewerRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
+import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesAroundHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryBanedUsersHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryMembersHash
@@ -88,6 +89,16 @@ internal class DistinctChatApi(
         }
         return getOrCreate(uniqueKey) {
             delegate.getNewerReplies(parentId, limit, lastId)
+        }
+    }
+
+    override fun getRepliesAround(parentId: String, aroundId: String, limit: Int): Call<List<Message>> {
+        val uniqueKey = GetRepliesAroundHash(parentId, aroundId, limit).hashCode()
+        StreamLog.d(TAG) {
+            "[getRepliesAround] parentId: $parentId, aroundId: $aroundId, limit: $limit, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.getRepliesAround(parentId, aroundId, limit)
         }
     }
 

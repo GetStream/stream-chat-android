@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
+import io.getstream.chat.android.client.api.models.identifier.getRepliesAroundIdentifier
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -2586,6 +2587,40 @@ internal constructor(
             }
             .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
+    }
+
+    /**
+     * Fetch replies to the specified message with id [parentId] around the reply with id [aroundId].
+     *
+     * @param parentId The id of the parent message.
+     * @param aroundId The id of the reply to fetch the surrounding page for.
+     * @param limit The number of replies to fetch.
+     *
+     * @return Executable async [Call] responsible for fetching replies around a reply.
+     */
+    @CheckResult
+    public fun getRepliesAround(
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ): Call<List<Message>> {
+        logger.d { "[getRepliesAround] parentId: $parentId, aroundId: $aroundId, limit: $limit" }
+
+        return api.getRepliesAround(parentId, aroundId, limit)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    logger.v { "[getRepliesAround] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetRepliesAroundRequest(parentId, aroundId, limit)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[getRepliesAround] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetRepliesAroundResult(result, parentId, aroundId, limit)
+                }
+            }
+            .precondition(plugins) { onGetRepliesPrecondition(parentId) }
+            .share(userScope) { getRepliesAroundIdentifier(parentId, aroundId, limit) }
     }
 
     @CheckResult
