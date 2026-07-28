@@ -240,7 +240,7 @@ internal class DtoMappingTest {
 
     @Test
     fun `Reaction is correctly mapped to Dto`() {
-        val reaction = randomReaction()
+        val reaction = randomReaction(emojiCode = "smile", extraData = mutableMapOf("k" to "v"))
         val mapping = Fixture().get()
         val dto = with(mapping) { reaction.toDto() }
         val expected = ReactionRequest(
@@ -248,9 +248,22 @@ internal class DtoMappingTest {
             createdAt = reaction.createdAt,
             score = reaction.score,
             updatedAt = reaction.updatedAt,
-            custom = reaction.emojiCode
-                ?.let { reaction.extraData + ("emoji_code" to it) }
-                ?: reaction.extraData,
+            custom = mapOf("k" to "v", "emoji_code" to "smile"),
+        )
+        dto shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `Reaction without an emojiCode omits emoji_code from custom`() {
+        val reaction = randomReaction(emojiCode = null, extraData = mutableMapOf("k" to "v"))
+        val mapping = Fixture().get()
+        val dto = with(mapping) { reaction.toDto() }
+        val expected = ReactionRequest(
+            type = reaction.type,
+            createdAt = reaction.createdAt,
+            score = reaction.score,
+            updatedAt = reaction.updatedAt,
+            custom = mapOf("k" to "v"),
         )
         dto shouldBeEqualTo expected
     }
