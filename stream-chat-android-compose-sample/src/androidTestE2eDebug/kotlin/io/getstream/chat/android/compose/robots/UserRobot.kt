@@ -189,6 +189,24 @@ class UserRobot {
         return this
     }
 
+    fun copyMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.copy.waitToAppear().click()
+        return this
+    }
+
+    fun pinMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.pin.waitToAppear().click()
+        return this
+    }
+
+    fun unpinMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.unpin.waitToAppear().click()
+        return this
+    }
+
     fun clearComposer(): UserRobot {
         Composer.inputField.waitToAppear().clear()
         return this
@@ -197,6 +215,22 @@ class UserRobot {
     fun addReaction(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.ReactionsView.reaction(type).waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnMessageReaction(): UserRobot {
+        Message.Reactions.reactions.waitToAppear().click()
+        return this
+    }
+
+    /**
+     * Adds or removes a reaction through the extended reactions picker sheet. Selecting a type
+     * the user has already reacted with removes that reaction.
+     */
+    fun toggleReactionUsingExtendedPicker(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.showMoreReactions.waitToAppear().click()
+        ContextMenu.ReactionsView.reaction(type).waitToAppear().click()
         return this
     }
 
@@ -254,6 +288,16 @@ class UserRobot {
         return this
     }
 
+    fun tapOnScrollToFirstUnreadButton(): UserRobot {
+        MessageList.scrollToFirstUnreadButton.waitToAppear().click()
+        return this
+    }
+
+    fun dismissUnreadIndicator(): UserRobot {
+        MessageList.scrollToFirstUnreadDismissIcon.waitToAppear().click()
+        return this
+    }
+
     fun sendMessageInThread(
         text: String,
         alsoSendInChannel: Boolean = false,
@@ -307,6 +351,37 @@ class UserRobot {
 
     fun scrollMessageListUp(times: Int = 3): UserRobot {
         scrollChannelListUp(times = times) // Reusing the channel list scroll
+        return this
+    }
+
+    fun openChannelMenu(channelCellIndex: Int = 0): UserRobot {
+        ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].longPress()
+        return this
+    }
+
+    /** Swipes a channel item right to left to reveal the swipe actions behind it. */
+    fun swipeChannel(channelCellIndex: Int = 0): UserRobot {
+        val percent = 0.5f
+        val channel = ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex]
+        val rect = channel.visibleBounds
+        val startX = (rect.right - (rect.width() * 0.1)).toInt()
+        device.swipe(
+            startX, // startX
+            rect.centerY(), // startY
+            (startX - (rect.width() * percent)).toInt(), // endX
+            rect.centerY(), // endY
+            20, // steps
+        )
+        return this
+    }
+
+    fun tapOnMoreSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.more.waitToAppear().click()
+        return this
+    }
+
+    fun tapOnViewChannelInfo(): UserRobot {
+        ChannelListPage.ChannelMenu.viewInfo.waitToAppear().click()
         return this
     }
 
