@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.isDuplicateMessageError
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
@@ -59,7 +60,12 @@ internal class SendMessageListenerDatabase(
 
         when (result) {
             is Result.Success -> handleSendMessageSuccess(cid, result.value)
-            is Result.Failure -> handleSendMessageFailure(message, result.value)
+            is Result.Failure -> if (result.value.isDuplicateMessageError()) {
+                // The message was delivered by an earlier attempt whose response was lost.
+                handleSendMessageSuccess(cid, message)
+            } else {
+                handleSendMessageFailure(message, result.value)
+            }
         }
     }
 
