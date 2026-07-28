@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class SendActionRequest(
-    val channel_id: String,
-    val message_id: String,
-    val type: String,
-    val form_data: Map<Any, Any>,
+import com.squareup.moshi.Json
+import kotlin.collections.List
+
+/**
+ *
+ */
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class MarkDeliveredRequest(
+    @Json(name = "latest_delivered_messages")
+    val latestDeliveredMessages: kotlin.collections.List<DeliveredMessagePayload>? = emptyList(),
 )

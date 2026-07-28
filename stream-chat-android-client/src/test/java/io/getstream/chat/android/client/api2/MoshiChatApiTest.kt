@@ -51,11 +51,9 @@ import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersR
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -71,11 +69,9 @@ import io.getstream.chat.android.client.api2.model.requests.QueryRemindersReques
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
@@ -157,10 +153,13 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
@@ -168,6 +167,7 @@ import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -1467,8 +1467,8 @@ internal class MoshiChatApiTest {
         val result = sut.markDelivered(messages).await()
         // then
         val expectedRequest = MarkDeliveredRequest(
-            latest_delivered_messages = messages.map { messageInfo ->
-                DeliveredMessageDto(
+            latestDeliveredMessages = messages.map { messageInfo ->
+                DeliveredMessagePayload(
                     cid = messageInfo.cid,
                     id = messageInfo.id,
                 )
@@ -1714,11 +1714,8 @@ internal class MoshiChatApiTest {
         val request = Mother.randomSendActionRequest()
         val result = sut.sendAction(request).await()
         // then
-        val expectedRequest = SendActionRequest(
-            channel_id = request.channelId,
-            message_id = request.messageId,
-            type = request.type,
-            form_data = request.formData,
+        val expectedRequest = MessageActionRequest(
+            formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
         )
         result `should be instance of` expected
         verify(api, times(1)).sendAction(request.messageId, expectedRequest)
