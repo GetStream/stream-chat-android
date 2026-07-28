@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -68,7 +70,9 @@ internal fun StreamCardBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        // The sheet renders in its own window, so the app-level `testTagsAsResourceId`
+        // does not reach it; re-enable it here for UiAutomator access to the content tags.
+        modifier = modifier.semantics { testTagsAsResourceId = true },
         sheetState = sheetState,
         shape = StreamCardSheetShape,
         containerColor = ChatTheme.colors.backgroundCoreElevation1,
@@ -135,7 +139,9 @@ internal fun StreamScreenBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        // The sheet renders in its own window, so the app-level `testTagsAsResourceId`
+        // does not reach it; re-enable it here for UiAutomator access to the content tags.
+        modifier = modifier.semantics { testTagsAsResourceId = true },
         sheetState = sheetState,
         sheetMaxWidth = Dp.Unspecified,
         shape = RectangleShape,

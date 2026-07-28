@@ -60,7 +60,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -79,7 +78,6 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
@@ -87,7 +85,6 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
@@ -160,15 +157,19 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -1155,7 +1156,9 @@ constructor(
 
     override fun markDelivered(messages: List<Message>): Call<Unit> =
         channelApi.markDelivered(
-            request = MarkDeliveredRequest.create(messages),
+            request = MarkDeliveredRequest(
+                latestDeliveredMessages = messages.map { DeliveredMessagePayload(cid = it.cid, id = it.id) },
+            ),
         ).toUnitCall()
 
     override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {
@@ -1260,7 +1263,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             userId = userId,
-            body = UpdateMemberPartialRequest(set, unset),
+            body = UpdateMemberPartialRequest(set = set, unset = unset),
         ).mapDomain { response ->
             response.channel_member.toDomain()
         }
@@ -1351,11 +1354,8 @@ constructor(
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
         return messageApi.sendAction(
             messageId = request.messageId,
-            request = SendActionRequest(
-                channel_id = request.channelId,
-                message_id = request.messageId,
-                type = request.type,
-                form_data = request.formData,
+            request = MessageActionRequest(
+                formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
             ),
         ).mapDomain { response ->
             response.message.toDomain()
