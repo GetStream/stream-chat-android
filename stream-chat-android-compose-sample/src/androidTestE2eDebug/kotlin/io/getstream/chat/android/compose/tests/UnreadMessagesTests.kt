@@ -18,9 +18,11 @@ package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelUnreadCount
 import io.getstream.chat.android.compose.robots.assertMessage
+import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertScrollToFirstUnreadButton
 import io.getstream.chat.android.compose.robots.assertUnreadSeparator
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
+import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
@@ -36,6 +38,9 @@ class UnreadMessagesTests : StreamTestCase() {
         val unreadCount = 2
         step("GIVEN user opens the channel and sends the message") {
             userRobot.login().openChannel().sendMessage(sampleText)
+        }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND user moves back to the channel list") {
             userRobot.moveToChannelListFromMessageList()
@@ -60,6 +65,9 @@ class UnreadMessagesTests : StreamTestCase() {
         val unreadCount = 25
         step("GIVEN user opens the channel and sends the message") {
             userRobot.login().openChannel().sendMessage(sampleText)
+        }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND user moves back to the channel list") {
             userRobot.moveToChannelListFromMessageList()
@@ -91,6 +99,9 @@ class UnreadMessagesTests : StreamTestCase() {
         step("GIVEN user opens the channel and sends the message") {
             userRobot.login().openChannel().sendMessage(sampleText)
         }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
         step("AND participant sends messages") {
             participantRobot.sendMultipleMessages(text = "New", count = unreadCount)
             userRobot.assertMessage("New-$unreadCount")
@@ -112,6 +123,9 @@ class UnreadMessagesTests : StreamTestCase() {
         val unreadCount = 25
         step("GIVEN user opens the channel and sends the message") {
             userRobot.login().openChannel().sendMessage(sampleText)
+        }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND user moves back to the channel list") {
             userRobot.moveToChannelListFromMessageList()
