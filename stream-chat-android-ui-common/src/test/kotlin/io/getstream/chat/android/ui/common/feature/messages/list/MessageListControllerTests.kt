@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.ThreadState
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
@@ -76,6 +77,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,11 +98,14 @@ import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.Answers
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -1284,6 +1290,170 @@ internal class MessageListControllerTests {
         )
     }
 
+    @Test
+    fun `Given the newest thread page is not loaded When the bottom end is reached Should load newer replies`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val replies = randomMessageList(3)
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = replies,
+                endOfNewerMessages = MutableStateFlow(false),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .givenGetNewerReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+
+            controller.loadNewerMessages(baseMessageId = randomString())
+
+            verify(chatClient).getNewerReplies(
+                parentId = parentMessage.id,
+                limit = MessageListController.DEFAULT_MESSAGES_LIMIT,
+                lastId = replies.last().id,
+            )
+        }
+
+    @Test
+    fun `Given the newest thread page is loaded When the bottom end is reached Should not load newer replies`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                endOfNewerMessages = MutableStateFlow(true),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .givenGetNewerReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+
+            controller.loadNewerMessages(baseMessageId = randomString())
+
+            verify(chatClient, never()).getNewerReplies(any(), any(), anyOrNull())
+        }
+
+    @Test
+    fun `Given a thread When the newer end of the thread changes Should mirror it in the thread list state`() =
+        runTest {
+            val parentMessage = randomMessage()
+            val endOfNewerMessages = MutableStateFlow(false)
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                endOfNewerMessages = endOfNewerMessages,
+            )
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+
+            controller.threadListState.value.endOfNewMessagesReached.shouldBeFalse()
+
+            endOfNewerMessages.value = true
+
+            controller.threadListState.value.endOfNewMessagesReached.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given a thread message is not loaded When scrolling to it Should load the replies page around it`() =
+        runTest {
+            val chatClient = mockChatClientWithCoroutineScopes()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .givenGetRepliesAround()
+                .get()
+            controller.enterThreadMode(parentMessage)
+            val targetMessageId = randomString()
+
+            controller.scrollToMessage(messageId = targetMessageId, parentMessageId = parentMessage.id)
+
+            verify(chatClient).getRepliesAround(
+                parentId = parentMessage.id,
+                aroundId = targetMessageId,
+                limit = MessageListController.DEFAULT_MESSAGES_LIMIT,
+            )
+        }
+
+    @Test
+    fun `Given a thread message is loaded When scrolling to it Should not load the replies page around it`() =
+        runTest {
+            val chatClient = mockChatClientWithCoroutineScopes()
+            val parentMessage = randomMessage()
+            val replies = randomMessageList(3)
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = replies,
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .givenGetRepliesAround()
+                .get()
+            controller.enterThreadMode(parentMessage)
+
+            controller.scrollToMessage(messageId = replies.first().id, parentMessageId = parentMessage.id)
+
+            verify(chatClient, never()).getRepliesAround(any(), any(), any())
+        }
+
+    /**
+     * A [ChatClient] mock whose scope-returning members (like the internal scope inheritance used
+     * by the ChatClient state extensions) return a real [CoroutineScope] instead of null, so
+     * extension functions that build calls on top of the client can run against the mock.
+     */
+    private fun mockChatClientWithCoroutineScopes(): ChatClient = mock(
+        defaultAnswer = { invocation ->
+            if (invocation.method.returnType == CoroutineScope::class.java) {
+                CoroutineScope(Dispatchers.Unconfined)
+            } else {
+                Answers.RETURNS_DEFAULTS.answer(invocation)
+            }
+        },
+    )
+
+    private fun mockThreadState(
+        parentMessage: Message,
+        messages: List<Message>,
+        endOfNewerMessages: MutableStateFlow<Boolean> = MutableStateFlow(false),
+    ): ThreadState = mock {
+        on { it.parentId } doReturn parentMessage.id
+        on { it.messages } doReturn MutableStateFlow(messages)
+        on { it.loading } doReturn MutableStateFlow(false)
+        on { it.endOfOlderMessages } doReturn MutableStateFlow(false)
+        on { it.endOfNewerMessages } doReturn endOfNewerMessages
+        on { it.oldestInThread } doReturn MutableStateFlow(messages.firstOrNull())
+        on { it.newestInThread } doReturn MutableStateFlow(messages.lastOrNull())
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -1308,6 +1478,7 @@ internal class MessageListControllerTests {
         fun givenCurrentUser(currentUser: User = user1) = apply {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
+            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
@@ -1374,6 +1545,22 @@ internal class MessageListControllerTests {
                 channelState.convertToChannel()
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
+        }
+
+        fun givenThreadState(threadState: ThreadState) = apply {
+            whenever(stateRegistry.thread(any())) doReturn threadState
+        }
+
+        fun givenGetReplies(replies: List<Message> = emptyList()) = apply {
+            whenever(chatClient.getReplies(any(), any())) doReturn replies.asCall()
+        }
+
+        fun givenGetNewerReplies(replies: List<Message> = emptyList()) = apply {
+            whenever(chatClient.getNewerReplies(any(), any(), anyOrNull())) doReturn replies.asCall()
+        }
+
+        fun givenGetRepliesAround(replies: List<Message> = emptyList()) = apply {
+            whenever(chatClient.getRepliesAround(any(), any(), any())) doReturn replies.asCall()
         }
 
         fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {

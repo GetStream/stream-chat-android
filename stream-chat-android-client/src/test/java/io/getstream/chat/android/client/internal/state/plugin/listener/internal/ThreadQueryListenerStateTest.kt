@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -27,7 +26,6 @@ import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -44,11 +42,8 @@ internal class ThreadQueryListenerStateTest {
     private val logic: LogicRegistry = mock {
         on(it.thread(message.id)) doReturn threadLogic
     }
-    private val messageRepository: MessageRepository = mock {
-        onBlocking { it.selectMessagesForThread(any(), any()) } doReturn messageList
-    }
 
-    private val threadQueryListenerState = ThreadQueryListenerState(logic, messageRepository)
+    private val threadQueryListenerState = ThreadQueryListenerState(logic)
 
     @Test
     fun `given a request is already running, new requests are not allowed`() = runTest {
@@ -107,6 +102,7 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).run {
             setLoading(false)
+            setEndOfNewerMessages(true)
             upsertMessages(messageList)
             setEndOfOlderMessages(false)
         }
@@ -123,4 +119,122 @@ internal class ThreadQueryListenerStateTest {
             setEndOfOlderMessages(false)
         }
     }
+
+    @Test
+    fun `given a request for replies around a reply is made, loading starts and the newer end is reset`() =
+        runTest {
+            threadQueryListenerState.onGetRepliesAroundRequest(message.id, randomString(), randomInt())
+
+            verify(threadLogic).setLoading(true)
+            verify(threadLogic).setEndOfNewerMessages(false)
+        }
+
+    @Test
+    fun `given the reply around which the page was loaded is in the middle, neither end is reached`() = runTest {
+        val messages = List(5) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[2].id, 5)
+
+        verify(threadLogic).run {
+            setLoading(false)
+            updateOldestMessageInThread(messages)
+            updateNewestMessageInThread(messages)
+            setEndOfOlderMessages(false)
+            setEndOfNewerMessages(false)
+            upsertMessages(messages)
+        }
+        verify(threadLogic, never()).setEndOfOlderMessages(true)
+        verify(threadLogic, never()).setEndOfNewerMessages(true)
+    }
+
+    @Test
+    fun `given the reply around which the page was loaded is in the second half, the newer end is reached`() =
+        runTest {
+            val messages = List(5) { randomMessage() }
+
+            threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[4].id, 5)
+
+            verify(threadLogic).setEndOfNewerMessages(true)
+            verify(threadLogic, never()).setEndOfOlderMessages(true)
+        }
+
+    @Test
+    fun `given an even page around a reply, both central positions count as the middle`() = runTest {
+        val messages = List(30) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[14].id, 30)
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[15].id, 30)
+
+        verify(threadLogic, never()).setEndOfOlderMessages(true)
+        verify(threadLogic, never()).setEndOfNewerMessages(true)
+    }
+
+    @Test
+    fun `given an even page around a reply, a target after the central positions reaches the newer end`() = runTest {
+        val messages = List(30) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[16].id, 30)
+
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic, never()).setEndOfOlderMessages(true)
+    }
+
+    @Test
+    fun `given the reply around which the page was loaded is in the first half, the older end is reached`() = runTest {
+        val messages = List(5) { randomMessage() }
+
+        threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[0].id, 5)
+
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic, never()).setEndOfNewerMessages(true)
+    }
+
+    @Test
+    fun `given an empty page around a reply, both ends are reached`() = runTest {
+        threadQueryListenerState.onGetRepliesAroundResult(
+            Result.Success(emptyList()),
+            message.id,
+            randomString(),
+            30,
+        )
+
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).upsertMessages(emptyList())
+    }
+
+    @Test
+    fun `given the page around a reply is smaller than the limit, both ends are reached`() = runTest {
+        threadQueryListenerState.onGetRepliesAroundResult(
+            Result.Success(messageList),
+            message.id,
+            messageList[1].id,
+            30,
+        )
+
+        verify(threadLogic).run {
+            setLoading(false)
+            setEndOfOlderMessages(true)
+            setEndOfNewerMessages(true)
+            upsertMessages(messageList)
+        }
+    }
+
+    @Test
+    fun `given response for replies around a reply is failure, the state should NOT be updated in the SDK`() =
+        runTest {
+            threadQueryListenerState.onGetRepliesAroundResult(
+                Result.Failure(Error.GenericError("")),
+                message.id,
+                randomString(),
+                30,
+            )
+
+            verify(threadLogic).setLoading(false)
+
+            verify(threadLogic, never()).run {
+                upsertMessages(messageList)
+                setEndOfOlderMessages(true)
+            }
+        }
 }
