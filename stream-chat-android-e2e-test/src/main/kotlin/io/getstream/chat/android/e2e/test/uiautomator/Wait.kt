@@ -70,7 +70,9 @@ public fun BySelector.waitToAppearAndClick(timeOutMillis: Long = defaultTimeout)
  * Waits up to [timeOutMillis] for objects matching this selector and clicks the one at
  * [withIndex]. When the click lands on a node that went stale between the find and the click
  * (e.g. because the containing list refreshed), the object is re-found and the click retried
- * until the timeout, after which the last [StaleObjectException] escapes.
+ * until the timeout, after which the last [StaleObjectException] escapes. A retry started just
+ * before the deadline is granted one final poll interval past it, so the last re-find is a
+ * real attempt instead of an immediate timeout.
  *
  * @param withIndex The zero-based index of the object to click.
  * @param timeOutMillis Maximum time to wait before failing.

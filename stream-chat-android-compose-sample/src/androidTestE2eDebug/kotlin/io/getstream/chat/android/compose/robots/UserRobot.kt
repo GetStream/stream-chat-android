@@ -398,9 +398,11 @@ class UserRobot {
 
     /**
      * Scrolls the message list up one page at a time until the message with [messageText] is
-     * fully inside the list viewport, giving up after [maxScrolls] pages. The first sighting is
-     * not enough: a message clipped by the viewport edge cannot be long pressed, so a target
-     * that is still clipped after the scroll settles counts as not reached yet. Does not fail
+     * displayed and clear of the top edge of the list, giving up after [maxScrolls] pages. The
+     * first sighting is not enough: a message still clipped by the top edge after the scroll
+     * settles has no laid-out text to long press, so it counts as not reached yet. Only the top
+     * edge matters: scrolling up moves content downwards, so it is the edge the target enters
+     * from, and a text clipped by the bottom edge is laid out and can be pressed. Does not fail
      * on its own: the interaction that follows reports the missing message.
      */
     fun scrollMessageListUpToMessage(messageText: String, maxScrolls: Int = 10): UserRobot {
