@@ -166,4 +166,11 @@ internal interface MessageApi {
         @Query("limit") limit: Int,
         @Query("id_lt") firstId: String,
     ): RetrofitCall<MessagesResponse>
+
+    @GET("/messages/{parent_id}/replies")
+    fun getRepliesAround(
+        @Path("parent_id") parentId: String,
+        @Query("limit") limit: Int,
+        @Query("id_around") aroundId: String,
+    ): RetrofitCall<MessagesResponse>
 }

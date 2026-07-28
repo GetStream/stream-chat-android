@@ -1250,6 +1250,8 @@ public interface ChatComponentFactory {
             message = params.messageItem.message,
             isMessageRead = params.messageItem.isMessageRead,
             isMessageDelivered = params.messageItem.isMessageDelivered,
+            readEventsEnabled = params.messageItem.readEventsEnabled,
+            deliveryEventsEnabled = params.messageItem.deliveryEventsEnabled,
         )
     }
 

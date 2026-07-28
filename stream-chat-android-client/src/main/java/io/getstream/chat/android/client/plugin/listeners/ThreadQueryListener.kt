@@ -70,4 +70,23 @@ public interface ThreadQueryListener {
         limit: Int,
         lastId: String?,
     )
+
+    /** Runs side effect before the request is launched. */
+    public suspend fun onGetRepliesAroundRequest(
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ) {
+        // No-op by default.
+    }
+
+    /** Runs this function on the result of the [ChatClient.getRepliesAround] request. */
+    public suspend fun onGetRepliesAroundResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ) {
+        // No-op by default.
+    }
 }

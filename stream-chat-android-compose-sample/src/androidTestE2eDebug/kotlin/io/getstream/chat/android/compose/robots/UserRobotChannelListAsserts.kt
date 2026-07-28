@@ -19,8 +19,8 @@ package io.getstream.chat.android.compose.robots
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitForText
-import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -44,9 +44,14 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
     return this
 }
 
+fun UserRobot.assertFailedMessageDeliveryStatusInPreview(): UserRobot {
+    assertTrue(Channel.deliveryStatusIsFailed.waitDisplayed())
+    return this
+}
+
 fun UserRobot.assertMessagePreviewTimestamp(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
-        assertTrue(Channel.timestamp.waitToAppear().isDisplayed())
+        assertTrue(Channel.timestamp.waitDisplayed())
     } else {
         assertFalse(Channel.timestamp.waitToDisappear().isDisplayed())
     }

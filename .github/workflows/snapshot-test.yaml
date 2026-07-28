@@ -17,12 +17,16 @@ env:
 
 jobs:
   run_snapshot_tests:
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
     name: Run
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v7.0.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:

@@ -28,6 +28,7 @@ public class ParticipantRobot(
 
     public companion object {
         public const val name: String = "Count Dooku"
+        public const val id: String = "count_dooku"
     }
 
     public fun startTyping(): ParticipantRobot {
@@ -55,12 +56,41 @@ public class ParticipantRobot(
         return this
     }
 
+    /**
+     * Delivers a push notification for the last message to the Android app under test.
+     *
+     * @param component The broadcast receiver component of the app under test.
+     * @param rest Optional payload degradation, matching the mock server's `rest` values.
+     */
+    public fun sendPushNotification(component: String, rest: String? = null): ParticipantRobot {
+        var endpoint = "participant/push?platform=android&component=$component"
+        if (rest != null) {
+            endpoint += "&rest=$rest"
+        }
+        mockServer.postRequest(endpoint)
+        return this
+    }
+
     public fun sendMessage(text: String, delay: Int = 0): ParticipantRobot {
         var endpoint = "participant/message"
         if (delay > 0) {
             endpoint += "?delay=$delay"
         }
         mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
+        return this
+    }
+
+    /**
+     * Sends [count] messages named `"$text-1"` through `"$text-$count"`, spaced 300ms apart.
+     *
+     * @param text The base text of every message; the one-based index is appended after a dash.
+     * @param count How many messages to send.
+     */
+    public fun sendMultipleMessages(text: String, count: Int): ParticipantRobot {
+        repeat(count) { index ->
+            sendMessage("$text-${index + 1}")
+            Thread.sleep(MULTIPLE_MESSAGES_INTERVAL_MILLIS)
+        }
         return this
     }
 
@@ -192,3 +222,5 @@ public class ParticipantRobot(
         return this
     }
 }
+
+private const val MULTIPLE_MESSAGES_INTERVAL_MILLIS = 300L

@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
+import io.getstream.chat.android.client.api.models.identifier.getRepliesAroundIdentifier
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -75,6 +76,7 @@ import io.getstream.chat.android.client.attachment.prepareForUpload
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamAudioPlayer
+import io.getstream.chat.android.client.cache.internal.VideoMediaCache
 import io.getstream.chat.android.client.cdn.CDN
 import io.getstream.chat.android.client.cdn.internal.StreamMediaDataSource
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -304,6 +306,8 @@ internal constructor(
     internal val messageReceiptManager: MessageReceiptManager,
     @InternalStreamChatApi
     public val cdn: CDN? = null,
+    @InternalStreamChatApi
+    public val videoCache: VideoMediaCache? = null,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -1511,12 +1515,22 @@ internal constructor(
     public fun clearCacheAndTemporaryFiles(context: Context): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[clearCacheAndTemporaryFiles] Clearing all cache and temporary files" }
+            // Clear the video cache for its directory atomically: if a live cache owns the
+            // directory, clear it in place (keeps the SimpleCache alive so playback continues to
+            // work); otherwise delete the directory from disk. Deciding and deleting under the
+            // registry lock prevents a concurrent client build from registering a new cache for the
+            // directory mid-delete, which would corrupt Media3's on-disk index and lock.
+            val videoCacheResult = VideoMediaCache.clearOrDelete(
+                cacheDir = fileManager.getVideoCache(context),
+                deleteOnDisk = { fileManager.clearVideoCache(context) },
+            )
             // Clear all cache directories
             val cacheResult = fileManager.clearAllCache(context)
             // Clear external (temporary) storage files - always run regardless of cache result
             val externalStorageResult = fileManager.clearExternalStorage(context)
             // Return the first failure if any, otherwise success
             when {
+                videoCacheResult is Result.Failure -> videoCacheResult
                 cacheResult is Result.Failure -> cacheResult
                 externalStorageResult is Result.Failure -> externalStorageResult
                 else -> Result.Success(Unit)
@@ -2573,6 +2587,40 @@ internal constructor(
             }
             .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
+    }
+
+    /**
+     * Fetch replies to the specified message with id [parentId] around the reply with id [aroundId].
+     *
+     * @param parentId The id of the parent message.
+     * @param aroundId The id of the reply to fetch the surrounding page for.
+     * @param limit The number of replies to fetch.
+     *
+     * @return Executable async [Call] responsible for fetching replies around a reply.
+     */
+    @CheckResult
+    public fun getRepliesAround(
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ): Call<List<Message>> {
+        logger.d { "[getRepliesAround] parentId: $parentId, aroundId: $aroundId, limit: $limit" }
+
+        return api.getRepliesAround(parentId, aroundId, limit)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    logger.v { "[getRepliesAround] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetRepliesAroundRequest(parentId, aroundId, limit)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[getRepliesAround] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetRepliesAroundResult(result, parentId, aroundId, limit)
+                }
+            }
+            .precondition(plugins) { onGetRepliesPrecondition(parentId) }
+            .share(userScope) { getRepliesAroundIdentifier(parentId, aroundId, limit) }
     }
 
     @CheckResult
@@ -5274,7 +5322,10 @@ internal constructor(
             val api = module.api()
             val appSettingsManager = AppSettingManager(api)
 
-            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn)
+            val videoCache = chatClientConfig.cacheConfig.video?.let {
+                VideoMediaCache.create(appContext, StreamFileManager().getVideoCache(appContext), it)
+            }
+            val mediaDataSourceFactory = StreamMediaDataSource.factory(appContext, cdn, videoCache)
             val audioPlayer: AudioPlayer = StreamAudioPlayer(
                 mediaPlayer = NativeMediaPlayerImpl(mediaDataSourceFactory) {
                     ExoPlayer.Builder(appContext)
@@ -5332,6 +5383,7 @@ internal constructor(
                     api = api,
                 ),
                 cdn = cdn,
+                videoCache = videoCache,
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,

@@ -7,14 +7,17 @@ on:
 
 jobs:
   clean_detekt_baseline_files:
+    permissions:
+      contents: read
+      pull-requests: write
     name: Clean Detekt Baseline Files
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: tibdex/github-app-token@v2.1.0
         id: generate-token
         with:

@@ -378,6 +378,9 @@ internal object MoshiChatApiTestArguments {
     fun getRepliesMoreInput() = messagesResponseArguments()
 
     @JvmStatic
+    fun getRepliesAroundInput() = messagesResponseArguments()
+
+    @JvmStatic
     fun sendActionInput() = messageResponseArguments()
 
     @JvmStatic

@@ -1311,6 +1311,20 @@ constructor(
         }
     }
 
+    override fun getRepliesAround(
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ): Call<List<Message>> = messageApi.getRepliesAround(
+        parentId = parentId,
+        limit = limit,
+        aroundId = aroundId,
+    ).mapDomain { response ->
+        response.messages.map {
+            it.toDomain()
+        }
+    }
+
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,

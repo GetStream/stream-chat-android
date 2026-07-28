@@ -16,13 +16,17 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 internal class ChannelUtilsTest {
 
@@ -83,6 +87,63 @@ internal class ChannelUtilsTest {
         val channel = dmChannel(randomUser(), randomUser())
 
         assertNull(channel.dmCounterpartId(currentUser = null))
+    }
+
+    @Test
+    fun `Given a deleted newest message Should return it from getLastMessageIncludingDeleted`() {
+        val currentUser = randomUser()
+        val older = randomMessage(
+            createdAt = Date(1_000),
+            deletedAt = null,
+            deletedForMe = false,
+            type = MessageType.REGULAR,
+        )
+        val deletedNewest = older.copy(id = randomString(), createdAt = Date(2_000), deletedAt = Date(3_000))
+        val channel = randomChannel(
+            messages = listOf(older, deletedNewest),
+            pendingMessages = emptyList(),
+            isInsideSearch = false,
+        )
+
+        assertEquals(deletedNewest, channel.getLastMessageIncludingDeleted(currentUser))
+    }
+
+    @Test
+    fun `Given a deleted newest message Should return the older message from getLastMessage`() {
+        val currentUser = randomUser()
+        val older = randomMessage(
+            createdAt = Date(1_000),
+            deletedAt = null,
+            deletedForMe = false,
+            type = MessageType.REGULAR,
+        )
+        val deletedNewest = older.copy(id = randomString(), createdAt = Date(2_000), deletedAt = Date(3_000))
+        val channel = randomChannel(
+            messages = listOf(older, deletedNewest),
+            pendingMessages = emptyList(),
+            isInsideSearch = false,
+        )
+
+        assertEquals(older, channel.getLastMessage(currentUser))
+    }
+
+    @Test
+    fun `Given messages with equal creation times Should return the later list element from getLastMessageIncludingDeleted`() {
+        val currentUser = randomUser()
+        val older = randomMessage(
+            createdAt = Date(1_000),
+            deletedAt = null,
+            deletedForMe = false,
+            type = MessageType.REGULAR,
+        )
+        val deletedNewest = older.copy(id = randomString(), deletedAt = Date(2_000))
+        val channel = randomChannel(
+            messages = listOf(older, deletedNewest),
+            pendingMessages = emptyList(),
+            isInsideSearch = false,
+        )
+
+        assertEquals(deletedNewest, channel.getLastMessageIncludingDeleted(currentUser))
     }
 
     private fun dmChannel(currentUser: User, counterpart: User) = randomChannel(

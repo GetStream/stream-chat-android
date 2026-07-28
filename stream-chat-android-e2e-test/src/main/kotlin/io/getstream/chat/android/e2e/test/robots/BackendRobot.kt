@@ -18,6 +18,7 @@ package io.getstream.chat.android.e2e.test.robots
 
 import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import junit.framework.TestCase.fail
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -62,6 +63,50 @@ public class BackendRobot(
         return this
     }
 
+    /**
+     * Truncates the currently open channel on the server side. The app under test receives
+     * the `channel.truncated` websocket event.
+     *
+     * @param withMessage When `true`, the truncation also delivers a "Channel truncated" system message.
+     */
+    public fun truncateChannel(withMessage: Boolean): BackendRobot {
+        mockServer.postRequest("truncate_channel?with_message=$withMessage")
+        return this
+    }
+
+    /**
+     * Enables or disables read events on every channel. Call before the channel is opened.
+     *
+     * @param enabled Whether the channel config reports `read_events`.
+     */
+    public fun setReadEvents(enabled: Boolean): BackendRobot {
+        waitForMockServerToStart()
+        mockServer.postRequest("config/read_events?value=$enabled")
+        return this
+    }
+
+    /**
+     * Adds a member to the currently open channel on the server side. The app under test
+     * receives the `member.added` and `channel.updated` websocket events.
+     *
+     * @param userId The id of the user to add.
+     */
+    public fun addMember(userId: String): BackendRobot {
+        mockServer.postRequest("add_member?user_id=$userId")
+        return this
+    }
+
+    /**
+     * Removes a member from the currently open channel on the server side. The app under test
+     * receives the `member.removed` and `channel.updated` websocket events.
+     *
+     * @param userId The id of the user to remove.
+     */
+    public fun removeMember(userId: String): BackendRobot {
+        mockServer.postRequest("remove_member?user_id=$userId")
+        return this
+    }
+
     public fun revokeToken(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/revoke_token?duration=$duration")
@@ -85,6 +130,25 @@ public class BackendRobot(
     public fun breakTokenGeneration(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/break_token_generation?duration=$duration")
+    }
+
+    /**
+     * Waits until the app under test closes its WebSocket connection to the mock server.
+     * The SDK keeps the socket open for a short period after the app goes to background,
+     * so call this before triggering server-side events that must not be delivered live.
+     *
+     * @param timeoutMillis How long to wait for the disconnect before failing the test.
+     */
+    public fun waitForWebSocketDisconnection(timeoutMillis: Long = 10_000) {
+        val startTime = System.currentTimeMillis()
+        while (System.currentTimeMillis() - startTime < timeoutMillis) {
+            val status = mockServer.getRequest("ws/status")?.string()
+            if (status != null && !JSONObject(status).getBoolean("connected")) {
+                return
+            }
+            Thread.sleep(500)
+        }
+        fail("WebSocket was not disconnected within $timeoutMillis ms")
     }
 
     private fun waitForMockServerToStart() {

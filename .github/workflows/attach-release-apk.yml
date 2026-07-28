@@ -1,0 +1,44 @@
+name: Attach sample APK to release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: attach-apk-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  attach-compose-sample-apk:
+    name: Build and attach Compose sample APK
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - name: Prepare signing environment
+        env:
+          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
+          RELEASE_KEYSTORE_PROPERTIES: ${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}
+          PASSPHRASE: ${{ secrets.PASSPHRASE }}
+        run: |
+          echo "$RELEASE_KEYSTORE" > .sign/release.keystore.asc
+          gpg -d --passphrase "$PASSPHRASE" --batch .sign/release.keystore.asc > .sign/release.keystore
+          echo "$RELEASE_KEYSTORE_PROPERTIES" > .sign/keystore.properties.asc
+          gpg -d --passphrase "$PASSPHRASE" --batch .sign/keystore.properties.asc > .sign/keystore.properties
+      - name: Assemble Compose sample (demo/release)
+        run: bash ./gradlew :stream-chat-android-compose-sample:assembleDemoRelease --stacktrace
+      - name: Attach APK to release under a constant name
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            "stream-chat-android-compose-sample/build/outputs/apk/demo/release/stream-chat-android-compose-sample-demo-release.apk#stream-chat-android-sample.apk" \
+            --clobber
