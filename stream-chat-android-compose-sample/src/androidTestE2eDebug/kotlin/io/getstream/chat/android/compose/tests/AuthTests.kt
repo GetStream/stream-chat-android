@@ -26,7 +26,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.goToBackground
 import io.getstream.chat.android.e2e.test.uiautomator.goToForeground
 import io.getstream.chat.android.e2e.test.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
-import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Assert.assertTrue
@@ -248,7 +248,7 @@ class AuthTests : StreamTestCase() {
     }
 
     private fun UserRobot.tapOnConnectionButton(): UserRobot {
-        JwtPage.connectionButton.waitToAppear().click()
+        JwtPage.connectionButton.waitToAppearAndClick()
         return this
     }
 
