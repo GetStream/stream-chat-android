@@ -34,10 +34,12 @@ import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
+import io.getstream.chat.android.e2e.test.uiautomator.sleep
 import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
 import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
 import io.getstream.chat.android.e2e.test.uiautomator.typeText
 import io.getstream.chat.android.e2e.test.uiautomator.wait
+import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
@@ -71,7 +73,7 @@ class UserRobot {
     }
 
     fun openChannel(channelCellIndex: Int = 0): UserRobot {
-        ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].click()
+        ChannelListPage.ChannelList.channels.waitToAppearAndClick(withIndex = channelCellIndex)
         return this
     }
 
@@ -279,7 +281,16 @@ class UserRobot {
     }
 
     fun tapOnQuotedMessage(messageCellIndex: Int = 0): UserRobot {
-        Message.quotedMessage.waitToAppearAndClick()
+        // A tap that lands while the list is still moving is cancelled by the touch slop and
+        // never reaches the click handler, so verify the jump moved the quote out of the
+        // viewport and tap again when it did not. Does not fail on its own: the assertion
+        // that follows reports a jump that never happened.
+        repeat(3) {
+            Message.quotedMessage.waitToAppearAndClick()
+            if (!Message.quotedMessage.waitToDisappear(timeOutMillis = 3_000).isDisplayed()) {
+                return this
+            }
+        }
         return this
     }
 
@@ -382,6 +393,33 @@ class UserRobot {
 
     fun tapOnViewChannelInfo(): UserRobot {
         ChannelListPage.ChannelMenu.viewInfo.waitToAppear().click()
+        return this
+    }
+
+    /**
+     * Scrolls the message list up one page at a time until the message with [messageText] is
+     * fully inside the list viewport, giving up after [maxScrolls] pages. The first sighting is
+     * not enough: a message clipped by the viewport edge cannot be long pressed, so a target
+     * that is still clipped after the scroll settles counts as not reached yet. Does not fail
+     * on its own: the interaction that follows reports the missing message.
+     */
+    fun scrollMessageListUpToMessage(messageText: String, maxScrolls: Int = 10): UserRobot {
+        val message = Message.text
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+        val listTop = MessageList.messageList.waitToAppear().visibleBounds.top
+        repeat(maxScrolls) {
+            if (message.waitDisplayed(timeOutMillis = 1_000)) {
+                sleep(500) // let the fling settle before trusting the bounds
+                val fullyVisible = runCatching {
+                    message.findObjects().firstOrNull()?.visibleBounds?.let { it.top > listTop } == true
+                }.getOrDefault(false)
+                if (fullyVisible) {
+                    return this
+                }
+            }
+            scrollMessageListUp(times = 1)
+        }
         return this
     }
 
