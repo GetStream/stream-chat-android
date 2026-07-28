@@ -104,6 +104,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
@@ -1423,6 +1424,17 @@ internal object Mother {
         created_by = createdBy,
         created_at = createdAt,
         updated_at = updatedAt,
+    )
+
+    fun randomUserGroupResponse(): UserGroupResponse = UserGroupResponse(
+        createdAt = randomDate(),
+        id = randomString(),
+        name = randomString(),
+        updatedAt = randomDate(),
+        createdBy = randomString(),
+        description = randomString(),
+        teamId = randomString(),
+        members = emptyList(),
     )
 
     fun randomRoleDto(
