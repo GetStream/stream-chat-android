@@ -39,6 +39,7 @@ internal object DownstreamReactionDtoAdapter :
     fun toJson(jsonWriter: JsonWriter, value: DownstreamReactionDto): Unit = error("Can't convert this to Json")
 }
 
+// extraDataPropertyName must match the @Json(name = ...) of ReactionRequest's overflow field.
 internal object UpstreamReactionDtoAdapter :
     CustomObjectDtoAdapter<ReactionRequest>(ReactionRequest::class, extraDataPropertyName = "custom") {
 
