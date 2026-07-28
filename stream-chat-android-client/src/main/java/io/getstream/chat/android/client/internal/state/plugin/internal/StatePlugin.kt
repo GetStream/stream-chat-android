@@ -124,7 +124,7 @@ public class StatePlugin internal constructor(
         groupedUnreadChannelsUpdater = groupedUnreadChannelsUpdater,
     ),
     QueryChannelListener by QueryChannelListenerState(logic),
-    ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
+    ThreadQueryListener by ThreadQueryListenerState(logic),
     ChannelMarkReadListener by ChannelMarkReadListenerState(logic),
     EditMessageListener by EditMessageListenerState(logic, clientState),
     HideChannelListener by HideChannelListenerState(logic),

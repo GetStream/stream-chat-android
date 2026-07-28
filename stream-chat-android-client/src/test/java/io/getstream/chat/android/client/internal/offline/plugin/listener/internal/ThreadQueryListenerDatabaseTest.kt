@@ -52,6 +52,22 @@ internal class ThreadQueryListenerDatabaseTest {
     }
 
     @Test
+    fun `given the response for replies around a reply is successful, database should be updated`() = runTest {
+        val message = randomMessage()
+        val messageList = listOf(message)
+
+        threadQueryListenerDatabase.onGetRepliesAroundResult(
+            Result.Success(messageList),
+            randomString(),
+            randomString(),
+            randomInt(),
+        )
+
+        verify(userRepository).insertUsers(any())
+        verify(messageRepository).insertMessages(messageList)
+    }
+
+    @Test
     fun `given the response is failure, database should NOT be updated`() = runTest {
         val message = randomMessage()
         val messageList = listOf(message)

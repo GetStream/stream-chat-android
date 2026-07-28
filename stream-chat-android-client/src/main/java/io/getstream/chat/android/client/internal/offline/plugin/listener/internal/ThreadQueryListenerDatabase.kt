@@ -69,6 +69,15 @@ internal class ThreadQueryListenerDatabase(
         onResult(result)
     }
 
+    override suspend fun onGetRepliesAroundResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ) {
+        onResult(result)
+    }
+
     private suspend fun onResult(result: Result<List<Message>>) {
         if (result is Result.Success) {
             val messages = result.value

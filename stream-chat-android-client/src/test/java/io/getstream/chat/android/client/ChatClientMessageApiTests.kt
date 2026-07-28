@@ -494,6 +494,50 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun getRepliesAroundSuccess() = runTest {
+        // given
+        val parentId = randomString()
+        val aroundId = randomString()
+        val limit = randomInt()
+        val plugin = mock<Plugin>()
+        val replies = listOf(randomMessage())
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenGetRepliesAroundResult(replies.asCall())
+            .get()
+        // when
+        val result = sut.getRepliesAround(parentId, aroundId, limit).await()
+        // then
+        verifySuccess(result, replies)
+        val inOrder = Mockito.inOrder(plugin)
+        inOrder.verify(plugin).onGetRepliesPrecondition(parentId)
+        inOrder.verify(plugin).onGetRepliesAroundRequest(parentId, aroundId, limit)
+        inOrder.verify(plugin).onGetRepliesAroundResult(result, parentId, aroundId, limit)
+    }
+
+    @Test
+    fun getRepliesAroundError() = runTest {
+        // given
+        val parentId = randomString()
+        val aroundId = randomString()
+        val limit = randomInt()
+        val plugin = mock<Plugin>()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenGetRepliesAroundResult(RetroError<List<Message>>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.getRepliesAround(parentId, aroundId, limit).await()
+        // then
+        verifyNetworkError(result, errorCode)
+        val inOrder = Mockito.inOrder(plugin)
+        inOrder.verify(plugin).onGetRepliesPrecondition(parentId)
+        inOrder.verify(plugin).onGetRepliesAroundRequest(parentId, aroundId, limit)
+        inOrder.verify(plugin).onGetRepliesAroundResult(result, parentId, aroundId, limit)
+    }
+
+    @Test
     fun sendReactionSuccess() = runTest {
         // given
         val currentUser = randomUser()
@@ -1012,6 +1056,10 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
 
         fun givenGetRepliesMoreResult(result: Call<List<Message>>) = apply {
             whenever(api.getRepliesMore(any(), any(), any())).thenReturn(result)
+        }
+
+        fun givenGetRepliesAroundResult(result: Call<List<Message>>) = apply {
+            whenever(api.getRepliesAround(any(), any(), any())).thenReturn(result)
         }
 
         fun givenSendReactionResult(result: Call<Reaction>) = apply {
