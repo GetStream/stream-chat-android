@@ -31,6 +31,7 @@ import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
+import org.junit.Ignore
 import org.junit.Test
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
@@ -362,6 +363,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5892")
+    @Ignore("https://linear.app/stream/issue/AND-1332")
     @Test
     fun test_quotedReplyNotInList_whenUserAddsQuotedReply_InThread() {
         step("GIVEN user opens the channel") {
