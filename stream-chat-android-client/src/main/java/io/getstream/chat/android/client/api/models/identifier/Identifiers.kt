@@ -159,6 +159,22 @@ internal fun GetRepliesMoreIdentifier(
 }
 
 /**
+ * Identifier for a [ChatClient.getRepliesAround] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun getRepliesAroundIdentifier(
+    parentId: String,
+    aroundId: String,
+    limit: Int,
+): Int {
+    var result = "GetRepliesAround".hashCode()
+    result = 31 * result + parentId.hashCode()
+    result = 31 * result + aroundId.hashCode()
+    result = 31 * result + limit.hashCode()
+    return result
+}
+
+/**
  * Identifier for a [ChatClient.sendGiphy] call.
  */
 @Suppress("FunctionName", "MagicNumber")

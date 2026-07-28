@@ -103,6 +103,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getPoll (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/result/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/result/call/Call;
+	public final fun getRepliesAround (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/util/Date;)Lio/getstream/result/call/Call;
