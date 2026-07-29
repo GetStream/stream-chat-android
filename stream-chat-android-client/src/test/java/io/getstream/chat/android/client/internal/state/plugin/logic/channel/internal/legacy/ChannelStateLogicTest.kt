@@ -788,6 +788,37 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given no read state and local unread tracking enabled, When updateCurrentUserRead is called, Then a read is created`() {
+        // given - no read state, local tracking on, read events disabled server-side
+        _read.value = null
+        _channelConfig.value = Config(readEventsEnabled = false)
+        whenever(mutableState.isLocalUnreadCountEnabled) doReturn true
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        val expectedChannelUserRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = eventDate,
+            unreadMessages = 1,
+            lastRead = Date(0),
+            lastReadMessageId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState).upsertReads(eq(listOf(expectedChannelUserRead)))
+    }
+
+    @Test
     fun `Given channel is in global mutes, When syncMuteState is called, Then setMuted is called with true`() {
         // given
         val cid = mutableState.cid

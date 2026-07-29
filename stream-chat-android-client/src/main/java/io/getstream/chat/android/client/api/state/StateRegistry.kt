@@ -58,6 +58,8 @@ import java.util.concurrent.ConcurrentHashMap
  * @param messageLimitConfig Configuration for message limits.
  * @param mutedUsers The current list of muted users.
  * @param useLegacyChannelState Whether to use the legacy channel state implementation.
+ * @param isLocalUnreadCountEnabled Whether the per-channel unread count is tracked on-device for channels with
+ * server-side read events disabled.
  */
 @Suppress("LongParameterList", "TooManyFunctions")
 public class StateRegistry @JvmOverloads constructor(
@@ -70,6 +72,7 @@ public class StateRegistry @JvmOverloads constructor(
     private val messageLimitConfig: MessageLimitConfig,
     private val mutedUsers: StateFlow<List<Mute>> = MutableStateFlow(emptyList()),
     private val useLegacyChannelState: Boolean = true,
+    private val isLocalUnreadCountEnabled: Boolean = false,
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")
@@ -188,6 +191,7 @@ public class StateRegistry @JvmOverloads constructor(
             activeLiveLocations = activeLiveLocations,
             baseMessageLimit = baseMessageLimit,
             now = now,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )
     }
 
@@ -203,6 +207,7 @@ public class StateRegistry @JvmOverloads constructor(
             mutedUsers = mutedUsers,
             liveLocations = activeLiveLocations,
             messageLimit = baseMessageLimit,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )
     }
 

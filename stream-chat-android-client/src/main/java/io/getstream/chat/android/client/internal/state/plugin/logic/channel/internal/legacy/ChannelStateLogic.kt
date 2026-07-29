@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.internal.state.message.attachments.inter
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
@@ -598,11 +599,11 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Marks channel as read locally.
+     * Marks the channel as read for the current user.
      *
-     * @return The flag to determine if the channel was marked as read locally.
+     * @return A [MarkReadResult] describing how the mark-read request was handled.
      */
-    fun markRead(): Boolean {
+    fun markRead(): MarkReadResult {
         return mutableState.markChannelAsRead()
     }
 
@@ -932,15 +933,36 @@ internal class ChannelStateLogic(
             return
         }
         // Update the unread count
-        currentRead?.let {
+        incrementUnreadCount(currentRead, eventReceivedDate)
+        processedMessageIds.put(message.id, true)
+    }
+
+    /**
+     * Increments the current user's unread count for a newly received message. Creates the read
+     * state on-the-fly when local tracking is enabled and none exists yet (read-events-disabled
+     * channels omit it).
+     */
+    private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
+        if (currentRead != null) {
             updateRead(
-                it.copy(
+                currentRead.copy(
                     lastReceivedEventDate = eventReceivedDate,
-                    unreadMessages = it.unreadMessages.inc(),
+                    unreadMessages = currentRead.unreadMessages.inc(),
                 ),
             )
+        } else if (mutableState.isLocalUnreadCountEnabled && !mutableState.channelConfig.value.readEventsEnabled) {
+            clientState.user.value?.let { user ->
+                updateRead(
+                    ChannelUserRead(
+                        user = user,
+                        lastReceivedEventDate = eventReceivedDate,
+                        unreadMessages = 1,
+                        lastRead = Date(0),
+                        lastReadMessageId = null,
+                    ),
+                )
+            }
         }
-        processedMessageIds.put(message.id, true)
     }
 
     private fun Message.storePoll() {

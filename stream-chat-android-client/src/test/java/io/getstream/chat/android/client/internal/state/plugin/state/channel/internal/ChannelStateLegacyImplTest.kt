@@ -617,7 +617,7 @@ internal class ChannelStateLegacyImplTest {
     }
 
     @Test
-    fun `markChannelAsRead should return true when lastReadMessageId matches lastMessage but unreadMessages greater than 0`() {
+    fun `markChannelAsRead returns Remote when lastReadMessageId matches lastMessage but unreadMessages greater than 0`() {
         val lastMessage = randomMessage(
             parentId = null,
             shadowed = false,
@@ -636,14 +636,14 @@ internal class ChannelStateLegacyImplTest {
 
         val actual = channelState.markChannelAsRead()
 
-        assertEquals(true, actual)
+        assertEquals(MarkReadResult.RemoteRequired, actual)
         assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
         assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
         assertEquals(0, channelState.read.value?.unreadMessages)
     }
 
     @Test
-    fun `markChannelAsRead should return false when lastReadMessageId matches and unreadMessages is 0`() =
+    fun `markChannelAsRead returns None when lastReadMessageId matches and unreadMessages is 0`() =
         runTest {
             val lastMessage = randomMessage(
                 parentId = null,
@@ -661,11 +661,11 @@ internal class ChannelStateLegacyImplTest {
 
             val result = channelState.markChannelAsRead()
 
-            assertEquals(false, result)
+            assertEquals(MarkReadResult.NotNeeded, result)
         }
 
     @Test
-    fun `markChannelAsRead should return true when lastReadMessageId differs from lastMessage`() = runTest {
+    fun `markChannelAsRead returns Remote when lastReadMessageId differs from lastMessage`() = runTest {
         val lastMessage = randomMessage(
             parentId = null,
             shadowed = false,
@@ -682,14 +682,14 @@ internal class ChannelStateLegacyImplTest {
 
         val result = channelState.markChannelAsRead()
 
-        assertEquals(true, result)
+        assertEquals(MarkReadResult.RemoteRequired, result)
         assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
         assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
         assertEquals(0, channelState.read.value?.unreadMessages)
     }
 
     @Test
-    fun `markChannelAsRead should return false when readEventsEnabled is false`() = runTest {
+    fun `markChannelAsRead returns None when readEventsEnabled is false`() = runTest {
         val lastMessage = randomMessage(
             parentId = null,
             shadowed = false,
@@ -705,11 +705,11 @@ internal class ChannelStateLegacyImplTest {
 
         val result = channelState.markChannelAsRead()
 
-        assertEquals(false, result)
+        assertEquals(MarkReadResult.NotNeeded, result)
     }
 
     @Test
-    fun `markChannelAsRead should return false when there are no messages`() = runTest {
+    fun `markChannelAsRead returns None when there are no messages`() = runTest {
         channelState.setMessages(emptyList())
         channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
 
@@ -721,11 +721,11 @@ internal class ChannelStateLegacyImplTest {
 
         val result = channelState.markChannelAsRead()
 
-        assertEquals(false, result)
+        assertEquals(MarkReadResult.NotNeeded, result)
     }
 
     @Test
-    fun `markChannelAsRead should return true when read state is null`() = runTest {
+    fun `markChannelAsRead returns Remote when read state is null`() = runTest {
         val lastMessage = randomMessage(
             parentId = null,
             shadowed = false,
@@ -739,7 +739,7 @@ internal class ChannelStateLegacyImplTest {
 
         val result = channelState.markChannelAsRead()
 
-        assertEquals(true, result)
+        assertEquals(MarkReadResult.RemoteRequired, result)
     }
 
     @Test

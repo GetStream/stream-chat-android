@@ -111,6 +111,7 @@ public class StreamStatePluginFactory(
             messageLimitConfig = config.messageLimitConfig,
             mutedUsers = mutableGlobalState.muted,
             useLegacyChannelState = config.useLegacyChannelLogic,
+            isLocalUnreadCountEnabled = config.isLocalUnreadCountEnabled,
         )
 
         val isQueryingFree = MutableStateFlow(true)

@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Channel
@@ -244,7 +245,7 @@ internal class ChannelLogicImpl(
         state.setRepliedMessage(message)
     }
 
-    override fun markRead(): Boolean {
+    override fun markRead(): MarkReadResult {
         return state.markRead()
     }
 

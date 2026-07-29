@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MessagesPaginationManager
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -887,22 +888,22 @@ internal class ChannelLogicImplTest {
     @Test
     fun `markRead should delegate to stateImpl and return result`() {
         // Given
-        whenever(stateImpl.markRead()).thenReturn(true)
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.RemoteRequired)
         // When
         val result = sut.markRead()
         // Then
-        assertTrue(result)
+        assertEquals(MarkReadResult.RemoteRequired, result)
         verify(stateImpl).markRead()
     }
 
     @Test
-    fun `markRead should return false when stateImpl returns false`() {
+    fun `markRead should return the result from stateImpl`() {
         // Given
-        whenever(stateImpl.markRead()).thenReturn(false)
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.NotNeeded)
         // When
         val result = sut.markRead()
         // Then
-        assertFalse(result)
+        assertEquals(MarkReadResult.NotNeeded, result)
     }
 
     // endregion
