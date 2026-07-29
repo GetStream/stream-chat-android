@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class SearchMessagesRequest(
-    val filter_conditions: Map<*, *>,
-    val message_filter_conditions: Map<*, *>,
-    val offset: Int?,
-    val limit: Int?,
-    val next: String?,
-    val sort: List<Map<String, Any>>?,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class MessageOptions(
+    @Json(name = "include_thread_participants")
+    internal val includeThreadParticipants: Boolean? = null,
+
+    @Json(name = "member_custom_include")
+    internal val memberCustomInclude: List<String>? = emptyList(),
 )
