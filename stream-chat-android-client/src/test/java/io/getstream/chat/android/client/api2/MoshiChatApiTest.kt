@@ -1925,8 +1925,8 @@ internal class MoshiChatApiTest {
         val result = sut.queryChannels(query).await()
         // then
         val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
-            filterConditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
-            sort = if (query.predefinedFilter != null) null else query.querySort.toSortParams(),
+            filterConditions = query.filter.toMap(),
+            sort = query.querySort.toSortParams(),
             predefinedFilter = query.predefinedFilter,
             filterValues = query.filterValues,
             sortValues = query.sortValues,
