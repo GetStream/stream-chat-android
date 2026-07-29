@@ -33,6 +33,8 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -83,14 +85,31 @@ internal class ScrollToFocusedItemTest {
     @Test
     fun `given a scroll in progress, waits it out and then scrolls to the focused item`() {
         setListContent()
-        composeTestRule.runOnIdle {
+        // Pause the clock so the animation genuinely overlaps the jump. With the clock
+        // auto-advancing, runOnIdle would finish the animation before the jump even starts and
+        // the test would pass without exercising the wait. Assertions use runOnUiThread because
+        // runOnIdle cannot settle while the clock is paused mid-animation.
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnUiThread {
             scope.launch {
-                listState.animateScrollBy(value = 500f, animationSpec = tween(durationMillis = 1_000))
+                listState.animateScrollBy(value = 1_000f, animationSpec = tween(durationMillis = 2_000))
             }
         }
+        composeTestRule.mainClock.advanceTimeBy(500)
+        composeTestRule.runOnUiThread { assertTrue(listState.isScrollInProgress) }
 
-        val jump = scrollToFocusedItemAsync(focusedItemIndex = 100)
+        val jump = composeTestRule.runOnUiThread {
+            scope.async { listState.scrollToFocusedItem(focusedItemIndex = 100, offset = 0) }
+        }
 
+        composeTestRule.mainClock.advanceTimeBy(500)
+        composeTestRule.runOnUiThread {
+            assertTrue(listState.isScrollInProgress)
+            assertFalse(jump.isCompleted)
+            assertTrue(listState.firstVisibleItemIndex < 100)
+        }
+
+        composeTestRule.mainClock.autoAdvance = true
         composeTestRule.waitUntil(timeoutMillis = 5_000) { jump.isCompleted }
         assertEquals(100, listState.firstVisibleItemIndex)
     }
