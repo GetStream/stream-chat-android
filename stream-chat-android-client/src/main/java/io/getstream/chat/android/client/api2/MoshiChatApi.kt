@@ -158,6 +158,7 @@ import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
@@ -166,6 +167,7 @@ import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
+import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -600,7 +602,7 @@ constructor(
                 createdAtGt = createdAtGt,
                 teamId = teamId,
             )
-            .mapUserGroups { it.userGroups }
+            .mapUserGroups(ListUserGroupsResponse::userGroups)
     }
 
     override fun searchUserGroups(
@@ -618,7 +620,7 @@ constructor(
                 nameGt = nameGt,
                 idGt = idGt,
             )
-            .mapUserGroups { it.userGroups }
+            .mapUserGroups(SearchUserGroupsResponse::userGroups)
     }
 
     override fun getUserGroup(id: String, teamId: String?): Call<UserGroup> {
