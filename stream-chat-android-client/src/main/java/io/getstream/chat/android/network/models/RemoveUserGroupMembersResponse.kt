@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
-
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-
-@JsonClass(generateAdapter = true)
-internal data class UserGroupResponse(
-    val user_group: DownstreamUserGroupDto,
-    val duration: String? = null,
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
 )
 
-@JsonClass(generateAdapter = true)
-internal data class UserGroupsResponse(
-    val user_groups: List<DownstreamUserGroupDto> = emptyList(),
-    val duration: String? = null,
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
+
+/**
+ * Response for removing members from a user group
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class RemoveUserGroupMembersResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "user_group")
+    internal val userGroup: io.getstream.chat.android.network.models.UserGroupResponse? = null,
 )

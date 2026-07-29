@@ -103,6 +103,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
@@ -124,6 +125,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -1423,6 +1425,40 @@ internal object Mother {
         created_by = createdBy,
         created_at = createdAt,
         updated_at = updatedAt,
+    )
+
+    fun randomUserGroupMemberDto(
+        appPk: Int = randomInt(),
+        groupId: String = randomString(),
+        userId: String = randomString(),
+        isAdmin: Boolean = randomBoolean(),
+        createdAt: Date = randomDate(),
+    ): UserGroupMemberDto = UserGroupMemberDto(
+        appPk = appPk,
+        groupId = groupId,
+        userId = userId,
+        isAdmin = isAdmin,
+        createdAt = createdAt,
+    )
+
+    fun randomUserGroupResponse(
+        id: String = randomString(),
+        name: String = randomString(),
+        description: String? = randomString(),
+        teamId: String? = randomString(),
+        members: List<UserGroupMemberDto> = emptyList(),
+        createdBy: String? = randomString(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): UserGroupResponse = UserGroupResponse(
+        createdAt = createdAt,
+        id = id,
+        name = name,
+        updatedAt = updatedAt,
+        createdBy = createdBy,
+        description = description,
+        teamId = teamId,
+        members = members,
     )
 
     fun randomRoleDto(
