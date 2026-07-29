@@ -672,9 +672,14 @@ constructor(
     }
 
     private fun <T : Any> RetrofitCall<T>.mapUserGroup(extract: (T) -> UserGroupResponse?) =
-        map { response ->
-            with(domainMapping) {
-                requireNotNull(extract(response)) { "usergroup response missing user_group" }.toDomain()
+        flatMap { response ->
+            CoroutineCall(coroutineScope) {
+                when (val userGroup = extract(response)) {
+                    null -> Result.Failure(
+                        Error.GenericError("UserGroup response is missing the user_group field"),
+                    )
+                    else -> Result.Success(with(domainMapping) { userGroup.toDomain() })
+                }
             }
         }
 
