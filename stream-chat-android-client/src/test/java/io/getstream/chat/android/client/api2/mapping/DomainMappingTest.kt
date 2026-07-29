@@ -984,6 +984,20 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `UserGroupMemberDto is correctly mapped to UserGroupMember`() {
+        val dto = randomUserGroupMemberDto()
+        val sut = Fixture().get()
+        val member = with(sut) { dto.toDomain() }
+        val expected = UserGroupMember(
+            groupId = dto.groupId,
+            userId = dto.userId,
+            isAdmin = dto.isAdmin,
+            createdAt = dto.createdAt,
+        )
+        assertEquals(expected, member)
+    }
+
+    @Test
     fun `RoleDto is correctly mapped to Role`() {
         val dto = randomRoleDto()
         val sut = Fixture().get()
