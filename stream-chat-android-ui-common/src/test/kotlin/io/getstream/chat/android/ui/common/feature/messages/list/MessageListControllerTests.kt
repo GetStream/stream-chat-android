@@ -784,6 +784,57 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Keep unread label, when marking read zeroes the read state`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val lastReadMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
+            val messages = listOf(
+                lastReadMessage,
+                randomMessage(
+                    id = "first_unread_message_id",
+                    user = user2,
+                    syncStatus = SyncStatus.COMPLETED,
+                    deletedAt = null,
+                    deletedForMe = false,
+                ),
+            )
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = lastReadMessage.id,
+                    unreadMessages = 1,
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenChannelState(
+                    messagesState = MutableStateFlow(messages),
+                    read = channelRead,
+                )
+                .get()
+
+            // The state plugin zeroes the read state optimistically when marking read;
+            // the label must already be computed when the mark-read call goes out.
+            var labelWhenMarkingRead: MessageListController.UnreadLabel? = null
+            whenever(chatClient.markRead(any(), any())) doAnswer {
+                labelWhenMarkingRead = controller.unreadLabelState.value
+                channelRead.value = channelRead.value.copy(
+                    unreadMessages = 0,
+                    lastRead = Date(),
+                    lastReceivedEventDate = Date(),
+                )
+                Unit.asCall()
+            }
+            controller.markLastMessageRead()
+            delay(1000)
+
+            verify(chatClient, times(1)).markRead(any(), any())
+            labelWhenMarkingRead.`should not be null`().unreadCount `should be equal to` 1
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 1
+        }
+
+    @Test
     fun `Show unread label, when message is marked as unread`() =
         runTest {
             val user = randomUser()

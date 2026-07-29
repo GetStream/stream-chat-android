@@ -147,7 +147,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -236,7 +235,7 @@ public class MessageListController(
      * via [messageListState], which mirrors this value.
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
-    private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    private val showUnreadButtonState = MutableStateFlow(true)
     private var lastProcessedReadMessageId: String? = null
     private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
@@ -597,34 +596,51 @@ public class MessageListController(
      * logic of determining unread message state, including edge cases for own messages,
      * mark as unread functionality, and offline/pending message scenarios.
      */
-    @Suppress("MagicNumber")
     private fun observeUnreadLabelState() {
         combine(
-            showUnreadButtonState.onStart { emit(true) },
+            showUnreadButtonState,
             channelState.filterNotNull(),
             channelState.filterNotNull().flatMapLatest { it.read },
         ) { shouldShowButton, channel, read ->
-            read
-                ?.takeIf { !isStartedForThread }
-                ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
-                ?.let { channelUserRead ->
-                    lastProcessedReadMessageId = channelUserRead.lastReadMessageId
-
-                    // Delegate to the calculator for the complex unread label logic
-                    val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
-                        channelUserRead = channelUserRead,
-                        messages = channel.messages.value,
-                        currentUserId = clientState.user.value?.id,
-                        shouldShowButton = shouldShowButton,
-                    )
-
-                    // Only update the label if the calculator produced a non-null result. This makes the label sticky:
-                    // once shown, it persists until the user leaves the channel.
-                    if (unreadLabel != null) {
-                        unreadLabelState.value = unreadLabel
-                    }
-                }
+            computeUnreadLabel(
+                channelUserRead = read,
+                channel = channel,
+                shouldShowButton = shouldShowButton,
+            )
         }.launchIn(scope)
+    }
+
+    /**
+     * Recalculates the unread label from the given read state and updates [unreadLabelState].
+     *
+     * The label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes, and the
+     * result is "sticky": a null calculation never overwrites a non-null label, so the separator
+     * persists when the user auto-reads messages by scrolling, while mark-as-unread events
+     * (which move [ChannelUserRead.lastReadMessageId] backward) still produce a new label.
+     */
+    private fun computeUnreadLabel(
+        channelUserRead: ChannelUserRead?,
+        channel: ChannelState,
+        shouldShowButton: Boolean,
+    ) {
+        channelUserRead
+            ?.takeIf { !isStartedForThread }
+            ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
+            ?.let { read ->
+                lastProcessedReadMessageId = read.lastReadMessageId
+
+                // Delegate to the calculator for the complex unread label logic
+                val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
+                    channelUserRead = read,
+                    messages = channel.messages.value,
+                    currentUserId = clientState.user.value?.id,
+                    shouldShowButton = shouldShowButton,
+                )
+
+                if (unreadLabel != null) {
+                    unreadLabelState.value = unreadLabel
+                }
+            }
     }
 
     /**
@@ -638,7 +654,7 @@ public class MessageListController(
      */
     public fun disableUnreadLabelButton() {
         val currentLabel = unreadLabelState.value ?: return
-        showUnreadButtonState.tryEmit(false)
+        showUnreadButtonState.value = false
         unreadLabelState.value = currentLabel.copy(buttonVisibility = false)
     }
 
@@ -1761,6 +1777,17 @@ public class MessageListController(
         if (isInThread) {
             markThreadAsRead()
         } else {
+            // Compute the unread label before marking read. Marking the channel read zeroes the
+            // read state optimistically, and observeUnreadLabelState collects a conflating flow,
+            // so on a busy main thread it can observe only the zeroed state and never produce
+            // the label.
+            channelState.value?.let { channel ->
+                computeUnreadLabel(
+                    channelUserRead = channel.read.value,
+                    channel = channel,
+                    shouldShowButton = showUnreadButtonState.value,
+                )
+            }
             markChannelAsRead()
         }
     }
@@ -1844,7 +1871,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    showUnreadButtonState.tryEmit(false)
+                    showUnreadButtonState.value = false
                 }
             }
         }
