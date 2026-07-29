@@ -24,8 +24,6 @@ import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -39,10 +37,12 @@ import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.QueryChannelsRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
@@ -76,7 +76,7 @@ internal interface ChannelApi {
     @POST("/channels/grouped")
     fun queryGroupedChannels(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: QueryGroupedChannelsRequest,
+        @Body body: GroupedQueryChannelsRequest,
     ): RetrofitCall<QueryGroupedChannelsResponse>
 
     @POST("/channels/{type}/query")

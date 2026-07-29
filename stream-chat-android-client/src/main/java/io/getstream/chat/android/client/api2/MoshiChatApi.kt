@@ -67,8 +67,6 @@ import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesReques
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
@@ -1480,16 +1478,16 @@ constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
-            sort = if (query.predefinedFilter != null) null else query.sort,
-            predefined_filter = query.predefinedFilter,
-            filter_values = query.filterValues,
-            sort_values = query.sortValues,
+        val request = io.getstream.chat.android.network.models.QueryChannelsRequest(
+            filterConditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
+            sort = if (query.predefinedFilter != null) null else query.querySort.toSortParams(),
+            predefinedFilter = query.predefinedFilter,
+            filterValues = query.filterValues.orEmpty(),
+            sortValues = query.sortValues.orEmpty(),
             offset = query.offset,
             limit = query.limit,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -1530,10 +1528,10 @@ constructor(
         watch: Boolean,
         presence: Boolean,
     ): Call<GroupedChannels> {
-        val body = QueryGroupedChannelsRequest(
+        val body = io.getstream.chat.android.network.models.GroupedQueryChannelsRequest(
             limit = limit,
             groups = groups?.mapValues { (_, query) ->
-                QueryGroupedChannelsGroupRequest(
+                io.getstream.chat.android.network.models.GroupedChannelsGroupRequest(
                     limit = query.limit,
                     next = query.next,
                     prev = query.prev,
@@ -1607,11 +1605,11 @@ constructor(
     }
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = queryUsers.filter.toMap(),
+        val request = io.getstream.chat.android.network.models.QueryUsersPayload(
+            filterConditions = queryUsers.filter.toMap(),
             offset = queryUsers.offset,
             limit = queryUsers.limit,
-            sort = queryUsers.sort,
+            sort = queryUsers.querySort.toSortParams(),
             presence = queryUsers.presence,
         )
         val lazyQueryUsersCall = {

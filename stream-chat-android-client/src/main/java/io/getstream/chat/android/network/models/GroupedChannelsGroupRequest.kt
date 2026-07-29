@@ -14,15 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class QueryUsersRequest(
-    val filter_conditions: Map<*, *>,
-    val offset: Int,
-    val limit: Int,
-    val sort: List<Map<String, Any>>,
-    val presence: Boolean,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class GroupedChannelsGroupRequest(
+    @Json(name = "limit")
+    internal val limit: Int? = null,
+
+    @Json(name = "next")
+    internal val next: String? = null,
+
+    @Json(name = "prev")
+    internal val prev: String? = null,
 )

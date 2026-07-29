@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
@@ -31,6 +30,7 @@ import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.QueryUsersPayload
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import retrofit2.http.Body
@@ -69,7 +69,7 @@ internal interface UserApi {
     @GET("/users")
     fun queryUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @UrlQueryPayload @Query("payload") payload: QueryUsersRequest,
+        @UrlQueryPayload @Query("payload") payload: QueryUsersPayload,
     ): RetrofitCall<UsersResponse>
 
     @GET("/users/live_locations")

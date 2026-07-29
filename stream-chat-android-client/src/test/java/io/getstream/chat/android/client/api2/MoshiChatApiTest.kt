@@ -59,8 +59,6 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadR
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
@@ -153,6 +151,8 @@ import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.GetUserGroupResponse
+import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
+import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
@@ -1924,13 +1924,16 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannels(query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = query.filter.toMap(),
-            sort = query.sort,
+        val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
+            filterConditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
+            sort = if (query.predefinedFilter != null) null else query.querySort.toSortParams(),
+            predefinedFilter = query.predefinedFilter,
+            filterValues = query.filterValues.orEmpty(),
+            sortValues = query.sortValues.orEmpty(),
             offset = query.offset,
             limit = query.limit,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -1958,7 +1961,7 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryGroupedChannels(limit = limit, groups = null, watch = false, presence = false).await()
         // then
-        val expectedPayload = QueryGroupedChannelsRequest(
+        val expectedPayload = GroupedQueryChannelsRequest(
             limit = limit,
             groups = null,
             watch = false,
@@ -1989,11 +1992,11 @@ internal class MoshiChatApiTest {
             presence = false,
         ).await()
 
-        val expectedPayload = QueryGroupedChannelsRequest(
+        val expectedPayload = GroupedQueryChannelsRequest(
             limit = 30,
             groups = mapOf(
-                "direct" to QueryGroupedChannelsGroupRequest(limit = 10, next = "cursor-next", prev = null),
-                "support" to QueryGroupedChannelsGroupRequest(limit = null, next = null, prev = "cursor-prev"),
+                "direct" to GroupedChannelsGroupRequest(limit = 10, next = "cursor-next", prev = null),
+                "support" to GroupedChannelsGroupRequest(limit = null, next = null, prev = "cursor-prev"),
             ),
             watch = false,
             presence = false,
@@ -2066,16 +2069,16 @@ internal class MoshiChatApiTest {
             sut.setConnection(userId = userId, connectionId = connectionId)
             val result = sut.queryChannels(query).await()
             // then
-            val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-                filter_conditions = null,
+            val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
+                filterConditions = null,
                 sort = null,
-                predefined_filter = predefinedFilter,
-                filter_values = filterValues,
-                sort_values = sortValues,
+                predefinedFilter = predefinedFilter,
+                filterValues = filterValues,
+                sortValues = sortValues,
                 offset = query.offset,
                 limit = query.limit,
-                message_limit = query.messageLimit,
-                member_limit = query.memberLimit,
+                messageLimit = query.messageLimit,
+                memberLimit = query.memberLimit,
                 state = query.state,
                 watch = query.watch,
                 presence = query.presence,
@@ -2287,11 +2290,11 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryUsers(query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = query.filter.toMap(),
-            sort = query.sort,
+        val expectedPayload = io.getstream.chat.android.network.models.QueryUsersPayload(
+            filterConditions = query.filter.toMap(),
             offset = query.offset,
             limit = query.limit,
+            sort = query.querySort.toSortParams(),
             presence = query.presence,
         )
         result `should be instance of` expected
