@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import java.util.Date
+import io.getstream.chat.android.network.models.Command as CommandDto
 
 @JsonClass(generateAdapter = true)
 internal data class ConfigDto(

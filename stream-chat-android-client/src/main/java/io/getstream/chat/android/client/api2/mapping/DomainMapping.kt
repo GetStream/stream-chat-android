@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -139,6 +138,7 @@ import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
