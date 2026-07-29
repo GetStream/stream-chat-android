@@ -107,7 +107,7 @@ class UnreadMessagesTests : StreamTestCase() {
             userRobot.assertMessage("New-$unreadCount")
         }
         step("WHEN user marks the first participant message as unread") {
-            userRobot.markMessageAsUnread(messageCellIndex = 1)
+            userRobot.markMessageAsUnread("New-1")
         }
         step("THEN the unread separator is shown with the unread count") {
             userRobot.assertUnreadSeparator(unreadCount = unreadCount)
