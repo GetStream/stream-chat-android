@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.pages
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
+import java.util.regex.Pattern
 
 open class MessageListPage {
 
@@ -56,6 +57,10 @@ open class MessageListPage {
             val sendButton get() = By.res("Stream_ComposerSendButton")
             val cooldownIndicator get() = By.res("Stream_ComposerCooldownIndicator")
             val saveButton get() = By.res("Stream_ComposerSaveButton")
+
+            // The composer trailing button is the send button normally and the save button in
+            // command mode; one selector covers taps that accept either.
+            val confirmButton get() = By.res(Pattern.compile("Stream_Composer(Send|Save)Button"))
             val recordAudioButton get() = By.res("Stream_ComposerRecordAudioButton")
             val commandSuggestionList get() = By.res("Stream_CommandSuggestionList")
             val commandSuggestionListTitle get() = By.res("Stream_CommandSuggestionListTitle")
