@@ -125,6 +125,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 @Suppress("LargeClass")
 internal object Mother {
@@ -1426,15 +1427,38 @@ internal object Mother {
         updated_at = updatedAt,
     )
 
-    fun randomUserGroupResponse(): UserGroupResponse = UserGroupResponse(
-        createdAt = randomDate(),
-        id = randomString(),
-        name = randomString(),
-        updatedAt = randomDate(),
-        createdBy = randomString(),
-        description = randomString(),
-        teamId = randomString(),
-        members = emptyList(),
+    fun randomUserGroupMemberDto(
+        appPk: Int = randomInt(),
+        groupId: String = randomString(),
+        userId: String = randomString(),
+        isAdmin: Boolean = randomBoolean(),
+        createdAt: Date = randomDate(),
+    ): UserGroupMemberDto = UserGroupMemberDto(
+        appPk = appPk,
+        groupId = groupId,
+        userId = userId,
+        isAdmin = isAdmin,
+        createdAt = createdAt,
+    )
+
+    fun randomUserGroupResponse(
+        id: String = randomString(),
+        name: String = randomString(),
+        description: String? = randomString(),
+        teamId: String? = randomString(),
+        members: List<UserGroupMemberDto> = emptyList(),
+        createdBy: String? = randomString(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): UserGroupResponse = UserGroupResponse(
+        createdAt = createdAt,
+        id = id,
+        name = name,
+        updatedAt = updatedAt,
+        createdBy = createdBy,
+        description = description,
+        teamId = teamId,
+        members = members,
     )
 
     fun randomRoleDto(

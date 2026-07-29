@@ -63,6 +63,8 @@ import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
+import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
+import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
@@ -942,6 +944,40 @@ internal class DomainMappingTest {
     @Test
     fun `DownstreamUserGroupDto with null team_id maps team to empty string`() {
         val dto = randomDownstreamUserGroupDto(teamId = null)
+        val sut = Fixture().get()
+        val userGroup = with(sut) { dto.toDomain() }
+        assertEquals("", userGroup.team)
+    }
+
+    @Test
+    fun `UserGroupResponse is correctly mapped to UserGroup`() {
+        val memberDto = randomUserGroupMemberDto()
+        val dto = randomUserGroupResponse(members = listOf(memberDto))
+        val sut = Fixture().get()
+        val userGroup = with(sut) { dto.toDomain() }
+        val expected = UserGroup(
+            id = dto.id,
+            name = dto.name,
+            description = dto.description,
+            team = dto.teamId.orEmpty(),
+            members = listOf(
+                UserGroupMember(
+                    groupId = memberDto.groupId,
+                    userId = memberDto.userId,
+                    isAdmin = memberDto.isAdmin,
+                    createdAt = memberDto.createdAt,
+                ),
+            ),
+            createdBy = dto.createdBy,
+            createdAt = dto.createdAt,
+            updatedAt = dto.updatedAt,
+        )
+        assertEquals(expected, userGroup)
+    }
+
+    @Test
+    fun `UserGroupResponse with null team_id maps team to empty string`() {
+        val dto = randomUserGroupResponse(teamId = null)
         val sut = Fixture().get()
         val userGroup = with(sut) { dto.toDomain() }
         assertEquals("", userGroup.team)
