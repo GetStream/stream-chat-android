@@ -18,13 +18,17 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 
 internal class ChannelMarkReadListenerStateTest {
 
@@ -50,6 +54,48 @@ internal class ChannelMarkReadListenerStateTest {
     }
 
     @Test
+    fun `Local result refreshes the channel in the active channel-list queries`() = runTest {
+        // No server read event follows a local mark-read, so the listener must trigger the
+        // channel-list refresh that the event would otherwise cause.
+        val queryChannelsLogic: QueryChannelsLogic = mock()
+        val listener = listenerWith(
+            markReadResult = MarkReadResult.HandledLocally,
+            activeQueryChannelsLogic = listOf(queryChannelsLogic),
+        )
+        // when
+        listener.onChannelMarkReadPrecondition(channelType, channelId)
+        // then
+        verify(queryChannelsLogic).refreshChannelState("$channelType:$channelId")
+    }
+
+    @Test
+    fun `Remote result does not refresh the channel-list queries`() = runTest {
+        // The server read event triggers the refresh through the regular event handling.
+        val queryChannelsLogic: QueryChannelsLogic = mock()
+        val listener = listenerWith(
+            markReadResult = MarkReadResult.RemoteRequired,
+            activeQueryChannelsLogic = listOf(queryChannelsLogic),
+        )
+        // when
+        listener.onChannelMarkReadPrecondition(channelType, channelId)
+        // then
+        verify(queryChannelsLogic, never()).refreshChannelState(any())
+    }
+
+    @Test
+    fun `None result does not refresh the channel-list queries`() = runTest {
+        val queryChannelsLogic: QueryChannelsLogic = mock()
+        val listener = listenerWith(
+            markReadResult = MarkReadResult.NotNeeded,
+            activeQueryChannelsLogic = listOf(queryChannelsLogic),
+        )
+        // when
+        listener.onChannelMarkReadPrecondition(channelType, channelId)
+        // then
+        verify(queryChannelsLogic, never()).refreshChannelState(any())
+    }
+
+    @Test
     fun `None result makes the precondition fail`() = runTest {
         val listener = listenerWith(markReadResult = MarkReadResult.NotNeeded)
         // when
@@ -58,12 +104,16 @@ internal class ChannelMarkReadListenerStateTest {
         assertInstanceOf(Result.Failure::class.java, result)
     }
 
-    private fun listenerWith(markReadResult: MarkReadResult): ChannelMarkReadListenerState {
+    private fun listenerWith(
+        markReadResult: MarkReadResult,
+        activeQueryChannelsLogic: List<QueryChannelsLogic> = emptyList(),
+    ): ChannelMarkReadListenerState {
         val channelLogic: ChannelLogic = mock {
             on { it.markRead() } doReturn markReadResult
         }
         val logic: LogicRegistry = mock {
             on { it.channel(channelType, channelId) } doReturn channelLogic
+            on { it.getActiveQueryChannelsLogic() } doReturn activeQueryChannelsLogic
         }
         return ChannelMarkReadListenerState(logic)
     }
