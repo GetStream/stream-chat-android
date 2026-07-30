@@ -59,7 +59,6 @@ class ChannelListPage {
                 // The channel preview renders the failed state via MessageReadStatusIcon,
                 // unlike the message list, which uses its own failed icon
                 val deliveryStatusIsFailed: BySelector = By.res("Stream_MessageReadStatus_isError")
-                val unreadCountIndicator = By.res("Stream_UnreadCountIndicator")
                 val timestamp = By.res("Stream_Timestamp")
                 val typingIndicator = By.res("Stream_ChannelListTypingIndicator")
                 val mutedIcon = By.res("Stream_ChannelMutedIcon")

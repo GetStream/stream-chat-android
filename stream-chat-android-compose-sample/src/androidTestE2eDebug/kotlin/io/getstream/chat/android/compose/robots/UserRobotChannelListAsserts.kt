@@ -28,10 +28,23 @@ import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import io.getstream.chat.android.compose.R as ComposeR
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
 fun UserRobot.assertChannelAvatar(): UserRobot {
     assertTrue(Channel.avatar.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertChannelUnreadCount(count: Int): UserRobot {
+    // The badge exposes only a content description; its text is cleared from the
+    // semantics tree by clearAndSetSemantics in UnreadCountIndicator.
+    val expectedDescription = appContext.resources.getQuantityString(
+        ComposeR.plurals.stream_compose_channel_item_unread,
+        count,
+        count,
+    )
+    assertTrue(By.desc(expectedDescription).waitDisplayed())
     return this
 }
 
