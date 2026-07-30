@@ -893,8 +893,6 @@ internal class EventHandlerSequential(
         // execute the batch
         batch.execute()
 
-        // persist the locally tracked reads for the affected channels, after the batch has stored
-        // the server data
         persistLocallyTrackedReads(events)
 
         // handle delete and truncate events

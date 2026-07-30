@@ -56,6 +56,13 @@ internal class DatabaseChannelRepository(
     private val channelCache = LruCache<String, Channel>(cacheSize)
     private val dbMutex = Mutex()
 
+    /**
+     * Guards the read-merge-cache sequences of [insertChannels] and [upsertChannelReads]: without
+     * it, concurrent writers (e.g. a channel list refresh racing a local mark-read persist) could
+     * interleave and put an outdated merge result into the cache.
+     */
+    private val cacheMutex = Mutex()
+
     override suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
     }
@@ -67,20 +74,21 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
-        val updatedChannels = channels
-            .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
-            .map { if (it.config.readEventsEnabled) it else it.preserveLocallyTrackedReads() }
-        val channelToInsert = updatedChannels
-            .filter { channelCache[it.cid] != it }
-            .map { it.toEntity() }
-        cacheChannel(updatedChannels)
+        val channelsToInsert = cacheMutex.withLock {
+            val updatedChannels = channels
+                .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+                .map { if (it.config.readEventsEnabled) it else it.preserveLocallyTrackedReads() }
+            updatedChannels
+                .filter { channelCache[it.cid] != it }
+                .also { cacheChannel(updatedChannels) }
+        }
         scope.launchWithMutex(dbMutex) {
-            logger.v {
-                "[insertChannels] inserting ${channelToInsert.size} entities on DB, " +
-                    "updated ${updatedChannels.size} on cache"
-            }
-            channelToInsert
+            logger.v { "[insertChannels] inserting ${channelsToInsert.size} entities on DB" }
+            channelsToInsert
                 .takeUnless { it.isEmpty() }
+                // Re-read the cache at write time: DAO writes are not guaranteed to run in launch
+                // order, so the last write must persist the latest merged state, not its snapshot
+                ?.map { channel -> (channelCache[channel.cid] ?: channel).toEntity() }
                 ?.let { channelDao.insertMany(it) }
         }
     }
@@ -122,19 +130,23 @@ internal class DatabaseChannelRepository(
     /**
      * Upserts the given [reads] into the stored channel, replacing the stored reads of the same
      * users and keeping the rest. The write is applied verbatim (no merge against the stored read
-     * state): the caller is the source of truth for these reads. Ordering with concurrent
-     * [insertChannels] writes for the same channel is guaranteed by the shared [dbMutex].
+     * state): the caller is the source of truth for these reads. The cache merge runs under
+     * [cacheMutex] so concurrent [insertChannels] merges cannot interleave with it, and the DAO
+     * writes re-read the cache at write time, so the persisted row converges to the latest merged
+     * state regardless of the order in which the writes land.
      */
     override suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
         if (reads.isEmpty()) return
-        val stored = selectChannel(cid) ?: return
-        val updatedChannel = stored
-            .copy(read = (reads + stored.read).distinctBy(ChannelUserRead::getUserId))
-            .syncUnreadCountWithReads()
-        cacheChannel(updatedChannel)
+        val updatedChannel = cacheMutex.withLock {
+            val stored = selectChannel(cid) ?: return
+            stored
+                .copy(read = (reads + stored.read).distinctBy(ChannelUserRead::getUserId))
+                .syncUnreadCountWithReads()
+                .also { cacheChannel(it) }
+        }
         scope.launchWithMutex(dbMutex) {
             logger.v { "[upsertChannelReads] cid: $cid, reads.size: ${reads.size}" }
-            channelDao.insert(updatedChannel.toEntity())
+            channelDao.insert((channelCache[cid] ?: updatedChannel).toEntity())
         }
     }
 
