@@ -1071,51 +1071,67 @@ internal class ChannelStateImpl(
         // Skip update if the message was already processed
         val isProcessed = processedMessageIds[message.id] == true
         if (isProcessed) {
+            logUnreadCountSkip(message, "message already processed")
             return
         }
         // Skip update if the channel is muted
         val isMuted = muted.value
         if (isMuted) {
+            logUnreadCountSkip(message, "channel is muted")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for thread replies not shown in channel
         val isThreadReplyNotInChannel = message.parentId != null && !message.showInChannel
         if (isThreadReplyNotInChannel) {
+            logUnreadCountSkip(message, "thread reply not shown in channel")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for messages from current user
         val isFromCurrentUser = message.user.id == currentUser.value?.id
         if (isFromCurrentUser) {
+            logUnreadCountSkip(message, "own message")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for messages from muted users
         val isFromMutedUser = mutedUsers.value.any { it.target?.id == message.user.id }
         if (isFromMutedUser) {
+            logUnreadCountSkip(message, "message author is muted")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for messages from shadow banned users
         if (message.shadowed) {
+            logUnreadCountSkip(message, "message is shadowed")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for silent messages
         if (message.silent) {
+            logUnreadCountSkip(message, "message is silent")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update if the event is outdated
         val currentRead = read.value
         if (currentRead != null && currentRead.lastReceivedEventDate.after(eventReceivedDate)) {
+            logUnreadCountSkip(
+                message,
+                "event is outdated, read.lastReceivedEventDate: ${currentRead.lastReceivedEventDate}, " +
+                    "eventReceivedDate: $eventReceivedDate",
+            )
             processedMessageIds.put(message.id, true)
             return
         }
         // Update the unread count
         incrementUnreadCount(currentRead, eventReceivedDate)
         processedMessageIds.put(message.id, true)
+    }
+
+    private fun logUnreadCountSkip(message: Message, reason: String) {
+        logger.v { "[updateCurrentUserRead] cid: $cid, message: ${message.id} does not update unread count: $reason" }
     }
 
     /**
@@ -1156,6 +1172,10 @@ internal class ChannelStateImpl(
             null
         }
         updatedRead?.let { newRead ->
+            logger.v {
+                "[incrementUnreadCount] cid: $cid, unreadMessages: ${newRead.unreadMessages}, " +
+                    "lastReceivedEventDate: ${newRead.lastReceivedEventDate}"
+            }
             _reads.update { current ->
                 current + (newRead.getUserId() to newRead)
             }
@@ -1223,6 +1243,10 @@ internal class ChannelStateImpl(
             lastReadMessageId = lastMessage?.id ?: currentUserRead.lastReadMessageId,
             unreadMessages = 0,
         )
+        logger.v {
+            "[markReadLocally] cid: $cid, lastRead: ${updatedRead.lastRead}, " +
+                "lastReceivedEventDate: ${updatedRead.lastReceivedEventDate}"
+        }
         _reads.update { current ->
             current + (updatedRead.getUserId() to updatedRead)
         }
