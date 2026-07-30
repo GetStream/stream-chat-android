@@ -47,6 +47,20 @@ object ChatHelper {
     var apiKey: String = ""
         private set
 
+    /** The value of the local unread count setting the SDK was initialized with. */
+    private var isLocalUnreadCountEnabled: Boolean = false
+
+    /**
+     * Initializes the SDK, unless it is already initialized with the given API key and the current settings.
+     */
+    fun ensureInitialized(context: Context, apiKey: String) {
+        if (this.apiKey != apiKey ||
+            isLocalUnreadCountEnabled != context.customSettings().isLocalUnreadCountEnabled
+        ) {
+            initializeSdk(context, apiKey)
+        }
+    }
+
     /**
      * Initializes the SDK with the given API key.
      */
@@ -84,9 +98,10 @@ object ChatHelper {
             },
         )
 
+        this.isLocalUnreadCountEnabled = context.customSettings().isLocalUnreadCountEnabled
         val chatClientConfig = ChatClientConfig(
             userPresence = true,
-            isLocalUnreadCountEnabled = context.customSettings().isLocalUnreadCountEnabled,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING

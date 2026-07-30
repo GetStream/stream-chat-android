@@ -93,7 +93,9 @@ import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewM
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -133,7 +135,10 @@ class ChatsActivity : ComponentActivity() {
     private val settings by lazy { customSettings() }
 
     /**
-     * The provided predefined filter has the following specs:
+     * When the local unread count is enabled ([CustomSettings.isLocalUnreadCountEnabled]), an explicit
+     * filter including livestream channels is used, to make the feature testable: livestream channels
+     * have read events disabled server-side. Otherwise, the predefined server-side filter is used,
+     * which has the following specs:
      *
      * **Filter:**
      * ```
@@ -152,15 +157,28 @@ class ChatsActivity : ComponentActivity() {
     private val channelListViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelListViewModelFactory(
-            chatClient = chatClient,
-            predefinedFilterName = "android_sample_filter",
-            filterValues = mapOf(
-                "channel_type" to "messaging",
-                "user_id" to currentUserId,
-            ),
-            chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-        )
+        if (settings.isLocalUnreadCountEnabled) {
+            ChannelListViewModelFactory(
+                chatClient = chatClient,
+                querySort = QuerySortByField<Channel>().desc("pinned_at").desc("last_updated"),
+                filters = Filters.and(
+                    Filters.`in`("type", listOf("messaging", "livestream")),
+                    Filters.`in`("members", listOf(currentUserId)),
+                    Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
+                ),
+                chatEventHandlerFactory = CustomChatEventHandlerFactory(),
+            )
+        } else {
+            ChannelListViewModelFactory(
+                chatClient = chatClient,
+                predefinedFilterName = "android_sample_filter",
+                filterValues = mapOf(
+                    "channel_type" to "messaging",
+                    "user_id" to currentUserId,
+                ),
+                chatEventHandlerFactory = CustomChatEventHandlerFactory(),
+            )
+        }
     }
 
     private val channelViewModelFactory by lazy {

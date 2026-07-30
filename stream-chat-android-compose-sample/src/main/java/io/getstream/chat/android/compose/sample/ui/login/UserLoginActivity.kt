@@ -85,11 +85,7 @@ class UserLoginActivity : AppCompatActivity() {
                 UserLoginScreen(
                     onUserItemClick = { userCredentials ->
                         lifecycleScope.launch {
-                            if (ChatHelper.apiKey != userCredentials.apiKey) {
-                                // If the user attempted to login with custom credentials on the custom
-                                // login screen then we need to reinitialize the SDK with our API key.
-                                ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
-                            }
+                            ChatHelper.ensureInitialized(applicationContext, userCredentials.apiKey)
                             ChatHelper.connectUser(
                                 userCredentials = userCredentials,
                                 onSuccess = ::openChannels,
