@@ -187,6 +187,14 @@ internal class QueryChannelsStateLogic(
                 )
             }
         }.forEach { it.await() }
+        // The channels set above come from the raw payload. For channels with read events disabled
+        // the locally tracked read state is authoritative over the payload's read data, so
+        // reconcile those channels from the per-channel state populated by the merge above.
+        validated
+            .filter { (_, channel) -> !channel.config.readEventsEnabled }
+            .map { (id, _) -> id.cid }
+            .takeIf { it.isNotEmpty() }
+            ?.let(::refreshChannels)
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel =

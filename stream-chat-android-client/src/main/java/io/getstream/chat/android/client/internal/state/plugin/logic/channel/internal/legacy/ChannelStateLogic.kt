@@ -672,6 +672,10 @@ internal class ChannelStateLogic(
 
         mutableState.setMembersCount(channel.memberCount)
 
+        // The config must be set before updating the reads: the read merge checks the config
+        // to protect locally tracked reads from being overwritten.
+        mutableState.setChannelConfig(channel.config)
+
         updateReads(channel.read)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
@@ -698,8 +702,6 @@ internal class ChannelStateLogic(
                 upsertCachedMessages(channel.pinnedMessages + channel.messages + pendingMessageObjects)
             }
         }
-
-        mutableState.setChannelConfig(channel.config)
 
         mutableState.setLoadingOlderMessages(false)
         mutableState.setLoadingNewerMessages(false)

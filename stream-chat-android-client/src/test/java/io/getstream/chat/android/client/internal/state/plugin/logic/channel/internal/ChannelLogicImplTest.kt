@@ -51,6 +51,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -1071,6 +1072,29 @@ internal class ChannelLogicImplTest {
             )
             // Then
             verify(stateImpl).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        }
+
+        @Test
+        fun `should set the channel config before updating reads`() = runTest {
+            // The read merge checks the config to protect locally tracked reads, so the config
+            // must be up to date before the reads are merged.
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = emptyList(),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = listOf(randomChannelUserRead()),
+                memberCount = 5,
+                watcherCount = 0,
+            )
+            // When
+            sut.updateDataForChannel(channel = channel, messageLimit = 0)
+            // Then
+            inOrder(stateImpl) {
+                verify(stateImpl).setChannelConfig(channel.config)
+                verify(stateImpl).updateReads(channel.read)
+            }
         }
 
         @Test

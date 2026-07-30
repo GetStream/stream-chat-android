@@ -136,10 +136,11 @@ internal class ChannelLogicImpl(
                 state.setMemberCount(channel.memberCount)
                 state.upsertMembers(channel.members)
                 state.upsertWatchers(channel.watchers, channel.watcherCount)
+                // Update config. Must happen before updating the reads: the read merge checks
+                // the config to protect locally tracked reads from being overwritten.
+                state.setChannelConfig(channel.config)
                 // Update reads
                 state.updateReads(channel.read)
-                // Update config
-                state.setChannelConfig(channel.config)
                 // Update messages
                 if (limit > 0) {
                     updateMessages(query, channel)
@@ -312,10 +313,11 @@ internal class ChannelLogicImpl(
         state.setMemberCount(channel.memberCount)
         state.upsertMembers(channel.members)
         state.upsertWatchers(channel.watchers, channel.watcherCount)
+        // Update channel config. Must happen before updating the reads: the read merge checks
+        // the config to protect locally tracked reads from being overwritten.
+        state.setChannelConfig(channel.config)
         // Update reads
         state.updateReads(channel.read)
-        // Update channel config
-        state.setChannelConfig(channel.config)
         // Set pending messages
         state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
         // Update messages based on the relationship between the incoming page and existing state.

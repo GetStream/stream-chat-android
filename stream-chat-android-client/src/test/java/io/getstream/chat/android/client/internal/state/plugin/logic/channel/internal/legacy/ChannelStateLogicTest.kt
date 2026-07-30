@@ -66,6 +66,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
@@ -919,6 +920,23 @@ internal class ChannelStateLogicTest {
                 ),
             ),
         )
+    }
+
+    @Test
+    fun `When updateDataForChannel is called, Then the config is set before the reads are updated`() {
+        // The read merge checks the config to protect locally tracked reads, so the config
+        // must be up to date before the reads are merged.
+        val channel = randomChannel(read = listOf(randomChannelUserRead(user = user)))
+
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        inOrder(mutableState) {
+            verify(mutableState).setChannelConfig(channel.config)
+            verify(mutableState).upsertReads(any())
+        }
     }
 
     @Test
