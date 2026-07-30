@@ -63,8 +63,6 @@ import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -75,11 +73,18 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.ListUserGroupsResponse
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
+import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
@@ -376,6 +381,9 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun getRepliesMoreInput() = messagesResponseArguments()
+
+    @JvmStatic
+    fun getRepliesAroundInput() = messagesResponseArguments()
 
     @JvmStatic
     fun sendActionInput() = messageResponseArguments()
@@ -923,25 +931,40 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    @JvmStatic
-    fun userGroupsResponseInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                UserGroupsResponse(user_groups = listOf(Mother.randomDownstreamUserGroupDto())),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<UserGroupsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    private fun <T : Any> userGroupArgs(success: T) = listOf(
+        Arguments.of(RetroSuccess(success).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
+    private fun userGroup() = Mother.randomUserGroupResponse()
+
     @JvmStatic
-    fun userGroupResponseInput() = listOf(
-        Arguments.of(
-            RetroSuccess(UserGroupResponse(user_group = Mother.randomDownstreamUserGroupDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<UserGroupResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun createUserGroupResponseInput() =
+        userGroupArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+
+    @JvmStatic
+    fun getUserGroupResponseInput() =
+        userGroupArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+
+    @JvmStatic
+    fun updateUserGroupResponseInput() =
+        userGroupArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+
+    @JvmStatic
+    fun addUserGroupMembersResponseInput() =
+        userGroupArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+
+    @JvmStatic
+    fun removeUserGroupMembersResponseInput() =
+        userGroupArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+
+    @JvmStatic
+    fun listUserGroupsResponseInput() =
+        userGroupArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+
+    @JvmStatic
+    fun searchUserGroupsResponseInput() =
+        userGroupArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
     fun deleteUserGroupInput() = completableResponseArguments()

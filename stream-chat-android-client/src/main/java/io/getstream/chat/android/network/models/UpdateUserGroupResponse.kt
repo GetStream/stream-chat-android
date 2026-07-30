@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Request for adding a reaction to a message.
- *
- * @property reaction The reaction to be added.
- * @property enforce_unique If true, the reaction will be unique per user per message.
- * @property skip_push If true, the reaction addition will not trigger a push notification.
+ * Response for updating a user group
  */
-@JsonClass(generateAdapter = true)
-internal data class ReactionRequest(
-    val reaction: UpstreamReactionDto,
-    val enforce_unique: Boolean,
-    val skip_push: Boolean,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateUserGroupResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "user_group")
+    internal val userGroup: io.getstream.chat.android.network.models.UserGroupResponse? = null,
 )

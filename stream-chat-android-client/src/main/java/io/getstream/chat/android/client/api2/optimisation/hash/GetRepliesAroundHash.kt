@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+package io.getstream.chat.android.client.api2.optimisation.hash
 
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
-internal data class SendActionRequest(
-    val channel_id: String,
-    val message_id: String,
-    val type: String,
-    val form_data: Map<Any, Any>,
+internal data class GetRepliesAroundHash(
+    val parentId: String,
+    val aroundId: String,
+    val limit: Int,
 )

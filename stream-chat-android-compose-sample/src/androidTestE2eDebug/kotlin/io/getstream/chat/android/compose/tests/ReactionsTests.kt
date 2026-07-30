@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.robots.assertReaction
+import io.getstream.chat.android.compose.robots.assertReactionAuthor
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.disableInternetConnection
 import io.getstream.chat.android.e2e.test.uiautomator.enableInternetConnection
@@ -68,6 +70,64 @@ class ReactionsTests : StreamTestCase() {
         }
         step("THEN the reaction is removed") {
             userRobot.assertReaction(type = ReactionType.WOW, isDisplayed = false)
+        }
+    }
+
+    @AllureId("11451")
+    @Test
+    fun test_userAddsReactionUsingExtendedReactionsPicker() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("WHEN participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user adds the reaction using the extended reactions picker") {
+            userRobot.toggleReactionUsingExtendedPicker(type = ReactionType.LOL)
+        }
+        step("THEN the reaction is added") {
+            userRobot.assertReaction(type = ReactionType.LOL, isDisplayed = true)
+        }
+    }
+
+    @AllureId("11452")
+    @Test
+    fun test_userRemovesReactionUsingExtendedReactionsPicker() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user adds the reaction using the extended reactions picker") {
+            userRobot.toggleReactionUsingExtendedPicker(type = ReactionType.LOL)
+        }
+        step("WHEN user selects the same reaction in the extended reactions picker") {
+            userRobot.toggleReactionUsingExtendedPicker(type = ReactionType.LOL)
+        }
+        step("THEN the reaction is removed") {
+            userRobot.assertReaction(type = ReactionType.LOL, isDisplayed = false)
+        }
+    }
+
+    @AllureId("11459")
+    @Test
+    fun test_reactionAuthorsSheetIsShown_whenUserTapsOnReaction() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND participant adds the reaction") {
+            participantRobot.addReaction(type = ReactionType.LOVE)
+        }
+        step("WHEN user taps on the message reaction") {
+            userRobot.assertReaction(type = ReactionType.LOVE, isDisplayed = true)
+            userRobot.tapOnMessageReaction()
+        }
+        step("THEN the reaction authors sheet shows the participant") {
+            userRobot.assertReactionAuthor(ParticipantRobot.name)
         }
     }
 

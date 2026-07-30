@@ -14,18 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Used to form a partial member update request.
- *
- * @param set Map of key-value pairs to set.
- * @param unset List of keys to unset.
+ * Request body for updating a user group
  */
-@JsonClass(generateAdapter = true)
-internal data class UpdateMemberPartialRequest(
-    val set: Map<String, Any>,
-    val unset: List<String>,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateUserGroupRequest(
+    @Json(name = "description")
+    internal val description: String? = null,
+
+    @Json(name = "name")
+    internal val name: String? = null,
+
+    @Json(name = "team_id")
+    internal val teamId: String? = null,
 )

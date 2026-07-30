@@ -51,16 +51,13 @@ import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -70,17 +67,12 @@ import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesReques
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
-import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
@@ -88,17 +80,13 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.getUserChannelPreference
 import io.getstream.chat.android.client.api2.model.response.getUserPreference
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -158,17 +146,34 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
+import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateUserGroupRequest
+import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
+import io.getstream.chat.android.network.models.ListUserGroupsResponse
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
+import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupResponse
+import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -445,10 +450,10 @@ constructor(
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> {
         return messageApi.sendReaction(
             messageId = reaction.messageId,
-            request = ReactionRequest(
+            request = SendReactionRequest(
                 reaction = with(dtoMapping) { reaction.toDto() },
-                enforce_unique = enforceUnique,
-                skip_push = skipPush,
+                enforceUnique = enforceUnique,
+                skipPush = skipPush,
             ),
         ).mapDomain { response ->
             response.reaction.toDomain()
@@ -576,10 +581,10 @@ constructor(
             id = id,
             name = name,
             description = description,
-            team_id = teamId,
-            member_ids = memberIds,
+            teamId = teamId,
+            memberIds = memberIds,
         )
-        return userGroupApi.createUserGroup(body).mapUserGroup()
+        return userGroupApi.createUserGroup(body).mapUserGroup(CreateUserGroupResponse::userGroup)
     }
 
     override fun queryUserGroups(
@@ -595,7 +600,7 @@ constructor(
                 createdAtGt = createdAtGt,
                 teamId = teamId,
             )
-            .mapUserGroups()
+            .mapUserGroups(ListUserGroupsResponse::userGroups)
     }
 
     override fun searchUserGroups(
@@ -613,11 +618,11 @@ constructor(
                 nameGt = nameGt,
                 idGt = idGt,
             )
-            .mapUserGroups()
+            .mapUserGroups(SearchUserGroupsResponse::userGroups)
     }
 
     override fun getUserGroup(id: String, teamId: String?): Call<UserGroup> {
-        return userGroupApi.getUserGroup(id = id, teamId = teamId).mapUserGroup()
+        return userGroupApi.getUserGroup(id = id, teamId = teamId).mapUserGroup(GetUserGroupResponse::userGroup)
     }
 
     override fun updateUserGroup(
@@ -629,9 +634,9 @@ constructor(
         val body = UpdateUserGroupRequest(
             name = name,
             description = description,
-            team_id = teamId,
+            teamId = teamId,
         )
-        return userGroupApi.updateUserGroup(id = id, body = body).mapUserGroup()
+        return userGroupApi.updateUserGroup(id = id, body = body).mapUserGroup(UpdateUserGroupResponse::userGroup)
     }
 
     override fun deleteUserGroup(id: String, teamId: String?): Call<Unit> {
@@ -645,11 +650,12 @@ constructor(
         teamId: String?,
     ): Call<UserGroup> {
         val body = AddUserGroupMembersRequest(
-            member_ids = memberIds,
-            as_admin = asAdmin,
-            team_id = teamId,
+            memberIds = memberIds,
+            asAdmin = asAdmin,
+            teamId = teamId,
         )
-        return userGroupApi.addUserGroupMembers(id = id, body = body).mapUserGroup()
+        return userGroupApi.addUserGroupMembers(id = id, body = body)
+            .mapUserGroup(AddUserGroupMembersResponse::userGroup)
     }
 
     override fun removeUserGroupMembers(
@@ -658,17 +664,27 @@ constructor(
         teamId: String?,
     ): Call<UserGroup> {
         val body = RemoveUserGroupMembersRequest(
-            member_ids = memberIds,
-            team_id = teamId,
+            memberIds = memberIds,
+            teamId = teamId,
         )
-        return userGroupApi.removeUserGroupMembers(id = id, body = body).mapUserGroup()
+        return userGroupApi.removeUserGroupMembers(id = id, body = body)
+            .mapUserGroup(RemoveUserGroupMembersResponse::userGroup)
     }
 
-    private fun RetrofitCall<UserGroupResponse>.mapUserGroup() =
-        map { response -> with(domainMapping) { response.user_group.toDomain() } }
+    private fun <T : Any> RetrofitCall<T>.mapUserGroup(extract: (T) -> UserGroupResponse?) =
+        flatMap { response ->
+            CoroutineCall(coroutineScope) {
+                when (val userGroup = extract(response)) {
+                    null -> Result.Failure(
+                        Error.GenericError("UserGroup response is missing the user_group field"),
+                    )
+                    else -> Result.Success(with(domainMapping) { userGroup.toDomain() })
+                }
+            }
+        }
 
-    private fun RetrofitCall<UserGroupsResponse>.mapUserGroups() =
-        map { response -> with(domainMapping) { response.user_groups.map { it.toDomain() } } }
+    private fun <T : Any> RetrofitCall<T>.mapUserGroups(extract: (T) -> List<UserGroupResponse>) =
+        map { response -> with(domainMapping) { extract(response).map { it.toDomain() } } }
 
     override fun searchRoles(
         query: String,
@@ -1155,7 +1171,9 @@ constructor(
 
     override fun markDelivered(messages: List<Message>): Call<Unit> =
         channelApi.markDelivered(
-            request = MarkDeliveredRequest.create(messages),
+            request = MarkDeliveredRequest(
+                latestDeliveredMessages = messages.map { DeliveredMessagePayload(cid = it.cid, id = it.id) },
+            ),
         ).toUnitCall()
 
     override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {
@@ -1260,7 +1278,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             userId = userId,
-            body = UpdateMemberPartialRequest(set, unset),
+            body = UpdateMemberPartialRequest(set = set, unset = unset),
         ).mapDomain { response ->
             response.channel_member.toDomain()
         }
@@ -1311,6 +1329,20 @@ constructor(
         }
     }
 
+    override fun getRepliesAround(
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ): Call<List<Message>> = messageApi.getRepliesAround(
+        parentId = parentId,
+        limit = limit,
+        aroundId = aroundId,
+    ).mapDomain { response ->
+        response.messages.map {
+            it.toDomain()
+        }
+    }
+
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,
@@ -1337,11 +1369,8 @@ constructor(
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
         return messageApi.sendAction(
             messageId = request.messageId,
-            request = SendActionRequest(
-                channel_id = request.channelId,
-                message_id = request.messageId,
-                type = request.type,
-                form_data = request.formData,
+            request = MessageActionRequest(
+                formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
             ),
         ).mapDomain { response ->
             response.message.toDomain()
@@ -1449,16 +1478,16 @@ constructor(
     }
 
     override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
-            sort = if (query.predefinedFilter != null) null else query.sort,
-            predefined_filter = query.predefinedFilter,
-            filter_values = query.filterValues,
-            sort_values = query.sortValues,
+        val request = io.getstream.chat.android.network.models.QueryChannelsRequest(
+            filterConditions = if (query.predefinedFilter != null) null else query.filter.toMap(),
+            sort = if (query.predefinedFilter != null) null else query.querySort.toSortParams(),
+            predefinedFilter = query.predefinedFilter,
+            filterValues = query.filterValues,
+            sortValues = query.sortValues,
             offset = query.offset,
             limit = query.limit,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -1499,10 +1528,10 @@ constructor(
         watch: Boolean,
         presence: Boolean,
     ): Call<GroupedChannels> {
-        val body = QueryGroupedChannelsRequest(
+        val body = io.getstream.chat.android.network.models.GroupedQueryChannelsRequest(
             limit = limit,
             groups = groups?.mapValues { (_, query) ->
-                QueryGroupedChannelsGroupRequest(
+                io.getstream.chat.android.network.models.GroupedChannelsGroupRequest(
                     limit = query.limit,
                     next = query.next,
                     prev = query.prev,
@@ -1576,11 +1605,11 @@ constructor(
     }
 
     override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = queryUsers.filter.toMap(),
+        val request = io.getstream.chat.android.network.models.QueryUsersPayload(
+            filterConditions = queryUsers.filter.toMap(),
             offset = queryUsers.offset,
             limit = queryUsers.limit,
-            sort = queryUsers.sort,
+            sort = queryUsers.querySort.toSortParams(),
             presence = queryUsers.presence,
         )
         val lazyQueryUsersCall = {

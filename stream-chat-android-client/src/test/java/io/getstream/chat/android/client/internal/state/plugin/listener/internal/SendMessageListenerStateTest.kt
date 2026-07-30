@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
@@ -186,6 +187,52 @@ internal class SendMessageListenerStateTest {
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.COMPLETED &&
                     message.createdLocallyAt == null
+            },
+        )
+    }
+
+    @Test
+    fun `when send fails because the message id already exists, message should be marked as completed`() = runTest {
+        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
+        val duplicateError = Error.NetworkError(
+            message = "a message with ID ${testMessage.id} already exists",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Failure(duplicateError),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+    }
+
+    @Test
+    fun `when send fails with another validation error, message should be marked as failed permanently`() = runTest {
+        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
+        val validationError = Error.NetworkError(
+            message = "message text is too long",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Failure(validationError),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.FAILED_PERMANENTLY
             },
         )
     }

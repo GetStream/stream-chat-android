@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -24,6 +23,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.models.ChannelCapabilities
 import org.intellij.lang.annotations.Language
 import java.util.Date
+import io.getstream.chat.android.network.models.Command as CommandDto
 
 internal object ChannelDtoTestData {
 

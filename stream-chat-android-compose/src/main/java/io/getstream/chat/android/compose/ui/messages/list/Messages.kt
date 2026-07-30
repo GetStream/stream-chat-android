@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,6 +76,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -347,6 +349,17 @@ private fun MessageListState.getVerticalArrangement(
     if (parentMessageId != null) threadsVerticalArrangement else messagesVerticalArrangement
 
 /**
+ * Scrolls to the focused item at [focusedItemIndex], or returns right away when there is none
+ * (index -1). A scroll that is still in progress is waited out first instead of skipping the
+ * jump: the focused state is consumed either way, so a skipped jump would never be retried.
+ */
+internal suspend fun LazyListState.scrollToFocusedItem(focusedItemIndex: Int, offset: Int) {
+    if (focusedItemIndex == -1) return
+    snapshotFlow { isScrollInProgress }.first { inProgress -> !inProgress }
+    animateScrollToItem(focusedItemIndex, offset)
+}
+
+/**
  * Represents the default scrolling behavior and UI for [Messages], based on the state of messages and the scroll state.
  *
  * @param messagesState The state of messages, current message list, thread, user and more.
@@ -385,11 +398,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     val offset = messagesLazyListState.focusedMessageOffset
 
     LaunchedEffect(focusedItemIndex, offset) {
-        if (focusedItemIndex != -1 &&
-            !lazyListState.isScrollInProgress
-        ) {
-            lazyListState.animateScrollToItem(focusedItemIndex, offset)
-        }
+        lazyListState.scrollToFocusedItem(focusedItemIndex, offset)
     }
 
     // Keep track of the last new message state that triggered a scroll to bottom.

@@ -254,6 +254,13 @@ internal interface ChatApi {
     ): Call<List<Message>>
 
     @CheckResult
+    fun getRepliesAround(
+        parentId: String,
+        aroundId: String,
+        limit: Int,
+    ): Call<List<Message>>
+
+    @CheckResult
     fun getReactions(
         messageId: String,
         offset: Int,

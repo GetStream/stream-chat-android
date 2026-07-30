@@ -81,6 +81,8 @@ public sealed class MessageListItem {
      * @property showMessageFooter True if the message footer should be displayed, otherwise false.
      * @property showOriginalText If the original text of the message should be shown in the UI instead of its
      * translation (if the message was auto-translated).
+     * @property readEventsEnabled Whether read events are enabled for the channel.
+     * @property deliveryEventsEnabled Whether delivery events are enabled for the channel.
      */
     public data class MessageItem(
         val message: Message,
@@ -92,6 +94,8 @@ public sealed class MessageListItem {
         val isMessageDelivered: Boolean = false,
         val showMessageFooter: Boolean = false,
         val showOriginalText: Boolean = false,
+        val readEventsEnabled: Boolean = true,
+        val deliveryEventsEnabled: Boolean = true,
     ) : MessageListItem() {
         public val isTheirs: Boolean
             get() = !isMine

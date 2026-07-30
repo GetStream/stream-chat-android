@@ -20,8 +20,6 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
@@ -33,8 +31,10 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SendReactionRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -113,13 +113,13 @@ internal interface MessageApi {
     @POST("/messages/{id}/action")
     fun sendAction(
         @Path("id") messageId: String,
-        @Body request: SendActionRequest,
+        @Body request: MessageActionRequest,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/reaction")
     fun sendReaction(
         @Path("id") messageId: String,
-        @Body request: ReactionRequest,
+        @Body request: SendReactionRequest,
     ): RetrofitCall<ReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")
@@ -165,5 +165,12 @@ internal interface MessageApi {
         @Path("parent_id") messageId: String,
         @Query("limit") limit: Int,
         @Query("id_lt") firstId: String,
+    ): RetrofitCall<MessagesResponse>
+
+    @GET("/messages/{parent_id}/replies")
+    fun getRepliesAround(
+        @Path("parent_id") parentId: String,
+        @Query("limit") limit: Int,
+        @Query("id_around") aroundId: String,
     ): RetrofitCall<MessagesResponse>
 }

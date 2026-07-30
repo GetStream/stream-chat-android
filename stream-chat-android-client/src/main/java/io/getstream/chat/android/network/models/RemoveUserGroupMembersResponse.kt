@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.dto
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class CommandDto(
-    val name: String,
-    val description: String,
-    val args: String,
-    val set: String,
+import com.squareup.moshi.Json
+
+/**
+ * Response for removing members from a user group
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class RemoveUserGroupMembersResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "user_group")
+    internal val userGroup: io.getstream.chat.android.network.models.UserGroupResponse? = null,
 )

@@ -47,15 +47,11 @@ import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
-import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
@@ -63,21 +59,15 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadR
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryGroupedChannelsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
-import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
@@ -115,8 +105,6 @@ import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
@@ -153,21 +141,38 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
+import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateUserGroupRequest
+import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.DeliveredMessagePayload
+import io.getstream.chat.android.network.models.GetUserGroupResponse
+import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
+import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.ListDevicesResponse
+import io.getstream.chat.android.network.models.ListUserGroupsResponse
+import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
+import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -1467,8 +1472,8 @@ internal class MoshiChatApiTest {
         val result = sut.markDelivered(messages).await()
         // then
         val expectedRequest = MarkDeliveredRequest(
-            latest_delivered_messages = messages.map { messageInfo ->
-                DeliveredMessageDto(
+            latestDeliveredMessages = messages.map { messageInfo ->
+                DeliveredMessagePayload(
                     cid = messageInfo.cid,
                     id = messageInfo.id,
                 )
@@ -1683,6 +1688,25 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getRepliesAroundInput")
+    fun testGetRepliesAround(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.getRepliesAround(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val parentId = randomString()
+        val aroundId = randomString()
+        val limit = randomInt()
+        val result = sut.getRepliesAround(parentId, aroundId, limit).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).getRepliesAround(parentId, limit, aroundId)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendActionInput")
     fun testSendAction(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
         // given
@@ -1695,11 +1719,8 @@ internal class MoshiChatApiTest {
         val request = Mother.randomSendActionRequest()
         val result = sut.sendAction(request).await()
         // then
-        val expectedRequest = SendActionRequest(
-            channel_id = request.channelId,
-            message_id = request.messageId,
-            type = request.type,
-            form_data = request.formData,
+        val expectedRequest = MessageActionRequest(
+            formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
         )
         result `should be instance of` expected
         verify(api, times(1)).sendAction(request.messageId, expectedRequest)
@@ -1903,13 +1924,16 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannels(query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-            filter_conditions = query.filter.toMap(),
-            sort = query.sort,
+        val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
+            filterConditions = query.filter.toMap(),
+            sort = query.querySort.toSortParams(),
+            predefinedFilter = query.predefinedFilter,
+            filterValues = query.filterValues,
+            sortValues = query.sortValues,
             offset = query.offset,
             limit = query.limit,
-            message_limit = query.messageLimit,
-            member_limit = query.memberLimit,
+            messageLimit = query.messageLimit,
+            memberLimit = query.memberLimit,
             state = query.state,
             watch = query.watch,
             presence = query.presence,
@@ -1937,7 +1961,7 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryGroupedChannels(limit = limit, groups = null, watch = false, presence = false).await()
         // then
-        val expectedPayload = QueryGroupedChannelsRequest(
+        val expectedPayload = GroupedQueryChannelsRequest(
             limit = limit,
             groups = null,
             watch = false,
@@ -1968,11 +1992,11 @@ internal class MoshiChatApiTest {
             presence = false,
         ).await()
 
-        val expectedPayload = QueryGroupedChannelsRequest(
+        val expectedPayload = GroupedQueryChannelsRequest(
             limit = 30,
             groups = mapOf(
-                "direct" to QueryGroupedChannelsGroupRequest(limit = 10, next = "cursor-next", prev = null),
-                "support" to QueryGroupedChannelsGroupRequest(limit = null, next = null, prev = "cursor-prev"),
+                "direct" to GroupedChannelsGroupRequest(limit = 10, next = "cursor-next", prev = null),
+                "support" to GroupedChannelsGroupRequest(limit = null, next = null, prev = "cursor-prev"),
             ),
             watch = false,
             presence = false,
@@ -2045,16 +2069,16 @@ internal class MoshiChatApiTest {
             sut.setConnection(userId = userId, connectionId = connectionId)
             val result = sut.queryChannels(query).await()
             // then
-            val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelsRequest(
-                filter_conditions = null,
+            val expectedPayload = io.getstream.chat.android.network.models.QueryChannelsRequest(
+                filterConditions = null,
                 sort = null,
-                predefined_filter = predefinedFilter,
-                filter_values = filterValues,
-                sort_values = sortValues,
+                predefinedFilter = predefinedFilter,
+                filterValues = filterValues,
+                sortValues = sortValues,
                 offset = query.offset,
                 limit = query.limit,
-                message_limit = query.messageLimit,
-                member_limit = query.memberLimit,
+                messageLimit = query.messageLimit,
+                memberLimit = query.memberLimit,
                 state = query.state,
                 watch = query.watch,
                 presence = query.presence,
@@ -2266,11 +2290,11 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryUsers(query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest(
-            filter_conditions = query.filter.toMap(),
-            sort = query.sort,
+        val expectedPayload = io.getstream.chat.android.network.models.QueryUsersPayload(
+            filterConditions = query.filter.toMap(),
             offset = query.offset,
             limit = query.limit,
+            sort = query.querySort.toSortParams(),
             presence = query.presence,
         )
         result `should be instance of` expected
@@ -3132,8 +3156,8 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
-    fun testCreateUserGroup(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createUserGroupResponseInput")
+    fun testCreateUserGroup(call: RetrofitCall<CreateUserGroupResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(api.createUserGroup(any())).doReturn(call)
         val sut = Fixture().withUserGroupApi(api).get()
@@ -3157,15 +3181,15 @@ internal class MoshiChatApiTest {
                 id = id,
                 name = name,
                 description = description,
-                team_id = teamId,
-                member_ids = memberIds,
+                teamId = teamId,
+                memberIds = memberIds,
             ),
         )
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupsResponseInput")
-    fun testListUserGroups(call: RetrofitCall<UserGroupsResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#listUserGroupsResponseInput")
+    fun testListUserGroups(call: RetrofitCall<ListUserGroupsResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(
             api.queryUserGroups(
@@ -3198,8 +3222,8 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupsResponseInput")
-    fun testSearchUserGroups(call: RetrofitCall<UserGroupsResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#searchUserGroupsResponseInput")
+    fun testSearchUserGroups(call: RetrofitCall<SearchUserGroupsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserGroupApi>()
         whenever(
@@ -3233,8 +3257,8 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
-    fun testGetUserGroup(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getUserGroupResponseInput")
+    fun testGetUserGroup(call: RetrofitCall<GetUserGroupResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(api.getUserGroup(id = any(), teamId = anyOrNull())).doReturn(call)
         val sut = Fixture().withUserGroupApi(api).get()
@@ -3248,8 +3272,8 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
-    fun testUpdateUserGroup(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateUserGroupResponseInput")
+    fun testUpdateUserGroup(call: RetrofitCall<UpdateUserGroupResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(api.updateUserGroup(id = any(), body = any())).doReturn(call)
         val sut = Fixture().withUserGroupApi(api).get()
@@ -3268,7 +3292,7 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).updateUserGroup(
             id = id,
-            body = UpdateUserGroupRequest(name = name, description = description, team_id = teamId),
+            body = UpdateUserGroupRequest(name = name, description = description, teamId = teamId),
         )
     }
 
@@ -3288,8 +3312,8 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
-    fun testAddUserGroupMembers(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#addUserGroupMembersResponseInput")
+    fun testAddUserGroupMembers(call: RetrofitCall<AddUserGroupMembersResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(api.addUserGroupMembers(id = any(), body = any())).doReturn(call)
         val sut = Fixture().withUserGroupApi(api).get()
@@ -3308,13 +3332,13 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).addUserGroupMembers(
             id = id,
-            body = AddUserGroupMembersRequest(member_ids = memberIds, as_admin = asAdmin, team_id = teamId),
+            body = AddUserGroupMembersRequest(memberIds = memberIds, asAdmin = asAdmin, teamId = teamId),
         )
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#userGroupResponseInput")
-    fun testRemoveUserGroupMembers(call: RetrofitCall<UserGroupResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#removeUserGroupMembersResponseInput")
+    fun testRemoveUserGroupMembers(call: RetrofitCall<RemoveUserGroupMembersResponse>, expected: KClass<*>) = runTest {
         val api = mock<UserGroupApi>()
         whenever(api.removeUserGroupMembers(id = any(), body = any())).doReturn(call)
         val sut = Fixture().withUserGroupApi(api).get()
@@ -3327,7 +3351,7 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).removeUserGroupMembers(
             id = id,
-            body = RemoveUserGroupMembersRequest(member_ids = memberIds, team_id = teamId),
+            body = RemoveUserGroupMembersRequest(memberIds = memberIds, teamId = teamId),
         )
     }
 

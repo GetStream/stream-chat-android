@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.compose.tests
 
+import io.getstream.chat.android.compose.robots.assertFailedMessageDeliveryStatusInPreview
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class MessageDeliveryStatusTests : StreamTestCase() {
@@ -199,6 +199,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("WHEN user replies to message in thread") {
             userRobot.openThread().sendMessage(sampleText)
         }
+        step("AND the thread reply is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
         step("AND participant reads the user's thread reply") {
             participantRobot.readMessage()
         }
@@ -320,7 +323,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5769")
-    @Ignore("https://linear.app/stream/issue/AND-256")
     @Test
     fun test_errorIndicatorShownInPreview_whenMessageFailedToBeSent() {
         step("GIVEN user opens the channel") {
@@ -335,7 +337,7 @@ class MessageDeliveryStatusTests : StreamTestCase() {
             userRobot.moveToChannelListFromMessageList()
         }
         step("THEN last message delivery status in the channel preview shows failed icon") {
-            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.FAILED)
+            userRobot.assertFailedMessageDeliveryStatusInPreview()
         }
     }
 
@@ -347,6 +349,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         }
         step("AND user sends a new message") {
             userRobot.sendMessage(sampleText)
+        }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("WHEN user returns to the channel list") {
             userRobot.moveToChannelListFromMessageList()
@@ -462,7 +467,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5746")
-    @Ignore("https://linear.app/stream/issue/AND-1310")
     @Test
     fun test_readByDecremented_whenParticipantIsRemoved() {
         step("GIVEN user opens the channel") {
@@ -470,6 +474,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         }
         step("AND user sends a new message") {
             userRobot.sendMessage(sampleText)
+        }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND participant reads the message") {
             participantRobot.readMessage()
@@ -484,7 +491,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5756")
-    @Ignore("https://linear.app/stream/issue/AND-1310")
     @Test
     fun test_readByDecrementedInThreadReply_whenParticipantIsRemoved() {
         step("GIVEN user opens the channel") {
@@ -493,6 +499,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         }
         step("AND user replies to message in thread") {
             userRobot.openThread().sendMessage(sampleText)
+        }
+        step("AND the thread reply is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND participant reads the thread reply") {
             participantRobot.readMessage()
@@ -507,7 +516,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5759")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenMessageIsSentAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -555,7 +563,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5762")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenMessageReadByParticipantAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -574,7 +581,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5763")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenNewParticipantAddedAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -596,7 +602,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5764")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenParticipantIsRemovedAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -618,7 +623,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5765")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHiddenForMessagesInGroup_whenReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -637,7 +641,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5766")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHidden_whenMessageIsDeletedAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
@@ -659,7 +662,6 @@ class MessageDeliveryStatusTests : StreamTestCase() {
     }
 
     @AllureId("5771")
-    @Ignore("https://linear.app/stream/issue/AND-1309")
     @Test
     fun test_deliveryStatusHiddenInPreview_whenMessageIsSentAndReadEventsIsDisabled() {
         step("GIVEN read events are disabled and user opens the channel") {
