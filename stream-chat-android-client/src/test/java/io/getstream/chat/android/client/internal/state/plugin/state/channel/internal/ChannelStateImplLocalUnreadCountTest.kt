@@ -116,18 +116,44 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         val state = localTrackingState()
         state.setChannelConfig(Config(readEventsEnabled = false))
         val otherUser = randomUser(id = "other_user")
-        // first message arrives -> unread = 1
+        // first message arrives -> unread = 1 (the read is updated before the message is upserted,
+        // mirroring the event handling order)
         val firstMessage = createMessage(1, timestamp = 1000, user = otherUser)
-        state.setMessages(listOf(firstMessage))
         state.updateCurrentUserRead(Date(1000), firstMessage)
+        state.setMessages(listOf(firstMessage))
         assertEquals(1, state.unreadCount.value)
         // user opens the channel -> local mark read resets to 0
         state.markRead()
         assertEquals(0, state.unreadCount.value)
         // a later message arrives -> unread = 1 again, not 2
         val secondMessage = createMessage(2, timestamp = 5000, user = otherUser)
-        state.setMessages(listOf(firstMessage, secondMessage))
         state.updateCurrentUserRead(Date(5000), secondMessage)
+        state.setMessages(listOf(firstMessage, secondMessage))
+        assertEquals(1, state.unreadCount.value)
+    }
+
+    @Test
+    fun `updateCurrentUserRead does not count a replayed event for a message already in the state`() = runTest {
+        // After a restart the sync replays the events since the last sync, including the event of
+        // the newest message already counted (and persisted) before the restart. That message is
+        // already part of the state seeded from the database, so it must not be counted twice.
+        val state = localTrackingState()
+        state.setChannelConfig(Config(readEventsEnabled = false))
+        val otherUser = randomUser(id = "other_user")
+        val message = createMessage(1, timestamp = 5000, user = otherUser)
+        // Seeded from the database: the message and the read counting it
+        state.setMessages(listOf(message))
+        state.updateRead(
+            createRead(
+                user = currentUser,
+                unreadMessages = 1,
+                lastRead = Date(1000),
+                lastReceivedEventDate = Date(5000),
+            ),
+        )
+        // when: the sync replays the message event
+        state.updateCurrentUserRead(Date(5000), message)
+        // then: the count is not incremented again
         assertEquals(1, state.unreadCount.value)
     }
 

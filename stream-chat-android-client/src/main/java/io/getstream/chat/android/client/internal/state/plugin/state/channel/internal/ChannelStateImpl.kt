@@ -1074,6 +1074,14 @@ internal class ChannelStateImpl(
             logUnreadCountSkip(message, "message already processed")
             return
         }
+        // Skip update if the message is already part of the channel state: it was already counted, or
+        // was loaded from the local database or a channel query (e.g. an event replayed by the sync
+        // after a restart, when the in-memory processed cache is empty)
+        if (getMessageById(message.id) != null) {
+            logUnreadCountSkip(message, "message already in the channel state")
+            processedMessageIds.put(message.id, true)
+            return
+        }
         // Skip update if the channel is muted
         val isMuted = muted.value
         if (isMuted) {

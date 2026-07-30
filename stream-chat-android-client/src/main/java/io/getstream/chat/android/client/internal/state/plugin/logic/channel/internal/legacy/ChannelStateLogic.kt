@@ -919,6 +919,13 @@ internal class ChannelStateLogic(
         if (isProcessed) {
             return
         }
+        // Skip update if the message is already part of the channel state: it was already counted, or
+        // was loaded from the local database or a channel query (e.g. an event replayed by the sync
+        // after a restart, when the in-memory processed cache is empty)
+        if (mutableState.getMessageById(message.id) != null) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
         // Skip update if the channel is muted
         val isMuted = mutableState.muted.value
         if (isMuted) {

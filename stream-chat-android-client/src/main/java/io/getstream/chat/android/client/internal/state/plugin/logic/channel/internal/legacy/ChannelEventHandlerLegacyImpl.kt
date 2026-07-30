@@ -117,9 +117,10 @@ internal class ChannelEventHandlerLegacyImpl(
                 // Preserve createdLocallyAt only for messages created by current user, to ensure they are
                 // sorted properly
                 val preserveCreatedLocallyAt = event.message.user.id == getCurrentUserId()
-                upsertMessage(event.message, preserveCreatedLocallyAt)
-                // Update channel read state
+                // Update channel read state. Must happen before the message is upserted: a message
+                // already present in the state does not update the unread count.
                 stateLogic.updateCurrentUserRead(event.createdAt, event.message)
+                upsertMessage(event.message, preserveCreatedLocallyAt)
                 // Update hidden state if the message is not shadowed
                 if (!event.message.shadowed) {
                     stateLogic.setHidden(false)
@@ -131,11 +132,12 @@ internal class ChannelEventHandlerLegacyImpl(
             }
 
             is NotificationMessageNewEvent -> {
+                // Update channel read state. Must happen before the message is upserted: a message
+                // already present in the state does not update the unread count.
+                stateLogic.updateCurrentUserRead(event.createdAt, event.message)
                 if (!mutableState.insideSearch.value) {
                     upsertMessage(event.message)
                 }
-                // Update channel read state
-                stateLogic.updateCurrentUserRead(event.createdAt, event.message)
                 // Update hidden state if the message is not shadowed
                 if (!event.message.shadowed) {
                     stateLogic.setHidden(false)

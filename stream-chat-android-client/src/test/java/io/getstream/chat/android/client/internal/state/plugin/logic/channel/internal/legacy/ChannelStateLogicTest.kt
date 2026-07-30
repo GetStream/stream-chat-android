@@ -768,6 +768,37 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given message already in the channel state, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // After a restart the sync replays the events since the last sync, including the event of
+        // the newest message already counted (and persisted) before the restart. That message is
+        // already part of the state seeded from the database, so it must not be counted twice.
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = 1,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(10L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+        whenever(mutableState.getMessageById(newMessage.id)) doReturn newMessage
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
     fun `Given no current read state exists, When updateCurrentUserRead is called, Then unread count is not updated`() {
         // given - no current read state
         _read.value = null
