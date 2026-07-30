@@ -166,6 +166,7 @@ import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
@@ -2744,14 +2745,14 @@ internal class MoshiChatApiTest {
         val filter = Filters.neutral()
         val limit = positiveRandomInt()
         val next = randomString()
-        val sort = QuerySortByField<Poll>()
+        val sort = QuerySortByField.descByName<Poll>("created_at")
         val result = sut.queryPolls(filter, limit, next, sort).await()
         // then
         val expectedBody = QueryPollsRequest(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toSortParams(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryPolls(expectedBody)
@@ -2771,14 +2772,14 @@ internal class MoshiChatApiTest {
         val filter = Filters.neutral()
         val limit = positiveRandomInt()
         val next = randomString()
-        val sort = QuerySortByField<Vote>()
+        val sort = QuerySortByField.descByName<Vote>("created_at")
         val result = sut.queryPollVotes(pollId, filter, limit, next, sort).await()
         // then
         val expectedBody = QueryPollVotesRequest(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toSortParams(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryPollVotes(pollId, expectedBody)
