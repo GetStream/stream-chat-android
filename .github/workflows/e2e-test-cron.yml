@@ -43,6 +43,7 @@ jobs:
     strategy:
       matrix:
         include:
+          - android_api_level: 36
           - android_api_level: 35
           - android_api_level: 34
           - android_api_level: 33
