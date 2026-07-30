@@ -188,7 +188,7 @@ class UserRobot {
 
     fun markMessageAsUnread(text: String): UserRobot {
         openContextMenu(text)
-        ContextMenu.markAsUnread.waitToAppear().click()
+        ContextMenu.markAsUnread.waitToAppearAndClick()
         return this
     }
 
