@@ -109,4 +109,9 @@ jobs:
         timeout-minutes: 10
         with:
           name: logs_${{ matrix.batch }}
-          path: fastlane/stream-chat-test-mock-server/logs/*
+          # The allure results carry the retry rule's failure artifacts (logcat,
+          # screenshot, hierarchy per failed attempt), which TestOps deduplicates
+          # away when the same test passes in another batch.
+          path: |
+            fastlane/stream-chat-test-mock-server/logs/*
+            fastlane/allure-results/*
