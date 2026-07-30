@@ -11,6 +11,8 @@ io.getstream.chat.android.client.api.state.querychannels
 io.getstream.chat.android.client.attachment
 io.getstream.chat.android.client.attachment.worker
 io.getstream.chat.android.client.audio
+io.getstream.chat.android.client.cache
+io.getstream.chat.android.client.cache.internal
 io.getstream.chat.android.client.cdn
 io.getstream.chat.android.client.cdn.internal
 io.getstream.chat.android.client.channel
