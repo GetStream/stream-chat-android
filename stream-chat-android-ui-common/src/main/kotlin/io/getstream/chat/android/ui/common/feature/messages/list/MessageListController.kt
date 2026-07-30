@@ -627,8 +627,6 @@ public class MessageListController(
             ?.takeIf { !isStartedForThread }
             ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
             ?.let { read ->
-                lastProcessedReadMessageId = read.lastReadMessageId
-
                 // Delegate to the calculator for the complex unread label logic
                 val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
                     channelUserRead = read,
@@ -638,6 +636,10 @@ public class MessageListController(
                 )
 
                 if (unreadLabel != null) {
+                    // Marking the read state as processed only on a produced label keeps the
+                    // recalculation open while the reason for a null result is transient, for
+                    // example a message list that has not loaded yet.
+                    lastProcessedReadMessageId = read.lastReadMessageId
                     unreadLabelState.value = unreadLabel
                 }
             }

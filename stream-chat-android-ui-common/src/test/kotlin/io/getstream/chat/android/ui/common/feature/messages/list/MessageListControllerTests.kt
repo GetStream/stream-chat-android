@@ -784,6 +784,49 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Show unread label, when the read state arrives before the messages are loaded`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val messagesState = MutableStateFlow(emptyList<Message>())
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user1,
+                    lastReadMessageId = "last_read_message_id",
+                    unreadMessages = 2,
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser(user1)
+                .givenChannelQuery()
+                .givenMarkRead()
+                .givenChannelState(
+                    messagesState = messagesState,
+                    read = channelRead,
+                )
+                .get()
+            // The read state is processed while the message list is still empty,
+            // so no label can be calculated yet.
+            delay(1000)
+            controller.unreadLabelState.value `should be equal to` null
+
+            messagesState.value = listOf(
+                randomMessage(id = "last_read_message_id", user = user1, deletedAt = null, deletedForMe = false),
+                randomMessage(id = "unread_1", user = user2, deletedAt = null, deletedForMe = false),
+                randomMessage(
+                    id = "unread_2",
+                    user = user2,
+                    syncStatus = SyncStatus.COMPLETED,
+                    deletedAt = null,
+                    deletedForMe = false,
+                ),
+            )
+            controller.markLastMessageRead()
+            delay(1000)
+
+            controller.unreadLabelState.value.`should not be null`().unreadCount `should be equal to` 2
+        }
+
+    @Test
     fun `Keep unread label, when marking read zeroes the read state`() =
         runTest {
             val chatClient: ChatClient = mock()
