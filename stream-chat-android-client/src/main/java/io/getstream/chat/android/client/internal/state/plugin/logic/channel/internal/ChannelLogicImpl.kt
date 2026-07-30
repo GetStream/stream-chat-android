@@ -42,6 +42,7 @@ import io.getstream.chat.android.models.toChannelData
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 
@@ -246,7 +247,26 @@ internal class ChannelLogicImpl(
     }
 
     override fun markRead(): MarkReadResult {
-        return state.markRead()
+        val result = state.markRead()
+        if (result == MarkReadResult.HandledLocally) {
+            // Local mark-read only mutates in-memory state; persist the reset read so the on-device
+            // unread count survives a restart.
+            persistCurrentReads()
+        }
+        return result
+    }
+
+    /**
+     * Persists the current in-memory reads to the database. Used by the on-device unread tracking
+     * path, where the read state is not backed by a server response.
+     */
+    private fun persistCurrentReads() {
+        val reads = state.reads.value
+        coroutineScope.launch {
+            repository.selectChannel(state.cid)?.let { channel ->
+                repository.insertChannel(channel.copy(read = reads))
+            }
+        }
     }
 
     override fun typingEventsEnabled(): Boolean {

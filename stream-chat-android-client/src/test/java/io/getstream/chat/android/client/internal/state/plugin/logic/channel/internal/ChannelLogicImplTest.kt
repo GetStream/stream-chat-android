@@ -906,6 +906,30 @@ internal class ChannelLogicImplTest {
         assertEquals(MarkReadResult.NotNeeded, result)
     }
 
+    @Test
+    fun `markRead persists the reset read when handled locally`() = runTest {
+        // Given
+        val reads = listOf(randomChannelUserRead())
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.HandledLocally)
+        whenever(stateImpl.cid).thenReturn(cid)
+        whenever(stateImpl.reads).thenReturn(MutableStateFlow(reads))
+        whenever(repository.selectChannel(cid)).thenReturn(randomChannel())
+        // When
+        sut.markRead()
+        // Then
+        verify(repository).insertChannel(any())
+    }
+
+    @Test
+    fun `markRead does not persist when not handled locally`() = runTest {
+        // Given
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.RemoteRequired)
+        // When
+        sut.markRead()
+        // Then
+        verify(repository, never()).insertChannel(any())
+    }
+
     // endregion
 
     // region typingEventsEnabled

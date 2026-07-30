@@ -103,6 +103,7 @@ import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.client.extensions.internal.updateParentOrReply
 import io.getstream.chat.android.client.extensions.internal.updateReads
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.SocketEventCollector
@@ -115,10 +116,13 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
@@ -641,7 +645,7 @@ internal class EventHandlerSequential(
                         messages = channel.messages + listOf(enrichedMessage),
                         messageCount = event.channelMessageCount ?: channel.messageCount,
                         lastMessageAt = newLastMessageAt,
-                    )
+                    ).withLocallyTrackedReads(event.cid)
                     batch.addChannel(updatedChannel)
                     // Update thread data in DB if the new message is added to a thread
                     batch.addThreadIfExists(enrichedMessage)
@@ -969,6 +973,21 @@ internal class EventHandlerSequential(
             val channelData = stateRegistry.channel(type, id).channelData.value
             channelData.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         }
+    }
+
+    /**
+     * For channels with server-side read events disabled, the per-channel unread count is tracked
+     * on-device in the channel state. This carries the current in-memory reads into the channel
+     * being persisted so the count survives a restart. No-op for regular channels and for channels
+     * that are not currently active in state.
+     */
+    private fun Channel.withLocallyTrackedReads(cid: String): Channel {
+        if (config.readEventsEnabled) return this
+        val channelId = ChannelId.fromCid(cid) ?: return this
+        if (!stateRegistry.isActiveChannel(channelId)) return this
+        val stateReads = stateRegistry.channel(channelId).reads.value
+        if (stateReads.isEmpty()) return this
+        return copy(read = (stateReads + read).distinctBy(ChannelUserRead::getUserId)).syncUnreadCountWithReads()
     }
 
     private suspend fun deleteMessagesFromUser(cid: String?, userId: String, hard: Boolean, deletedAt: Date) {

@@ -201,7 +201,18 @@ internal class ChannelLogicLegacyImpl(
     }
 
     override fun markRead(): MarkReadResult {
-        return stateLogic.markRead()
+        val result = stateLogic.markRead()
+        if (result == MarkReadResult.HandledLocally) {
+            // Local mark-read only mutates in-memory state; persist the reset read so the on-device
+            // unread count survives a restart.
+            val reads = mutableState.reads.value
+            coroutineScope.launch {
+                repos.selectChannel(mutableState.cid)?.let { channel ->
+                    repos.insertChannel(channel.copy(read = reads))
+                }
+            }
+        }
+        return result
     }
 
     override fun typingEventsEnabled(): Boolean {

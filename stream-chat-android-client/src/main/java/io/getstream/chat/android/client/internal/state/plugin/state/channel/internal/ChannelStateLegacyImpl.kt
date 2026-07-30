@@ -640,7 +640,7 @@ internal class ChannelStateLegacyImpl(
         upsertReads(
             listOf(
                 currentUserRead.copy(
-                    lastReceivedEventDate = readDate,
+                    lastReceivedEventDate = maxOf(currentUserRead.lastReceivedEventDate, readDate),
                     lastRead = readDate,
                     lastReadMessageId = lastMessage?.id ?: currentUserRead.lastReadMessageId,
                     unreadMessages = 0,

@@ -957,6 +957,8 @@ internal class ChannelStateLogic(
                         user = user,
                         lastReceivedEventDate = eventReceivedDate,
                         unreadMessages = 1,
+                        // Only the count is tracked locally; lastRead/lastReadMessageId are left unset
+                        // because there is no server read to anchor the unread separator to.
                         lastRead = Date(0),
                         lastReadMessageId = null,
                     ),

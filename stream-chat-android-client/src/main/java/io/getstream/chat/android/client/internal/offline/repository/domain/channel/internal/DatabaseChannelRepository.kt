@@ -21,10 +21,12 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
+import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -66,6 +68,7 @@ internal class DatabaseChannelRepository(
         if (channels.isEmpty()) return
         val updatedChannels = channels
             .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+            .map { if (it.config.readEventsEnabled) it else it.preserveLocallyTrackedReads() }
         val channelToInsert = updatedChannels
             .filter { channelCache[it.cid] != it }
             .map { it.toEntity() }
@@ -79,6 +82,27 @@ internal class DatabaseChannelRepository(
                 .takeUnless { it.isEmpty() }
                 ?.let { channelDao.insertMany(it) }
         }
+    }
+
+    /**
+     * For channels with server-side read events disabled the per-channel unread count is tracked
+     * on-device, so a stored read with a newer [ChannelUserRead.lastReceivedEventDate] must not be
+     * overwritten by a stale server payload. Mirrors the in-memory channel-state merge, but also
+     * survives a cache miss (e.g. after a process restart) by falling back to the persisted row.
+     */
+    private suspend fun Channel.preserveLocallyTrackedReads(): Channel {
+        val storedReads = channelCache[cid]?.read
+            ?: channelDao.select(cid)?.reads?.values?.map { it.toModel(getUser) }
+            ?: return this
+        if (storedReads.isEmpty()) return this
+        val mergedByUser = read.associateBy(ChannelUserRead::getUserId).toMutableMap()
+        storedReads.forEach { stored ->
+            val incoming = mergedByUser[stored.getUserId()]
+            if (incoming == null || stored.lastReceivedEventDate.after(incoming.lastReceivedEventDate)) {
+                mergedByUser[stored.getUserId()] = stored
+            }
+        }
+        return copy(read = mergedByUser.values.toList()).syncUnreadCountWithReads()
     }
 
     private fun cacheChannel(vararg channels: Channel) {
