@@ -1071,28 +1071,28 @@ internal class ChannelStateImpl(
         // Skip update if the message was already processed
         val isProcessed = processedMessageIds[message.id] == true
         if (isProcessed) {
-            logUnreadCountSkip(message, "message already processed")
+            logUnreadCountSkip(message, "already processed")
             return
         }
         // Skip update if the message is already part of the channel state: it was already counted, or
         // was loaded from the local database or a channel query (e.g. an event replayed by the sync
         // after a restart, when the in-memory processed cache is empty)
         if (getMessageById(message.id) != null) {
-            logUnreadCountSkip(message, "message already in the channel state")
+            logUnreadCountSkip(message, "already in state")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update if the channel is muted
         val isMuted = muted.value
         if (isMuted) {
-            logUnreadCountSkip(message, "channel is muted")
+            logUnreadCountSkip(message, "channel muted")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for thread replies not shown in channel
         val isThreadReplyNotInChannel = message.parentId != null && !message.showInChannel
         if (isThreadReplyNotInChannel) {
-            logUnreadCountSkip(message, "thread reply not shown in channel")
+            logUnreadCountSkip(message, "thread reply not in channel")
             processedMessageIds.put(message.id, true)
             return
         }
@@ -1106,19 +1106,19 @@ internal class ChannelStateImpl(
         // Skip update for messages from muted users
         val isFromMutedUser = mutedUsers.value.any { it.target?.id == message.user.id }
         if (isFromMutedUser) {
-            logUnreadCountSkip(message, "message author is muted")
+            logUnreadCountSkip(message, "author muted")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for messages from shadow banned users
         if (message.shadowed) {
-            logUnreadCountSkip(message, "message is shadowed")
+            logUnreadCountSkip(message, "shadowed")
             processedMessageIds.put(message.id, true)
             return
         }
         // Skip update for silent messages
         if (message.silent) {
-            logUnreadCountSkip(message, "message is silent")
+            logUnreadCountSkip(message, "silent")
             processedMessageIds.put(message.id, true)
             return
         }
@@ -1127,8 +1127,7 @@ internal class ChannelStateImpl(
         if (currentRead != null && currentRead.lastReceivedEventDate.after(eventReceivedDate)) {
             logUnreadCountSkip(
                 message,
-                "event is outdated, read.lastReceivedEventDate: ${currentRead.lastReceivedEventDate}, " +
-                    "eventReceivedDate: $eventReceivedDate",
+                "outdated (read: ${currentRead.lastReceivedEventDate}, event: $eventReceivedDate)",
             )
             processedMessageIds.put(message.id, true)
             return
@@ -1139,7 +1138,7 @@ internal class ChannelStateImpl(
     }
 
     private fun logUnreadCountSkip(message: Message, reason: String) {
-        logger.v { "[updateCurrentUserRead] cid: $cid, message: ${message.id} does not update unread count: $reason" }
+        logger.v { "[updateCurrentUserRead] cid: $cid, skipping ${message.id}: $reason" }
     }
 
     /**
@@ -1180,10 +1179,7 @@ internal class ChannelStateImpl(
             null
         }
         updatedRead?.let { newRead ->
-            logger.v {
-                "[incrementUnreadCount] cid: $cid, unreadMessages: ${newRead.unreadMessages}, " +
-                    "lastReceivedEventDate: ${newRead.lastReceivedEventDate}"
-            }
+            logger.v { "[incrementUnreadCount] cid: $cid, unreadMessages: ${newRead.unreadMessages}" }
             _reads.update { current ->
                 current + (newRead.getUserId() to newRead)
             }
@@ -1251,10 +1247,7 @@ internal class ChannelStateImpl(
             lastReadMessageId = lastMessage?.id ?: currentUserRead.lastReadMessageId,
             unreadMessages = 0,
         )
-        logger.v {
-            "[markReadLocally] cid: $cid, lastRead: ${updatedRead.lastRead}, " +
-                "lastReceivedEventDate: ${updatedRead.lastReceivedEventDate}"
-        }
+        logger.v { "[markReadLocally] cid: $cid, lastRead: ${updatedRead.lastRead}" }
         _reads.update { current ->
             current + (updatedRead.getUserId() to updatedRead)
         }
@@ -1716,8 +1709,7 @@ internal class ChannelStateImpl(
             // with the local value anchored to the same message. Only the user info and the delivered
             // fields are merged from the server.
             logger.d {
-                "[updateReads] Read state is tracked locally, preserving: " +
-                    "local.lastRead=${localRead.lastRead}, " +
+                "[updateReads] preserving locally tracked read, " +
                     "local.unreadMessages=${localRead.unreadMessages}, " +
                     "server.unreadMessages=${serverRead.unreadMessages}"
             }

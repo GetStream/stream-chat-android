@@ -241,8 +241,7 @@ internal class ChannelStateLogic(
             // with the local value anchored to the same message. Only the user info and the delivered
             // fields are merged from the server.
             logger.d {
-                "[updateReads] Read state is tracked locally, preserving: " +
-                    "local.lastRead=${localRead.lastRead}, " +
+                "[updateReads] preserving locally tracked read, " +
                     "local.unreadMessages=${localRead.unreadMessages}, " +
                     "server.unreadMessages=${serverRead.unreadMessages}"
             }
