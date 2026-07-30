@@ -137,19 +137,8 @@ class UserRobot {
      * send button; with the sample's configuration both build the same message.
      */
     private fun tapOnComposerConfirmButton(): UserRobot {
-        val endTime = System.currentTimeMillis() + defaultTimeout
-        while (System.currentTimeMillis() < endTime) {
-            Composer.sendButton.findObjects().firstOrNull()?.let {
-                it.click()
-                return this
-            }
-            Composer.saveButton.findObjects().firstOrNull()?.let {
-                it.click()
-                return this
-            }
-            Thread.sleep(50)
-        }
-        error("Neither the send nor the save composer button appeared within ${defaultTimeout}ms")
+        Composer.confirmButton.waitToAppearAndClick()
+        return this
     }
 
     fun tapOnLinkPreviewCancelButton(): UserRobot {
@@ -193,19 +182,19 @@ class UserRobot {
 
     fun copyMessage(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.copy.waitToAppear().click()
+        ContextMenu.copy.waitToAppearAndClick()
         return this
     }
 
     fun pinMessage(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.pin.waitToAppear().click()
+        ContextMenu.pin.waitToAppearAndClick()
         return this
     }
 
     fun unpinMessage(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.unpin.waitToAppear().click()
+        ContextMenu.unpin.waitToAppearAndClick()
         return this
     }
 
@@ -221,7 +210,7 @@ class UserRobot {
     }
 
     fun tapOnMessageReaction(): UserRobot {
-        Message.Reactions.reactions.waitToAppear().click()
+        Message.Reactions.reactions.waitToAppearAndClick()
         return this
     }
 
@@ -231,8 +220,8 @@ class UserRobot {
      */
     fun toggleReactionUsingExtendedPicker(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.showMoreReactions.waitToAppear().click()
-        ContextMenu.ReactionsView.reaction(type).waitToAppear().click()
+        ContextMenu.showMoreReactions.waitToAppearAndClick()
+        ContextMenu.ReactionsView.reaction(type).waitToAppearAndClick()
         return this
     }
 
@@ -275,11 +264,6 @@ class UserRobot {
         return this
     }
 
-    fun tapOnMessage(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppearBottomUp(withIndex = messageCellIndex).click()
-        return this
-    }
-
     fun tapOnQuotedMessage(messageCellIndex: Int = 0): UserRobot {
         // A tap that lands while the list is still moving is cancelled by the touch slop and
         // never reaches the click handler, so verify the jump moved the quote out of the
@@ -300,12 +284,12 @@ class UserRobot {
     }
 
     fun tapOnScrollToFirstUnreadButton(): UserRobot {
-        MessageList.scrollToFirstUnreadButton.waitToAppear().click()
+        MessageList.scrollToFirstUnreadButton.waitToAppearAndClick()
         return this
     }
 
     fun dismissUnreadIndicator(): UserRobot {
-        MessageList.scrollToFirstUnreadDismissIcon.waitToAppear().click()
+        MessageList.scrollToFirstUnreadDismissIcon.waitToAppearAndClick()
         return this
     }
 
@@ -387,12 +371,12 @@ class UserRobot {
     }
 
     fun tapOnMoreSwipeAction(): UserRobot {
-        ChannelListPage.ChannelList.SwipeActions.more.waitToAppear().click()
+        ChannelListPage.ChannelList.SwipeActions.more.waitToAppearAndClick()
         return this
     }
 
     fun tapOnViewChannelInfo(): UserRobot {
-        ChannelListPage.ChannelMenu.viewInfo.waitToAppear().click()
+        ChannelListPage.ChannelMenu.viewInfo.waitToAppearAndClick()
         return this
     }
 
