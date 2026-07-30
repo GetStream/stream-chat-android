@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
@@ -259,17 +258,14 @@ internal class ChannelLogicImpl(
 
     /**
      * Persists the current in-memory reads to the database. Used by the on-device unread tracking
-     * path, where the read state is not backed by a server response. The in-memory reads are merged
-     * over the stored ones so a partially populated state never drops reads already persisted.
+     * path, where the read state is not backed by a server response. Writes through
+     * [ChannelRepository.upsertChannelReads], which bypasses the repository's server-data merge.
      */
     private fun persistCurrentReads() {
         val reads = state.reads.value
         if (reads.isEmpty()) return
         coroutineScope.launch {
-            repository.selectChannel(state.cid)?.let { channel ->
-                val mergedReads = (reads + channel.read).distinctBy(ChannelUserRead::getUserId)
-                repository.insertChannel(channel.copy(read = mergedReads))
-            }
+            repository.upsertChannelReads(cid = state.cid, reads = reads)
         }
     }
 

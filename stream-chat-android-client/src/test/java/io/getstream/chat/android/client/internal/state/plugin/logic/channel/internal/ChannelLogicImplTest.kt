@@ -913,11 +913,10 @@ internal class ChannelLogicImplTest {
         whenever(stateImpl.markRead()).thenReturn(MarkReadResult.HandledLocally)
         whenever(stateImpl.cid).thenReturn(cid)
         whenever(stateImpl.reads).thenReturn(MutableStateFlow(reads))
-        whenever(repository.selectChannel(cid)).thenReturn(randomChannel())
         // When
         sut.markRead()
         // Then
-        verify(repository).insertChannel(any())
+        verify(repository).upsertChannelReads(cid, reads)
     }
 
     @Test
@@ -927,7 +926,18 @@ internal class ChannelLogicImplTest {
         // When
         sut.markRead()
         // Then
-        verify(repository, never()).insertChannel(any())
+        verify(repository, never()).upsertChannelReads(any(), any())
+    }
+
+    @Test
+    fun `markRead does not persist when the state has no reads`() = runTest {
+        // Given
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.HandledLocally)
+        whenever(stateImpl.reads).thenReturn(MutableStateFlow(emptyList()))
+        // When
+        sut.markRead()
+        // Then
+        verify(repository, never()).upsertChannelReads(any(), any())
     }
 
     // endregion

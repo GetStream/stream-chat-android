@@ -84,6 +84,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeast
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -421,6 +422,56 @@ internal class EventHandlerSequentialTest {
     }
 
     @Test
+    fun `When local unread tracking is enabled, a new message event persists the locally tracked reads`() = runTest {
+        val channelType = "livestream"
+        val channelId = "local-unread"
+        val cid = "$channelType:$channelId"
+        val repos: RepositoryFacade = mock()
+        repos.stub {
+            onBlocking { selectChannel(cid) } doReturn
+                randomChannel(id = channelId, type = channelType, ownCapabilities = emptySet())
+            onBlocking { selectChannels(any()) } doReturn emptyList()
+            onBlocking { selectMessages(any()) } doReturn emptyList()
+            onBlocking { selectThreads(any()) } doReturn emptyList()
+        }
+        val localReads = listOf(
+            io.getstream.chat.android.randomChannelUserRead(user = currentUser, unreadMessages = 3),
+        )
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .withLocalUnreadCountEnabled()
+            .withLocallyTrackedChannel(channelType, channelId, localReads)
+            .get(this)
+
+        handler.handleEvents(randomNewMessageEvent(cid = cid, channelType = channelType, channelId = channelId))
+
+        verify(repos).upsertChannelReads(cid, localReads)
+    }
+
+    @Test
+    fun `When local unread tracking is disabled, a new message event does not persist reads`() = runTest {
+        val channelType = "livestream"
+        val channelId = "local-unread"
+        val cid = "$channelType:$channelId"
+        val repos: RepositoryFacade = mock()
+        repos.stub {
+            onBlocking { selectChannel(cid) } doReturn
+                randomChannel(id = channelId, type = channelType, ownCapabilities = emptySet())
+        }
+        val localReads = listOf(
+            io.getstream.chat.android.randomChannelUserRead(user = currentUser, unreadMessages = 3),
+        )
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .withLocallyTrackedChannel(channelType, channelId, localReads)
+            .get(this)
+
+        handler.handleEvents(randomNewMessageEvent(cid = cid, channelType = channelType, channelId = channelId))
+
+        verify(repos, never()).upsertChannelReads(any(), any())
+    }
+
+    @Test
     fun `When buffer overflows with DROP_OLDEST, the oldest queued NewMessageEvent is dropped`() = runTest {
         val fixture = Fixture()
             .withBufferConfig(
@@ -602,6 +653,11 @@ internal class EventHandlerSequentialTest {
         private val sideEffect: suspend () -> Unit = { sideEffectGate.await() }
         private val syncedEvents: Flow<List<ChatEvent>> = emptyFlow()
         private var bufferConfig: MessageBufferConfig = MessageBufferConfig()
+        private var isLocalUnreadCountEnabled: Boolean = false
+
+        fun withLocalUnreadCountEnabled() = apply {
+            isLocalUnreadCountEnabled = true
+        }
 
         fun withReadEventsCapability(cid: String) = apply {
             repos.stub {
@@ -677,6 +733,27 @@ internal class EventHandlerSequentialTest {
             whenever(stateRegistry.channel(channelType, channelId)) doReturn channelMutableState
         }
 
+        /**
+         * Stubs [stateRegistry] so the channel identified by [channelType] / [channelId] is
+         * active, has read events disabled, and carries the given locally tracked [reads].
+         */
+        fun withLocallyTrackedChannel(
+            channelType: String,
+            channelId: String,
+            reads: List<io.getstream.chat.android.models.ChannelUserRead>,
+        ) = apply {
+            val channelState: io.getstream.chat.android.client.channel.state.ChannelState =
+                mock {
+                    on { it.channelConfig } doReturn
+                        MutableStateFlow(io.getstream.chat.android.models.Config(readEventsEnabled = false))
+                    on { it.reads } doReturn MutableStateFlow(reads)
+                }
+            val cid = io.getstream.chat.android.client.utils.internal.ChannelId
+                .fromTypeAndId(channelType, channelId)!!
+            whenever(stateRegistry.isActiveChannel(cid)) doReturn true
+            whenever(stateRegistry.channel(cid)) doReturn channelState
+        }
+
         fun get(scope: CoroutineScope) = EventHandlerSequential(
             currentUserId = currentUser.id,
             subscribeForEvents = subscribeForEvents,
@@ -688,6 +765,7 @@ internal class EventHandlerSequentialTest {
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
             bufferConfig = bufferConfig,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
             scope = scope,
         )
     }

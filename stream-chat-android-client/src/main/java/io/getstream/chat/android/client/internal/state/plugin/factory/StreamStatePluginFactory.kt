@@ -164,6 +164,7 @@ public class StreamStatePluginFactory(
             syncedEvents = syncManager.syncedEvents,
             sideEffect = syncManager::awaitSyncing,
             bufferConfig = config.messageLimitConfig.messageBufferConfig,
+            isLocalUnreadCountEnabled = config.isLocalUnreadCountEnabled,
         )
 
         val stateErrorHandlerFactory = StateErrorHandlerFactory(
@@ -202,6 +203,7 @@ public class StreamStatePluginFactory(
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
         bufferConfig: MessageBufferConfig,
+        isLocalUnreadCountEnabled: Boolean,
     ): EventHandler {
         return EventHandlerSequential(
             scope = scope,
@@ -216,6 +218,7 @@ public class StreamStatePluginFactory(
             syncedEvents = syncedEvents,
             sideEffect = sideEffect,
             bufferConfig = bufferConfig,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )
     }
 }

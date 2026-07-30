@@ -86,6 +86,7 @@ internal class DatabaseRepositoryFactory(
                 getUser,
                 getMessage,
                 messageRepository::selectDraftMessagesByCid,
+                currentUser.id,
                 now,
             )
                 .also { repository ->

@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushPreference
@@ -205,15 +204,12 @@ internal class ChannelLogicLegacyImpl(
         val result = stateLogic.markRead()
         if (result == MarkReadResult.HandledLocally) {
             // Local mark-read only mutates in-memory state; persist the reset read so the on-device
-            // unread count survives a restart. The in-memory reads are merged over the stored ones
-            // so a partially populated state never drops reads already persisted.
+            // unread count survives a restart. The write goes through upsertChannelReads, which
+            // bypasses the repository's server-data merge.
             val reads = mutableState.reads.value
             if (reads.isNotEmpty()) {
                 coroutineScope.launch {
-                    repos.selectChannel(mutableState.cid)?.let { channel ->
-                        val mergedReads = (reads + channel.read).distinctBy(ChannelUserRead::getUserId)
-                        repos.insertChannel(channel.copy(read = mergedReads))
-                    }
+                    repos.upsertChannelReads(cid = mutableState.cid, reads = reads)
                 }
             }
         }

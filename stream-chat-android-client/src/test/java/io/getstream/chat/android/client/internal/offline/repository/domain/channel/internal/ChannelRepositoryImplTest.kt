@@ -58,6 +58,7 @@ internal class ChannelRepositoryImplTest {
             { randomUser() },
             { randomMessage() },
             { randomDraftMessageOrNull() },
+            "current-user",
         )
 
     @BeforeEach
@@ -137,6 +138,156 @@ internal class ChannelRepositoryImplTest {
         assertEquals(0, persistedUnreadCount(cid))
     }
 
+    @Test
+    fun `insertChannels preserves the stored current user read on tying event dates for a read-events-disabled channel`() =
+        runTest {
+            val repo = repositoryWithUserEchoingIds()
+            val cid = "messaging:local"
+            // Server reads carry lastReceivedEventDate = last_message_at, which ties with the locally
+            // tracked value anchored to the same message - a recency merge would let the stale server
+            // count win here.
+            val lastMessageDate = Date(2000)
+            val stored = randomChannel(
+                id = "local",
+                type = "messaging",
+                config = randomConfig(readEventsEnabled = false),
+                read = listOf(
+                    randomChannelUserRead(
+                        user = currentUser,
+                        unreadMessages = 5,
+                        lastReceivedEventDate = lastMessageDate,
+                    ),
+                ),
+            )
+            whenever(channelDao.select(cid)) doReturn stored.toEntity()
+            val serverPayload = randomChannel(
+                id = "local",
+                type = "messaging",
+                config = randomConfig(readEventsEnabled = false),
+                read = listOf(
+                    randomChannelUserRead(
+                        user = currentUser,
+                        unreadMessages = 0,
+                        lastReceivedEventDate = lastMessageDate,
+                    ),
+                ),
+            )
+
+            repo.insertChannels(listOf(serverPayload))
+
+            assertEquals(5, persistedUnreadCount(cid))
+        }
+
+    @Test
+    fun `insertChannels preserves the stored current user read even when the server read is more recent`() = runTest {
+        val repo = repositoryWithUserEchoingIds()
+        val cid = "messaging:local"
+        val stored = randomChannel(
+            id = "local",
+            type = "messaging",
+            config = randomConfig(readEventsEnabled = false),
+            read = listOf(
+                randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = Date(1000)),
+            ),
+        )
+        whenever(channelDao.select(cid)) doReturn stored.toEntity()
+        val serverPayload = randomChannel(
+            id = "local",
+            type = "messaging",
+            config = randomConfig(readEventsEnabled = false),
+            read = listOf(
+                randomChannelUserRead(user = currentUser, unreadMessages = 0, lastReceivedEventDate = Date(2000)),
+            ),
+        )
+
+        repo.insertChannels(listOf(serverPayload))
+
+        assertEquals(5, persistedUnreadCount(cid))
+    }
+
+    @Test
+    fun `insertChannels lets a newer server read win for other users on a read-events-disabled channel`() = runTest {
+        val repo = repositoryWithUserEchoingIds()
+        val cid = "messaging:local"
+        val otherUser = randomUser(id = "other-user")
+        val stored = randomChannel(
+            id = "local",
+            type = "messaging",
+            config = randomConfig(readEventsEnabled = false),
+            read = listOf(
+                randomChannelUserRead(user = otherUser, unreadMessages = 5, lastReceivedEventDate = Date(1000)),
+            ),
+        )
+        whenever(channelDao.select(cid)) doReturn stored.toEntity()
+        val serverPayload = randomChannel(
+            id = "local",
+            type = "messaging",
+            config = randomConfig(readEventsEnabled = false),
+            read = listOf(
+                randomChannelUserRead(user = otherUser, unreadMessages = 0, lastReceivedEventDate = Date(2000)),
+            ),
+        )
+
+        repo.insertChannels(listOf(serverPayload))
+
+        val captor = argumentCaptor<List<ChannelEntity>>()
+        verify(channelDao).insertMany(captor.capture())
+        val persisted = captor.allValues.flatten().firstOrNull { it.cid == cid }
+        assertEquals(0, persisted?.reads?.get(otherUser.id)?.unreadMessages)
+    }
+
+    @Test
+    fun `upsertChannelReads replaces the stored current user read and keeps other users reads`() = runTest {
+        val repo = repositoryWithUserEchoingIds()
+        val cid = "messaging:local"
+        val otherUser = randomUser(id = "other-user")
+        val stored = randomChannel(
+            id = "local",
+            type = "messaging",
+            config = randomConfig(readEventsEnabled = false),
+            read = listOf(
+                randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = Date(2000)),
+                randomChannelUserRead(user = otherUser, unreadMessages = 7, lastReceivedEventDate = Date(2000)),
+            ),
+        )
+        whenever(channelDao.select(cid)) doReturn stored.toEntity()
+
+        // The local mark-read resets the count; the write is applied verbatim, no recency merge.
+        val resetRead = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 0,
+            lastReceivedEventDate = Date(2000),
+        )
+        repo.upsertChannelReads(cid, listOf(resetRead))
+
+        val captor = argumentCaptor<ChannelEntity>()
+        verify(channelDao).insert(captor.capture())
+        val persisted = captor.firstValue
+        assertEquals(0, persisted.reads[currentUser.id]?.unreadMessages)
+        assertEquals(7, persisted.reads[otherUser.id]?.unreadMessages)
+    }
+
+    @Test
+    fun `upsertChannelReads does nothing when the channel is not stored`() = runTest {
+        val repo = repositoryWithUserEchoingIds()
+        val cid = "messaging:missing"
+        whenever(channelDao.select(cid)) doReturn null
+
+        repo.upsertChannelReads(cid, listOf(randomChannelUserRead(user = currentUser)))
+
+        verify(channelDao, never()).insert(any())
+    }
+
+    @Test
+    fun `upsertChannelReads does nothing when the reads are empty`() = runTest {
+        val repo = repositoryWithUserEchoingIds()
+
+        repo.upsertChannelReads("messaging:local", emptyList())
+
+        verify(channelDao, never()).select(any<String>())
+        verify(channelDao, never()).insert(any())
+    }
+
     private val currentUser = randomUser(id = "current-user")
 
     private fun repositoryWithUserEchoingIds(): DatabaseChannelRepository =
@@ -146,6 +297,7 @@ internal class ChannelRepositoryImplTest {
             { userId -> randomUser(id = userId) },
             { randomMessage() },
             { randomDraftMessageOrNull() },
+            currentUser.id,
         )
 
     /** Returns the current user's unread count from the entity written to the DAO for [cid]. */

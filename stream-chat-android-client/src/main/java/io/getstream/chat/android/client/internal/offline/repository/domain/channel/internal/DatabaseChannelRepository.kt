@@ -47,6 +47,7 @@ internal class DatabaseChannelRepository(
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
     private val getDraftMessage: suspend (cid: String) -> DraftMessage?,
+    private val currentUserId: String,
     private val now: () -> Long = { System.currentTimeMillis() },
     cacheSize: Int = 1000,
 ) : ChannelRepository {
@@ -86,9 +87,13 @@ internal class DatabaseChannelRepository(
 
     /**
      * For channels with server-side read events disabled the per-channel unread count is tracked
-     * on-device, so a stored read with a newer [ChannelUserRead.lastReceivedEventDate] must not be
-     * overwritten by a stale server payload. Mirrors the in-memory channel-state merge, but also
-     * survives a cache miss (e.g. after a process restart) by falling back to the persisted row.
+     * on-device, so a server payload must never overwrite the stored current user read. Note that
+     * a recency check is not enough: server reads carry lastReceivedEventDate = last_message_at,
+     * which ties with the locally tracked value anchored to the same message. The locally tracked
+     * reads reach the database through [upsertChannelReads], which bypasses this merge, so every
+     * [insertChannels] write for these channels' reads is server-sourced by construction. For
+     * other users' reads a recency check is applied. Falls back to the persisted row on a cache
+     * miss (e.g. after a process restart).
      */
     private suspend fun Channel.preserveLocallyTrackedReads(): Channel {
         val storedReads = channelCache[cid]?.read
@@ -98,11 +103,39 @@ internal class DatabaseChannelRepository(
         val mergedByUser = read.associateBy(ChannelUserRead::getUserId).toMutableMap()
         storedReads.forEach { stored ->
             val incoming = mergedByUser[stored.getUserId()]
-            if (incoming == null || stored.lastReceivedEventDate.after(incoming.lastReceivedEventDate)) {
-                mergedByUser[stored.getUserId()] = stored
+            mergedByUser[stored.getUserId()] = when {
+                incoming == null -> stored
+                stored.getUserId() == currentUserId -> stored.copy(
+                    // Only the user info and the delivered fields are merged from the server,
+                    // mirroring the in-memory merge in the channel state.
+                    user = incoming.user,
+                    lastDeliveredAt = incoming.lastDeliveredAt ?: stored.lastDeliveredAt,
+                    lastDeliveredMessageId = incoming.lastDeliveredMessageId ?: stored.lastDeliveredMessageId,
+                )
+                stored.lastReceivedEventDate.after(incoming.lastReceivedEventDate) -> stored
+                else -> incoming
             }
         }
         return copy(read = mergedByUser.values.toList()).syncUnreadCountWithReads()
+    }
+
+    /**
+     * Upserts the given [reads] into the stored channel, replacing the stored reads of the same
+     * users and keeping the rest. The write is applied verbatim (no merge against the stored read
+     * state): the caller is the source of truth for these reads. Ordering with concurrent
+     * [insertChannels] writes for the same channel is guaranteed by the shared [dbMutex].
+     */
+    override suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
+        if (reads.isEmpty()) return
+        val stored = selectChannel(cid) ?: return
+        val updatedChannel = stored
+            .copy(read = (reads + stored.read).distinctBy(ChannelUserRead::getUserId))
+            .syncUnreadCountWithReads()
+        cacheChannel(updatedChannel)
+        scope.launchWithMutex(dbMutex) {
+            logger.v { "[upsertChannelReads] cid: $cid, reads.size: ${reads.size}" }
+            channelDao.insert(updatedChannel.toEntity())
+        }
     }
 
     private fun cacheChannel(vararg channels: Channel) {
