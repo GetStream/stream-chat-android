@@ -922,6 +922,118 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given locally tracked channel, When updateDataForChannel is called with more recent server read, Then local read state is preserved`() {
+        // given - local unread count enabled, read events disabled, locally incremented count
+        whenever(mutableState.isLocalUnreadCountEnabled) doReturn true
+        _channelConfig.value = Config(readEventsEnabled = false)
+
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(50L),
+            unreadMessages = 3,
+            lastRead = Date(40L),
+            lastReadMessageId = null,
+            lastDeliveredAt = null,
+            lastDeliveredMessageId = null,
+        )
+        _read.value = localRead
+
+        // Server sends a sync payload with unreadMessages = 0 and a newer event date
+        val serverRead = ChannelUserRead(
+            user = user.copy(name = "Updated Name"),
+            lastReceivedEventDate = Date(100L),
+            unreadMessages = 0,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+            lastDeliveredAt = Date(85L),
+            lastDeliveredMessageId = "server-delivered-id",
+        )
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - the locally tracked read state is preserved; only user info and delivered fields
+        // are merged from the server
+        verify(mutableState).upsertReads(
+            eq(
+                listOf(
+                    localRead.copy(
+                        user = serverRead.user,
+                        lastDeliveredAt = serverRead.lastDeliveredAt,
+                        lastDeliveredMessageId = serverRead.lastDeliveredMessageId,
+                    ),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `Given locally tracked channel, When updateDataForChannel is called with a server read tying on event date, Then local read state is preserved`() {
+        // Server reads carry lastReceivedEventDate = last_message_at, which ties with the local value
+        // anchored to the same message - a recency merge would let the stale server count win here.
+        whenever(mutableState.isLocalUnreadCountEnabled) doReturn true
+        _channelConfig.value = Config(readEventsEnabled = false)
+
+        val lastMessageDate = Date(100L)
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = lastMessageDate,
+            unreadMessages = 3,
+            lastRead = Date(40L),
+            lastReadMessageId = null,
+        )
+        _read.value = localRead
+
+        val serverRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = lastMessageDate,
+            unreadMessages = 0,
+            lastRead = Date(40L),
+            lastReadMessageId = null,
+        )
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then
+        verify(mutableState).upsertReads(eq(listOf(localRead)))
+    }
+
+    @Test
+    fun `Given locally tracked channel without local read, When updateDataForChannel is called, Then server data is used`() {
+        // given - first channel load, no local read state yet
+        whenever(mutableState.isLocalUnreadCountEnabled) doReturn true
+        _channelConfig.value = Config(readEventsEnabled = false)
+        _read.value = null
+
+        val serverRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(100L),
+            unreadMessages = 5,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+        )
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - the server value is authoritative on first load
+        verify(mutableState).upsertReads(eq(listOf(serverRead)))
+    }
+
+    @Test
     fun `Given server read state is more recent than local, When updateDataForChannel is called, Then server data is used`() {
         // given - server state has more recent lastReceivedEventDate
         val localLastReceivedEventDate = Date(50L)

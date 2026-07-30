@@ -1119,31 +1119,45 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * `true` if the per-channel unread count is tracked locally for this channel, i.e. local unread count tracking
+     * is enabled and read events are disabled server-side.
+     */
+    private val isReadTrackedLocally: Boolean
+        get() = isLocalUnreadCountEnabled && !channelConfig.value.readEventsEnabled
+
+    /**
      * Increments the current user's unread count for a newly received message. Creates the read
      * state on-the-fly when local tracking is enabled and none exists yet (read-events-disabled
      * channels omit it).
+     *
+     * The updated read is upserted directly, bypassing the merge in [updateReads] which is reserved
+     * for server data - the outdated event check in [updateCurrentUserRead] already guarantees this
+     * update is the most recent one.
      */
     private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
-        if (currentRead != null) {
-            updateRead(
-                currentRead.copy(
-                    lastReceivedEventDate = eventReceivedDate,
-                    unreadMessages = currentRead.unreadMessages.inc(),
-                ),
+        val updatedRead = if (currentRead != null) {
+            currentRead.copy(
+                lastReceivedEventDate = eventReceivedDate,
+                unreadMessages = currentRead.unreadMessages.inc(),
             )
-        } else if (isLocalUnreadCountEnabled && !channelConfig.value.readEventsEnabled) {
+        } else if (isReadTrackedLocally) {
             currentUser.value?.let { user ->
-                updateRead(
-                    ChannelUserRead(
-                        user = user,
-                        lastReceivedEventDate = eventReceivedDate,
-                        unreadMessages = 1,
-                        // Only the count is tracked locally; lastRead/lastReadMessageId are left unset
-                        // because there is no server read to anchor the unread separator to.
-                        lastRead = Date(0),
-                        lastReadMessageId = null,
-                    ),
+                ChannelUserRead(
+                    user = user,
+                    lastReceivedEventDate = eventReceivedDate,
+                    unreadMessages = 1,
+                    // Only the count is tracked locally; lastRead/lastReadMessageId are left unset
+                    // because there is no server read to anchor the unread separator to.
+                    lastRead = Date(0),
+                    lastReadMessageId = null,
                 )
+            }
+        } else {
+            null
+        }
+        updatedRead?.let { newRead ->
+            _reads.update { current ->
+                current + (newRead.getUserId() to newRead)
             }
         }
     }
@@ -1663,6 +1677,24 @@ internal class ChannelStateImpl(
         localRead: ChannelUserRead,
         serverRead: ChannelUserRead,
     ): ChannelUserRead {
+        if (isReadTrackedLocally) {
+            // The unread count is tracked locally for this channel (read events are disabled server-side),
+            // so the server data must never overwrite the locally tracked read state. Note that a recency
+            // check is not enough: server reads carry lastReceivedEventDate = last_message_at, which ties
+            // with the local value anchored to the same message. Only the user info and the delivered
+            // fields are merged from the server.
+            logger.d {
+                "[updateReads] Read state is tracked locally, preserving: " +
+                    "local.lastRead=${localRead.lastRead}, " +
+                    "local.unreadMessages=${localRead.unreadMessages}, " +
+                    "server.unreadMessages=${serverRead.unreadMessages}"
+            }
+            return localRead.copy(
+                user = serverRead.user,
+                lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
+                lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
+            )
+        }
         return if (localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)) {
             // Local state is more recent, preserve it but merge other fields from server
             logger.d {
