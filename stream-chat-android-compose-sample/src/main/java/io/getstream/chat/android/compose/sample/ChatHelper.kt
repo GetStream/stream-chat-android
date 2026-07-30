@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EventType
@@ -83,7 +84,10 @@ object ChatHelper {
             },
         )
 
-        val chatClientConfig = ChatClientConfig(userPresence = true)
+        val chatClientConfig = ChatClientConfig(
+            userPresence = true,
+            isLocalUnreadCountEnabled = context.customSettings().isLocalUnreadCountEnabled,
+        )
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
