@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
+import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.PollOptionInput
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -186,33 +186,33 @@ internal object PollDtoTestData {
         extraData = emptyMap(),
     )
 
-    // UpstreamOptionDto Test Data
+    // PollOptionInput Test Data
 
     @Language("JSON")
-    val upstreamOptionJson =
+    val pollOptionInputJson =
         """{
           "text": "option",
           "customKey1": "customValue1",
           "customKey2": 42.0
         }""".withoutWhitespace()
 
-    val upstreamOption = UpstreamOptionDto(
+    val pollOptionInput = PollOptionInput(
         text = "option",
-        extraData = mapOf(
+        custom = mapOf(
             "customKey1" to "customValue1",
             "customKey2" to 42.0, // JSON numbers are parsed as Double
         ),
     )
 
     @Language("JSON")
-    val upstreamOptionJsonWithoutExtraData =
+    val pollOptionInputJsonWithoutExtraData =
         """{
           "text": "option"
         }""".withoutWhitespace()
 
-    val upstreamOptionWithoutExtraData = UpstreamOptionDto(
+    val pollOptionInputWithoutExtraData = PollOptionInput(
         text = "option",
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 
     // CreatePollRequest Test Data
@@ -220,36 +220,36 @@ internal object PollDtoTestData {
     @Language("JSON")
     val createPollRequestJson =
         """{
+          "name": "poll",
           "allow_answers": true,
           "allow_user_suggested_options": false,
           "description": "description",
           "enforce_unique_vote": true,
           "max_votes_allowed": 1,
-          "name": "poll",
+          "voting_visibility": "public",
           "options": [
             {
               "text": "option"
             }
           ],
-          "voting_visibility": "public",
           "customRequestKey": "customRequestValue"
         }""".withoutWhitespace()
 
     val createPollRequest = CreatePollRequest(
-        allow_answers = true,
-        allow_user_suggested_options = false,
-        description = "description",
-        enforce_unique_vote = true,
-        max_votes_allowed = 1,
         name = "poll",
+        allowAnswers = true,
+        allowUserSuggestedOptions = false,
+        description = "description",
+        enforceUniqueVote = true,
+        maxVotesAllowed = 1,
+        votingVisibility = CreatePollRequest.VotingVisibility.Public,
         options = listOf(
-            UpstreamOptionDto(
+            PollOptionInput(
                 text = "option",
-                extraData = emptyMap(),
+                custom = emptyMap(),
             ),
         ),
-        voting_visibility = "public",
-        extraData = mapOf(
+        custom = mapOf(
             "customRequestKey" to "customRequestValue",
         ),
     )
@@ -257,25 +257,25 @@ internal object PollDtoTestData {
     @Language("JSON")
     val createPollRequestJsonWithoutExtraData =
         """{
+          "name": "poll",
           "allow_answers": false,
           "allow_user_suggested_options": false,
           "description": "",
           "enforce_unique_vote": false,
           "max_votes_allowed": 1,
-          "name": "poll",
-          "options": [],
-          "voting_visibility": "public"
+          "voting_visibility": "public",
+          "options": []
         }""".withoutWhitespace()
 
     val createPollRequestWithoutExtraData = CreatePollRequest(
-        allow_answers = false,
-        allow_user_suggested_options = false,
-        description = "",
-        enforce_unique_vote = false,
-        max_votes_allowed = 1,
         name = "poll",
+        allowAnswers = false,
+        allowUserSuggestedOptions = false,
+        description = "",
+        enforceUniqueVote = false,
+        maxVotesAllowed = 1,
+        votingVisibility = CreatePollRequest.VotingVisibility.Public,
         options = emptyList(),
-        voting_visibility = "public",
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 }

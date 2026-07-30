@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter
@@ -44,15 +45,20 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpdatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.UpstreamOptionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
@@ -84,7 +90,19 @@ internal class MoshiChatParser(
             .add(DownstreamPollDtoAdapter)
             .add(DownstreamPollOptionDtoAdapter)
             .add(CreatePollRequestAdapter)
-            .add(UpstreamOptionDtoAdapter)
+            .add(UpdatePollRequestAdapter)
+            .add(CreatePollOptionRequestAdapter)
+            .add(UpdatePollOptionRequestAdapter)
+            .add(PollOptionInputAdapter)
+            .add(PollOptionRequestAdapter)
+            .add(
+                CreatePollRequest.VotingVisibility::class.java,
+                CreatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
+            )
+            .add(
+                UpdatePollRequest.VotingVisibility::class.java,
+                UpdatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
+            )
             .build()
     }
 
