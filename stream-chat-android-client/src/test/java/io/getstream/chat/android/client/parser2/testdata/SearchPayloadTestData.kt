@@ -38,8 +38,7 @@ internal object SearchPayloadTestData {
           "sort": [
             {
               "direction": -1,
-              "field": "created_at",
-              "type": "message"
+              "field": "created_at"
             }
           ],
           "message_filter_conditions": {
@@ -65,7 +64,6 @@ internal object SearchPayloadTestData {
             SortParamRequest(
                 direction = -1,
                 field = "created_at",
-                type = "message",
             ),
         ),
         messageFilterConditions = mapOf("text" to "hello"),
