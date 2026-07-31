@@ -1067,66 +1067,51 @@ internal class ChannelStateImpl(
      * @param message The new message that triggered the event.
      */
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
-        // Skip update if the message was already processed
-        val isProcessed = processedMessageIds[message.id] == true
-        if (isProcessed) {
+        if (processedMessageIds[message.id] == true) {
+            logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): already processed" }
             return
         }
-        // Skip update if the channel is muted
-        val isMuted = muted.value
-        if (isMuted) {
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for thread replies not shown in channel
-        val isThreadReplyNotInChannel = message.parentId != null && !message.showInChannel
-        if (isThreadReplyNotInChannel) {
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages from current user
-        val isFromCurrentUser = message.user.id == currentUser.value?.id
-        if (isFromCurrentUser) {
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages from muted users
-        val isFromMutedUser = mutedUsers.value.any { it.target?.id == message.user.id }
-        if (isFromMutedUser) {
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages from shadow banned users
-        if (message.shadowed) {
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for silent messages
-        if (message.silent) {
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages the user has already read. The read dates only advance
-        // with server-confirmed values, so a replayed event for a message older than the
-        // last read must not count again.
         val currentRead = read.value
-        if (currentRead != null && !message.getCreatedAtOrDefault(Date()).after(currentRead.lastRead)) {
+        val skipReason = unreadCountSkipReason(currentRead, message)
+        if (skipReason != null) {
+            logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): $skipReason" }
             processedMessageIds.put(message.id, true)
             return
         }
-        // Update the unread count. Replays are excluded by processedMessageIds and the
-        // last read date; the event clock must not gate the count, because a queued event
-        // can legitimately carry an older date than an already processed one. The clock
-        // only moves forward, so an out of order event cannot regress it.
+        // The event clock must not gate the count, because a queued event can legitimately
+        // carry an older date than an already processed one. The clock only moves forward,
+        // so an out of order event cannot regress it.
         currentRead?.let {
+            val unreadMessages = it.unreadMessages.inc()
+            logger.d { "[updateCurrentUserRead] counted msgId(${message.id}); unreadMessages: $unreadMessages" }
             updateRead(
                 it.copy(
                     lastReceivedEventDate = maxOf(it.lastReceivedEventDate, eventReceivedDate),
-                    unreadMessages = it.unreadMessages.inc(),
+                    unreadMessages = unreadMessages,
                 ),
             )
-        }
+        } ?: logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): no read state for the current user" }
         processedMessageIds.put(message.id, true)
+    }
+
+    /**
+     * Why [message] does not increment the current user's unread count, or `null` when it does.
+     *
+     * The returned reason is logged, so a wrong count can be traced to the exact condition that
+     * suppressed it.
+     */
+    private fun unreadCountSkipReason(currentRead: ChannelUserRead?, message: Message): String? = when {
+        muted.value -> "channel is muted"
+        message.parentId != null && !message.showInChannel -> "thread reply not shown in channel"
+        message.user.id == currentUser.value?.id -> "own message"
+        mutedUsers.value.any { it.target?.id == message.user.id } -> "author is muted"
+        message.shadowed -> "message is shadowed"
+        message.silent -> "message is silent"
+        // The read dates only advance with server-confirmed values, so a replayed event for a
+        // message older than the last read must not count again.
+        currentRead != null && !message.getCreatedAtOrDefault(Date()).after(currentRead.lastRead) ->
+            "already read: createdAt(${message.createdAt}) <= lastRead(${currentRead.lastRead})"
+        else -> null
     }
 
     /**
