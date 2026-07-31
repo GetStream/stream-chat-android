@@ -136,8 +136,8 @@ internal class ChannelLogicImpl(
                 state.setMemberCount(channel.memberCount)
                 state.upsertMembers(channel.members)
                 state.upsertWatchers(channel.watchers, channel.watcherCount)
-                // Update config. Must happen before updating the reads: the read merge checks
-                // the config to protect locally tracked reads from being overwritten.
+                // The config must be set before the reads: the read merge checks it to protect
+                // locally tracked reads.
                 state.setChannelConfig(channel.config)
                 // Update reads
                 state.updateReads(channel.read)
@@ -250,18 +250,12 @@ internal class ChannelLogicImpl(
     override fun markRead(): MarkReadResult {
         val result = state.markRead()
         if (result == MarkReadResult.HandledLocally) {
-            // Local mark-read only mutates in-memory state; persist the reset read so the on-device
-            // unread count survives a restart.
             persistCurrentReads()
         }
         return result
     }
 
-    /**
-     * Persists the current in-memory reads to the database. Used by the on-device unread tracking
-     * path, where the read state is not backed by a server response. Writes through
-     * [ChannelRepository.upsertChannelReads], which bypasses the repository's server-data merge.
-     */
+    /** Persists the in-memory reads so the locally tracked unread count survives a restart. */
     private fun persistCurrentReads() {
         val reads = state.reads.value
         if (reads.isEmpty()) return
@@ -313,8 +307,8 @@ internal class ChannelLogicImpl(
         state.setMemberCount(channel.memberCount)
         state.upsertMembers(channel.members)
         state.upsertWatchers(channel.watchers, channel.watcherCount)
-        // Update channel config. Must happen before updating the reads: the read merge checks
-        // the config to protect locally tracked reads from being overwritten.
+        // The config must be set before the reads: the read merge checks it to protect
+        // locally tracked reads.
         state.setChannelConfig(channel.config)
         // Update reads
         state.updateReads(channel.read)

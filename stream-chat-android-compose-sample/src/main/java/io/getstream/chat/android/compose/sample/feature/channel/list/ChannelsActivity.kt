@@ -107,24 +107,10 @@ class ChannelsActivity : ComponentActivity() {
     private val settings by lazy { customSettings() }
 
     /**
-     * When the local unread count is enabled ([CustomSettings.isLocalUnreadCountEnabled]), an explicit
-     * filter including livestream channels is used, to make the feature testable: livestream channels
-     * have read events disabled server-side. Otherwise, the predefined server-side filter is used,
-     * which has the following specs:
-     *
-     * **Filter:**
-     * ```
-     * Filters.and(
-     *     Filters.eq("type", "messaging"),
-     *     Filters.`in`("members", listOf(currentUserId)),
-     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
-     * )
-     * ```
-     *
-     * **Sort:**
-     * ```
-     * QuerySortByField<Channel>().desc("pinned_at").desc("last_updated")
-     * ```
+     * When the local unread count is enabled, an explicit filter including livestream channels is used,
+     * to make the feature testable. Otherwise, the predefined server-side filter is used, which resolves
+     * to: messaging channels the current user is a member of, without a draft, sorted by "pinned_at" and
+     * "last_updated" descending.
      */
     private val channelsViewModelFactory by lazy {
         val chatClient = ChatClient.instance()

@@ -82,10 +82,6 @@ internal class ChannelStateLogic(
     private val logger by taggedLogger(TAG)
     private val processedMessageIds = LruCache<String, Boolean>(CACHE_SIZE)
 
-    /**
-     * `true` if the per-channel unread count is tracked locally for this channel, i.e. local unread count tracking
-     * is enabled and read events are disabled server-side.
-     */
     private val isReadTrackedLocally: Boolean
         get() = mutableState.isLocalUnreadCountEnabled && !mutableState.channelConfig.value.readEventsEnabled
 
@@ -235,15 +231,14 @@ internal class ChannelStateLogic(
         serverRead: ChannelUserRead,
     ): ChannelUserRead {
         if (isReadTrackedLocally) {
-            // The unread count is tracked locally for this channel (read events are disabled server-side),
-            // so the server data must never overwrite the locally tracked read state. Note that a recency
-            // check is not enough: server reads carry lastReceivedEventDate = last_message_at, which ties
-            // with the local value anchored to the same message. Only the user info and the delivered
-            // fields are merged from the server.
-            logger.d {
-                "[updateReads] preserving locally tracked read, " +
-                    "local.unreadMessages=${localRead.unreadMessages}, " +
-                    "server.unreadMessages=${serverRead.unreadMessages}"
+            // Locally tracked reads must never be overwritten by server data. A recency check is not
+            // enough: server reads carry lastReceivedEventDate = last_message_at, tying the local value.
+            if (localRead.unreadMessages != serverRead.unreadMessages) {
+                logger.d {
+                    "[updateReads] preserving locally tracked read, " +
+                        "local.unreadMessages=${localRead.unreadMessages}, " +
+                        "server.unreadMessages=${serverRead.unreadMessages}"
+                }
             }
             return localRead.copy(
                 user = serverRead.user,
@@ -671,8 +666,8 @@ internal class ChannelStateLogic(
 
         mutableState.setMembersCount(channel.memberCount)
 
-        // The config must be set before updating the reads: the read merge checks the config
-        // to protect locally tracked reads from being overwritten.
+        // The config must be set before the reads: the read merge checks it to protect
+        // locally tracked reads.
         mutableState.setChannelConfig(channel.config)
 
         updateReads(channel.read)
@@ -918,9 +913,8 @@ internal class ChannelStateLogic(
         if (isProcessed) {
             return
         }
-        // Skip update if the message is already part of the channel state: it was already counted, or
-        // was loaded from the local database or a channel query (e.g. an event replayed by the sync
-        // after a restart, when the in-memory processed cache is empty)
+        // Skip messages already in the channel state - e.g. a sync-replayed event after a restart,
+        // when the in-memory processed cache is empty
         if (mutableState.getMessageById(message.id) != null) {
             processedMessageIds.put(message.id, true)
             return
@@ -970,15 +964,7 @@ internal class ChannelStateLogic(
         processedMessageIds.put(message.id, true)
     }
 
-    /**
-     * Increments the current user's unread count for a newly received message. Creates the read
-     * state on-the-fly when local tracking is enabled and none exists yet (read-events-disabled
-     * channels omit it).
-     *
-     * The updated read is upserted directly, bypassing the merge in [updateReads] which is reserved
-     * for server data - the outdated event check in [updateCurrentUserRead] already guarantees this
-     * update is the most recent one.
-     */
+    /** The incremented read is upserted directly: the merge in [updateReads] is for server data. */
     private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
         val updatedRead = if (currentRead != null) {
             currentRead.copy(
@@ -991,8 +977,7 @@ internal class ChannelStateLogic(
                     user = user,
                     lastReceivedEventDate = eventReceivedDate,
                     unreadMessages = 1,
-                    // Only the count is tracked locally; lastRead/lastReadMessageId are left unset
-                    // because there is no server read to anchor the unread separator to.
+                    // lastRead/lastReadMessageId are unset: there is no server read to anchor them to.
                     lastRead = Date(0),
                     lastReadMessageId = null,
                 )

@@ -55,12 +55,6 @@ internal class DatabaseChannelRepository(
     private val logger by taggedLogger("Chat:ChannelRepository")
     private val channelCache = LruCache<String, Channel>(cacheSize)
     private val dbMutex = Mutex()
-
-    /**
-     * Guards the read-merge-cache sequences of [insertChannels] and [upsertChannelReads]: without
-     * it, concurrent writers (e.g. a channel list refresh racing a local mark-read persist) could
-     * interleave and put an outdated merge result into the cache.
-     */
     private val cacheMutex = Mutex()
 
     override suspend fun insertChannel(channel: Channel) {
@@ -94,14 +88,9 @@ internal class DatabaseChannelRepository(
     }
 
     /**
-     * For channels with server-side read events disabled the per-channel unread count is tracked
-     * on-device, so a server payload must never overwrite the stored current user read. Note that
-     * a recency check is not enough: server reads carry lastReceivedEventDate = last_message_at,
-     * which ties with the locally tracked value anchored to the same message. The locally tracked
-     * reads reach the database through [upsertChannelReads], which bypasses this merge, so every
-     * [insertChannels] write for these channels' reads is server-sourced by construction. For
-     * other users' reads a recency check is applied. Falls back to the persisted row on a cache
-     * miss (e.g. after a process restart).
+     * Keeps the stored current user read of read-events-disabled channels: it is tracked on-device and
+     * must never be overwritten by server data (a recency check is not enough - server reads carry
+     * lastReceivedEventDate = last_message_at, tying it). Other users' reads are merged by recency.
      */
     private suspend fun Channel.preserveLocallyTrackedReads(): Channel {
         val storedReads = channelCache[cid]?.read
@@ -128,12 +117,8 @@ internal class DatabaseChannelRepository(
     }
 
     /**
-     * Upserts the given [reads] into the stored channel, replacing the stored reads of the same
-     * users and keeping the rest. The write is applied verbatim (no merge against the stored read
-     * state): the caller is the source of truth for these reads. The cache merge runs under
-     * [cacheMutex] so concurrent [insertChannels] merges cannot interleave with it, and the DAO
-     * writes re-read the cache at write time, so the persisted row converges to the latest merged
-     * state regardless of the order in which the writes land.
+     * The cache merge runs under [cacheMutex] and the DAO writes re-read the cache, so the persisted
+     * row converges to the latest merged state regardless of write order.
      */
     override suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
         if (reads.isEmpty()) return

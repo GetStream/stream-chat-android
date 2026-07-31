@@ -157,20 +157,10 @@ public interface ChannelRepository {
     public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
 
     /**
-     * Upserts the given [reads] into the stored channel, replacing the stored reads of the same
-     * users and keeping the rest.
-     *
-     * Used by the local unread count tracking (`ChatClientConfig.isLocalUnreadCountEnabled`) to
-     * persist reads that are not backed by a server response, for channels with server-side read
-     * events disabled. Unlike [insertChannel], the write is applied verbatim - it is not merged
-     * against the stored read state, because the caller (the in-memory channel state) is the
-     * source of truth for these reads.
-     *
-     * The default implementation is a no-op: custom [ChannelRepository] implementations must
-     * override it for the locally tracked unread count to survive across app restarts.
-     *
-     * @param cid The full channel id of the channel to update, ie messaging:123.
-     * @param reads The reads to upsert.
+     * Upserts the given [reads] into the channel stored with the given [cid] (ie messaging:123),
+     * replacing the stored reads of the same users. Used by the local unread count tracking: unlike
+     * [insertChannel], the write is applied verbatim - the caller is the source of truth.
+     * The default no-op must be overridden for the locally tracked count to survive app restarts.
      */
     public suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
         // no-op by default

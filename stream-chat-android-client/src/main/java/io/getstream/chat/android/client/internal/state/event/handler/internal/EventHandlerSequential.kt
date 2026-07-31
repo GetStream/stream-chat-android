@@ -976,13 +976,8 @@ internal class EventHandlerSequential(
     }
 
     /**
-     * For channels with server-side read events disabled, the per-channel unread count is tracked
-     * on-device in the channel state. This persists the current in-memory reads of the channels
-     * affected by new-message events, so the count survives a restart. The write goes through
-     * [RepositoryFacade.upsertChannelReads], which bypasses the repository's server-data merge;
-     * it runs after the batch has stored the server data, and the two writes are serialized by
-     * the repository's internal mutex. No-op when local unread count tracking is disabled, and
-     * for regular channels or channels that are not currently active in state.
+     * Persists the in-memory reads of the locally tracked channels affected by new-message events, so
+     * the on-device unread count survives a restart. Runs after the batch stored the server data.
      */
     private suspend fun persistLocallyTrackedReads(events: List<ChatEvent>) {
         if (!isLocalUnreadCountEnabled) return

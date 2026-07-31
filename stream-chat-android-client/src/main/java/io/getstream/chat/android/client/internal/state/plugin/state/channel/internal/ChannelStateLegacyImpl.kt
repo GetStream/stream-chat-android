@@ -592,13 +592,8 @@ internal class ChannelStateLegacyImpl(
     }
 
     /**
-     * Marks the channel as read for the current user.
-     *
-     * When the channel has server-side read events disabled, the unread count is either reset
-     * on-device ([MarkReadResult.HandledLocally]) if local tracking is enabled, or the request is ignored
-     * ([MarkReadResult.NotNeeded]). Otherwise the channel is marked as read remotely
-     * ([MarkReadResult.RemoteRequired]) when there are unread messages, or left untouched
-     * ([MarkReadResult.NotNeeded]) when it is already up to date.
+     * Marks the channel as read for the current user and returns how the request was handled:
+     * remotely, on-device (read events disabled + local tracking enabled), or not at all.
      */
     fun markChannelAsRead(): MarkReadResult {
         if (!channelConfig.value.readEventsEnabled) {
@@ -629,9 +624,8 @@ internal class ChannelStateLegacyImpl(
     }
 
     /**
-     * Resets the current user's unread count on-device by advancing the read state to the latest
-     * message without a network request. Local tracking sets [ChannelUserRead.lastReadMessageId]
-     * itself, unlike the remote path which waits for the server to confirm it.
+     * Resets the current user's unread count on-device, advancing the read state (including
+     * [ChannelUserRead.lastReadMessageId], which the remote path leaves to the server).
      */
     private fun markReadLocally() {
         val currentUserRead = read.value ?: return
