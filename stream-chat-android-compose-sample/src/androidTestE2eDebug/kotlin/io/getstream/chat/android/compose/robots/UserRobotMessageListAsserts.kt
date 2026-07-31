@@ -24,6 +24,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.pages.MessageListPage
 import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
+import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -540,5 +541,30 @@ fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
         assertFalse(Composer.linkPreviewTitle.isDisplayed())
         assertFalse(Composer.linkPreviewDescription.isDisplayed())
     }
+    return this
+}
+
+fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
+    assertVisibility(MessageListPage.FlagMessageDialog.body, isDisplayed)
+    return this
+}
+
+/**
+ * Asserts the mute option the message menu offers for the message author. The sample has no muted
+ * users list, so the option label is the only place the mute state is visible.
+ */
+fun UserRobot.assertMuteMessageAuthorOption(isAuthorMuted: Boolean): UserRobot {
+    val expectedOption = if (isAuthorMuted) ContextMenu.unmuteUser else ContextMenu.muteUser
+    assertTrue(expectedOption.waitDisplayed())
+    return this
+}
+
+/**
+ * Asserts the block option the message menu offers for the message author. The sample has no
+ * blocked users list, so the option label is the only place the block state is visible.
+ */
+fun UserRobot.assertBlockMessageAuthorOption(isAuthorBlocked: Boolean): UserRobot {
+    val expectedOption = if (isAuthorBlocked) ContextMenu.unblock else ContextMenu.block
+    assertTrue(expectedOption.waitDisplayed())
     return this
 }

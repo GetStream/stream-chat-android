@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
+import io.getstream.chat.android.compose.pages.ChannelInfoPage
 import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.LoginPage
 import io.getstream.chat.android.compose.pages.MessageListPage
@@ -25,6 +26,7 @@ import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
+import io.getstream.chat.android.compose.pages.ThreadListPage
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -57,8 +59,15 @@ class UserRobot {
         return this
     }
 
-    fun logout(): UserRobot {
+    /** Opens the navigation drawer, which the channel list header avatar reveals. */
+    fun openNavigationDrawer(): UserRobot {
         ChannelListPage.Header.userAvatar.waitToAppearAndClick()
+        return this
+    }
+
+    fun openReminders(): UserRobot {
+        openNavigationDrawer()
+        ChannelListPage.NavigationDrawer.reminders.waitToAppearAndClick()
         return this
     }
 
@@ -189,6 +198,41 @@ class UserRobot {
     fun markMessageAsUnread(text: String): UserRobot {
         openContextMenu(text)
         ContextMenu.markAsUnread.waitToAppearAndClick()
+        return this
+    }
+
+    fun flagMessage(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.flag.waitToAppearAndClick()
+        return this
+    }
+
+    fun confirmFlagMessage(): UserRobot {
+        ContextMenu.ok.waitToAppearAndClick()
+        return this
+    }
+
+    fun muteMessageAuthor(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.muteUser.waitToAppearAndClick()
+        return this
+    }
+
+    fun unmuteMessageAuthor(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.unmuteUser.waitToAppearAndClick()
+        return this
+    }
+
+    fun blockMessageAuthor(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.block.waitToAppearAndClick()
+        return this
+    }
+
+    fun unblockMessageAuthor(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.unblock.waitToAppearAndClick()
         return this
     }
 
@@ -381,8 +425,66 @@ class UserRobot {
         return this
     }
 
+    fun tapOnMuteSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.mute.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnUnmuteSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.unmute.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnLeaveGroup(): UserRobot {
+        ChannelListPage.ChannelMenu.leaveGroup.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnDeleteGroup(): UserRobot {
+        ChannelListPage.ChannelMenu.deleteGroup.waitToAppearAndClick()
+        return this
+    }
+
+    fun confirmChannelAction(): UserRobot {
+        ChannelListPage.ChannelMenu.confirmButton.waitToAppearAndClick()
+        return this
+    }
+
     fun tapOnViewChannelInfo(): UserRobot {
         ChannelListPage.ChannelMenu.viewInfo.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnPinnedMessagesOption(): UserRobot {
+        ChannelInfoPage.pinnedMessagesOption.waitToAppearAndClick()
+        return this
+    }
+
+    fun openThreadList(): UserRobot {
+        ThreadListPage.threadsTab.waitToAppearAndClick()
+        return this
+    }
+
+    /**
+     * Taps the first thread of the thread list. The rows carry no test tag of their own, so the tap
+     * lands on the parent message preview inside the row, which the row handles.
+     */
+    fun openThreadFromThreadList(): UserRobot {
+        ThreadListPage.parentMessagePreview.waitToAppearAndClick()
+        return this
+    }
+
+    fun searchForMessage(text: String): UserRobot {
+        ChannelListPage.Header.searchField.waitToAppear().typeText(text)
+        return this
+    }
+
+    /**
+     * Taps the first search result. The result rows carry no test tag of their own, so the tap
+     * lands on the message preview inside the row, which the row handles.
+     */
+    fun tapOnSearchResult(): UserRobot {
+        ChannelListPage.ChannelList.Channel.messagePreview.waitToAppearAndClick()
         return this
     }
 
