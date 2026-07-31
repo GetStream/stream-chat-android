@@ -1068,6 +1068,19 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Replaces the read state of [read]'s user with no arbitration against the local one.
+     *
+     * For read states the server reports explicitly, where the reported position and count are
+     * the truth even when the position moves backwards, as a mark unread does. [updateReads]
+     * cannot be used for those, because it protects the local count against stale payloads.
+     */
+    fun replaceRead(read: ChannelUserRead) {
+        val previous = _reads.value[read.getUserId()]?.unreadMessages
+        logger.d { "[replaceRead] cid: $cid; unreadMessages: $previous -> ${read.unreadMessages}" }
+        _reads.update { current -> current + (read.getUserId() to read) }
+    }
+
+    /**
      * Updates the reads state for the current user based on a received event.
      * Handles `message.new` and `notification.message_new` events.
      *
@@ -1622,8 +1635,12 @@ internal class ChannelStateImpl(
     ): ChannelUserRead {
         // The read position is the only thing an incoming read can tell us that the local state
         // does not already know: the count between two read positions is maintained locally, one
-        // increment per new message event. So the incoming count is taken only when it comes with
-        // a newer read position, which is what happens when the channel is read elsewhere. Note
+        // increment per new message event. So the incoming count is taken only when the position
+        // moved forward, which is what happens when the channel is read elsewhere. At the same or
+        // an earlier position the incoming count may be stale, as with the channel list's own copy
+        // of the channel, so the local count is kept. A mark unread moves the position backwards on
+        // purpose and its count is authoritative, which is why it is applied by [replaceRead]
+        // instead of going through this arbitration. Note
         // that lastReceivedEventDate cannot be used to decide this: the server does not send it,
         // it is synthesised while mapping, so comparing it against a locally advanced clock is
         // meaningless and lets a stale snapshot (for example the channel list's own copy of the

@@ -1025,12 +1025,15 @@ internal class ChannelEventHandlerImplTest {
     }
 
     @Test
-    fun `When NotificationMarkUnreadEvent is handled, Then read is updated`() {
+    fun `When NotificationMarkUnreadEvent is handled, Then the read is replaced`() {
+        // Replaced rather than merged: a mark unread moves the read position backwards on purpose,
+        // and updateRead would keep the local count instead of the one the server reported.
         val event = randomNotificationMarkUnreadEvent(cid = cid)
 
         handler.handle(event)
 
-        verify(state).updateRead(event.toChannelUserRead())
+        verify(state).replaceRead(event.toChannelUserRead())
+        verify(state, never()).updateRead(any())
     }
 
     @Test
