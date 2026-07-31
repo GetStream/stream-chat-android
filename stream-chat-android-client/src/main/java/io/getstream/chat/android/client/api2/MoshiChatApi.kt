@@ -60,13 +60,10 @@ import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -159,9 +156,11 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
@@ -171,6 +170,7 @@ import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
@@ -327,7 +327,7 @@ constructor(
                 filter = filter.toMap(),
                 limit = limit,
                 next = next,
-                sort = sort.toDto(),
+                sort = sort.toSortParams(),
             ),
         ).mapDomain { response ->
             QueryDraftsResult(
@@ -1704,16 +1704,16 @@ constructor(
         val lazyQueryThreads = {
             threadsApi.queryThreads(
                 connectionId,
-                io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                io.getstream.chat.android.network.models.QueryThreadsRequest(
                     filter = query.filter?.toMap(),
-                    sort = query.sort.toDto(),
+                    sort = query.sort.toSortParams(),
                     watch = query.watch,
                     limit = query.limit,
-                    member_limit = query.memberLimit,
+                    memberLimit = query.memberLimit,
                     next = query.next,
-                    participant_limit = query.participantLimit,
+                    participantLimit = query.participantLimit,
                     prev = query.prev,
-                    reply_limit = query.replyLimit,
+                    replyLimit = query.replyLimit,
                 ),
             ).mapDomain { response ->
                 QueryThreadsResult(
@@ -1765,7 +1765,7 @@ constructor(
     override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<ThreadInfo> {
         return threadsApi.partialUpdateThread(
             messageId = messageId,
-            body = PartialUpdateThreadRequest(
+            body = UpdateThreadPartialRequest(
                 set = set,
                 unset = unset,
             ),
@@ -1960,7 +1960,7 @@ constructor(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toSortParams(),
         )
         return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
     }
