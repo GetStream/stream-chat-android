@@ -40,12 +40,23 @@ internal class ToSortParamsTest {
         fun arguments(): List<Arguments> = listOf(
             // Custom sorter emitting a type: field, direction and type are all forwarded.
             Arguments.of(
-                FakeSorter(mapOf("field" to "created_at", "direction" to -1, "type" to "number")),
+                FakeSorter(
+                    mapOf(
+                        QuerySorter.KEY_FIELD_NAME to "created_at",
+                        QuerySorter.KEY_DIRECTION to -1,
+                        QuerySorter.KEY_TYPE to "number",
+                    ),
+                ),
                 listOf(SortParamRequest(field = "created_at", direction = -1, type = "number")),
             ),
             // Custom sorter without a type: type stays null.
             Arguments.of(
-                FakeSorter(mapOf("field" to "created_at", "direction" to 1)),
+                FakeSorter(
+                    mapOf(
+                        QuerySorter.KEY_FIELD_NAME to "created_at",
+                        QuerySorter.KEY_DIRECTION to 1,
+                    ),
+                ),
                 listOf(SortParamRequest(field = "created_at", direction = 1, type = null)),
             ),
             // Built-in sorter: only field and direction, no type.
