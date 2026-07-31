@@ -472,6 +472,36 @@ internal class EventHandlerSequentialTest {
     }
 
     @Test
+    fun `When local unread tracking is enabled, a notification new message event persists the locally tracked reads`() =
+        runTest {
+            val channelType = "livestream"
+            val channelId = "local-unread"
+            val cid = "$channelType:$channelId"
+            val repos: RepositoryFacade = mock()
+            repos.stub {
+                onBlocking { selectChannel(cid) } doReturn
+                    randomChannel(id = channelId, type = channelType, ownCapabilities = emptySet())
+                onBlocking { selectChannels(any()) } doReturn emptyList()
+                onBlocking { selectMessages(any()) } doReturn emptyList()
+                onBlocking { selectThreads(any()) } doReturn emptyList()
+            }
+            val localReads = listOf(
+                io.getstream.chat.android.randomChannelUserRead(user = currentUser, unreadMessages = 3),
+            )
+            val handler = Fixture()
+                .withRepositoryFacade(repos)
+                .withLocalUnreadCountEnabled()
+                .withLocallyTrackedChannel(channelType, channelId, localReads)
+                .get(this)
+
+            handler.handleEvents(
+                randomNotificationMessageNewEvent(cid = cid, channelType = channelType, channelId = channelId),
+            )
+
+            verify(repos).upsertChannelReads(cid, localReads)
+        }
+
+    @Test
     fun `When buffer overflows with DROP_OLDEST, the oldest queued NewMessageEvent is dropped`() = runTest {
         val fixture = Fixture()
             .withBufferConfig(

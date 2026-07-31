@@ -68,10 +68,15 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
+        val storedReadsByCid = channels
+            .filterNot { it.config.readEventsEnabled || channelCache[it.cid] != null }
+            .associate { it.cid to channelDao.select(it.cid)?.reads?.values?.map { read -> read.toModel(getUser) } }
         val channelsToInsert = cacheMutex.withLock {
             val updatedChannels = channels
                 .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
-                .map { if (it.config.readEventsEnabled) it else it.preserveLocallyTrackedReads() }
+                .map {
+                    if (it.config.readEventsEnabled) it else it.preserveLocallyTrackedReads(storedReadsByCid[it.cid])
+                }
             updatedChannels
                 .filter { channelCache[it.cid] != it }
                 .also { cacheChannel(updatedChannels) }
@@ -91,11 +96,12 @@ internal class DatabaseChannelRepository(
      * Keeps the stored current user read of read-events-disabled channels: it is tracked on-device and
      * must never be overwritten by server data (a recency check is not enough - server reads carry
      * lastReceivedEventDate = last_message_at, tying it). Other users' reads are merged by recency.
+     *
+     * [preloadedStoredReads] is the persisted read state fetched before acquiring the lock; the cache
+     * still takes priority when populated.
      */
-    private suspend fun Channel.preserveLocallyTrackedReads(): Channel {
-        val storedReads = channelCache[cid]?.read
-            ?: channelDao.select(cid)?.reads?.values?.map { it.toModel(getUser) }
-            ?: return this
+    private fun Channel.preserveLocallyTrackedReads(preloadedStoredReads: List<ChannelUserRead>?): Channel {
+        val storedReads = channelCache[cid]?.read ?: preloadedStoredReads ?: return this
         if (storedReads.isEmpty()) return this
         val mergedByUser = read.associateByTo(mutableMapOf(), ChannelUserRead::getUserId)
         storedReads.forEach { stored ->
@@ -122,10 +128,13 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
         if (reads.isEmpty()) return
+        // Resolve the stored channel before the lock so no DB read runs while cacheMutex is held.
+        val stored = selectChannel(cid) ?: return
         val updatedChannel = cacheMutex.withLock {
-            val stored = selectChannel(cid) ?: return
-            stored
-                .copy(read = (reads + stored.read).distinctBy(ChannelUserRead::getUserId))
+            // The cache takes priority in case it was updated between the read above and the lock.
+            val base = channelCache[cid] ?: stored
+            base
+                .copy(read = (reads + base.read).distinctBy(ChannelUserRead::getUserId))
                 .syncUnreadCountWithReads()
                 .also { cacheChannel(it) }
         }
