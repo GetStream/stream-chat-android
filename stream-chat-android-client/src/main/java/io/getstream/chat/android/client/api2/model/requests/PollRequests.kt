@@ -94,15 +94,3 @@ internal data class UpstreamOptionDto(
     val text: String,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-/**
- * Used for updating a poll.
- *
- * @property set the fields to set.
- * @property unset the fields to unset.
- */
-@JsonClass(generateAdapter = true)
-internal data class PartialUpdatePollRequest(
-    val set: Map<String, Any> = emptyMap(),
-    val unset: List<String> = emptyList(),
-)
