@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.ChannelInfoPage
 import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.LoginPage
@@ -37,7 +36,6 @@ import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
-import io.getstream.chat.android.e2e.test.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.uiautomator.sleep
 import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
 import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
@@ -203,24 +201,6 @@ class UserRobot {
         return this
     }
 
-    /**
-     * Opens the message menu of the message with [text], reopening it while [option] is missing.
-     * The menu builds its options when it opens and keeps them while it stays open, so an option
-     * that flips because of a moderation action shows up only on a later open.
-     */
-    internal fun openContextMenuWithOption(text: String, option: BySelector): UserRobot {
-        repeat(contextMenuOpenAttempts) { attempt ->
-            openContextMenu(text)
-            if (option.waitDisplayed(timeOutMillis = 5.seconds)) {
-                return this
-            }
-            if (attempt < contextMenuOpenAttempts - 1) {
-                pressBack()
-            }
-        }
-        return this
-    }
-
     fun flagMessage(text: String): UserRobot {
         openContextMenu(text)
         ContextMenu.flag.waitToAppearAndClick()
@@ -229,30 +209,6 @@ class UserRobot {
 
     fun confirmFlagMessage(): UserRobot {
         ContextMenu.ok.waitToAppearAndClick()
-        return this
-    }
-
-    fun muteMessageAuthor(text: String): UserRobot {
-        openContextMenu(text)
-        ContextMenu.muteUser.waitToAppearAndClick()
-        return this
-    }
-
-    fun unmuteMessageAuthor(text: String): UserRobot {
-        openContextMenuWithOption(text, ContextMenu.unmuteUser)
-        ContextMenu.unmuteUser.waitToAppearAndClick()
-        return this
-    }
-
-    fun blockMessageAuthor(text: String): UserRobot {
-        openContextMenu(text)
-        ContextMenu.block.waitToAppearAndClick()
-        return this
-    }
-
-    fun unblockMessageAuthor(text: String): UserRobot {
-        openContextMenuWithOption(text, ContextMenu.unblock)
-        ContextMenu.unblock.waitToAppearAndClick()
         return this
     }
 
@@ -442,16 +398,6 @@ class UserRobot {
 
     fun tapOnMoreSwipeAction(): UserRobot {
         ChannelListPage.ChannelList.SwipeActions.more.waitToAppearAndClick()
-        return this
-    }
-
-    fun tapOnMuteSwipeAction(): UserRobot {
-        ChannelListPage.ChannelList.SwipeActions.mute.waitToAppearAndClick()
-        return this
-    }
-
-    fun tapOnUnmuteSwipeAction(): UserRobot {
-        ChannelListPage.ChannelList.SwipeActions.unmute.waitToAppearAndClick()
         return this
     }
 
@@ -652,5 +598,3 @@ class UserRobot {
         return this
     }
 }
-
-private const val contextMenuOpenAttempts = 3
