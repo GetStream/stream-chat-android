@@ -1106,17 +1106,22 @@ internal class ChannelStateImpl(
             processedMessageIds.put(message.id, true)
             return
         }
-        // Skip update if the event is outdated
+        // Skip update for messages the user has already read. The read dates only advance
+        // with server-confirmed values, so a replayed event for a message older than the
+        // last read must not count again.
         val currentRead = read.value
-        if (currentRead != null && currentRead.lastReceivedEventDate.after(eventReceivedDate)) {
+        if (currentRead != null && !message.getCreatedAtOrDefault(Date()).after(currentRead.lastRead)) {
             processedMessageIds.put(message.id, true)
             return
         }
-        // Update the unread count
+        // Update the unread count. Replays are excluded by processedMessageIds and the
+        // last read date; the event clock must not gate the count, because a queued event
+        // can legitimately carry an older date than an already processed one. The clock
+        // only moves forward, so an out of order event cannot regress it.
         currentRead?.let {
             updateRead(
                 it.copy(
-                    lastReceivedEventDate = eventReceivedDate,
+                    lastReceivedEventDate = maxOf(it.lastReceivedEventDate, eventReceivedDate),
                     unreadMessages = it.unreadMessages.inc(),
                 ),
             )
@@ -1149,12 +1154,11 @@ internal class ChannelStateImpl(
             return true
         }
         return if (lastMessage.id != currentUserRead.lastReadMessageId) {
-            // The last message is different from the last read message, we can mark the channel as read
-            val updatedRead = currentUserRead.copy(
-                lastReceivedEventDate = lastMessage.getCreatedAtOrDefault(Date()),
-                lastRead = lastMessage.getCreatedAtOrDefault(Date()),
-                unreadMessages = 0,
-            )
+            // Zero the count optimistically, but leave the read dates untouched: they stay
+            // anchored to what the server confirmed, and the server's own message.read echo
+            // advances them. Stamping them with the newest loaded message's date here made
+            // messages that were still queued behind this call count as already seen.
+            val updatedRead = currentUserRead.copy(unreadMessages = 0)
             _reads.update { current ->
                 current + (updatedRead.getUserId() to updatedRead)
             }
