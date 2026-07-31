@@ -97,7 +97,7 @@ internal class DatabaseChannelRepository(
             ?: channelDao.select(cid)?.reads?.values?.map { it.toModel(getUser) }
             ?: return this
         if (storedReads.isEmpty()) return this
-        val mergedByUser = read.associateBy(ChannelUserRead::getUserId).toMutableMap()
+        val mergedByUser = read.associateByTo(mutableMapOf(), ChannelUserRead::getUserId)
         storedReads.forEach { stored ->
             val incoming = mergedByUser[stored.getUserId()]
             mergedByUser[stored.getUserId()] = when {

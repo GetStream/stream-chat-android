@@ -190,8 +190,7 @@ internal class QueryChannelsStateLogic(
         // For read-events-disabled channels the locally tracked read is authoritative over the raw
         // payload set above, so re-derive those channels from the merged per-channel state.
         validated
-            .filter { (_, channel) -> !channel.config.readEventsEnabled }
-            .map { (id, _) -> id.cid }
+            .mapNotNull { (id, channel) -> id.cid.takeUnless { channel.config.readEventsEnabled } }
             .takeIf { it.isNotEmpty() }
             ?.let(::refreshChannels)
     }
