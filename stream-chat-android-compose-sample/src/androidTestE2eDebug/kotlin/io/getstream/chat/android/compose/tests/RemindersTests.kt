@@ -22,6 +22,7 @@ import io.getstream.chat.android.compose.robots.assertRemindersAreEmpty
 import io.getstream.chat.android.compose.robots.assertRemindersScreen
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 /**
@@ -34,6 +35,7 @@ class RemindersTests : StreamTestCase() {
     private val sampleText = "Test"
     private val oneHourInSeconds = 3600
 
+    @AllureId("11574")
     @Test
     fun test_remindersScreenIsEmpty_whenUserHasNoReminders() {
         step("GIVEN user logs in") {
@@ -49,6 +51,7 @@ class RemindersTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11562")
     @Test
     fun test_reminderSavedForLaterIsShownOnTheRemindersScreen() {
         step("GIVEN user opens the channel") {
@@ -72,6 +75,7 @@ class RemindersTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11571")
     @Test
     fun test_scheduledReminderIsShownOnTheRemindersScreen() {
         step("GIVEN user opens the channel") {

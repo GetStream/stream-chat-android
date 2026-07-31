@@ -550,21 +550,25 @@ fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
 }
 
 /**
- * Asserts the mute option the message menu offers for the message author. The sample has no muted
- * users list, so the option label is the only place the mute state is visible.
+ * Opens the message menu of the message with [messageText] and asserts the mute option it offers
+ * for the author. The sample has no muted users list, so the option label is the only place the
+ * mute state is visible.
  */
-fun UserRobot.assertMuteMessageAuthorOption(isAuthorMuted: Boolean): UserRobot {
+fun UserRobot.assertMuteMessageAuthorOption(messageText: String, isAuthorMuted: Boolean): UserRobot {
     val expectedOption = if (isAuthorMuted) ContextMenu.unmuteUser else ContextMenu.muteUser
-    assertTrue(expectedOption.waitDisplayed())
+    openContextMenuWithOption(messageText, expectedOption)
+    assertTrue(expectedOption.isDisplayed())
     return this
 }
 
 /**
- * Asserts the block option the message menu offers for the message author. The sample has no
- * blocked users list, so the option label is the only place the block state is visible.
+ * Opens the message menu of the message with [messageText] and asserts the block option it offers
+ * for the author. The sample has no blocked users list, so the option label is the only place the
+ * block state is visible.
  */
-fun UserRobot.assertBlockMessageAuthorOption(isAuthorBlocked: Boolean): UserRobot {
+fun UserRobot.assertBlockMessageAuthorOption(messageText: String, isAuthorBlocked: Boolean): UserRobot {
     val expectedOption = if (isAuthorBlocked) ContextMenu.unblock else ContextMenu.block
-    assertTrue(expectedOption.waitDisplayed())
+    openContextMenuWithOption(messageText, expectedOption)
+    assertTrue(expectedOption.isDisplayed())
     return this
 }

@@ -34,6 +34,7 @@ class ModerationTests : StreamTestCase() {
     override fun initTestActivity() = InitTestActivity.UserLogin
     private val sampleText = "Test"
 
+    @AllureId("11572")
     @Test
     fun test_userFlagsMessage() {
         step("GIVEN user opens the channel") {
@@ -58,6 +59,7 @@ class ModerationTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11563")
     @Test
     fun test_userMutesMessageAuthor() {
         step("GIVEN user opens the channel") {
@@ -70,12 +72,11 @@ class ModerationTests : StreamTestCase() {
             userRobot.muteMessageAuthor(sampleText)
         }
         step("THEN the message menu offers to unmute the author") {
-            userRobot
-                .openContextMenu(sampleText)
-                .assertMuteMessageAuthorOption(isAuthorMuted = true)
+            userRobot.assertMuteMessageAuthorOption(sampleText, isAuthorMuted = true)
         }
     }
 
+    @AllureId("11566")
     @Test
     fun test_userUnmutesMessageAuthor() {
         step("GIVEN user opens the channel") {
@@ -91,9 +92,7 @@ class ModerationTests : StreamTestCase() {
             userRobot.unmuteMessageAuthor(sampleText)
         }
         step("THEN the message menu offers to mute the author again") {
-            userRobot
-                .openContextMenu(sampleText)
-                .assertMuteMessageAuthorOption(isAuthorMuted = false)
+            userRobot.assertMuteMessageAuthorOption(sampleText, isAuthorMuted = false)
         }
     }
 
@@ -110,12 +109,11 @@ class ModerationTests : StreamTestCase() {
             userRobot.blockMessageAuthor(sampleText)
         }
         step("THEN the message menu offers to unblock the author") {
-            userRobot
-                .openContextMenu(sampleText)
-                .assertBlockMessageAuthorOption(isAuthorBlocked = true)
+            userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = true)
         }
     }
 
+    @AllureId("11575")
     @Test
     fun test_userUnblocksMessageAuthor() {
         step("GIVEN user opens the channel") {
@@ -131,9 +129,7 @@ class ModerationTests : StreamTestCase() {
             userRobot.unblockMessageAuthor(sampleText)
         }
         step("THEN the message menu offers to block the author again") {
-            userRobot
-                .openContextMenu(sampleText)
-                .assertBlockMessageAuthorOption(isAuthorBlocked = false)
+            userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = false)
         }
     }
 }

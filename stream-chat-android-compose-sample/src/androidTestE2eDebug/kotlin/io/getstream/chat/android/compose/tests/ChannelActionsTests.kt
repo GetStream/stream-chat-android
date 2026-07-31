@@ -74,6 +74,7 @@ class ChannelActionsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11569")
     @Test
     fun test_userLeavesGroupChannel() {
         step("GIVEN user logs in") {
@@ -92,6 +93,7 @@ class ChannelActionsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11573")
     @Test
     fun test_userDeletesGroupChannel() {
         step("GIVEN user logs in") {
@@ -110,6 +112,7 @@ class ChannelActionsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11560")
     @Test
     fun test_userMutesChannelFromTheSwipeAction() {
         step("GIVEN user logs in") {
@@ -125,6 +128,7 @@ class ChannelActionsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11567")
     @Test
     fun test_userUnmutesChannelFromTheSwipeAction() {
         step("GIVEN user logs in") {

@@ -51,6 +51,7 @@ class SearchTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11561")
     @Test
     fun test_userOpensMessageFromSearchResults() {
         step("GIVEN user opens the channel") {

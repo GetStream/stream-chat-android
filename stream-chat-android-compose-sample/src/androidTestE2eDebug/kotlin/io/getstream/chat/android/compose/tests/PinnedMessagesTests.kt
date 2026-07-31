@@ -90,6 +90,7 @@ class PinnedMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11568")
     @Test
     fun test_pinnedMessageIsShownOnThePinnedMessagesScreen() {
         step("GIVEN user opens the channel") {
@@ -115,6 +116,7 @@ class PinnedMessagesTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11565")
     @Test
     fun test_unpinnedMessageIsNotShownOnThePinnedMessagesScreen() {
         step("GIVEN user opens the channel") {

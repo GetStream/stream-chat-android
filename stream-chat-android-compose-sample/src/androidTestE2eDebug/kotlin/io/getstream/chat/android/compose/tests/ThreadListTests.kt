@@ -21,6 +21,7 @@ import io.getstream.chat.android.compose.robots.assertThreadListIsEmpty
 import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 /**
@@ -32,6 +33,7 @@ class ThreadListTests : StreamTestCase() {
     private val parentMessageText = "Test"
     private val replyText = "Reply"
 
+    @AllureId("11564")
     @Test
     fun test_threadListIsEmpty_whenChannelHasNoThreads() {
         step("GIVEN user logs in") {
@@ -45,6 +47,7 @@ class ThreadListTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11570")
     @Test
     fun test_threadIsShownOnTheThreadList() {
         step("GIVEN user opens the channel") {
@@ -69,6 +72,7 @@ class ThreadListTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11576")
     @Test
     fun test_userOpensThreadFromTheThreadList() {
         step("GIVEN user opens the channel") {
