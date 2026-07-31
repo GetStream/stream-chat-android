@@ -21,12 +21,12 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.SearchPayload
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -47,7 +47,7 @@ internal interface GeneralApi {
 
     @GET("/search")
     fun searchMessages(
-        @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest,
+        @UrlQueryPayload @Query("payload") payload: SearchPayload,
     ): RetrofitCall<SearchMessagesResponse>
 
     @GET("/members")

@@ -60,15 +60,12 @@ import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
@@ -162,6 +159,8 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
@@ -171,6 +170,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
@@ -1449,13 +1449,13 @@ constructor(
         next: String?,
         sort: QuerySorter<Message>?,
     ): Call<SearchMessagesResult> {
-        val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = channelFilter.toMap(),
-            message_filter_conditions = messageFilter.toMap(),
+        val newRequest = io.getstream.chat.android.network.models.SearchPayload(
+            filterConditions = channelFilter.toMap(),
+            messageFilterConditions = messageFilter.toMap(),
             offset = offset,
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return generalApi.searchMessages(newRequest)
             .mapDomain { response ->
@@ -1813,7 +1813,7 @@ constructor(
         ).mapDomain { it.vote.toDomain() }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
-        val request = PartialUpdatePollRequest(set, unset)
+        val request = UpdatePollPartialRequest(set = set, unset = unset)
         return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
     }
 
@@ -1854,7 +1854,7 @@ constructor(
             filter = filter?.toMap(),
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return pollsApi.queryPollVotes(pollId, request).mapDomain { it.toDomain() }
     }
@@ -1869,7 +1869,7 @@ constructor(
             filter = filter?.toMap(),
             limit = limit,
             next = next,
-            sort = sort?.toDto(),
+            sort = sort?.toSortParams(),
         )
         return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
     }

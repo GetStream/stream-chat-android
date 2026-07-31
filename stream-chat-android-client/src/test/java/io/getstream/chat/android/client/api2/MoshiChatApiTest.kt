@@ -54,13 +54,10 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
@@ -161,16 +158,20 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.VoteData
@@ -1896,13 +1897,13 @@ internal class MoshiChatApiTest {
         val next = randomString()
         val result = sut.searchMessages(channelFilter, messageFilter, offset, limit, next, sort).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = channelFilter.toMap(),
-            message_filter_conditions = messageFilter.toMap(),
+        val expectedPayload = io.getstream.chat.android.network.models.SearchPayload(
+            filterConditions = channelFilter.toMap(),
+            messageFilterConditions = messageFilter.toMap(),
             offset = offset,
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = sort.toSortParams(),
         )
         result `should be instance of` expected
         verify(api, times(1)).searchMessages(expectedPayload)
@@ -2523,7 +2524,7 @@ internal class MoshiChatApiTest {
         val unset = listOf("custom_property")
         val result = sut.partialUpdatePoll(pollId, set, unset).await()
         // then
-        val expectedRequest = PartialUpdatePollRequest(set, unset)
+        val expectedRequest = UpdatePollPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
         verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
@@ -2541,7 +2542,7 @@ internal class MoshiChatApiTest {
         val pollId = randomString()
         val result = sut.closePoll(pollId).await()
         // then
-        val expectedRequest = PartialUpdatePollRequest(set = mapOf("is_closed" to true))
+        val expectedRequest = UpdatePollPartialRequest(set = mapOf("is_closed" to true))
         result `should be instance of` expected
         verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
@@ -2744,14 +2745,14 @@ internal class MoshiChatApiTest {
         val filter = Filters.neutral()
         val limit = positiveRandomInt()
         val next = randomString()
-        val sort = QuerySortByField<Poll>()
+        val sort = QuerySortByField.descByName<Poll>("created_at")
         val result = sut.queryPolls(filter, limit, next, sort).await()
         // then
         val expectedBody = QueryPollsRequest(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryPolls(expectedBody)
@@ -2771,14 +2772,14 @@ internal class MoshiChatApiTest {
         val filter = Filters.neutral()
         val limit = positiveRandomInt()
         val next = randomString()
-        val sort = QuerySortByField<Vote>()
+        val sort = QuerySortByField.descByName<Vote>("created_at")
         val result = sut.queryPollVotes(pollId, filter, limit, next, sort).await()
         // then
         val expectedBody = QueryPollVotesRequest(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryPollVotes(pollId, expectedBody)
