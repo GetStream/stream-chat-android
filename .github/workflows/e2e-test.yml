@@ -11,6 +11,15 @@ on:
         type: string
         required: true
         default: main
+      api_level:
+        description: 'Android API level to run on'
+        type: string
+        required: false
+        default: '36'
+      test_class:
+        description: 'Fully qualified test class to run on its own. Every batch job then runs it, giving independent samples of a flaky test.'
+        type: string
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -70,7 +79,7 @@ jobs:
           - batch: 2
       fail-fast: false
     env:
-      ANDROID_API_LEVEL: 36
+      ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -90,7 +99,7 @@ jobs:
           profile: pixel
           arch : x86_64
           emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
-          script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }}
+          script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }} mock_server_branch:${{ inputs.mock_server_branch }} ${{ inputs.test_class && format('test_class:{0}', inputs.test_class) || '' }}
       - name: Allure TestOps Upload
         if: ${{ env.LAUNCH_ID != '' && (success() || failure()) }}
         run: bundle exec fastlane allure_upload
