@@ -54,11 +54,9 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -118,6 +116,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.ChatPreferences
+import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.Location
@@ -158,9 +157,11 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
@@ -172,6 +173,7 @@ import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.VoteData
@@ -316,15 +318,20 @@ internal class MoshiChatApiTest {
             .withMessageApi(api)
             .get()
         // when
-        val result = sut.queryDrafts(
-            filter = Filters.neutral(),
-            limit = positiveRandomInt(),
-            next = randomString(),
-            sort = QuerySortByField(),
-        ).await()
+        val filter = Filters.neutral()
+        val limit = positiveRandomInt()
+        val next = randomString()
+        val sort = QuerySortByField.descByName<DraftsSort>("created_at")
+        val result = sut.queryDrafts(filter, limit, next, sort).await()
         // then
+        val expectedBody = QueryDraftsRequest(
+            filter = filter.toMap(),
+            limit = limit,
+            next = next,
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
+        )
         result `should be instance of` expected
-        verify(api, times(1)).queryDrafts(any())
+        verify(api, times(1)).queryDrafts(expectedBody)
     }
 
     @ParameterizedTest
@@ -2401,11 +2408,22 @@ internal class MoshiChatApiTest {
         val userId = randomString()
         val connectionId = randomString()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val request = Mother.randomQueryThreadsRequest()
+        val request = Mother.randomQueryThreadsRequest(filter = Filters.eq("channel_cid", "messaging:123"))
         val result = sut.queryThreads(request).await()
         // then
+        val expectedBody = io.getstream.chat.android.network.models.QueryThreadsRequest(
+            filter = request.filter?.toMap(),
+            sort = request.sort.toSortParams(),
+            watch = request.watch,
+            limit = request.limit,
+            memberLimit = request.memberLimit,
+            next = request.next,
+            participantLimit = request.participantLimit,
+            prev = request.prev,
+            replyLimit = request.replyLimit,
+        )
         result `should be instance of` expected
-        verify(api, times(1)).queryThreads(eq(connectionId), any())
+        verify(api, times(1)).queryThreads(eq(connectionId), eq(expectedBody))
     }
 
     @ParameterizedTest
@@ -2445,7 +2463,7 @@ internal class MoshiChatApiTest {
         val unset = emptyList<String>()
         val result = sut.partialUpdateThread(messageId, set, unset).await()
         // then
-        val expectedBody = PartialUpdateThreadRequest(set, unset)
+        val expectedBody = UpdateThreadPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateThread(messageId, expectedBody)
     }
@@ -2853,14 +2871,14 @@ internal class MoshiChatApiTest {
         val filter = Filters.neutral()
         val limit = positiveRandomInt()
         val next = randomString()
-        val sort = QuerySortByField<MessageReminder>()
+        val sort = QuerySortByField.descByName<MessageReminder>("created_at")
         val result = sut.queryReminders(filter, limit, next, sort).await()
         // then
         val expectedBody = QueryRemindersRequest(
             filter = filter.toMap(),
             limit = limit,
             next = next,
-            sort = sort.toDto(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = -1)),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryReminders(expectedBody)

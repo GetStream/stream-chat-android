@@ -956,6 +956,7 @@ internal object Mother {
     )
 
     fun randomQueryThreadsRequest(
+        filter: FilterObject? = null,
         watch: Boolean = randomBoolean(),
         limit: Int = randomInt(),
         memberLimit: Int = randomInt(),
@@ -964,6 +965,7 @@ internal object Mother {
         prev: String? = randomString(),
         replyLimit: Int = randomInt(),
     ): QueryThreadsRequest = QueryThreadsRequest(
+        filter = filter,
         watch = watch,
         limit = limit,
         memberLimit = memberLimit,

@@ -42,6 +42,7 @@ public interface QuerySorter<T : Any> {
     public companion object {
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
+        public const val KEY_TYPE: String = "type"
         public const val MORE_ON_COMPARISON: Int = 1
         public const val EQUAL_ON_COMPARISON: Int = 0
         public const val LESS_ON_COMPARISON: Int = -1

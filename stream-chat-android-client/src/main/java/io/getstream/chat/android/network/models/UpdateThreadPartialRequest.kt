@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
+import kotlin.collections.List
+import kotlin.collections.Map
 
 /**
- * Used to form a partial message update request.
- * @see [ThreadsApi.partialUpdateMessage]
  *
- * @param set Sets new field values.
- * @param unset Array of field names to unset.
  */
-@JsonClass(generateAdapter = true)
-internal data class PartialUpdateThreadRequest(
-    val set: Map<String, Any>,
-    val unset: List<String>,
+
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateThreadPartialRequest(
+    @Json(name = "unset")
+    val unset: kotlin.collections.List<kotlin.String>? = emptyList(),
+
+    @Json(name = "set")
+    val set: kotlin.collections.Map<kotlin.String, Any?>? = emptyMap(),
 )
