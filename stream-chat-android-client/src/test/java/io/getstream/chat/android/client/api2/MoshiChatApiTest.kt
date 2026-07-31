@@ -2408,7 +2408,7 @@ internal class MoshiChatApiTest {
         val userId = randomString()
         val connectionId = randomString()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val request = Mother.randomQueryThreadsRequest()
+        val request = Mother.randomQueryThreadsRequest(filter = Filters.eq("channel_cid", "messaging:123"))
         val result = sut.queryThreads(request).await()
         // then
         val expectedBody = io.getstream.chat.android.network.models.QueryThreadsRequest(
