@@ -63,6 +63,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
 /**
@@ -167,7 +168,8 @@ internal class ChannelStateImpl(
             pending.filter { pagination.isInWindow(it) }
         }
 
-    private val logger by taggedLogger("ChannelStateImpl")
+    private val seq = seqGenerator.incrementAndGet()
+    private val logger by taggedLogger("ChannelStateImpl-$seq")
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage.asStateFlow()
 
@@ -1054,8 +1056,14 @@ internal class ChannelStateImpl(
         } else {
             reads
         }
+        val before = read.value?.unreadMessages
         _reads.update { current ->
             current + readsToUpsert.associateBy(ChannelUserRead::getUserId)
+        }
+        val after = read.value?.unreadMessages
+        if (before != after) {
+            val incoming = reads.firstOrNull { it.getUserId() == currentUser.value?.id }?.unreadMessages
+            logger.d { "[updateReads] cid: $cid; unreadMessages: $before -> $after; incoming: $incoming" }
         }
     }
 
@@ -1664,6 +1672,9 @@ internal class ChannelStateImpl(
     }
 
     private companion object {
+        /** Distinguishes instances of the same channel in the logs. */
+        private val seqGenerator = AtomicInteger()
+
         /**
          * Hard limit for cached latest messages to prevent unbounded memory growth while in search mode.
          * When the user is viewing messages around a specific message (e.g., from a deep link or search),
