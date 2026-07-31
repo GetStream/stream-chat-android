@@ -40,7 +40,6 @@ internal class ChannelStateLegacyImplLocalUnreadCountTest {
         runTest {
             val state = localTrackingState()
             state.setMessages(listOf(randomMessage(parentId = null, shadowed = false)))
-            state.setChannelConfig(randomConfig(readEventsEnabled = false))
             state.upsertReads(listOf(randomChannelUserRead(user = currentUser, unreadMessages = 3)))
             // when
             val result = state.markChannelAsRead()
@@ -53,7 +52,6 @@ internal class ChannelStateLegacyImplLocalUnreadCountTest {
     fun `markChannelAsRead is ignored when local tracking is disabled and read events are disabled`() = runTest {
         val state = localTrackingState(isLocalUnreadCountEnabled = false)
         state.setMessages(listOf(randomMessage(parentId = null, shadowed = false)))
-        state.setChannelConfig(randomConfig(readEventsEnabled = false))
         state.upsertReads(listOf(randomChannelUserRead(user = currentUser, unreadMessages = 3)))
         // when
         val result = state.markChannelAsRead()
@@ -62,7 +60,10 @@ internal class ChannelStateLegacyImplLocalUnreadCountTest {
         assertEquals(3, state.read.value?.unreadMessages)
     }
 
-    private fun localTrackingState(isLocalUnreadCountEnabled: Boolean = true) = ChannelStateLegacyImpl(
+    private fun localTrackingState(
+        isLocalUnreadCountEnabled: Boolean = true,
+        readEventsEnabled: Boolean = false,
+    ) = ChannelStateLegacyImpl(
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
         userFlow = userFlow,
@@ -71,7 +72,9 @@ internal class ChannelStateLegacyImplLocalUnreadCountTest {
         baseMessageLimit = null,
         isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         now = ::currentTime,
-    )
+    ).apply {
+        setChannelConfig(randomConfig(readEventsEnabled = readEventsEnabled))
+    }
 
     private companion object {
         @JvmField

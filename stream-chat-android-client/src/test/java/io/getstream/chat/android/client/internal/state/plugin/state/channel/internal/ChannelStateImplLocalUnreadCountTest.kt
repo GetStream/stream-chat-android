@@ -25,6 +25,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.Date
 
 /**
@@ -37,7 +40,6 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     fun `markRead resets unread count locally when local tracking is enabled and read events are disabled`() =
         runTest {
             val state = localTrackingState()
-            state.setChannelConfig(Config(readEventsEnabled = false))
             state.setMessages(listOf(createMessage(1, timestamp = 5000)))
             state.updateRead(createRead(currentUser, unreadMessages = 5, lastRead = Date(1000)))
             // when
@@ -50,7 +52,6 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     @Test
     fun `markRead is ignored when local tracking is disabled and read events are disabled`() = runTest {
         val state = localTrackingState(isLocalUnreadCountEnabled = false)
-        state.setChannelConfig(Config(readEventsEnabled = false))
         state.setMessages(listOf(createMessage(1, timestamp = 5000)))
         state.updateRead(createRead(currentUser, unreadMessages = 5, lastRead = Date(1000)))
         // when
@@ -62,8 +63,7 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
 
     @Test
     fun `markRead uses the remote path when read events are enabled even if local tracking is enabled`() = runTest {
-        val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = true))
+        val state = localTrackingState(readEventsEnabled = true)
         state.setMessages(listOf(createMessage(1, timestamp = 5000)))
         state.updateRead(
             createRead(currentUser, unreadMessages = 5, lastRead = Date(1000), lastReadMessageId = "old_id"),
@@ -79,7 +79,6 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     fun `updateCurrentUserRead creates a read state and increments when none exists for a local tracking channel`() =
         runTest {
             val state = localTrackingState()
-            state.setChannelConfig(Config(readEventsEnabled = false))
             assertNull(state.read.value)
             val message = createMessage(1, user = randomUser(id = "other_user"))
             // when
@@ -91,7 +90,6 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     @Test
     fun `updateCurrentUserRead does not create a read state for own messages on a local tracking channel`() = runTest {
         val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
         val message = createMessage(1, user = currentUser)
         // when
         state.updateCurrentUserRead(Date(2000), message)
@@ -103,7 +101,6 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     @Test
     fun `updateCurrentUserRead does not create a read state when local tracking is disabled`() = runTest {
         val state = localTrackingState(isLocalUnreadCountEnabled = false)
-        state.setChannelConfig(Config(readEventsEnabled = false))
         val message = createMessage(1, user = randomUser(id = "other_user"))
         // when
         state.updateCurrentUserRead(Date(2000), message)
@@ -112,9 +109,20 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     }
 
     @Test
+    fun `updateCurrentUserRead does not create a read state when read events are enabled`() = runTest {
+        // read events enabled server-side, so the server owns the read state
+        val state = localTrackingState(readEventsEnabled = true)
+        val message = createMessage(1, user = randomUser(id = "other_user"))
+        // when
+        state.updateCurrentUserRead(Date(2000), message)
+        // then
+        assertNull(state.read.value)
+        assertEquals(0, state.unreadCount.value)
+    }
+
+    @Test
     fun `local tracking counts only messages received after a mark read`() = runTest {
         val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
         val otherUser = randomUser(id = "other_user")
         // first message arrives -> unread = 1 (the read is updated before the message is upserted,
         // mirroring the event handling order)
@@ -138,18 +146,11 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         // the newest message already counted (and persisted) before the restart. That message is
         // already part of the state seeded from the database, so it must not be counted twice.
         val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
-        val otherUser = randomUser(id = "other_user")
-        val message = createMessage(1, timestamp = 5000, user = otherUser)
+        val message = createMessage(1, timestamp = 5000, user = randomUser(id = "other_user"))
         // Seeded from the database: the message and the read counting it
         state.setMessages(listOf(message))
         state.updateRead(
-            createRead(
-                user = currentUser,
-                unreadMessages = 1,
-                lastRead = Date(1000),
-                lastReceivedEventDate = Date(5000),
-            ),
+            createRead(currentUser, unreadMessages = 1, lastRead = Date(1000), lastReceivedEventDate = Date(5000)),
         )
         // when: the sync replays the message event
         state.updateCurrentUserRead(Date(5000), message)
@@ -157,98 +158,65 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         assertEquals(1, state.unreadCount.value)
     }
 
-    @Test
-    fun `updateCurrentUserRead does not create a read state when read events are enabled`() = runTest {
-        // read events enabled server-side, so the server owns the read state
-        val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = true))
-        val message = createMessage(1, user = randomUser(id = "other_user"))
-        // when
-        state.updateCurrentUserRead(Date(2000), message)
-        // then
-        assertNull(state.read.value)
-        assertEquals(0, state.unreadCount.value)
-    }
-
-    @Test
-    fun `updateReads preserves the locally tracked read even when the server data is more recent`() = runTest {
-        val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("updateReadsMergeInput")
+    fun `updateReads merges the server read according to the local tracking state`(
+        testName: String,
+        isLocalUnreadCountEnabled: Boolean,
+        readEventsEnabled: Boolean,
+        serverEventDate: Date,
+        expectedUnreadMessages: Int,
+    ) = runTest {
+        val state = localTrackingState(isLocalUnreadCountEnabled, readEventsEnabled)
         state.updateRead(
-            createRead(currentUser, unreadMessages = 3, lastRead = Date(1000)),
+            createRead(currentUser, unreadMessages = 3, lastRead = Date(1000), lastReceivedEventDate = Date(3000)),
         )
-        // when: the server sends a sync payload with unreadMessages = 0 and a newer event date
-        val serverRead = createRead(
-            user = currentUser,
-            unreadMessages = 0,
-            lastRead = Date(5000),
-            lastReceivedEventDate = Date(5000),
-            lastReadMessageId = "server_message_id",
-        )
-        state.updateReads(listOf(serverRead))
-        // then: the locally tracked read state must be preserved
-        val read = state.read.value
-        assertEquals(3, read?.unreadMessages)
-        assertEquals(Date(1000), read?.lastRead)
-        assertNull(read?.lastReadMessageId)
-    }
-
-    @Test
-    fun `updateReads preserves the locally tracked read on equal event dates`() = runTest {
-        // Server reads carry lastReceivedEventDate = last_message_at, which ties with the local value
-        // anchored to the same message - a recency merge would let the stale server count win here.
-        val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
-        val lastMessageDate = Date(3000)
-        state.updateRead(
-            createRead(
-                user = currentUser,
-                unreadMessages = 3,
-                lastRead = Date(1000),
-                lastReceivedEventDate = lastMessageDate,
+        // when: the server sends a read with unreadMessages = 0
+        state.updateReads(
+            listOf(
+                createRead(
+                    user = currentUser,
+                    unreadMessages = 0,
+                    lastRead = Date(1000),
+                    lastReceivedEventDate = serverEventDate,
+                ),
             ),
         )
-        // when: the server read ties on lastReceivedEventDate and carries a stale count
-        val serverRead = createRead(
-            user = currentUser,
-            unreadMessages = 0,
-            lastRead = Date(1000),
-            lastReceivedEventDate = lastMessageDate,
-        )
-        state.updateReads(listOf(serverRead))
         // then
-        assertEquals(3, state.read.value?.unreadMessages)
+        assertEquals(expectedUnreadMessages, state.read.value?.unreadMessages)
     }
 
     @Test
-    fun `updateReads merges delivered fields from the server for locally tracked reads`() = runTest {
-        val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
-        state.updateRead(
-            createRead(currentUser, unreadMessages = 3, lastRead = Date(1000)),
-        )
-        // when
-        val serverRead = createRead(
-            user = currentUser.copy(name = "Updated Name"),
-            unreadMessages = 0,
-            lastRead = Date(5000),
-            lastDeliveredAt = Date(4000),
-            lastDeliveredMessageId = "delivered_message_id",
-        )
-        state.updateReads(listOf(serverRead))
-        // then: user info and delivered fields come from the server, the rest stays local
-        val read = state.read.value
-        assertEquals(3, read?.unreadMessages)
-        assertEquals("Updated Name", read?.user?.name)
-        assertEquals(Date(4000), read?.lastDeliveredAt)
-        assertEquals("delivered_message_id", read?.lastDeliveredMessageId)
-    }
+    fun `updateReads merges only user info and delivered fields from the server for locally tracked reads`() =
+        runTest {
+            val state = localTrackingState()
+            state.updateRead(
+                createRead(currentUser, unreadMessages = 3, lastRead = Date(1000)),
+            )
+            // when
+            val serverRead = createRead(
+                user = currentUser.copy(name = "Updated Name"),
+                unreadMessages = 0,
+                lastRead = Date(5000),
+                lastReadMessageId = "server_message_id",
+                lastDeliveredAt = Date(4000),
+                lastDeliveredMessageId = "delivered_message_id",
+            )
+            state.updateReads(listOf(serverRead))
+            // then
+            val read = state.read.value
+            assertEquals(3, read?.unreadMessages)
+            assertEquals(Date(1000), read?.lastRead)
+            assertNull(read?.lastReadMessageId)
+            assertEquals("Updated Name", read?.user?.name)
+            assertEquals(Date(4000), read?.lastDeliveredAt)
+            assertEquals("delivered_message_id", read?.lastDeliveredMessageId)
+        }
 
     @Test
     fun `updateReads uses the server data when no local read exists for a locally tracked channel`() = runTest {
         // first channel load, no local read state yet
         val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
         assertNull(state.read.value)
         // when
         state.updateReads(
@@ -259,49 +227,8 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
     }
 
     @Test
-    fun `updateReads uses more recent server data when read events are enabled`() = runTest {
-        // even with the flag on, channels with read events enabled follow the server
-        val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = true))
-        state.updateRead(
-            createRead(currentUser, unreadMessages = 9, lastRead = Date(1000)),
-        )
-        // when
-        val serverRead = createRead(
-            user = currentUser,
-            unreadMessages = 1,
-            lastRead = Date(5000),
-            lastReceivedEventDate = Date(5000),
-        )
-        state.updateReads(listOf(serverRead))
-        // then
-        assertEquals(1, state.read.value?.unreadMessages)
-    }
-
-    @Test
-    fun `updateReads uses more recent server data when local tracking is disabled`() = runTest {
-        // flag off, the standard recency merge applies
-        val state = localTrackingState(isLocalUnreadCountEnabled = false)
-        state.setChannelConfig(Config(readEventsEnabled = false))
-        state.updateRead(
-            createRead(currentUser, unreadMessages = 7, lastRead = Date(1000)),
-        )
-        // when
-        val serverRead = createRead(
-            user = currentUser,
-            unreadMessages = 0,
-            lastRead = Date(5000),
-            lastReceivedEventDate = Date(5000),
-        )
-        state.updateReads(listOf(serverRead))
-        // then
-        assertEquals(0, state.read.value?.unreadMessages)
-    }
-
-    @Test
     fun `updateReads does not affect other users reads for locally tracked channels`() = runTest {
         val state = localTrackingState()
-        state.setChannelConfig(Config(readEventsEnabled = false))
         val otherUser = randomUser(id = "other_user")
         // when
         state.updateReads(
@@ -312,7 +239,10 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         assertEquals(10, otherRead?.unreadMessages)
     }
 
-    private fun localTrackingState(isLocalUnreadCountEnabled: Boolean = true) = ChannelStateImpl(
+    private fun localTrackingState(
+        isLocalUnreadCountEnabled: Boolean = true,
+        readEventsEnabled: Boolean = false,
+    ) = ChannelStateImpl(
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
         currentUser = userFlow,
@@ -321,7 +251,9 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         liveLocations = MutableStateFlow(emptyList()),
         messageLimit = null,
         isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
-    )
+    ).apply {
+        setChannelConfig(Config(readEventsEnabled = readEventsEnabled))
+    }
 
     private fun createRead(
         user: User,
@@ -340,4 +272,21 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         lastDeliveredAt = lastDeliveredAt,
         lastDeliveredMessageId = lastDeliveredMessageId,
     )
+
+    companion object {
+
+        @JvmStatic
+        fun updateReadsMergeInput() = listOf(
+            // (test name, isLocalUnreadCountEnabled, readEventsEnabled, serverEventDate, expectedUnreadMessages)
+            // Locally tracked: preserved even when the server read is more recent
+            Arguments.of("locally tracked, newer server read", true, false, Date(5000), 3),
+            // Locally tracked: preserved on tying event dates (server reads carry
+            // lastReceivedEventDate = last_message_at, which ties the local value)
+            Arguments.of("locally tracked, tying server read", true, false, Date(3000), 3),
+            // Read events enabled: the more recent server read wins
+            Arguments.of("read events enabled, newer server read", true, true, Date(5000), 0),
+            // Local tracking disabled: the standard recency merge applies
+            Arguments.of("local tracking disabled, newer server read", false, false, Date(5000), 0),
+        )
+    }
 }

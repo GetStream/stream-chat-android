@@ -30,6 +30,9 @@ import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -82,127 +85,36 @@ internal class ChannelRepositoryImplTest {
         verify(channelDao, never()).insert(any())
     }
 
-    @Test
-    fun `insertChannels preserves a newer stored read for a read-events-disabled channel`() = runTest {
-        val repo = repositoryWithUserEchoingIds()
-        val cid = "messaging:local"
-        // Stored on disk: a locally-tracked read with a recent event date and a non-zero count.
-        val stored = randomChannel(
-            id = "local",
-            type = "messaging",
-            config = randomConfig(readEventsEnabled = false),
-            read = listOf(
-                randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = Date(2000)),
-            ),
-        )
-        whenever(channelDao.select(cid)) doReturn stored.toEntity()
-        // Server sends a stale read with count 0.
-        val serverPayload = randomChannel(
-            id = "local",
-            type = "messaging",
-            config = randomConfig(readEventsEnabled = false),
-            read = listOf(
-                randomChannelUserRead(user = currentUser, unreadMessages = 0, lastReceivedEventDate = Date(1000)),
-            ),
-        )
-
-        repo.insertChannels(listOf(serverPayload))
-
-        assertEquals(5, persistedUnreadCount(cid))
-    }
-
-    @Test
-    fun `insertChannels lets the server read win for a read-events-enabled channel`() = runTest {
-        val repo = repositoryWithUserEchoingIds()
-        val cid = "messaging:regular"
-        val stored = randomChannel(
-            id = "regular",
-            type = "messaging",
-            config = randomConfig(readEventsEnabled = true),
-            read = listOf(
-                randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = Date(2000)),
-            ),
-        )
-        whenever(channelDao.select(cid)) doReturn stored.toEntity()
-        val serverPayload = randomChannel(
-            id = "regular",
-            type = "messaging",
-            config = randomConfig(readEventsEnabled = true),
-            read = listOf(
-                randomChannelUserRead(user = currentUser, unreadMessages = 0, lastReceivedEventDate = Date(1000)),
-            ),
-        )
-
-        repo.insertChannels(listOf(serverPayload))
-
-        assertEquals(0, persistedUnreadCount(cid))
-    }
-
-    @Test
-    fun `insertChannels preserves the stored current user read on tying event dates for a read-events-disabled channel`() =
-        runTest {
-            val repo = repositoryWithUserEchoingIds()
-            val cid = "messaging:local"
-            // Server reads carry lastReceivedEventDate = last_message_at, which ties with the locally
-            // tracked value anchored to the same message - a recency merge would let the stale server
-            // count win here.
-            val lastMessageDate = Date(2000)
-            val stored = randomChannel(
-                id = "local",
-                type = "messaging",
-                config = randomConfig(readEventsEnabled = false),
-                read = listOf(
-                    randomChannelUserRead(
-                        user = currentUser,
-                        unreadMessages = 5,
-                        lastReceivedEventDate = lastMessageDate,
-                    ),
-                ),
-            )
-            whenever(channelDao.select(cid)) doReturn stored.toEntity()
-            val serverPayload = randomChannel(
-                id = "local",
-                type = "messaging",
-                config = randomConfig(readEventsEnabled = false),
-                read = listOf(
-                    randomChannelUserRead(
-                        user = currentUser,
-                        unreadMessages = 0,
-                        lastReceivedEventDate = lastMessageDate,
-                    ),
-                ),
-            )
-
-            repo.insertChannels(listOf(serverPayload))
-
-            assertEquals(5, persistedUnreadCount(cid))
-        }
-
-    @Test
-    fun `insertChannels preserves the stored current user read even when the server read is more recent`() = runTest {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("currentUserReadMergeInput")
+    fun `insertChannels merges the incoming current user read according to the channel config`(
+        testName: String,
+        readEventsEnabled: Boolean,
+        storedEventDate: Date,
+        incomingEventDate: Date,
+        expectedUnreadMessages: Int,
+    ) = runTest {
         val repo = repositoryWithUserEchoingIds()
         val cid = "messaging:local"
         val stored = randomChannel(
             id = "local",
             type = "messaging",
-            config = randomConfig(readEventsEnabled = false),
+            config = randomConfig(readEventsEnabled = readEventsEnabled),
             read = listOf(
-                randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = Date(1000)),
+                randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = storedEventDate),
             ),
         )
         whenever(channelDao.select(cid)) doReturn stored.toEntity()
-        val serverPayload = randomChannel(
-            id = "local",
-            type = "messaging",
-            config = randomConfig(readEventsEnabled = false),
+        // The server sends a read with unreadMessages = 0
+        val serverPayload = stored.copy(
             read = listOf(
-                randomChannelUserRead(user = currentUser, unreadMessages = 0, lastReceivedEventDate = Date(2000)),
+                randomChannelUserRead(user = currentUser, unreadMessages = 0, lastReceivedEventDate = incomingEventDate),
             ),
         )
 
         repo.insertChannels(listOf(serverPayload))
 
-        assertEquals(5, persistedUnreadCount(cid))
+        assertEquals(expectedUnreadMessages, persistedUnreadCount(cid))
     }
 
     @Test
@@ -307,5 +219,19 @@ internal class ChannelRepositoryImplTest {
         return captor.allValues.flatten()
             .firstOrNull { it.cid == cid }
             ?.reads?.get(currentUser.id)?.unreadMessages
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun currentUserReadMergeInput() = listOf(
+            // (test name, readEventsEnabled, storedEventDate, incomingEventDate, expectedUnreadMessages)
+            // Read events disabled: the read is tracked locally and the stored value always wins
+            Arguments.of("read events disabled, older incoming read", false, Date(2000), Date(1000), 5),
+            Arguments.of("read events disabled, tying incoming read", false, Date(2000), Date(2000), 5),
+            Arguments.of("read events disabled, newer incoming read", false, Date(1000), Date(2000), 5),
+            // Read events enabled: the incoming read wins
+            Arguments.of("read events enabled, older incoming read", true, Date(2000), Date(1000), 0),
+        )
     }
 }
