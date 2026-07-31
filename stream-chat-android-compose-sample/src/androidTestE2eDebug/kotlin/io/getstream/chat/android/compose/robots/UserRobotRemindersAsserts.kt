@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.compose.robots
 
-import androidx.test.uiautomator.By
 import io.getstream.chat.android.compose.pages.RemindersPage
-import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 
 fun UserRobot.assertRemindersScreen(): UserRobot {
@@ -28,13 +28,15 @@ fun UserRobot.assertRemindersScreen(): UserRobot {
 }
 
 fun UserRobot.assertReminder(messageText: String): UserRobot {
-    assertTrue(By.text(messageText).waitDisplayed())
+    assertTrue(RemindersPage.reminder(messageText).waitDisplayed())
     return this
 }
 
 fun UserRobot.assertReminderSavedForLater(messageText: String): UserRobot {
-    assertReminder(messageText)
-    assertTrue(RemindersPage.savedForLaterStatus.isDisplayed())
+    // The status is looked up inside the row of this message, so another reminder's status
+    // cannot satisfy the assertion.
+    val reminder = RemindersPage.reminder(messageText).waitToAppear()
+    assertNotNull(reminder.findObject(RemindersPage.savedForLaterStatus))
     return this
 }
 

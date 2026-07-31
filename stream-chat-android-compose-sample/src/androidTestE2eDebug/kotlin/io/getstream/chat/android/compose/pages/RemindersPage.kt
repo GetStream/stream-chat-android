@@ -33,5 +33,9 @@ class RemindersPage {
 
         val savedForLaterStatus
             get() = By.text(appContext.getString(SampleR.string.reminders_status_save_for_later))
+
+        /** The reminder row of the message with [messageText]. */
+        fun reminder(messageText: String) =
+            By.res("Stream_MessageReminderItem").hasDescendant(By.text(messageText))
     }
 }

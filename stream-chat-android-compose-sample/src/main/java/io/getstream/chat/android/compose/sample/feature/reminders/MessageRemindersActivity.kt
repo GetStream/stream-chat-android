@@ -21,8 +21,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
+import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelActivity
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 
 /**
@@ -33,7 +33,7 @@ class MessageRemindersActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ChatTheme {
+            SampleChatTheme {
                 MessageRemindersScreen(
                     modifier = Modifier.statusBarsPadding(),
                     onReminderClick = { reminder ->
