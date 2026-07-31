@@ -53,7 +53,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
-import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
+import io.getstream.chat.android.compose.sample.feature.channel.list.sampleChannelListViewModelFactory
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.MemberRolesTrailingContent
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
@@ -86,16 +86,13 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.ComposerOptions
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -134,37 +131,8 @@ class ChatsActivity : ComponentActivity() {
 
     private val settings by lazy { customSettings() }
 
-    /**
-     * When the local unread count is enabled, an explicit filter including livestream channels is used,
-     * to make the feature testable. Otherwise, the predefined server-side filter is used, which resolves
-     * to: messaging channels the current user is a member of, without a draft, sorted by "pinned_at" and
-     * "last_updated" descending.
-     */
     private val channelListViewModelFactory by lazy {
-        val chatClient = ChatClient.instance()
-        val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        if (settings.isLocalUnreadCountEnabled) {
-            ChannelListViewModelFactory(
-                chatClient = chatClient,
-                querySort = QuerySortByField<Channel>().desc("pinned_at").desc("last_updated"),
-                filters = Filters.and(
-                    Filters.`in`("type", listOf("messaging", "livestream")),
-                    Filters.`in`("members", listOf(currentUserId)),
-                    Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
-                ),
-                chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-            )
-        } else {
-            ChannelListViewModelFactory(
-                chatClient = chatClient,
-                predefinedFilterName = "android_sample_filter",
-                filterValues = mapOf(
-                    "channel_type" to "messaging",
-                    "user_id" to currentUserId,
-                ),
-                chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-            )
-        }
+        sampleChannelListViewModelFactory(settings)
     }
 
     private val channelViewModelFactory by lazy {

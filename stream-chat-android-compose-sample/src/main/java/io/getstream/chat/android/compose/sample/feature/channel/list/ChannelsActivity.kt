@@ -87,13 +87,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.threads.ThreadsScreen
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -106,37 +103,8 @@ class ChannelsActivity : ComponentActivity() {
 
     private val settings by lazy { customSettings() }
 
-    /**
-     * When the local unread count is enabled, an explicit filter including livestream channels is used,
-     * to make the feature testable. Otherwise, the predefined server-side filter is used, which resolves
-     * to: messaging channels the current user is a member of, without a draft, sorted by "pinned_at" and
-     * "last_updated" descending.
-     */
     private val channelsViewModelFactory by lazy {
-        val chatClient = ChatClient.instance()
-        val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        if (settings.isLocalUnreadCountEnabled) {
-            ChannelListViewModelFactory(
-                chatClient = chatClient,
-                querySort = QuerySortByField<Channel>().desc("pinned_at").desc("last_updated"),
-                filters = Filters.and(
-                    Filters.`in`("type", listOf("messaging", "livestream")),
-                    Filters.`in`("members", listOf(currentUserId)),
-                    Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
-                ),
-                chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-            )
-        } else {
-            ChannelListViewModelFactory(
-                chatClient = chatClient,
-                predefinedFilterName = "android_sample_filter",
-                filterValues = mapOf(
-                    "channel_type" to "messaging",
-                    "user_id" to currentUserId,
-                ),
-                chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-            )
-        }
+        sampleChannelListViewModelFactory(settings)
     }
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
