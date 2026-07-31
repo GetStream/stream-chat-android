@@ -40,4 +40,10 @@ internal class UserRequestsAdapterTest {
         val json = parser.toJson(UserRequestsTestData.createGuestRequestWithoutCustom)
         Assertions.assertEquals(UserRequestsTestData.createGuestRequestJsonWithoutCustom, json)
     }
+
+    @Test
+    fun `Serialize UpdateUsersRequest`() {
+        val json = parser.toJson(UserRequestsTestData.updateUsersRequest)
+        Assertions.assertEquals(UserRequestsTestData.updateUsersRequestJson, json)
+    }
 }

@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpdateUsersRequest(
-    val users: Map<String, UpstreamUserDto>,
+    @Json(name = "users")
+    internal val users: Map<String, io.getstream.chat.android.network.models.UserRequest> = emptyMap(),
 )

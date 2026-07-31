@@ -69,7 +69,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
@@ -177,6 +176,7 @@ import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersRequest
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
@@ -1387,7 +1387,7 @@ constructor(
         return userApi.updateUsers(
             connectionId = connectionId,
             body = with(dtoMapping) {
-                UpdateUsersRequest(users.associateBy({ it.id }, { it.toDto() }))
+                UpdateUsersRequest(users.associateBy({ it.id }, { it.toUserRequest() }))
             },
         ).mapDomain { response ->
             response.users.values.map {
