@@ -157,10 +157,9 @@ public interface ChannelRepository {
     public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
 
     /**
-     * Upserts the given [reads] into the channel stored with the given [cid] (ie messaging:123),
-     * replacing the stored reads of the same users. Used by the local unread count tracking: unlike
-     * [insertChannel], the write is applied verbatim - the caller is the source of truth.
-     * The default no-op must be overridden for the locally tracked count to survive app restarts.
+     * Upserts the given [reads] into the channel stored with the given [cid], replacing the stored
+     * reads of the same users. The default no-op must be overridden for the locally tracked unread
+     * count to survive app restarts.
      */
     public suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
         // no-op by default
