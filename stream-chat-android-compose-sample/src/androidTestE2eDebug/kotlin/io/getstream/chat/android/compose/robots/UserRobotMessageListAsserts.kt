@@ -542,3 +542,8 @@ fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
     }
     return this
 }
+
+fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
+    assertVisibility(MessageListPage.FlagMessageDialog.body, isDisplayed)
+    return this
+}

@@ -19,6 +19,9 @@ package io.getstream.chat.android.compose.pages
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import io.getstream.chat.android.compose.R as ComposeR
+import io.getstream.chat.android.compose.sample.R as SampleR
 
 class ChannelListPage {
 
@@ -28,6 +31,13 @@ class ChannelListPage {
             val userAvatar = By.res("Stream_UserAvatar")
             val searchField = By.res("Stream_SearchInput")
             val createChannelButton = By.res("Stream_CreateChannelIcon")
+        }
+    }
+
+    class NavigationDrawer {
+
+        companion object {
+            val reminders get() = By.text(appContext.getString(SampleR.string.navigation_drawer_later))
         }
     }
 
@@ -72,6 +82,10 @@ class ChannelListPage {
             val viewInfo = By.res("Stream_ContextMenu_View info")
             val leaveGroup = By.res("Stream_ContextMenu_Leave group")
             val deleteGroup = By.res("Stream_ContextMenu_Delete Group")
+
+            // Leave and delete open a confirmation dialog whose confirm button is the generic
+            // dialog one, not the action label.
+            val confirmButton get() = By.text(appContext.getString(ComposeR.string.stream_compose_ok))
         }
     }
 }
