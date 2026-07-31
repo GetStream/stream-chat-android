@@ -982,22 +982,20 @@ internal class EventHandlerSequential(
     private suspend fun persistLocallyTrackedReads(events: List<ChatEvent>) {
         if (!isLocalUnreadCountEnabled) return
         events
-            .mapNotNull { event ->
+            .mapNotNullTo(mutableSetOf()) { event ->
                 when (event) {
-                    is NewMessageEvent -> event.cid
-                    is NotificationMessageNewEvent -> event.cid
+                    is NewMessageEvent -> ChannelId.fromCid(event.cid)
+                    is NotificationMessageNewEvent -> ChannelId.fromCid(event.cid)
                     else -> null
                 }
             }
-            .distinct()
-            .forEach { cid ->
-                val channelId = ChannelId.fromCid(cid) ?: return@forEach
+            .forEach { channelId ->
                 if (!stateRegistry.isActiveChannel(channelId)) return@forEach
                 val channelState = stateRegistry.channel(channelId)
                 if (channelState.channelConfig.value.readEventsEnabled) return@forEach
                 val stateReads = channelState.reads.value
                 if (stateReads.isEmpty()) return@forEach
-                repos.upsertChannelReads(cid = cid, reads = stateReads)
+                repos.upsertChannelReads(cid = channelId.cid, reads = stateReads)
             }
     }
 
