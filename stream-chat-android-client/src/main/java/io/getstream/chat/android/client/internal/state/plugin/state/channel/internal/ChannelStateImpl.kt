@@ -1086,19 +1086,28 @@ internal class ChannelStateImpl(
             processedMessageIds.put(message.id, true)
             return
         }
-        // The event clock must not gate the count, because a queued event can legitimately
-        // carry an older date than an already processed one. The clock only moves forward,
-        // so an out of order event cannot regress it.
-        currentRead?.let {
-            val unreadMessages = it.unreadMessages.inc()
-            logger.d { "[updateCurrentUserRead] counted msgId(${message.id}); unreadMessages: $unreadMessages" }
-            updateRead(
-                it.copy(
-                    lastReceivedEventDate = maxOf(it.lastReceivedEventDate, eventReceivedDate),
-                    unreadMessages = unreadMessages,
-                ),
-            )
-        } ?: logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): no read state for the current user" }
+        if (currentRead == null) {
+            logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): no read state for the current user" }
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Written straight into the map instead of through updateRead: this is the local count,
+        // not an incoming read, so it must not pass through the merge that arbitrates external
+        // reads, and the read-modify-write has to be atomic to survive a burst of events. The
+        // clock only moves forward, so an out of order event cannot regress it.
+        val userId = currentRead.getUserId()
+        _reads.update { current ->
+            val existing = current[userId] ?: currentRead
+            current + (
+                userId to existing.copy(
+                    lastReceivedEventDate = maxOf(existing.lastReceivedEventDate, eventReceivedDate),
+                    unreadMessages = existing.unreadMessages.inc(),
+                )
+                )
+        }
+        logger.d {
+            "[updateCurrentUserRead] counted msgId(${message.id}); unreadMessages: ${read.value?.unreadMessages}"
+        }
         processedMessageIds.put(message.id, true)
     }
 
@@ -1611,12 +1620,18 @@ internal class ChannelStateImpl(
         localRead: ChannelUserRead,
         serverRead: ChannelUserRead,
     ): ChannelUserRead {
-        return if (localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)) {
-            // Local state is more recent, preserve it but merge other fields from server
+        // The read position is the only thing an incoming read can tell us that the local state
+        // does not already know: the count between two read positions is maintained locally, one
+        // increment per new message event. So the incoming count is taken only when it comes with
+        // a newer read position, which is what happens when the channel is read elsewhere. Note
+        // that lastReceivedEventDate cannot be used to decide this: the server does not send it,
+        // it is synthesised while mapping, so comparing it against a locally advanced clock is
+        // meaningless and lets a stale snapshot (for example the channel list's own copy of the
+        // channel) overwrite a count that is correct.
+        return if (!serverRead.lastRead.after(localRead.lastRead)) {
             logger.d {
-                "[updateReads] Local read state is more recent, preserving: " +
-                    "local.lastReceivedEventDate=${localRead.lastReceivedEventDate}, " +
-                    "server.lastReceivedEventDate=${serverRead.lastReceivedEventDate}, " +
+                "[updateReads] keeping the local count: " +
+                    "local.lastRead=${localRead.lastRead}, server.lastRead=${serverRead.lastRead}, " +
                     "local.unreadMessages=${localRead.unreadMessages}, " +
                     "server.unreadMessages=${serverRead.unreadMessages}"
             }
@@ -1629,7 +1644,7 @@ internal class ChannelStateImpl(
                 // lastReceivedEventDate and unreadMessages are preserved from local (not set in copy)
             )
         } else {
-            // Server data is more recent, use it
+            // The read position moved forward, so the incoming count describes it best.
             serverRead
         }
     }
