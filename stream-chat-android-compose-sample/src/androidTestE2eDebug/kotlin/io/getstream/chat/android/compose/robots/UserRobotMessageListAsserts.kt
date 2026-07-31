@@ -338,8 +338,9 @@ fun UserRobot.assertScrollToFirstUnreadButton(unreadCount: Int? = null, isDispla
             unreadCount,
             unreadCount,
         )
-        // Comparing against the rendered count so a failure reports the actual text.
-        val countText = By.text(Pattern.compile("\\d+ unread"))
+        // Comparing against the rendered count so a failure reports the actual text. The
+        // count is the only text inside the button and carries no test tag of its own.
+        val countText = By.text(Pattern.compile(".+"))
             .hasAncestor(MessageListPage.MessageList.scrollToFirstUnreadButton)
         assertEquals(expectedText, countText.waitForText(expectedText))
     }
