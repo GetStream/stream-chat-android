@@ -2045,5 +2045,7 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
         SortParamRequest(
             field = it[QuerySorter.KEY_FIELD_NAME] as? String,
             direction = (it[QuerySorter.KEY_DIRECTION] as? Number)?.toInt(),
+            // Built-in sorters don't emit a type; forward it when a custom sorter does.
+            type = it[QuerySorter.KEY_TYPE] as? String,
         )
     }

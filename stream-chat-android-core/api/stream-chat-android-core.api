@@ -2778,6 +2778,7 @@ public abstract interface class io/getstream/chat/android/models/querysort/Query
 	public static final field EQUAL_ON_COMPARISON I
 	public static final field KEY_DIRECTION Ljava/lang/String;
 	public static final field KEY_FIELD_NAME Ljava/lang/String;
+	public static final field KEY_TYPE Ljava/lang/String;
 	public static final field LESS_ON_COMPARISON I
 	public static final field MORE_ON_COMPARISON I
 	public abstract fun getComparator ()Ljava/util/Comparator;
@@ -2790,6 +2791,7 @@ public final class io/getstream/chat/android/models/querysort/QuerySorter$Compan
 	public static final field EQUAL_ON_COMPARISON I
 	public static final field KEY_DIRECTION Ljava/lang/String;
 	public static final field KEY_FIELD_NAME Ljava/lang/String;
+	public static final field KEY_TYPE Ljava/lang/String;
 	public static final field LESS_ON_COMPARISON I
 	public static final field MORE_ON_COMPARISON I
 }
