@@ -107,6 +107,23 @@ public class BackendRobot(
         return this
     }
 
+    /**
+     * Creates a reminder for the last message of the currently open channel on the server side.
+     * The app under test has no way to create a reminder, so tests seed it here.
+     *
+     * @param remindAtSeconds How far in the future the reminder is due, in seconds. Pass `null`
+     * for a reminder that is saved for later, which has no due date.
+     */
+    public fun createReminder(remindAtSeconds: Int? = null): BackendRobot {
+        val endpoint = if (remindAtSeconds == null) {
+            "create_reminder"
+        } else {
+            "create_reminder?remind_at=$remindAtSeconds"
+        }
+        mockServer.postRequest(endpoint)
+        return this
+    }
+
     public fun revokeToken(duration: Int = 5) {
         waitForMockServerToStart()
         mockServer.postRequest("jwt/revoke_token?duration=$duration")

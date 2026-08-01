@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
+import io.getstream.chat.android.compose.pages.ChannelInfoPage
+import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelMenu
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
@@ -29,7 +31,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import io.getstream.chat.android.compose.R as ComposeR
-import io.getstream.chat.android.ui.common.R as UiCommonR
 
 fun UserRobot.assertChannelAvatar(): UserRobot {
     assertTrue(Channel.avatar.isDisplayed())
@@ -56,10 +57,8 @@ fun UserRobot.assertChannelActionsSheetForGroupChannel(): UserRobot {
 }
 
 fun UserRobot.assertGroupChannelInfoScreen(): UserRobot {
-    assertTrue(By.text(appContext.getString(UiCommonR.string.stream_ui_channel_info_group_title)).waitDisplayed())
-    assertTrue(
-        By.text(appContext.getString(UiCommonR.string.stream_ui_channel_info_option_pinned_messages)).isDisplayed(),
-    )
+    assertTrue(ChannelInfoPage.groupTitle.waitDisplayed())
+    assertTrue(ChannelInfoPage.pinnedMessagesOption.isDisplayed())
     return this
 }
 
@@ -78,6 +77,11 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
 
 fun UserRobot.assertFailedMessageDeliveryStatusInPreview(): UserRobot {
     assertTrue(Channel.deliveryStatusIsFailed.waitDisplayed())
+    return this
+}
+
+fun UserRobot.assertChannelListIsEmpty(): UserRobot {
+    assertFalse(ChannelList.channels.waitToDisappear().isDisplayed())
     return this
 }
 

@@ -39,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -79,6 +80,7 @@ fun AppBottomBar(
                 selectedIcon = ComposeR.drawable.stream_design_ic_message_bubble_fill,
                 unselectedIcon = ComposeR.drawable.stream_design_ic_message_bubble,
                 text = R.string.app_bottom_bar_chats,
+                modifier = Modifier.testTag("Stream_BottomBarChatsTab"),
                 isSelected = selectedOption == AppBottomBarOption.CHATS,
                 onClick = { onOptionSelected(AppBottomBarOption.CHATS) },
                 decorationBadge = if (unreadChannelsCount > 0) {
@@ -91,6 +93,7 @@ fun AppBottomBar(
                 selectedIcon = ComposeR.drawable.stream_design_ic_thread_fill,
                 unselectedIcon = ComposeR.drawable.stream_design_ic_thread,
                 text = R.string.app_bottom_bar_threads,
+                modifier = Modifier.testTag("Stream_BottomBarThreadsTab"),
                 isSelected = selectedOption == AppBottomBarOption.THREADS,
                 onClick = { onOptionSelected(AppBottomBarOption.THREADS) },
                 decorationBadge = if (unreadThreadsCount > 0) {
@@ -118,13 +121,14 @@ private fun AppBottomBarOptionTile(
     @StringRes text: Int,
     isSelected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     decorationBadge: (@Composable () -> Unit)? = null,
 ) {
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) ChatTheme.colors.textPrimary else ChatTheme.colors.textTertiary,
     )
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(CircleShape)
             .clickable(
                 indication = ripple(),

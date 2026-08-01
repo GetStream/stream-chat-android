@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelActionsSheetForGroupChannel
+import io.getstream.chat.android.compose.robots.assertChannelListIsEmpty
 import io.getstream.chat.android.compose.robots.assertGroupChannelInfoScreen
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
@@ -69,6 +70,44 @@ class ChannelActionsTests : StreamTestCase() {
         }
         step("THEN the group channel info screen is shown") {
             userRobot.assertGroupChannelInfoScreen()
+        }
+    }
+
+    @AllureId("11569")
+    @Test
+    fun test_userLeavesGroupChannel() {
+        step("GIVEN user logs in") {
+            userRobot.login().waitForChannelListToLoad()
+        }
+        step("AND user long presses the channel") {
+            userRobot.openChannelMenu()
+        }
+        step("WHEN user leaves the group") {
+            userRobot
+                .tapOnLeaveGroup()
+                .confirmChannelAction()
+        }
+        step("THEN the channel is gone from the channel list") {
+            userRobot.assertChannelListIsEmpty()
+        }
+    }
+
+    @AllureId("11573")
+    @Test
+    fun test_userDeletesGroupChannel() {
+        step("GIVEN user logs in") {
+            userRobot.login().waitForChannelListToLoad()
+        }
+        step("AND user long presses the channel") {
+            userRobot.openChannelMenu()
+        }
+        step("WHEN user deletes the group") {
+            userRobot
+                .tapOnDeleteGroup()
+                .confirmChannelAction()
+        }
+        step("THEN the channel is gone from the channel list") {
+            userRobot.assertChannelListIsEmpty()
         }
     }
 }
