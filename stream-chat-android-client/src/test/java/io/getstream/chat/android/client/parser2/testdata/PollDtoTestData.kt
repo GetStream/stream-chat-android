@@ -18,8 +18,12 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
+import io.getstream.chat.android.network.models.CreatePollOptionRequest
+import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.PollOptionInput
+import io.getstream.chat.android.network.models.PollOptionRequest
+import io.getstream.chat.android.network.models.UpdatePollOptionRequest
+import io.getstream.chat.android.network.models.UpdatePollRequest
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -186,33 +190,33 @@ internal object PollDtoTestData {
         extraData = emptyMap(),
     )
 
-    // UpstreamOptionDto Test Data
+    // PollOptionInput Test Data
 
     @Language("JSON")
-    val upstreamOptionJson =
+    val pollOptionInputJson =
         """{
           "text": "option",
           "customKey1": "customValue1",
           "customKey2": 42.0
         }""".withoutWhitespace()
 
-    val upstreamOption = UpstreamOptionDto(
+    val pollOptionInput = PollOptionInput(
         text = "option",
-        extraData = mapOf(
+        custom = mapOf(
             "customKey1" to "customValue1",
             "customKey2" to 42.0, // JSON numbers are parsed as Double
         ),
     )
 
     @Language("JSON")
-    val upstreamOptionJsonWithoutExtraData =
+    val pollOptionInputJsonWithoutExtraData =
         """{
           "text": "option"
         }""".withoutWhitespace()
 
-    val upstreamOptionWithoutExtraData = UpstreamOptionDto(
+    val pollOptionInputWithoutExtraData = PollOptionInput(
         text = "option",
-        extraData = emptyMap(),
+        custom = emptyMap(),
     )
 
     // CreatePollRequest Test Data
@@ -220,36 +224,36 @@ internal object PollDtoTestData {
     @Language("JSON")
     val createPollRequestJson =
         """{
+          "name": "poll",
           "allow_answers": true,
           "allow_user_suggested_options": false,
           "description": "description",
           "enforce_unique_vote": true,
           "max_votes_allowed": 1,
-          "name": "poll",
+          "voting_visibility": "public",
           "options": [
             {
               "text": "option"
             }
           ],
-          "voting_visibility": "public",
           "customRequestKey": "customRequestValue"
         }""".withoutWhitespace()
 
     val createPollRequest = CreatePollRequest(
-        allow_answers = true,
-        allow_user_suggested_options = false,
-        description = "description",
-        enforce_unique_vote = true,
-        max_votes_allowed = 1,
         name = "poll",
+        allowAnswers = true,
+        allowUserSuggestedOptions = false,
+        description = "description",
+        enforceUniqueVote = true,
+        maxVotesAllowed = 1,
+        votingVisibility = CreatePollRequest.VotingVisibility.Public,
         options = listOf(
-            UpstreamOptionDto(
+            PollOptionInput(
                 text = "option",
-                extraData = emptyMap(),
+                custom = emptyMap(),
             ),
         ),
-        voting_visibility = "public",
-        extraData = mapOf(
+        custom = mapOf(
             "customRequestKey" to "customRequestValue",
         ),
     )
@@ -257,25 +261,156 @@ internal object PollDtoTestData {
     @Language("JSON")
     val createPollRequestJsonWithoutExtraData =
         """{
+          "name": "poll",
           "allow_answers": false,
           "allow_user_suggested_options": false,
           "description": "",
           "enforce_unique_vote": false,
           "max_votes_allowed": 1,
-          "name": "poll",
-          "options": [],
-          "voting_visibility": "public"
+          "voting_visibility": "public",
+          "options": []
         }""".withoutWhitespace()
 
     val createPollRequestWithoutExtraData = CreatePollRequest(
-        allow_answers = false,
-        allow_user_suggested_options = false,
-        description = "",
-        enforce_unique_vote = false,
-        max_votes_allowed = 1,
         name = "poll",
+        allowAnswers = false,
+        allowUserSuggestedOptions = false,
+        description = "",
+        enforceUniqueVote = false,
+        maxVotesAllowed = 1,
+        votingVisibility = CreatePollRequest.VotingVisibility.Public,
         options = emptyList(),
-        voting_visibility = "public",
-        extraData = emptyMap(),
+        custom = emptyMap(),
+    )
+
+    // UpdatePollRequest Test Data
+
+    @Language("JSON")
+    val updatePollRequestJson =
+        """{
+          "id": "poll1",
+          "name": "poll",
+          "voting_visibility": "public",
+          "options": [
+            {
+              "id": "option1",
+              "text": "option"
+            }
+          ],
+          "customRequestKey": "customRequestValue"
+        }""".withoutWhitespace()
+
+    val updatePollRequest = UpdatePollRequest(
+        id = "poll1",
+        name = "poll",
+        votingVisibility = UpdatePollRequest.VotingVisibility.Public,
+        options = listOf(
+            PollOptionRequest(
+                id = "option1",
+                text = "option",
+                custom = emptyMap(),
+            ),
+        ),
+        custom = mapOf("customRequestKey" to "customRequestValue"),
+    )
+
+    @Language("JSON")
+    val updatePollRequestJsonWithoutExtraData =
+        """{
+          "id": "poll2",
+          "name": "poll",
+          "voting_visibility": "public",
+          "options": []
+        }""".withoutWhitespace()
+
+    val updatePollRequestWithoutExtraData = UpdatePollRequest(
+        id = "poll2",
+        name = "poll",
+        votingVisibility = UpdatePollRequest.VotingVisibility.Public,
+        options = emptyList(),
+        custom = emptyMap(),
+    )
+
+    // PollOptionRequest Test Data
+
+    @Language("JSON")
+    val pollOptionRequestJson =
+        """{
+          "id": "option1",
+          "text": "option",
+          "customKey": "customValue"
+        }""".withoutWhitespace()
+
+    val pollOptionRequest = PollOptionRequest(
+        id = "option1",
+        text = "option",
+        custom = mapOf("customKey" to "customValue"),
+    )
+
+    @Language("JSON")
+    val pollOptionRequestJsonWithoutExtraData =
+        """{
+          "id": "option2",
+          "text": "option"
+        }""".withoutWhitespace()
+
+    val pollOptionRequestWithoutExtraData = PollOptionRequest(
+        id = "option2",
+        text = "option",
+        custom = emptyMap(),
+    )
+
+    // CreatePollOptionRequest Test Data
+
+    @Language("JSON")
+    val createPollOptionRequestJson =
+        """{
+          "text": "option",
+          "customKey": "customValue"
+        }""".withoutWhitespace()
+
+    val createPollOptionRequest = CreatePollOptionRequest(
+        text = "option",
+        custom = mapOf("customKey" to "customValue"),
+    )
+
+    @Language("JSON")
+    val createPollOptionRequestJsonWithoutExtraData =
+        """{
+          "text": "option"
+        }""".withoutWhitespace()
+
+    val createPollOptionRequestWithoutExtraData = CreatePollOptionRequest(
+        text = "option",
+        custom = emptyMap(),
+    )
+
+    // UpdatePollOptionRequest Test Data
+
+    @Language("JSON")
+    val updatePollOptionRequestJson =
+        """{
+          "id": "option1",
+          "text": "option",
+          "customKey": "customValue"
+        }""".withoutWhitespace()
+
+    val updatePollOptionRequest = UpdatePollOptionRequest(
+        id = "option1",
+        text = "option",
+        custom = mapOf("customKey" to "customValue"),
+    )
+
+    @Language("JSON")
+    val updatePollOptionRequestJsonWithoutExtraData =
+        """{
+          "id": "option2",
+          "text": "option"
+        }""".withoutWhitespace()
+
+    val updatePollOptionRequestWithoutExtraData = UpdatePollOptionRequest(
+        id = "option2",
+        text = "option",
+        custom = emptyMap(),
     )
 }
