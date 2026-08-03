@@ -1615,48 +1615,30 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Merges local and server read states for the current user.
-     * Preserves local state if it's more recent, otherwise uses server data.
-     *
-     * @param localRead The local read state.
-     * @param serverRead The server read state.
-     * @return The merged read state.
+     * Combines the read the server sent with the one tracked locally for the current user. A server
+     * read's unread count can be stale, so the read position (how far the user has read) decides
+     * which count to keep.
      */
     private fun mergeCurrentUserRead(
         localRead: ChannelUserRead,
         serverRead: ChannelUserRead,
     ): ChannelUserRead {
-        // The read position is the only thing an incoming read can tell us that the local state
-        // does not already know: the count between two read positions is maintained locally, one
-        // increment per new message event. So the incoming count is taken only when the position
-        // moved forward, which is what happens when the channel is read elsewhere. At the same or
-        // an earlier position the incoming count may be stale, as with the channel list's own copy
-        // of the channel, so the local count is kept. A mark unread moves the position backwards on
-        // purpose and its count is authoritative, which is why it is applied by [replaceRead]
-        // instead of going through this arbitration. Note
-        // that lastReceivedEventDate cannot be used to decide this: the server does not send it,
-        // it is synthesised while mapping, so comparing it against a locally advanced clock is
-        // meaningless and lets a stale snapshot (for example the channel list's own copy of the
-        // channel) overwrite a count that is correct.
-        return if (!serverRead.lastRead.after(localRead.lastRead)) {
-            logger.d {
-                "[updateReads] keeping the local count: " +
-                    "local.lastRead=${localRead.lastRead}, server.lastRead=${serverRead.lastRead}, " +
-                    "local.unreadMessages=${localRead.unreadMessages}, " +
-                    "server.unreadMessages=${serverRead.unreadMessages}"
-            }
-            localRead.copy(
-                user = serverRead.user,
-                lastRead = maxOf(localRead.lastRead, serverRead.lastRead),
-                lastReadMessageId = serverRead.lastReadMessageId ?: localRead.lastReadMessageId,
-                lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
-                lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
-                // lastReceivedEventDate and unreadMessages are preserved from local (not set in copy)
-            )
-        } else {
-            // The read position moved forward, so the incoming count describes it best.
-            serverRead
+        if (serverRead.lastRead.after(localRead.lastRead)) {
+            // The server is further ahead: the user read the channel elsewhere, so its read is correct.
+            return serverRead
         }
+        // Same or older position: we can't tell a stale count (e.g. an old channel-list copy) from a
+        // correct one, so bias to the higher value. The bug this guards against is the count settling
+        // too low and never recovering, so never shrinking here is the safer error.
+        val unreadMessages = maxOf(localRead.unreadMessages, serverRead.unreadMessages)
+        return localRead.copy(
+            user = serverRead.user,
+            lastRead = maxOf(localRead.lastRead, serverRead.lastRead),
+            lastReadMessageId = serverRead.lastReadMessageId ?: localRead.lastReadMessageId,
+            lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
+            lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
+            unreadMessages = unreadMessages,
+        )
     }
 
     private fun deleteMemberAndDecrementMemberCount(memberId: String) {

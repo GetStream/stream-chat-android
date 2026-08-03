@@ -166,6 +166,32 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
         }
 
         @Test
+        fun `updateReads should heal the count when the server has more at the same read position`() = runTest {
+            // Local under-counted (missed message events); the server read, at the same position,
+            // carries the correct higher count and heals it.
+            channelState.updateRead(createRead(user = currentUser, unreadMessages = 2, lastRead = Date(1000)))
+            // when
+            channelState.updateReads(
+                listOf(createRead(user = currentUser, unreadMessages = 5, lastRead = Date(1000))),
+            )
+            // then
+            assertEquals(5, channelState.read.value?.unreadMessages)
+        }
+
+        @Test
+        fun `updateReads should keep the local count when the server has fewer at the same read position`() = runTest {
+            // A stale snapshot (e.g. an old channel-list copy) at the same position carries a lower
+            // count and must not shrink the locally maintained one.
+            channelState.updateRead(createRead(user = currentUser, unreadMessages = 25, lastRead = Date(1000)))
+            // when
+            channelState.updateReads(
+                listOf(createRead(user = currentUser, unreadMessages = 12, lastRead = Date(1000))),
+            )
+            // then
+            assertEquals(25, channelState.read.value?.unreadMessages)
+        }
+
+        @Test
         fun `updateReads should merge lastRead taking the max when local is preserved`() = runTest {
             // given
             val localRead = createRead(
