@@ -1037,32 +1037,24 @@ internal class ChannelStateImpl(
      * @param reads The list of [ChannelUserRead] states to update.
      */
     fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUserRead = read.value
-        // Root cause fix: When updating reads from server data, we should preserve local state
-        // if it's more recent (has a newer lastReceivedEventDate). This prevents stale server
-        // data from overwriting recent local updates, which happens when:
-        // 1. Hidden channels receive messages (server doesn't track unread counts for hidden channels)
-        // 2. Race conditions where updateCurrentUserRead() has updated local state but a concurrent
-        //    query channels update calls updateReads() with stale server data
-        // 3. When visible channels work correctly, server data is more recent, so it's used
-        val readsToUpsert = if (currentUserRead != null) {
-            reads.map { serverRead ->
-                if (serverRead.getUserId() == currentUser.value?.id) {
-                    mergeCurrentUserRead(currentUserRead, serverRead)
+        val currentUserId = currentUser.value?.id
+        val before = read.value?.unreadMessages
+        // Merge inside the update, against the live map, so a concurrent increment is not lost to a
+        // pre-increment snapshot.
+        _reads.update { current ->
+            val merged = reads.associateBy(ChannelUserRead::getUserId).mapValues { (userId, serverRead) ->
+                val localRead = current[userId]
+                if (userId == currentUserId && localRead != null) {
+                    mergeCurrentUserRead(localRead, serverRead)
                 } else {
                     serverRead
                 }
             }
-        } else {
-            reads
-        }
-        val before = read.value?.unreadMessages
-        _reads.update { current ->
-            current + readsToUpsert.associateBy(ChannelUserRead::getUserId)
+            current + merged
         }
         val after = read.value?.unreadMessages
         if (before != after) {
-            val incoming = reads.firstOrNull { it.getUserId() == currentUser.value?.id }?.unreadMessages
+            val incoming = reads.firstOrNull { it.getUserId() == currentUserId }?.unreadMessages
             logger.d { "[updateReads] cid: $cid; unreadMessages: $before -> $after; incoming: $incoming" }
         }
     }
@@ -1173,9 +1165,10 @@ internal class ChannelStateImpl(
             // anchored to what the server confirmed, and the server's own message.read echo
             // advances them. Stamping them with the newest loaded message's date here made
             // messages that were still queued behind this call count as already seen.
-            val updatedRead = currentUserRead.copy(unreadMessages = 0)
+            // Zero the live read, not the snapshot, so a concurrent write is not overwritten.
             _reads.update { current ->
-                current + (updatedRead.getUserId() to updatedRead)
+                val latest = current[currentUserRead.getUserId()] ?: currentUserRead
+                current + (latest.getUserId() to latest.copy(unreadMessages = 0))
             }
             true
         } else {
