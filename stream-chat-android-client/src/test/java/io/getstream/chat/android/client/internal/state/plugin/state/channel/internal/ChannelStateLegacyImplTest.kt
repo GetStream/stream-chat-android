@@ -637,8 +637,9 @@ internal class ChannelStateLegacyImplTest {
         val actual = channelState.markChannelAsRead()
 
         assertEquals(true, actual)
-        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
-        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
+        // The read dates stay untouched: they only advance with server-confirmed values.
+        assertEquals(readState.lastReceivedEventDate, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(readState.lastRead, channelState.read.value?.lastRead)
         assertEquals(0, channelState.read.value?.unreadMessages)
     }
 
@@ -683,8 +684,9 @@ internal class ChannelStateLegacyImplTest {
         val result = channelState.markChannelAsRead()
 
         assertEquals(true, result)
-        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
-        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
+        // The read dates stay untouched: they only advance with server-confirmed values.
+        assertEquals(readState.lastReceivedEventDate, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(readState.lastRead, channelState.read.value?.lastRead)
         assertEquals(0, channelState.read.value?.unreadMessages)
     }
 

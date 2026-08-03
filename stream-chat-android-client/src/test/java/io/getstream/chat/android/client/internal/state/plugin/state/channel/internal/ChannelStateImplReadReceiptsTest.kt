@@ -166,6 +166,32 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
         }
 
         @Test
+        fun `updateReads should heal the count when the server has more at the same read position`() = runTest {
+            // Local under-counted (missed message events); the server read, at the same position,
+            // carries the correct higher count and heals it.
+            channelState.updateRead(createRead(user = currentUser, unreadMessages = 2, lastRead = Date(1000)))
+            // when
+            channelState.updateReads(
+                listOf(createRead(user = currentUser, unreadMessages = 5, lastRead = Date(1000))),
+            )
+            // then
+            assertEquals(5, channelState.read.value?.unreadMessages)
+        }
+
+        @Test
+        fun `updateReads should keep the local count when the server has fewer at the same read position`() = runTest {
+            // A stale snapshot (e.g. an old channel-list copy) at the same position carries a lower
+            // count and must not shrink the locally maintained one.
+            channelState.updateRead(createRead(user = currentUser, unreadMessages = 25, lastRead = Date(1000)))
+            // when
+            channelState.updateReads(
+                listOf(createRead(user = currentUser, unreadMessages = 12, lastRead = Date(1000))),
+            )
+            // then
+            assertEquals(25, channelState.read.value?.unreadMessages)
+        }
+
+        @Test
         fun `updateReads should merge lastRead taking the max when local is preserved`() = runTest {
             // given
             val localRead = createRead(
@@ -240,7 +266,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 2,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -258,7 +284,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -277,7 +303,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -296,7 +322,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -315,7 +341,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -333,7 +359,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -351,7 +377,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -379,7 +405,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             stateWithMutedUsers.updateRead(initialRead)
@@ -396,7 +422,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -414,7 +440,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -427,21 +453,24 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `updateCurrentUserRead should skip outdated events`() = runTest {
-            // given
+        fun `updateCurrentUserRead should count events older than the read state clock without regressing it`() = runTest {
+            // Marking read stamps the read state with the newest loaded message's date, so a
+            // queued event can legitimately carry an older date while its message was never
+            // counted. Only processedMessageIds may exclude it.
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
-                lastReceivedEventDate = Date(5000), // recent event date
+                lastRead = Date(500),
+                lastReceivedEventDate = Date(5000),
             )
             channelState.updateRead(initialRead)
             val otherUser = randomUser(id = "other_user")
-            val message = createMessage(1, user = otherUser)
+            val message = createMessage(1, timestamp = 3000, user = otherUser)
             // when - event date is older than current read's lastReceivedEventDate
             channelState.updateCurrentUserRead(Date(3000), message)
             // then
-            assertEquals(0, channelState.read.value?.unreadMessages)
+            assertEquals(1, channelState.read.value?.unreadMessages)
+            assertEquals(Date(5000), channelState.read.value?.lastReceivedEventDate)
         }
 
         @Test
@@ -462,7 +491,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             val initialRead = createRead(
                 user = currentUser,
                 unreadMessages = 0,
-                lastRead = Date(1000),
+                lastRead = Date(500),
                 lastReceivedEventDate = Date(1000),
             )
             channelState.updateRead(initialRead)
@@ -558,8 +587,10 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `markRead should update lastRead to last message createdAt`() = runTest {
-            // given
+        fun `markRead should keep the read dates untouched`() = runTest {
+            // The read dates only advance with server-confirmed values (query responses and
+            // read events); stamping them optimistically made messages that were still queued
+            // behind the mark-read call count as already seen.
             channelState.setChannelConfig(Config(readEventsEnabled = true))
             val message1 = createMessage(1, timestamp = 1000)
             val message2 = createMessage(2, timestamp = 2000)
@@ -568,6 +599,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
                 user = currentUser,
                 unreadMessages = 2,
                 lastRead = Date(500),
+                lastReceivedEventDate = Date(500),
                 lastReadMessageId = null,
             )
             channelState.updateRead(read)
@@ -575,7 +607,9 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             channelState.markRead()
             // then
             val currentRead = channelState.read.value
-            assertEquals(Date(2000), currentRead?.lastRead)
+            assertEquals(0, currentRead?.unreadMessages)
+            assertEquals(Date(500), currentRead?.lastRead)
+            assertEquals(Date(500), currentRead?.lastReceivedEventDate)
         }
     }
 

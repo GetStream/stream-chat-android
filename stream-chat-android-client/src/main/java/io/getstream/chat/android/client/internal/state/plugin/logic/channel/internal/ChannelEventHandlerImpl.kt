@@ -340,7 +340,7 @@ internal class ChannelEventHandlerImpl(
                 }
             }
 
-            is NotificationMarkUnreadEvent -> state.updateRead(event.toChannelUserRead())
+            is NotificationMarkUnreadEvent -> state.replaceRead(event.toChannelUserRead())
             is MessageDeliveredEvent -> state.updateDelivered(event.toChannelUserRead())
             // Invitation events
             is NotificationInviteAcceptedEvent -> {
