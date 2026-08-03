@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
@@ -953,22 +954,27 @@ internal class ChannelStateLogic(
             processedMessageIds.put(message.id, true)
             return
         }
-        // Skip update if the event is outdated
+        // Skip update for messages the user has already read. The read dates only advance
+        // with server-confirmed values, so a replayed event for a message older than the
+        // last read must not count again.
         val currentRead = mutableState.read.value
-        if (currentRead != null && currentRead.lastReceivedEventDate.after(eventReceivedDate)) {
+        if (currentRead != null && !message.getCreatedAtOrDefault(Date()).after(currentRead.lastRead)) {
             processedMessageIds.put(message.id, true)
             return
         }
-        // Update the unread count
         incrementUnreadCount(currentRead, eventReceivedDate)
         processedMessageIds.put(message.id, true)
     }
 
-    /** The incremented read is upserted directly: the merge in [updateReads] is for server data. */
+    /**
+     * Increments the unread count, creating a read for a locally tracked channel that has none yet.
+     * Upserted directly, bypassing the [updateReads] merge, which is for server data. The clock only
+     * moves forward, so an out of order event cannot regress it.
+     */
     private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
         val updatedRead = if (currentRead != null) {
             currentRead.copy(
-                lastReceivedEventDate = eventReceivedDate,
+                lastReceivedEventDate = maxOf(currentRead.lastReceivedEventDate, eventReceivedDate),
                 unreadMessages = currentRead.unreadMessages.inc(),
             )
         } else if (isReadTrackedLocally) {

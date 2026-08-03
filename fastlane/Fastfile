@@ -107,8 +107,18 @@ lane :run_e2e_test do |options|
 
   backend_test_class = 'io.getstream.chat.android.compose.tests.BackendTests'
 
+  targeted_class = options[:test_class].to_s
+  # The value is interpolated into a shell command, so only a class name is accepted,
+  # optionally with a single method. A typo also fails here instead of in the shell.
+  UI.user_error!("Invalid test_class: #{targeted_class}") unless
+    targeted_class.empty? || targeted_class.match?(/\A[\w.$]+(#\w+)?\z/)
+
   if options[:use_backend]
     test_filter = "-e class #{backend_test_class}"
+  elsif !targeted_class.empty?
+    # Targeted run: a single class and no batching, so every batch job runs it and gives an
+    # independent sample. Used to reproduce a failure that only shows on one API level.
+    test_filter = "-e class #{targeted_class}"
   else
     run_tests_in_batches = batch_tests(
       batch: options[:batch],

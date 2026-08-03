@@ -17,7 +17,10 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
+import io.getstream.chat.android.compose.robots.assertMessageInPinnedMessages
 import io.getstream.chat.android.compose.robots.assertMessagePinnedLabel
+import io.getstream.chat.android.compose.robots.assertPinnedMessagesAreEmpty
+import io.getstream.chat.android.compose.robots.assertPinnedMessagesScreen
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
@@ -84,6 +87,61 @@ class PinnedMessagesTests : StreamTestCase() {
         }
         step("THEN the message shows the pinned by participant label") {
             userRobot.assertMessagePinnedLabel(pinnedBy = ParticipantRobot.name)
+        }
+    }
+
+    @AllureId("11568")
+    @Test
+    fun test_pinnedMessageIsShownOnThePinnedMessagesScreen() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user pins the message") {
+            userRobot.pinMessage()
+        }
+        step("WHEN user opens the pinned messages screen") {
+            userRobot
+                .moveToChannelListFromMessageList()
+                .openChannelMenu()
+                .tapOnViewChannelInfo()
+                .tapOnPinnedMessagesOption()
+        }
+        step("THEN the pinned message is shown") {
+            userRobot
+                .assertPinnedMessagesScreen()
+                .assertMessageInPinnedMessages(sampleText)
+        }
+    }
+
+    @AllureId("11565")
+    @Test
+    fun test_unpinnedMessageIsNotShownOnThePinnedMessagesScreen() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user pins the message") {
+            userRobot.pinMessage()
+        }
+        step("WHEN user unpins the message") {
+            userRobot.unpinMessage()
+        }
+        step("AND user opens the pinned messages screen") {
+            userRobot
+                .moveToChannelListFromMessageList()
+                .openChannelMenu()
+                .tapOnViewChannelInfo()
+                .tapOnPinnedMessagesOption()
+        }
+        step("THEN no pinned message is shown") {
+            userRobot
+                .assertPinnedMessagesScreen()
+                .assertPinnedMessagesAreEmpty()
         }
     }
 

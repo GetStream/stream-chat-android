@@ -48,6 +48,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
+import java.util.regex.Pattern
 
 /**
  * Asserts the selector's visibility with a bounded wait: waits for it to appear when
@@ -337,7 +338,11 @@ fun UserRobot.assertScrollToFirstUnreadButton(unreadCount: Int? = null, isDispla
             unreadCount,
             unreadCount,
         )
-        assertTrue(By.text(expectedText).waitDisplayed())
+        // Comparing against the rendered count so a failure reports the actual text. The
+        // count is the only text inside the button and carries no test tag of its own.
+        val countText = By.text(Pattern.compile(".+"))
+            .hasAncestor(MessageListPage.MessageList.scrollToFirstUnreadButton)
+        assertEquals(expectedText, countText.waitForText(expectedText))
     }
     return this
 }
@@ -540,5 +545,10 @@ fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
         assertFalse(Composer.linkPreviewTitle.isDisplayed())
         assertFalse(Composer.linkPreviewDescription.isDisplayed())
     }
+    return this
+}
+
+fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
+    assertVisibility(MessageListPage.FlagMessageDialog.body, isDisplayed)
     return this
 }

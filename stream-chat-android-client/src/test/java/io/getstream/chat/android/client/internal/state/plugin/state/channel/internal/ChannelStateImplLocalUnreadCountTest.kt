@@ -164,21 +164,20 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
         testName: String,
         isLocalUnreadCountEnabled: Boolean,
         readEventsEnabled: Boolean,
-        serverEventDate: Date,
+        serverLastRead: Date,
         expectedUnreadMessages: Int,
     ) = runTest {
         val state = localTrackingState(isLocalUnreadCountEnabled, readEventsEnabled)
         state.updateRead(
-            createRead(currentUser, unreadMessages = 3, lastRead = Date(1000), lastReceivedEventDate = Date(3000)),
+            createRead(currentUser, unreadMessages = 3, lastRead = Date(1000)),
         )
-        // when: the server sends a read with unreadMessages = 0
+        // when: the server sends a read with unreadMessages = 0 at the given read position
         state.updateReads(
             listOf(
                 createRead(
                     user = currentUser,
                     unreadMessages = 0,
-                    lastRead = Date(1000),
-                    lastReceivedEventDate = serverEventDate,
+                    lastRead = serverLastRead,
                 ),
             ),
         )
@@ -277,16 +276,13 @@ internal class ChannelStateImplLocalUnreadCountTest : ChannelStateImplTestBase()
 
         @JvmStatic
         fun updateReadsMergeInput() = listOf(
-            // (test name, isLocalUnreadCountEnabled, readEventsEnabled, serverEventDate, expectedUnreadMessages)
-            // Locally tracked: preserved even when the server read is more recent
-            Arguments.of("locally tracked, newer server read", true, false, Date(5000), 3),
-            // Locally tracked: preserved on tying event dates (server reads carry
-            // lastReceivedEventDate = last_message_at, which ties the local value)
-            Arguments.of("locally tracked, tying server read", true, false, Date(3000), 3),
-            // Read events enabled: the more recent server read wins
-            Arguments.of("read events enabled, newer server read", true, true, Date(5000), 0),
-            // Local tracking disabled: the standard recency merge applies
-            Arguments.of("local tracking disabled, newer server read", false, false, Date(5000), 0),
+            // (test name, isLocalUnreadCountEnabled, readEventsEnabled, serverLastRead, expectedUnreadMessages)
+            // Locally tracked reads are preserved even when the server read is further ahead.
+            Arguments.of("locally tracked, server ahead", true, false, Date(5000), 3),
+            Arguments.of("locally tracked, server at same position", true, false, Date(1000), 3),
+            // Not locally tracked: a server read ahead of the local one wins.
+            Arguments.of("read events enabled, server ahead", true, true, Date(5000), 0),
+            Arguments.of("local tracking disabled, server ahead", false, false, Date(5000), 0),
         )
     }
 }

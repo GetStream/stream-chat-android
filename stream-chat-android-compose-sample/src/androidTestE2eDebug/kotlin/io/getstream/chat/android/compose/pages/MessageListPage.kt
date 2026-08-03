@@ -19,7 +19,9 @@ package io.getstream.chat.android.compose.pages
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import java.util.regex.Pattern
+import io.getstream.chat.android.compose.R as ComposeR
 
 open class MessageListPage {
 
@@ -80,6 +82,15 @@ open class MessageListPage {
             val linkPreviewTitle get() = By.res("Stream_LinkPreviewTitle")
             val linkPreviewDescription get() = By.res("Stream_LinkPreviewDescription")
             val linkPreviewCancelButton get() = By.res("Stream_LinkPreviewCancelButton")
+        }
+    }
+
+    class FlagMessageDialog {
+
+        companion object {
+            // The dialog title repeats the message option label, so the body text is what
+            // identifies the dialog.
+            val body get() = By.text(appContext.getString(ComposeR.string.stream_compose_flag_message_text))
         }
     }
 

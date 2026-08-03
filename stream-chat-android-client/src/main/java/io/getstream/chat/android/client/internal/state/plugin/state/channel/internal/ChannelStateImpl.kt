@@ -63,6 +63,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
 /**
@@ -168,7 +169,8 @@ internal class ChannelStateImpl(
             pending.filter { pagination.isInWindow(it) }
         }
 
-    private val logger by taggedLogger("ChannelStateImpl")
+    private val seq = seqGenerator.incrementAndGet()
+    private val logger by taggedLogger("ChannelStateImpl-$seq")
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage.asStateFlow()
 
@@ -1036,28 +1038,39 @@ internal class ChannelStateImpl(
      * @param reads The list of [ChannelUserRead] states to update.
      */
     fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUserRead = read.value
-        // Root cause fix: When updating reads from server data, we should preserve local state
-        // if it's more recent (has a newer lastReceivedEventDate). This prevents stale server
-        // data from overwriting recent local updates, which happens when:
-        // 1. Hidden channels receive messages (server doesn't track unread counts for hidden channels)
-        // 2. Race conditions where updateCurrentUserRead() has updated local state but a concurrent
-        //    query channels update calls updateReads() with stale server data
-        // 3. When visible channels work correctly, server data is more recent, so it's used
-        val readsToUpsert = if (currentUserRead != null) {
-            reads.map { serverRead ->
-                if (serverRead.getUserId() == currentUser.value?.id) {
-                    mergeCurrentUserRead(currentUserRead, serverRead)
+        val currentUserId = currentUser.value?.id
+        val before = read.value?.unreadMessages
+        // Merge inside the update, against the live map, so a concurrent increment is not lost to a
+        // pre-increment snapshot.
+        _reads.update { current ->
+            val merged = reads.associateBy(ChannelUserRead::getUserId).mapValues { (userId, serverRead) ->
+                val localRead = current[userId]
+                if (userId == currentUserId && localRead != null) {
+                    mergeCurrentUserRead(localRead, serverRead)
                 } else {
                     serverRead
                 }
             }
-        } else {
-            reads
+            current + merged
         }
-        _reads.update { current ->
-            current + readsToUpsert.associateBy(ChannelUserRead::getUserId)
+        val after = read.value?.unreadMessages
+        if (before != after) {
+            val incoming = reads.firstOrNull { it.getUserId() == currentUserId }?.unreadMessages
+            logger.d { "[updateReads] cid: $cid; unreadMessages: $before -> $after; incoming: $incoming" }
         }
+    }
+
+    /**
+     * Replaces the read state of [read]'s user with no arbitration against the local one.
+     *
+     * For read states the server reports explicitly, where the reported position and count are
+     * the truth even when the position moves backwards, as a mark unread does. [updateReads]
+     * cannot be used for those, because it protects the local count against stale payloads.
+     */
+    fun replaceRead(read: ChannelUserRead) {
+        val previous = _reads.value[read.getUserId()]?.unreadMessages
+        logger.d { "[replaceRead] cid: $cid; unreadMessages: $previous -> ${read.unreadMessages}" }
+        _reads.update { current -> current + (read.getUserId() to read) }
     }
 
     /**
@@ -1069,8 +1082,7 @@ internal class ChannelStateImpl(
      */
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
         // Skip update if the message was already processed
-        val isProcessed = processedMessageIds[message.id] == true
-        if (isProcessed) {
+        if (processedMessageIds[message.id] == true) {
             logUnreadCountSkip(message, "already processed")
             return
         }
@@ -1081,57 +1093,13 @@ internal class ChannelStateImpl(
             processedMessageIds.put(message.id, true)
             return
         }
-        // Skip update if the channel is muted
-        val isMuted = muted.value
-        if (isMuted) {
-            logUnreadCountSkip(message, "channel muted")
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for thread replies not shown in channel
-        val isThreadReplyNotInChannel = message.parentId != null && !message.showInChannel
-        if (isThreadReplyNotInChannel) {
-            logUnreadCountSkip(message, "thread reply not in channel")
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages from current user
-        val isFromCurrentUser = message.user.id == currentUser.value?.id
-        if (isFromCurrentUser) {
-            logUnreadCountSkip(message, "own message")
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages from muted users
-        val isFromMutedUser = mutedUsers.value.any { it.target?.id == message.user.id }
-        if (isFromMutedUser) {
-            logUnreadCountSkip(message, "author muted")
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for messages from shadow banned users
-        if (message.shadowed) {
-            logUnreadCountSkip(message, "shadowed")
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update for silent messages
-        if (message.silent) {
-            logUnreadCountSkip(message, "silent")
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Skip update if the event is outdated
         val currentRead = read.value
-        if (currentRead != null && currentRead.lastReceivedEventDate.after(eventReceivedDate)) {
-            logUnreadCountSkip(
-                message,
-                "outdated (read: ${currentRead.lastReceivedEventDate}, event: $eventReceivedDate)",
-            )
+        val skipReason = unreadCountSkipReason(currentRead, message)
+        if (skipReason != null) {
+            logUnreadCountSkip(message, skipReason)
             processedMessageIds.put(message.id, true)
             return
         }
-        // Update the unread count
         incrementUnreadCount(currentRead, eventReceivedDate)
         processedMessageIds.put(message.id, true)
     }
@@ -1143,33 +1111,53 @@ internal class ChannelStateImpl(
     private val isReadTrackedLocally: Boolean
         get() = isLocalUnreadCountEnabled && !channelConfig.value.readEventsEnabled
 
-    /** The incremented read is upserted directly: the merge in [updateReads] is for server data. */
+    /**
+     * Increments the current user's unread count, creating a read for a locally tracked channel
+     * that has none yet. Upserted directly, bypassing the [updateReads] merge, which is for server
+     * data. The read-modify-write is atomic so a burst of events cannot lose an increment, and the
+     * clock only moves forward, so an out of order event cannot regress it.
+     */
     private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
-        val updatedRead = if (currentRead != null) {
-            currentRead.copy(
+        val user = currentUser.value ?: return
+        if (currentRead == null && !isReadTrackedLocally) return
+        val userId = currentRead?.getUserId() ?: user.id
+        _reads.update { current ->
+            val existing = current[userId] ?: currentRead ?: ChannelUserRead(
+                user = user,
                 lastReceivedEventDate = eventReceivedDate,
-                unreadMessages = currentRead.unreadMessages.inc(),
+                unreadMessages = 0,
+                // lastRead/lastReadMessageId are unset: there is no server read to anchor them to.
+                lastRead = Date(0),
+                lastReadMessageId = null,
             )
-        } else if (isReadTrackedLocally) {
-            currentUser.value?.let { user ->
-                ChannelUserRead(
-                    user = user,
-                    lastReceivedEventDate = eventReceivedDate,
-                    unreadMessages = 1,
-                    // lastRead/lastReadMessageId are unset: there is no server read to anchor them to.
-                    lastRead = Date(0),
-                    lastReadMessageId = null,
+            current + (
+                userId to existing.copy(
+                    lastReceivedEventDate = maxOf(existing.lastReceivedEventDate, eventReceivedDate),
+                    unreadMessages = existing.unreadMessages.inc(),
                 )
-            }
-        } else {
-            null
+                )
         }
-        updatedRead?.let { newRead ->
-            logger.v { "[incrementUnreadCount] cid: $cid, unreadMessages: ${newRead.unreadMessages}" }
-            _reads.update { current ->
-                current + (newRead.getUserId() to newRead)
-            }
-        }
+        logger.v { "[incrementUnreadCount] cid: $cid, unreadMessages: ${read.value?.unreadMessages}" }
+    }
+
+    /**
+     * Why [message] does not increment the current user's unread count, or `null` when it does.
+     *
+     * The returned reason is logged, so a wrong count can be traced to the exact condition that
+     * suppressed it.
+     */
+    private fun unreadCountSkipReason(currentRead: ChannelUserRead?, message: Message): String? = when {
+        muted.value -> "channel is muted"
+        message.parentId != null && !message.showInChannel -> "thread reply not shown in channel"
+        message.user.id == currentUser.value?.id -> "own message"
+        mutedUsers.value.any { it.target?.id == message.user.id } -> "author is muted"
+        message.shadowed -> "message is shadowed"
+        message.silent -> "message is silent"
+        // The read dates only advance with server-confirmed values, so a replayed event for a
+        // message older than the last read must not count again.
+        currentRead != null && !message.getCreatedAtOrDefault(Date()).after(currentRead.lastRead) ->
+            "already read: createdAt(${message.createdAt}) <= lastRead(${currentRead.lastRead})"
+        else -> null
     }
 
     /**
@@ -1197,14 +1185,14 @@ internal class ChannelStateImpl(
             return MarkReadResult.RemoteRequired
         }
         return if (lastMessage.id != currentUserRead.lastReadMessageId) {
-            // The last message is different from the last read message, we can mark the channel as read
-            val updatedRead = currentUserRead.copy(
-                lastReceivedEventDate = lastMessage.getCreatedAtOrDefault(Date()),
-                lastRead = lastMessage.getCreatedAtOrDefault(Date()),
-                unreadMessages = 0,
-            )
+            // Zero the count optimistically, but leave the read dates untouched: they stay
+            // anchored to what the server confirmed, and the server's own message.read echo
+            // advances them. Stamping them with the newest loaded message's date here made
+            // messages that were still queued behind this call count as already seen.
+            // Zero the live read, not the snapshot, so a concurrent write is not overwritten.
             _reads.update { current ->
-                current + (updatedRead.getUserId() to updatedRead)
+                val latest = current[currentUserRead.getUserId()] ?: currentUserRead
+                current + (latest.getUserId() to latest.copy(unreadMessages = 0))
             }
             MarkReadResult.RemoteRequired
         } else {
@@ -1671,12 +1659,9 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Merges local and server read states for the current user.
-     * Preserves local state if it's more recent, otherwise uses server data.
-     *
-     * @param localRead The local read state.
-     * @param serverRead The server read state.
-     * @return The merged read state.
+     * Combines the read the server sent with the one tracked locally for the current user. A server
+     * read's unread count can be stale, so the read position (how far the user has read) decides
+     * which count to keep.
      */
     private fun mergeCurrentUserRead(
         localRead: ChannelUserRead,
@@ -1698,27 +1683,22 @@ internal class ChannelStateImpl(
                 lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
             )
         }
-        return if (localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)) {
-            // Local state is more recent, preserve it but merge other fields from server
-            logger.d {
-                "[updateReads] Local read state is more recent, preserving: " +
-                    "local.lastReceivedEventDate=${localRead.lastReceivedEventDate}, " +
-                    "server.lastReceivedEventDate=${serverRead.lastReceivedEventDate}, " +
-                    "local.unreadMessages=${localRead.unreadMessages}, " +
-                    "server.unreadMessages=${serverRead.unreadMessages}"
-            }
-            localRead.copy(
-                user = serverRead.user,
-                lastRead = maxOf(localRead.lastRead, serverRead.lastRead),
-                lastReadMessageId = serverRead.lastReadMessageId ?: localRead.lastReadMessageId,
-                lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
-                lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
-                // lastReceivedEventDate and unreadMessages are preserved from local (not set in copy)
-            )
-        } else {
-            // Server data is more recent, use it
-            serverRead
+        if (serverRead.lastRead.after(localRead.lastRead)) {
+            // The server is further ahead: the user read the channel elsewhere, so its read is correct.
+            return serverRead
         }
+        // Same or older position: we can't tell a stale count (e.g. an old channel-list copy) from a
+        // correct one, so bias to the higher value. The bug this guards against is the count settling
+        // too low and never recovering, so never shrinking here is the safer error.
+        val unreadMessages = maxOf(localRead.unreadMessages, serverRead.unreadMessages)
+        return localRead.copy(
+            user = serverRead.user,
+            lastRead = maxOf(localRead.lastRead, serverRead.lastRead),
+            lastReadMessageId = serverRead.lastReadMessageId ?: localRead.lastReadMessageId,
+            lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
+            lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
+            unreadMessages = unreadMessages,
+        )
     }
 
     private fun deleteMemberAndDecrementMemberCount(memberId: String) {
@@ -1759,6 +1739,9 @@ internal class ChannelStateImpl(
     }
 
     private companion object {
+        /** Distinguishes instances of the same channel in the logs. */
+        private val seqGenerator = AtomicInteger()
+
         /**
          * Hard limit for cached latest messages to prevent unbounded memory growth while in search mode.
          * When the user is viewing messages around a specific message (e.g., from a deep link or search),

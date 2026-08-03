@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+package io.getstream.chat.android.compose.pages
 
-import com.squareup.moshi.JsonClass
+import androidx.test.uiautomator.By
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
- * Request object for querying reminders.
- *
- * @property filter The filter conditions for querying reminders.
- * @property limit The maximum number of reminders to return.
- * @property sort The sorting criteria for the reminders.
- * @property next The pagination token for fetching the next set of results.
+ * The channel info screen. Its rows carry no test tags, so they are matched by the option label.
  */
-@JsonClass(generateAdapter = true)
-internal data class QueryRemindersRequest(
-    val filter: Map<*, *>,
-    val limit: Int,
-    val next: String?,
-    val sort: List<Map<String, Any>>,
-)
+class ChannelInfoPage {
+
+    companion object {
+        val groupTitle get() = By.text(appContext.getString(UiCommonR.string.stream_ui_channel_info_group_title))
+
+        val pinnedMessagesOption
+            get() = By.text(appContext.getString(UiCommonR.string.stream_ui_channel_info_option_pinned_messages))
+    }
+}

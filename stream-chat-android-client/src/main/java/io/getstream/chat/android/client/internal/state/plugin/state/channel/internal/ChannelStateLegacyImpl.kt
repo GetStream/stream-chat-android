@@ -608,15 +608,11 @@ internal class ChannelStateLegacyImpl(
         // Mark as read if the last read message differs from the last message, or there are unread
         // messages (server state may differ even when the ids match).
         return if (currentUserRead.lastReadMessageId != lastMessage.id || currentUserRead.unreadMessages > 0) {
-            upsertReads(
-                listOf(
-                    currentUserRead.copy(
-                        lastReceivedEventDate = lastMessage.getCreatedAtOrDefault(Date()),
-                        lastRead = lastMessage.getCreatedAtOrDefault(Date()),
-                        unreadMessages = 0,
-                    ),
-                ),
-            )
+            // Zero the count optimistically, but leave the read dates untouched: they stay anchored
+            // to what the server confirmed, and the server's own message.read echo advances them.
+            // Stamping them with the newest loaded message's date here made messages still queued
+            // behind this call count as already seen.
+            upsertReads(listOf(currentUserRead.copy(unreadMessages = 0)))
             MarkReadResult.RemoteRequired
         } else {
             MarkReadResult.NotNeeded
