@@ -57,7 +57,6 @@ import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesReques
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
@@ -1222,7 +1221,7 @@ internal class MoshiChatApiTest {
         val cooldown = randomInt()
         val result = sut.enableSlowMode(channelType, channelId, cooldown).await()
         // then
-        val expectedBody = UpdateCooldownRequest.create(cooldown)
+        val expectedBody = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldown))
         result `should be instance of` expected
         verify(api, times(1)).updateCooldown(channelType, channelId, expectedBody)
     }
@@ -1241,7 +1240,7 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val result = sut.disableSlowMode(channelType, channelId).await()
         // then
-        val expectedBody = UpdateCooldownRequest.create(0)
+        val expectedBody = UpdateChannelPartialRequest(set = mapOf("cooldown" to 0))
         result `should be instance of` expected
         verify(api, times(1)).updateCooldown(channelType, channelId, expectedBody)
     }
