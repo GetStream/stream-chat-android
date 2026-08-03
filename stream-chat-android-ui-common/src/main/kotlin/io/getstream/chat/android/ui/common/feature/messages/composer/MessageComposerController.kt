@@ -774,7 +774,7 @@ public class MessageComposerController(
         val currentUserId = chatClient.getCurrentUser()?.id
         val trimmedMessage = message.trim()
         val activeMessage = activeAction?.message ?: Message()
-        val replyMessageId = (activeAction as? Reply)?.message?.id
+        val replyMessage = (activeAction as? Reply)?.message
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
         return if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
@@ -788,7 +788,8 @@ public class MessageComposerController(
                 cid = channelCid,
                 text = trimmedMessage,
                 parentId = parentMessageId,
-                replyMessageId = replyMessageId,
+                replyMessageId = replyMessage?.id,
+                replyTo = replyMessage,
                 attachments = attachments.toMutableList(),
                 mentionedUsersIds = mentions,
             )
