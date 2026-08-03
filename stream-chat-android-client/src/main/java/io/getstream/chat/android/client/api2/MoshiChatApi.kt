@@ -1835,8 +1835,12 @@ constructor(
     }
 
     override fun updatePollOption(pollId: String, option: PollOption): Call<PollOption> {
+        val optionId = option.id ?: return ErrorCall(
+            coroutineScope,
+            Error.GenericError("Cannot update a poll option without an id"),
+        )
         val body = UpdatePollOptionRequest(
-            id = option.id.orEmpty(),
+            id = optionId,
             text = option.text,
             custom = option.extraData,
         )
@@ -1903,6 +1907,17 @@ constructor(
     }
 
     override fun updatePoll(request: UpdatePollRequest): Call<Poll> {
+        val options = request.options?.map { option ->
+            val optionId = option.id ?: return ErrorCall(
+                coroutineScope,
+                Error.GenericError("Cannot update a poll option without an id"),
+            )
+            PollOptionRequest(
+                id = optionId,
+                text = option.text,
+                custom = option.extraData,
+            )
+        }
         val body = UpdatePollRequestDto(
             allowAnswers = request.allowAnswers,
             allowUserSuggestedOptions = request.allowUserSuggestedOptions,
@@ -1912,13 +1927,7 @@ constructor(
             isClosed = request.isClosed,
             maxVotesAllowed = request.maxVotesAllowed,
             name = request.name,
-            options = request.options?.map {
-                PollOptionRequest(
-                    id = it.id.orEmpty(),
-                    text = it.text,
-                    custom = it.extraData,
-                )
-            },
+            options = options,
             votingVisibility = when (request.votingVisibility) {
                 VotingVisibility.PUBLIC -> UpdatePollRequestDto.VotingVisibility.Public
                 VotingVisibility.ANONYMOUS -> UpdatePollRequestDto.VotingVisibility.Anonymous

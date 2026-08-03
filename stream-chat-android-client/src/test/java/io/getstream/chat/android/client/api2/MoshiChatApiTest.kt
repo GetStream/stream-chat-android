@@ -125,6 +125,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.RoleType
@@ -2722,6 +2723,39 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).updatePoll(expectedBody)
+    }
+
+    @Test
+    fun `updatePollOption returns a failure when the option has no id`() = runTest {
+        // given
+        val api = mock<PollsApi>()
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val result = sut.updatePollOption(randomString(), PollOption(text = randomString())).await()
+        // then
+        result `should be instance of` Result.Failure::class
+        verify(api, never()).updatePollOption(any(), any())
+    }
+
+    @Test
+    fun `updatePoll returns a failure when an option has no id`() = runTest {
+        // given
+        val api = mock<PollsApi>()
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val request = io.getstream.chat.android.client.api.models.UpdatePollRequest(
+            id = randomString(),
+            name = randomString(),
+            options = listOf(PollOption(text = randomString())),
+        )
+        val result = sut.updatePoll(request).await()
+        // then
+        result `should be instance of` Result.Failure::class
+        verify(api, never()).updatePoll(any())
     }
 
     @ParameterizedTest
