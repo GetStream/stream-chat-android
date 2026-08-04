@@ -85,6 +85,10 @@ public fun Channel.updateLastMessage(
 
     val newReads = read.map { read ->
         read.takeUnless { it.user.id == currentUserId }
+            // A locally tracked read (read events disabled) is owned by the on-device tracking, which
+            // increments and persists it with the full skip rules. Leave it untouched here to avoid a
+            // second, weaker-guarded increment (this path counts own messages).
+            ?: read.takeIf { !config.readEventsEnabled }
             ?: read.copy(
                 lastReceivedEventDate = receivedEventDate,
                 unreadMessages = read.let {
