@@ -31,6 +31,9 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.AttachmentRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
@@ -46,6 +49,7 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapte
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
+import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
@@ -59,7 +63,9 @@ import io.getstream.chat.android.client.parser2.adapters.UserRequestAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.ConfigOverridesRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -84,6 +90,10 @@ internal class MoshiChatParser(
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
             .add(UserRequestAdapter)
+            .add(AttachmentRequestAdapter)
+            .add(MessageRequestAdapter)
+            .add(ChannelMemberRequestAdapter)
+            .add(ChannelInputRequestAdapter)
             .add(DownstreamMemberDtoAdapter)
             .add(UpstreamMemberDtoAdapter)
             .add(UpstreamMemberDataDtoAdapter)
@@ -106,6 +116,18 @@ internal class MoshiChatParser(
             .add(
                 UpdatePollRequest.VotingVisibility::class.java,
                 UpdatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
+            )
+            .add(
+                MessageRequest.Type::class.java,
+                MessageRequest.Type.TypeAdapter(),
+            )
+            .add(
+                ConfigOverridesRequest.BlocklistBehavior::class.java,
+                ConfigOverridesRequest.BlocklistBehavior.BlocklistBehaviorAdapter(),
+            )
+            .add(
+                ConfigOverridesRequest.PushLevel::class.java,
+                ConfigOverridesRequest.PushLevel.PushLevelAdapter(),
             )
             .build()
     }
