@@ -42,14 +42,12 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
-import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
@@ -106,6 +104,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -128,6 +127,7 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
+import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
@@ -150,6 +150,7 @@ import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
@@ -170,6 +171,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
@@ -210,6 +212,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.amshove.kluent.`should be instance of`
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -219,6 +222,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -1399,7 +1403,7 @@ internal class MoshiChatApiTest {
     fun testRejectInvite(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.rejectInvite(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1408,9 +1412,9 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val result = sut.rejectInvite(channelType, channelId).await()
         // then
-        val expectedBody = RejectInviteRequest()
+        val expectedBody = UpdateChannelRequest(rejectInvite = true)
         result `should be instance of` expected
-        verify(api, times(1)).rejectInvite(channelType, channelId, expectedBody)
+        verify(api, times(1)).updateChannel(channelType, channelId, expectedBody)
     }
 
     @ParameterizedTest
@@ -1418,7 +1422,7 @@ internal class MoshiChatApiTest {
     fun testAcceptInvite(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.acceptInvite(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1431,9 +1435,12 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.acceptInvite(channelType, channelId, message).await()
         // then
-        val expectedBody = AcceptInviteRequest.create(userId, message)
+        val expectedBody = UpdateChannelRequest(
+            acceptInvite = true,
+            message = MessageRequest(text = message),
+        )
         result `should be instance of` expected
-        verify(api, times(1)).acceptInvite(channelType, channelId, expectedBody)
+        verify(api, times(1)).updateChannel(channelType, channelId, expectedBody)
     }
 
     @ParameterizedTest
@@ -1563,7 +1570,7 @@ internal class MoshiChatApiTest {
     fun testAddMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.addMembers(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1580,7 +1587,18 @@ internal class MoshiChatApiTest {
                 .await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).addMembers(eq(channelType), eq(channelId), any())
+        verify(api, times(1)).updateChannel(
+            eq(channelType),
+            eq(channelId),
+            check { body ->
+                body.addMembers?.map(ChannelMemberRequest::userId) shouldBeEqualTo members.map(MemberData::userId)
+                body.removeMembers shouldBeEqualTo emptyList()
+                body.invites shouldBeEqualTo emptyList()
+                body.hideHistory shouldBeEqualTo hideHistory
+                body.hideHistoryBefore shouldBeEqualTo hideHistoryBefore
+                body.skipPush shouldBeEqualTo skipPush
+            },
+        )
     }
 
     @ParameterizedTest
@@ -1588,7 +1606,7 @@ internal class MoshiChatApiTest {
     fun testRemoveMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.removeMembers(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1601,7 +1619,16 @@ internal class MoshiChatApiTest {
         val result = sut.removeMembers(channelType, channelId, members, systemMessage, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).removeMembers(eq(channelType), eq(channelId), any())
+        verify(api, times(1)).updateChannel(
+            eq(channelType),
+            eq(channelId),
+            check { body ->
+                body.removeMembers shouldBeEqualTo members
+                body.addMembers shouldBeEqualTo emptyList()
+                body.invites shouldBeEqualTo emptyList()
+                body.skipPush shouldBeEqualTo skipPush
+            },
+        )
     }
 
     @ParameterizedTest
@@ -1609,7 +1636,7 @@ internal class MoshiChatApiTest {
     fun testInviteMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.inviteMembers(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1622,7 +1649,16 @@ internal class MoshiChatApiTest {
         val result = sut.inviteMembers(channelType, channelId, members, systemMessage, skipPush).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).inviteMembers(eq(channelType), eq(channelId), any())
+        verify(api, times(1)).updateChannel(
+            eq(channelType),
+            eq(channelId),
+            check { body ->
+                body.invites shouldBeEqualTo members.map { ChannelMemberRequest(userId = it) }
+                body.addMembers shouldBeEqualTo emptyList()
+                body.removeMembers shouldBeEqualTo emptyList()
+                body.skipPush shouldBeEqualTo skipPush
+            },
+        )
     }
 
     @ParameterizedTest

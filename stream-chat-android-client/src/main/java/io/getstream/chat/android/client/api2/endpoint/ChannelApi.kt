@@ -19,15 +19,9 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -44,6 +38,7 @@ import io.getstream.chat.android.network.models.QueryChannelsRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -109,41 +104,6 @@ internal interface ChannelApi {
     fun deleteChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-    ): RetrofitCall<ChannelResponse>
-
-    @POST("/channels/{type}/{id}")
-    fun acceptInvite(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: AcceptInviteRequest,
-    ): RetrofitCall<ChannelResponse>
-
-    @POST("/channels/{type}/{id}")
-    fun rejectInvite(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: RejectInviteRequest,
-    ): RetrofitCall<ChannelResponse>
-
-    @POST("/channels/{type}/{id}")
-    fun addMembers(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: AddMembersRequest,
-    ): RetrofitCall<ChannelResponse>
-
-    @POST("/channels/{type}/{id}")
-    fun removeMembers(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: RemoveMembersRequest,
-    ): RetrofitCall<ChannelResponse>
-
-    @POST("/channels/{type}/{id}")
-    fun inviteMembers(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: InviteMembersRequest,
     ): RetrofitCall<ChannelResponse>
 
     @PATCH("/channels/{type}/{id}/member/{user_id}")
