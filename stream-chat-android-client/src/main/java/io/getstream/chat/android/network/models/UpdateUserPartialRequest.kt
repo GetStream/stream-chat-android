@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class GuestUserRequest(
-    val user: GuestUser,
-) {
+import com.squareup.moshi.Json
 
-    @JsonClass(generateAdapter = true)
-    data class GuestUser(
-        val id: String,
-        val name: String,
-    )
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateUserPartialRequest(
+    @Json(name = "id")
+    internal val id: String,
 
-    companion object {
-        fun create(id: String, name: String): GuestUserRequest {
-            return GuestUserRequest(GuestUser(id = id, name = name))
-        }
-    }
-}
+    @Json(name = "unset")
+    internal val unset: List<String>? = emptyList(),
+
+    @Json(name = "set")
+    internal val set: Map<String, Any?>? = emptyMap(),
+)
