@@ -1032,8 +1032,8 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Updates the read states for the channel.
-     * Preserves local state for the current user if it's more recent than the server data.
+     * Updates the read states for the channel. For the current user, the incoming read is reconciled
+     * with the local one by [mergeCurrentUserRead] (a locally tracked read is preserved).
      *
      * @param reads The list of [ChannelUserRead] states to update.
      */
