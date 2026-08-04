@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
-import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
@@ -55,10 +54,8 @@ import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
@@ -71,7 +68,6 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
@@ -140,6 +136,7 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -176,7 +173,11 @@ import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
+import io.getstream.chat.android.network.models.UpdateUserPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersRequest
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -1385,7 +1386,7 @@ constructor(
         return userApi.updateUsers(
             connectionId = connectionId,
             body = with(dtoMapping) {
-                UpdateUsersRequest(users.associateBy({ it.id }, { it.toDto() }))
+                UpdateUsersRequest(users.associateBy({ it.id }, { it.toUserRequest() }))
             },
         ).mapDomain { response ->
             response.users.values.map {
@@ -1414,8 +1415,8 @@ constructor(
     override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
         return userApi.partialUpdateUsers(
             connectionId = connectionId,
-            body = PartialUpdateUsersRequest(
-                listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
+            body = UpdateUsersPartialRequest(
+                users = listOf(UpdateUserPartialRequest(id = id, set = set, unset = unset)),
             ),
         ).mapDomain { response ->
             response.users.values.map { it.toDomain() }
@@ -1424,7 +1425,7 @@ constructor(
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
-            body = GuestUserRequest.create(userId, userName),
+            body = CreateGuestRequest(user = UserRequest(id = userId, name = userName)),
         ).mapDomain { response ->
             GuestUser(
                 response.user.toDomain(),

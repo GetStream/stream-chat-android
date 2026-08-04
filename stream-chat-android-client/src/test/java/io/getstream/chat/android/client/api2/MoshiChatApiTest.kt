@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
@@ -50,9 +49,7 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -139,6 +136,7 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -180,6 +178,9 @@ import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
+import io.getstream.chat.android.network.models.UpdateUserPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -1829,8 +1830,8 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.partialUpdateUser(targetUserId, set, unset).await()
         // then
-        val expectedBody = PartialUpdateUsersRequest(
-            users = listOf(PartialUpdateUserDto(targetUserId, set, unset)),
+        val expectedBody = UpdateUsersPartialRequest(
+            users = listOf(UpdateUserPartialRequest(id = targetUserId, set = set, unset = unset)),
         )
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateUsers(connectionId, expectedBody)
@@ -1850,7 +1851,7 @@ internal class MoshiChatApiTest {
         val userName = randomString()
         val result = sut.getGuestUser(userId, userName).await()
         // then
-        val expectedBody = GuestUserRequest.create(userId, userName)
+        val expectedBody = CreateGuestRequest(user = UserRequest(id = userId, name = userName))
         result `should be instance of` expected
         verify(api, times(1)).getGuestUser(expectedBody)
     }
