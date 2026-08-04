@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.endpoint
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import io.getstream.chat.android.client.api.AnonymousApi
-import io.getstream.chat.android.client.api2.model.response.TokenResponse
-import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.CreateGuestRequest
-import retrofit2.http.Body
-import retrofit2.http.POST
+package io.getstream.chat.android.network.models
 
-@AnonymousApi
-internal interface GuestApi {
+import com.squareup.moshi.Json
 
-    @POST("/guest")
-    fun getGuestUser(
-        @Body body: CreateGuestRequest,
-    ): RetrofitCall<TokenResponse>
-}
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class PollOptionInput(
+    @Json(name = "text")
+    internal val text: String? = null,
+
+    @Json(name = "custom")
+    internal val custom: Map<String, Any?>? = emptyMap(),
+)

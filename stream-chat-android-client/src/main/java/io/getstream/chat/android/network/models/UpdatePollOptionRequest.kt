@@ -14,15 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Request object for creating/updating a reminder.
  *
- * @property remind_at The date when the reminder should be sent.
  */
-@JsonClass(generateAdapter = true)
-internal data class ReminderRequest(val remind_at: Date?)
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdatePollOptionRequest(
+    @Json(name = "id")
+    internal val id: String,
+
+    @Json(name = "text")
+    internal val text: String,
+
+    @Json(name = "custom")
+    internal val custom: Map<String, Any?>? = emptyMap(),
+)

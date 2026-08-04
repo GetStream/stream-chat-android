@@ -42,29 +42,22 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
@@ -127,6 +120,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.RoleType
@@ -143,6 +137,10 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.CreatePollOptionRequest
+import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -157,6 +155,8 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.PollOptionInput
+import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
@@ -172,10 +172,16 @@ import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
+import io.getstream.chat.android.network.models.UpdateUserPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -221,6 +227,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
+import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 
 @Suppress("LargeClass")
 internal class MoshiChatApiTest {
@@ -367,10 +374,10 @@ internal class MoshiChatApiTest {
         val skipEnrichUrl = randomBoolean()
         val result = sut.partialUpdateMessage(messageId, set, unset, skipEnrichUrl).await()
         // then
-        val expectedRequest = PartialUpdateMessageRequest(
+        val expectedRequest = UpdateMessagePartialRequest(
             set = set,
             unset = unset,
-            skip_enrich_url = skipEnrichUrl,
+            skipEnrichUrl = skipEnrichUrl,
         )
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateMessage(messageId, expectedRequest)
@@ -1824,8 +1831,8 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.partialUpdateUser(targetUserId, set, unset).await()
         // then
-        val expectedBody = PartialUpdateUsersRequest(
-            users = listOf(PartialUpdateUserDto(targetUserId, set, unset)),
+        val expectedBody = UpdateUsersPartialRequest(
+            users = listOf(UpdateUserPartialRequest(id = targetUserId, set = set, unset = unset)),
         )
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateUsers(connectionId, expectedBody)
@@ -1845,7 +1852,7 @@ internal class MoshiChatApiTest {
         val userName = randomString()
         val result = sut.getGuestUser(userId, userName).await()
         // then
-        val expectedBody = GuestUserRequest.create(userId, userName)
+        val expectedBody = CreateGuestRequest(user = UserRequest(id = userId, name = userName))
         result `should be instance of` expected
         verify(api, times(1)).getGuestUser(expectedBody)
     }
@@ -2579,7 +2586,7 @@ internal class MoshiChatApiTest {
         val option = randomPollOption()
         val result = sut.createPollOption(pollId, option).await()
         // then
-        val expectedOption = UpstreamOptionDto(text = option.text, extraData = option.extraData)
+        val expectedOption = CreatePollOptionRequest(text = option.text, custom = option.extraData)
         result `should be instance of` expected
         verify(api, times(1)).createPollOption(pollId, expectedOption)
     }
@@ -2598,7 +2605,11 @@ internal class MoshiChatApiTest {
         val option = randomPollOption()
         val result = sut.updatePollOption(pollId, option).await()
         // then
-        val expectedOption = UpstreamOptionDto(option.id, option.text, option.extraData)
+        val expectedOption = UpdatePollOptionRequest(
+            id = option.id.orEmpty(),
+            text = option.text,
+            custom = option.extraData,
+        )
         result `should be instance of` expected
         verify(api, times(1)).updatePollOption(pollId, expectedOption)
     }
@@ -2638,20 +2649,20 @@ internal class MoshiChatApiTest {
             name = pollConfig.name,
             description = pollConfig.description,
             options = pollConfig.optionsWithExtraData.map {
-                UpstreamOptionDto(
+                PollOptionInput(
                     text = it.text,
-                    extraData = it.extraData,
+                    custom = it.extraData,
                 )
             },
-            voting_visibility = when (pollConfig.votingVisibility) {
-                VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
-                VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+            votingVisibility = when (pollConfig.votingVisibility) {
+                VotingVisibility.PUBLIC -> CreatePollRequest.VotingVisibility.Public
+                VotingVisibility.ANONYMOUS -> CreatePollRequest.VotingVisibility.Anonymous
             },
-            enforce_unique_vote = pollConfig.enforceUniqueVote,
-            max_votes_allowed = pollConfig.maxVotesAllowed,
-            allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-            allow_answers = pollConfig.allowAnswers,
-            extraData = pollConfig.extraData,
+            enforceUniqueVote = pollConfig.enforceUniqueVote,
+            maxVotesAllowed = pollConfig.maxVotesAllowed,
+            allowUserSuggestedOptions = pollConfig.allowUserSuggestedOptions,
+            allowAnswers = pollConfig.allowAnswers,
+            custom = pollConfig.extraData,
         )
         result `should be instance of` expected
         verify(api, times(1)).createPoll(expectedBody)
@@ -2693,27 +2704,60 @@ internal class MoshiChatApiTest {
         )
         val result = sut.updatePoll(request).await()
         // then
-        val expectedBody = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
+        val expectedBody = UpdatePollRequestDto(
             id = pollId,
             name = name,
             description = description,
             options = options.map {
-                UpstreamOptionDto(
-                    id = it.id,
+                PollOptionRequest(
+                    id = it.id.orEmpty(),
                     text = it.text,
-                    extraData = it.extraData,
+                    custom = it.extraData,
                 )
             },
-            voting_visibility = CreatePollRequest.VOTING_VISIBILITY_PUBLIC,
-            enforce_unique_vote = enforceUniqueVote,
-            max_votes_allowed = maxVotesAllowed,
-            allow_user_suggested_options = allowUserSuggestedOptions,
-            allow_answers = allowAnswers,
-            is_closed = isClosed,
-            extraData = extraData,
+            votingVisibility = UpdatePollRequestDto.VotingVisibility.Public,
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            isClosed = isClosed,
+            custom = extraData,
         )
         result `should be instance of` expected
         verify(api, times(1)).updatePoll(expectedBody)
+    }
+
+    @Test
+    fun `updatePollOption returns a failure when the option has no id`() = runTest {
+        // given
+        val api = mock<PollsApi>()
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val result = sut.updatePollOption(randomString(), PollOption(text = randomString())).await()
+        // then
+        result `should be instance of` Result.Failure::class
+        verify(api, never()).updatePollOption(any(), any())
+    }
+
+    @Test
+    fun `updatePoll returns a failure when an option has no id`() = runTest {
+        // given
+        val api = mock<PollsApi>()
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val request = io.getstream.chat.android.client.api.models.UpdatePollRequest(
+            id = randomString(),
+            name = randomString(),
+            options = listOf(PollOption(text = randomString())),
+        )
+        val result = sut.updatePoll(request).await()
+        // then
+        result `should be instance of` Result.Failure::class
+        verify(api, never()).updatePoll(any())
     }
 
     @ParameterizedTest
@@ -2817,7 +2861,7 @@ internal class MoshiChatApiTest {
         val remindAt = randomDate()
         val result = sut.createReminder(messageId, remindAt).await()
         // then
-        val expectedBody = ReminderRequest(remind_at = remindAt)
+        val expectedBody = CreateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
         verify(api, times(1)).createReminder(messageId, expectedBody)
     }
@@ -2836,7 +2880,7 @@ internal class MoshiChatApiTest {
         val remindAt = randomDate()
         val result = sut.updateReminder(messageId, remindAt).await()
         // then
-        val expectedBody = ReminderRequest(remind_at = remindAt)
+        val expectedBody = UpdateReminderRequest(remindAt = remindAt)
         result `should be instance of` expected
         verify(api, times(1)).updateReminder(messageId, expectedBody)
     }

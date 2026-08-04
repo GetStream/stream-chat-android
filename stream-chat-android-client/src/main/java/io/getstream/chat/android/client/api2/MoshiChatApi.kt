@@ -47,25 +47,19 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
-import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
-import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -75,9 +69,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -145,6 +137,10 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.CreatePollOptionRequest
+import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -156,6 +152,8 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.PollOptionInput
+import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
@@ -169,11 +167,18 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdateReminderRequest
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
+import io.getstream.chat.android.network.models.UpdateUserPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersRequest
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -190,6 +195,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
+import io.getstream.chat.android.network.models.UpdatePollRequest as UpdatePollRequestDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class MoshiChatApi
@@ -359,10 +365,10 @@ constructor(
     ): Call<Message> {
         return messageApi.partialUpdateMessage(
             messageId = messageId,
-            body = PartialUpdateMessageRequest(
+            body = UpdateMessagePartialRequest(
                 set = set.toDto(),
                 unset = unset,
-                skip_enrich_url = skipEnrichUrl,
+                skipEnrichUrl = skipEnrichUrl,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
@@ -1381,7 +1387,7 @@ constructor(
         return userApi.updateUsers(
             connectionId = connectionId,
             body = with(dtoMapping) {
-                UpdateUsersRequest(users.associateBy({ it.id }, { it.toDto() }))
+                UpdateUsersRequest(users.associateBy({ it.id }, { it.toUserRequest() }))
             },
         ).mapDomain { response ->
             response.users.values.map {
@@ -1410,8 +1416,8 @@ constructor(
     override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
         return userApi.partialUpdateUsers(
             connectionId = connectionId,
-            body = PartialUpdateUsersRequest(
-                listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
+            body = UpdateUsersPartialRequest(
+                users = listOf(UpdateUserPartialRequest(id = id, set = set, unset = unset)),
             ),
         ).mapDomain { response ->
             response.users.values.map { it.toDomain() }
@@ -1420,7 +1426,7 @@ constructor(
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
-            body = GuestUserRequest.create(userId, userName),
+            body = CreateGuestRequest(user = UserRequest(id = userId, name = userName)),
         ).mapDomain { response ->
             GuestUser(
                 response.user.toDomain(),
@@ -1823,18 +1829,22 @@ constructor(
     }
 
     override fun createPollOption(pollId: String, option: PollOption): Call<PollOption> {
-        val body = UpstreamOptionDto(
+        val body = CreatePollOptionRequest(
             text = option.text,
-            extraData = option.extraData,
+            custom = option.extraData,
         )
         return pollsApi.createPollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
     }
 
     override fun updatePollOption(pollId: String, option: PollOption): Call<PollOption> {
-        val body = UpstreamOptionDto(
-            id = option.id,
+        val optionId = option.id ?: return ErrorCall(
+            coroutineScope,
+            Error.GenericError("Cannot update a poll option without an id"),
+        )
+        val body = UpdatePollOptionRequest(
+            id = optionId,
             text = option.text,
-            extraData = option.extraData,
+            custom = option.extraData,
         )
         return pollsApi.updatePollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
     }
@@ -1877,49 +1887,54 @@ constructor(
     override fun createPoll(createPollParams: CreatePollParams): Call<Poll> {
         return pollsApi.createPoll(
             CreatePollRequest(
-                allow_answers = createPollParams.allowAnswers,
-                allow_user_suggested_options = createPollParams.allowUserSuggestedOptions,
+                allowAnswers = createPollParams.allowAnswers,
+                allowUserSuggestedOptions = createPollParams.allowUserSuggestedOptions,
                 description = createPollParams.description,
-                enforce_unique_vote = createPollParams.enforceUniqueVote,
-                max_votes_allowed = createPollParams.maxVotesAllowed,
+                enforceUniqueVote = createPollParams.enforceUniqueVote,
+                maxVotesAllowed = createPollParams.maxVotesAllowed,
                 name = createPollParams.name,
                 options = createPollParams.optionsWithExtraData.map {
-                    UpstreamOptionDto(
+                    PollOptionInput(
                         text = it.text,
-                        extraData = it.extraData,
+                        custom = it.extraData,
                     )
                 },
-                voting_visibility = when (createPollParams.votingVisibility) {
-                    VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
-                    VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+                votingVisibility = when (createPollParams.votingVisibility) {
+                    VotingVisibility.PUBLIC -> CreatePollRequest.VotingVisibility.Public
+                    VotingVisibility.ANONYMOUS -> CreatePollRequest.VotingVisibility.Anonymous
                 },
-                extraData = createPollParams.extraData,
+                custom = createPollParams.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
     }
 
     override fun updatePoll(request: UpdatePollRequest): Call<Poll> {
-        val body = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
-            allow_answers = request.allowAnswers,
-            allow_user_suggested_options = request.allowUserSuggestedOptions,
+        val options = request.options?.map { option ->
+            val optionId = option.id ?: return ErrorCall(
+                coroutineScope,
+                Error.GenericError("Cannot update a poll option without an id"),
+            )
+            PollOptionRequest(
+                id = optionId,
+                text = option.text,
+                custom = option.extraData,
+            )
+        }
+        val body = UpdatePollRequestDto(
+            allowAnswers = request.allowAnswers,
+            allowUserSuggestedOptions = request.allowUserSuggestedOptions,
             description = request.description,
-            enforce_unique_vote = request.enforceUniqueVote,
+            enforceUniqueVote = request.enforceUniqueVote,
             id = request.id,
-            is_closed = request.isClosed,
-            max_votes_allowed = request.maxVotesAllowed,
+            isClosed = request.isClosed,
+            maxVotesAllowed = request.maxVotesAllowed,
             name = request.name,
-            options = request.options?.map {
-                UpstreamOptionDto(
-                    id = it.id,
-                    text = it.text,
-                    extraData = it.extraData,
-                )
+            options = options,
+            votingVisibility = when (request.votingVisibility) {
+                VotingVisibility.PUBLIC -> UpdatePollRequestDto.VotingVisibility.Public
+                VotingVisibility.ANONYMOUS -> UpdatePollRequestDto.VotingVisibility.Anonymous
             },
-            voting_visibility = when (request.votingVisibility) {
-                VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
-                VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
-            },
-            extraData = request.extraData,
+            custom = request.extraData,
         )
         return pollsApi.updatePoll(body).mapDomain { it.poll.toDomain() }
     }
@@ -1935,14 +1950,14 @@ constructor(
     override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.createReminder(
             messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
+            body = CreateReminderRequest(remindAt = remindAt),
         ).mapDomain { it.reminder.toDomain() }
     }
 
     override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.updateReminder(
             messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
+            body = UpdateReminderRequest(remindAt = remindAt),
         ).mapDomain { it.reminder.toDomain() }
     }
 

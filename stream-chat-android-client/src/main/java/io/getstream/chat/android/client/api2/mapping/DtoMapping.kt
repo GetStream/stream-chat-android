@@ -50,7 +50,12 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReactionRequest
+import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UserRequest
 
 internal class DtoMapping(
     private val messageTransformer: MessageTransformer,
@@ -265,6 +270,33 @@ internal class DtoMapping(
                     extraData = extraData,
                 )
             }
+
+    /**
+     * Maps the domain [User] model to a network [UserRequest] model.
+     *
+     * Applies [UserTransformer] first, then maps only the fields a client is allowed to set. The
+     * backend marks role/teams/teams_role as ignore_if_client_side, so they are dropped from
+     * client requests server-side regardless; the generated model omits them accordingly.
+     */
+    internal fun User.toUserRequest(): UserRequest =
+        userTransformer.transform(this)
+            .run {
+                UserRequest(
+                    id = id,
+                    name = name,
+                    image = image,
+                    invisible = isInvisible,
+                    language = language,
+                    privacySettings = privacySettings?.toResponse(),
+                    custom = extraData,
+                )
+            }
+
+    private fun PrivacySettings.toResponse(): PrivacySettingsResponse = PrivacySettingsResponse(
+        typingIndicators = typingIndicators?.let { TypingIndicatorsResponse(enabled = it.enabled) },
+        readReceipts = readReceipts?.let { ReadReceiptsResponse(enabled = it.enabled) },
+        deliveryReceipts = deliveryReceipts?.let { DeliveryReceiptsResponse(enabled = it.enabled) },
+    )
 
     /**
      * Maps the domain [ConnectedEvent] model to a network [UpstreamConnectedEventDto] model.

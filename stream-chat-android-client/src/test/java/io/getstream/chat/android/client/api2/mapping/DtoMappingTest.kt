@@ -39,7 +39,12 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReactionRequest
+import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
@@ -328,6 +333,79 @@ internal class DtoMappingTest {
         dto shouldBeEqualTo expected
         // Verify the transformer is called
         verify(userTransformer, times(1)).transform(user)
+    }
+
+    @Test
+    fun `User with privacy settings is correctly mapped to UserRequest`() {
+        val userTransformer = spy(NoOpUserTransformer)
+        val user = randomUser(
+            privacySettings = PrivacySettings(
+                typingIndicators = TypingIndicators(enabled = true),
+                readReceipts = ReadReceipts(enabled = false),
+                deliveryReceipts = DeliveryReceipts(enabled = true),
+            ),
+        )
+        val mapping = Fixture()
+            .withUserTransformer(userTransformer)
+            .get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        val expected = UserRequest(
+            id = user.id,
+            name = user.name,
+            image = user.image,
+            invisible = user.isInvisible,
+            language = user.language,
+            privacySettings = PrivacySettingsResponse(
+                typingIndicators = TypingIndicatorsResponse(enabled = true),
+                readReceipts = ReadReceiptsResponse(enabled = false),
+                deliveryReceipts = DeliveryReceiptsResponse(enabled = true),
+            ),
+            custom = user.extraData,
+        )
+        request shouldBeEqualTo expected
+        // Verify the transformer is called
+        verify(userTransformer, times(1)).transform(user)
+    }
+
+    @Test
+    fun `User with empty privacy settings maps each sub-setting to null`() {
+        val user = randomUser(
+            privacySettings = PrivacySettings(
+                typingIndicators = null,
+                readReceipts = null,
+                deliveryReceipts = null,
+            ),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        request.privacySettings shouldBeEqualTo PrivacySettingsResponse(
+            typingIndicators = null,
+            readReceipts = null,
+            deliveryReceipts = null,
+        )
+    }
+
+    @Test
+    fun `User without privacy settings is mapped to UserRequest with null privacy settings`() {
+        val user = randomUser(privacySettings = null)
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        val expected = UserRequest(
+            id = user.id,
+            name = user.name,
+            image = user.image,
+            invisible = user.isInvisible,
+            language = user.language,
+            privacySettings = null,
+            custom = user.extraData,
+        )
+        request shouldBeEqualTo expected
     }
 
     @Test
