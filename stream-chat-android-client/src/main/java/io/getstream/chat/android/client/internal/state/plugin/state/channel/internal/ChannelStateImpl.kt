@@ -1208,7 +1208,11 @@ internal class ChannelStateImpl(
     private fun markReadLocally() {
         val currentUserRead = read.value ?: return
         val lastMessage = _messages.value.lastOrNull()
-        val readDate = lastMessage?.getCreatedAtOrDefault(Date()) ?: Date()
+        // Read strictly past the last message (not exactly its createdAt), mirroring the server's
+        // mark-read. An exact match would make the message list treat the user's next own message as
+        // a "mark as unread" and show a spurious 0-count separator.
+        val lastMessageAt = lastMessage?.getCreatedAtOrDefault(Date()) ?: Date(0)
+        val readDate = Date(lastMessageAt.time + 1)
         val updatedRead = currentUserRead.copy(
             lastReceivedEventDate = maxOf(currentUserRead.lastReceivedEventDate, readDate),
             lastRead = readDate,
