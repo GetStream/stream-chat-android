@@ -78,6 +78,8 @@ jobs:
         with:
           name: apks
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+        with:
+          java-version: '21'
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Run tests

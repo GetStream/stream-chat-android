@@ -21,6 +21,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+        with:
+          java-version: '21'
       - name: Build
         run: ./gradlew assembleDebug
   release_build:
@@ -33,6 +35,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+        with:
+          java-version: '21'
       - name: Build
         run: ./gradlew assembleRelease
   tests:
@@ -47,6 +51,8 @@ jobs:
         with:
           fetch-depth: 0 # fetch all history for sonar analysis
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+        with:
+          java-version: '21'
       - name: Unit tests
         run: ./gradlew :testCoverage
       - name: Upload test results
@@ -70,6 +76,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+        with:
+          java-version: '21'
       - name: build demo debug
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
       - name: Upload artifact to Emerge
@@ -88,6 +96,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+        with:
+          java-version: '21'
       - name: build debug
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
       - name: Upload artifact to Emerge

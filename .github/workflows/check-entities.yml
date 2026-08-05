@@ -20,6 +20,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
+        with:
+          java-version: '21'
       - name: Find touched DB Entities
         id: touchedEntities
         continue-on-error: true

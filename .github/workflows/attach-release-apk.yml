@@ -22,6 +22,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: GetStream/android-ci-actions/actions/setup-java@main
+        with:
+          java-version: '21'
       - name: Prepare signing environment
         env:
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
