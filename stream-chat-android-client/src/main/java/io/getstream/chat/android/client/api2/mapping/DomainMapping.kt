@@ -61,10 +61,7 @@ import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
-import io.getstream.chat.android.client.api2.model.response.AppDto
-import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
-import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
@@ -134,11 +131,14 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
+import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
@@ -151,22 +151,22 @@ internal class DomainMapping(
 ) {
 
     /**
-     * Transforms [AppSettingsResponse] to [AppSettings].
+     * Transforms [GetApplicationResponse] to [AppSettings].
      */
-    internal fun AppSettingsResponse.toDomain(): AppSettings = AppSettings(app.toDomain())
+    internal fun GetApplicationResponse.toDomain(): AppSettings = AppSettings(app.toDomain())
 
-    private fun AppDto.toDomain(): App = App(
+    private fun AppResponseFields.toDomain(): App = App(
         name = name,
-        fileUploadConfig = file_upload_config.toDomain(),
-        imageUploadConfig = image_upload_config.toDomain(),
+        fileUploadConfig = fileUploadConfig.toDomain(),
+        imageUploadConfig = imageUploadConfig.toDomain(),
     )
 
-    private fun FileUploadConfigDto.toDomain(): FileUploadConfig = FileUploadConfig(
-        allowedFileExtensions = allowed_file_extensions,
-        allowedMimeTypes = allowed_mime_types,
-        blockedFileExtensions = blocked_file_extensions,
-        blockedMimeTypes = blocked_mime_types,
-        sizeLimitInBytes = size_limit?.takeUnless { it <= 0 } ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+    private fun UploadConfigDto.toDomain(): FileUploadConfig = FileUploadConfig(
+        allowedFileExtensions = allowedFileExtensions,
+        allowedMimeTypes = allowedMimeTypes,
+        blockedFileExtensions = blockedFileExtensions,
+        blockedMimeTypes = blockedMimeTypes,
+        sizeLimitInBytes = sizeLimit.toLong().takeUnless { it <= 0 } ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
     )
 
     /**

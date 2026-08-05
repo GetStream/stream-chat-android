@@ -65,11 +65,8 @@ import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
-import io.getstream.chat.android.client.api2.model.response.AppDto
-import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
-import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
@@ -100,12 +97,14 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.FileUploadConfig
+import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.positiveRandomInt
-import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
@@ -626,30 +625,36 @@ internal object Mother {
         )
     }
 
-    fun randomAppSettingsResponse(app: AppDto = randomAppDto()): AppSettingsResponse = AppSettingsResponse(app)
+    fun randomAppSettingsResponse(
+        app: AppResponseFields = randomAppResponseFields(),
+    ): GetApplicationResponse = GetApplicationResponse(duration = randomString(), app = app)
 
-    fun randomAppDto(
+    fun randomAppResponseFields(
         name: String = randomString(),
-        fileUploadConfig: FileUploadConfigDto = randomFileUploadConfigDto(),
-        imageUploadConfig: FileUploadConfigDto = randomFileUploadConfigDto(),
-    ): AppDto = AppDto(
+        fileUploadConfig: FileUploadConfig = randomFileUploadConfig(),
+        imageUploadConfig: FileUploadConfig = randomFileUploadConfig(),
+    ): AppResponseFields = AppResponseFields(
+        asyncUrlEnrichEnabled = randomBoolean(),
+        autoTranslationEnabled = randomBoolean(),
+        id = randomInt(),
         name = name,
-        file_upload_config = fileUploadConfig,
-        image_upload_config = imageUploadConfig,
+        placement = randomString(),
+        fileUploadConfig = fileUploadConfig,
+        imageUploadConfig = imageUploadConfig,
     )
 
-    fun randomFileUploadConfigDto(
+    fun randomFileUploadConfig(
         allowedFileExtensions: List<String> = listOf(randomString()),
         allowedMimeTypes: List<String> = listOf(randomString()),
         blockedFileExtensions: List<String> = listOf(randomString()),
         blockedMimeTypes: List<String> = listOf(randomString()),
-        sizeLimit: Long = positiveRandomLong(),
-    ): FileUploadConfigDto = FileUploadConfigDto(
-        allowed_file_extensions = allowedFileExtensions,
-        allowed_mime_types = allowedMimeTypes,
-        blocked_file_extensions = blockedFileExtensions,
-        blocked_mime_types = blockedMimeTypes,
-        size_limit = sizeLimit,
+        sizeLimit: Int = positiveRandomInt(),
+    ): FileUploadConfig = FileUploadConfig(
+        sizeLimit = sizeLimit,
+        allowedFileExtensions = allowedFileExtensions,
+        allowedMimeTypes = allowedMimeTypes,
+        blockedFileExtensions = blockedFileExtensions,
+        blockedMimeTypes = blockedMimeTypes,
     )
 
     fun randomDownstreamReactionDto(

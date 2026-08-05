@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
-import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -76,6 +75,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
@@ -104,7 +104,7 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun appSettingsInput() = listOf(
         Arguments.of(RetroSuccess(Mother.randomAppSettingsResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<AppSettingsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetApplicationResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
