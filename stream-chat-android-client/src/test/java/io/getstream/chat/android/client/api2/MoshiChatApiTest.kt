@@ -65,7 +65,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
@@ -147,6 +146,7 @@ import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
+import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
@@ -2378,7 +2378,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryMembersInput")
-    fun testQueryMembers(call: RetrofitCall<QueryMembersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryMembers(call: RetrofitCall<MembersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<GeneralApi>()
         whenever(api.queryMembers(any())).doReturn(call)

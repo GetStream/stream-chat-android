@@ -92,6 +92,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
+import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
@@ -726,6 +727,20 @@ internal object Mother {
         sum_scores = sumScores,
         first_reaction_at = firstReactionAt,
         last_reaction_at = lastReactionAt,
+    )
+
+    fun randomChannelMemberResponse(
+        user: UserResponse = randomUserResponse(),
+        channelRole: String = randomString(),
+    ): ChannelMemberResponse = ChannelMemberResponse(
+        user = user,
+        userId = user.id,
+        channelRole = channelRole,
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        banned = randomBoolean(),
+        shadowBanned = randomBoolean(),
+        notificationsMuted = randomBoolean(),
     )
 
     fun randomDownstreamMemberDto(

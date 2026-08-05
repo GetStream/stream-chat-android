@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.Mother.randomBannedUserResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
 import io.getstream.chat.android.client.Mother.randomChannelInfoDto
+import io.getstream.chat.android.client.Mother.randomChannelMemberResponse
 import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
@@ -671,6 +672,54 @@ internal class DomainMappingTest {
             extraData = downstreamMemberDto.extraData,
         )
         assertEquals(expected, member)
+    }
+
+    @Test
+    fun `ChannelMemberResponse is correctly mapped to Member`() {
+        val memberResponse = randomChannelMemberResponse()
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        val expected = Member(
+            user = with(sut) { memberResponse.user!!.toDomain() },
+            createdAt = memberResponse.createdAt,
+            updatedAt = memberResponse.updatedAt,
+            isInvited = memberResponse.invited,
+            inviteAcceptedAt = memberResponse.inviteAcceptedAt,
+            inviteRejectedAt = memberResponse.inviteRejectedAt,
+            shadowBanned = memberResponse.shadowBanned,
+            banned = memberResponse.banned,
+            channelRole = memberResponse.channelRole,
+            notificationsMuted = memberResponse.notificationsMuted,
+            status = memberResponse.status,
+            banExpires = memberResponse.banExpires,
+            pinnedAt = memberResponse.pinnedAt,
+            archivedAt = memberResponse.archivedAt,
+            extraData = emptyMap(),
+        )
+        assertEquals(expected, member)
+    }
+
+    @Test
+    fun `ChannelMemberResponse without a user is mapped to a Member holding only the user id`() {
+        val memberResponse = randomChannelMemberResponse().copy(user = null)
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        assertEquals(User(id = memberResponse.userId.orEmpty()), member.user)
+    }
+
+    @Test
+    fun `ChannelMemberResponse custom data is mapped to extraData without its null values`() {
+        val memberResponse = randomChannelMemberResponse()
+            .copy(custom = mapOf("customKey" to "customValue", "nullKey" to null))
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), member.extraData)
     }
 
     @Test
