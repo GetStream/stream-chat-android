@@ -40,6 +40,14 @@ import org.junit.Before
 import org.junit.Rule
 import java.util.Date
 
+/**
+ * API level Paparazzi renders at. Defaults to 36 (alpha05's stable ceiling); the module compiles
+ * against 37. Override per run with `-Ppaparazzi.compileSdk=NN`, forwarded as this system property
+ * by build.gradle.kts. Rendering above 36 is unstable on alpha05.
+ */
+internal val paparazziCompileSdk: Int =
+    System.getProperty("paparazzi.compileSdk")?.toIntOrNull() ?: 36
+
 internal abstract class PaparazziViewTest : MockedChatClientTest {
 
     @get:Rule
@@ -58,7 +66,7 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
      * renders/records goldens at 36. Remove once Paparazzi supports API 37.
      */
     fun createPaparazzi(deviceConfig: DeviceConfig): Paparazzi = Paparazzi(
-        environment = detectEnvironment().copy(compileSdkVersion = 36),
+        environment = detectEnvironment().copy(compileSdkVersion = paparazziCompileSdk),
         deviceConfig = deviceConfig,
     )
 

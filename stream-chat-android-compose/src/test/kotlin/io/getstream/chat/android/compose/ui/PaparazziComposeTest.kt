@@ -73,6 +73,15 @@ private fun DeviceConfig.atHdpi(): DeviceConfig = copy(
     density = Density.HIGH,
 )
 
+/**
+ * API level Paparazzi renders at. Defaults to 36 — Paparazzi 2.0.0-alpha05's stable ceiling — while
+ * the module still compiles against 37. Override per run with `-Ppaparazzi.compileSdk=NN`, which
+ * build.gradle.kts forwards as this system property (e.g. to record/verify at 35 or 37). Rendering
+ * above 36 is unstable on alpha05.
+ */
+internal val paparazziCompileSdk: Int =
+    System.getProperty("paparazzi.compileSdk")?.toIntOrNull() ?: 36
+
 internal interface PaparazziComposeTest : MockedChatClientTest {
 
     @get:Rule
@@ -90,7 +99,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         deviceConfig: DeviceConfig = PIXEL_2_HDPI,
         renderingMode: SessionParams.RenderingMode = SessionParams.RenderingMode.NORMAL,
     ): Paparazzi = Paparazzi(
-        environment = detectEnvironment().copy(compileSdkVersion = 36),
+        environment = detectEnvironment().copy(compileSdkVersion = paparazziCompileSdk),
         deviceConfig = deviceConfig,
         renderingMode = renderingMode,
     )

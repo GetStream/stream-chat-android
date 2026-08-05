@@ -61,6 +61,13 @@ baselineProfile {
 // 512 MB heap. Raise it so recordPaparazziDebug / verifyPaparazziDebug do not run out of memory.
 tasks.withType<Test>().configureEach {
     maxHeapSize = "4g"
+    // Forward `-Ppaparazzi.compileSdk=NN` to the forked test worker so PaparazziComposeTest can
+    // render/record goldens at a chosen API level (defaults to 36). Forked workers do not inherit
+    // Gradle properties, so it must be passed explicitly as a system property.
+    systemProperty(
+        "paparazzi.compileSdk",
+        providers.gradleProperty("paparazzi.compileSdk").getOrElse("36"),
+    )
 }
 
 tasks.withType<KotlinCompile> {

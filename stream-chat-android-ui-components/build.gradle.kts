@@ -55,6 +55,16 @@ tasks.withType<KotlinCompile> {
     )
 }
 
+tasks.withType<Test>().configureEach {
+    // Forward `-Ppaparazzi.compileSdk=NN` to the forked test worker so PaparazziViewTest can
+    // render/record goldens at a chosen API level (defaults to 36). Forked workers do not inherit
+    // Gradle properties, so it must be passed explicitly as a system property.
+    systemProperty(
+        "paparazzi.compileSdk",
+        providers.gradleProperty("paparazzi.compileSdk").getOrElse("36"),
+    )
+}
+
 dependencies {
     api(project(":stream-chat-android-ui-common"))
 
