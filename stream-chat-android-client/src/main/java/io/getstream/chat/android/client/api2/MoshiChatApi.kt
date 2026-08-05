@@ -1428,7 +1428,7 @@ constructor(
         ).mapDomain { response ->
             GuestUser(
                 response.user.toDomain(),
-                response.access_token,
+                response.accessToken,
             )
         }
     }

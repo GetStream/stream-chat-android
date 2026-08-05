@@ -83,7 +83,6 @@ import io.getstream.chat.android.client.api2.model.response.SearchMessagesRespon
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
-import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
@@ -133,6 +132,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -1841,7 +1841,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getGuestUserInput")
-    fun testGetGuestUser(call: RetrofitCall<TokenResponse>, expected: KClass<*>) = runTest {
+    fun testGetGuestUser(call: RetrofitCall<CreateGuestResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<GuestApi>()
         whenever(api.getGuestUser(any())).doReturn(call)

@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollVotesRespon
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
-import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -94,6 +93,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.GetApplicationResponse
@@ -1129,10 +1129,15 @@ internal object Mother {
     fun randomUnblockUsersResponse(duration: String = randomString()): UnblockUsersResponse =
         UnblockUsersResponse(duration)
 
-    fun randomTokenResponse(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
+    fun randomCreateGuestResponse(
+        user: UserResponse = randomUserResponse(),
         accessToken: String = randomString(),
-    ): TokenResponse = TokenResponse(user, accessToken)
+        duration: String = randomString(),
+    ): CreateGuestResponse = CreateGuestResponse(
+        accessToken = accessToken,
+        duration = duration,
+        user = user,
+    )
 
     fun randomDownstreamPollDto(
         id: String = randomString(),
