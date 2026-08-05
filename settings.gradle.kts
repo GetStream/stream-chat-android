@@ -21,9 +21,13 @@ pluginManagement {
 			}
 		}
 
-		maven(url = "https://jitpack.io/") {
+		// fetch Stream SNAPSHOT plugins (e.g. streamConventions) from Central snapshots
+		maven(url = "https://central.sonatype.com/repository/maven-snapshots/") {
 			content {
-				includeModule("com.github.passsy", "gradle-gitVersioner-plugin")
+				includeGroupByRegex("io\\.getstream.*")
+			}
+			mavenContent {
+				snapshotsOnly()
 			}
 		}
 
@@ -37,7 +41,6 @@ pluginManagement {
 		eachPlugin {
 			when(requested.id.id) {
 				"shot" -> { useModule("com.karumi:shot:${requested.version}") }
-				"com.pascalwelsch.gitversioner" -> { useModule("com.github.passsy:gradle-gitVersioner-plugin:${requested.version}") }
 			}
 		}
 	}

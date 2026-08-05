@@ -4,7 +4,7 @@ targetSdk = "37"
 sampleTargetSdk = "37"
 minSdk = "21"
 allureKotlin = "2.4.0"
-androidGradlePlugin = "8.10.1"
+androidGradlePlugin = "9.1.1"
 androidJunit5GradlePlugin = "1.11.2.0"
 androidLegacySupport = "1.0.0"
 androidxActivityCompose = "1.9.3"
@@ -44,7 +44,6 @@ firebaseAnalytics = "22.1.2"
 firebaseCrashlytics = "19.2.1"
 firebaseCrashlyticsPlugin = "3.0.2"
 firebaseMessaging = "24.1.0"
-gitversioner = "0.5.0"
 googleServices = "4.4.2"
 gradleVersionsPlugin = "0.51.0"
 huaweiPush = "6.11.0.300"
@@ -59,7 +58,7 @@ kotlin = "2.2.0"
 kotlinBinaryValidator = "0.16.3"
 ksp = "2.2.0-2.0.2"
 leakCanary = "2.4"
-macroBenchmark = "1.2.3"
+macroBenchmark = "1.5.0-alpha07"
 markwon = "4.6.2"
 materialComponents = "1.12.0"
 mockitoKotlin = "5.4.0"
@@ -77,7 +76,7 @@ room = "2.7.2"
 shimmer = "0.5.0"
 shimmerCompose = "1.3.1"
 shot = "6.1.0"
-streamConventions = "0.13.1"
+streamConventions = "0.13.2-SNAPSHOT"
 streamLog = "1.3.2"
 streamPush = "1.3.1"
 streamResult = "1.3.2"
@@ -232,7 +231,6 @@ androidx-navigation = { id = "androidx.navigation.safeargs.kotlin", version.ref 
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinBinaryValidator"}
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektPlugin"}
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin"}
-gitversioner = { id = "com.pascalwelsch.gitversioner", version.ref = "gitversioner"}
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices"}
 gradle-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin"}
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}

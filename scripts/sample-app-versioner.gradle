@@ -10,15 +10,11 @@ def isCI = System.getenv('CI')
 ext["sampleAppVersionCode"] = 1
 ext["sampleAppVersionName"] = version
 if (isCI && gitIsAvailable()) {
-    gitVersioner {
-        def branches = ['develop', 'main', 'release']
-        baseBranch branchName in branches ? branchName : branches[0]
-        yearFactor 100
-        formatter = { gitVersioner ->
-            "1.${gitVersioner.versionCode}.${gitVersioner.featureBranchCommitCount}.${gitVersioner.currentSha1Short}"
-        }
-    }
-
-    ext["sampleAppVersionCode"] = gitVersioner.versionCode
-    ext["sampleAppVersionName"] = gitVersioner.versionName
+    // Derive the demo-app version from git. Replaces the gitVersioner plugin, which relied on
+    // the Gradle-9-removed Project.exec(Action) API. Groovy's String.execute() is plain JVM and
+    // Gradle-9-safe. versionCode = commit count on HEAD (monotonic); versionName = 1.<count>.<sha>.
+    def commitCount = "git rev-list --count HEAD".execute().text.trim()
+    def shortSha = "git rev-parse --short HEAD".execute().text.trim()
+    ext["sampleAppVersionCode"] = commitCount.toInteger()
+    ext["sampleAppVersionName"] = "1.${commitCount}.${shortSha}"
 }

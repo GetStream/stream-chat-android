@@ -28,7 +28,7 @@ android {
         }
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.add("META-INF/*")
     }
 
@@ -37,7 +37,7 @@ android {
         compose = true
     }
 
-    lintOptions {
+    lint {
         disable += "MissingTranslation"
     }
 }

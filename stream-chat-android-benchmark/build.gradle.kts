@@ -21,22 +21,24 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
     buildFeatures {
         buildConfig = true
     }
 
     targetProjectPath = ":stream-chat-android-compose-sample"
 
-    testOptions.managedDevices.devices {
+    testOptions.managedDevices.allDevices {
         maybeCreate<com.android.build.api.dsl.ManagedVirtualDevice>("pixel6api31").apply {
             device = "Pixel 6"
             apiLevel = 31
             systemImageSource = "aosp"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 
