@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -137,8 +136,11 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.UserGroupResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -978,6 +980,24 @@ internal class DomainMapping(
         userId = user_id,
         isAdmin = is_admin,
         createdAt = created_at,
+    )
+
+    internal fun UserGroupResponse.toDomain(): UserGroup = UserGroup(
+        id = id,
+        name = name,
+        description = description,
+        team = teamId.orEmpty(),
+        members = members.orEmpty().map { it.toDomain() },
+        createdBy = createdBy,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+
+    internal fun UserGroupMemberDto.toDomain(): UserGroupMember = UserGroupMember(
+        groupId = groupId,
+        userId = userId,
+        isAdmin = isAdmin,
+        createdAt = createdAt,
     )
 
     internal fun RoleDto.toDomain(): Role = Role(

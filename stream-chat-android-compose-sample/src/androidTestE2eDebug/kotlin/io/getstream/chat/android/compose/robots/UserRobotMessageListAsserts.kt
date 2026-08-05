@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.robots
 
 import android.annotation.SuppressLint
+import android.content.ClipboardManager
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.R
@@ -47,6 +48,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
+import java.util.regex.Pattern
 
 /**
  * Asserts the selector's visibility with a bounded wait: waits for it to appear when
@@ -314,6 +316,58 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
     return this
 }
 
+fun UserRobot.assertUnreadSeparator(unreadCount: Int, isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        val expectedText = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_message_list_unread_separator,
+            unreadCount,
+            unreadCount,
+        )
+        assertEquals(expectedText, MessageListPage.MessageList.unreadMessagesBadge.waitForText(expectedText))
+    } else {
+        assertVisibility(MessageListPage.MessageList.unreadMessagesBadge, isDisplayed = false)
+    }
+    return this
+}
+
+fun UserRobot.assertScrollToFirstUnreadButton(unreadCount: Int? = null, isDisplayed: Boolean = true): UserRobot {
+    assertVisibility(MessageListPage.MessageList.scrollToFirstUnreadButton, isDisplayed)
+    if (isDisplayed && unreadCount != null) {
+        val expectedText = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_scroll_to_first_unread_count,
+            unreadCount,
+            unreadCount,
+        )
+        // Comparing against the rendered count so a failure reports the actual text. The
+        // count is the only text inside the button and carries no test tag of its own.
+        val countText = By.text(Pattern.compile(".+"))
+            .hasAncestor(MessageListPage.MessageList.scrollToFirstUnreadButton)
+        assertEquals(expectedText, countText.waitForText(expectedText))
+    }
+    return this
+}
+
+fun UserRobot.assertMessageCopied(text: String): UserRobot {
+    val clipboard = appContext.getSystemService(ClipboardManager::class.java)
+    assertEquals(text, clipboard.primaryClip?.getItemAt(0)?.text?.toString())
+    return this
+}
+
+/**
+ * Asserts the "Pinned by X" label above a message. [pinnedBy] is the name shown in the label;
+ * `null` expects the current user's label ("Pinned by You").
+ */
+fun UserRobot.assertMessagePinnedLabel(pinnedBy: String? = null, isDisplayed: Boolean = true): UserRobot {
+    val pinnedByName = pinnedBy ?: appContext.getString(R.string.stream_compose_message_list_you)
+    val expectedLabel = appContext.getString(R.string.stream_compose_pinned_to_channel_by, pinnedByName)
+    if (isDisplayed) {
+        assertEquals(expectedLabel, Message.messageHeaderLabel.waitForText(expectedLabel))
+    } else {
+        assertVisibility(Message.messageHeaderLabel.text(expectedLabel), isDisplayed = false)
+    }
+    return this
+}
+
 fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
         assertTrue(Message.giphy.waitDisplayed())
@@ -351,6 +405,11 @@ fun UserRobot.assertInvalidCommandMessage(text: String, isDisplayed: Boolean = t
 
 fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobot {
     assertVisibility(Message.Reactions.reaction(type), isDisplayed)
+    return this
+}
+
+fun UserRobot.assertReactionAuthor(name: String): UserRobot {
+    assertTrue(Message.Reactions.reactionAuthor.hasDescendant(By.text(name)).waitDisplayed())
     return this
 }
 
@@ -486,5 +545,10 @@ fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
         assertFalse(Composer.linkPreviewTitle.isDisplayed())
         assertFalse(Composer.linkPreviewDescription.isDisplayed())
     }
+    return this
+}
+
+fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
+    assertVisibility(MessageListPage.FlagMessageDialog.body, isDisplayed)
     return this
 }

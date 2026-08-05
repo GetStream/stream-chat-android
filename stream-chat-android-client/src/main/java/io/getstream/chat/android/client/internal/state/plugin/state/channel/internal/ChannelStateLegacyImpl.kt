@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -611,15 +610,12 @@ internal class ChannelStateLegacyImpl(
                     currentUserRead
                         .takeIf { it.lastReadMessageId != lastMessage.id || it.unreadMessages > 0 }
                         ?.let {
-                            upsertReads(
-                                listOf(
-                                    it.copy(
-                                        lastReceivedEventDate = lastMessage.getCreatedAtOrDefault(Date()),
-                                        lastRead = lastMessage.getCreatedAtOrDefault(Date()),
-                                        unreadMessages = 0,
-                                    ),
-                                ),
-                            )
+                            // Zero the count optimistically, but leave the read dates untouched:
+                            // they stay anchored to what the server confirmed, and the server's
+                            // own message.read echo advances them. Stamping them with the newest
+                            // loaded message's date here made messages that were still queued
+                            // behind this call count as already seen.
+                            upsertReads(listOf(it.copy(unreadMessages = 0)))
                             true
                         }
             }

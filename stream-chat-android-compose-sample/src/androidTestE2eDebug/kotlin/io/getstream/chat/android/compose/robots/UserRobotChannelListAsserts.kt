@@ -16,8 +16,13 @@
 
 package io.getstream.chat.android.compose.robots
 
+import androidx.test.uiautomator.By
+import io.getstream.chat.android.compose.pages.ChannelInfoPage
+import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
+import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelMenu
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
+import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitForText
@@ -25,9 +30,35 @@ import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import io.getstream.chat.android.compose.R as ComposeR
 
 fun UserRobot.assertChannelAvatar(): UserRobot {
     assertTrue(Channel.avatar.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertChannelUnreadCount(count: Int): UserRobot {
+    // The badge exposes only a content description; its text is cleared from the
+    // semantics tree by clearAndSetSemantics in UnreadCountIndicator.
+    val expectedDescription = appContext.resources.getQuantityString(
+        ComposeR.plurals.stream_compose_channel_item_unread,
+        count,
+        count,
+    )
+    assertTrue(By.desc(expectedDescription).waitDisplayed())
+    return this
+}
+
+fun UserRobot.assertChannelActionsSheetForGroupChannel(): UserRobot {
+    assertTrue(ChannelMenu.viewInfo.waitDisplayed())
+    assertTrue(ChannelMenu.leaveGroup.isDisplayed())
+    assertTrue(ChannelMenu.deleteGroup.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertGroupChannelInfoScreen(): UserRobot {
+    assertTrue(ChannelInfoPage.groupTitle.waitDisplayed())
+    assertTrue(ChannelInfoPage.pinnedMessagesOption.isDisplayed())
     return this
 }
 
@@ -46,6 +77,11 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
 
 fun UserRobot.assertFailedMessageDeliveryStatusInPreview(): UserRobot {
     assertTrue(Channel.deliveryStatusIsFailed.waitDisplayed())
+    return this
+}
+
+fun UserRobot.assertChannelListIsEmpty(): UserRobot {
+    assertFalse(ChannelList.channels.waitToDisappear().isDisplayed())
     return this
 }
 

@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MessageTransformer
@@ -40,6 +39,12 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.ReactionRequest
+import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
@@ -240,19 +245,30 @@ internal class DtoMappingTest {
 
     @Test
     fun `Reaction is correctly mapped to Dto`() {
-        val reaction = randomReaction()
+        val reaction = randomReaction(emojiCode = "smile", extraData = mutableMapOf("k" to "v"))
         val mapping = Fixture().get()
         val dto = with(mapping) { reaction.toDto() }
-        val expected = UpstreamReactionDto(
-            created_at = reaction.createdAt,
-            message_id = reaction.messageId,
-            score = reaction.score,
+        val expected = ReactionRequest(
             type = reaction.type,
-            updated_at = reaction.updatedAt,
-            user = reaction.user?.let { with(mapping) { it.toDto() } },
-            user_id = reaction.userId,
-            extraData = reaction.extraData,
-            emoji_code = reaction.emojiCode,
+            createdAt = reaction.createdAt,
+            score = reaction.score,
+            updatedAt = reaction.updatedAt,
+            custom = mapOf("k" to "v", "emoji_code" to "smile"),
+        )
+        dto shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `Reaction without an emojiCode omits emoji_code from custom`() {
+        val reaction = randomReaction(emojiCode = null, extraData = mutableMapOf("k" to "v"))
+        val mapping = Fixture().get()
+        val dto = with(mapping) { reaction.toDto() }
+        val expected = ReactionRequest(
+            type = reaction.type,
+            createdAt = reaction.createdAt,
+            score = reaction.score,
+            updatedAt = reaction.updatedAt,
+            custom = mapOf("k" to "v"),
         )
         dto shouldBeEqualTo expected
     }
@@ -317,6 +333,79 @@ internal class DtoMappingTest {
         dto shouldBeEqualTo expected
         // Verify the transformer is called
         verify(userTransformer, times(1)).transform(user)
+    }
+
+    @Test
+    fun `User with privacy settings is correctly mapped to UserRequest`() {
+        val userTransformer = spy(NoOpUserTransformer)
+        val user = randomUser(
+            privacySettings = PrivacySettings(
+                typingIndicators = TypingIndicators(enabled = true),
+                readReceipts = ReadReceipts(enabled = false),
+                deliveryReceipts = DeliveryReceipts(enabled = true),
+            ),
+        )
+        val mapping = Fixture()
+            .withUserTransformer(userTransformer)
+            .get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        val expected = UserRequest(
+            id = user.id,
+            name = user.name,
+            image = user.image,
+            invisible = user.isInvisible,
+            language = user.language,
+            privacySettings = PrivacySettingsResponse(
+                typingIndicators = TypingIndicatorsResponse(enabled = true),
+                readReceipts = ReadReceiptsResponse(enabled = false),
+                deliveryReceipts = DeliveryReceiptsResponse(enabled = true),
+            ),
+            custom = user.extraData,
+        )
+        request shouldBeEqualTo expected
+        // Verify the transformer is called
+        verify(userTransformer, times(1)).transform(user)
+    }
+
+    @Test
+    fun `User with empty privacy settings maps each sub-setting to null`() {
+        val user = randomUser(
+            privacySettings = PrivacySettings(
+                typingIndicators = null,
+                readReceipts = null,
+                deliveryReceipts = null,
+            ),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        request.privacySettings shouldBeEqualTo PrivacySettingsResponse(
+            typingIndicators = null,
+            readReceipts = null,
+            deliveryReceipts = null,
+        )
+    }
+
+    @Test
+    fun `User without privacy settings is mapped to UserRequest with null privacy settings`() {
+        val user = randomUser(privacySettings = null)
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        val expected = UserRequest(
+            id = user.id,
+            name = user.name,
+            image = user.image,
+            invisible = user.isInvisible,
+            language = user.language,
+            privacySettings = null,
+            custom = user.extraData,
+        )
+        request shouldBeEqualTo expected
     }
 
     @Test

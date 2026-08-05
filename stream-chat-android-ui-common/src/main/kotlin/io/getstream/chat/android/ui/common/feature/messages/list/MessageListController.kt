@@ -147,7 +147,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -236,7 +235,7 @@ public class MessageListController(
      * via [messageListState], which mirrors this value.
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
-    private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    private val showUnreadButtonState = MutableStateFlow(true)
     private var lastProcessedReadMessageId: String? = null
     private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
@@ -597,34 +596,53 @@ public class MessageListController(
      * logic of determining unread message state, including edge cases for own messages,
      * mark as unread functionality, and offline/pending message scenarios.
      */
-    @Suppress("MagicNumber")
     private fun observeUnreadLabelState() {
         combine(
-            showUnreadButtonState.onStart { emit(true) },
+            showUnreadButtonState,
             channelState.filterNotNull(),
             channelState.filterNotNull().flatMapLatest { it.read },
         ) { shouldShowButton, channel, read ->
-            read
-                ?.takeIf { !isStartedForThread }
-                ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
-                ?.let { channelUserRead ->
-                    lastProcessedReadMessageId = channelUserRead.lastReadMessageId
-
-                    // Delegate to the calculator for the complex unread label logic
-                    val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
-                        channelUserRead = channelUserRead,
-                        messages = channel.messages.value,
-                        currentUserId = clientState.user.value?.id,
-                        shouldShowButton = shouldShowButton,
-                    )
-
-                    // Only update the label if the calculator produced a non-null result. This makes the label sticky:
-                    // once shown, it persists until the user leaves the channel.
-                    if (unreadLabel != null) {
-                        unreadLabelState.value = unreadLabel
-                    }
-                }
+            computeUnreadLabel(
+                channelUserRead = read,
+                channel = channel,
+                shouldShowButton = shouldShowButton,
+            )
         }.launchIn(scope)
+    }
+
+    /**
+     * Recalculates the unread label from the given read state and updates [unreadLabelState].
+     *
+     * The label is recalculated whenever [ChannelUserRead.lastReadMessageId] changes, and the
+     * result is "sticky": a null calculation never overwrites a non-null label, so the separator
+     * persists when the user auto-reads messages by scrolling, while mark-as-unread events
+     * (which move [ChannelUserRead.lastReadMessageId] backward) still produce a new label.
+     */
+    private fun computeUnreadLabel(
+        channelUserRead: ChannelUserRead?,
+        channel: ChannelState,
+        shouldShowButton: Boolean,
+    ) {
+        channelUserRead
+            ?.takeIf { !isStartedForThread }
+            ?.takeIf { it.lastReadMessageId != null && lastProcessedReadMessageId != it.lastReadMessageId }
+            ?.let { read ->
+                // Delegate to the calculator for the complex unread label logic
+                val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
+                    channelUserRead = read,
+                    messages = channel.messages.value,
+                    currentUserId = clientState.user.value?.id,
+                    shouldShowButton = shouldShowButton,
+                )
+
+                if (unreadLabel != null) {
+                    // Marking the read state as processed only on a produced label keeps the
+                    // recalculation open while the reason for a null result is transient, for
+                    // example a message list that has not loaded yet.
+                    lastProcessedReadMessageId = read.lastReadMessageId
+                    unreadLabelState.value = unreadLabel
+                }
+            }
     }
 
     /**
@@ -638,7 +656,7 @@ public class MessageListController(
      */
     public fun disableUnreadLabelButton() {
         val currentLabel = unreadLabelState.value ?: return
-        showUnreadButtonState.tryEmit(false)
+        showUnreadButtonState.value = false
         unreadLabelState.value = currentLabel.copy(buttonVisibility = false)
     }
 
@@ -766,20 +784,20 @@ public class MessageListController(
      * Observes the currently active thread. In process, this
      * creates a [threadJob] that we can cancel once we leave the thread.
      *
-     * @param threadId The message id with the thread we want to observe.
-     * @param messages State flow source of thread messages.
-     * @param endOfOlderMessages State flow which signals when end of older messages is reached.
+     * @param threadState The state of the thread we want to observe.
      * @param reads State flow source of read states.
      * @param members State flow source of members.
      */
     @Suppress("MagicNumber", "LongMethod")
     private fun observeThreadMessagesState(
-        threadId: String,
-        messages: StateFlow<List<Message>>,
-        endOfOlderMessages: StateFlow<Boolean>,
+        threadState: ThreadState,
         reads: StateFlow<List<ChannelUserRead>>,
         members: StateFlow<List<Member>>,
     ) {
+        val threadId = threadState.parentId
+        val messages = threadState.messages
+        val endOfOlderMessages = threadState.endOfOlderMessages
+        val endOfNewerMessages = threadState.endOfNewerMessages
         threadJob = scope.launch {
             user.onEach {
                 _threadListState.value = _threadListState.value.copy(currentUser = it)
@@ -793,6 +811,10 @@ public class MessageListController(
                         else -> _threadListState.value.isLoadingOlderMessages
                     },
                 )
+            }.launchIn(this)
+
+            endOfNewerMessages.onEach {
+                _threadListState.value = _threadListState.value.copy(endOfNewMessagesReached = it)
             }.launchIn(this)
 
             combine(
@@ -842,7 +864,6 @@ public class MessageListController(
                         messagesInOriginalLanguage = messagesInOriginalLanguage,
                     ),
                     parentMessageId = threadId,
-                    endOfNewMessagesReached = true,
                 )
             }.onFirst {
                 // Set the last message in the list of message items as the last loaded thread message
@@ -1169,18 +1190,15 @@ public class MessageListController(
     private fun loadNewerMessagesInThread(
         threadMode: MessageMode.MessageThread,
     ) {
+        val threadState = threadMode.threadState
         logger.d {
-            "[loadNewerMessagesInThread] endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}"
+            "[loadNewerMessagesInThread] endOfNewerMessages: ${threadState?.endOfNewerMessages?.value}"
         }
-        if (threadMode.threadState?.endOfNewerMessages?.value == true ||
-            threadMode.threadState?.loading?.value == true ||
-            !threadLoadOrderOlderToNewer
-        ) {
+        if (threadState == null || threadState.endOfNewerMessages.value || threadState.loading.value) {
             logger.d {
                 "[loadNewerMessagesInThread] rejected; " +
-                    "endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}, " +
-                    "loading: ${threadMode.threadState?.loading?.value}, " +
-                    "threadLoadOrderOlderToNewer: $threadLoadOrderOlderToNewer"
+                    "endOfNewerMessages: ${threadState?.endOfNewerMessages?.value}, " +
+                    "loading: ${threadState?.loading?.value}"
             }
             return
         }
@@ -1188,12 +1206,12 @@ public class MessageListController(
             "[loadNewerMessagesInThread] loading newer messages:" +
                 "parentId: ${threadMode.parentMessage.id}, " +
                 "messageLimit: $messageLimit, " +
-                "lastId = ${threadMode.threadState?.newestInThread?.value?.id}"
+                "lastId = ${threadState.newestInThread.value?.id}"
         }
         chatClient.getNewerReplies(
             parentId = threadMode.parentMessage.id,
             limit = messageLimit,
-            lastId = threadMode.threadState?.newestInThread?.value?.id,
+            lastId = threadState.newestInThread.value?.id,
         ).enqueue()
     }
 
@@ -1271,9 +1289,7 @@ public class MessageListController(
 
         _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
-            threadId = state.parentId,
-            messages = state.messages,
-            endOfOlderMessages = state.endOfOlderMessages,
+            threadState = state,
             reads = channelState.reads,
             members = channelState.members,
         )
@@ -1312,9 +1328,7 @@ public class MessageListController(
         _mode.value = MessageMode.MessageThread(parentMessage, threadState)
 
         observeThreadMessagesState(
-            threadId = threadState.parentId,
-            messages = threadState.messages,
-            endOfOlderMessages = threadState.endOfOlderMessages,
+            threadState = threadState,
             reads = channelState.reads,
             members = channelState.members,
         )
@@ -1438,6 +1452,8 @@ public class MessageListController(
 
     /**
      * Enters the thread if it has not already been entered and focuses on the given message.
+     * If the message is not loaded in the thread yet, loads the page of replies around it first,
+     * so the list can scroll to it.
      *
      * @param threadMessageId The ID of the thread message to be focused.
      * @param parentMessageId The ID of the parent message of the thread.
@@ -1450,6 +1466,22 @@ public class MessageListController(
             val mode = _mode.value
             if (mode !is MessageMode.MessageThread || mode.parentMessage.id != parentMessageId) {
                 enterThreadSequential(parentMessageId)
+            }
+
+            val loadedThreadMessages = (_mode.value as? MessageMode.MessageThread)
+                ?.threadState
+                ?.messages
+                ?.value
+            if (loadedThreadMessages != null && loadedThreadMessages.none { it.id == threadMessageId }) {
+                val aroundResult = chatClient
+                    .getRepliesAround(parentId = parentMessageId, aroundId = threadMessageId, limit = messageLimit)
+                    .await()
+                if (aroundResult is Result.Failure) {
+                    logger.e {
+                        "[focusThreadMessage] -> Could not load replies around the thread message: " +
+                            "${aroundResult.value.message}."
+                    }
+                }
             }
 
             val threadMessageResult = chatClient.getMessageUsingCache(messageId = threadMessageId).await()
@@ -1484,7 +1516,11 @@ public class MessageListController(
                         it
                     }
                 }
-                setMessageListState(_messageListState.value.copy(messageItems = messages))
+                if (isInThread) {
+                    _threadListState.value = _threadListState.value.copy(messageItems = messages)
+                } else {
+                    setMessageListState(_messageListState.value.copy(messageItems = messages))
+                }
 
                 if (focusedMessage.value?.id == messageId) {
                     focusedMessage.value = null
@@ -1743,6 +1779,17 @@ public class MessageListController(
         if (isInThread) {
             markThreadAsRead()
         } else {
+            // Compute the unread label before marking read. Marking the channel read zeroes the
+            // read state optimistically, and observeUnreadLabelState collects a conflating flow,
+            // so on a busy main thread it can observe only the zeroed state and never produce
+            // the label.
+            channelState.value?.let { channel ->
+                computeUnreadLabel(
+                    channelUserRead = channel.read.value,
+                    channel = channel,
+                    shouldShowButton = showUnreadButtonState.value,
+                )
+            }
             markChannelAsRead()
         }
     }
@@ -1826,7 +1873,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    showUnreadButtonState.tryEmit(false)
+                    showUnreadButtonState.value = false
                 }
             }
         }

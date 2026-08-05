@@ -17,14 +17,19 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.AddUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.CreateUserGroupRequest
-import io.getstream.chat.android.client.api2.model.requests.RemoveUserGroupMembersRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateUserGroupRequest
-import io.getstream.chat.android.client.api2.model.response.UserGroupResponse
-import io.getstream.chat.android.client.api2.model.response.UserGroupsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
+import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
+import io.getstream.chat.android.network.models.CreateUserGroupRequest
+import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.GetUserGroupResponse
+import io.getstream.chat.android.network.models.ListUserGroupsResponse
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
+import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.UpdateUserGroupRequest
+import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -37,7 +42,7 @@ import retrofit2.http.Query
 internal interface UserGroupApi {
 
     @POST("/usergroups")
-    fun createUserGroup(@Body body: CreateUserGroupRequest): RetrofitCall<UserGroupResponse>
+    fun createUserGroup(@Body body: CreateUserGroupRequest): RetrofitCall<CreateUserGroupResponse>
 
     @GET("/usergroups")
     fun queryUserGroups(
@@ -45,7 +50,7 @@ internal interface UserGroupApi {
         @Query("id_gt") idGt: String? = null,
         @Query("created_at_gt") createdAtGt: String? = null,
         @Query("team_id") teamId: String? = null,
-    ): RetrofitCall<UserGroupsResponse>
+    ): RetrofitCall<ListUserGroupsResponse>
 
     @GET("/usergroups/search")
     fun searchUserGroups(
@@ -54,19 +59,19 @@ internal interface UserGroupApi {
         @Query("team_id") teamId: String? = null,
         @Query("name_gt") nameGt: String? = null,
         @Query("id_gt") idGt: String? = null,
-    ): RetrofitCall<UserGroupsResponse>
+    ): RetrofitCall<SearchUserGroupsResponse>
 
     @GET("/usergroups/{id}")
     fun getUserGroup(
         @Path("id") id: String,
         @Query("team_id") teamId: String? = null,
-    ): RetrofitCall<UserGroupResponse>
+    ): RetrofitCall<GetUserGroupResponse>
 
     @PUT("/usergroups/{id}")
     fun updateUserGroup(
         @Path("id") id: String,
         @Body body: UpdateUserGroupRequest,
-    ): RetrofitCall<UserGroupResponse>
+    ): RetrofitCall<UpdateUserGroupResponse>
 
     @DELETE("/usergroups/{id}")
     fun deleteUserGroup(
@@ -78,11 +83,11 @@ internal interface UserGroupApi {
     fun addUserGroupMembers(
         @Path("id") id: String,
         @Body body: AddUserGroupMembersRequest,
-    ): RetrofitCall<UserGroupResponse>
+    ): RetrofitCall<AddUserGroupMembersResponse>
 
     @POST("/usergroups/{id}/members/delete")
     fun removeUserGroupMembers(
         @Path("id") id: String,
         @Body body: RemoveUserGroupMembersRequest,
-    ): RetrofitCall<UserGroupResponse>
+    ): RetrofitCall<RemoveUserGroupMembersResponse>
 }

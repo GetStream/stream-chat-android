@@ -17,12 +17,6 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
@@ -30,7 +24,14 @@ import io.getstream.chat.android.client.api2.model.response.QueryPollVotesRespon
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.CastPollVoteRequest
+import io.getstream.chat.android.network.models.CreatePollOptionRequest
+import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.QueryPollVotesRequest
+import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.UpdatePollOptionRequest
+import io.getstream.chat.android.network.models.UpdatePollPartialRequest
+import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -103,7 +104,7 @@ internal interface PollsApi {
     @PATCH("/polls/{poll_id}")
     fun partialUpdatePoll(
         @Path("poll_id") pollId: String,
-        @Body body: PartialUpdatePollRequest,
+        @Body body: UpdatePollPartialRequest,
     ): RetrofitCall<PollResponse>
 
     /**
@@ -119,7 +120,7 @@ internal interface PollsApi {
     @POST("/polls/{poll_id}/options")
     fun createPollOption(
         @Path("poll_id") pollId: String,
-        @Body body: UpstreamOptionDto,
+        @Body body: CreatePollOptionRequest,
     ): RetrofitCall<PollOptionResponse>
 
     /**
@@ -133,7 +134,7 @@ internal interface PollsApi {
     @PUT("/polls/{poll_id}/options")
     fun updatePollOption(
         @Path("poll_id") pollId: String,
-        @Body body: UpstreamOptionDto,
+        @Body body: UpdatePollOptionRequest,
     ): RetrofitCall<PollOptionResponse>
 
     /**

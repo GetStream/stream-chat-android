@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
+import io.getstream.chat.android.compose.pages.ChannelInfoPage
 import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.LoginPage
 import io.getstream.chat.android.compose.pages.MessageListPage
@@ -25,6 +26,7 @@ import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
+import io.getstream.chat.android.compose.pages.ThreadListPage
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -34,11 +36,14 @@ import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
+import io.getstream.chat.android.e2e.test.uiautomator.sleep
 import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
 import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
 import io.getstream.chat.android.e2e.test.uiautomator.typeText
 import io.getstream.chat.android.e2e.test.uiautomator.wait
+import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppear
+import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearAndClick
 import io.getstream.chat.android.e2e.test.uiautomator.waitToAppearBottomUp
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 
@@ -50,12 +55,19 @@ class UserRobot {
     }
 
     fun login(): UserRobot {
-        LoginPage.loginButton.waitToAppear().click()
+        LoginPage.loginButton.waitToAppearAndClick()
         return this
     }
 
-    fun logout(): UserRobot {
-        ChannelListPage.Header.userAvatar.waitToAppear().click()
+    /** Opens the navigation drawer, which the channel list header avatar reveals. */
+    fun openNavigationDrawer(): UserRobot {
+        ChannelListPage.Header.userAvatar.waitToAppearAndClick()
+        return this
+    }
+
+    fun openReminders(): UserRobot {
+        openNavigationDrawer()
+        ChannelListPage.NavigationDrawer.reminders.waitToAppearAndClick()
         return this
     }
 
@@ -70,7 +82,7 @@ class UserRobot {
     }
 
     fun openChannel(channelCellIndex: Int = 0): UserRobot {
-        ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].click()
+        ChannelListPage.ChannelList.channels.waitToAppearAndClick(withIndex = channelCellIndex)
         return this
     }
 
@@ -114,17 +126,17 @@ class UserRobot {
     }
 
     fun tapOnPushNotification(text: String): UserRobot {
-        By.text(text).waitToAppear().click()
+        By.text(text).waitToAppearAndClick()
         return this
     }
 
     fun tapOnBackButton(): UserRobot {
-        MessageListPage.Header.backButton.waitToAppear().click()
+        MessageListPage.Header.backButton.waitToAppearAndClick()
         return this
     }
 
     fun tapOnSendButton(): UserRobot {
-        Composer.sendButton.waitToAppear().click()
+        Composer.sendButton.waitToAppearAndClick()
         return this
     }
 
@@ -134,23 +146,12 @@ class UserRobot {
      * send button; with the sample's configuration both build the same message.
      */
     private fun tapOnComposerConfirmButton(): UserRobot {
-        val endTime = System.currentTimeMillis() + defaultTimeout
-        while (System.currentTimeMillis() < endTime) {
-            Composer.sendButton.findObjects().firstOrNull()?.let {
-                it.click()
-                return this
-            }
-            Composer.saveButton.findObjects().firstOrNull()?.let {
-                it.click()
-                return this
-            }
-            Thread.sleep(50)
-        }
-        error("Neither the send nor the save composer button appeared within ${defaultTimeout}ms")
+        Composer.confirmButton.waitToAppearAndClick()
+        return this
     }
 
     fun tapOnLinkPreviewCancelButton(): UserRobot {
-        Composer.linkPreviewCancelButton.waitToAppear().click()
+        Composer.linkPreviewCancelButton.waitToAppearAndClick()
         return this
     }
 
@@ -162,29 +163,64 @@ class UserRobot {
 
     fun deleteMessage(messageCellIndex: Int = 0, hard: Boolean = false): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.delete.waitToAppear().click()
-        ContextMenu.ok.waitToAppear().click()
+        ContextMenu.delete.waitToAppearAndClick()
+        ContextMenu.ok.waitToAppearAndClick()
         return this
     }
 
     fun deleteMessage(text: String): UserRobot {
         openContextMenu(text)
-        ContextMenu.delete.waitToAppear().click()
-        ContextMenu.ok.waitToAppear().click()
+        ContextMenu.delete.waitToAppearAndClick()
+        ContextMenu.ok.waitToAppearAndClick()
         return this
     }
 
     fun editMessage(newText: String, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.edit.waitToAppear().click()
+        ContextMenu.edit.waitToAppearAndClick()
         typeText(newText)
-        Composer.saveButton.waitToAppear().click()
+        Composer.saveButton.waitToAppearAndClick()
         return this
     }
 
     fun resendMessage(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.resend.waitToAppear().click()
+        ContextMenu.resend.waitToAppearAndClick()
+        return this
+    }
+
+    fun copyMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.copy.waitToAppearAndClick()
+        return this
+    }
+
+    fun markMessageAsUnread(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.markAsUnread.waitToAppearAndClick()
+        return this
+    }
+
+    fun flagMessage(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.flag.waitToAppearAndClick()
+        return this
+    }
+
+    fun confirmFlagMessage(): UserRobot {
+        ContextMenu.ok.waitToAppearAndClick()
+        return this
+    }
+
+    fun pinMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.pin.waitToAppearAndClick()
+        return this
+    }
+
+    fun unpinMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.unpin.waitToAppearAndClick()
         return this
     }
 
@@ -195,7 +231,23 @@ class UserRobot {
 
     fun addReaction(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.ReactionsView.reaction(type).waitToAppear().click()
+        ContextMenu.ReactionsView.reaction(type).waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnMessageReaction(): UserRobot {
+        Message.Reactions.reactions.waitToAppearAndClick()
+        return this
+    }
+
+    /**
+     * Adds or removes a reaction through the extended reactions picker sheet. Selecting a type
+     * the user has already reacted with removes that reaction.
+     */
+    fun toggleReactionUsingExtendedPicker(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.showMoreReactions.waitToAppearAndClick()
+        ContextMenu.ReactionsView.reaction(type).waitToAppearAndClick()
         return this
     }
 
@@ -203,8 +255,8 @@ class UserRobot {
         if (usingContextMenu) {
             addReaction(type, messageCellIndex)
         } else {
-            Message.Reactions.reactions.waitToAppear().click()
-            Message.Reactions.reaction(type).waitToAppear().click()
+            Message.Reactions.reactions.waitToAppearAndClick()
+            Message.Reactions.reaction(type).waitToAppearAndClick()
         }
         return this
     }
@@ -217,13 +269,13 @@ class UserRobot {
 
     fun selectReplyFromContextMenu(messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        ContextMenu.reply.waitToAppear().click()
+        ContextMenu.reply.waitToAppearAndClick()
         return this
     }
 
     fun quoteMessage(text: String, quotedMessageText: String): UserRobot {
         openContextMenu(quotedMessageText)
-        ContextMenu.reply.waitToAppear().click()
+        ContextMenu.reply.waitToAppearAndClick()
         sendMessage(text)
         return this
     }
@@ -231,25 +283,39 @@ class UserRobot {
     fun openThread(messageCellIndex: Int = 0, usingContextMenu: Boolean = true): UserRobot {
         if (usingContextMenu) {
             openContextMenu(messageCellIndex)
-            ContextMenu.threadReply.waitToAppear().click()
+            ContextMenu.threadReply.waitToAppearAndClick()
         } else {
-            Message.threadRepliesLabel.waitToAppear().click()
+            Message.threadRepliesLabel.waitToAppearAndClick()
         }
         return this
     }
 
-    fun tapOnMessage(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppearBottomUp(withIndex = messageCellIndex).click()
-        return this
-    }
-
     fun tapOnQuotedMessage(messageCellIndex: Int = 0): UserRobot {
-        Message.quotedMessage.waitToAppear().click()
+        // A tap that lands while the list is still moving is cancelled by the touch slop and
+        // never reaches the click handler, so verify the jump moved the quote out of the
+        // viewport and tap again when it did not. Does not fail on its own: the assertion
+        // that follows reports a jump that never happened.
+        repeat(3) {
+            Message.quotedMessage.waitToAppearAndClick()
+            if (!Message.quotedMessage.waitToDisappear(timeOutMillis = 3_000).isDisplayed()) {
+                return this
+            }
+        }
         return this
     }
 
     fun tapOnScrollToBottomButton(): UserRobot {
-        MessageList.scrollToBottomButton.waitToAppear().click()
+        MessageList.scrollToBottomButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnScrollToFirstUnreadButton(): UserRobot {
+        MessageList.scrollToFirstUnreadButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun dismissUnreadIndicator(): UserRobot {
+        MessageList.scrollToFirstUnreadDismissIcon.waitToAppearAndClick()
         return this
     }
 
@@ -258,7 +324,7 @@ class UserRobot {
         alsoSendInChannel: Boolean = false,
     ): UserRobot {
         if (alsoSendInChannel) {
-            ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToAppear().click()
+            ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToAppearAndClick()
         }
         sendMessage(text)
         return this
@@ -270,7 +336,7 @@ class UserRobot {
         messageCellIndex: Int = 0,
     ): UserRobot {
         if (alsoSendInChannel) {
-            ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToAppear().click()
+            ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToAppearAndClick()
         }
         quoteMessage(text, messageCellIndex)
         return this
@@ -309,6 +375,114 @@ class UserRobot {
         return this
     }
 
+    fun openChannelMenu(channelCellIndex: Int = 0): UserRobot {
+        ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].longPress()
+        return this
+    }
+
+    /** Swipes a channel item right to left to reveal the swipe actions behind it. */
+    fun swipeChannel(channelCellIndex: Int = 0): UserRobot {
+        val percent = 0.5f
+        val channel = ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex]
+        val rect = channel.visibleBounds
+        val startX = (rect.right - (rect.width() * 0.1)).toInt()
+        device.swipe(
+            startX, // startX
+            rect.centerY(), // startY
+            (startX - (rect.width() * percent)).toInt(), // endX
+            rect.centerY(), // endY
+            20, // steps
+        )
+        return this
+    }
+
+    fun tapOnMoreSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.more.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnLeaveGroup(): UserRobot {
+        ChannelListPage.ChannelMenu.leaveGroup.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnDeleteGroup(): UserRobot {
+        ChannelListPage.ChannelMenu.deleteGroup.waitToAppearAndClick()
+        return this
+    }
+
+    fun confirmChannelAction(): UserRobot {
+        ChannelListPage.ChannelMenu.confirmButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnViewChannelInfo(): UserRobot {
+        ChannelListPage.ChannelMenu.viewInfo.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnPinnedMessagesOption(): UserRobot {
+        ChannelInfoPage.pinnedMessagesOption.waitToAppearAndClick()
+        return this
+    }
+
+    fun openThreadList(): UserRobot {
+        ThreadListPage.threadsTab.waitToAppearAndClick()
+        return this
+    }
+
+    /**
+     * Taps the first thread of the thread list. The rows carry no test tag of their own, so the tap
+     * lands on the parent message preview inside the row, which the row handles.
+     */
+    fun openThreadFromThreadList(): UserRobot {
+        ThreadListPage.parentMessagePreview.waitToAppearAndClick()
+        return this
+    }
+
+    fun searchForMessage(text: String): UserRobot {
+        ChannelListPage.Header.searchField.waitToAppear().typeText(text)
+        return this
+    }
+
+    /**
+     * Taps the first search result. The result rows carry no test tag of their own, so the tap
+     * lands on the message preview inside the row, which the row handles.
+     */
+    fun tapOnSearchResult(): UserRobot {
+        ChannelListPage.ChannelList.Channel.messagePreview.waitToAppearAndClick()
+        return this
+    }
+
+    /**
+     * Scrolls the message list up one page at a time until the message with [messageText] is
+     * displayed and clear of the top edge of the list, giving up after [maxScrolls] pages. The
+     * first sighting is not enough: a message still clipped by the top edge after the scroll
+     * settles has no laid-out text to long press, so it counts as not reached yet. Only the top
+     * edge matters: scrolling up moves content downwards, so it is the edge the target enters
+     * from, and a text clipped by the bottom edge is laid out and can be pressed. Does not fail
+     * on its own: the interaction that follows reports the missing message.
+     */
+    fun scrollMessageListUpToMessage(messageText: String, maxScrolls: Int = 10): UserRobot {
+        val message = Message.text
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+        val listTop = MessageList.messageList.waitToAppear().visibleBounds.top
+        repeat(maxScrolls) {
+            if (message.waitDisplayed(timeOutMillis = 1_000)) {
+                sleep(500) // let the fling settle before trusting the bounds
+                val fullyVisible = runCatching {
+                    message.findObjects().firstOrNull()?.visibleBounds?.let { it.top > listTop } == true
+                }.getOrDefault(false)
+                if (fullyVisible) {
+                    return this
+                }
+            }
+            scrollMessageListUp(times = 1)
+        }
+        return this
+    }
+
     fun swipeMessage(messageCellIndex: Int = 0): UserRobot {
         val percent = 0.5f
         val message = MessageList.messages.waitToAppearBottomUp(withIndex = messageCellIndex)
@@ -331,12 +505,12 @@ class UserRobot {
     }
 
     fun openAttachmentsMenu(): UserRobot {
-        Composer.attachmentsButton.waitToAppear().click()
+        Composer.attachmentsButton.waitToAppearAndClick()
         return this
     }
 
     fun tapOnGiphyCommandSuggestion(): UserRobot {
-        Composer.giphyButton.waitToAppear().click()
+        Composer.giphyButton.waitToAppearAndClick()
         return this
     }
 
@@ -370,34 +544,33 @@ class UserRobot {
     }
 
     fun tapOnSendGiphyButton(): UserRobot {
-        Message.GiphyButtons.send.waitToAppear().click()
+        Message.GiphyButtons.send.waitToAppearAndClick()
         return this
     }
 
     fun tapOnShuffleGiphyButton(): UserRobot {
-        Message.GiphyButtons.shuffle.waitToAppear().click()
+        Message.GiphyButtons.shuffle.waitToAppearAndClick()
         return this
     }
 
     fun tapOnCancelGiphyButton(): UserRobot {
-        Message.GiphyButtons.cancel.waitToAppear().click()
+        Message.GiphyButtons.cancel.waitToAppearAndClick()
         return this
     }
 
     fun attachFile(type: AttachmentType, multiple: Boolean = false): UserRobot {
         val count = if (multiple) 2 else 1
-        Composer.attachmentsButton.waitToAppear().click()
+        Composer.attachmentsButton.waitToAppearAndClick()
         repeat(count) {
-            AttachmentPicker.filesTab.waitToAppear().click()
-            AttachmentPicker.findFilesButton.waitToAppear().click()
+            AttachmentPicker.filesTab.waitToAppearAndClick()
+            AttachmentPicker.findFilesButton.waitToAppearAndClick()
 
             if (!AttachmentPicker.downloadsView.isDisplayed()) {
-                AttachmentPicker.rootsButton.waitToAppear().click()
+                AttachmentPicker.rootsButton.waitToAppearAndClick()
                 val documentsUiPackageName = device.currentPackageName
                 By.text("Downloads")
                     .hasAncestor(By.res("$documentsUiPackageName:id/roots_list"))
-                    .waitToAppear()
-                    .click()
+                    .waitToAppearAndClick()
             }
 
             val attachment = if (it == 0) {
@@ -405,7 +578,7 @@ class UserRobot {
             } else {
                 if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
             }
-            attachment.waitToAppear().click()
+            attachment.waitToAppearAndClick()
         }
 
         return this
@@ -414,13 +587,13 @@ class UserRobot {
     fun mentionParticipant(useSuggestions: Boolean = true, send: Boolean = true): UserRobot {
         if (useSuggestions) {
             typeText("@")
-            By.text(ParticipantRobot.name).waitToAppear().click()
+            By.text(ParticipantRobot.name).waitToAppearAndClick()
         } else {
             typeText("@${ParticipantRobot.name}")
         }
 
         if (send) {
-            Composer.sendButton.waitToAppear().click()
+            Composer.sendButton.waitToAppearAndClick()
         }
         return this
     }

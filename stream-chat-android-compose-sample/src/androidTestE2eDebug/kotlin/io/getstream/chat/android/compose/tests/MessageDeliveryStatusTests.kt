@@ -199,6 +199,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("WHEN user replies to message in thread") {
             userRobot.openThread().sendMessage(sampleText)
         }
+        step("AND the thread reply is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
         step("AND participant reads the user's thread reply") {
             participantRobot.readMessage()
         }
@@ -347,6 +350,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("AND user sends a new message") {
             userRobot.sendMessage(sampleText)
         }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
         step("WHEN user returns to the channel list") {
             userRobot.moveToChannelListFromMessageList()
         }
@@ -469,6 +475,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         step("AND user sends a new message") {
             userRobot.sendMessage(sampleText)
         }
+        step("AND the message is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+        }
         step("AND participant reads the message") {
             participantRobot.readMessage()
             userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.READ)
@@ -490,6 +499,9 @@ class MessageDeliveryStatusTests : StreamTestCase() {
         }
         step("AND user replies to message in thread") {
             userRobot.openThread().sendMessage(sampleText)
+        }
+        step("AND the thread reply is delivered") {
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
         step("AND participant reads the thread reply") {
             participantRobot.readMessage()

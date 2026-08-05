@@ -44,6 +44,53 @@ public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObje
 }
 
 /**
+ * Waits up to [timeOutMillis] for an object matching this selector and clicks it. When the click
+ * lands on a node that went stale between the find and the click (e.g. because the containing
+ * list refreshed), the object is re-found and the click retried until the timeout, after which
+ * the last [StaleObjectException] escapes. A retry started just before the deadline is granted
+ * one final poll interval past it, so the last re-find is a real attempt instead of an
+ * immediate timeout.
+ *
+ * @param timeOutMillis Maximum time to wait before failing.
+ * @throws IllegalStateException when the timeout elapses without a matching object.
+ */
+public fun BySelector.waitToAppearAndClick(timeOutMillis: Long = defaultTimeout) {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (true) {
+        try {
+            waitToAppear(maxOf(endTime - System.currentTimeMillis(), POLL_INTERVAL_MILLIS)).click()
+            return
+        } catch (e: StaleObjectException) {
+            if (System.currentTimeMillis() >= endTime) throw e
+        }
+    }
+}
+
+/**
+ * Waits up to [timeOutMillis] for objects matching this selector and clicks the one at
+ * [withIndex]. When the click lands on a node that went stale between the find and the click
+ * (e.g. because the containing list refreshed), the object is re-found and the click retried
+ * until the timeout, after which the last [StaleObjectException] escapes. A retry started just
+ * before the deadline is granted one final poll interval past it, so the last re-find is a
+ * real attempt instead of an immediate timeout.
+ *
+ * @param withIndex The zero-based index of the object to click.
+ * @param timeOutMillis Maximum time to wait before failing.
+ * @throws IllegalStateException when the timeout elapses without enough matching objects.
+ */
+public fun BySelector.waitToAppearAndClick(withIndex: Int, timeOutMillis: Long = defaultTimeout) {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    while (true) {
+        try {
+            waitToAppear(withIndex, maxOf(endTime - System.currentTimeMillis(), POLL_INTERVAL_MILLIS)).click()
+            return
+        } catch (e: StaleObjectException) {
+            if (System.currentTimeMillis() >= endTime) throw e
+        }
+    }
+}
+
+/**
  * Waits up to [timeOutMillis] for objects matching this selector and returns the one at [withIndex].
  *
  * @param withIndex The zero-based index of the object to return.

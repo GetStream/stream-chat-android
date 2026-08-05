@@ -43,6 +43,7 @@ jobs:
     strategy:
       matrix:
         include:
+          - android_api_level: 36
           - android_api_level: 35
           - android_api_level: 34
           - android_api_level: 33
@@ -95,7 +96,12 @@ jobs:
         if: failure()
         with:
           name: logs_${{ env.ANDROID_API_LEVEL }}
-          path: fastlane/stream-chat-test-mock-server/logs/*
+          # The allure results carry the retry rule's failure artifacts (logcat,
+          # screenshot, hierarchy per failed attempt), which TestOps deduplicates
+          # away when the same test passes on another API level.
+          path: |
+            fastlane/stream-chat-test-mock-server/logs/*
+            fastlane/allure-results/*
   slack:
     permissions:
       actions: write

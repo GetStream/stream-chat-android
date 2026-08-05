@@ -63,6 +63,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -669,19 +670,20 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
-    fun `Given event is outdated, When updateCurrentUserRead is called, Then unread count is not updated`() {
-        // given
-        val initialUnreadCount = 5
+    fun `Given event is older than the read state clock, When updateCurrentUserRead is called, Then the message still counts and the clock does not regress`() {
+        // Marking read stamps the read state with the newest loaded message's date, so a
+        // queued event can legitimately carry an older date while its message was never
+        // counted. Only processedMessageIds may exclude it.
         val initialChannelUserRead = randomChannelUserRead(
             user = user,
-            lastReceivedEventDate = Date(100L), // Current read state is at 100L
-            unreadMessages = initialUnreadCount,
+            lastReceivedEventDate = Date(100L),
+            unreadMessages = 0,
             lastRead = Date(10L),
             lastReadMessageId = randomString(),
         )
         _read.value = initialChannelUserRead
 
-        val eventDate = Date(50L) // Event is older than current read state
+        val eventDate = Date(50L) // Older than the read state clock, newer than lastRead
         val newMessage = randomMessage(
             user = randomUser(id = "anotherUserId"),
             createdAt = eventDate,
@@ -694,7 +696,11 @@ internal class ChannelStateLogicTest {
         channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
 
         // then
-        verify(mutableState, times(0)).upsertReads(any())
+        val captor = argumentCaptor<List<ChannelUserRead>>()
+        verify(mutableState, times(1)).upsertReads(captor.capture())
+        val updatedRead = captor.firstValue.single()
+        updatedRead.unreadMessages `should be equal to` 1
+        updatedRead.lastReceivedEventDate `should be equal to` Date(100L)
     }
 
     @Test
