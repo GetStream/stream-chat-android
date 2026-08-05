@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
@@ -31,7 +30,7 @@ import org.junit.Test
 internal class SearchInputTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

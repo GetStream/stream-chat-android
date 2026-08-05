@@ -22,6 +22,7 @@ import android.widget.LinearLayout
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.InstantAnimationsRule
 import app.cash.paparazzi.Paparazzi
+import app.cash.paparazzi.detectEnvironment
 import coil3.ComponentRegistry
 import coil3.ImageLoader
 import coil3.disk.DiskCache
@@ -48,6 +49,18 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
     val instantAnimations = InstantAnimationsRule()
 
     abstract val deviceConfig: DeviceConfig
+
+    /**
+     * Builds a Paparazzi rule that renders at API 36 while the module keeps compileSdk 37.
+     *
+     * Paparazzi 2.0.0-alpha05's layoutlib is unstable rendering at API 37; API 36 is its stable
+     * ceiling. Overriding only the environment's compileSdkVersion keeps the build on 37 and
+     * renders/records goldens at 36. Remove once Paparazzi supports API 37.
+     */
+    fun createPaparazzi(deviceConfig: DeviceConfig): Paparazzi = Paparazzi(
+        environment = detectEnvironment().copy(compileSdkVersion = 36),
+        deviceConfig = deviceConfig,
+    )
 
     @Before
     fun prepare() {

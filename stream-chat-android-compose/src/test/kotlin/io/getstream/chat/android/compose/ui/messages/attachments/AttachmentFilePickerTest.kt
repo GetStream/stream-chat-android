@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
-import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
@@ -30,7 +29,7 @@ internal class AttachmentFilePickerTest : PaparazziComposeTest {
     val testCoroutineRule = TestCoroutineRule()
 
     @get:Rule
-    override val paparazzi = Paparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

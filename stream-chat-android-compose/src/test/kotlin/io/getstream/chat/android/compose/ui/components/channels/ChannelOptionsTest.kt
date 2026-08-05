@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.runtime.Composable
-import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
@@ -44,7 +43,7 @@ import java.util.Date
 internal class ChannelOptionsTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

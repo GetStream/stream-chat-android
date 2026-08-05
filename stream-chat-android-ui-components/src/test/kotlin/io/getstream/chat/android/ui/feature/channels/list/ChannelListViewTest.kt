@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.feature.channels.list
 
 import app.cash.paparazzi.DeviceConfig
-import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -32,7 +31,7 @@ internal class ChannelListViewTest : PaparazziViewTest() {
 
     override val deviceConfig = DeviceConfig.PIXEL_4A
 
-    override val paparazzi = Paparazzi(deviceConfig = deviceConfig)
+    override val paparazzi = createPaparazzi(deviceConfig = deviceConfig)
 
     @Before
     fun setUp() {

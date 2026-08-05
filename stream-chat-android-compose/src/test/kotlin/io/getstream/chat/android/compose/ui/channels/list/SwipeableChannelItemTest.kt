@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
@@ -35,7 +34,7 @@ import org.junit.Test
 internal class SwipeableChannelItemTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

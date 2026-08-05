@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
-import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.ScreenOrientation
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
@@ -27,7 +26,7 @@ import org.junit.Test
 internal class UserAvatarTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI.copy(orientation = ScreenOrientation.LANDSCAPE),
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

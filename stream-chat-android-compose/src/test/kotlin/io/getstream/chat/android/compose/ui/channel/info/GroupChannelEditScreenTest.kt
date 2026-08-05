@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.ui.graphics.Color
-import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
@@ -27,7 +26,7 @@ import org.junit.Test
 internal class GroupChannelEditScreenTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

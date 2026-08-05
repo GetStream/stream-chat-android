@@ -44,6 +44,8 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import app.cash.paparazzi.detectEnvironment
+import com.android.ide.common.rendering.api.SessionParams
 import com.android.resources.Density
 import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -75,6 +77,23 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
 
     @get:Rule
     val paparazzi: Paparazzi
+
+    /**
+     * Builds a Paparazzi rule that renders at API 36 while the module keeps compileSdk 37.
+     *
+     * Paparazzi 2.0.0-alpha05's layoutlib is unstable rendering at API 37 — e.g. any HandlerThread
+     * hits `Thread.setPosixNicenessInternal`, and Popup dismissal hits a null WindowManager child
+     * list. API 36 is alpha05's stable ceiling. Overriding only the environment's compileSdkVersion
+     * keeps the build on 37 and renders/records goldens at 36. Remove once Paparazzi supports 37.
+     */
+    fun createPaparazzi(
+        deviceConfig: DeviceConfig = PIXEL_2_HDPI,
+        renderingMode: SessionParams.RenderingMode = SessionParams.RenderingMode.NORMAL,
+    ): Paparazzi = Paparazzi(
+        environment = detectEnvironment().copy(compileSdkVersion = 36),
+        deviceConfig = deviceConfig,
+        renderingMode = renderingMode,
+    )
 
     fun snapshot(
         isInDarkMode: Boolean = false,
