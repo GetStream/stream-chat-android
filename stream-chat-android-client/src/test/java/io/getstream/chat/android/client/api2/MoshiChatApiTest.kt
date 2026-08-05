@@ -61,7 +61,6 @@ import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilt
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
-import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
@@ -138,6 +137,7 @@ import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
@@ -1836,7 +1836,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryBlockedUsersInput")
-    fun testQueryBlockedUsers(call: RetrofitCall<QueryBlockedUsersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryBlockedUsers(call: RetrofitCall<GetBlockedUsersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserApi>()
         whenever(api.queryBlockedUsers()).doReturn(call)
