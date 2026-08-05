@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.endpoint
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.GetApplicationResponse
-import retrofit2.http.GET
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * API for configurations, settings in the dashboard with read and write possibilities (not mandatorily).
+ * Basic response information
  */
-@AuthenticatedApi
-internal interface ConfigApi {
 
-    @GET("/app")
-    fun getAppSettings(): RetrofitCall<GetApplicationResponse>
-}
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class GetApplicationResponse(
+    @Json(name = "duration")
+    val duration: kotlin.String,
+
+    @Json(name = "app")
+    val app: io.getstream.chat.android.network.models.AppResponseFields,
+)
