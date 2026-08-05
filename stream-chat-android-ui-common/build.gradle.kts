@@ -61,6 +61,11 @@ dependencies {
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.annotation)
+    // `api` (not implementation): AudioPlayerState exposes androidx.collection primitive maps
+    // (IntFloatMap, from collection 1.4.0) as public properties (seekTo, speeds), so consumers
+    // must see the type. Declared explicitly so it no longer relies on a transitive version that
+    // the toolchain graph can resolve below 1.4.0.
+    api(libs.androidx.collection)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.recyclerview)

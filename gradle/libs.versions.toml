@@ -11,6 +11,7 @@ androidxActivityCompose = "1.9.3"
 androidxActivityKtx = "1.9.3"
 androidxAnnotations = "1.9.1"
 androidxAppcompat = "1.7.0"
+androidxCollection = "1.5.0"
 androidxComposeBom = "2025.08.01"
 androidxComposeConstraintLayout = "1.1.0"
 androidxCoreSplashScreen = "1.2.0"
@@ -97,6 +98,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidxActivityKtx"}
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotations"}
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat"}
+androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection"}
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "macroBenchmark"}
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidxComposeBom"}
 androidx-compose-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidxComposeConstraintLayout"}
