@@ -35,7 +35,9 @@ android {
 }
 
 baselineProfile {
-    baselineProfileOutputDir = "."
+    // Do not set baselineProfileOutputDir = "." — it points the baseline-profile source dir at
+    // src/main, so AGP 9's prepareReleaseArtProfile parses AndroidManifest.xml / res as ART rules
+    // and fails with "Illegal token '<'". Default (generated/baselineProfiles) keeps it isolated.
     filter {
         include("io.getstream.chat.android.ui.**")
     }
