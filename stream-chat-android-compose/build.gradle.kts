@@ -48,7 +48,10 @@ composeCompiler {
 }
 
 baselineProfile {
-    baselineProfileOutputDir = "."
+    // Do not set baselineProfileOutputDir = "." — that points the baseline-profile source dir at
+    // the module's src/main root, so AGP 9's prepareReleaseArtProfile recursively parses every file
+    // there (AndroidManifest.xml, res/*.webp, *.kt) as ART profile rules and fails with
+    // "Illegal token '<'". The default output dir (generated/baselineProfiles) keeps it isolated.
     filter {
         include("io.getstream.chat.android.compose.**")
     }
