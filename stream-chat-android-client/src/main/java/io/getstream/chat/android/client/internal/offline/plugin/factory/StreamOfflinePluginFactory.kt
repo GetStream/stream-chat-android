@@ -63,12 +63,14 @@ import kotlin.reflect.KClass
  *
  * @param appContext [Context]
  * @param ignoredChannelTypes Set of channel types that should be ignored by the offline plugin.
+ * @param isLocalUnreadCountEnabled Whether the on-device unread count tracking is enabled.
  * @param now Function to get the current time in milliseconds. Useful for testing purposes.
  */
 @InternalStreamChatApi
 public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
     private val ignoredChannelTypes: Set<String> = emptySet(),
+    private val isLocalUnreadCountEnabled: Boolean = false,
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : PluginFactory, RepositoryFactory.Provider {
 
@@ -88,6 +90,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             currentUser = user,
             scope = ChatClient.instance().inheritScope { SupervisorJob(it) },
             ignoredChannelTypes = ignoredChannelTypes,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
             now = now,
         )
     }

@@ -65,12 +65,14 @@ public val Channel.lastMessage: Message?
  * @param receivedEventDate Date when the event which updates the message was received.
  * @param message New message to update the channel with.
  * @param currentUserId User id of the currently logged in user.
+ * @param isLocalUnreadCountEnabled Whether the on-device unread count tracking is enabled.
  */
 @InternalStreamChatApi
 public fun Channel.updateLastMessage(
     receivedEventDate: Date,
     message: Message,
     currentUserId: String,
+    isLocalUnreadCountEnabled: Boolean,
 ): Channel {
     val createdAt = message.getCreatedAtOrNull()
     checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
@@ -85,10 +87,10 @@ public fun Channel.updateLastMessage(
 
     val newReads = read.map { read ->
         read.takeUnless { it.user.id == currentUserId }
-            // A locally tracked read (read events disabled) is owned by the on-device tracking, which
-            // increments and persists it with the full skip rules. Leave it untouched here to avoid a
-            // second, weaker-guarded increment (this path counts own messages).
-            ?: read.takeIf { !config.readEventsEnabled }
+            // A locally tracked read (local unread count enabled + read events disabled) is owned by the
+            // on-device tracking, which increments and persists it with the full skip rules. Leave it
+            // untouched here to avoid a second, weaker-guarded increment (this path counts own messages).
+            ?: read.takeIf { !config.readEventsEnabled && isLocalUnreadCountEnabled }
             ?: read.copy(
                 lastReceivedEventDate = receivedEventDate,
                 unreadMessages = read.let {

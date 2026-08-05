@@ -48,6 +48,7 @@ internal class DatabaseChannelRepository(
     private val getMessage: suspend (messageId: String) -> Message?,
     private val getDraftMessage: suspend (cid: String) -> DraftMessage?,
     private val currentUserId: String,
+    private val isLocalUnreadCountEnabled: Boolean = false,
     private val now: () -> Long = { System.currentTimeMillis() },
     cacheSize: Int = 1000,
 ) : ChannelRepository {
@@ -69,14 +70,12 @@ internal class DatabaseChannelRepository(
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
         val storedReadsByCid = channels
-            .filterNot { it.config.readEventsEnabled || channelCache[it.cid] != null }
+            .filter { it.isReadTrackedLocally() && channelCache[it.cid] == null }
             .associate { it.cid to channelDao.select(it.cid)?.reads?.values?.map { read -> read.toModel(getUser) } }
         val channelsToInsert = cacheMutex.withLock {
             val updatedChannels = channels
                 .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
-                .map {
-                    if (it.config.readEventsEnabled) it else it.preserveLocallyTrackedReads(storedReadsByCid[it.cid])
-                }
+                .map { if (it.isReadTrackedLocally()) it.preserveLocallyTrackedReads(storedReadsByCid[it.cid]) else it }
             updatedChannels
                 .filter { channelCache[it.cid] != it }
                 .also { cacheChannel(updatedChannels) }
@@ -91,6 +90,9 @@ internal class DatabaseChannelRepository(
                 ?.let { channelDao.insertMany(it) }
         }
     }
+
+    private fun Channel.isReadTrackedLocally(): Boolean =
+        isLocalUnreadCountEnabled && !config.readEventsEnabled
 
     /**
      * Keeps the stored current user read of read-events-disabled channels: it is tracked on-device and

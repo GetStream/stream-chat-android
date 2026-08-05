@@ -149,6 +149,32 @@ internal class ChannelRepositoryImplTest {
     }
 
     @Test
+    fun `insertChannels lets the server read win on a read-events-disabled channel when local unread count is disabled`() =
+        runTest {
+            val repo = repositoryWithUserEchoingIds(isLocalUnreadCountEnabled = false)
+            val cid = "messaging:local"
+            val stored = randomChannel(
+                id = "local",
+                type = "messaging",
+                config = randomConfig(readEventsEnabled = false),
+                read = listOf(
+                    randomChannelUserRead(user = currentUser, unreadMessages = 5, lastReceivedEventDate = Date(2000)),
+                ),
+            )
+            whenever(channelDao.select(cid)) doReturn stored.toEntity()
+            val serverPayload = stored.copy(
+                read = listOf(
+                    randomChannelUserRead(user = currentUser, unreadMessages = 0, lastReceivedEventDate = Date(1000)),
+                ),
+            )
+
+            repo.insertChannels(listOf(serverPayload))
+
+            // The feature is off, so no on-device read is preserved: the incoming server read wins.
+            assertEquals(0, persistedUnreadCount(cid))
+        }
+
+    @Test
     fun `upsertChannelReads replaces the stored current user read and keeps other users reads`() = runTest {
         val repo = repositoryWithUserEchoingIds()
         val cid = "messaging:local"
@@ -202,7 +228,7 @@ internal class ChannelRepositoryImplTest {
 
     private val currentUser = randomUser(id = "current-user")
 
-    private fun repositoryWithUserEchoingIds(): DatabaseChannelRepository =
+    private fun repositoryWithUserEchoingIds(isLocalUnreadCountEnabled: Boolean = true): DatabaseChannelRepository =
         DatabaseChannelRepository(
             testCoroutines.scope,
             channelDao,
@@ -210,6 +236,7 @@ internal class ChannelRepositoryImplTest {
             { randomMessage() },
             { randomDraftMessageOrNull() },
             currentUser.id,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
         )
 
     /** Returns the current user's unread count from the entity written to the DAO for [cid]. */
