@@ -1,0 +1,55 @@
+name: Record Paparazzi Snapshots
+
+# Manually-triggered job that regenerates Paparazzi golden images on the CI runner (Linux/amd64)
+# and uploads them as an artifact. Paparazzi renders via native layoutlib, whose pixels depend on
+# OS + architecture, so goldens must be produced in the same environment that verifies them —
+# the CI runner.
+# Download the artifact with scripts/paparazzi-pull-goldens.sh, then commit + push.
+# Deliberately does NOT commit back: no write permissions needed, and you review the diff locally.
+on:
+  # Manual trigger — only works once this file is on the default branch (kept for later).
+  workflow_dispatch:
+  # Branch trigger — works from a feature branch without default-branch access. The heavy job is
+  # gated by a commit-message marker (see the job's `if:`) so ordinary pushes don't run it.
+  # To trigger: git commit --allow-empty -m "record goldens [record-paparazzi]" && git push
+  push:
+    branches:
+      - "feature/rahullohra/**"
+
+concurrency:
+  group: record-paparazzi-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    name: Record golden images (Linux/amd64)
+    runs-on: ubuntu-latest # Same runner as the verify job, so recorded pixels match verification.
+    # Run only on manual dispatch, or on a push whose commit message contains [record-paparazzi].
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[record-paparazzi]')
+    steps:
+      - uses: actions/checkout@v7
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21' # Paparazzi 2.0.0-alpha05 requires JDK 21.
+          distribution: temurin
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Record Paparazzi goldens
+        # cleanRecord so stale / differently-named goldens are removed and the artifact is the
+        # exact set the current tests produce under this Paparazzi/layoutlib version.
+        run: ./gradlew cleanRecordPaparazziDebug --stacktrace
+      - name: Upload recorded goldens
+        uses: actions/upload-artifact@v4
+        with:
+          name: paparazzi-goldens
+          # Paths are preserved relative to the workspace, i.e. <module>/src/test/snapshots/...,
+          # so the local pull script can overlay them straight onto the repo root.
+          path: '**/src/test/snapshots/**'
+          if-no-files-found: error
+          retention-days: 7
