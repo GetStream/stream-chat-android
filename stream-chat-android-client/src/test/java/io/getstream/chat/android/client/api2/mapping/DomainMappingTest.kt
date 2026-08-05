@@ -20,6 +20,7 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.Mother.randomAnswerDownstreamVoteDto
+import io.getstream.chat.android.client.Mother.randomAppResponseFields
 import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
 import io.getstream.chat.android.client.Mother.randomBannedUserResponse
@@ -52,6 +53,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
+import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
@@ -138,6 +140,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ValueSource
 import java.util.Date
 
 @Suppress("LargeClass")
@@ -327,26 +330,42 @@ internal class DomainMappingTest {
 
     @Test
     fun `GetApplicationResponse is correctly mapped to AppSettings`() {
-        val response = randomAppSettingsResponse()
+        val response = randomAppSettingsResponse(
+            app = randomAppResponseFields(
+                name = "app-name",
+                fileUploadConfig = randomFileUploadConfig(
+                    allowedFileExtensions = listOf(".png"),
+                    allowedMimeTypes = listOf("image/png"),
+                    blockedFileExtensions = listOf(".exe"),
+                    blockedMimeTypes = listOf("application/x-msdownload"),
+                    sizeLimit = 1024,
+                ),
+                imageUploadConfig = randomFileUploadConfig(
+                    allowedFileExtensions = listOf(".jpg"),
+                    allowedMimeTypes = listOf("image/jpeg"),
+                    blockedFileExtensions = listOf(".gif"),
+                    blockedMimeTypes = listOf("image/gif"),
+                    sizeLimit = 2048,
+                ),
+            ),
+        )
         val sut = Fixture().get()
         val expected = AppSettings(
             app = App(
-                name = response.app.name,
+                name = "app-name",
                 fileUploadConfig = FileUploadConfig(
-                    allowedMimeTypes = response.app.fileUploadConfig.allowedMimeTypes,
-                    blockedMimeTypes = response.app.fileUploadConfig.blockedMimeTypes,
-                    allowedFileExtensions = response.app.fileUploadConfig.allowedFileExtensions,
-                    blockedFileExtensions = response.app.fileUploadConfig.blockedFileExtensions,
-                    sizeLimitInBytes = response.app.fileUploadConfig.sizeLimit.toLong().takeUnless { it <= 0 }
-                        ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+                    allowedFileExtensions = listOf(".png"),
+                    allowedMimeTypes = listOf("image/png"),
+                    blockedFileExtensions = listOf(".exe"),
+                    blockedMimeTypes = listOf("application/x-msdownload"),
+                    sizeLimitInBytes = 1024,
                 ),
                 imageUploadConfig = FileUploadConfig(
-                    allowedMimeTypes = response.app.imageUploadConfig.allowedMimeTypes,
-                    blockedMimeTypes = response.app.imageUploadConfig.blockedMimeTypes,
-                    allowedFileExtensions = response.app.imageUploadConfig.allowedFileExtensions,
-                    blockedFileExtensions = response.app.imageUploadConfig.blockedFileExtensions,
-                    sizeLimitInBytes = response.app.imageUploadConfig.sizeLimit.toLong().takeUnless { it <= 0 }
-                        ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+                    allowedFileExtensions = listOf(".jpg"),
+                    allowedMimeTypes = listOf("image/jpeg"),
+                    blockedFileExtensions = listOf(".gif"),
+                    blockedMimeTypes = listOf("image/gif"),
+                    sizeLimitInBytes = 2048,
                 ),
             ),
         )
@@ -354,6 +373,29 @@ internal class DomainMappingTest {
         with(sut) {
             assertEquals(expected, response.toDomain())
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [0, -1])
+    fun `GetApplicationResponse with a non-positive size limit falls back to the default`(sizeLimit: Int) {
+        val response = randomAppSettingsResponse(
+            app = randomAppResponseFields(
+                fileUploadConfig = randomFileUploadConfig(sizeLimit = sizeLimit),
+                imageUploadConfig = randomFileUploadConfig(sizeLimit = sizeLimit),
+            ),
+        )
+        val sut = Fixture().get()
+
+        val appSettings = with(sut) { response.toDomain() }
+
+        assertEquals(
+            AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+            appSettings.app.fileUploadConfig.sizeLimitInBytes,
+        )
+        assertEquals(
+            AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+            appSettings.app.imageUploadConfig.sizeLimitInBytes,
+        )
     }
 
     @Test
