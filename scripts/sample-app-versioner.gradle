@@ -8,7 +8,9 @@ static Boolean gitIsAvailable() {
 }
 def isCI = System.getenv('CI')
 ext["sampleAppVersionCode"] = 1
-ext["sampleAppVersionName"] = version
+// Consumers read this with `as String`, so it must be a real java.lang.String — never a Groovy
+// GString. `.toString()` on every assignment guarantees that.
+ext["sampleAppVersionName"] = version.toString()
 if (isCI && gitIsAvailable()) {
     // Derive the demo-app version from git. Replaces the gitVersioner plugin, which relied on
     // the Gradle-9-removed Project.exec(Action) API. Groovy's String.execute() is plain JVM and
@@ -16,5 +18,6 @@ if (isCI && gitIsAvailable()) {
     def commitCount = "git rev-list --count HEAD".execute().text.trim()
     def shortSha = "git rev-parse --short HEAD".execute().text.trim()
     ext["sampleAppVersionCode"] = commitCount.toInteger()
-    ext["sampleAppVersionName"] = "1.${commitCount}.${shortSha}"
+    // Interpolated "..." is a GString; .toString() coerces it to java.lang.String for `as String`.
+    ext["sampleAppVersionName"] = "1.${commitCount}.${shortSha}".toString()
 }
