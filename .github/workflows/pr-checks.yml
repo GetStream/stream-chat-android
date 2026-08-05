@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@v0.13.1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@feature/rahullohra/build-on-sdk-37
       - name: Detekt
         run: ./gradlew detekt
   rubocop:
