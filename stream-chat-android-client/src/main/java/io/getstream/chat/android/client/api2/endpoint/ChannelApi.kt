@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -104,14 +103,6 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: UpdateChannelPartialRequest,
-    ): RetrofitCall<ChannelResponse>
-
-    @PATCH("/channels/{type}/{id}")
-    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
-    fun updateCooldown(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: UpdateCooldownRequest,
     ): RetrofitCall<ChannelResponse>
 
     @DELETE("/channels/{type}/{id}")

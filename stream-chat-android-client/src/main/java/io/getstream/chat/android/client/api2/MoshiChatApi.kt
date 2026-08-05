@@ -66,7 +66,6 @@ import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
@@ -1033,10 +1032,10 @@ constructor(
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel> {
-        return channelApi.updateCooldown(
+        return channelApi.updateChannelPartial(
             channelType = channelType,
             channelId = channelId,
-            body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
+            body = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds)),
         ).map(this::flattenChannel)
     }
 
