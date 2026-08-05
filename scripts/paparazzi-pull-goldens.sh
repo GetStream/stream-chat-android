@@ -30,7 +30,7 @@ fi
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-echo "==> downloading... '$ARTIFACT' from run $run_id"
+echo "==> downloading '$ARTIFACT' from run $run_id"
 gh run download "$run_id" -n "$ARTIFACT" -D "$tmp"
 
 echo "==> replacing local Paparazzi snapshots"
