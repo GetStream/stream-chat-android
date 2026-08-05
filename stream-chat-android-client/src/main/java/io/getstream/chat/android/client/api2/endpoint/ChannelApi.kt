@@ -105,14 +105,6 @@ internal interface ChannelApi {
         @Body body: UpdateChannelPartialRequest,
     ): RetrofitCall<ChannelResponse>
 
-    @PATCH("/channels/{type}/{id}")
-    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
-    fun updateCooldown(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Body body: UpdateChannelPartialRequest,
-    ): RetrofitCall<ChannelResponse>
-
     @DELETE("/channels/{type}/{id}")
     fun deleteChannel(
         @Path("type") channelType: String,

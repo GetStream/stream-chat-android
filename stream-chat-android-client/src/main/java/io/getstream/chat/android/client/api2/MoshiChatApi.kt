@@ -1032,7 +1032,7 @@ constructor(
         channelId: String,
         cooldownTimeInSeconds: Int,
     ): Call<Channel> {
-        return channelApi.updateCooldown(
+        return channelApi.updateChannelPartial(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds)),

@@ -1212,7 +1212,7 @@ internal class MoshiChatApiTest {
     fun testEnableSlowMode(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.updateCooldown(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1224,7 +1224,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldown))
         result `should be instance of` expected
-        verify(api, times(1)).updateCooldown(channelType, channelId, expectedBody)
+        verify(api, times(1)).updateChannelPartial(channelType, channelId, expectedBody)
     }
 
     @ParameterizedTest
@@ -1232,7 +1232,7 @@ internal class MoshiChatApiTest {
     fun testDisableSlowMode(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
-        whenever(api.updateCooldown(any(), any(), any())).doReturn(call)
+        whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withChannelApi(api)
             .get()
@@ -1243,7 +1243,7 @@ internal class MoshiChatApiTest {
         // then
         val expectedBody = UpdateChannelPartialRequest(set = mapOf("cooldown" to 0))
         result `should be instance of` expected
-        verify(api, times(1)).updateCooldown(channelType, channelId, expectedBody)
+        verify(api, times(1)).updateChannelPartial(channelType, channelId, expectedBody)
     }
 
     @ParameterizedTest
