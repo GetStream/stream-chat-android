@@ -82,6 +82,46 @@ private fun DeviceConfig.atHdpi(): DeviceConfig = copy(
 internal val paparazziCompileSdk: Int =
     System.getProperty("paparazzi.compileSdk")?.toIntOrNull() ?: 36
 
+/**
+ * The two known Paparazzi 2.0.0-alpha05 / layoutlib 16.2.1 bugs. In both, the snapshot is already
+ * captured when the error is thrown during render teardown / on a background thread, so swallowing
+ * them yields a valid golden. Both are fixed by layoutlib 16.2.3 (Paparazzi alpha05.2 / alpha06).
+ *  - https://github.com/cashapp/paparazzi/issues/2342 — HandlerThread → Thread.setPosixNicenessInternal
+ *  - https://github.com/cashapp/paparazzi/issues/2373 — Dialog/Popup teardown → WindowManagerImpl.removeView NPE
+ * Remove this (and its call sites) once Paparazzi ships layoutlib >= 16.2.3.
+ */
+private fun Throwable.isPaparazziAlpha05LayoutlibBug(): Boolean =
+    generateSequence(this) { it.cause }.any { t ->
+        (t is NoSuchMethodError && t.message?.contains("setPosixNicenessInternal") == true) ||
+            (
+                t is NullPointerException && t.stackTrace.any {
+                    it.className == "android.view.WindowManagerImpl" && it.methodName == "removeView"
+                }
+                )
+    }
+
+/**
+ * Removes the known layoutlib-16.2.1 bug errors from Paparazzi's internal logger.
+ *
+ * The #2342 `setPosixNicenessInternal` error is raised on a background HandlerThread during render,
+ * captured into `PaparazziSdk.logger`, and re-thrown at rule teardown (`close()`) — outside the
+ * `snapshot()` call — so a try/catch around `snapshot()` cannot reach it. We reach into the logger
+ * and drop those entries so teardown stays clean; the snapshot itself is already captured. Reflective
+ * because the fields are internal; guarded so it degrades to a no-op if Paparazzi's internals change.
+ * Remove once Paparazzi ships layoutlib >= 16.2.3 (alpha05.2 / alpha06).
+ */
+private fun Paparazzi.dropKnownLayoutlibBugErrors() {
+    runCatching {
+        val sdk = Paparazzi::class.java.getDeclaredField("sdk")
+            .apply { isAccessible = true }.get(this) ?: return
+        val logger = sdk.javaClass.getDeclaredField("logger")
+            .apply { isAccessible = true }.get(sdk)
+        val errors = logger.javaClass.getDeclaredField("errors")
+            .apply { isAccessible = true }.get(logger) as? MutableList<*> ?: return
+        errors.removeAll { it is Throwable && it.isPaparazziAlpha05LayoutlibBug() }
+    }
+}
+
 internal interface PaparazziComposeTest : MockedChatClientTest {
 
     @get:Rule
@@ -104,13 +144,28 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         renderingMode = renderingMode,
     )
 
+    /**
+     * Wraps [Paparazzi.snapshot], swallowing the known alpha05/layoutlib-16.2.1 teardown bugs
+     * (see [isPaparazziAlpha05LayoutlibBug]). The snapshot is captured before they throw.
+     */
+    private fun snapshotSwallowingLayoutlibBugs(content: @Composable () -> Unit) {
+        try {
+            paparazzi.snapshot(composable = content)
+        } catch (t: Throwable) {
+            if (!t.isPaparazziAlpha05LayoutlibBug()) throw t
+        }
+        // #2342 is captured on a background thread and re-thrown at rule teardown, outside the
+        // try above — drop it from the logger here so close() stays clean.
+        paparazzi.dropKnownLayoutlibBugErrors()
+    }
+
     fun snapshot(
         isInDarkMode: Boolean = false,
         contentAlignment: Alignment = Alignment.TopStart,
         backgroundColor: Color = Color.Unspecified,
         composable: @Composable () -> Unit,
     ) {
-        paparazzi.snapshot {
+        snapshotSwallowingLayoutlibBugs {
             TestEnvironment {
                 ChatTheme(isInDarkMode = isInDarkMode) {
                     Box(
@@ -129,7 +184,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         contentAlignment: Alignment = Alignment.TopStart,
         composable: @Composable () -> Unit,
     ) {
-        paparazzi.snapshot {
+        snapshotSwallowingLayoutlibBugs {
             TestEnvironment {
                 Column {
                     ChatTheme(isInDarkMode = true) {
@@ -161,7 +216,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         contentAlignment: Alignment = Alignment.TopStart,
         composable: @Composable () -> Unit,
     ) {
-        paparazzi.snapshot {
+        snapshotSwallowingLayoutlibBugs {
             TestEnvironment {
                 Row {
                     ChatTheme(isInDarkMode = true) {

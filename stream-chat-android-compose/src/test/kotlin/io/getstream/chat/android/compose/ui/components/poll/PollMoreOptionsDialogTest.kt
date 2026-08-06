@@ -25,7 +25,7 @@ import org.junit.Test
 internal class PollMoreOptionsDialogTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi: Paparazzi = createPaparazzi(
+    override val paparazzi = createPaparazzi(
         deviceConfig = PIXEL_2_HDPI,
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )
