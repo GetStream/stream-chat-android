@@ -145,6 +145,7 @@ import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
@@ -489,6 +490,27 @@ internal class DomainMapping(
             updatedAt = updatedAt,
             expires = expires,
         )
+
+    /**
+     * Transforms [ReactionResponse] into [Reaction].
+     *
+     * `emoji_code` is custom data on the backend rather than a declared field, so it arrives inside
+     * [ReactionResponse.custom] and is promoted here, staying out of [Reaction.extraData].
+     */
+    internal fun ReactionResponse.toDomain(): Reaction = Reaction(
+        createdAt = createdAt,
+        messageId = messageId,
+        score = score,
+        type = type,
+        updatedAt = updatedAt,
+        user = user.toDomain(),
+        userId = userId,
+        emojiCode = custom[EMOJI_CODE_KEY] as? String,
+        extraData = custom
+            .filterKeys { it != EMOJI_CODE_KEY }
+            .mapNotNull { (key, value) -> value?.let { key to it } }
+            .toMap(),
+    )
 
     /**
      * Transforms [DownstreamReactionDto] to [Reaction].
@@ -1383,6 +1405,9 @@ internal class DomainMapping(
     )
 
     private companion object {
+        /** `emoji_code` is sent as custom data rather than a declared field. */
+        private const val EMOJI_CODE_KEY = "emoji_code"
+
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
         private const val FIELD_LAST_UPDATED = "last_updated"
     }

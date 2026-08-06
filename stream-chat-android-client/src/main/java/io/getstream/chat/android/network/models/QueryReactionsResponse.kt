@@ -14,19 +14,31 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response for querying reactions on a message.
- *
- * @property reactions The list of reactions returned by the query.
- * @property next The identifier for the next page of reactions.
+ * Basic response information
  */
-@JsonClass(generateAdapter = true)
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QueryReactionsResponse(
-    val reactions: List<DownstreamReactionDto>,
-    val next: String?,
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "reactions")
+    internal val reactions: List<ReactionResponse> = emptyList(),
+
+    @Json(name = "next")
+    internal val next: String? = null,
+
+    @Json(name = "prev")
+    internal val prev: String? = null,
 )
