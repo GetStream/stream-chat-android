@@ -97,6 +97,23 @@ subprojects {
     }
 
     apply(plugin = "io.gitlab.arturbosch.detekt")
+
+    // Align the androidx.test family across every configuration. Shot (in the sample apps) drags an
+    // old androidx.test (core 1.5.0 / monitor 1.6.0 / storage 1.4.2) onto the main runtime classpath
+    // via fragment-testing / compose-ui-test, while androidx.test.ext:junit 1.2.1 needs newer ones on
+    // the androidTest classpath. AGP consistent resolution then can't reconcile the two. Forcing the
+    // family (main included) makes both classpaths resolve the same versions.
+    configurations.configureEach {
+        resolutionStrategy {
+            force(
+                "androidx.test:core:1.6.1",
+                "androidx.test:core-ktx:1.6.1",
+                "androidx.test:runner:1.6.2",
+                "androidx.test:monitor:1.7.2",
+                "androidx.test.services:storage:1.5.0",
+            )
+        }
+    }
 }
 
 tasks.withType<DependencyUpdatesTask> {
