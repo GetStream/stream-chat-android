@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
+import io.getstream.chat.android.client.Mother.randomReactionResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
@@ -1739,5 +1740,18 @@ internal class DomainMappingTest {
                 userTransformer = userTransformer,
             )
         }
+    }
+
+    @Test
+    fun `ReactionResponse maps emoji_code out of custom and keeps it out of extraData`() {
+        val dto = randomReactionResponse(
+            custom = mapOf("emoji_code" to "\uD83D\uDE04", "weight" to 3),
+        )
+        val sut = Fixture().get()
+
+        val reaction = with(sut) { dto.toDomain() }
+
+        assertEquals("\uD83D\uDE04", reaction.emojiCode)
+        assertEquals(mapOf("weight" to 3), reaction.extraData)
     }
 }

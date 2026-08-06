@@ -105,6 +105,7 @@ import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -1397,6 +1398,21 @@ internal object Mother {
     ): QueryRemindersResponse = QueryRemindersResponse(
         reminders = reminders,
         next = next,
+    )
+
+    fun randomReactionResponse(
+        messageId: String = randomString(),
+        type: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): ReactionResponse = ReactionResponse(
+        messageId = messageId,
+        type = type,
+        score = randomInt(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        userId = randomString(),
+        user = randomUserResponse(),
+        custom = custom,
     )
 
     fun randomPollResponseData(
