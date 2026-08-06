@@ -44,4 +44,8 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
+    // Gradle 9 no longer auto-provisions the JUnit Platform launcher; JVM modules that call
+    // useJUnitPlatform() manually (unlike Android modules using the android-junit5 plugin, which
+    // bundles it) must declare it explicitly on the test runtime classpath.
+    testRuntimeOnly(libs.junit.platform.launcher)
 }

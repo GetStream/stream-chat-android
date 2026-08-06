@@ -52,6 +52,7 @@ ituDateVersion = "1.10.2"
 json = "20240303"
 junit4 = "4.13.2"
 junit5 = "5.11.3"
+junitPlatformLauncher = "1.11.3"
 keyboardVisibilityEvent = "2.3.0"
 kluent = "1.73"
 kotest = "5.9.1"
@@ -175,6 +176,7 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5"}
 junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit5"}
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5"}
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junitPlatformLauncher"}
 keyboardvisibilityevent = { module = "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent", version.ref = "keyboardVisibilityEvent"}
 kluent = { module = "org.amshove.kluent:kluent", version.ref = "kluent"}
 kotest-assertions-json = { module = "io.kotest:kotest-assertions-json", version.ref = "kotest" }
