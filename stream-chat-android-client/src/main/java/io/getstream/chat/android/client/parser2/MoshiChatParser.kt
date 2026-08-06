@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
@@ -99,6 +100,7 @@ internal class MoshiChatParser(
             .add(PollOptionInputAdapter)
             .add(PollOptionRequestAdapter)
             .add(EventRequestAdapter)
+            .add(PollOptionResponseDataAdapter)
             .add(
                 CreatePollRequest.VotingVisibility::class.java,
                 CreatePollRequest.VotingVisibility.VotingVisibilityAdapter(),

@@ -98,6 +98,7 @@ import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
@@ -1154,6 +1155,16 @@ internal object Mother {
         answers_count = answersCount,
         is_closed = isClosed,
         extraData = extraData,
+    )
+
+    fun randomPollOptionResponseData(
+        id: String = randomString(),
+        text: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): PollOptionResponseData = PollOptionResponseData(
+        id = id,
+        text = text,
+        custom = custom,
     )
 
     fun randomDownstreamOptionDto(
