@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyF
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollResponseDataAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
@@ -129,6 +130,7 @@ internal class MoshiChatParser(
             .add(EventRequestAdapter)
             .add(GetOGResponseAdapter)
             .add(PollOptionResponseDataAdapter)
+            .add(PollResponseDataAdapter)
             .add(
                 CreatePollRequest.VotingVisibility::class.java,
                 CreatePollRequest.VotingVisibility.VotingVisibilityAdapter(),

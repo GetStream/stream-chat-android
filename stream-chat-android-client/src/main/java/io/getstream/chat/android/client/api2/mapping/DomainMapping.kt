@@ -57,8 +57,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
@@ -141,8 +139,12 @@ import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
+import io.getstream.chat.android.network.models.PollResponseData
+import io.getstream.chat.android.network.models.PollVoteResponseData
+import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
@@ -677,6 +679,89 @@ internal class DomainMapping(
     }
 
     /**
+     * Transforms [PollResponseData] into [Poll]
+     */
+    internal fun PollResponseData.toDomain(): Poll {
+        val ownUserId = currentUserIdProvider() ?: ownVotes.firstOrNull()?.user?.id
+        val allVotes = latestVotesByOption.values
+            .flatten()
+            .filter { it.isAnswer != true }
+            .map { it.toDomain() }
+        val resolvedOwnVotes = (
+            ownVotes
+                .filter { it.isAnswer != true }
+                .map { it.toDomain() } +
+                allVotes.filter { it.user?.id == ownUserId }
+            )
+            .associateBy { it.id }
+            .values
+            .toList()
+
+        return Poll(
+            id = id,
+            name = name,
+            description = description,
+            options = options.map { option -> Option(id = option.id, text = option.text) },
+            votingVisibility = votingVisibility.toVotingVisibility(),
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            voteCount = voteCount,
+            voteCountsByOption = voteCountsByOption,
+            votes = allVotes,
+            ownVotes = resolvedOwnVotes,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            closed = isClosed ?: false,
+            answersCount = answersCount,
+            answers = latestAnswers.map { it.toAnswerDomain() },
+            createdBy = createdBy?.toDomain(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+        )
+    }
+
+    /**
+     * Transforms [PollVoteResponseData] into [Vote]
+     */
+    internal fun PollVoteResponseData.toDomain(): Vote = Vote(
+        id = id,
+        pollId = pollId,
+        optionId = optionId,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        user = user?.toDomain(),
+    )
+
+    /**
+     * Transforms [PollVoteResponseData] into [Answer]
+     */
+    internal fun PollVoteResponseData.toAnswerDomain(): Answer = Answer(
+        id = id,
+        pollId = pollId,
+        text = answerText ?: "",
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        user = user?.toDomain(),
+    )
+
+    /**
+     * Transforms [PollVotesResponse] into [QueryPollVotesResult]
+     */
+    internal fun PollVotesResponse.toDomain(): QueryPollVotesResult = QueryPollVotesResult(
+        votes = votes.map { it.toDomain() },
+        next = next,
+    )
+
+    /**
+     * Transforms [QueryPollsResponse] into [QueryPollsResult]
+     */
+    internal fun QueryPollsResponse.toDomain(): QueryPollsResult = QueryPollsResult(
+        polls = polls.map { it.toDomain() },
+        next = next,
+    )
+
+    /**
      * Transforms [PollOptionResponseData] into [PollOption]
      */
     internal fun PollOptionResponseData.toDomain(): PollOption = PollOption(
@@ -747,22 +832,6 @@ internal class DomainMapping(
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
     }
-
-    /**
-     * Transforms [QueryPollVotesResponse] to [QueryPollVotesResult].
-     */
-    internal fun QueryPollVotesResponse.toDomain(): QueryPollVotesResult = QueryPollVotesResult(
-        votes = votes.map { it.toDomain() },
-        next = next,
-    )
-
-    /**
-     * Transforms the network [QueryPollsResponse] to a domain [QueryPollsResult].
-     */
-    internal fun QueryPollsResponse.toDomain(): QueryPollsResult = QueryPollsResult(
-        polls = polls.map { it.toDomain() },
-        next = next,
-    )
 
     /**
      * Transform [DownstreamChannelUserRead] to [ChannelUserRead].

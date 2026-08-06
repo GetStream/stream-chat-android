@@ -56,8 +56,8 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
+import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
-import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
@@ -1510,7 +1510,7 @@ internal class DomainMappingTest {
 
     @Test
     fun `QueryPollVotesResponse is correctly mapped to QueryPollVotesResult`() {
-        val input = randomQueryPollVotesResponse()
+        val input = randomPollVotesResponse()
         val sut = Fixture().get()
         val result = with(sut) { input.toDomain() }
         val expected = QueryPollVotesResult(
