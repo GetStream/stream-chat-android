@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
-import io.getstream.chat.android.client.Mother.randomDownstreamThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
@@ -60,12 +59,14 @@ import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
+import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
 import io.getstream.chat.android.client.Mother.randomUserGroupResponse
+import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
@@ -847,14 +848,14 @@ internal class DomainMappingTest {
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
         val user2 = randomDownstreamUserDto(id = "user2")
-        val participant1Dto = randomDownstreamThreadParticipantDto(
+        val participant1Dto = randomThreadParticipantDto(
             userId = user1.id,
-            user = user1,
+            user = randomUserResponse(id = user1.id),
             lastThreadMessageAt = Date(2000),
         )
-        val participant2Dto = randomDownstreamThreadParticipantDto(
+        val participant2Dto = randomThreadParticipantDto(
             userId = user2.id,
-            user = user2,
+            user = randomUserResponse(id = user2.id),
             lastThreadMessageAt = Date(1000),
         )
         val downstreamThreadDto = randomDownstreamThreadDto(

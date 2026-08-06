@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.network.models.UserResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -193,6 +194,32 @@ internal object UserDtoTestData {
                 "disabled_until": "2020-06-10T11:04:31.588Z"
             }
          }"""
+    const val userResponseJson =
+        """{
+            "id": "userId",
+            "role": "owner",
+            "language": "language",
+            "banned": false,
+            "online": true,
+            "created_at": "2020-06-10T11:04:31.588Z",
+            "updated_at": "2020-06-10T11:04:31.588Z",
+            "name": "username",
+            "image": "image"
+        }"""
+
+    val userResponse =
+        UserResponse(
+            id = "userId",
+            role = "owner",
+            language = "language",
+            banned = false,
+            online = true,
+            createdAt = Date(1591787071588),
+            updatedAt = Date(1591787071588),
+            name = "username",
+            image = "image",
+        )
+
     val downstreamUser =
         DownstreamUserDto(
             banned = false,

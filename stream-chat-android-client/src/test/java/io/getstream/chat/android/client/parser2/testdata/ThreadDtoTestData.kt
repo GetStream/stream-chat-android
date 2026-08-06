@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
+import io.getstream.chat.android.network.models.ThreadParticipant
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -44,9 +44,14 @@ internal object ThreadDtoTestData {
           "reply_count": 10,
           "thread_participants": [
             {
+              "app_pk": 1,
+              "channel_cid": "messaging:channelId",
+              "created_at": "2020-06-10T11:04:31.588Z",
+              "last_read_at": "2020-06-10T11:04:31.588Z",
               "user_id": "user1",
-              "user": ${UserDtoTestData.downstreamJson},
-              "last_thread_message_at": null
+              "user": ${UserDtoTestData.userResponseJson},
+              "last_thread_message_at": null,
+              "custom": null
             }
           ],
           "title": "Thread Title",
@@ -84,10 +89,13 @@ internal object ThreadDtoTestData {
         read = emptyList(),
         reply_count = 10,
         thread_participants = listOf(
-            DownstreamThreadParticipantDto(
-                user_id = "user1",
-                user = UserDtoTestData.downstreamUser,
-                last_thread_message_at = null,
+            ThreadParticipant(
+                channelCid = "messaging:channelId",
+                createdAt = Date(1591787071588),
+                lastReadAt = Date(1591787071588),
+                userId = "user1",
+                user = UserDtoTestData.userResponse,
+                lastThreadMessageAt = null,
             ),
         ),
         title = "Thread Title",
@@ -169,9 +177,14 @@ internal object ThreadDtoTestData {
           "active_participant_count": 4,
           "thread_participants": [
             {
+              "app_pk": 1,
+              "channel_cid": "messaging:channelId",
+              "created_at": "2020-06-10T11:04:31.588Z",
+              "last_read_at": "2020-06-10T11:04:31.588Z",
               "user_id": "user1",
-              "user": ${UserDtoTestData.downstreamJson},
-              "last_thread_message_at": null
+              "user": ${UserDtoTestData.userResponseJson},
+              "last_thread_message_at": null,
+              "custom": null
             }
           ],
           "last_message_at": "2020-06-10T11:04:31.588Z",
@@ -197,10 +210,13 @@ internal object ThreadDtoTestData {
         participant_count = 8,
         active_participant_count = 4,
         thread_participants = listOf(
-            DownstreamThreadParticipantDto(
-                user_id = "user1",
-                user = UserDtoTestData.downstreamUser,
-                last_thread_message_at = null,
+            ThreadParticipant(
+                channelCid = "messaging:channelId",
+                createdAt = Date(1591787071588),
+                lastReadAt = Date(1591787071588),
+                userId = "user1",
+                user = UserDtoTestData.userResponse,
+                lastThreadMessageAt = null,
             ),
         ),
         last_message_at = Date(1591787071588),

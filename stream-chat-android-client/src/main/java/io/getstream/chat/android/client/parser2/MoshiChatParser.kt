@@ -57,6 +57,7 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapt
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UserRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.UserResponseAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
@@ -84,6 +85,7 @@ internal class MoshiChatParser(
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
+            .add(UserResponseAdapter)
             .add(UserRequestAdapter)
             .add(DownstreamMemberDtoAdapter)
             .add(UpstreamMemberDtoAdapter)
