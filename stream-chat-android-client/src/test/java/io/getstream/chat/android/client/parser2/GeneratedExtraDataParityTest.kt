@@ -91,12 +91,16 @@ internal class GeneratedExtraDataParityTest {
             ChannelMemberResponse::class.java,
         )
 
-        member.custom.keys shouldContainAll setOf(
-            "sentinel", "user_id", "role", "is_moderator", "deleted_messages", "deleted_at",
+        // Asserted as an exact map so a key silently dropping out of the keep set fails here.
+        member.custom shouldBeEqualTo mapOf(
+            "user_id" to "u1",
+            "role" to "member",
+            "is_moderator" to true,
+            "deleted_messages" to emptyList<String>(),
+            "deleted_at" to "2026-08-14T12:00:00.000Z",
+            "sentinel" to "keep-me",
         )
-        member.custom["role"] shouldBeEqualTo "member"
-        member.custom["is_moderator"] shouldBeEqualTo true
-        member.custom["deleted_at"] shouldBeEqualTo "2026-08-14T12:00:00.000Z"
+        // Still parsed into its own field, not only kept in the map.
         member.role shouldBeEqualTo "member"
     }
 }
