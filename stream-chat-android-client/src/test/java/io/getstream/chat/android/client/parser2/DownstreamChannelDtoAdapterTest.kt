@@ -22,6 +22,7 @@ import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 internal class DownstreamChannelDtoAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
@@ -51,6 +52,19 @@ internal class DownstreamChannelDtoAdapterTest {
             DownstreamChannelDto::class.java,
         )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutNameAndImage
+    }
+
+    @Test
+    fun `Deserialize JSON channel state fields as declared properties instead of custom fields`() {
+        val channel = parser.fromJson(
+            ChannelDtoTestData.downstreamJson,
+            DownstreamChannelDto::class.java,
+        )
+
+        channel.truncated_at shouldBeEqualTo Date(1591787071588)
+        channel.disabled shouldBeEqualTo true
+        channel.blocked shouldBeEqualTo true
+        channel.extraData.keys shouldBeEqualTo setOf("draft")
     }
 
     @Test
