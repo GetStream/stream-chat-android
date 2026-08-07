@@ -37,6 +37,7 @@ import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 internal class ChannelMapperTest {
 
@@ -86,7 +87,7 @@ internal class ChannelMapperTest {
             memberCount = channel.memberCount,
             reads = reads.map { it.toEntity() }.associateBy { it.userId }.toMutableMap(),
             lastMessageId = lastMessage.id,
-            lastMessageAt = channel.lastMessageAt,
+            lastMessageAt = listOfNotNull(channel.lastMessageAt, lastMessage.createdAt).maxOrNull(),
             createdByUserId = createdByUser.id,
             watcherIds = watchers.map { it.id },
             watcherCount = channel.watcherCount,
@@ -100,6 +101,48 @@ internal class ChannelMapperTest {
         val result = channel.toEntity()
 
         assertEquals(expectedChannelEntity, result)
+    }
+
+    @Test
+    fun `toEntity should advance lastMessageAt to the newest message when the stored value is stale`() = runTest {
+        val newest = randomMessage(
+            createdAt = Date(2000),
+            createdLocallyAt = null,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val channel = randomChannel(messages = listOf(newest), lastMessageAt = Date(1000))
+
+        val entity = channel.toEntity()
+
+        assertEquals(Date(2000), entity.lastMessageAt)
+        assertEquals(newest.id, entity.lastMessageId)
+    }
+
+    @Test
+    fun `toEntity should keep lastMessageAt when it is newer than the last message`() = runTest {
+        val older = randomMessage(
+            createdAt = Date(1000),
+            createdLocallyAt = null,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val channel = randomChannel(messages = listOf(older), lastMessageAt = Date(3000))
+
+        val entity = channel.toEntity()
+
+        assertEquals(Date(3000), entity.lastMessageAt)
+    }
+
+    @Test
+    fun `toEntity should keep lastMessageAt when there is no last message`() = runTest {
+        val channel = randomChannel(messages = emptyList(), lastMessageAt = Date(1000))
+
+        val entity = channel.toEntity()
+
+        assertEquals(Date(1000), entity.lastMessageAt)
     }
 
     @Test
