@@ -168,6 +168,7 @@ internal class LogicRegistryTest {
             coroutineScope = coroutineScope,
             now = { System.currentTimeMillis() },
             useLegacyChannelLogic = true,
+            isLocalUnreadCountEnabled = false,
         )
 
         logicRegistry = LogicRegistry(
@@ -180,6 +181,7 @@ internal class LogicRegistryTest {
             coroutineScope = coroutineScope,
             now = { System.currentTimeMillis() },
             useLegacyChannelLogic = false,
+            isLocalUnreadCountEnabled = false,
         )
     }
 

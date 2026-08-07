@@ -126,6 +126,7 @@ public class StreamStatePluginFactory(
             coroutineScope = scope,
             now = config.now,
             useLegacyChannelLogic = config.useLegacyChannelLogic,
+            isLocalUnreadCountEnabled = config.isLocalUnreadCountEnabled,
         )
 
         chatClient.logicRegistry = logic

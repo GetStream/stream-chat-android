@@ -42,6 +42,7 @@ internal class QueryChannelsStateLogic(
     private val stateRegistry: StateRegistry,
     private val logicRegistry: LogicRegistry,
     private val coroutineScope: CoroutineScope,
+    private val isLocalUnreadCountEnabled: Boolean,
 ) {
 
     private val logger by taggedLogger("QueryChannelsStateLogic")
@@ -187,12 +188,15 @@ internal class QueryChannelsStateLogic(
                 )
             }
         }.forEach { it.await() }
-        // For read-events-disabled channels the locally tracked read is authoritative over the raw
-        // payload set above, so re-derive those channels from the merged per-channel state.
-        validated
-            .mapNotNull { (id, channel) -> id.cid.takeUnless { channel.config.readEventsEnabled } }
-            .takeIf { it.isNotEmpty() }
-            ?.let(::refreshChannels)
+        // For locally tracked channels (local unread count enabled + read events disabled) the local
+        // read is authoritative over the raw payload set above, so re-derive them from the merged
+        // per-channel state. Skipped entirely when the feature is off, keeping its footprint at zero.
+        if (isLocalUnreadCountEnabled) {
+            validated
+                .mapNotNull { (id, channel) -> id.cid.takeUnless { channel.config.readEventsEnabled } }
+                .takeIf { it.isNotEmpty() }
+                ?.let(::refreshChannels)
+        }
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel =
