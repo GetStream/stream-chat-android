@@ -89,6 +89,11 @@ import io.getstream.chat.android.models.TimeDuration
  *
  * @param cacheConfig Configuration for the SDK's user-configurable on-disk caches. By default all caches are off. See
  * [StreamCacheConfig] for the available cache types and their options.
+ *
+ * @param isLocalUnreadCountEnabled When enabled, the per-channel unread count is tracked on-device for channels where
+ * server-side read events are disabled ([io.getstream.chat.android.models.Config.readEventsEnabled] is `false`, typical
+ * for livestream channels): incoming messages increment a local counter and marking the channel as read resets it
+ * without a network request. Defaults to `false`.
  */
 public data class ChatClientConfig @JvmOverloads constructor(
     public val offlineEnabled: Boolean = true,
@@ -101,6 +106,7 @@ public data class ChatClientConfig @JvmOverloads constructor(
     public val useLegacyChannelLogic: Boolean = false,
     public val fastEventParsing: Boolean = false,
     public val cacheConfig: StreamCacheConfig = StreamCacheConfig(),
+    public val isLocalUnreadCountEnabled: Boolean = false,
 )
 
 /**

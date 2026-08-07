@@ -5424,7 +5424,13 @@ internal constructor(
                 add(StreamStatePluginFactory(chatClientConfig, appContext))
                 // Offline plugin (if enabled)
                 if (chatClientConfig.offlineEnabled) {
-                    add(StreamOfflinePluginFactory(appContext, chatClientConfig.ignoredOfflineChannelTypes))
+                    add(
+                        StreamOfflinePluginFactory(
+                            appContext = appContext,
+                            ignoredChannelTypes = chatClientConfig.ignoredOfflineChannelTypes,
+                            isLocalUnreadCountEnabled = chatClientConfig.isLocalUnreadCountEnabled,
+                        ),
+                    )
                 }
             }
         }

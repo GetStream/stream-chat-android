@@ -29,6 +29,8 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
+import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -46,6 +48,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -72,8 +75,13 @@ internal class QueryChannelsStateLogicTest {
         on(it.channel(any<ChannelId>())) doReturn mock()
     }
 
-    private val queryChannelsStateLogic =
-        QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry, testCoroutines.scope)
+    private val queryChannelsStateLogic = QueryChannelsStateLogic(
+        mutableState,
+        stateRegistry,
+        logicRegistry,
+        testCoroutines.scope,
+        isLocalUnreadCountEnabled = false,
+    )
 
     @Test
     fun `when a channel is inside the query spec and it is refreshed, it should be added`() {
@@ -136,6 +144,66 @@ internal class QueryChannelsStateLogicTest {
 
         verify(mutableState).setCids(setOf(testCid, channel1.cid, channel2.cid))
         verify(mutableState).setChannels(channels.associateBy { it.cid })
+    }
+
+    @Test
+    fun `when adding channels with read events disabled and local unread count enabled, the channel is reconciled from the state`() =
+        runTest {
+            // The payload of a read-events-disabled channel carries read data the locally tracked
+            // unread count must win over, so the added channel is rebuilt from the per-channel state.
+            val logic = QueryChannelsStateLogic(
+                mutableState,
+                stateRegistry,
+                logicRegistry,
+                testCoroutines.scope,
+                isLocalUnreadCountEnabled = true,
+            )
+            val payloadChannel = randomChannel(
+                type = type,
+                id = id,
+                config = randomConfig(readEventsEnabled = false),
+            )
+            val stateChannel = payloadChannel.copy(
+                read = listOf(randomChannelUserRead(unreadMessages = 3)),
+            )
+            val channelState: ChannelState = mock {
+                on(it.toChannel()) doReturn stateChannel
+            }
+            whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
+            whenever(stateRegistry.channel(testChannelId)) doReturn channelState
+
+            logic.addChannelsState(listOf(payloadChannel))
+
+            verify(mutableState).setChannels(mapOf(testCid to stateChannel))
+        }
+
+    @Test
+    fun `when adding channels with read events disabled but local unread count disabled, the channel is not reconciled`() =
+        runTest {
+            // With the feature off, the reconciliation pass is skipped: only the raw payload is set.
+            val payloadChannel = randomChannel(
+                type = type,
+                id = id,
+                config = randomConfig(readEventsEnabled = false),
+            )
+
+            queryChannelsStateLogic.addChannelsState(listOf(payloadChannel))
+
+            verify(mutableState, times(1)).setChannels(any())
+        }
+
+    @Test
+    fun `when adding channels with read events enabled, the channel is not reconciled from the state`() = runTest {
+        val payloadChannel = randomChannel(
+            type = type,
+            id = id,
+            config = randomConfig(readEventsEnabled = true),
+        )
+
+        queryChannelsStateLogic.addChannelsState(listOf(payloadChannel))
+
+        // Only the payload channels are set; no reconciliation pass runs
+        verify(mutableState, times(1)).setChannels(any())
     }
 
     @Test
@@ -245,7 +313,7 @@ internal class QueryChannelsStateLogicTest {
         whenever(mutableState.rawChannels) doReturn channels
         whenever(mutableState.queryChannelsSpec) doReturn spec
 
-        val logic = QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry, testCoroutines.scope)
+        val logic = QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry, testCoroutines.scope, isLocalUnreadCountEnabled = false)
         logic.removeChannels(setOf(chA.cid, chC.cid))
 
         verify(mutableState).setCids(setOf(chB.cid))

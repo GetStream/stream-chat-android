@@ -91,6 +91,7 @@ internal class ChannelStateImpl(
     private val messageLimit: Int?,
     val paginationManager: MessagesPaginationManager = MessagesPaginationManagerImpl(),
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val isLocalUnreadCountEnabled: Boolean = false,
 ) : ChannelState {
 
     override val cid: String = "$channelType:$channelId"
@@ -1031,8 +1032,8 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Updates the read states for the channel.
-     * Preserves local state for the current user if it's more recent than the server data.
+     * Updates the read states for the channel. For the current user, the incoming read is reconciled
+     * with the local one by [mergeCurrentUserRead] (a locally tracked read is preserved).
      *
      * @param reads The list of [ChannelUserRead] states to update.
      */
@@ -1080,29 +1081,55 @@ internal class ChannelStateImpl(
      * @param message The new message that triggered the event.
      */
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
+        // Skip update if the message was already processed
         if (processedMessageIds[message.id] == true) {
-            logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): already processed" }
+            logUnreadCountSkip(message, "already processed")
+            return
+        }
+        // Skip messages already in the channel state - e.g. a sync-replayed event after a restart,
+        // when the in-memory processed cache is empty
+        if (getMessageById(message.id) != null) {
+            logUnreadCountSkip(message, "already in state")
+            processedMessageIds.put(message.id, true)
             return
         }
         val currentRead = read.value
         val skipReason = unreadCountSkipReason(currentRead, message)
         if (skipReason != null) {
-            logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): $skipReason" }
+            logUnreadCountSkip(message, skipReason)
             processedMessageIds.put(message.id, true)
             return
         }
-        if (currentRead == null) {
-            logger.d { "[updateCurrentUserRead] skipped msgId(${message.id}): no read state for the current user" }
-            processedMessageIds.put(message.id, true)
-            return
-        }
-        // Written straight into the map instead of through updateRead: this is the local count,
-        // not an incoming read, so it must not pass through the merge that arbitrates external
-        // reads, and the read-modify-write has to be atomic to survive a burst of events. The
-        // clock only moves forward, so an out of order event cannot regress it.
-        val userId = currentRead.getUserId()
+        incrementUnreadCount(currentRead, eventReceivedDate)
+        processedMessageIds.put(message.id, true)
+    }
+
+    private fun logUnreadCountSkip(message: Message, reason: String) {
+        logger.v { "[updateCurrentUserRead] cid: $cid, skipping ${message.id}: $reason" }
+    }
+
+    private val isReadTrackedLocally: Boolean
+        get() = isLocalUnreadCountEnabled && !channelConfig.value.readEventsEnabled
+
+    /**
+     * Increments the current user's unread count, creating a read for a locally tracked channel
+     * that has none yet. Upserted directly, bypassing the [updateReads] merge, which is for server
+     * data. The read-modify-write is atomic so a burst of events cannot lose an increment, and the
+     * clock only moves forward, so an out of order event cannot regress it.
+     */
+    private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
+        val user = currentUser.value ?: return
+        if (currentRead == null && !isReadTrackedLocally) return
+        val userId = currentRead?.getUserId() ?: user.id
         _reads.update { current ->
-            val existing = current[userId] ?: currentRead
+            val existing = current[userId] ?: currentRead ?: ChannelUserRead(
+                user = user,
+                lastReceivedEventDate = eventReceivedDate,
+                unreadMessages = 0,
+                // lastRead/lastReadMessageId are unset: there is no server read to anchor them to.
+                lastRead = Date(0),
+                lastReadMessageId = null,
+            )
             current + (
                 userId to existing.copy(
                     lastReceivedEventDate = maxOf(existing.lastReceivedEventDate, eventReceivedDate),
@@ -1110,10 +1137,7 @@ internal class ChannelStateImpl(
                 )
                 )
         }
-        logger.d {
-            "[updateCurrentUserRead] counted msgId(${message.id}); unreadMessages: ${read.value?.unreadMessages}"
-        }
-        processedMessageIds.put(message.id, true)
+        logger.v { "[incrementUnreadCount] cid: $cid, unreadMessages: ${read.value?.unreadMessages}" }
     }
 
     /**
@@ -1137,28 +1161,28 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Marks the channel as read for the current user if the following conditions are met:
-     * 1. Read events are enabled in the channel configuration.
-     * 2. There are messages in the channel.
-     * 3. The last message in the channel is different from the last read message for the current user.
-     *
-     * @return `true` if the channel was marked as read, `false` otherwise.
+     * Marks the channel as read for the current user and returns how the request was handled:
+     * remotely, on-device (read events disabled + local tracking enabled), or not at all.
      */
-    fun markRead(): Boolean {
+    fun markRead(): MarkReadResult {
         if (!channelConfig.value.readEventsEnabled) {
-            // Ignore request, `read_events = false`
-            return false
+            if (!isLocalUnreadCountEnabled) {
+                // Ignore request, `read_events = false`
+                return MarkReadResult.NotNeeded
+            }
+            markReadLocally()
+            return MarkReadResult.HandledLocally
         }
         val lastMessage = _messages.value.lastOrNull()
         if (lastMessage == null) {
             // No messages in the channel, nothing to mark as read
-            return true
+            return MarkReadResult.RemoteRequired
         }
         val currentUserRead = read.value
         if (currentUserRead == null) {
             // No read state for current user, but we can still mark the channel as read, and create a new read state
             // later when we receive the updated read state from the backend
-            return true
+            return MarkReadResult.RemoteRequired
         }
         return if (lastMessage.id != currentUserRead.lastReadMessageId) {
             // Zero the count optimistically, but leave the read dates untouched: they stay
@@ -1170,10 +1194,34 @@ internal class ChannelStateImpl(
                 val latest = current[currentUserRead.getUserId()] ?: currentUserRead
                 current + (latest.getUserId() to latest.copy(unreadMessages = 0))
             }
-            true
+            MarkReadResult.RemoteRequired
         } else {
             // Already marked up to the latest message
-            false
+            MarkReadResult.NotNeeded
+        }
+    }
+
+    /**
+     * Resets the current user's unread count on-device, advancing the read state (including
+     * [ChannelUserRead.lastReadMessageId], which the remote path leaves to the server).
+     */
+    private fun markReadLocally() {
+        val currentUserRead = read.value ?: return
+        val lastMessage = _messages.value.lastOrNull()
+        // Read strictly past the last message (not exactly its createdAt), mirroring the server's
+        // mark-read. An exact match would make the message list treat the user's next own message as
+        // a "mark as unread" and show a spurious 0-count separator.
+        val lastMessageAt = lastMessage?.getCreatedAtOrDefault(Date()) ?: Date(0)
+        val readDate = Date(lastMessageAt.time + 1)
+        val updatedRead = currentUserRead.copy(
+            lastReceivedEventDate = maxOf(currentUserRead.lastReceivedEventDate, readDate),
+            lastRead = readDate,
+            lastReadMessageId = lastMessage?.id ?: currentUserRead.lastReadMessageId,
+            unreadMessages = 0,
+        )
+        logger.v { "[markReadLocally] cid: $cid, lastRead: ${updatedRead.lastRead}" }
+        _reads.update { current ->
+            current + (updatedRead.getUserId() to updatedRead)
         }
     }
 
@@ -1623,6 +1671,22 @@ internal class ChannelStateImpl(
         localRead: ChannelUserRead,
         serverRead: ChannelUserRead,
     ): ChannelUserRead {
+        if (isReadTrackedLocally) {
+            // Locally tracked reads must never be overwritten by server data. A recency check is not
+            // enough: server reads carry lastReceivedEventDate = last_message_at, tying the local value.
+            if (localRead.unreadMessages != serverRead.unreadMessages) {
+                logger.d {
+                    "[updateReads] preserving locally tracked read, " +
+                        "local.unreadMessages=${localRead.unreadMessages}, " +
+                        "server.unreadMessages=${serverRead.unreadMessages}"
+                }
+            }
+            return localRead.copy(
+                user = serverRead.user,
+                lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
+                lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
+            )
+        }
         if (serverRead.lastRead.after(localRead.lastRead)) {
             // The server is further ahead: the user read the channel elsewhere, so its read is correct.
             return serverRead

@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Channel
@@ -41,6 +42,7 @@ import io.getstream.chat.android.models.toChannelData
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
 
@@ -134,10 +136,11 @@ internal class ChannelLogicImpl(
                 state.setMemberCount(channel.memberCount)
                 state.upsertMembers(channel.members)
                 state.upsertWatchers(channel.watchers, channel.watcherCount)
+                // The config must be set before the reads: the read merge checks it to protect
+                // locally tracked reads.
+                state.setChannelConfig(channel.config)
                 // Update reads
                 state.updateReads(channel.read)
-                // Update config
-                state.setChannelConfig(channel.config)
                 // Update messages
                 if (limit > 0) {
                     updateMessages(query, channel)
@@ -244,8 +247,21 @@ internal class ChannelLogicImpl(
         state.setRepliedMessage(message)
     }
 
-    override fun markRead(): Boolean {
-        return state.markRead()
+    override fun markRead(): MarkReadResult {
+        val result = state.markRead()
+        if (result == MarkReadResult.HandledLocally) {
+            persistCurrentReads()
+        }
+        return result
+    }
+
+    /** Persists the in-memory reads so the locally tracked unread count survives a restart. */
+    private fun persistCurrentReads() {
+        val reads = state.reads.value
+        if (reads.isEmpty()) return
+        coroutineScope.launch {
+            repository.upsertChannelReads(cid = state.cid, reads = reads)
+        }
     }
 
     override fun typingEventsEnabled(): Boolean {
@@ -291,10 +307,11 @@ internal class ChannelLogicImpl(
         state.setMemberCount(channel.memberCount)
         state.upsertMembers(channel.members)
         state.upsertWatchers(channel.watchers, channel.watcherCount)
+        // The config must be set before the reads: the read merge checks it to protect
+        // locally tracked reads.
+        state.setChannelConfig(channel.config)
         // Update reads
         state.updateReads(channel.read)
-        // Update channel config
-        state.setChannelConfig(channel.config)
         // Set pending messages
         state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
         // Update messages based on the relationship between the incoming page and existing state.

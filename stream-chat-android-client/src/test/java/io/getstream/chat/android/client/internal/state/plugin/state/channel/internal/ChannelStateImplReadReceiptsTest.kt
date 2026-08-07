@@ -25,7 +25,6 @@ import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -516,39 +515,39 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
     inner class MarkRead {
 
         @Test
-        fun `markRead should return false when read events are disabled`() = runTest {
+        fun `markRead returns None when read events are disabled`() = runTest {
             // given
             channelState.setChannelConfig(Config(readEventsEnabled = false))
             channelState.setMessages(listOf(createMessage(1)))
             // when
             val result = channelState.markRead()
             // then
-            assertFalse(result)
+            assertEquals(MarkReadResult.NotNeeded, result)
         }
 
         @Test
-        fun `markRead should return true when no messages exist`() = runTest {
+        fun `markRead returns Remote when no messages exist`() = runTest {
             // given
             channelState.setChannelConfig(Config(readEventsEnabled = true))
             // when
             val result = channelState.markRead()
             // then
-            assertTrue(result)
+            assertEquals(MarkReadResult.RemoteRequired, result)
         }
 
         @Test
-        fun `markRead should return true when no read state for current user`() = runTest {
+        fun `markRead returns Remote when no read state for current user`() = runTest {
             // given
             channelState.setChannelConfig(Config(readEventsEnabled = true))
             channelState.setMessages(listOf(createMessage(1)))
             // when
             val result = channelState.markRead()
             // then
-            assertTrue(result)
+            assertEquals(MarkReadResult.RemoteRequired, result)
         }
 
         @Test
-        fun `markRead should mark as read and reset unread count`() = runTest {
+        fun `markRead marks as read remotely and resets unread count`() = runTest {
             // given
             channelState.setChannelConfig(Config(readEventsEnabled = true))
             val message = createMessage(1, timestamp = 5000)
@@ -563,12 +562,12 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             // when
             val result = channelState.markRead()
             // then
-            assertTrue(result)
+            assertEquals(MarkReadResult.RemoteRequired, result)
             assertEquals(0, channelState.unreadCount.value)
         }
 
         @Test
-        fun `markRead should return false when last message is already read`() = runTest {
+        fun `markRead returns None when last message is already read`() = runTest {
             // given
             channelState.setChannelConfig(Config(readEventsEnabled = true))
             val message = createMessage(1)
@@ -583,7 +582,7 @@ internal class ChannelStateImplReadReceiptsTest : ChannelStateImplTestBase() {
             // when
             val result = channelState.markRead()
             // then
-            assertFalse(result)
+            assertEquals(MarkReadResult.NotNeeded, result)
         }
 
         @Test

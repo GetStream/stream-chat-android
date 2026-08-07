@@ -53,7 +53,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
-import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
+import io.getstream.chat.android.compose.sample.feature.channel.list.sampleChannelListViewModelFactory
 import io.getstream.chat.android.compose.sample.ui.SampleChatTheme
 import io.getstream.chat.android.compose.sample.ui.channel.MemberRolesTrailingContent
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
@@ -86,7 +86,6 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.ComposerOptions
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
@@ -132,35 +131,8 @@ class ChatsActivity : ComponentActivity() {
 
     private val settings by lazy { customSettings() }
 
-    /**
-     * The provided predefined filter has the following specs:
-     *
-     * **Filter:**
-     * ```
-     * Filters.and(
-     *     Filters.eq("type", "messaging"),
-     *     Filters.`in`("members", listOf(currentUserId)),
-     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
-     * )
-     * ```
-     *
-     * **Sort:**
-     * ```
-     * QuerySortByField<Channel>().desc("pinned_at").desc("last_updated")
-     * ```
-     */
     private val channelListViewModelFactory by lazy {
-        val chatClient = ChatClient.instance()
-        val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelListViewModelFactory(
-            chatClient = chatClient,
-            predefinedFilterName = "android_sample_filter",
-            filterValues = mapOf(
-                "channel_type" to "messaging",
-                "user_id" to currentUserId,
-            ),
-            chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-        )
+        sampleChannelListViewModelFactory(settings)
     }
 
     private val channelViewModelFactory by lazy {

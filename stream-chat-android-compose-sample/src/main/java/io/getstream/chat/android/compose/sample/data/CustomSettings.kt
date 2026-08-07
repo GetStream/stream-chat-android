@@ -38,6 +38,7 @@ class CustomSettings(private val context: Context) {
     var isComposerFloatingStyleEnabled: Boolean by booleanPref(ComposerFloatingStyle)
     var isSystemAttachmentPickerEnabled: Boolean by booleanPref(SystemAttachmentPicker)
     var isLocationSharingEnabled: Boolean by booleanPref(LocationSharing)
+    var isLocalUnreadCountEnabled: Boolean by booleanPref(LocalUnreadCount)
 
     private fun booleanPref(key: String, default: Boolean = false) =
         object : ReadWriteProperty<Any?, Boolean> {
@@ -55,5 +56,6 @@ private const val ComposerLinkPreview = "composer_link_preview"
 private const val ComposerFloatingStyle = "composer_floating_style"
 private const val SystemAttachmentPicker = "system_attachment_picker"
 private const val LocationSharing = "location_sharing"
+private const val LocalUnreadCount = "local_unread_count"
 
 fun Context.customSettings(): CustomSettings = CustomSettings(this)

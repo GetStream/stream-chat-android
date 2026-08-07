@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.int
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -170,11 +171,12 @@ internal interface ChannelLogic {
     fun setRepliedMessage(message: Message?)
 
     /**
-     * Marks channel as read locally.
+     * Marks the channel as read for the current user.
      *
-     * @return The flag to determine if the channel was marked as read locally.
+     * @return A [MarkReadResult] describing whether the channel should be marked as read remotely,
+     * was marked as read on-device, or does not need to be marked as read.
      */
-    fun markRead(): Boolean
+    fun markRead(): MarkReadResult
 
     /**
      * Checks if typing events are enabled for the channel.

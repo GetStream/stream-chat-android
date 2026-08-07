@@ -141,6 +141,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isLocationSharingEnabled by remember {
                         mutableStateOf(settings.isLocationSharingEnabled)
                     }
+                    var isLocalUnreadCountEnabled by remember {
+                        mutableStateOf(settings.isLocalUnreadCountEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -205,6 +208,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isLocationSharingEnabled = it
                                 settings.isLocationSharingEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_local_unread_count_label),
+                            description = stringResource(R.string.custom_login_flag_local_unread_count_description),
+                            value = isLocalUnreadCountEnabled,
+                            onValueChange = {
+                                isLocalUnreadCountEnabled = it
+                                settings.isLocalUnreadCountEnabled = it
                             },
                         ),
                     )

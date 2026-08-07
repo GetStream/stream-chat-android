@@ -54,6 +54,7 @@ import java.util.Date
 internal class EventBatchUpdate private constructor(
     private val id: Int,
     private val currentUserId: String,
+    private val isLocalUnreadCountEnabled: Boolean,
     private val globalState: GlobalState,
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
@@ -71,7 +72,7 @@ internal class EventBatchUpdate private constructor(
     fun addMessageData(receivedEventDate: Date, cid: String, message: Message) {
         addMessage(message)
         getCurrentChannel(cid)
-            ?.updateLastMessage(receivedEventDate, message, currentUserId)
+            ?.updateLastMessage(receivedEventDate, message, currentUserId, isLocalUnreadCountEnabled)
             ?.let(::addChannel)
     }
 
@@ -192,6 +193,7 @@ internal class EventBatchUpdate private constructor(
             globalState: GlobalState,
             repos: RepositoryFacade,
             currentUserId: String,
+            isLocalUnreadCountEnabled: Boolean,
         ): EventBatchUpdate {
             channelsToRemove.forEach { repos.deleteChannel(it) }
             // Update users in DB in order to fetch channels and messages with sync data.
@@ -214,6 +216,7 @@ internal class EventBatchUpdate private constructor(
             return EventBatchUpdate(
                 id,
                 currentUserId,
+                isLocalUnreadCountEnabled,
                 globalState,
                 repos,
                 channelMap.toMutableMap(),

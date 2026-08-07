@@ -258,7 +258,7 @@ internal class ChannelExtensionsTests {
         )
 
         // when
-        val result = channel.updateLastMessage(receivedEventDate, newMessage, currentUserId)
+        val result = channel.updateLastMessage(receivedEventDate, newMessage, currentUserId, isLocalUnreadCountEnabled = false)
 
         // then
         result.messages shouldContain existingMessage
@@ -316,7 +316,7 @@ internal class ChannelExtensionsTests {
         )
 
         // when
-        val result = channel.updateLastMessage(receivedEventDate, newMessage, currentUserId)
+        val result = channel.updateLastMessage(receivedEventDate, newMessage, currentUserId, isLocalUnreadCountEnabled = false)
 
         // then
         result.messages shouldContain existingMessage

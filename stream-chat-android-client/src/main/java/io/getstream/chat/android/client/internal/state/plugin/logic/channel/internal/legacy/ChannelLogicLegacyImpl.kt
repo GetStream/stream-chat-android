@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.internal.state.model.querychannels.pagin
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
@@ -199,8 +200,18 @@ internal class ChannelLogicLegacyImpl(
         stateLogic.setRepliedMessage(message)
     }
 
-    override fun markRead(): Boolean {
-        return stateLogic.markRead()
+    override fun markRead(): MarkReadResult {
+        val result = stateLogic.markRead()
+        if (result == MarkReadResult.HandledLocally) {
+            // Persist the reset read so the on-device unread count survives a restart.
+            val reads = mutableState.reads.value
+            if (reads.isNotEmpty()) {
+                coroutineScope.launch {
+                    repos.upsertChannelReads(cid = mutableState.cid, reads = reads)
+                }
+            }
+        }
+        return result
     }
 
     override fun typingEventsEnabled(): Boolean {

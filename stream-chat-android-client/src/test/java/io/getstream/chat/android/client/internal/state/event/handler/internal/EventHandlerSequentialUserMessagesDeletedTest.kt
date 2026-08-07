@@ -347,6 +347,7 @@ internal class EventHandlerSequentialUserMessagesDeletedTest {
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
             bufferConfig = MessageBufferConfig(),
+            isLocalUnreadCountEnabled = false,
             scope = scope,
         )
     }

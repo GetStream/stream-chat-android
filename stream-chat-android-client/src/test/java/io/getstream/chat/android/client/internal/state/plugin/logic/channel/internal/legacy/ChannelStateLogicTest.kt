@@ -67,6 +67,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
@@ -773,6 +774,37 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given message already in the channel state, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // After a restart the sync replays the events since the last sync, including the event of
+        // the newest message already counted (and persisted) before the restart. That message is
+        // already part of the state seeded from the database, so it must not be counted twice.
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = 1,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(10L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+        whenever(mutableState.getMessageById(newMessage.id)) doReturn newMessage
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
     fun `Given no current read state exists, When updateCurrentUserRead is called, Then unread count is not updated`() {
         // given - no current read state
         _read.value = null
@@ -791,6 +823,37 @@ internal class ChannelStateLogicTest {
 
         // then - should not crash and should not call upsertReads
         verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given no read state and local unread tracking enabled, When updateCurrentUserRead is called, Then a read is created`() {
+        // given - no read state, local tracking on, read events disabled server-side
+        _read.value = null
+        _channelConfig.value = Config(readEventsEnabled = false)
+        whenever(mutableState.isLocalUnreadCountEnabled) doReturn true
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        val expectedChannelUserRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = eventDate,
+            unreadMessages = 1,
+            lastRead = Date(0),
+            lastReadMessageId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState).upsertReads(eq(listOf(expectedChannelUserRead)))
     }
 
     @Test
@@ -894,6 +957,105 @@ internal class ChannelStateLogicTest {
                 ),
             ),
         )
+    }
+
+    @Test
+    fun `When updateDataForChannel is called, Then the config is set before the reads are updated`() {
+        // The read merge checks the config to protect locally tracked reads, so the config
+        // must be up to date before the reads are merged.
+        val channel = randomChannel(read = listOf(randomChannelUserRead(user = user)))
+
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        inOrder(mutableState) {
+            verify(mutableState).setChannelConfig(channel.config)
+            verify(mutableState).upsertReads(any())
+        }
+    }
+
+    @Test
+    fun `Given locally tracked channel, When updateDataForChannel is called with more recent server read, Then local read state is preserved`() {
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(50L),
+            unreadMessages = 3,
+            lastRead = Date(40L),
+            lastReadMessageId = null,
+        )
+        // Server sends a sync payload with unreadMessages = 0 and a newer event date
+        val serverRead = ChannelUserRead(
+            user = user.copy(name = "Updated Name"),
+            lastReceivedEventDate = Date(100L),
+            unreadMessages = 0,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+            lastDeliveredAt = Date(85L),
+            lastDeliveredMessageId = "server-delivered-id",
+        )
+
+        assertLocallyTrackedMerge(
+            localRead = localRead,
+            serverRead = serverRead,
+            // only user info and delivered fields are merged from the server
+            expectedRead = localRead.copy(
+                user = serverRead.user,
+                lastDeliveredAt = serverRead.lastDeliveredAt,
+                lastDeliveredMessageId = serverRead.lastDeliveredMessageId,
+            ),
+        )
+    }
+
+    @Test
+    fun `Given locally tracked channel, When updateDataForChannel is called with a server read tying on event date, Then local read state is preserved`() {
+        // Server reads carry lastReceivedEventDate = last_message_at, which ties with the local value
+        // anchored to the same message - a recency merge would let the stale server count win here.
+        val lastMessageDate = Date(100L)
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = lastMessageDate,
+            unreadMessages = 3,
+            lastRead = Date(40L),
+            lastReadMessageId = null,
+        )
+        val serverRead = localRead.copy(unreadMessages = 0)
+
+        assertLocallyTrackedMerge(localRead = localRead, serverRead = serverRead, expectedRead = localRead)
+    }
+
+    @Test
+    fun `Given locally tracked channel without local read, When updateDataForChannel is called, Then server data is used`() {
+        // first channel load, no local read state yet - the server value is authoritative
+        val serverRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(100L),
+            unreadMessages = 5,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+        )
+
+        assertLocallyTrackedMerge(localRead = null, serverRead = serverRead, expectedRead = serverRead)
+    }
+
+    /**
+     * On a locally tracked channel (local unread count enabled, read events disabled), feeds
+     * [serverRead] through `updateDataForChannel` over the given [localRead] and asserts the merge
+     * upserts [expectedRead].
+     */
+    private fun assertLocallyTrackedMerge(
+        localRead: ChannelUserRead?,
+        serverRead: ChannelUserRead,
+        expectedRead: ChannelUserRead,
+    ) {
+        whenever(mutableState.isLocalUnreadCountEnabled) doReturn true
+        _channelConfig.value = Config(readEventsEnabled = false)
+        _read.value = localRead
+
+        channelStateLogic.updateDataForChannel(channel = randomChannel(read = listOf(serverRead)), messageLimit = 0)
+
+        verify(mutableState).upsertReads(eq(listOf(expectedRead)))
     }
 
     @Test

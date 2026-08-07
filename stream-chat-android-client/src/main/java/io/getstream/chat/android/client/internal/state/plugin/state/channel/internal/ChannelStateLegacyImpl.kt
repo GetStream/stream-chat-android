@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -68,6 +69,7 @@ internal class ChannelStateLegacyImpl(
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
     val baseMessageLimit: Int?,
+    val isLocalUnreadCountEnabled: Boolean = false,
     private val now: () -> Long,
 ) : ChannelState {
 
@@ -590,36 +592,56 @@ internal class ChannelStateLegacyImpl(
     }
 
     /**
-     * Marks channel as read locally if different conditions are met:
-     * 1. Channel has read events enabled
-     * 2. Channel has messages not marked as read yet
-     * 3. Current user is set
-     *
-     * @return The flag to determine if the channel was marked as read locally.
+     * Marks the channel as read for the current user and returns how the request was handled:
+     * remotely, on-device (read events disabled + local tracking enabled), or not at all.
      */
-    fun markChannelAsRead(): Boolean = messages.value
-        .takeIf { channelConfig.value.readEventsEnabled }
-        ?.lastOrNull()
-        ?.let { lastMessage ->
-            when (val currentUserRead = read.value) {
-                null -> true
-                else ->
-                    // Allow marking as read if:
-                    // 1. The last read message ID differs from the last message, OR
-                    // 2. There are unread messages (even if lastReadMessageId matches, server state may differ)
-                    currentUserRead
-                        .takeIf { it.lastReadMessageId != lastMessage.id || it.unreadMessages > 0 }
-                        ?.let {
-                            // Zero the count optimistically, but leave the read dates untouched:
-                            // they stay anchored to what the server confirmed, and the server's
-                            // own message.read echo advances them. Stamping them with the newest
-                            // loaded message's date here made messages that were still queued
-                            // behind this call count as already seen.
-                            upsertReads(listOf(it.copy(unreadMessages = 0)))
-                            true
-                        }
+    fun markChannelAsRead(): MarkReadResult {
+        if (!channelConfig.value.readEventsEnabled) {
+            if (!isLocalUnreadCountEnabled) {
+                return MarkReadResult.NotNeeded
             }
-        } ?: false
+            markReadLocally()
+            return MarkReadResult.HandledLocally
+        }
+        val lastMessage = messages.value.lastOrNull() ?: return MarkReadResult.NotNeeded
+        val currentUserRead = read.value ?: return MarkReadResult.RemoteRequired
+        // Mark as read if the last read message differs from the last message, or there are unread
+        // messages (server state may differ even when the ids match).
+        return if (currentUserRead.lastReadMessageId != lastMessage.id || currentUserRead.unreadMessages > 0) {
+            // Zero the count optimistically, but leave the read dates untouched: they stay anchored
+            // to what the server confirmed, and the server's own message.read echo advances them.
+            // Stamping them with the newest loaded message's date here made messages still queued
+            // behind this call count as already seen.
+            upsertReads(listOf(currentUserRead.copy(unreadMessages = 0)))
+            MarkReadResult.RemoteRequired
+        } else {
+            MarkReadResult.NotNeeded
+        }
+    }
+
+    /**
+     * Resets the current user's unread count on-device, advancing the read state (including
+     * [ChannelUserRead.lastReadMessageId], which the remote path leaves to the server).
+     */
+    private fun markReadLocally() {
+        val currentUserRead = read.value ?: return
+        val lastMessage = messages.value.lastOrNull()
+        // Read strictly past the last message (not exactly its createdAt), mirroring the server's
+        // mark-read. An exact match would make the message list treat the user's next own message as
+        // a "mark as unread" and show a spurious 0-count separator.
+        val lastMessageAt = lastMessage?.getCreatedAtOrDefault(Date()) ?: Date(0)
+        val readDate = Date(lastMessageAt.time + 1)
+        upsertReads(
+            listOf(
+                currentUserRead.copy(
+                    lastReceivedEventDate = maxOf(currentUserRead.lastReceivedEventDate, readDate),
+                    lastRead = readDate,
+                    lastReadMessageId = lastMessage?.id ?: currentUserRead.lastReadMessageId,
+                    unreadMessages = 0,
+                ),
+            ),
+        )
+    }
 
     fun removeMessagesBefore(date: Date) {
         logger.d { "[removeMessagesBefore] date: $date" }
