@@ -933,6 +933,13 @@ internal class EventHandlerSequential(
                 is PollDeletedEvent -> {
                     repos.deletePoll(event.poll.id)
                 }
+                is DraftMessageUpdatedEvent -> {
+                    repos.insertDraftMessage(event.draftMessage)
+                }
+                is DraftMessageDeletedEvent -> {
+                    // The event carries an empty message id, so the draft is identified by its channel/thread.
+                    repos.deleteDraftMessage(event.draftMessage.cid, event.draftMessage.parentId)
+                }
                 is UserMessagesDeletedEvent -> {
                     deleteMessagesFromUser(event.cid, event.user.id, event.hardDelete, event.createdAt)
                 }

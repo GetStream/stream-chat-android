@@ -178,6 +178,12 @@ public interface MessageRepository {
     public suspend fun deleteDraftMessage(message: DraftMessage)
 
     /**
+     * Deletes the draft message of a channel, or of a thread when [parentId] is not null. Used when the draft is only
+     * identified by the channel/thread it belongs to, as happens with the `draft.deleted` event.
+     */
+    public suspend fun deleteDraftMessage(cid: String, parentId: String?)
+
+    /**
      * Evict messages from the repository.
      */
     public suspend fun evictMessages()
