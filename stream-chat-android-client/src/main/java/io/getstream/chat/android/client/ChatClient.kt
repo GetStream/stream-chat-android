@@ -93,6 +93,7 @@ import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
 import io.getstream.chat.android.client.errorhandler.onReactionError
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundException
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -572,15 +573,33 @@ internal constructor(
         val isAnonymous = user == anonUser
         val cacheableTokenProvider = CacheableTokenProvider(tokenProvider)
         val userState = userStateService.state
+        val token = cacheableTokenProvider.loadToken()
 
         return when {
-            tokenUtils.getUserId(cacheableTokenProvider.loadToken()) != user.id -> {
+            token.isBlank() -> {
+                logger.e {
+                    "The token provided by the TokenProvider is empty; unable to connect the user"
+                }
+                // Keep the existing message unchanged for backwards compatibility (callers may
+                // match on it); the distinct `code` is what differentiates this from a real mismatch.
+                Result.Failure(
+                    Error.GenericError(
+                        message = "The user_id provided on the JWT token doesn't match " +
+                            "with the current user you try to connect",
+                        code = ChatErrorCode.UNDEFINED_TOKEN.code,
+                    ),
+                )
+            }
+
+            tokenUtils.getUserId(token) != user.id -> {
                 logger.e {
                     "The user_id provided on the JWT token doesn't match with the current user you try to connect"
                 }
                 Result.Failure(
                     Error.GenericError(
-                        "The user_id provided on the JWT token doesn't match with the current user you try to connect",
+                        message = "The user_id provided on the JWT token doesn't match " +
+                            "with the current user you try to connect",
+                        code = ChatErrorCode.INVALID_TOKEN.code,
                     ),
                 )
             }
