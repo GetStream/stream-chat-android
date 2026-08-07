@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -84,6 +83,7 @@ import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -376,11 +376,23 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun partialUpdateMemberInput() = listOf(
         Arguments.of(
-            RetroSuccess(UpdateMemberPartialResponse(Mother.randomDownstreamMemberDto())).toRetrofitCall(),
+            RetroSuccess(
+                UpdateMemberPartialResponse(
+                    duration = randomString(),
+                    channelMember = Mother.randomChannelMemberResponse(),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             RetroError<UpdateMemberPartialResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        // The member is optional in the response schema: a 200 without it must fail, not crash.
+        Arguments.of(
+            RetroSuccess(
+                UpdateMemberPartialResponse(duration = randomString(), channelMember = null),
+            ).toRetrofitCall(),
             Result.Failure::class,
         ),
     )

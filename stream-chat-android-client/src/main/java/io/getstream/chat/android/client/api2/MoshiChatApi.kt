@@ -162,6 +162,7 @@ import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
@@ -1290,9 +1291,7 @@ constructor(
             channelId = channelId,
             userId = userId,
             body = UpdateMemberPartialRequest(set = set, unset = unset),
-        ).mapDomain { response ->
-            response.channel_member.toDomain()
-        }
+        ).flatMapDomain { toMemberCall(it) }
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
@@ -2053,6 +2052,20 @@ constructor(
             val error = Error.GenericError(
                 "Push preferences response for user $currentUserId did not contain channel preference for $cid",
             )
+            ErrorCall(coroutineScope, error)
+        }
+    }
+
+    /**
+     * The member is optional in the response schema, so a missing one is surfaced as a failure rather
+     * than crashing the mapping.
+     */
+    private fun DomainMapping.toMemberCall(response: UpdateMemberPartialResponse): Call<Member> {
+        val member = response.channelMember
+        return if (member != null) {
+            CoroutineCall(coroutineScope) { Result.Success(member.toDomain()) }
+        } else {
+            val error = Error.GenericError("The updated member is missing from the response")
             ErrorCall(coroutineScope, error)
         }
     }
