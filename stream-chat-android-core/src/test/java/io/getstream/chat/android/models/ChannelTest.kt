@@ -216,14 +216,23 @@ internal class ChannelTest {
 
     @Test
     fun `getComparableField should return boolean fields`() {
-        val channel = randomChannel(frozen = true, hidden = false)
+        val channel = randomChannel(frozen = true, hidden = false, disabled = true, blocked = false)
         assertEquals(true, channel.getComparableField("frozen"))
         assertEquals(false, channel.getComparableField("hidden"))
+        assertEquals(true, channel.getComparableField("disabled"))
+        assertEquals(false, channel.getComparableField("blocked"))
+    }
+
+    @Test
+    fun `getComparableField should return null for an absent blocked value`() {
+        assertNull(randomChannel(blocked = null).getComparableField("blocked"))
     }
 
     @Test
     fun `getComparableField should return date fields for snake_case and camelCase field names`() {
-        val channel = randomChannel(lastMessageAt = randomDate())
+        val channel = randomChannel(lastMessageAt = randomDate(), truncatedAt = randomDate())
+        assertEquals(channel.truncatedAt, channel.getComparableField("truncated_at"))
+        assertEquals(channel.truncatedAt, channel.getComparableField("truncatedAt"))
         assertEquals(channel.lastMessageAt, channel.getComparableField("last_message_at"))
         assertEquals(channel.lastMessageAt, channel.getComparableField("lastMessageAt"))
         assertEquals(channel.createdAt, channel.getComparableField("created_at"))
