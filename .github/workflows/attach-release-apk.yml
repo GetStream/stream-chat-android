@@ -21,7 +21,7 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
           fetch-depth: 0
           persist-credentials: false
-      - uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@feature/rahullohra/build-on-sdk-37
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
         with:
           java-version: '21'
       - name: Prepare signing environment
