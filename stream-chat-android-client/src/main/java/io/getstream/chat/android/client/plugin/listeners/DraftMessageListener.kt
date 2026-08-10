@@ -34,7 +34,7 @@ public interface DraftMessageListener {
      * Side effect to be invoked before the original request is launched.
      *
      * @param channelType The type of the channel in which message is created.
-     * @param channelId The id of the the channel in which message is created.
+     * @param channelId The id of the channel in which message is created.
      * @param message [DraftMessage] to be created.
      */
     public suspend fun onCreateDraftMessageRequest(
@@ -48,7 +48,7 @@ public interface DraftMessageListener {
      *
      * @param result [Result] response from the original request.
      * @param channelType The type of the channel in which message is created.
-     * @param channelId The id of the the channel in which message is created.
+     * @param channelId The id of the channel in which message is created.
      * @param message [DraftMessage] to be created.
      */
     public suspend fun onCreateDraftMessageResult(
@@ -61,8 +61,8 @@ public interface DraftMessageListener {
     /**
      * Side effect to be invoked before the original request is launched.
      *
-     * @param channelType The type of the channel in which message is updated.
-     * @param channelId The id of the the channel in which message is updated.
+     * @param channelType The type of the channel in which message is deleted.
+     * @param channelId The id of the channel in which message is deleted.
      * @param message [DraftMessage] to be deleted.
      */
     public suspend fun onDeleteDraftMessagesRequest(
@@ -75,9 +75,9 @@ public interface DraftMessageListener {
      * Side effect to be invoked when the original request is completed with a response.
      *
      * @param result [Result] response from the original request.
-     * @param channelType The type of the channel in which message is updated.
-     * @param channelId The id of the the channel in which message is updated.
-     * @param message [DraftMessage] to be updated.
+     * @param channelType The type of the channel in which message is deleted.
+     * @param channelId The id of the channel in which message is deleted.
+     * @param message [DraftMessage] to be deleted.
      */
     public suspend fun onDeleteDraftMessagesResult(
         result: Result<Unit>,
