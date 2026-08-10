@@ -18,6 +18,7 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.utils.date.max
 import java.util.Date
 
 /**
@@ -45,6 +46,10 @@ import java.util.Date
  * @param pushPreference The current user's push notification preference for this channel, if set.
  * @param filterTags The list of filter tags applied to the channel.
  * @param lastMessageAt Date/time of the last message sent.
+ * @param truncatedAt Date/time of the last truncation, if the channel was ever truncated.
+ * @param disabled Whether the channel is disabled or not.
+ * @param blocked Whether the channel is blocked or not. Note that the field is not provided by every endpoint, nor in
+ * the events.
  */
 @Immutable
 public data class ChannelData(
@@ -68,6 +73,9 @@ public data class ChannelData(
     val pushPreference: PushPreference? = null,
     val filterTags: List<String> = emptyList(),
     val lastMessageAt: Date? = null,
+    val truncatedAt: Date? = null,
+    val disabled: Boolean = false,
+    val blocked: Boolean? = null,
 ) {
 
     /**
@@ -131,6 +139,9 @@ public data class ChannelData(
             messageCount = messageCount,
             pushPreference = pushPreference,
             lastMessageAt = lastMessageAt,
+            truncatedAt = truncatedAt,
+            disabled = disabled,
+            blocked = blocked,
         )
     }
 
@@ -168,6 +179,10 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         createdBy = that.createdBy,
         messageCount = that.messageCount ?: this.messageCount,
         lastMessageAt = that.lastMessageAt,
+        disabled = that.disabled,
+        // blocked is omitted by the events, and truncatedAt only ever moves forward
+        blocked = that.blocked ?: this.blocked,
+        truncatedAt = max(this.truncatedAt, that.truncatedAt),
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,

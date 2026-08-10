@@ -18,6 +18,7 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -392,6 +393,10 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         deletedAt = that.deletedAt,
         messageCount = that.messageCount ?: messageCount,
         lastMessageAt = that.lastMessageAt,
+        disabled = that.disabled,
+        // blocked is omitted by the events, and truncatedAt only ever moves forward
+        blocked = that.blocked ?: blocked,
+        truncatedAt = max(truncatedAt, that.truncatedAt),
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -429,5 +434,8 @@ public fun Channel.toChannelData(): ChannelData {
         messageCount = messageCount,
         pushPreference = pushPreference,
         lastMessageAt = lastMessageAt,
+        truncatedAt = truncatedAt,
+        disabled = disabled,
+        blocked = blocked,
     )
 }

@@ -310,6 +310,41 @@ internal class ChannelTest {
     }
 
     @Test
+    fun `mergeChannelFromEvent should always take disabled from the update`() {
+        val original = randomChannel(disabled = true)
+        val update = randomChannel(disabled = false)
+
+        val merged = original.mergeChannelFromEvent(update)
+
+        assertFalse(merged.disabled)
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should keep blocked when the update has none`() {
+        val original = randomChannel(blocked = true)
+        val update = randomChannel(blocked = null)
+
+        val merged = original.mergeChannelFromEvent(update)
+
+        assertTrue(merged.blocked!!)
+    }
+
+    @Test
+    fun `mergeChannelFromEvent should keep the latest truncatedAt`() {
+        val earlier = Date(1000)
+        val later = Date(2000)
+
+        fun merge(original: Date?, update: Date?): Date? =
+            randomChannel(truncatedAt = original).mergeChannelFromEvent(randomChannel(truncatedAt = update)).truncatedAt
+
+        assertEquals(later, merge(original = later, update = earlier))
+        assertEquals(later, merge(original = earlier, update = later))
+        assertEquals(later, merge(original = later, update = null))
+        assertEquals(later, merge(original = null, update = later))
+        assertNull(merge(original = null, update = null))
+    }
+
+    @Test
     @Suppress("DEPRECATION")
     fun `mergeChannelFromEvent should not merge connection specific fields`() {
         val original = randomChannel(
@@ -374,5 +409,8 @@ internal class ChannelTest {
         assertEquals(channel.messageCount, channelData.messageCount)
         assertEquals(channel.pushPreference, channelData.pushPreference)
         assertEquals(channel.lastMessageAt, channelData.lastMessageAt)
+        assertEquals(channel.truncatedAt, channelData.truncatedAt)
+        assertEquals(channel.disabled, channelData.disabled)
+        assertEquals(channel.blocked, channelData.blocked)
     }
 }
