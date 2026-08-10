@@ -120,6 +120,7 @@ androidx-core-testing = { module = "androidx.arch.core:core-testing", version.re
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "androidxExifInterface"}
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment"}
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidxFragment"}
+androidx-fragment-testing-manifest = { module = "androidx.fragment:fragment-testing-manifest", version.ref = "androidxFragment"}
 androidx-legacy-support = { module = "androidx.legacy:legacy-support-v4", version.ref = "androidLegacySupport"}
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidxLifecycle"}
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycle"}

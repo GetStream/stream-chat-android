@@ -81,9 +81,12 @@ dependencies {
     androidTestImplementation(libs.coil.video)
 
     // Instrumentation tests
-    debugImplementation(libs.androidx.fragment.testing) {
-        exclude(group = "androidx.test", module = "monitor")
-    }
+    // fragment-1.6+ split: FragmentScenario lives in fragment-testing (androidTest), while only the
+    // debug empty-activity manifest goes on the debug runtime. Keeps fragment-testing's androidx.test
+    // (core/monitor/storage) off the main debug classpath, so AGP consistent resolution has nothing
+    // to reconcile against the newer androidx.test on androidTest.
+    debugImplementation(libs.androidx.fragment.testing.manifest)
+    androidTestImplementation(libs.androidx.fragment.testing)
     androidTestImplementation(libs.androidx.test.espresso.contrib) {
         exclude(group = "org.checkerframework", module = "checker")
     }

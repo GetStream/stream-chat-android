@@ -173,8 +173,6 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.shimmer)
 
-    debugImplementation(libs.androidx.fragment.testing)
-
     // Instrumentation tests
     androidTestImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
