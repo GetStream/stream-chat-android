@@ -14,17 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Represents the body part of the truncate channel request.
  *
- * @param message The system message that will be shown in the channel.
  */
-@JsonClass(generateAdapter = true)
-internal data class TruncateChannelRequest(
-    val message: UpstreamMessageDto?,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UpdateMessageRequest(
+    @Json(name = "message")
+    internal val message: io.getstream.chat.android.network.models.MessageRequest,
+
+    @Json(name = "skip_enrich_url")
+    internal val skipEnrichUrl: Boolean? = null,
+
+    @Json(name = "skip_push")
+    internal val skipPush: Boolean? = null,
 )

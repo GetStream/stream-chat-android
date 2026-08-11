@@ -56,10 +56,7 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -126,6 +123,7 @@ import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.ChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateDraftRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
@@ -154,15 +152,18 @@ import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
+import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
+import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
@@ -273,9 +274,9 @@ constructor(
         channelType = channelType,
         channelId = channelId,
         message = SendMessageRequest(
-            message = with(dtoMapping) { message.toDto() },
-            skip_push = message.skipPushNotification,
-            skip_enrich_url = message.skipEnrichUrl,
+            message = with(dtoMapping) { message.toMessageRequest() },
+            skipPush = message.skipPushNotification,
+            skipEnrichUrl = message.skipEnrichUrl,
         ),
     ).mapDomain { response ->
         response.message.toDomain()
@@ -288,8 +289,8 @@ constructor(
     ): Call<DraftMessage> = messageApi.createDraftMessage(
         channelType = channelType,
         channelId = channelId,
-        message = SendMessageRequest(
-            message = with(dtoMapping) { message.toDto() },
+        message = CreateDraftRequest(
+            message = with(dtoMapping) { message.toMessageRequest() },
         ),
     ).mapDomain { response ->
         response.draft.toDomain()
@@ -344,9 +345,9 @@ constructor(
         return messageApi.updateMessage(
             messageId = message.id,
             message = UpdateMessageRequest(
-                message = with(dtoMapping) { message.toDto() },
-                skip_enrich_url = message.skipEnrichUrl,
-                skip_push = message.skipPushNotification,
+                message = with(dtoMapping) { message.toMessageRequest() },
+                skipEnrichUrl = message.skipEnrichUrl,
+                skipPush = message.skipPushNotification,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
@@ -1129,7 +1130,7 @@ constructor(
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toDto()) },
+            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toMessageRequest()) },
         ).map(this::flattenChannel)
     }
 

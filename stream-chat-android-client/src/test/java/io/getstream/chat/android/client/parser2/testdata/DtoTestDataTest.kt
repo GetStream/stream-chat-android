@@ -28,8 +28,6 @@ internal class DtoTestDataTest {
 
         anyAdapter.fromJson(MessageDtoTestData.downstreamJson)
         anyAdapter.fromJson(MessageDtoTestData.downstreamJsonWithoutExtraData)
-        anyAdapter.fromJson(MessageDtoTestData.upstreamJson)
-        anyAdapter.fromJson(MessageDtoTestData.upstreamJsonWithoutExtraData)
 
         anyAdapter.fromJson(ReactionDtoTestData.downstreamJson)
         anyAdapter.fromJson(ReactionDtoTestData.downstreamJsonWithoutExtraData)

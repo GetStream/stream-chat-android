@@ -21,44 +21,6 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
 
 /**
- * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class UpstreamMessageDto(
-    val attachments: List<AttachmentDto>,
-    val cid: String,
-    val command: String?,
-    val args: String?,
-    val html: String,
-    val id: String,
-    val type: String,
-    val mentioned_users: List<String>,
-    val mentioned_here: Boolean = false,
-    val mentioned_channel: Boolean = false,
-    val mentioned_group_ids: List<String> = emptyList(),
-    val mentioned_roles: List<String> = emptyList(),
-    val parent_id: String?,
-    val pin_expires: Date?,
-    val pinned: Boolean?,
-    val pinned_at: Date?,
-    val pinned_by: UpstreamUserDto?,
-    val quoted_message_id: String?,
-    val shadowed: Boolean,
-    val show_in_channel: Boolean,
-    val silent: Boolean,
-    val text: String,
-    val thread_participants: List<UpstreamUserDto>,
-    val restricted_visibility: List<String>,
-    val shared_location: UpstreamLocationDto?,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
-/**
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter] for
  * special [extraData] handling.
  */

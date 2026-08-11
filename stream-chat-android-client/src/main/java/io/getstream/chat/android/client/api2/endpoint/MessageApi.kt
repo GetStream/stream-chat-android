@@ -18,8 +18,6 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
@@ -28,13 +26,16 @@ import io.getstream.chat.android.client.api2.model.response.QueryReactionsRespon
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.CreateDraftRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessageRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -61,7 +62,7 @@ internal interface MessageApi {
     fun createDraftMessage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-        @Body message: SendMessageRequest,
+        @Body message: CreateDraftRequest,
     ): RetrofitCall<DraftMessageResponse>
 
     @DELETE("/channels/{type}/{id}/draft")
