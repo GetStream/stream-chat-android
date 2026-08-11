@@ -16,11 +16,22 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.FileUploadResponse
+import io.getstream.result.Error
+import io.getstream.result.Result
 
-internal fun UploadFileResponse.toUploadedFile() =
-    UploadedFile(
-        file = this.file,
-        thumbUrl = this.thumb_url,
-    )
+/**
+ * The upload endpoints omit `file` when the asset URL is empty, which leaves nothing to attach, so
+ * that is reported as a failure rather than an upload with a blank URL.
+ */
+internal fun FileUploadResponse.toUploadedFile(): Result<UploadedFile> =
+    when (val uploadedFileUrl = file) {
+        null -> Result.Failure(Error.GenericError(message = "Missing file URL in the upload response"))
+        else -> Result.Success(
+            UploadedFile(
+                file = uploadedFileUrl,
+                thumbUrl = thumbUrl,
+            ),
+        )
+    }
