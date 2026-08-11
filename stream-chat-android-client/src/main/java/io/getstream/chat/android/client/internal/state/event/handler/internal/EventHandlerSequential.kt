@@ -96,6 +96,7 @@ import io.getstream.chat.android.client.extensions.internal.mergeReactions
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.extensions.internal.removeMembership
+import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.extensions.internal.updateMember
 import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
@@ -935,6 +936,15 @@ internal class EventHandlerSequential(
                 }
                 is UserMessagesDeletedEvent -> {
                     deleteMessagesFromUser(event.cid, event.user.id, event.hardDelete, event.createdAt)
+                }
+                is MemberUpdatedEvent -> {
+                    // The backend does not emit message.updated for membership changes, so the snapshot denormalized
+                    // onto the stored messages would otherwise stay stale until they are fetched again.
+                    repos.updateChannelUserMessagesMember(
+                        cid = event.cid,
+                        userId = event.member.getUserId(),
+                        member = event.member.toMemberInfo(),
+                    )
                 }
                 else -> Unit // Ignore other events
             }

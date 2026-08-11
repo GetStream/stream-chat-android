@@ -20,10 +20,24 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import java.util.Date
+
+/**
+ * Replaces the [Message.member] snapshot of this message, keeping the deprecated [Message.channelRole] in sync with it.
+ *
+ * A member payload that carries no `channel_role` must not wipe the role already known for the message: the backend
+ * always assigns one, so an absent role means "not sent" rather than "no role".
+ */
+@InternalStreamChatApi
+@Suppress("DEPRECATION")
+public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message {
+    val resolved = memberInfo?.let { it.copy(channelRole = it.channelRole ?: member?.channelRole) }
+    return copy(member = resolved, channelRole = resolved?.channelRole)
+}
 
 /** Updates collection of messages with more recent data of [users]. */
 @InternalStreamChatApi

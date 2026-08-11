@@ -409,6 +409,65 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         }
     }
 
+    @Nested
+    inner class UpdateMessagesMemberInfo {
+
+        @Test
+        fun `updateMessagesMemberInfo should refresh the member snapshot on the author's messages`() = runTest {
+            // given - the backend does not emit message.updated when a membership changes
+            val author = randomUser(id = "author")
+            val message = createMessage(1, user = author)
+            channelState.setMessages(listOf(message))
+            // when
+            val member = randomMember(user = author, channelRole = "channel_moderator")
+                .copy(notificationsMuted = true, extraData = mapOf("flair" to "gold"))
+            channelState.updateMessagesMemberInfo(member)
+            // then
+            val updated = channelState.messages.value.first()
+            assertEquals("channel_moderator", updated.member?.channelRole)
+            assertEquals(true, updated.member?.notificationsMuted)
+            assertEquals(mapOf("flair" to "gold"), updated.member?.extraData)
+        }
+
+        @Test
+        fun `updateMessagesMemberInfo should keep the deprecated channelRole in sync`() = runTest {
+            // given
+            val author = randomUser(id = "author")
+            channelState.setMessages(listOf(createMessage(1, user = author)))
+            // when
+            channelState.updateMessagesMemberInfo(randomMember(user = author, channelRole = "channel_moderator"))
+            // then
+            @Suppress("DEPRECATION")
+            assertEquals("channel_moderator", channelState.messages.value.first().channelRole)
+        }
+
+        @Test
+        fun `updateMessagesMemberInfo should leave messages of other users untouched`() = runTest {
+            // given
+            val author = randomUser(id = "author")
+            val otherAuthor = randomUser(id = "other_author")
+            val otherMessage = createMessage(2, user = otherAuthor)
+            channelState.setMessages(listOf(createMessage(1, user = author), otherMessage))
+            // when
+            channelState.updateMessagesMemberInfo(randomMember(user = author))
+            // then
+            val untouched = channelState.messages.value.first { it.id == otherMessage.id }
+            assertNull(untouched.member)
+        }
+
+        @Test
+        fun `updateMessagesMemberInfo should refresh pinned messages too`() = runTest {
+            // given
+            val author = randomUser(id = "author")
+            val pinnedMessage = createMessage(1, user = author, pinned = true, pinnedAt = Date())
+            channelState.addPinnedMessages(listOf(pinnedMessage))
+            // when
+            channelState.updateMessagesMemberInfo(randomMember(user = author, channelRole = "channel_moderator"))
+            // then
+            assertEquals("channel_moderator", channelState.pinnedMessages.value.first().member?.channelRole)
+        }
+    }
+
     private fun createMember(index: Int): Member {
         val user = randomUser(id = "user_$index", name = "User $index")
         return randomMember(user = user)

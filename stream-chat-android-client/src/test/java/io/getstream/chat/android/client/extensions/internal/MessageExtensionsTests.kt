@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -625,5 +626,44 @@ internal class MessageExtensionsTests {
 
         // then
         result shouldBeEqualTo false
+    }
+
+    @Test
+    fun `withMemberInfo should set the member snapshot and keep the deprecated channelRole in sync`() {
+        val message = randomMessage(member = null)
+        val memberInfo = MemberInfo(channelRole = "channel_moderator", extraData = mapOf("flair" to "gold"))
+
+        val result = message.withMemberInfo(memberInfo)
+
+        result.member shouldBeEqualTo memberInfo
+        @Suppress("DEPRECATION")
+        result.channelRole shouldBeEqualTo "channel_moderator"
+    }
+
+    @Test
+    fun `withMemberInfo should keep the known role when the incoming member carries none`() {
+        // The backend always assigns a role, so an absent one means "not sent" and must not wipe what we know.
+        val message = randomMessage(member = MemberInfo(channelRole = "channel_moderator"))
+        val memberInfo = MemberInfo(channelRole = null, extraData = mapOf("flair" to "gold"))
+
+        val result = message.withMemberInfo(memberInfo)
+
+        result.member shouldBeEqualTo MemberInfo(
+            channelRole = "channel_moderator",
+            extraData = mapOf("flair" to "gold"),
+        )
+        @Suppress("DEPRECATION")
+        result.channelRole shouldBeEqualTo "channel_moderator"
+    }
+
+    @Test
+    fun `withMemberInfo should clear both fields when the member is absent`() {
+        val message = randomMessage(member = MemberInfo(channelRole = "channel_moderator"))
+
+        val result = message.withMemberInfo(null)
+
+        result.member shouldBeEqualTo null
+        @Suppress("DEPRECATION")
+        result.channelRole shouldBeEqualTo null
     }
 }

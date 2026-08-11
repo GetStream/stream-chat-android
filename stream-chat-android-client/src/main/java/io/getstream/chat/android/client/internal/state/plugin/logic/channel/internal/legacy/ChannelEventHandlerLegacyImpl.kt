@@ -196,6 +196,8 @@ internal class ChannelEventHandlerLegacyImpl(
             is MemberUpdatedEvent -> {
                 stateLogic.upsertMember(event.member)
                 stateLogic.updateMembership(event.member)
+                // The backend does not emit message.updated for membership changes, so refresh the snapshot ourselves
+                mutableState.updateMessagesMemberInfo(event.member)
             }
 
             is NotificationAddedToChannelEvent -> {

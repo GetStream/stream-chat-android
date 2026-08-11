@@ -110,4 +110,53 @@ internal class MessageMemberInfoDaoTest {
         val stored = messageDao.select(message.id)?.messageInnerEntity?.member
         stored shouldBeEqualTo MemberInfoEntity(channelRole = "channel_moderator")
     }
+
+    @Test
+    fun `updating the member touches only the matching channel and author`(): Unit = runBlocking {
+        val author = randomUser(id = "author")
+        val other = randomUser(id = "other")
+        val mine = randomMessage(cid = CID, user = author, member = null, replyTo = null, poll = null)
+        val theirs = randomMessage(cid = CID, user = other, member = null, replyTo = null, poll = null)
+        val elsewhere = randomMessage(cid = OTHER_CID, user = author, member = null, replyTo = null, poll = null)
+        messageDao.insert(listOf(mine, theirs, elsewhere).map { it.toEntity() })
+        val member = MemberInfoEntity(channelRole = "channel_moderator", extraData = mapOf("flair" to "gold"))
+
+        messageDao.updateMemberByCidAndUserId(CID, author.id, member)
+
+        messageDao.select(mine.id)?.messageInnerEntity?.member shouldBeEqualTo member
+        messageDao.select(theirs.id)?.messageInnerEntity?.member.shouldBeNull()
+        messageDao.select(elsewhere.id)?.messageInnerEntity?.member.shouldBeNull()
+    }
+
+    @Test
+    fun `updating the member leaves the rest of the message untouched`(): Unit = runBlocking {
+        // This is the point of the targeted update: a concurrent edit elsewhere must not be reverted by the refresh.
+        val author = randomUser(id = "author")
+        val message = randomMessage(cid = CID, user = author, member = null, replyTo = null, poll = null)
+        messageDao.insert(message.toEntity())
+
+        messageDao.updateMemberByCidAndUserId(CID, author.id, MemberInfoEntity(channelRole = "channel_moderator"))
+
+        val stored = messageDao.select(message.id)?.messageInnerEntity
+        stored?.text shouldBeEqualTo message.text
+        stored?.extraData shouldBeEqualTo message.extraData
+        stored?.member shouldBeEqualTo MemberInfoEntity(channelRole = "channel_moderator")
+    }
+
+    @Test
+    fun `updating the member clears it when null is stored`(): Unit = runBlocking {
+        val author = randomUser(id = "author")
+        val member = MemberInfo(channelRole = "channel_member", extraData = mapOf("flair" to "gold"))
+        val message = randomMessage(cid = CID, user = author, member = member, replyTo = null, poll = null)
+        messageDao.insert(message.toEntity())
+
+        messageDao.updateMemberByCidAndUserId(CID, author.id, null)
+
+        messageDao.select(message.id)?.messageInnerEntity?.member.shouldBeNull()
+    }
+
+    private companion object {
+        const val CID = "messaging:probe"
+        const val OTHER_CID = "messaging:other"
+    }
 }

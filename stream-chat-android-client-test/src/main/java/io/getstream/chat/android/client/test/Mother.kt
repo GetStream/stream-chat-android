@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MemberUpdatedEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -428,6 +429,26 @@ public fun randomMemberAddedEvent(
 ): MemberAddedEvent {
     return MemberAddedEvent(
         type = EventType.MEMBER_ADDED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        member = member,
+    )
+}
+
+public fun randomMemberUpdatedEvent(
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    member: Member = randomMember(),
+): MemberUpdatedEvent {
+    return MemberUpdatedEvent(
+        type = EventType.MEMBER_UPDATED,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,

@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberInfo
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
 /** Updates collection of members with more recent data of [users]. */
@@ -29,3 +31,20 @@ public fun Collection<Member>.updateUsers(userMap: Map<String, User>): Collectio
         member
     }
 }
+
+/**
+ * Narrows a full [Member] down to the slim [MemberInfo] carried by [Message.member].
+ *
+ * [Member.extraData] holds every key the member DTO does not declare, which includes `user_id`. The projection the
+ * backend puts on `message.member` never carries it, so it is dropped here to keep [MemberInfo.extraData] identical
+ * no matter whether it came from a message payload or from a member event.
+ */
+@InternalStreamChatApi
+public fun Member.toMemberInfo(): MemberInfo = MemberInfo(
+    channelRole = channelRole,
+    notificationsMuted = notificationsMuted ?: false,
+    extraData = extraData - NON_CUSTOM_MEMBER_KEYS,
+)
+
+/** Keys that reach [Member.extraData] only because the member DTO does not declare them. */
+private val NON_CUSTOM_MEMBER_KEYS = setOf("user_id")

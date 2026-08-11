@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.mess
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.extensions.internal.withMemberInfo
 import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -25,6 +26,7 @@ import io.getstream.chat.android.client.utils.message.LocalOnlyMessageTypes
 import io.getstream.chat.android.client.utils.message.LocalOnlySyncStatuses
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
@@ -83,6 +85,26 @@ internal class DatabaseMessageRepository(
     override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> =
         messageDao.selectByCidAndUserId(cid, userId)
             .map { it.toMessage() }
+
+    override suspend fun updateChannelUserMessagesMember(cid: String, userId: String, member: MemberInfo?) {
+        val entity = member?.toEntity()
+        messageDao.updateMemberByCidAndUserId(cid, userId, entity)
+        replyMessageDao.updateMemberByCidAndUserId(cid, userId, entity)
+        // The caches are read before the database, so they have to follow the same edit.
+        patchCachedMember(messageCache, cid, userId, member)
+        patchCachedMember(replyMessageCache, cid, userId, member)
+    }
+
+    private fun patchCachedMember(
+        cache: LruCache<String, Message>,
+        cid: String,
+        userId: String,
+        member: MemberInfo?,
+    ) {
+        cache.snapshot().values
+            .filter { message -> message.cid == cid && message.user.id == userId }
+            .forEach { message -> cache.put(message.id, message.withMemberInfo(member)) }
+    }
 
     private suspend fun selectRepliedMessage(messageId: String): Message? =
         replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)

@@ -26,8 +26,10 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.extensions.internal.withMemberInfo
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.CACHED_LATEST_MESSAGES_LIMIT
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.TRIM_BUFFER
@@ -889,6 +891,24 @@ internal class ChannelStateImpl(
             merged += members.associateBy(Member::getUserId)
             merged.values.toList()
         }
+    }
+
+    /**
+     * Refreshes the [Message.member] snapshot carried by the messages the [member] authored.
+     *
+     * The backend does not emit `message.updated` when a membership changes, so without this the snapshot stored on
+     * already delivered messages would stay stale until they are fetched again.
+     *
+     * @param member The member whose messages should be refreshed.
+     */
+    fun updateMessagesMemberInfo(member: Member) {
+        val userId = member.getUserId()
+        val memberInfo = member.toMemberInfo()
+        val isOutdated = { message: Message -> message.user.id == userId && message.member != memberInfo }
+        val refresh = { message: Message -> message.withMemberInfo(memberInfo) }
+        _messages.update { it.updateIf(isOutdated, refresh) }
+        _cachedLatestMessages.update { it.updateIf(isOutdated, refresh) }
+        _pinnedMessages.update { it.updateIf(isOutdated, refresh) }
     }
 
     // endregion
