@@ -31,8 +31,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 public fun String.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing: StreamCdnImageResizing): String =
     if (streamCdnImageResizing.imageResizingEnabled) {
         this.createResizedStreamCdnImageUrl(
-            resizedHeightPercentage = streamCdnImageResizing.resizedWidthPercentage,
-            resizedWidthPercentage = streamCdnImageResizing.resizedHeightPercentage,
+            resizedWidthPercentage = streamCdnImageResizing.resizedWidthPercentage,
+            resizedHeightPercentage = streamCdnImageResizing.resizedHeightPercentage,
             resizeMode = streamCdnImageResizing.resizeMode,
             cropMode = streamCdnImageResizing.cropMode,
         )
