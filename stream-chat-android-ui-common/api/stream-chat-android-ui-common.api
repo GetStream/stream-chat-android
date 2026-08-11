@@ -1396,6 +1396,20 @@ public final class io/getstream/chat/android/ui/common/images/internal/StreamIma
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizer {
+	public static final field Companion Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizer$Companion;
+	public static final field DEFAULT_MAX_IMAGE_PIXELS J
+	public abstract fun resizeUrl (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizer$Companion {
+	public static final field DEFAULT_MAX_IMAGE_PIXELS J
+}
+
+public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizerKt {
+	public static final fun getNoOpStreamCdnImageResizer ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizer;
+}
+
 public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion;
@@ -1419,6 +1433,14 @@ public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdn
 
 public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion {
 	public final fun defaultStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
+}
+
+public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnMaxPixelsImageResizer : io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizer {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)V
+	public synthetic fun <init> (JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun resizeUrl (Ljava/lang/String;)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/model/MessageResult {

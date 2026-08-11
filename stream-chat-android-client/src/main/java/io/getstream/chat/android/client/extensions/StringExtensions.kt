@@ -25,10 +25,15 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnOriginalImageDimensions
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.log.StreamLog
+import kotlin.math.sqrt
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 private val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
 private val baseUrlRegex = "^(?:https?://)?(.*?)/*$".toRegex()
+
+// Mirrors AttachmentHelper's STREAM_CDN_HOST_PATTERN — resize only Stream-hosted images.
+private val streamCdnHostRegex =
+    "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)
 
 /**
  * Converts string written in snake case to String in camel case with the first symbol in lower case.
@@ -84,6 +89,10 @@ public fun String.cidToTypeAndId(): Pair<String, String> {
 public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDimensions? {
     return try {
         val imageUri = this.toUri()
+
+        if (imageUri.host?.let(streamCdnHostRegex::matches) != true) {
+            return null
+        }
 
         val width = imageUri.getQueryParameter("ow")
             ?.toInt()
@@ -174,6 +183,30 @@ public fun String.createResizedStreamCdnImageUrl(
         }
         this
     }
+}
+
+/**
+ * Generates a URL with Stream CDN resizing parameters that cap the image to [maxImagePixels] total
+ * pixels (width × height), preserving aspect ratio and never upscaling. Mirrors the iOS SDK's
+ * `imageAttachmentMaxPixels`. Only affects Stream CDN hosted images that carry original width (ow)
+ * and height (oh) params; any other URL, or one already at/under the budget, is returned unchanged.
+ */
+public fun String.createResizedStreamCdnImageUrl(
+    maxImagePixels: Long,
+    resizeMode: StreamCdnResizeImageMode? = null,
+    cropMode: StreamCdnCropImageMode? = null,
+): String {
+    if (maxImagePixels <= 0L) return this
+    val dimensions = getStreamCdnHostedImageDimensions() ?: return this
+    val totalPixels = dimensions.originalWidth.toLong() * dimensions.originalHeight.toLong()
+    if (totalPixels <= 0L || totalPixels <= maxImagePixels) return this
+    val scale = sqrt(maxImagePixels.toDouble() / totalPixels.toDouble()).toFloat()
+    return createResizedStreamCdnImageUrl(
+        resizedWidthPercentage = scale,
+        resizedHeightPercentage = scale,
+        resizeMode = resizeMode,
+        cropMode = cropMode,
+    )
 }
 
 /**
