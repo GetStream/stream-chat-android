@@ -75,11 +75,24 @@ internal data class DownstreamMemberDto(
 ) : ExtraDataDto
 
 /**
- * DTO holding limited data about a channel member.
+ * DTO holding limited data about a channel member, as attached to a message payload.
+ *
+ * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMemberInfoDtoAdapter] for
+ * special [extraData] handling.
  *
  * @property channel_role The role of the member in the channel.
+ * @property notifications_muted If notifications are muted for the member in the channel.
+ * @property custom The member custom data, in the shape API v2 returns it: nested.
+ * @property extraData The member custom data, in the shape API v1 returns it: inlined next to [channel_role].
  */
+@StreamHandsOff(
+    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
+        "content of [extraData] map",
+)
 @JsonClass(generateAdapter = true)
 internal data class DownstreamMemberInfoDto(
     val channel_role: String?,
-)
+    val notifications_muted: Boolean? = null,
+    val custom: Map<String, Any>? = null,
+    val extraData: Map<String, Any> = emptyMap(),
+) : ExtraDataDto

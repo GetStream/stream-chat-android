@@ -23,6 +23,7 @@ import io.getstream.chat.android.randomChannelInfo
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomLocation
+import io.getstream.chat.android.randomMemberInfo
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageModerationDetails
 import io.getstream.chat.android.randomMessageReminderInfo
@@ -93,6 +94,7 @@ internal class MessageTest {
             reminder = randomMessageReminderInfo(),
             sharedLocation = randomLocation(),
             channelRole = randomString(),
+            member = randomMemberInfo(),
             deletedForMe = randomBoolean(),
             mentionedHere = randomBoolean(),
             mentionedChannel = randomBoolean(),
@@ -148,6 +150,7 @@ internal class MessageTest {
             .withReminder(expected.reminder)
             .withSharedLocation(expected.sharedLocation)
             .withChannelRole(expected.channelRole)
+            .withMember(expected.member)
             .withDeletedForMe(expected.deletedForMe)
             .withMentionedHere(expected.mentionedHere)
             .withMentionedChannel(expected.mentionedChannel)
@@ -166,6 +169,7 @@ internal class MessageTest {
             moderationDetails = randomMessageModerationDetails(),
             moderation = randomModeration(),
             channelRole = randomString(),
+            member = randomMemberInfo(),
             threadParticipants = listOf(randomUser()),
             mentionedGroups = listOf(randomUserGroup()),
             mentionedRoles = listOf(randomString()),

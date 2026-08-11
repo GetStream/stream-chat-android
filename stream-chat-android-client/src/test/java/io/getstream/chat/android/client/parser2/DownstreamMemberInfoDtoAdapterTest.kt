@@ -30,4 +30,22 @@ internal class DownstreamMemberInfoDtoAdapterTest {
         val member = parser.fromJson(MemberInfoDtoTestData.downstreamJson, DownstreamMemberInfoDto::class.java)
         member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfo
     }
+
+    @Test
+    fun `Deserialize JSON member info with member custom inlined by API v1`() {
+        val member = parser.fromJson(
+            MemberInfoDtoTestData.downstreamJsonWithInlineCustom,
+            DownstreamMemberInfoDto::class.java,
+        )
+        member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfoWithInlineCustom
+    }
+
+    @Test
+    fun `Deserialize JSON member info with member custom nested by API v2`() {
+        val member = parser.fromJson(
+            MemberInfoDtoTestData.downstreamJsonWithNestedCustom,
+            DownstreamMemberInfoDto::class.java,
+        )
+        member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfoWithNestedCustom
+    }
 }

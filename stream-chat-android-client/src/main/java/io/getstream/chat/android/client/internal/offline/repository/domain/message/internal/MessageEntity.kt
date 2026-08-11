@@ -146,8 +146,8 @@ internal data class MessageInnerEntity(
     val reminder: ReminderInfoEntity? = null,
     /** The shared location of the message, if any */
     val sharedLocation: LocationEntity? = null,
-    /** The role of the member(who sent the message) in the channel */
-    val channelRole: String? = null,
+    /** Limited data about the channel membership of the user who sent the message */
+    val member: MemberInfoEntity? = null,
     /** Whether the message was deleted for the current user */
     val deletedForMe: Boolean = false,
 )

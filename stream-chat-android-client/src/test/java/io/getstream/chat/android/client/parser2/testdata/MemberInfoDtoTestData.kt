@@ -29,4 +29,36 @@ internal object MemberInfoDtoTestData {
     """.trimIndent()
 
     val downstreamMemberInfo = DownstreamMemberInfoDto(channel_role = "channel_member")
+
+    /** API v1 inlines the projected member custom keys next to the declared fields. */
+    @Language("JSON")
+    val downstreamJsonWithInlineCustom: String = """
+        {
+          "channel_role": "channel_member",
+          "notifications_muted": true,
+          "flair": { "tier": "gold" }
+        }
+    """.trimIndent()
+
+    val downstreamMemberInfoWithInlineCustom = DownstreamMemberInfoDto(
+        channel_role = "channel_member",
+        notifications_muted = true,
+        extraData = mapOf("flair" to mapOf("tier" to "gold")),
+    )
+
+    /** API v2 nests the same keys under `custom`. */
+    @Language("JSON")
+    val downstreamJsonWithNestedCustom: String = """
+        {
+          "channel_role": "channel_member",
+          "notifications_muted": true,
+          "custom": { "flair": { "tier": "gold" } }
+        }
+    """.trimIndent()
+
+    val downstreamMemberInfoWithNestedCustom = DownstreamMemberInfoDto(
+        channel_role = "channel_member",
+        notifications_muted = true,
+        custom = mapOf("flair" to mapOf("tier" to "gold")),
+    )
 }

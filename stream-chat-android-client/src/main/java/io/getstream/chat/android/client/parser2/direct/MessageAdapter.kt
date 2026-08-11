@@ -22,6 +22,7 @@ import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageReminderInfo
@@ -55,7 +56,7 @@ internal class MessageAdapter(
         return fromJson(reader, fallbackChannelInfo = null)
     }
 
-    @Suppress("LongMethod", "ThrowsCount")
+    @Suppress("LongMethod", "ThrowsCount", "DEPRECATION")
     fun fromJson(reader: JsonReader, fallbackChannelInfo: ChannelInfo?): Message? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
 
@@ -103,7 +104,7 @@ internal class MessageAdapter(
         var poll: Poll? = null
         var reminder: MessageReminderInfo? = null
         var sharedLocation: Location? = null
-        var channelRole: String? = null
+        var member: MemberInfo? = null
         var deletedForMe: Boolean? = null
         var extraData: MutableMap<String, Any>? = null
 
@@ -173,7 +174,7 @@ internal class MessageAdapter(
                 "poll" -> poll = pollAdapter.fromJson(reader)
                 "reminder" -> reminder = reminderAdapter.fromJson(reader)
                 "shared_location" -> sharedLocation = locationAdapter.fromJson(reader)
-                "member" -> channelRole = parseMemberChannelRole(reader)
+                "member" -> member = parseMemberInfo(reader)
                 "deleted_for_me" -> deletedForMe = JsonParsingUtils.readNullableBoolean(reader)
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
@@ -270,13 +271,14 @@ internal class MessageAdapter(
             restrictedVisibility = emptyList(),
             reminder = reminder,
             sharedLocation = sharedLocation,
-            channelRole = channelRole,
+            channelRole = member?.channelRole,
+            member = member,
             deletedForMe = deletedForMe ?: false,
             extraData = extraData ?: emptyMap(),
         ).let(messageTransformer::transform)
     }
 
-    private fun parseMemberChannelRole(reader: JsonReader): String? {
+    private fun parseMemberInfo(reader: JsonReader): MemberInfo? {
         if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
             reader.skipValue()
             return null
@@ -284,16 +286,30 @@ internal class MessageAdapter(
 
         reader.beginObject()
         var channelRole: String? = null
+        var notificationsMuted: Boolean? = null
+        var custom: MutableMap<String, Any>? = null
 
         while (reader.hasNext()) {
-            when (reader.nextName()) {
+            val key = reader.nextName()
+            when (key) {
                 "channel_role" -> channelRole = JsonParsingUtils.readNullableString(reader)
-                else -> reader.skipValue()
+                "notifications_muted" -> notificationsMuted = JsonParsingUtils.readNullableBoolean(reader)
+                // API v2 nests the member custom data under "custom", API v1 inlines it next to the declared
+                // fields, so unknown keys are member custom data too.
+                "custom" -> {
+                    val nested = JsonParsingUtils.parseAnyMap(reader).orEmpty()
+                    custom = (custom ?: mutableMapOf()).apply { putAll(nested) }
+                }
+                else -> custom = JsonParsingUtils.accumulateExtraData(key, reader, custom)
             }
         }
         reader.endObject()
 
-        return channelRole
+        return MemberInfo(
+            channelRole = channelRole,
+            notificationsMuted = notificationsMuted ?: false,
+            extraData = custom.orEmpty(),
+        )
     }
 
     override fun toJson(p0: JsonWriter, p1: Message?) {

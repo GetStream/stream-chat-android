@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
@@ -85,6 +86,7 @@ import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
@@ -229,6 +231,7 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamMessageDto] to [Message].
      */
+    @Suppress("DEPRECATION")
     internal fun DownstreamMessageDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): Message =
         (channel?.toDomain() ?: fallbackChannelInfo).let { channelInfo: ChannelInfo? ->
             Message(
@@ -280,6 +283,7 @@ internal class DomainMapping(
                 reminder = reminder?.toDomain(),
                 sharedLocation = shared_location?.toDomain(),
                 channelRole = member?.channel_role,
+                member = member?.toDomain(),
                 deletedForMe = deleted_for_me ?: false,
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
@@ -466,6 +470,22 @@ internal class DomainMapping(
             avgResponseTime = avgResponseTime?.toLong(),
             extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         ).let(userTransformer::transform)
+
+    /**
+     * Transforms [DownstreamMemberInfoDto] to [MemberInfo].
+     */
+    internal fun DownstreamMemberInfoDto.toDomain(): MemberInfo =
+        MemberInfo(
+            channelRole = channel_role,
+            notificationsMuted = notifications_muted ?: false,
+            extraData = memberCustom(),
+        )
+
+    /**
+     * The member custom data, regardless of whether API v1 inlined it next to the declared fields or API v2 nested it
+     * under `custom`. The two shapes never coexist, so the merge only ever picks up one of them.
+     */
+    private fun DownstreamMemberInfoDto.memberCustom(): Map<String, Any> = extraData + custom.orEmpty()
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(

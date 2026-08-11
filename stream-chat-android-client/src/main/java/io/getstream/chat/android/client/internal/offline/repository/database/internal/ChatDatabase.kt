@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.internal.offline.repository.database.con
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.LocationConverter
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.MapConverter
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.MemberConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.MemberInfoConverter
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ModerationConverter
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ModerationDetailsConverter
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.OptionConverter
@@ -103,6 +104,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.user.
     SyncStatusConverter::class,
     DateConverter::class,
     MemberConverter::class,
+    MemberInfoConverter::class,
     ModerationDetailsConverter::class,
     ModerationConverter::class,
     ReactionGroupConverter::class,
