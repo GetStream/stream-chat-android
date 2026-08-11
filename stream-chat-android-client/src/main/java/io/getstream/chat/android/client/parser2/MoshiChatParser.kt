@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -111,6 +112,10 @@ internal class MoshiChatParser(
             .add(
                 UpdatePollRequest.VotingVisibility::class.java,
                 UpdatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
+            )
+            .add(
+                TranslateMessageRequest.Language::class.java,
+                TranslateMessageRequest.Language.LanguageAdapter(),
             )
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)
