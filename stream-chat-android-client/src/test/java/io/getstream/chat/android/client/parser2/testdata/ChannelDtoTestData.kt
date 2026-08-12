@@ -21,6 +21,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelOwnCapability
+import io.getstream.chat.android.network.models.ChannelResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
@@ -285,6 +288,146 @@ internal object ChannelDtoTestData {
         pinned_messages = emptyList(),
         membership = null,
         extraData = emptyMap(),
+    )
+
+    /**
+     * The config as sent for a generated [io.getstream.chat.android.network.models.ChannelResponse].
+     * `message_retention` is on the wire but absent from the model, which drops it.
+     */
+    @Language("JSON")
+    private val channelResponseConfigJson =
+        """{
+          "created_at": "2020-06-10T11:04:31.000Z",
+          "updated_at": "2020-06-10T11:04:31.588Z",
+          "name": "config1",
+          "typing_events": true,
+          "read_events": true,
+          "delivery_events": true,
+          "connect_events": true,
+          "search": false,
+          "reactions": true,
+          "replies": true,
+          "quotes": true,
+          "mutes": true,
+          "uploads": true,
+          "url_enrichment": false,
+          "custom_events": false,
+          "push_notifications": true,
+          "reminders": false,
+          "count_messages": true,
+          "skip_last_msg_update_for_system_msgs": false,
+          "polls": true,
+          "message_retention": "retention",
+          "max_message_length": 500,
+          "automod": "disabled",
+          "automod_behavior": "flag",
+          "blocklist_behavior": "block",
+          "commands": [
+           {
+            "name": "giphy",
+            "description": "gif",
+            "args": "empty",
+            "set": "none"
+           }
+          ],
+          "user_message_reminders": false,
+          "shared_locations": true,
+          "mark_messages_pending": false
+        }
+        """.withoutWhitespace()
+
+    private val channelResponseConfig = ChannelConfigWithInfo(
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
+        name = "config1",
+        typingEvents = true,
+        readEvents = true,
+        deliveryEvents = true,
+        connectEvents = true,
+        search = false,
+        reactions = true,
+        replies = true,
+        quotes = true,
+        mutes = true,
+        uploads = true,
+        urlEnrichment = false,
+        customEvents = false,
+        pushNotifications = true,
+        reminders = false,
+        countMessages = true,
+        skipLastMsgUpdateForSystemMsgs = false,
+        polls = true,
+        maxMessageLength = 500,
+        automod = ChannelConfigWithInfo.Automod.Disabled,
+        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
+        blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
+        commands = listOf(
+            CommandDto(
+                name = "giphy",
+                description = "gif",
+                args = "empty",
+                set = "none",
+            ),
+        ),
+        userMessageReminders = false,
+        sharedLocations = true,
+        markMessagesPending = false,
+    )
+
+    /**
+     * A channel as embedded in a thread: `name` and `image` are custom data, and the type carries no
+     * messages, watchers or reads.
+     */
+    @Language("JSON")
+    val channelResponseJson =
+        """{
+          "cid": "channelType:channelId",
+          "id": "channelId",
+          "type": "channelType",
+          "name": "channelName",
+          "image": "channelImage",
+          "disabled": true,
+          "blocked": true,
+          "truncated_at": "2020-06-10T11:04:31.588Z",
+          "frozen": false,
+          "created_at": "2020-06-10T11:04:31.0Z",
+          "updated_at": "2020-06-10T11:04:31.588Z",
+          "member_count": 2,
+          "hidden": true,
+          "hide_messages_before": "2020-06-10T11:04:31.588Z",
+          "own_capabilities": ["connect-events", "pin-message"],
+          "config": $channelResponseConfigJson,
+          "customKey1": "customVal1"
+        }
+        """.withoutWhitespace()
+
+    val channelResponse = ChannelResponse(
+        cid = "channelType:channelId",
+        id = "channelId",
+        type = "channelType",
+        disabled = true,
+        blocked = true,
+        truncatedAt = Date(1591787071588),
+        frozen = false,
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
+        memberCount = 2,
+        hidden = true,
+        hideMessagesBefore = Date(1591787071588),
+        ownCapabilities = listOf(
+            ChannelOwnCapability.ConnectEvents,
+            ChannelOwnCapability.PinMessage,
+        ),
+        config = channelResponseConfig,
+        custom = mapOf(
+            "name" to "channelName",
+            "image" to "channelImage",
+            // Kept in the overflow map as well, so they stay reachable through Channel.extraData.
+            "disabled" to true,
+            "blocked" to true,
+            "truncated_at" to "2020-06-10T11:04:31.588Z",
+            "customKey1" to "customVal1",
+        ),
     )
 
     @Language("JSON")

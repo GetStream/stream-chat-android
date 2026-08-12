@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.Mother.randomBannedUserResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
 import io.getstream.chat.android.client.Mother.randomChannelInfoDto
+import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
@@ -72,6 +73,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
+import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -307,6 +309,95 @@ internal class DomainMappingTest {
         }
 
         assertEquals(transformedChannel, result)
+    }
+
+    @Test
+    fun `ChannelResponse promotes name and image out of custom and keeps the rest as extraData`() {
+        val channelResponse = randomChannelResponse(
+            custom = mapOf(
+                "name" to "channelName",
+                "image" to "channelImage",
+                "customKey" to "customValue",
+                "nullKey" to null,
+            ),
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        assertEquals("channelName", channel.name)
+        assertEquals("channelImage", channel.image)
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), channel.extraData)
+    }
+
+    @Test
+    fun `ChannelResponse is correctly mapped to Channel`() {
+        val channelResponse = ChannelDtoTestData.channelResponse
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        assertEquals(channelResponse.id, channel.id)
+        assertEquals(channelResponse.type, channel.type)
+        assertEquals(channelResponse.frozen, channel.frozen)
+        assertEquals(channelResponse.createdAt, channel.createdAt)
+        assertEquals(channelResponse.updatedAt, channel.updatedAt)
+        assertEquals(channelResponse.memberCount, channel.memberCount)
+        assertEquals(setOf("connect-events", "pin-message"), channel.ownCapabilities)
+        assertEquals(channelResponse.hidden, channel.hidden)
+        assertEquals(channelResponse.hideMessagesBefore, channel.hiddenMessagesBefore)
+        assertEquals(with(sut) { channelResponse.config?.toDomain() }, channel.config)
+    }
+
+    @Test
+    fun `ChannelResponse maps the channel state to properties and keeps it in extraData`() {
+        val channelResponse = ChannelDtoTestData.channelResponse
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        channel.disabled shouldBeEqualTo true
+        channel.blocked shouldBeEqualTo true
+        channel.truncatedAt shouldBeEqualTo Date(1591787071588)
+        channel.hidden shouldBeEqualTo true
+        channel.hiddenMessagesBefore shouldBeEqualTo Date(1591787071588)
+        // Still reachable through extraData, matching the hand-written channel path.
+        channel.extraData["disabled"] shouldBeEqualTo true
+        channel.extraData["blocked"] shouldBeEqualTo true
+        channel.extraData["truncated_at"] shouldBeEqualTo "2020-06-10T11:04:31.588Z"
+    }
+
+    @Test
+    fun `ChannelResponse is correctly mapped to ChannelInfo`() {
+        val channelResponse = ChannelDtoTestData.channelResponse
+        val sut = Fixture().get()
+
+        val channelInfo = with(sut) { channelResponse.toChannelInfo() }
+
+        assertEquals(
+            ChannelInfo(
+                cid = channelResponse.cid,
+                id = channelResponse.id,
+                memberCount = 2,
+                name = "channelName",
+                type = channelResponse.type,
+                image = "channelImage",
+            ),
+            channelInfo,
+        )
+    }
+
+    @Test
+    fun `ChannelConfigWithInfo keeps the domain messageRetention the wire field is absent from the model`() {
+        val sut = Fixture().get()
+
+        val config = with(sut) { ChannelDtoTestData.channelResponse.config!!.toDomain() }
+
+        assertEquals("infinite", config.messageRetention)
+        assertEquals("disabled", config.automod)
+        assertEquals("flag", config.automodBehavior)
+        assertEquals("block", config.blocklistBehavior)
+        assertEquals(500, config.maxMessageLength)
     }
 
     @Test
