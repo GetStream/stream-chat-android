@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 import io.getstream.chat.android.ui.databinding.StreamUiItemMediaAttachmentBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.feature.gallery.MediaAttachmentGridViewStyle
@@ -98,13 +98,15 @@ internal class MediaAttachmentAdapter(
                 val attachment = attachmentGalleryItem.attachment
                 if (attachment.isVideo()) {
                     attachment.videoThumbnailImageData(
-                        thumbnailUrl = attachment.thumbUrl?.applyStreamCdnImageResizingIfEnabled(
+                        thumbnailUrl = attachment.thumbUrl?.applyStreamCdnImageResizing(
                             streamCdnImageResizing = ChatUI.streamCdnImageResizing,
+                            streamCdnImageResizer = ChatUI.streamCdnImageResizer,
                         ),
                     )
                 } else {
-                    attachment.imageUrl?.applyStreamCdnImageResizingIfEnabled(
+                    attachment.imageUrl?.applyStreamCdnImageResizing(
                         streamCdnImageResizing = ChatUI.streamCdnImageResizing,
+                        streamCdnImageResizer = ChatUI.streamCdnImageResizer,
                     )
                 }
             } else {

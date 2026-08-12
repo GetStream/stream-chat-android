@@ -2834,7 +2834,9 @@ public final class io/getstream/chat/android/client/extensions/MessageExtensions
 public final class io/getstream/chat/android/client/extensions/StringExtensionsKt {
 	public static final fun cidToTypeAndId (Ljava/lang/String;)Lkotlin/Pair;
 	public static final fun createResizedStreamCdnImageUrl (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)Ljava/lang/String;
+	public static final fun createResizedStreamCdnImageUrl (Ljava/lang/String;JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;Ljava/lang/String;)Ljava/lang/String;
 	public static synthetic fun createResizedStreamCdnImageUrl$default (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun createResizedStreamCdnImageUrl$default (Ljava/lang/String;JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
 	public static final fun getStreamCdnHostedImageDimensions (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;
 }
 

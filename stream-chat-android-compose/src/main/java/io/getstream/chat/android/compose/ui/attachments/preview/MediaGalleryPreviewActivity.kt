@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGalleryPreviewActivityState
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.DefaultStreamCdnImageResizer
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.util.AttachmentFileController
 import io.getstream.chat.android.compose.util.attachmentDownloadState
@@ -155,6 +156,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ChatTheme(
                 videoThumbnailsEnabled = videoThumbnailsEnabled,
                 streamCdnImageResizing = streamCdnImageResizing,
+                // The resizer isn't serializable, so it's carried through the injector like the imageLoader rather
+                // than the launching Intent; falls back to the default 2MP resizer when nothing was installed.
+                streamCdnImageResizer = MediaGalleryInjector.streamCdnImageResizer ?: DefaultStreamCdnImageResizer,
                 downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
                 downloadRequestInterceptor = downloadRequestInterceptor,
                 mediaGalleryConfig = intent.getParcelable(KeyConfig) ?: MediaGalleryConfig(),

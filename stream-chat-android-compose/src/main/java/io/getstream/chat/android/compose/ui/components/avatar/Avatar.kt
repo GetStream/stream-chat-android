@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 
 /**
  * An avatar that renders an image from the provided image URL. In case the image URL
@@ -63,7 +63,10 @@ public fun Avatar(
     onClick: (() -> Unit)? = null,
 ) {
     val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
-    val data = remember(imageUrl) { imageUrl.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing) }
+    val streamCdnImageResizer = ChatTheme.streamCdnImageResizer
+    val data = remember(imageUrl, streamCdnImageResizing, streamCdnImageResizer) {
+        imageUrl.applyStreamCdnImageResizing(streamCdnImageResizing, streamCdnImageResizer)
+    }
     StreamAsyncImage(
         data = data,
         modifier = modifier.testTag("Stream_QuotedMessageAuthorAvatar"),

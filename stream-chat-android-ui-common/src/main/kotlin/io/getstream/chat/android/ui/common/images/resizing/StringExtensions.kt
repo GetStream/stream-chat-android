@@ -27,6 +27,8 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  *
  * @return The URL to the resized image if resizing was applicable, otherwise returns the URL to the original image.
  */
+// Bridges the deprecated StreamCdnImageResizing for back-compat until it is removed.
+@Suppress("DEPRECATION")
 @InternalStreamChatApi
 public fun String.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing: StreamCdnImageResizing): String =
     if (streamCdnImageResizing.imageResizingEnabled) {
@@ -38,4 +40,33 @@ public fun String.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing: S
         )
     } else {
         this
+    }
+
+/**
+ * Applies image resizing following the resolver precedence: if the legacy [streamCdnImageResizing] is explicitly
+ * enabled its exact percentage behavior is honored, otherwise the active [streamCdnImageResizer] is applied
+ * (defaulting to a 2MP cap). Disabling resizing is done by setting the resizer to [NoOpStreamCdnImageResizer].
+ *
+ * @param streamCdnImageResizing The legacy resizing config. Only honored when
+ * [StreamCdnImageResizing.imageResizingEnabled] is true.
+ * @param streamCdnImageResizer The active resizer, applied when the legacy config is not enabled.
+ *
+ * @return The URL to the resized image if resizing was applicable, otherwise returns the URL to the original image.
+ */
+// Bridges the deprecated StreamCdnImageResizing for back-compat until it is removed.
+@Suppress("DEPRECATION")
+@InternalStreamChatApi
+public fun String.applyStreamCdnImageResizing(
+    streamCdnImageResizing: StreamCdnImageResizing,
+    streamCdnImageResizer: StreamCdnImageResizer,
+): String =
+    if (streamCdnImageResizing.imageResizingEnabled) {
+        this.createResizedStreamCdnImageUrl(
+            resizedWidthPercentage = streamCdnImageResizing.resizedWidthPercentage,
+            resizedHeightPercentage = streamCdnImageResizing.resizedHeightPercentage,
+            resizeMode = streamCdnImageResizing.resizeMode,
+            cropMode = streamCdnImageResizing.cropMode,
+        )
+    } else {
+        streamCdnImageResizer.resizeUrl(this)
     }
