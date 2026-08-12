@@ -117,6 +117,9 @@ internal object ChannelDtoTestData {
           "created_at": "2020-06-10T11:04:31.0Z",
           "deleted_at": "2020-06-10T11:04:31.588Z",
           "updated_at": "2020-06-10T11:04:31.588Z",
+          "truncated_at": "2020-06-10T11:04:31.588Z",
+          "disabled": true,
+          "blocked": true,
           "member_count": 2,
           "messages": [${MessageDtoTestData.downstreamJson}],
           "members": [
@@ -179,6 +182,9 @@ internal object ChannelDtoTestData {
         created_at = Date(1591787071000),
         deleted_at = Date(1591787071588),
         updated_at = Date(1591787071588),
+        truncated_at = Date(1591787071588),
+        disabled = true,
+        blocked = true,
         member_count = 2,
         messages = listOf(MessageDtoTestData.downstreamMessage),
         members = listOf(
@@ -232,7 +238,12 @@ internal object ChannelDtoTestData {
             archived_at = null,
             extraData = emptyMap(),
         ),
-        extraData = mapOf("draft" to true),
+        extraData = mapOf(
+            "truncated_at" to "2020-06-10T11:04:31.588Z",
+            "disabled" to true,
+            "blocked" to true,
+            "draft" to true,
+        ),
     )
 
     @Language("JSON")
@@ -260,6 +271,8 @@ internal object ChannelDtoTestData {
         created_at = null,
         deleted_at = null,
         updated_at = null,
+        truncated_at = null,
+        blocked = null,
         member_count = 0,
         messages = emptyList(),
         members = emptyList(),
@@ -299,6 +312,8 @@ internal object ChannelDtoTestData {
         created_at = null,
         deleted_at = null,
         updated_at = null,
+        truncated_at = null,
+        blocked = null,
         member_count = 0,
         messages = emptyList(),
         members = emptyList(),
