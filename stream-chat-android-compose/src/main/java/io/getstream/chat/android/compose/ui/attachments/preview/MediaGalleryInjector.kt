@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.preview
 
 import coil3.ImageLoader
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizer
 
 /**
  * Injector for non-configuration dependencies of the Media Gallery Activity.
@@ -33,11 +34,21 @@ internal object MediaGalleryInjector {
         internal set
 
     /**
-     * Sets the [ImageLoader] instance.
+     * The [StreamCdnImageResizer] instance. Carried across the Activity boundary because a resizer is not
+     * serializable and therefore can't travel through the launching Intent like the legacy resizing config.
+     */
+    @Volatile
+    var streamCdnImageResizer: StreamCdnImageResizer? = null
+        internal set
+
+    /**
+     * Sets the dependencies carried into the [MediaGalleryPreviewActivity].
      *
      * @param imageLoader The [ImageLoader] instance to set.
+     * @param streamCdnImageResizer The [StreamCdnImageResizer] instance to set.
      */
-    fun install(imageLoader: ImageLoader) {
+    fun install(imageLoader: ImageLoader, streamCdnImageResizer: StreamCdnImageResizer) {
         this.imageLoader = imageLoader
+        this.streamCdnImageResizer = streamCdnImageResizer
     }
 }

@@ -20,6 +20,16 @@ import io.getstream.chat.android.client.extensions.createResizedStreamCdnImageUr
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 
+/**
+ * Strategy for resizing Stream CDN hosted image URLs before they are loaded, to avoid downloading
+ * full-resolution originals. It is applied to image attachment URLs by the Compose and XML UI kits and
+ * configured via `ChatTheme(streamCdnImageResizer = …)` / `ChatUI.streamCdnImageResizer`.
+ *
+ * Resizing is on by default at a 2MP cap ([StreamCdnMaxPixelsImageResizer]), matching the iOS SDK. Provide
+ * [NoOpStreamCdnImageResizer] to opt out, or implement this interface to apply a custom resizing strategy.
+ * Only Stream CDN hosted URLs that carry the original dimensions are affected; any other URL is returned
+ * unchanged.
+ */
 public fun interface StreamCdnImageResizer {
     /** Returns a (possibly) resized Stream CDN image URL for [imageUrl]. */
     public fun resizeUrl(imageUrl: String): String
@@ -30,11 +40,21 @@ public fun interface StreamCdnImageResizer {
     }
 }
 
-/** Caps images to [maxImagePixels] total pixels (default 2MP), preserving aspect ratio; on by presence. */
+/**
+ * Caps images to [maxImagePixels] total pixels (default 2MP), preserving aspect ratio and never upscaling.
+ *
+ * @param maxImagePixels The total-pixel budget (width × height). Must be positive.
+ * @param resizeMode The Stream CDN resize mode, or null for the CDN default.
+ * @param cropMode The Stream CDN crop mode, or null for the CDN default.
+ * @param cdnHost An optional custom Stream CDN host to resize in addition to the default Stream CDN hosts,
+ * for integrations serving Stream images from a proxied or custom domain. Mirrors iOS'
+ * `StreamCDNRequester(cdnHost:)`.
+ */
 public class StreamCdnMaxPixelsImageResizer(
     private val maxImagePixels: Long = StreamCdnImageResizer.DEFAULT_MAX_IMAGE_PIXELS,
     private val resizeMode: StreamCdnResizeImageMode? = null,
     private val cropMode: StreamCdnCropImageMode? = null,
+    private val cdnHost: String? = null,
 ) : StreamCdnImageResizer {
 
     init {
@@ -42,7 +62,7 @@ public class StreamCdnMaxPixelsImageResizer(
     }
 
     override fun resizeUrl(imageUrl: String): String =
-        imageUrl.createResizedStreamCdnImageUrl(maxImagePixels, resizeMode, cropMode)
+        imageUrl.createResizedStreamCdnImageUrl(maxImagePixels, resizeMode, cropMode, cdnHost)
 }
 
 /** Disables resizing — full-resolution originals. Explicit opt-out. */

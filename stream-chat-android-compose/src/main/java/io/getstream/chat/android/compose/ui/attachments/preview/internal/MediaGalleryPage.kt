@@ -64,7 +64,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.images.resizing.StreamCdnMaxPixelsImageResizer
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 import kotlinx.coroutines.coroutineScope
 import kotlin.math.abs
@@ -105,12 +104,11 @@ internal fun MediaGalleryImagePage(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        // Custom StreamCdnImageResizer instances don't propagate to the standalone gallery Activity
-        // (interfaces aren't serializable across the Intent boundary), so the legacy resizing is honored from the
-        // Intent when enabled and otherwise the default 2MP StreamCdnMaxPixelsImageResizer is applied inline.
+        // The resizer is carried into this standalone Activity via MediaGalleryInjector (it isn't serializable),
+        // and the legacy resizing config travels through the Intent; both are read here from the Activity's ChatTheme.
         val data = attachment.imageUrl?.applyStreamCdnImageResizing(
             ChatTheme.streamCdnImageResizing,
-            StreamCdnMaxPixelsImageResizer(),
+            ChatTheme.streamCdnImageResizer,
         )
         val context = LocalContext.current
 

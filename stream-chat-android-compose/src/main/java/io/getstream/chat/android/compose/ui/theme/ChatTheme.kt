@@ -125,6 +125,13 @@ private val LocalStreamCdnImageResizer = staticCompositionLocalOf<StreamCdnImage
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
+
+/**
+ * Stable default resizer. Held as a single instance so the [ChatTheme] default argument doesn't allocate a new
+ * resizer on every call, which — given [LocalStreamCdnImageResizer] is a [staticCompositionLocalOf] — would
+ * otherwise invalidate the whole subtree on each recomposition.
+ */
+internal val DefaultStreamCdnImageResizer: StreamCdnImageResizer = StreamCdnMaxPixelsImageResizer()
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -192,7 +199,7 @@ public fun ChatTheme(
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
-    streamCdnImageResizer: StreamCdnImageResizer = StreamCdnMaxPixelsImageResizer(),
+    streamCdnImageResizer: StreamCdnImageResizer = DefaultStreamCdnImageResizer,
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = config.translation.enabled,
         typography = typography,

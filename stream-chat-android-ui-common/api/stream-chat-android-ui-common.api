@@ -1438,8 +1438,8 @@ public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdn
 public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnMaxPixelsImageResizer : io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizer {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)V
-	public synthetic fun <init> (JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;Ljava/lang/String;)V
+	public synthetic fun <init> (JLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun resizeUrl (Ljava/lang/String;)Ljava/lang/String;
 }
 

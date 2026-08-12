@@ -85,6 +85,24 @@ internal class StreamCdnImageResizerTest {
     }
 
     @Test
+    fun `given a custom cdn host the resizer resizes an image served from that host`() {
+        val customHostUrl = "https://images.example.com/IMAGE_NAME.jpg?oh=2000&ow=4000"
+
+        // Unknown host → returned unchanged.
+        StreamCdnMaxPixelsImageResizer(maxImagePixels = 2_000_000L)
+            .resizeUrl(customHostUrl) shouldBeEqualTo customHostUrl
+
+        // Custom host opted in → resized.
+        val resized = StreamCdnMaxPixelsImageResizer(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "images.example.com",
+        ).resizeUrl(customHostUrl)
+
+        (resized != customHostUrl) shouldBeEqualTo true
+        (resized.toUri().getQueryParameter("w")!!.toInt() > 0) shouldBeEqualTo true
+    }
+
+    @Test
     fun `given a non-positive max pixel budget the resizer construction fails`() {
         invoking {
             StreamCdnMaxPixelsImageResizer(maxImagePixels = 0L)

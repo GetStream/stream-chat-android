@@ -211,15 +211,32 @@ internal class StringExtensionsKtTest {
     }
 
     @Test
-    fun `Given an external image link with dimension parameters Should not resize`() {
+    fun `external image link parses dimensions but max-pixel resizing is host-gated`() {
         val externalUrl = "https://example.com/image.jpg?oh=2000&ow=4000"
 
-        externalUrl.getStreamCdnHostedImageDimensions() shouldBeEqualTo null
-        externalUrl.createResizedStreamCdnImageUrl(
-            resizedWidthPercentage = 0.5f,
-            resizedHeightPercentage = 0.5f,
-        ) shouldBeEqualTo externalUrl
+        // The dimension parser is host-agnostic (restored public API contract): it reads ow/oh from any URL.
+        val dimensions = externalUrl.getStreamCdnHostedImageDimensions()
+        dimensions?.originalWidth shouldBeEqualTo 4000
+        dimensions?.originalHeight shouldBeEqualTo 2000
+
+        // The max-pixel resizing is gated on the CDN host, so an off-CDN URL is returned unchanged.
         externalUrl.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo externalUrl
+    }
+
+    @Test
+    fun `custom cdn host resizes an over-budget image only when the host is provided`() {
+        val customHostUrl = "https://images.example.com/image.jpg?oh=2000&ow=4000"
+
+        // Not a known Stream host, so no resizing by default.
+        customHostUrl.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo customHostUrl
+
+        // Opting the custom/proxied host in resizes it (iOS StreamCDNRequester(cdnHost:) parity).
+        val resized = customHostUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "images.example.com",
+        )
+        (resized != customHostUrl) shouldBeEqualTo true
+        (resized.toUri().getQueryParameter(QUERY_PARAMETER_KEY_RESIZED_WIDTH) != null) shouldBeEqualTo true
     }
 
     @Test

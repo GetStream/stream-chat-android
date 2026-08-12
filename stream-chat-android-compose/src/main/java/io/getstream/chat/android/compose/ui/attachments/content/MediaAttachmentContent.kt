@@ -143,10 +143,11 @@ public fun MediaAttachmentContent(
 ) {
     val message = state.message
 
-    // Prepare the image loader for the media gallery
+    // Prepare the image loader and resizer for the media gallery
     val imageLoader = LocalStreamImageLoader.current
-    LaunchedEffect(imageLoader) {
-        MediaGalleryInjector.install(imageLoader)
+    val streamCdnImageResizer = ChatTheme.streamCdnImageResizer
+    LaunchedEffect(imageLoader, streamCdnImageResizer) {
+        MediaGalleryInjector.install(imageLoader, streamCdnImageResizer)
     }
 
     val attachments = remember(message.attachments) {
