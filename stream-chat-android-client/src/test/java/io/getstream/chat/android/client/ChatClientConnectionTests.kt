@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -148,7 +149,23 @@ internal class ChatClientConnectionTests {
         val result = client.connectUser(user, jwt).await()
 
         result.shouldBeInstanceOf(Result.Failure::class)
-        (result as Result.Failure).value.message `should be equal to`
+        val error = (result as Result.Failure).value
+        error.shouldBeInstanceOf(Error.GenericError::class)
+        error.message `should be equal to`
+            "The user_id provided on the JWT token doesn't match with the current user you try to connect"
+        (error as Error.GenericError).code `should be equal to` ChatErrorCode.INVALID_TOKEN.code
+    }
+
+    @Test
+    fun `Connect an user with a blank token should return an undefined-token error`() = runTest {
+        val result = client.connectUser(user, "").await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        val error = (result as Result.Failure).value
+        error.shouldBeInstanceOf(Error.GenericError::class)
+        // Distinguished by code; message stays unchanged from the pre-existing behaviour.
+        (error as Error.GenericError).code `should be equal to` ChatErrorCode.UNDEFINED_TOKEN.code
+        error.message `should be equal to`
             "The user_id provided on the JWT token doesn't match with the current user you try to connect"
     }
 

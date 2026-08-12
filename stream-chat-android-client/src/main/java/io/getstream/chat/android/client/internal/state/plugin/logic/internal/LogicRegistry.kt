@@ -71,6 +71,7 @@ internal class LogicRegistry internal constructor(
     private val coroutineScope: CoroutineScope,
     private val now: () -> Long,
     private val useLegacyChannelLogic: Boolean,
+    private val isLocalUnreadCountEnabled: Boolean,
 ) : ChannelStateLogicProvider {
 
     private val logger by taggedLogger("Chat:LogicRegistry")
@@ -101,6 +102,7 @@ internal class LogicRegistry internal constructor(
                 stateRegistry = stateRegistry,
                 logicRegistry = this,
                 coroutineScope = coroutineScope,
+                isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
             )
 
             val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(

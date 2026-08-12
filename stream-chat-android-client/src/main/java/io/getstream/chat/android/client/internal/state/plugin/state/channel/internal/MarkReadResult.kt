@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
-import com.squareup.moshi.JsonClass
+/**
+ * Outcome of a request to mark a channel as read.
+ */
+internal sealed interface MarkReadResult {
 
-@JsonClass(generateAdapter = true)
-internal data class SendEventRequest(
-    val event: Map<Any, Any>,
-)
+    /** The channel needs to be marked as read with a remote request. */
+    data object RemoteRequired : MarkReadResult
+
+    /** The channel was marked as read on-device; no remote request is needed. */
+    data object HandledLocally : MarkReadResult
+
+    /** The channel does not need to be marked as read. */
+    data object NotNeeded : MarkReadResult
+}

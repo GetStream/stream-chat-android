@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -41,11 +42,16 @@ internal class ChannelMarkReadListenerState(private val logic: LogicRegistry) : 
      * @return [Result] with information if channel should be marked as read.
      */
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> {
-        val shouldMarkRead = logic.channel(channelType, channelId).markRead()
-        return if (shouldMarkRead) {
-            Result.Success(Unit)
-        } else {
-            Result.Failure(Error.GenericError("Can not mark channel as read with channel id: $channelId"))
+        return when (logic.channel(channelType, channelId).markRead()) {
+            MarkReadResult.RemoteRequired -> Result.Success(Unit)
+            MarkReadResult.HandledLocally -> {
+                // No server read event follows a local mark-read; refresh the channel-list queries directly.
+                val cid = "$channelType:$channelId"
+                logic.getActiveQueryChannelsLogic().forEach { it.refreshChannelState(cid) }
+                Result.Failure(Error.GenericError("Channel $channelId marked as read locally"))
+            }
+            MarkReadResult.NotNeeded ->
+                Result.Failure(Error.GenericError("Can not mark channel as read with channel id: $channelId"))
         }
     }
 }

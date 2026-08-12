@@ -24,7 +24,10 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -82,6 +85,7 @@ internal class ChatClientTest {
 
         init {
             val distinctEvents = generateSequence(EventArguments::randomEvent)
+                .filterNot { it is ConnectionErrorEvent || it is ConnectedEvent || it is HealthEvent }
                 .distinctBy { it::class }.take(3).toList()
             eventA = distinctEvents[0]
             eventB = distinctEvents[1]

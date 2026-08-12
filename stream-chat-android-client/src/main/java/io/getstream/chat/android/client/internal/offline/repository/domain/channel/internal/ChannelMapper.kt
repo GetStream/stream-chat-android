@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.MemberEntity
@@ -26,6 +27,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.chann
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.toModel
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.DraftMessage
@@ -53,7 +55,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         memberCount = memberCount,
         reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
         lastMessageId = lastMessage?.id,
-        lastMessageAt = lastMessageAt,
+        lastMessageAt = max(lastMessageAt, lastMessage?.getCreatedAtOrNull()),
         createdByUserId = createdBy.id,
         watcherIds = watchers.map(User::id),
         watcherCount = watcherCount,

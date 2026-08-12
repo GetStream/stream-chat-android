@@ -16,24 +16,30 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
-import io.getstream.chat.android.client.parser2.testdata.UnreadDtoTestData
-import org.junit.jupiter.api.Assertions.assertEquals
+import io.getstream.chat.android.network.models.EventRequest
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class UnreadDtoAdapterTest {
-
+internal class EventRequestAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
-    fun `deserialize JSON`() {
-        val dto = parser.fromJson(UnreadDtoTestData.json, UnreadDto::class.java)
-        assertEquals(UnreadDtoTestData.dto, dto)
+    fun `Serialize EventRequest with custom fields flattened to root`() {
+        val request = EventRequest(
+            type = "typing.start",
+            custom = mapOf("customKey" to "customValue"),
+        )
+        val json = parser.toJson(request)
+        Assertions.assertEquals(
+            """{"type":"typing.start","customKey":"customValue"}""",
+            json,
+        )
     }
 
     @Test
-    fun `serialize DTO`() {
-        val json = parser.toJson(UnreadDtoTestData.dto)
-        assertEquals(UnreadDtoTestData.json, json)
+    fun `Serialize EventRequest without custom fields`() {
+        val request = EventRequest(type = "typing.start", custom = emptyMap())
+        val json = parser.toJson(request)
+        Assertions.assertEquals("""{"type":"typing.start"}""", json)
     }
 }

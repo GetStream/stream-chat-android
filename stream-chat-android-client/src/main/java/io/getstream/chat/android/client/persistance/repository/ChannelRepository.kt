@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import java.util.Date
@@ -154,6 +155,15 @@ public interface ChannelRepository {
      * @param lastMessage [Message].
      */
     public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
+
+    /**
+     * Upserts the given [reads] into the channel stored with the given [cid], replacing the stored
+     * reads of the same users. The default no-op must be overridden for the locally tracked unread
+     * count to survive app restarts.
+     */
+    public suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
+        // no-op by default
+    }
 
     /**
      * Evict a [Channel] from the repository.

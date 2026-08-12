@@ -146,6 +146,7 @@ internal class TotalUnreadCountTest {
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
             bufferConfig = MessageBufferConfig(),
+            isLocalUnreadCountEnabled = false,
         )
 
         fun givenMockedRepositories(): Fixture {

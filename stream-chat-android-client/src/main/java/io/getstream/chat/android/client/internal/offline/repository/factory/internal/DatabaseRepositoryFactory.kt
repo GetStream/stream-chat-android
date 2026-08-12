@@ -46,6 +46,7 @@ internal class DatabaseRepositoryFactory(
     private val currentUser: User,
     private val scope: CoroutineScope,
     private val ignoredChannelTypes: Set<String>,
+    private val isLocalUnreadCountEnabled: Boolean = false,
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : RepositoryFactory {
 
@@ -86,6 +87,8 @@ internal class DatabaseRepositoryFactory(
                 getUser,
                 getMessage,
                 messageRepository::selectDraftMessagesByCid,
+                currentUser.id,
+                isLocalUnreadCountEnabled,
                 now,
             )
                 .also { repository ->

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MessagesPaginationManager
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -50,6 +51,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -887,22 +889,56 @@ internal class ChannelLogicImplTest {
     @Test
     fun `markRead should delegate to stateImpl and return result`() {
         // Given
-        whenever(stateImpl.markRead()).thenReturn(true)
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.RemoteRequired)
         // When
         val result = sut.markRead()
         // Then
-        assertTrue(result)
+        assertEquals(MarkReadResult.RemoteRequired, result)
         verify(stateImpl).markRead()
     }
 
     @Test
-    fun `markRead should return false when stateImpl returns false`() {
+    fun `markRead should return the result from stateImpl`() {
         // Given
-        whenever(stateImpl.markRead()).thenReturn(false)
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.NotNeeded)
         // When
         val result = sut.markRead()
         // Then
-        assertFalse(result)
+        assertEquals(MarkReadResult.NotNeeded, result)
+    }
+
+    @Test
+    fun `markRead persists the reset read when handled locally`() = runTest {
+        // Given
+        val reads = listOf(randomChannelUserRead())
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.HandledLocally)
+        whenever(stateImpl.cid).thenReturn(cid)
+        whenever(stateImpl.reads).thenReturn(MutableStateFlow(reads))
+        // When
+        sut.markRead()
+        // Then
+        verify(repository).upsertChannelReads(cid, reads)
+    }
+
+    @Test
+    fun `markRead does not persist when not handled locally`() = runTest {
+        // Given
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.RemoteRequired)
+        // When
+        sut.markRead()
+        // Then
+        verify(repository, never()).upsertChannelReads(any(), any())
+    }
+
+    @Test
+    fun `markRead does not persist when the state has no reads`() = runTest {
+        // Given
+        whenever(stateImpl.markRead()).thenReturn(MarkReadResult.HandledLocally)
+        whenever(stateImpl.reads).thenReturn(MutableStateFlow(emptyList()))
+        // When
+        sut.markRead()
+        // Then
+        verify(repository, never()).upsertChannelReads(any(), any())
     }
 
     // endregion
@@ -1036,6 +1072,29 @@ internal class ChannelLogicImplTest {
             )
             // Then
             verify(stateImpl).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        }
+
+        @Test
+        fun `should set the channel config before updating reads`() = runTest {
+            // The read merge checks the config to protect locally tracked reads, so the config
+            // must be up to date before the reads are merged.
+            val channel = randomChannel(
+                id = "123",
+                type = "messaging",
+                messages = emptyList(),
+                members = emptyList(),
+                watchers = emptyList(),
+                read = listOf(randomChannelUserRead()),
+                memberCount = 5,
+                watcherCount = 0,
+            )
+            // When
+            sut.updateDataForChannel(channel = channel, messageLimit = 0)
+            // Then
+            inOrder(stateImpl) {
+                verify(stateImpl).setChannelConfig(channel.config)
+                verify(stateImpl).updateReads(channel.read)
+            }
         }
 
         @Test

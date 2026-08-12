@@ -115,6 +115,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
+import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
@@ -165,6 +166,7 @@ internal class EventHandlerSequential(
     private val sideEffect: suspend () -> Unit,
     private val syncedEvents: Flow<List<ChatEvent>>,
     private val bufferConfig: MessageBufferConfig,
+    private val isLocalUnreadCountEnabled: Boolean,
     scope: CoroutineScope,
     private val groupedUnreadChannelsUpdater: GroupedUnreadChannelsUpdater = GroupedUnreadChannelsUpdater(
         stateRegistry = stateRegistry,
@@ -614,7 +616,7 @@ internal class EventHandlerSequential(
         batchBuilder.addToFetchMessages(messageIds)
 
         // actually fetch the data
-        val batch = batchBuilder.build(mutableGlobalState, repos, currentUserId)
+        val batch = batchBuilder.build(mutableGlobalState, repos, currentUserId, isLocalUnreadCountEnabled)
 
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
@@ -891,6 +893,8 @@ internal class EventHandlerSequential(
         // execute the batch
         batch.execute()
 
+        persistLocallyTrackedReads(events)
+
         // handle delete and truncate events
         for (event in events) {
             when (event) {
@@ -969,6 +973,30 @@ internal class EventHandlerSequential(
             val channelData = stateRegistry.channel(type, id).channelData.value
             channelData.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         }
+    }
+
+    /**
+     * Persists the in-memory reads of the locally tracked channels affected by new-message events, so
+     * the on-device unread count survives a restart. Runs after the batch stored the server data.
+     */
+    private suspend fun persistLocallyTrackedReads(events: List<ChatEvent>) {
+        if (!isLocalUnreadCountEnabled) return
+        events
+            .mapNotNullTo(mutableSetOf()) { event ->
+                when (event) {
+                    is NewMessageEvent -> ChannelId.fromCid(event.cid)
+                    is NotificationMessageNewEvent -> ChannelId.fromCid(event.cid)
+                    else -> null
+                }
+            }
+            .forEach { channelId ->
+                if (!stateRegistry.isActiveChannel(channelId)) return@forEach
+                val channelState = stateRegistry.channel(channelId)
+                if (channelState.channelConfig.value.readEventsEnabled) return@forEach
+                val stateReads = channelState.reads.value
+                if (stateReads.isEmpty()) return@forEach
+                repos.upsertChannelReads(cid = channelId.cid, reads = stateReads)
+            }
     }
 
     private suspend fun deleteMessagesFromUser(cid: String?, userId: String, hard: Boolean, deletedAt: Date) {

@@ -87,7 +87,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
 import io.getstream.chat.android.compose.ui.threads.ThreadsScreen
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
-import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -104,35 +103,8 @@ class ChannelsActivity : ComponentActivity() {
 
     private val settings by lazy { customSettings() }
 
-    /**
-     * The provided predefined filter has the following specs:
-     *
-     * **Filter:**
-     * ```
-     * Filters.and(
-     *     Filters.eq("type", "messaging"),
-     *     Filters.`in`("members", listOf(currentUserId)),
-     *     Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
-     * )
-     * ```
-     *
-     * **Sort:**
-     * ```
-     * QuerySortByField<Channel>().desc("pinned_at").desc("last_updated")
-     * ```
-     */
     private val channelsViewModelFactory by lazy {
-        val chatClient = ChatClient.instance()
-        val currentUserId = chatClient.getCurrentUser()?.id ?: ""
-        ChannelListViewModelFactory(
-            chatClient = chatClient,
-            predefinedFilterName = "android_sample_filter",
-            filterValues = mapOf(
-                "channel_type" to "messaging",
-                "user_id" to currentUserId,
-            ),
-            chatEventHandlerFactory = CustomChatEventHandlerFactory(),
-        )
+        sampleChannelListViewModelFactory(settings)
     }
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }

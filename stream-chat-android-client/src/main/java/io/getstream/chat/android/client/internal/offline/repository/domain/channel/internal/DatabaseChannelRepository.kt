@@ -21,10 +21,12 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.offline.extensions.launchWithMutex
+import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -45,6 +47,8 @@ internal class DatabaseChannelRepository(
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
     private val getDraftMessage: suspend (cid: String) -> DraftMessage?,
+    private val currentUserId: String,
+    private val isLocalUnreadCountEnabled: Boolean = false,
     private val now: () -> Long = { System.currentTimeMillis() },
     cacheSize: Int = 1000,
 ) : ChannelRepository {
@@ -52,6 +56,7 @@ internal class DatabaseChannelRepository(
     private val logger by taggedLogger("Chat:ChannelRepository")
     private val channelCache = LruCache<String, Channel>(cacheSize)
     private val dbMutex = Mutex()
+    private val cacheMutex = Mutex()
 
     override suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -64,20 +69,80 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
-        val updatedChannels = channels
-            .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
-        val channelToInsert = updatedChannels
-            .filter { channelCache[it.cid] != it }
-            .map { it.toEntity() }
-        cacheChannel(updatedChannels)
+        val storedReadsByCid = channels
+            .filter { it.isReadTrackedLocally() && channelCache[it.cid] == null }
+            .associate { it.cid to channelDao.select(it.cid)?.reads?.values?.map { read -> read.toModel(getUser) } }
+        val channelsToInsert = cacheMutex.withLock {
+            val updatedChannels = channels
+                .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+                .map { if (it.isReadTrackedLocally()) it.preserveLocallyTrackedReads(storedReadsByCid[it.cid]) else it }
+            updatedChannels
+                .filter { channelCache[it.cid] != it }
+                .also { cacheChannel(updatedChannels) }
+        }
         scope.launchWithMutex(dbMutex) {
-            logger.v {
-                "[insertChannels] inserting ${channelToInsert.size} entities on DB, " +
-                    "updated ${updatedChannels.size} on cache"
-            }
-            channelToInsert
+            logger.v { "[insertChannels] inserting ${channelsToInsert.size} entities on DB" }
+            channelsToInsert
                 .takeUnless { it.isEmpty() }
+                // Re-read the cache at write time: DAO writes are not guaranteed to run in launch
+                // order, so the last write must persist the latest merged state, not its snapshot
+                ?.map { channel -> (channelCache[channel.cid] ?: channel).toEntity() }
                 ?.let { channelDao.insertMany(it) }
+        }
+    }
+
+    private fun Channel.isReadTrackedLocally(): Boolean =
+        isLocalUnreadCountEnabled && !config.readEventsEnabled
+
+    /**
+     * Keeps the stored current user read of read-events-disabled channels: it is tracked on-device and
+     * must never be overwritten by server data (a recency check is not enough - server reads carry
+     * lastReceivedEventDate = last_message_at, tying it). Other users' reads are merged by recency.
+     *
+     * [preloadedStoredReads] is the persisted read state fetched before acquiring the lock; the cache
+     * still takes priority when populated.
+     */
+    private fun Channel.preserveLocallyTrackedReads(preloadedStoredReads: List<ChannelUserRead>?): Channel {
+        val storedReads = channelCache[cid]?.read ?: preloadedStoredReads ?: return this
+        if (storedReads.isEmpty()) return this
+        val mergedByUser = read.associateByTo(mutableMapOf(), ChannelUserRead::getUserId)
+        storedReads.forEach { stored ->
+            val incoming = mergedByUser[stored.getUserId()]
+            mergedByUser[stored.getUserId()] = when {
+                incoming == null -> stored
+                stored.getUserId() == currentUserId -> stored.copy(
+                    // Only the user info and the delivered fields are merged from the server,
+                    // mirroring the in-memory merge in the channel state.
+                    user = incoming.user,
+                    lastDeliveredAt = incoming.lastDeliveredAt ?: stored.lastDeliveredAt,
+                    lastDeliveredMessageId = incoming.lastDeliveredMessageId ?: stored.lastDeliveredMessageId,
+                )
+                stored.lastReceivedEventDate.after(incoming.lastReceivedEventDate) -> stored
+                else -> incoming
+            }
+        }
+        return copy(read = mergedByUser.values.toList()).syncUnreadCountWithReads()
+    }
+
+    /**
+     * The cache merge runs under [cacheMutex] and the DAO writes re-read the cache, so the persisted
+     * row converges to the latest merged state regardless of write order.
+     */
+    override suspend fun upsertChannelReads(cid: String, reads: List<ChannelUserRead>) {
+        if (reads.isEmpty()) return
+        // Resolve the stored channel before the lock so no DB read runs while cacheMutex is held.
+        val stored = selectChannel(cid) ?: return
+        val updatedChannel = cacheMutex.withLock {
+            // The cache takes priority in case it was updated between the read above and the lock.
+            val base = channelCache[cid] ?: stored
+            base
+                .copy(read = (reads + base.read).distinctBy(ChannelUserRead::getUserId))
+                .syncUnreadCountWithReads()
+                .also { cacheChannel(it) }
+        }
+        scope.launchWithMutex(dbMutex) {
+            logger.v { "[upsertChannelReads] cid: $cid, reads.size: ${reads.size}" }
+            channelDao.insert((channelCache[cid] ?: updatedChannel).toEntity())
         }
     }
 

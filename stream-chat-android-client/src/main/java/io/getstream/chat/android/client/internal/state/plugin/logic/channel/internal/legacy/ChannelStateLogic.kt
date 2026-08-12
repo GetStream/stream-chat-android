@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.internal.state.message.attachments.inter
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
@@ -81,6 +82,9 @@ internal class ChannelStateLogic(
 
     private val logger by taggedLogger(TAG)
     private val processedMessageIds = LruCache<String, Boolean>(CACHE_SIZE)
+
+    private val isReadTrackedLocally: Boolean
+        get() = mutableState.isLocalUnreadCountEnabled && !mutableState.channelConfig.value.readEventsEnabled
 
     /**
      * Used to prune stale active typing events when the sender
@@ -227,6 +231,22 @@ internal class ChannelStateLogic(
         localRead: ChannelUserRead,
         serverRead: ChannelUserRead,
     ): ChannelUserRead {
+        if (isReadTrackedLocally) {
+            // Locally tracked reads must never be overwritten by server data. A recency check is not
+            // enough: server reads carry lastReceivedEventDate = last_message_at, tying the local value.
+            if (localRead.unreadMessages != serverRead.unreadMessages) {
+                logger.d {
+                    "[updateReads] preserving locally tracked read, " +
+                        "local.unreadMessages=${localRead.unreadMessages}, " +
+                        "server.unreadMessages=${serverRead.unreadMessages}"
+                }
+            }
+            return localRead.copy(
+                user = serverRead.user,
+                lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
+                lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
+            )
+        }
         return if (localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)) {
             // Local state is more recent, preserve it but merge other fields from server
             logger.d {
@@ -599,11 +619,11 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Marks channel as read locally.
+     * Marks the channel as read for the current user.
      *
-     * @return The flag to determine if the channel was marked as read locally.
+     * @return A [MarkReadResult] describing how the mark-read request was handled.
      */
-    fun markRead(): Boolean {
+    fun markRead(): MarkReadResult {
         return mutableState.markChannelAsRead()
     }
 
@@ -647,6 +667,10 @@ internal class ChannelStateLogic(
 
         mutableState.setMembersCount(channel.memberCount)
 
+        // The config must be set before the reads: the read merge checks it to protect
+        // locally tracked reads.
+        mutableState.setChannelConfig(channel.config)
+
         updateReads(channel.read)
 
         // there are some edge cases here, this code adds to the members, watchers and messages
@@ -673,8 +697,6 @@ internal class ChannelStateLogic(
                 upsertCachedMessages(channel.pinnedMessages + channel.messages + pendingMessageObjects)
             }
         }
-
-        mutableState.setChannelConfig(channel.config)
 
         mutableState.setLoadingOlderMessages(false)
         mutableState.setLoadingNewerMessages(false)
@@ -892,6 +914,12 @@ internal class ChannelStateLogic(
         if (isProcessed) {
             return
         }
+        // Skip messages already in the channel state - e.g. a sync-replayed event after a restart,
+        // when the in-memory processed cache is empty
+        if (mutableState.getMessageById(message.id) != null) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
         // Skip update if the channel is muted
         val isMuted = mutableState.muted.value
         if (isMuted) {
@@ -934,19 +962,38 @@ internal class ChannelStateLogic(
             processedMessageIds.put(message.id, true)
             return
         }
-        // Update the unread count. Replays are excluded by processedMessageIds and the
-        // last read date; the event clock must not gate the count, because a queued event
-        // can legitimately carry an older date than an already processed one. The clock
-        // only moves forward, so an out of order event cannot regress it.
-        currentRead?.let {
-            updateRead(
-                it.copy(
-                    lastReceivedEventDate = maxOf(it.lastReceivedEventDate, eventReceivedDate),
-                    unreadMessages = it.unreadMessages.inc(),
-                ),
-            )
-        }
+        incrementUnreadCount(currentRead, eventReceivedDate)
         processedMessageIds.put(message.id, true)
+    }
+
+    /**
+     * Increments the unread count, creating a read for a locally tracked channel that has none yet.
+     * Upserted directly, bypassing the [updateReads] merge, which is for server data. The clock only
+     * moves forward, so an out of order event cannot regress it.
+     */
+    private fun incrementUnreadCount(currentRead: ChannelUserRead?, eventReceivedDate: Date) {
+        val updatedRead = if (currentRead != null) {
+            currentRead.copy(
+                lastReceivedEventDate = maxOf(currentRead.lastReceivedEventDate, eventReceivedDate),
+                unreadMessages = currentRead.unreadMessages.inc(),
+            )
+        } else if (isReadTrackedLocally) {
+            clientState.user.value?.let { user ->
+                ChannelUserRead(
+                    user = user,
+                    lastReceivedEventDate = eventReceivedDate,
+                    unreadMessages = 1,
+                    // lastRead/lastReadMessageId are unset: there is no server read to anchor them to.
+                    lastRead = Date(0),
+                    lastReadMessageId = null,
+                )
+            }
+        } else {
+            null
+        }
+        updatedRead?.let { newRead ->
+            mutableState.upsertReads(listOf(newRead))
+        }
     }
 
     private fun Message.storePoll() {
