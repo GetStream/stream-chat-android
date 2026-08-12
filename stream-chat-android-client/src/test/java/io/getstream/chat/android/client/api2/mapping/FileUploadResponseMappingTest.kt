@@ -17,7 +17,9 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.result.Result
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
@@ -55,5 +57,16 @@ internal class FileUploadResponseMappingTest {
         val result = dto.toUploadedFile()
 
         result shouldBeInstanceOf Result.Failure::class
+    }
+
+    @Test
+    fun `A response that omits the file URL parses and then fails to map`() {
+        // The upload endpoints tag `file` omitempty, so an empty asset URL is absent rather than null.
+        val response = ParserFactory.createMoshiChatParser()
+            .fromJson("""{"duration":"1ms"}""", FileUploadResponse::class.java)
+
+        response.file shouldBeEqualTo null
+        response.thumbUrl shouldBeEqualTo null
+        response.toUploadedFile() shouldBeInstanceOf Result.Failure::class
     }
 }
