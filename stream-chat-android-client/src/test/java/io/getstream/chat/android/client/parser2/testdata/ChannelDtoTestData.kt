@@ -238,7 +238,12 @@ internal object ChannelDtoTestData {
             archived_at = null,
             extraData = emptyMap(),
         ),
-        extraData = mapOf("draft" to true),
+        extraData = mapOf(
+            "truncated_at" to "2020-06-10T11:04:31.588Z",
+            "disabled" to true,
+            "blocked" to true,
+            "draft" to true,
+        ),
     )
 
     @Language("JSON")

@@ -64,7 +64,9 @@ internal class DownstreamChannelDtoAdapterTest {
         channel.truncated_at shouldBeEqualTo Date(1591787071588)
         channel.disabled shouldBeEqualTo true
         channel.blocked shouldBeEqualTo true
-        channel.extraData.keys shouldBeEqualTo setOf("draft")
+        channel.extraData["truncated_at"] shouldBeEqualTo "2020-06-10T11:04:31.588Z"
+        channel.extraData["disabled"] shouldBeEqualTo true
+        channel.extraData["blocked"] shouldBeEqualTo true
     }
 
     @Test
