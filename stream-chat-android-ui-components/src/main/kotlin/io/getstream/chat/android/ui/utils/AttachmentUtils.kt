@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader.ImageTransformation.RoundedCorners
 import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 import io.getstream.chat.android.ui.common.internal.file.ShareableUriProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
@@ -40,13 +40,19 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
             isVideo() && ChatUI.videoThumbnailsEnabled && (!thumbUrl.isNullOrBlank() || !assetUrl.isNullOrBlank()) ->
                 load(
                     data = videoThumbnailImageData(
-                        thumbnailUrl = thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
+                        thumbnailUrl = thumbUrl?.applyStreamCdnImageResizing(
+                            ChatUI.streamCdnImageResizing,
+                            ChatUI.streamCdnImageResizer,
+                        ),
                     ),
                     transformation = FILE_THUMB_TRANSFORMATION,
                 )
             isImage() && !imageUrl.isNullOrBlank() ->
                 load(
-                    data = imageUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
+                    data = imageUrl?.applyStreamCdnImageResizing(
+                        ChatUI.streamCdnImageResizing,
+                        ChatUI.streamCdnImageResizer,
+                    ),
                     transformation = FILE_THUMB_TRANSFORMATION,
                 )
             else -> {

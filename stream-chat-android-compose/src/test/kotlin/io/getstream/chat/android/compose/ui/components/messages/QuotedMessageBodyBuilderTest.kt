@@ -29,6 +29,7 @@ import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.images.internal.VideoThumbnailImageData
+import io.getstream.chat.android.ui.common.images.resizing.NoOpStreamCdnImageResizer
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing.Companion.defaultStreamCdnImageResizing
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
@@ -62,6 +63,7 @@ internal class QuotedMessageBodyBuilderTest {
             autoTranslationEnabled = autoTranslationEnabled,
             durationFormatter = durationFormatter,
             streamCdnImageResizing = defaultStreamCdnImageResizing(),
+            streamCdnImageResizer = NoOpStreamCdnImageResizer,
             spokenDurationFormatter = SpokenDurationFormatter(Locale.US, durationFormatter),
         )
 

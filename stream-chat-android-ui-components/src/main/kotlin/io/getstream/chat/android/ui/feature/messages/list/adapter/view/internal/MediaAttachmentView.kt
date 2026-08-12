@@ -29,7 +29,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 import io.getstream.chat.android.ui.databinding.StreamUiMediaAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -133,11 +133,17 @@ internal class MediaAttachmentView : ConstraintLayout {
     fun showAttachment(attachment: Attachment, andMoreCount: Int = NO_MORE_COUNT) {
         val url =
             if (attachment.isImage()) {
-                attachment.imageUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+                attachment.imageUrl?.applyStreamCdnImageResizing(
+                    ChatUI.streamCdnImageResizing,
+                    ChatUI.streamCdnImageResizer,
+                )
                     ?: attachment.upload ?: return
             } else if (attachment.isVideo() && ChatUI.videoThumbnailsEnabled) {
                 val thumbnailUrl =
-                    attachment.thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+                    attachment.thumbUrl?.applyStreamCdnImageResizing(
+                        ChatUI.streamCdnImageResizing,
+                        ChatUI.streamCdnImageResizer,
+                    )
                 attachment.videoThumbnailImageData(thumbnailUrl)
             } else {
                 null
