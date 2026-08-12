@@ -116,6 +116,7 @@ import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserGroupMember
@@ -126,6 +127,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -133,6 +135,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -473,6 +476,78 @@ internal class DomainMappingTest {
             lastReactionAt = downstreamReactionGroupDto.last_reaction_at,
         )
         assertEquals(expected, reactionGroup)
+    }
+
+    @Test
+    fun `UserResponse is correctly mapped to User`() {
+        val userResponse = UserResponse(
+            id = "userId",
+            role = "admin",
+            language = "pt",
+            banned = true,
+            online = true,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            name = "Padme",
+            image = "image.png",
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            avgResponseTime = 42,
+            custom = mapOf("birthland" to "Polis Massa", "absent" to null),
+        )
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        val expected = User(
+            id = "userId",
+            role = "admin",
+            name = "Padme",
+            image = "image.png",
+            language = "pt",
+            banned = true,
+            online = true,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            // The response carries an Int, the domain a Long.
+            avgResponseTime = 42L,
+            // `absent` is dropped: the domain map does not hold null values.
+            extraData = mapOf("birthland" to "Polis Massa"),
+        )
+        assertEquals(expected, user)
+    }
+
+    @Test
+    fun `UserResponse without a name or image is mapped to empty strings`() {
+        val userResponse = randomUserResponse()
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        user.name shouldBeEqualTo ""
+        user.image shouldBeEqualTo ""
+        user.teamsRole shouldBeEqualTo emptyMap()
+        user.avgResponseTime shouldBeEqualTo null
+    }
+
+    @Test
+    fun `User mapped from a UserResponse should be transformed`() {
+        val transformedUser = randomUser()
+        val sut = Fixture()
+            .withUserTransformer(UserTransformer { transformedUser })
+            .get()
+
+        val result = with(sut) { randomUserResponse().toDomain() }
+
+        assertEquals(transformedUser, result)
     }
 
     @Test
