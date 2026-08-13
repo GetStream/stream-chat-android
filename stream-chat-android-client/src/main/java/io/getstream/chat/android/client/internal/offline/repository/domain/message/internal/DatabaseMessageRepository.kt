@@ -88,11 +88,14 @@ internal class DatabaseMessageRepository(
 
     override suspend fun updateChannelUserMessagesMember(cid: String, userId: String, member: MemberInfo?) {
         val entity = member?.toEntity()
-        messageDao.updateMemberByCidAndUserId(cid, userId, entity)
-        replyMessageDao.updateMemberByCidAndUserId(cid, userId, entity)
-        // The caches are read before the database, so they have to follow the same edit.
+        // The caches are read before the database, so they follow the edit straight away.
         patchCachedMember(messageCache, cid, userId, member)
         patchCachedMember(replyMessageCache, cid, userId, member)
+        // Deferred under the same mutex as the inserts, so this cannot run ahead of a message still being written.
+        scope.launchWithMutex(dbMutex) {
+            messageDao.updateMemberByCidAndUserId(cid, userId, entity)
+            replyMessageDao.updateMemberByCidAndUserId(cid, userId, entity)
+        }
     }
 
     private fun patchCachedMember(

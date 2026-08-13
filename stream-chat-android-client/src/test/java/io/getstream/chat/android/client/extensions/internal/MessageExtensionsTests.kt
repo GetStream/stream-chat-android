@@ -641,19 +641,17 @@ internal class MessageExtensionsTests {
     }
 
     @Test
-    fun `withMemberInfo should keep the known role when the incoming member carries none`() {
-        // The backend always assigns a role, so an absent one means "not sent" and must not wipe what we know.
+    fun `withMemberInfo should take the incoming snapshot verbatim`() {
+        // The same value has to reach the state, the repository cache and the database, and a blanket column update
+        // cannot preserve a previously known role, so nothing is carried over here either.
         val message = randomMessage(member = MemberInfo(channelRole = "channel_moderator"))
         val memberInfo = MemberInfo(channelRole = null, extraData = mapOf("flair" to "gold"))
 
         val result = message.withMemberInfo(memberInfo)
 
-        result.member shouldBeEqualTo MemberInfo(
-            channelRole = "channel_moderator",
-            extraData = mapOf("flair" to "gold"),
-        )
+        result.member shouldBeEqualTo memberInfo
         @Suppress("DEPRECATION")
-        result.channelRole shouldBeEqualTo "channel_moderator"
+        result.channelRole shouldBeEqualTo null
     }
 
     @Test

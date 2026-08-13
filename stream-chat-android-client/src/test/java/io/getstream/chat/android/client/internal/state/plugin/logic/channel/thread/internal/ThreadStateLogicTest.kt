@@ -17,9 +17,13 @@
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,6 +34,8 @@ import java.util.Date
 internal class ThreadStateLogicTest {
 
     private val parentId = randomString()
+    private val cid = randomCID()
+    private val author = randomUser()
 
     @Test
     fun `updateQuotedMessageReferences should update messages quoting via replyTo`() = runTest {
@@ -84,6 +90,45 @@ internal class ThreadStateLogicTest {
         // then
         assertNull(mutableState.rawMessage.value[quotingMessage.id]?.replyTo)
     }
+
+    @Test
+    fun `updateMessagesMemberInfo should refresh the member snapshot on the author's thread replies`() = runTest {
+        // given - thread replies live in this state, so the channel refresh does not reach them
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val reply = threadReply(user = author)
+        threadStateLogic.upsertMessages(listOf(reply))
+        val memberInfo = MemberInfo(channelRole = "channel_moderator", extraData = mapOf("flair" to "gold"))
+        // when
+        threadStateLogic.updateMessagesMemberInfo(cid, author.id, memberInfo)
+        // then
+        assertEquals(memberInfo, mutableState.rawMessage.value[reply.id]?.member)
+    }
+
+    @Test
+    fun `updateMessagesMemberInfo should leave replies of other authors and other channels alone`() = runTest {
+        // given
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val otherAuthor = threadReply(user = randomUser())
+        val otherChannel = threadReply(user = author, cid = randomCID())
+        threadStateLogic.upsertMessages(listOf(otherAuthor, otherChannel))
+        // when
+        threadStateLogic.updateMessagesMemberInfo(cid, author.id, MemberInfo(channelRole = "channel_moderator"))
+        // then
+        assertNull(mutableState.rawMessage.value[otherAuthor.id]?.member)
+        assertNull(mutableState.rawMessage.value[otherChannel.id]?.member)
+    }
+
+    /** A reply that survives the thread state's deleted-message filtering. */
+    private fun threadReply(user: User, cid: String = this.cid): Message = randomMessage(
+        cid = cid,
+        user = user,
+        parentId = parentId,
+        member = null,
+        replyTo = null,
+        poll = null,
+        deletedAt = null,
+        deletedForMe = false,
+    )
 
     private fun threadStateLogic(scope: CoroutineScope): Pair<ThreadMutableState, ThreadStateLogic> {
         val mutableState = ThreadMutableState(parentId, scope)

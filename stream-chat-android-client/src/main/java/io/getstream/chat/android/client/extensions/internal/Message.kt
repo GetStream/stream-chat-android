@@ -29,15 +29,13 @@ import java.util.Date
 /**
  * Replaces the [Message.member] snapshot of this message, keeping the deprecated [Message.channelRole] in sync with it.
  *
- * A member payload that carries no `channel_role` must not wipe the role already known for the message: the backend
- * always assigns one, so an absent role means "not sent" rather than "no role".
+ * The snapshot is taken verbatim: the same value reaches the in-memory state, the repository cache and the database, so
+ * the three cannot disagree. A blanket column update cannot preserve a previously known role, so neither does this.
  */
 @InternalStreamChatApi
 @Suppress("DEPRECATION")
-public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message {
-    val resolved = memberInfo?.let { it.copy(channelRole = it.channelRole ?: member?.channelRole) }
-    return copy(member = resolved, channelRole = resolved?.channelRole)
-}
+public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message =
+    copy(member = memberInfo, channelRole = memberInfo?.channelRole)
 
 /** Updates collection of messages with more recent data of [users]. */
 @InternalStreamChatApi

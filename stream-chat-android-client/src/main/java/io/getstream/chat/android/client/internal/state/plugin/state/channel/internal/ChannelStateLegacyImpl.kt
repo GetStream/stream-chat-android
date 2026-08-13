@@ -581,6 +581,7 @@ internal class ChannelStateLegacyImpl(
         }
         _messages?.apply { value = refresh(value) }
         _pinnedMessages?.apply { value = refresh(value) }
+        cachedLatestMessages.apply { value = refresh(value) }
     }
 
     fun upsertReads(reads: List<ChannelUserRead>) {

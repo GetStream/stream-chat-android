@@ -583,6 +583,15 @@ internal class EventHandlerSequential(
                 }
             }
 
+        // A membership change carries no message id, so it cannot be grouped like the events above: every active
+        // thread is asked to refresh the author's replies, which the channel state refresh does not reach.
+        sortedEvents.filterIsInstance<MemberUpdatedEvent>().forEach { event ->
+            val memberInfo = event.member.toMemberInfo()
+            logicRegistry.getActiveThreadsLogic().forEach { thread ->
+                thread.updateMessagesMemberInfo(event.cid, event.member.getUserId(), memberInfo)
+            }
+        }
+
         logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
     }
 
