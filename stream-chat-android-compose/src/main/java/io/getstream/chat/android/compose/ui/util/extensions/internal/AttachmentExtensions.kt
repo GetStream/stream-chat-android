@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 
 /**
  * This property checks if the attachment is an image or a video with enabled thumbnails.
@@ -40,10 +40,13 @@ internal val Attachment.imagePreviewData: Any?
     get() = when {
         isImage() ->
             imageUrl
-                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                ?.applyStreamCdnImageResizing(ChatTheme.streamCdnImageResizing, ChatTheme.streamCdnImageResizer)
                 ?: upload
         isVideo() && ChatTheme.videoThumbnailsEnabled -> {
-            val thumbnailUrl = thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+            val thumbnailUrl = thumbUrl?.applyStreamCdnImageResizing(
+                ChatTheme.streamCdnImageResizing,
+                ChatTheme.streamCdnImageResizer,
+            )
             videoThumbnailImageData(thumbnailUrl) ?: upload
         }
         else -> null

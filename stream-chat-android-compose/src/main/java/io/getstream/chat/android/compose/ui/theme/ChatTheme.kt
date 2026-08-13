@@ -31,6 +31,7 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -77,7 +78,9 @@ import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.internal.CDNImageInterceptor
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizer
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnMaxPixelsImageResizer
 import io.getstream.chat.android.ui.common.model.UserPresence
 import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
@@ -213,12 +216,28 @@ private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
+
+// Deprecated StreamCdnImageResizing kept for back-compat until it is removed.
+@Suppress("DEPRECATION")
 private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResizing> {
     error(
         "No StreamCdnImageResizing provided! " +
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
+private val LocalStreamCdnImageResizer = staticCompositionLocalOf<StreamCdnImageResizer> {
+    error(
+        "No StreamCdnImageResizer provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
+
+/**
+ * Stable default resizer. Held as a single instance so the [ChatTheme] default argument doesn't allocate a new
+ * resizer on every call, which — given [LocalStreamCdnImageResizer] is a [staticCompositionLocalOf] — would
+ * otherwise invalidate the whole subtree on each recomposition.
+ */
+internal val DefaultStreamCdnImageResizer: StreamCdnImageResizer = StreamCdnMaxPixelsImageResizer()
 private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
     error(
         "No readCountEnabled Boolean provided! " +
@@ -333,6 +352,9 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
+ * @param streamCdnImageResizer Sets the strategy for resizing images hosted on Stream's CDN. Defaults to a
+ * [StreamCdnMaxPixelsImageResizer] capping images to 2MP, mirroring the iOS SDK. Set it to
+ * [io.getstream.chat.android.ui.common.images.resizing.NoOpStreamCdnImageResizer] to disable resizing.
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
  * @param messageDateSeparatorTheme Theme of the message date separator.
@@ -344,7 +366,8 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param mediaGalleryConfig Configuration for the media gallery screen.
  * @param content The content shown within the theme wrapper.
  */
-@Suppress("LongMethod")
+// DEPRECATION: the streamCdnImageResizing param is kept for back-compat until it is removed.
+@Suppress("LongMethod", "DEPRECATION")
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -405,6 +428,7 @@ public fun ChatTheme(
         },
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
+    streamCdnImageResizer: StreamCdnImageResizer = DefaultStreamCdnImageResizer,
     readCountEnabled: Boolean = true,
     ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
         isInDarkMode = isInDarkMode,
@@ -514,6 +538,7 @@ public fun ChatTheme(
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
+        LocalStreamCdnImageResizer provides streamCdnImageResizer,
         LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
@@ -783,10 +808,20 @@ public object ChatTheme {
     /**
      * Retrieves the value of [StreamCdnImageResizing] at the call site's position in the hierarchy.
      */
+    // Returns the deprecated StreamCdnImageResizing for back-compat.
+    @Suppress("DEPRECATION")
     public val streamCdnImageResizing: StreamCdnImageResizing
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamCdnImageResizing.current
+
+    /**
+     * Retrieves the value of [StreamCdnImageResizer] at the call site's position in the hierarchy.
+     */
+    public val streamCdnImageResizer: StreamCdnImageResizer
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamCdnImageResizer.current
 
     public val readCountEnabled: Boolean
         @Composable
