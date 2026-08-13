@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
@@ -129,18 +128,23 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
+import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -442,6 +446,26 @@ internal class DomainMapping(
             archivedAt = archived_at,
             extraData = extraData,
         )
+
+    internal fun UserResponse.toDomain(): User =
+        User(
+            id = id,
+            role = role,
+            name = name.orEmpty(),
+            image = image.orEmpty(),
+            language = language,
+            banned = banned,
+            online = online,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            deactivatedAt = deactivatedAt,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+        ).let(userTransformer::transform)
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(
@@ -850,11 +874,11 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]
+     * Transforms [ThreadParticipantDto] into [ThreadParticipant]
      */
-    internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
-        user = user?.toDomain() ?: User(id = user_id),
-        lastThreadMessageAt = last_thread_message_at,
+    internal fun ThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
+        user = user?.toDomain() ?: User(id = userId.orEmpty()),
+        lastThreadMessageAt = lastThreadMessageAt,
     )
 
     /**
@@ -952,6 +976,28 @@ internal class DomainMapping(
         channelMentions = ChatPreferenceToggle.fromValue(channel_mentions),
         threadReplies = ChatPreferenceToggle.fromValue(thread_replies),
         defaultPreference = ChatPreferenceToggle.fromValue(default_preference),
+    )
+
+    internal fun PushPreferencesResponse.toDomain(): PushPreference = PushPreference(
+        level = PushPreferenceLevel.fromValue(chatLevel),
+        disabledUntil = disabledUntil,
+        chatPreferences = chatPreferences?.toDomain(),
+    )
+
+    internal fun ChannelPushPreferencesResponse.toDomain(): PushPreference = PushPreference(
+        level = PushPreferenceLevel.fromValue(chatLevel),
+        disabledUntil = disabledUntil,
+        chatPreferences = null,
+    )
+
+    internal fun ChatPreferencesResponse.toDomain(): ChatPreferences = ChatPreferences(
+        directMentions = ChatPreferenceToggle.fromValue(directMentions),
+        roleMentions = ChatPreferenceToggle.fromValue(roleMentions),
+        groupMentions = ChatPreferenceToggle.fromValue(groupMentions),
+        hereMentions = ChatPreferenceToggle.fromValue(hereMentions),
+        channelMentions = ChatPreferenceToggle.fromValue(channelMentions),
+        threadReplies = ChatPreferenceToggle.fromValue(threadReplies),
+        defaultPreference = ChatPreferenceToggle.fromValue(defaultPreference),
     )
 
     internal fun List<Map<String, Any>>?.toSortDomain(): QuerySorter<Channel>? {
