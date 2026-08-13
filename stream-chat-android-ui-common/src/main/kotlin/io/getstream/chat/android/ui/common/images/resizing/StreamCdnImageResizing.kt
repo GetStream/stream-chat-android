@@ -34,6 +34,11 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
  * @param cropMode Sets the image crop mode. If null, the default mode used by the CDN is
  * [StreamCdnCropImageMode.CENTER].
  */
+@Deprecated(
+    "Configure image resizing via a StreamCdnImageResizer — the default StreamCdnMaxPixelsImageResizer caps " +
+        "images to 2MP (iOS parity), or provide your own StreamCdnImageResizer. This percentage-based config is " +
+        "only honored while enabled and will be removed in the next major version.",
+)
 public data class StreamCdnImageResizing(
     val imageResizingEnabled: Boolean,
     @FloatRange(from = 0.0, to = 1.0, fromInclusive = false) val resizedWidthPercentage: Float,
@@ -50,6 +55,12 @@ public data class StreamCdnImageResizing(
          *
          * @return Stream CDN hosted image resizing strategy in the form of [StreamCdnImageResizing].
          */
+        @Deprecated(
+            "Configure image resizing via a StreamCdnImageResizer — the default StreamCdnMaxPixelsImageResizer " +
+                "caps images to 2MP (iOS parity), or provide your own StreamCdnImageResizer. This percentage-based " +
+                "config will be removed in the next major version.",
+        )
+        @Suppress("DEPRECATION")
         public fun defaultStreamCdnImageResizing(): StreamCdnImageResizing = StreamCdnImageResizing(
             imageResizingEnabled = false,
             resizedWidthPercentage = 1f,

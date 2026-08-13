@@ -25,10 +25,37 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnOriginalImageDimensions
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.log.StreamLog
+import kotlin.math.sqrt
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 private val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
 private val baseUrlRegex = "^(?:https?://)?(.*?)/*$".toRegex()
+
+/**
+ * Matches the default Stream CDN hosts (imgix and stream-io-cdn). Shared with [AttachmentHelper] so the two
+ * can't drift. Anchored on the host only — resizing of custom/proxied Stream CDN domains is opted into via the
+ * `cdnHost` parameter of [createResizedStreamCdnImageUrl], mirroring iOS' `StreamCDNRequester(cdnHost:)`.
+ */
+@InternalStreamChatApi
+public val STREAM_CDN_HOST_PATTERN: Regex =
+    "stream-chat-+.+\\.imgix\\.net$|.+\\.stream-io-cdn\\.com$".toRegex(RegexOption.IGNORE_CASE)
+
+/**
+ * Returns whether this URL is served from a Stream CDN host that understands resizing query parameters.
+ *
+ * @param cdnHost An optional custom Stream CDN host (e.g. a proxied domain). When provided, the URL host is
+ * matched against it with a substring check, mirroring iOS' `StreamCDNRequester(cdnHost:)`; when null, the
+ * default [STREAM_CDN_HOST_PATTERN] is used.
+ */
+@InternalStreamChatApi
+public fun String.isStreamCdnHosted(cdnHost: String? = null): Boolean {
+    val host = this.toUri().host ?: return false
+    return if (cdnHost != null) {
+        host.contains(cdnHost, ignoreCase = true)
+    } else {
+        STREAM_CDN_HOST_PATTERN.matches(host)
+    }
+}
 
 /**
  * Converts string written in snake case to String in camel case with the first symbol in lower case.
@@ -174,6 +201,37 @@ public fun String.createResizedStreamCdnImageUrl(
         }
         this
     }
+}
+
+/**
+ * Generates a URL with Stream CDN resizing parameters that cap the image to [maxImagePixels] total
+ * pixels (width × height), preserving aspect ratio and never upscaling. Mirrors the iOS SDK's
+ * `imageAttachmentMaxPixels`. Only affects images served from a Stream CDN host (see [cdnHost]) that carry
+ * original width (ow) and height (oh) params; any other URL, or one already at/under the budget, is
+ * returned unchanged.
+ *
+ * @param cdnHost An optional custom Stream CDN host to resize in addition to the default Stream CDN hosts,
+ * for integrations serving Stream images from a proxied or custom domain. Mirrors iOS'
+ * `StreamCDNRequester(cdnHost:)`.
+ */
+public fun String.createResizedStreamCdnImageUrl(
+    maxImagePixels: Long,
+    resizeMode: StreamCdnResizeImageMode? = null,
+    cropMode: StreamCdnCropImageMode? = null,
+    cdnHost: String? = null,
+): String {
+    if (maxImagePixels <= 0L) return this
+    if (!isStreamCdnHosted(cdnHost)) return this
+    val dimensions = getStreamCdnHostedImageDimensions() ?: return this
+    val totalPixels = dimensions.originalWidth.toLong() * dimensions.originalHeight.toLong()
+    if (totalPixels <= 0L || totalPixels <= maxImagePixels) return this
+    val scale = sqrt(maxImagePixels.toDouble() / totalPixels.toDouble()).toFloat()
+    return createResizedStreamCdnImageUrl(
+        resizedWidthPercentage = scale,
+        resizedHeightPercentage = scale,
+        resizeMode = resizeMode,
+        cropMode = cropMode,
+    )
 }
 
 /**

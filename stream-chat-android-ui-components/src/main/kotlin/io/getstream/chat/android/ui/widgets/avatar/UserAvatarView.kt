@@ -25,7 +25,7 @@ import com.google.android.material.shape.RelativeCornerSize
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
@@ -98,7 +98,10 @@ public class UserAvatarView : AvatarImageView {
     @JvmOverloads
     public fun setUser(user: User, online: Boolean = user.online) {
         avatarRenderer?.render(avatarStyle, user, this) ?: setAvatar(
-            avatar = user.image.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
+            avatar = user.image.applyStreamCdnImageResizing(
+                ChatUI.streamCdnImageResizing,
+                ChatUI.streamCdnImageResizer,
+            ),
             placeholder = AvatarPlaceholderDrawable(
                 context,
                 user.initials,
