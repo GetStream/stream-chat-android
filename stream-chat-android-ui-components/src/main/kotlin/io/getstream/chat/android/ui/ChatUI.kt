@@ -21,7 +21,9 @@ import io.getstream.chat.android.ui.ChatUI.attachmentFactoryManager
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizer
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnMaxPixelsImageResizer
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll.PollsConfig
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
@@ -186,8 +188,22 @@ public object ChatUI {
      * resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)
      * query parameters.
      */
+    @Deprecated(
+        "Use streamCdnImageResizer (defaults to a StreamCdnMaxPixelsImageResizer capping images to 2MP). " +
+            "For custom behavior, provide your own StreamCdnImageResizer.",
+        ReplaceWith("streamCdnImageResizer"),
+    )
     @JvmStatic
     public var streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing()
+
+    /**
+     * Sets the strategy for resizing images hosted on Stream's CDN. Defaults to a [StreamCdnMaxPixelsImageResizer]
+     * capping images to 2MP, mirroring the iOS SDK. Set it to [NoOpStreamCdnImageResizer] to disable resizing. Note
+     * that resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)
+     * query parameters.
+     */
+    @JvmStatic
+    public var streamCdnImageResizer: StreamCdnImageResizer = StreamCdnMaxPixelsImageResizer()
 
     /**
      * Whether or not the auto-translation feature is enabled.

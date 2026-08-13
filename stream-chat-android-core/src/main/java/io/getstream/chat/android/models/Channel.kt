@@ -18,6 +18,7 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -63,6 +64,10 @@ import java.util.Date
  * @param pushPreference Channel-specific push preferences (if set).
  * @param filterTags The list of filter tags applied to the channel.
  * @param lastMessageAt Date/time of the last message sent.
+ * @param truncatedAt Date/time of the last truncation, if the channel was ever truncated.
+ * @param disabled Whether the channel is disabled or not.
+ * @param blocked Whether the channel is blocked or not. Note that the field is not provided by every endpoint, nor in
+ * the events.
  */
 @Immutable
 public data class Channel(
@@ -108,6 +113,9 @@ public data class Channel(
     val pushPreference: PushPreference? = null,
     val filterTags: List<String> = emptyList(),
     val lastMessageAt: Date? = null,
+    val truncatedAt: Date? = null,
+    val disabled: Boolean = false,
+    val blocked: Boolean? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -159,6 +167,9 @@ public data class Channel(
             "member_count", "memberCount" -> memberCount
             "team" -> team
             "hidden" -> hidden
+            "disabled" -> disabled
+            "blocked" -> blocked
+            "truncated_at", "truncatedAt" -> truncatedAt
             "cooldown" -> cooldown
             "last_updated", "lastUpdated" -> lastUpdated
             "unread_count", "unreadCount" -> unreadCount
@@ -208,6 +219,9 @@ public data class Channel(
         private var pushPreference: PushPreference? = null
         private var filterTags: List<String> = emptyList()
         private var lastMessageAt: Date? = null
+        private var truncatedAt: Date? = null
+        private var disabled: Boolean = false
+        private var blocked: Boolean? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -244,6 +258,9 @@ public data class Channel(
             pushPreference = channel.pushPreference
             filterTags = channel.filterTags
             lastMessageAt = channel.lastMessageAt
+            truncatedAt = channel.truncatedAt
+            disabled = channel.disabled
+            blocked = channel.blocked
             extraData = channel.extraData
         }
 
@@ -304,6 +321,9 @@ public data class Channel(
 
         public fun withFilterTags(filterTags: List<String>): Builder = apply { this.filterTags = filterTags }
         public fun withLastMessageAt(lastMessageAt: Date?): Builder = apply { this.lastMessageAt = lastMessageAt }
+        public fun withTruncatedAt(truncatedAt: Date?): Builder = apply { this.truncatedAt = truncatedAt }
+        public fun withDisabled(disabled: Boolean): Builder = apply { this.disabled = disabled }
+        public fun withBlocked(blocked: Boolean?): Builder = apply { this.blocked = blocked }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         public fun build(): Channel = Channel(
@@ -340,6 +360,9 @@ public data class Channel(
             pushPreference = pushPreference,
             filterTags = filterTags,
             lastMessageAt = lastMessageAt,
+            truncatedAt = truncatedAt,
+            disabled = disabled,
+            blocked = blocked,
             extraData = extraData,
         )
     }
@@ -370,6 +393,10 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         deletedAt = that.deletedAt,
         messageCount = that.messageCount ?: messageCount,
         lastMessageAt = that.lastMessageAt,
+        disabled = that.disabled,
+        // blocked is omitted by the events, and truncatedAt only ever moves forward
+        blocked = that.blocked ?: blocked,
+        truncatedAt = max(truncatedAt, that.truncatedAt),
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -407,5 +434,8 @@ public fun Channel.toChannelData(): ChannelData {
         messageCount = messageCount,
         pushPreference = pushPreference,
         lastMessageAt = lastMessageAt,
+        truncatedAt = truncatedAt,
+        disabled = disabled,
+        blocked = blocked,
     )
 }

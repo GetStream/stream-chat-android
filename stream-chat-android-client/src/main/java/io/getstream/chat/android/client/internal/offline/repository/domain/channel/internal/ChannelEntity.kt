@@ -37,8 +37,11 @@ import java.util.Date
  * @param createdByUserId Id of the user who created the channel.
  * @param filterTags The list of filter tags applied to the channel.
  * @param frozen If the channel is frozen or not (new messages wont be allowed).
+ * @param disabled If the channel is disabled or not.
+ * @param blocked If the channel is blocked or not, when known.
  * @param hidden If the channel is hidden (new messages changes this field to false).
  * @param hideMessagesBefore Messages before this date are hidden from the user.
+ * @param truncatedAt Date/time of the last truncation, if the channel was ever truncated.
  * @param members The list of channel's members.
  * @param memberCount Number of members in the channel.
  * @param watcherIds The list of watchers` ids.
@@ -68,8 +71,11 @@ internal data class ChannelEntity(
     val createdByUserId: String,
     val filterTags: List<String>,
     val frozen: Boolean,
+    val disabled: Boolean,
+    val blocked: Boolean?,
     val hidden: Boolean?,
     val hideMessagesBefore: Date?,
+    val truncatedAt: Date?,
     val members: Map<String, MemberEntity>,
     val memberCount: Int,
     val watcherIds: List<String>,

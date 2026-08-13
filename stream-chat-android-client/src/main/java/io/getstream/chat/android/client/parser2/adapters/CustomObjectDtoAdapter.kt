@@ -29,10 +29,14 @@ import kotlin.reflect.full.primaryConstructor
  * JSON models.
  *
  * [extraDataPropertyName] names the property that holds the overflow map (`extraData` or `custom`).
+ *
+ * [alsoKeepInExtraData] names declared properties that are additionally copied into the overflow map, with their raw
+ * wire values. Useful when a key has to stay available in the overflow map as well as on its declared property.
  */
 internal open class CustomObjectDtoAdapter<Value : Any>(
     private val kClass: KClass<Value>,
     private val extraDataPropertyName: String = "extraData",
+    private val alsoKeepInExtraData: Set<String> = emptySet(),
 ) {
 
     /**
@@ -74,7 +78,7 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
 
         // Save the values of non-member fields as extra data
         map.forEach { entry ->
-            if (entry.key !in memberNames) {
+            if (entry.key !in memberNames || entry.key in alsoKeepInExtraData) {
                 extraData[entry.key] = entry.value
             }
         }

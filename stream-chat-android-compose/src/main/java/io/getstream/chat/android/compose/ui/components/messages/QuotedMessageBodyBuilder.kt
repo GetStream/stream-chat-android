@@ -36,19 +36,23 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizer
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
 import java.util.Locale
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
+// Bridges the deprecated StreamCdnImageResizing for back-compat until it is removed.
+@Suppress("DEPRECATION")
 internal class QuotedMessageBodyBuilder(
     private val resources: Resources,
     private val autoTranslationEnabled: Boolean,
     private val durationFormatter: DurationFormatter,
     private val streamCdnImageResizing: StreamCdnImageResizing,
+    private val streamCdnImageResizer: StreamCdnImageResizer,
     private val spokenDurationFormatter: SpokenDurationFormatter,
 ) {
     fun build(message: Message, currentUser: User?): QuotedMessageBody {
@@ -216,14 +220,14 @@ internal class QuotedMessageBodyBuilder(
                     imageCount++
                     fileCount++
                     mediaPreviewData = attachment.upload ?: attachment.imageUrl
-                        ?.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing)
+                        ?.applyStreamCdnImageResizing(streamCdnImageResizing, streamCdnImageResizer)
                 }
 
                 type == AttachmentType.VIDEO -> {
                     videoCount++
                     fileCount++
                     val thumbnail = attachment.thumbUrl
-                        ?.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing)
+                        ?.applyStreamCdnImageResizing(streamCdnImageResizing, streamCdnImageResizer)
                     mediaPreviewData = attachment.videoThumbnailImageData(thumbnail) ?: attachment.upload
                 }
 
@@ -267,12 +271,15 @@ internal class QuotedMessageBodyBuilder(
     )
 }
 
+// Reads the deprecated ChatTheme.streamCdnImageResizing for back-compat until it is removed.
 @Composable
+@Suppress("DEPRECATION")
 internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
     val resources = LocalContext.current.resources
     val autoTranslationEnabled = ChatTheme.config.translation.enabled
     val durationFormatter = ChatTheme.durationFormatter
     val streamCdnImageResizing: StreamCdnImageResizing = ChatTheme.streamCdnImageResizing
+    val streamCdnImageResizer: StreamCdnImageResizer = ChatTheme.streamCdnImageResizer
     val locale = ConfigurationCompat.getLocales(LocalConfiguration.current)[0] ?: Locale.getDefault()
     val spokenDurationFormatter = remember(locale, durationFormatter) {
         SpokenDurationFormatter(locale, durationFormatter)
@@ -283,6 +290,7 @@ internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
         autoTranslationEnabled,
         durationFormatter,
         streamCdnImageResizing,
+        streamCdnImageResizer,
         spokenDurationFormatter,
     ) {
         QuotedMessageBodyBuilder(
@@ -290,6 +298,7 @@ internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
             autoTranslationEnabled = autoTranslationEnabled,
             durationFormatter = durationFormatter,
             streamCdnImageResizing = streamCdnImageResizing,
+            streamCdnImageResizer = streamCdnImageResizer,
             spokenDurationFormatter = spokenDurationFormatter,
         )
     }
