@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGaller
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.theme.DefaultStreamCdnImageResizer
 import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.compose.ui.theme.MessageListConfig
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -159,6 +160,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     mediaGallery = intent.getParcelable(KeyConfig) ?: MediaGalleryConfig(),
                 ),
                 streamCdnImageResizing = streamCdnImageResizing,
+                // The resizer isn't serializable, so it's carried through the injector like the imageLoader rather
+                // than the launching Intent; falls back to the default 2MP resizer when nothing was installed.
+                streamCdnImageResizer = MediaGalleryInjector.streamCdnImageResizer ?: DefaultStreamCdnImageResizer,
             ) {
                 SetupEdgeToEdge()
 

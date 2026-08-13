@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.helpers
 
+import io.getstream.chat.android.client.extensions.STREAM_CDN_HOST_PATTERN
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
@@ -40,7 +41,5 @@ public class AttachmentHelper(private val timeProvider: TimeProvider = TimeProvi
 
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"
-        private val STREAM_CDN_HOST_PATTERN =
-            "stream-chat-+.+\\.imgix.net$|.+\\.stream-io-cdn.com$".toRegex(RegexOption.IGNORE_CASE)
     }
 }

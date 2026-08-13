@@ -112,6 +112,7 @@ internal class ChannelDataTest {
         val createdAt = randomDate()
         val updatedAt = randomDate()
         val deletedAt = randomDate()
+        val truncatedAt = randomDate()
         val createdBy = randomUser()
         val membership = randomMember()
         val draft = randomDraftMessage()
@@ -141,6 +142,9 @@ internal class ChannelDataTest {
                 disabledUntil = null,
             ),
             filterTags = filterTags,
+            truncatedAt = truncatedAt,
+            disabled = true,
+            blocked = true,
         )
 
         val messages = listOf(randomMessage())
@@ -190,6 +194,9 @@ internal class ChannelDataTest {
         assertEquals(100, channel.messageCount)
         assertEquals(PushPreferenceLevel.all, channel.pushPreference?.level)
         assertNull(channel.pushPreference?.disabledUntil)
+        assertEquals(truncatedAt, channel.truncatedAt)
+        assertTrue(channel.disabled)
+        assertTrue(channel.blocked!!)
     }
 
     @Test
@@ -338,6 +345,42 @@ internal class ChannelDataTest {
 
         // then
         assertEquals(50, merged.messageCount)
+    }
+
+    @Test
+    fun `mergeFromEvent should always take disabled from the update`() {
+        val original = ChannelData(id = "123", type = "messaging", disabled = true)
+        val update = ChannelData(id = "123", type = "messaging", disabled = false)
+
+        assertFalse(original.mergeFromEvent(update).disabled)
+    }
+
+    @Test
+    fun `mergeFromEvent should keep blocked when the update has none`() {
+        val original = ChannelData(id = "123", type = "messaging", blocked = true)
+        val update = ChannelData(id = "123", type = "messaging", blocked = null)
+
+        assertTrue(original.mergeFromEvent(update).blocked!!)
+    }
+
+    @Test
+    fun `mergeFromEvent should keep the latest truncatedAt`() {
+        val earlier = Date(1000)
+        val later = Date(2000)
+
+        fun merge(original: Date?, update: Date?): Date? = ChannelData(
+            id = "123",
+            type = "messaging",
+            truncatedAt = original,
+        ).mergeFromEvent(
+            ChannelData(id = "123", type = "messaging", truncatedAt = update),
+        ).truncatedAt
+
+        assertEquals(later, merge(original = later, update = earlier))
+        assertEquals(later, merge(original = earlier, update = later))
+        assertEquals(later, merge(original = later, update = null))
+        assertEquals(later, merge(original = null, update = later))
+        assertNull(merge(original = null, update = null))
     }
 
     @Test
