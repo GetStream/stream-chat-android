@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -183,6 +182,7 @@ import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -3189,7 +3189,7 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getUnreadCounts")
     fun testGetUnreadCounts(
         model: UnreadCounts,
-        dto: UnreadDto,
+        dto: WrappedUnreadCountsResponse,
     ) = runTest {
         val api = mock<GeneralApi> {
             on { getUnreadCounts() } doReturn RetroSuccess(dto).toRetrofitCall()

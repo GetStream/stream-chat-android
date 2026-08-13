@@ -61,10 +61,6 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadDto
-import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
@@ -103,7 +99,11 @@ import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UnreadCountsChannel
+import io.getstream.chat.android.network.models.UnreadCountsChannelType
+import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -444,6 +444,9 @@ internal object Mother {
         created_at: Date? = randomDateOrNull(),
         deleted_at: Date? = randomDateOrNull(),
         updated_at: Date? = randomDateOrNull(),
+        truncated_at: Date? = randomDateOrNull(),
+        disabled: Boolean = randomBoolean(),
+        blocked: Boolean? = randomBoolean(),
         member_count: Int = randomInt(),
         messages: List<DownstreamMessageDto> = emptyList(),
         members: List<DownstreamMemberDto> = emptyList(),
@@ -470,6 +473,9 @@ internal object Mother {
         created_at = created_at,
         deleted_at = deleted_at,
         updated_at = updated_at,
+        truncated_at = truncated_at,
+        disabled = disabled,
+        blocked = blocked,
         member_count = member_count,
         messages = messages,
         members = members,
@@ -1357,16 +1363,17 @@ internal object Mother {
         totalUnreadCount: Int = randomInt(),
         totalUnreadThreadsCount: Int = randomInt(),
         totalUnreadCountByTeam: Map<String, Int> = emptyMap(),
-        channels: List<UnreadChannelDto> = emptyList(),
-        threads: List<UnreadThreadDto> = emptyList(),
-        channelType: List<UnreadChannelByTypeDto> = emptyList(),
-    ): UnreadDto = UnreadDto(
-        total_unread_count = totalUnreadCount,
-        total_unread_threads_count = totalUnreadThreadsCount,
-        total_unread_count_by_team = totalUnreadCountByTeam,
+        channels: List<UnreadCountsChannel> = emptyList(),
+        threads: List<UnreadCountsThread> = emptyList(),
+        channelType: List<UnreadCountsChannelType> = emptyList(),
+    ): WrappedUnreadCountsResponse = WrappedUnreadCountsResponse(
+        duration = randomString(),
+        totalUnreadCount = totalUnreadCount,
+        totalUnreadThreadsCount = totalUnreadThreadsCount,
+        totalUnreadCountByTeam = totalUnreadCountByTeam,
         channels = channels,
         threads = threads,
-        channel_type = channelType,
+        channelType = channelType,
     )
 
     fun randomUnreadCountByTeamDto(
@@ -1378,10 +1385,10 @@ internal object Mother {
         channelId: String = randomString(),
         unreadCount: Int = randomInt(),
         lastRead: Date = randomDate(),
-    ): UnreadChannelDto = UnreadChannelDto(
-        channel_id = channelId,
-        unread_count = unreadCount,
-        last_read = lastRead,
+    ): UnreadCountsChannel = UnreadCountsChannel(
+        channelId = channelId,
+        unreadCount = unreadCount,
+        lastRead = lastRead,
     )
 
     fun randomUnreadThreadDto(
@@ -1389,21 +1396,21 @@ internal object Mother {
         unreadCount: Int = randomInt(),
         lastRead: Date = randomDate(),
         lastReadMessageId: String = randomString(),
-    ): UnreadThreadDto = UnreadThreadDto(
-        parent_message_id = parentMessageId,
-        unread_count = unreadCount,
-        last_read = lastRead,
-        last_read_message_id = lastReadMessageId,
+    ): UnreadCountsThread = UnreadCountsThread(
+        parentMessageId = parentMessageId,
+        unreadCount = unreadCount,
+        lastRead = lastRead,
+        lastReadMessageId = lastReadMessageId,
     )
 
     fun randomUnreadChannelByTypeDto(
         channelType: String = randomString(),
         channelCount: Int = randomInt(),
         unreadCount: Int = randomInt(),
-    ): UnreadChannelByTypeDto = UnreadChannelByTypeDto(
-        channel_type = channelType,
-        channel_count = channelCount,
-        unread_count = unreadCount,
+    ): UnreadCountsChannelType = UnreadCountsChannelType(
+        channelType = channelType,
+        channelCount = channelCount,
+        unreadCount = unreadCount,
     )
 
     fun randomDownstreamPushPreferenceDto(

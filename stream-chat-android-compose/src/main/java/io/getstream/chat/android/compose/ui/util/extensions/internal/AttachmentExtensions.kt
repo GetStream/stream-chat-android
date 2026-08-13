@@ -23,7 +23,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageData
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 
 /**
  * The content URI stored when the attachment was created from a device picker,
@@ -70,10 +70,15 @@ internal val Attachment.imagePreviewData: Any?
     get() = when {
         isImage() ->
             imageUrl
-                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                ?.applyStreamCdnImageResizing(ChatTheme.streamCdnImageResizing, ChatTheme.streamCdnImageResizer)
                 ?: upload
         isVideo() && ChatTheme.config.messageList.videoThumbnailsEnabled ->
-            videoThumbnailImageData(thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing))
+            videoThumbnailImageData(
+                thumbUrl?.applyStreamCdnImageResizing(
+                    ChatTheme.streamCdnImageResizing,
+                    ChatTheme.streamCdnImageResizer,
+                ),
+            )
                 ?: upload
         else -> null
     }

@@ -33,7 +33,7 @@ import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
 
 @Composable
 internal fun Avatar(
@@ -43,7 +43,10 @@ internal fun Avatar(
     showBorder: Boolean = false,
 ) {
     val resizing = ChatTheme.streamCdnImageResizing
-    val data = remember(imageUrl, resizing) { imageUrl?.applyStreamCdnImageResizingIfEnabled(resizing) }
+    val resizer = ChatTheme.streamCdnImageResizer
+    val data = remember(imageUrl, resizing, resizer) {
+        imageUrl?.applyStreamCdnImageResizing(resizing, resizer)
+    }
 
     StreamAsyncImage(
         data = data,

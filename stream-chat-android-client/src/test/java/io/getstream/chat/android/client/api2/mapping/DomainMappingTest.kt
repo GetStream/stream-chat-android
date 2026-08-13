@@ -62,7 +62,6 @@ import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
-import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
@@ -319,6 +318,9 @@ internal class DomainMappingTest {
         assertEquals(downstreamChannelDto.created_at, channel.createdAt)
         assertEquals(downstreamChannelDto.deleted_at, channel.deletedAt)
         assertEquals(downstreamChannelDto.updated_at, channel.updatedAt)
+        assertEquals(downstreamChannelDto.truncated_at, channel.truncatedAt)
+        assertEquals(downstreamChannelDto.disabled, channel.disabled)
+        assertEquals(downstreamChannelDto.blocked, channel.blocked)
         assertEquals(downstreamChannelDto.member_count, channel.memberCount)
         assertEquals(downstreamChannelDto.team, channel.team)
         assertEquals(downstreamChannelDto.cooldown, channel.cooldown)
@@ -1108,41 +1110,45 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `UnreadDto is correctly mapped to UnreadCounts`() {
+    fun `WrappedUnreadCountsResponse is correctly mapped to UnreadCounts`() {
+        val lastRead = Date(1000)
         val input = randomUnreadDto(
-            totalUnreadCountByTeam = mapOf(randomUnreadCountByTeamDto()),
-            channels = listOf(randomUnreadChannelDto()),
-            threads = listOf(randomUnreadThreadDto()),
-            channelType = listOf(randomUnreadChannelByTypeDto()),
+            totalUnreadCount = 7,
+            totalUnreadThreadsCount = 3,
+            totalUnreadCountByTeam = mapOf("team-1" to 4),
+            channels = listOf(
+                randomUnreadChannelDto(channelId = "messaging:c1", unreadCount = 2, lastRead = lastRead),
+            ),
+            threads = listOf(
+                randomUnreadThreadDto(
+                    parentMessageId = "parent-1",
+                    unreadCount = 1,
+                    lastRead = lastRead,
+                    lastReadMessageId = "msg-1",
+                ),
+            ),
+            channelType = listOf(
+                randomUnreadChannelByTypeDto(channelType = "messaging", channelCount = 5, unreadCount = 6),
+            ),
         )
         val sut = Fixture().get()
         val result = with(sut) { input.toDomain() }
         val expected = UnreadCounts(
-            messagesCount = input.total_unread_count,
-            threadsCount = input.total_unread_threads_count,
-            messagesCountByTeam = input.total_unread_count_by_team!!,
-            channels = input.channels.map { dto ->
-                UnreadChannel(
-                    cid = dto.channel_id,
-                    messagesCount = dto.unread_count,
-                    lastRead = dto.last_read,
-                )
-            },
-            threads = input.threads.map { dto ->
+            messagesCount = 7,
+            threadsCount = 3,
+            messagesCountByTeam = mapOf("team-1" to 4),
+            channels = listOf(UnreadChannel(cid = "messaging:c1", messagesCount = 2, lastRead = lastRead)),
+            threads = listOf(
                 UnreadThread(
-                    parentMessageId = dto.parent_message_id,
-                    messagesCount = dto.unread_count,
-                    lastRead = dto.last_read,
-                    lastReadMessageId = dto.last_read_message_id,
-                )
-            },
-            channelsByType = input.channel_type.map { dto ->
-                UnreadChannelByType(
-                    channelType = dto.channel_type,
-                    channelsCount = dto.channel_count,
-                    messagesCount = dto.unread_count,
-                )
-            },
+                    parentMessageId = "parent-1",
+                    messagesCount = 1,
+                    lastRead = lastRead,
+                    lastReadMessageId = "msg-1",
+                ),
+            ),
+            channelsByType = listOf(
+                UnreadChannelByType(channelType = "messaging", channelsCount = 5, messagesCount = 6),
+            ),
         )
         assertEquals(expected, result)
     }

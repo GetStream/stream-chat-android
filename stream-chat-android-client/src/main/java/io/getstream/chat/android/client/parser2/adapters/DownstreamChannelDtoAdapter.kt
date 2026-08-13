@@ -24,7 +24,10 @@ import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 
 internal object DownstreamChannelDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamChannelDto>(DownstreamChannelDto::class) {
+    CustomObjectDtoAdapter<DownstreamChannelDto>(
+        DownstreamChannelDto::class,
+        alsoKeepInExtraData = LEGACY_CHANNEL_EXTRA_DATA_KEYS,
+    ) {
 
     @FromJson
     fun fromJson(
@@ -37,3 +40,10 @@ internal object DownstreamChannelDtoAdapter :
     @Suppress("UNUSED_PARAMETER")
     fun toJson(jsonWriter: JsonWriter, value: DownstreamChannelDto): Unit = error("Can't convert this to Json")
 }
+
+/**
+ * Channel fields that were only reachable through `Channel.extraData` before they became declared properties.
+ *
+ * TODO(AND-1375): drop in the next major, along with the [CustomObjectDtoAdapter.alsoKeepInExtraData] plumbing.
+ */
+internal val LEGACY_CHANNEL_EXTRA_DATA_KEYS = setOf("disabled", "blocked", "truncated_at")
