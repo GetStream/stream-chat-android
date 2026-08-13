@@ -128,8 +128,11 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
@@ -963,6 +966,28 @@ internal class DomainMapping(
         channelMentions = ChatPreferenceToggle.fromValue(channel_mentions),
         threadReplies = ChatPreferenceToggle.fromValue(thread_replies),
         defaultPreference = ChatPreferenceToggle.fromValue(default_preference),
+    )
+
+    internal fun PushPreferencesResponse.toDomain(): PushPreference = PushPreference(
+        level = PushPreferenceLevel.fromValue(chatLevel),
+        disabledUntil = disabledUntil,
+        chatPreferences = chatPreferences?.toDomain(),
+    )
+
+    internal fun ChannelPushPreferencesResponse.toDomain(): PushPreference = PushPreference(
+        level = PushPreferenceLevel.fromValue(chatLevel),
+        disabledUntil = disabledUntil,
+        chatPreferences = null,
+    )
+
+    internal fun ChatPreferencesResponse.toDomain(): ChatPreferences = ChatPreferences(
+        directMentions = ChatPreferenceToggle.fromValue(directMentions),
+        roleMentions = ChatPreferenceToggle.fromValue(roleMentions),
+        groupMentions = ChatPreferenceToggle.fromValue(groupMentions),
+        hereMentions = ChatPreferenceToggle.fromValue(hereMentions),
+        channelMentions = ChatPreferenceToggle.fromValue(channelMentions),
+        threadReplies = ChatPreferenceToggle.fromValue(threadReplies),
+        defaultPreference = ChatPreferenceToggle.fromValue(defaultPreference),
     )
 
     internal fun List<Map<String, Any>>?.toSortDomain(): QuerySorter<Channel>? {

@@ -69,10 +69,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRe
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
-import io.getstream.chat.android.client.api2.model.response.getUserChannelPreference
-import io.getstream.chat.android.client.api2.model.response.getUserPreference
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -177,6 +174,7 @@ import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersRequest
+import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
@@ -2022,9 +2020,9 @@ constructor(
     private fun <T : Any, R : Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
         map { domainMapping.transform(it) }
 
-    private fun RetrofitCall<PushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
+    private fun RetrofitCall<UpsertPushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
         val currentUserId = currentUserIdProvider().orEmpty()
-        val preference = it.getUserPreference(currentUserId)
+        val preference = it.userPreferences[currentUserId]
         if (preference != null) {
             val result = Result.Success(preference.toDomain())
             CoroutineCall(coroutineScope) { result }
@@ -2037,9 +2035,11 @@ constructor(
         }
     }
 
-    private fun RetrofitCall<PushPreferencesResponse>.parseChannelPushPreferencesResponse(cid: String) = flatMapDomain {
+    private fun RetrofitCall<UpsertPushPreferencesResponse>.parseChannelPushPreferencesResponse(
+        cid: String,
+    ) = flatMapDomain {
         val currentUserId = currentUserIdProvider().orEmpty()
-        val preference = it.getUserChannelPreference(currentUserId, cid)
+        val preference = it.userChannelPreferences[currentUserId]?.get(cid)
         if (preference != null) {
             val result = Result.Success(preference.toDomain())
             CoroutineCall(coroutineScope) { result }

@@ -39,9 +39,7 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -66,7 +64,6 @@ import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilt
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
-import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
@@ -132,6 +129,8 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
@@ -155,6 +154,7 @@ import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
+import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
@@ -180,6 +180,7 @@ import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.VoteData
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
@@ -2933,9 +2934,10 @@ internal class MoshiChatApiTest {
         // given
         val userId = randomString()
         val level = PushPreferenceLevel.all
-        val response = PushPreferencesResponse(
-            user_channel_preferences = emptyMap(),
-            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(level.value, null)),
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = emptyMap(),
+            userPreferences = mapOf(userId to PushPreferencesResponse(chatLevel = level.value, disabledUntil = null)),
         )
         val call = RetroSuccess(response).toRetrofitCall()
         val api = mock<PushPreferencesApi>()
@@ -2966,9 +2968,10 @@ internal class MoshiChatApiTest {
         // given
         val userId = randomString()
         val until = randomDate()
-        val response = PushPreferencesResponse(
-            user_channel_preferences = emptyMap(),
-            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(null, until)),
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = emptyMap(),
+            userPreferences = mapOf(userId to PushPreferencesResponse(chatLevel = null, disabledUntil = until)),
         )
         val call = RetroSuccess(response).toRetrofitCall()
         val api = mock<PushPreferencesApi>()
@@ -3000,9 +3003,12 @@ internal class MoshiChatApiTest {
         val userId = randomString()
         val cid = randomCID()
         val level = PushPreferenceLevel.mentions
-        val response = PushPreferencesResponse(
-            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(level.value, null))),
-            user_preferences = emptyMap(),
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = mapOf(
+                userId to mapOf(cid to ChannelPushPreferencesResponse(chatLevel = level.value, disabledUntil = null)),
+            ),
+            userPreferences = emptyMap(),
         )
         val call = RetroSuccess(response).toRetrofitCall()
         val api = mock<PushPreferencesApi>()
@@ -3034,9 +3040,12 @@ internal class MoshiChatApiTest {
         val userId = randomString()
         val cid = randomCID()
         val until = randomDate()
-        val response = PushPreferencesResponse(
-            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(null, until))),
-            user_preferences = emptyMap(),
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = mapOf(
+                userId to mapOf(cid to ChannelPushPreferencesResponse(chatLevel = null, disabledUntil = until)),
+            ),
+            userPreferences = emptyMap(),
         )
         val call = RetroSuccess(response).toRetrofitCall()
         val api = mock<PushPreferencesApi>()
@@ -3070,16 +3079,17 @@ internal class MoshiChatApiTest {
             channelMentions = ChatPreferenceToggle.none,
             defaultPreference = ChatPreferenceToggle.none,
         )
-        val response = PushPreferencesResponse(
-            user_channel_preferences = emptyMap(),
-            user_preferences = mapOf(
-                userId to DownstreamPushPreferenceDto(
-                    chat_level = null,
-                    disabled_until = null,
-                    chat_preferences = DownstreamChatPreferencesDto(
-                        direct_mentions = "all",
-                        channel_mentions = "none",
-                        default_preference = "none",
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = emptyMap(),
+            userPreferences = mapOf(
+                userId to PushPreferencesResponse(
+                    chatLevel = null,
+                    disabledUntil = null,
+                    chatPreferences = ChatPreferencesResponse(
+                        directMentions = "all",
+                        channelMentions = "none",
+                        defaultPreference = "none",
                     ),
                 ),
             ),
@@ -3114,17 +3124,17 @@ internal class MoshiChatApiTest {
         val userId = randomString()
         val cid = randomCID()
         val prefs = ChatPreferences(directMentions = ChatPreferenceToggle.all)
-        val response = PushPreferencesResponse(
-            user_channel_preferences = mapOf(
+        val response = UpsertPushPreferencesResponse(
+            duration = randomString(),
+            userChannelPreferences = mapOf(
                 userId to mapOf(
-                    cid to DownstreamPushPreferenceDto(
-                        chat_level = null,
-                        disabled_until = null,
-                        chat_preferences = DownstreamChatPreferencesDto(direct_mentions = "all"),
+                    cid to ChannelPushPreferencesResponse(
+                        chatLevel = null,
+                        disabledUntil = null,
                     ),
                 ),
             ),
-            user_preferences = emptyMap(),
+            userPreferences = emptyMap(),
         )
         val api = mock<PushPreferencesApi>()
         whenever(api.upsertPushPreferences(any())).doReturn(RetroSuccess(response).toRetrofitCall())
