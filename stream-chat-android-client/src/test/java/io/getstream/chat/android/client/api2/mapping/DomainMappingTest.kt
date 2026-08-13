@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
-import io.getstream.chat.android.client.Mother.randomDownstreamThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
@@ -60,12 +59,14 @@ import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
+import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
 import io.getstream.chat.android.client.Mother.randomUserGroupResponse
+import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
@@ -115,6 +116,7 @@ import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserGroupMember
@@ -125,6 +127,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -132,6 +135,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -472,6 +476,78 @@ internal class DomainMappingTest {
             lastReactionAt = downstreamReactionGroupDto.last_reaction_at,
         )
         assertEquals(expected, reactionGroup)
+    }
+
+    @Test
+    fun `UserResponse is correctly mapped to User`() {
+        val userResponse = UserResponse(
+            id = "userId",
+            role = "admin",
+            language = "pt",
+            banned = true,
+            online = true,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            name = "Padme",
+            image = "image.png",
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            avgResponseTime = 42,
+            custom = mapOf("birthland" to "Polis Massa", "absent" to null),
+        )
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        val expected = User(
+            id = "userId",
+            role = "admin",
+            name = "Padme",
+            image = "image.png",
+            language = "pt",
+            banned = true,
+            online = true,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            // The response carries an Int, the domain a Long.
+            avgResponseTime = 42L,
+            // `absent` is dropped: the domain map does not hold null values.
+            extraData = mapOf("birthland" to "Polis Massa"),
+        )
+        assertEquals(expected, user)
+    }
+
+    @Test
+    fun `UserResponse without a name or image is mapped to empty strings`() {
+        val userResponse = randomUserResponse()
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        user.name shouldBeEqualTo ""
+        user.image shouldBeEqualTo ""
+        user.teamsRole shouldBeEqualTo emptyMap()
+        user.avgResponseTime shouldBeEqualTo null
+    }
+
+    @Test
+    fun `User mapped from a UserResponse should be transformed`() {
+        val transformedUser = randomUser()
+        val sut = Fixture()
+            .withUserTransformer(UserTransformer { transformedUser })
+            .get()
+
+        val result = with(sut) { randomUserResponse().toDomain() }
+
+        assertEquals(transformedUser, result)
     }
 
     @Test
@@ -847,14 +923,14 @@ internal class DomainMappingTest {
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
         val user2 = randomDownstreamUserDto(id = "user2")
-        val participant1Dto = randomDownstreamThreadParticipantDto(
+        val participant1Dto = randomThreadParticipantDto(
             userId = user1.id,
-            user = user1,
+            user = randomUserResponse(id = user1.id),
             lastThreadMessageAt = Date(2000),
         )
-        val participant2Dto = randomDownstreamThreadParticipantDto(
+        val participant2Dto = randomThreadParticipantDto(
             userId = user2.id,
-            user = user2,
+            user = randomUserResponse(id = user2.id),
             lastThreadMessageAt = Date(1000),
         )
         val downstreamThreadDto = randomDownstreamThreadDto(

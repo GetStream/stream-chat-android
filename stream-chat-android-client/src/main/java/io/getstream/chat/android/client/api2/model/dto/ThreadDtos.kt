@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.ThreadParticipant
 import java.util.Date
 
 /**
@@ -60,7 +61,7 @@ internal data class DownstreamThreadDto(
     val participant_count: Int,
     val read: List<DownstreamChannelUserRead>?,
     val reply_count: Int?,
-    val thread_participants: List<DownstreamThreadParticipantDto>?,
+    val thread_participants: List<ThreadParticipant>?,
     val title: String,
     val updated_at: Date,
     val extraData: Map<String, Any>,
@@ -98,7 +99,7 @@ internal data class DownstreamThreadInfoDto(
     val reply_count: Int?,
     val participant_count: Int?,
     val active_participant_count: Int?,
-    val thread_participants: List<DownstreamThreadParticipantDto>?,
+    val thread_participants: List<ThreadParticipant>?,
     val last_message_at: Date?,
     val created_at: Date,
     val updated_at: Date,
@@ -106,18 +107,3 @@ internal data class DownstreamThreadInfoDto(
     val title: String,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-/**
- * The DTO for Thread Participant.
- *
- * @param user_id The ID of the user (thread participant).
- * @param user The user as the thread participant. (Note: It is not always delivered, sometimes we only get the ID of
- * the user - [user_id]).
- * @param last_thread_message_at The date of the last message in the thread at the time of participation.
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamThreadParticipantDto(
-    val user_id: String,
-    val user: DownstreamUserDto?,
-    val last_thread_message_at: Date?,
-)

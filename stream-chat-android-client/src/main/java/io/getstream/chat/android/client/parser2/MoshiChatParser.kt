@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapte
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
+import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
@@ -56,6 +57,7 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapt
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UserRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.UserResponseAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
@@ -83,6 +85,7 @@ internal class MoshiChatParser(
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
+            .add(UserResponseAdapter)
             .add(UserRequestAdapter)
             .add(DownstreamMemberDtoAdapter)
             .add(UpstreamMemberDtoAdapter)
@@ -107,6 +110,8 @@ internal class MoshiChatParser(
                 UpdatePollRequest.VotingVisibility::class.java,
                 UpdatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
             )
+            // Registered last so the model-specific adapters above keep precedence and delegate into it.
+            .add(NullCollectionsAsEmptyFactory)
             .build()
     }
 

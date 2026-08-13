@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
@@ -135,11 +134,13 @@ import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 @Suppress("TooManyFunctions", "LargeClass")
@@ -441,6 +442,26 @@ internal class DomainMapping(
             archivedAt = archived_at,
             extraData = extraData,
         )
+
+    internal fun UserResponse.toDomain(): User =
+        User(
+            id = id,
+            role = role,
+            name = name.orEmpty(),
+            image = image.orEmpty(),
+            language = language,
+            banned = banned,
+            online = online,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            deactivatedAt = deactivatedAt,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+        ).let(userTransformer::transform)
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(
@@ -840,11 +861,11 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]
+     * Transforms [ThreadParticipantDto] into [ThreadParticipant]
      */
-    internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
-        user = user?.toDomain() ?: User(id = user_id),
-        lastThreadMessageAt = last_thread_message_at,
+    internal fun ThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
+        user = user?.toDomain() ?: User(id = userId.orEmpty()),
+        lastThreadMessageAt = lastThreadMessageAt,
     )
 
     /**
