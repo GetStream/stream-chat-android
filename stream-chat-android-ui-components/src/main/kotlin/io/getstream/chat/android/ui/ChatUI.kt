@@ -190,8 +190,8 @@ public object ChatUI {
      */
     @Deprecated(
         "Use streamCdnImageResizer (defaults to a StreamCdnMaxPixelsImageResizer capping images to 2MP). " +
-            "For custom behavior, provide your own StreamCdnImageResizer.",
-        ReplaceWith("streamCdnImageResizer"),
+            "For custom behavior, provide your own StreamCdnImageResizer. This percentage-based config has no " +
+            "one-token replacement — migrate manually.",
     )
     @JvmStatic
     public var streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing()

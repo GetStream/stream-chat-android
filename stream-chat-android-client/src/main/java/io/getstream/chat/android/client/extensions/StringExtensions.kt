@@ -43,18 +43,14 @@ public val STREAM_CDN_HOST_PATTERN: Regex =
 /**
  * Returns whether this URL is served from a Stream CDN host that understands resizing query parameters.
  *
- * @param cdnHost An optional custom Stream CDN host (e.g. a proxied domain). When provided, the URL host is
- * matched against it with a substring check, mirroring iOS' `StreamCDNRequester(cdnHost:)`; when null, the
- * default [STREAM_CDN_HOST_PATTERN] is used.
+ * @param cdnHost An optional custom Stream CDN host (e.g. a proxied domain), matched with a substring check
+ * in addition to the default [STREAM_CDN_HOST_PATTERN], mirroring iOS' `StreamCDNRequester(cdnHost:)`.
  */
 @InternalStreamChatApi
 public fun String.isStreamCdnHosted(cdnHost: String? = null): Boolean {
     val host = this.toUri().host ?: return false
-    return if (cdnHost != null) {
-        host.contains(cdnHost, ignoreCase = true)
-    } else {
-        STREAM_CDN_HOST_PATTERN.matches(host)
-    }
+    return STREAM_CDN_HOST_PATTERN.matches(host) ||
+        (cdnHost != null && host.contains(cdnHost, ignoreCase = true))
 }
 
 /**
@@ -223,8 +219,9 @@ public fun String.createResizedStreamCdnImageUrl(
     if (maxImagePixels <= 0L) return this
     if (!isStreamCdnHosted(cdnHost)) return this
     val dimensions = getStreamCdnHostedImageDimensions() ?: return this
+    if (dimensions.originalWidth <= 0 || dimensions.originalHeight <= 0) return this
     val totalPixels = dimensions.originalWidth.toLong() * dimensions.originalHeight.toLong()
-    if (totalPixels <= 0L || totalPixels <= maxImagePixels) return this
+    if (totalPixels <= maxImagePixels) return this
     val scale = sqrt(maxImagePixels.toDouble() / totalPixels.toDouble()).toFloat()
     return createResizedStreamCdnImageUrl(
         resizedWidthPercentage = scale,
