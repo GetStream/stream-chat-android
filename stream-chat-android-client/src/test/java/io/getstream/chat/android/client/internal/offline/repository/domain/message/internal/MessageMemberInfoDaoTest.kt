@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.internal.offline.repository.database.int
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.After
@@ -54,7 +54,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `member custom survives the round trip`(): Unit = runBlocking {
+    fun `member custom survives the round trip`(): Unit = runTest {
         val member = MemberInfo(
             channelRole = "channel_moderator",
             notificationsMuted = true,
@@ -68,7 +68,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `a member without custom data survives the round trip`(): Unit = runBlocking {
+    fun `a member without custom data survives the round trip`(): Unit = runTest {
         val member = MemberInfo(channelRole = "channel_member", notificationsMuted = false, extraData = emptyMap())
         val message = randomMessage(member = member, replyTo = null, poll = null)
 
@@ -78,7 +78,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `an absent member stays absent across the round trip`(): Unit = runBlocking {
+    fun `an absent member stays absent across the round trip`(): Unit = runTest {
         val message = randomMessage(member = null, replyTo = null, poll = null)
 
         messageDao.insert(message.toEntity())
@@ -87,7 +87,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `member custom survives the round trip for a quoted message`(): Unit = runBlocking {
+    fun `member custom survives the round trip for a quoted message`(): Unit = runTest {
         val member = MemberInfo(
             channelRole = "channel_moderator",
             notificationsMuted = true,
@@ -101,7 +101,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `a message carrying only the deprecated channelRole keeps it across the round trip`(): Unit = runBlocking {
+    fun `a message carrying only the deprecated channelRole keeps it across the round trip`(): Unit = runTest {
         @Suppress("DEPRECATION")
         val message = randomMessage(channelRole = "channel_moderator", member = null, replyTo = null, poll = null)
 
@@ -112,7 +112,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `updating the member touches only the matching channel and author`(): Unit = runBlocking {
+    fun `updating the member touches only the matching channel and author`(): Unit = runTest {
         val author = randomUser(id = "author")
         val other = randomUser(id = "other")
         val mine = randomMessage(cid = CID, user = author, member = null, replyTo = null, poll = null)
@@ -129,7 +129,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `updating the member leaves the rest of the message untouched`(): Unit = runBlocking {
+    fun `updating the member leaves the rest of the message untouched`(): Unit = runTest {
         // This is the point of the targeted update: a concurrent edit elsewhere must not be reverted by the refresh.
         val author = randomUser(id = "author")
         val message = randomMessage(cid = CID, user = author, member = null, replyTo = null, poll = null)
@@ -144,7 +144,7 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
-    fun `updating the member clears it when null is stored`(): Unit = runBlocking {
+    fun `updating the member clears it when null is stored`(): Unit = runTest {
         val author = randomUser(id = "author")
         val member = MemberInfo(channelRole = "channel_member", extraData = mapOf("flair" to "gold"))
         val message = randomMessage(cid = CID, user = author, member = member, replyTo = null, poll = null)
