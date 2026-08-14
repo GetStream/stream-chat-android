@@ -139,6 +139,7 @@ import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
@@ -805,6 +806,41 @@ internal class DomainMapping(
             originalWidth = original_width,
             extraData = extraData.toMutableMap(),
         )
+
+    internal fun GetOGResponse.toDomain(): Attachment {
+        // The spec does not declare file_size/image/mime_type/name, so when the wire sends them they
+        // arrive in `custom`. Read them back out and remove them, or they would also sit in extraData
+        // under their wire names, which the hand-written DTO never did.
+        val extras = custom.toMutableMap()
+        val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
+        val image = extras.remove("image") as? String
+        val mimeType = extras.remove("mime_type") as? String
+        val name = extras.remove("name") as? String
+        return Attachment(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            authorLink = authorLink,
+            fallback = fallback,
+            fileSize = fileSize,
+            image = image,
+            imageUrl = imageUrl,
+            mimeType = mimeType,
+            name = name,
+            ogUrl = ogScrapeUrl,
+            text = text,
+            thumbUrl = thumbUrl,
+            title = title,
+            titleLink = titleLink,
+            type = type,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            extraData = extras.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+        )
+        // `giphy` is deliberately not mapped: unlike the fields above, it has a single producer -- the
+        // giphy slash command, which writes it to a message attachment -- so it cannot reach /og. The
+        // slice that adopts the shared Attachment model owns it, and must re-emit it into
+        // extraData["giphy"] or Attachment.giphyInfo() stops finding gif urls.
+    }
 
     /**
      * Transforms [BanResponse] to [BannedUser], or to null when the ban carries no user.
