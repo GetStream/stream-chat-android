@@ -240,6 +240,26 @@ internal class StringExtensionsKtTest {
     }
 
     @Test
+    fun `custom cdn host matching is additive - default Stream hosts still resize`() {
+        val streamUrl = createStreamCdnImageLink(originalWidth = 4000, originalHeight = 2000)
+
+        // With a custom host configured, default Stream CDN images must still be resized.
+        val resized = streamUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "images.example.com",
+        )
+        (resized != streamUrl) shouldBeEqualTo true
+        (resized.toUri().getQueryParameter(QUERY_PARAMETER_KEY_RESIZED_WIDTH) != null) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Given non-positive original dimensions Should return the url unchanged`() {
+        val negativeDimsUrl = createStreamCdnImageLink(originalWidth = -4000, originalHeight = -2000)
+
+        negativeDimsUrl.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo negativeDimsUrl
+    }
+
+    @Test
     fun `Given a non-positive max pixel budget Should return the url unchanged`() {
         val originalUrl = createStreamCdnImageLink(originalWidth = 4000, originalHeight = 2000)
 
