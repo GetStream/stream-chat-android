@@ -26,10 +26,11 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
-import io.getstream.chat.android.client.extensions.internal.withMemberInfo
+import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.CACHED_LATEST_MESSAGES_LIMIT
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.TRIM_BUFFER
@@ -904,8 +905,8 @@ internal class ChannelStateImpl(
     fun updateMessagesMemberInfo(member: Member) {
         val userId = member.getUserId()
         val memberInfo = member.toMemberInfo()
-        val isOutdated = { message: Message -> message.user.id == userId && message.member != memberInfo }
-        val refresh = { message: Message -> message.withMemberInfo(memberInfo) }
+        val isOutdated = { message: Message -> message.hasOutdatedMemberInfo(userId, memberInfo) }
+        val refresh = { message: Message -> message.withRefreshedMemberInfo(userId, memberInfo) }
         _messages.update { it.updateIf(isOutdated, refresh) }
         _cachedLatestMessages.update { it.updateIf(isOutdated, refresh) }
         _pinnedMessages.update { it.updateIf(isOutdated, refresh) }

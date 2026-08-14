@@ -649,6 +649,7 @@ public data class Message(
 
         @Suppress("DEPRECATION")
         public fun build(): Message {
+            val resolvedMember = member ?: channelRole?.let { MemberInfo(channelRole = it) }
             return Message(
                 id = id,
                 cid = cid,
@@ -696,8 +697,8 @@ public data class Message(
                 poll = poll,
                 reminder = reminder,
                 sharedLocation = sharedLocation,
-                channelRole = channelRole,
-                member = member,
+                channelRole = resolvedMember?.channelRole,
+                member = resolvedMember,
                 deletedForMe = deletedForMe,
                 mentionedHere = mentionedHere,
                 mentionedChannel = mentionedChannel,

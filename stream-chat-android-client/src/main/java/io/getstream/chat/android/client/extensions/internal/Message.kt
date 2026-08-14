@@ -37,6 +37,31 @@ import java.util.Date
 public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message =
     copy(member = memberInfo, channelRole = memberInfo?.channelRole)
 
+/**
+ * Whether this message, or the quoted message it carries, holds an out of date [Message.member] snapshot for [userId].
+ */
+@InternalStreamChatApi
+public fun Message.hasOutdatedMemberInfo(userId: String, memberInfo: MemberInfo?): Boolean =
+    isAuthoredBy(userId, memberInfo) || replyTo?.isAuthoredBy(userId, memberInfo) == true
+
+/**
+ * Applies [memberInfo] to this message and to the quoted message it carries, whichever of the two [userId] authored.
+ *
+ * The quoted copy is a snapshot of its own, so leaving it behind would show two different snapshots for one author.
+ */
+@InternalStreamChatApi
+public fun Message.withRefreshedMemberInfo(userId: String, memberInfo: MemberInfo?): Message {
+    val refreshed = if (user.id == userId) withMemberInfo(memberInfo) else this
+    val quoted = refreshed.replyTo
+    return when {
+        quoted == null || quoted.user.id != userId -> refreshed
+        else -> refreshed.copy(replyTo = quoted.withMemberInfo(memberInfo))
+    }
+}
+
+private fun Message.isAuthoredBy(userId: String, memberInfo: MemberInfo?): Boolean =
+    user.id == userId && member != memberInfo
+
 /** Updates collection of messages with more recent data of [users]. */
 @InternalStreamChatApi
 public fun Collection<Message>.updateUsers(users: Map<String, User>): List<Message> = map { it.updateUsers(users) }

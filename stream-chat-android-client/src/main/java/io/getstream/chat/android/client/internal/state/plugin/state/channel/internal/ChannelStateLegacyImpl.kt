@@ -19,10 +19,11 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
-import io.getstream.chat.android.client.extensions.internal.withMemberInfo
+import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
@@ -572,8 +573,8 @@ internal class ChannelStateLegacyImpl(
         val memberInfo = member.toMemberInfo()
         val refresh: (Map<String, Message>) -> Map<String, Message> = { messages ->
             messages.mapValues { (_, message) ->
-                if (message.user.id == userId && message.member != memberInfo) {
-                    message.withMemberInfo(memberInfo)
+                if (message.hasOutdatedMemberInfo(userId, memberInfo)) {
+                    message.withRefreshedMemberInfo(userId, memberInfo)
                 } else {
                     message
                 }

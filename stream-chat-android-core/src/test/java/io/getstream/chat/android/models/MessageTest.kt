@@ -43,6 +43,29 @@ import org.junit.jupiter.api.Test
 
 internal class MessageTest {
 
+    /** `Message` keeps `member` and the deprecated `channelRole` in sync, so fixtures must agree on both. */
+    private val consistentMember = randomMemberInfo()
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `builder should promote the deprecated channelRole into a member`() {
+        val built = Message.Builder().withChannelRole("channel_moderator").build()
+
+        assertEquals(MemberInfo(channelRole = "channel_moderator"), built.member)
+        assertEquals("channel_moderator", built.channelRole)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `builder should let an explicit member win over the deprecated channelRole`() {
+        val member = MemberInfo(channelRole = "channel_member", extraData = mapOf("flair" to "gold"))
+
+        val built = Message.Builder().withChannelRole("channel_moderator").withMember(member).build()
+
+        assertEquals(member, built.member)
+        assertEquals("channel_member", built.channelRole)
+    }
+
     @Test
     @Suppress("LongMethod")
     fun `builder should set every field`() {
@@ -93,8 +116,8 @@ internal class MessageTest {
             restrictedVisibility = listOf(randomString()),
             reminder = randomMessageReminderInfo(),
             sharedLocation = randomLocation(),
-            channelRole = randomString(),
-            member = randomMemberInfo(),
+            channelRole = consistentMember.channelRole,
+            member = consistentMember,
             deletedForMe = randomBoolean(),
             mentionedHere = randomBoolean(),
             mentionedChannel = randomBoolean(),
@@ -168,8 +191,8 @@ internal class MessageTest {
             poll = randomPoll(),
             moderationDetails = randomMessageModerationDetails(),
             moderation = randomModeration(),
-            channelRole = randomString(),
-            member = randomMemberInfo(),
+            channelRole = consistentMember.channelRole,
+            member = consistentMember,
             threadParticipants = listOf(randomUser()),
             mentionedGroups = listOf(randomUserGroup()),
             mentionedRoles = listOf(randomString()),

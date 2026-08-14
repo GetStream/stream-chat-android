@@ -29,6 +29,7 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -652,6 +653,42 @@ internal class MessageExtensionsTests {
         result.member shouldBeEqualTo memberInfo
         @Suppress("DEPRECATION")
         result.channelRole shouldBeEqualTo null
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should refresh the quoted copy of the same author`() {
+        // The quoted message carries its own snapshot, so leaving it behind shows one author with two values.
+        val author = randomUser()
+        val quoted = randomMessage(user = author, member = null)
+        val message = randomMessage(user = author, member = null, replyTo = quoted)
+        val memberInfo = MemberInfo(channelRole = "channel_moderator", extraData = mapOf("flair" to "gold"))
+
+        val result = message.withRefreshedMemberInfo(author.id, memberInfo)
+
+        result.member shouldBeEqualTo memberInfo
+        result.replyTo?.member shouldBeEqualTo memberInfo
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should leave a quoted copy of another author alone`() {
+        val author = randomUser()
+        val quoted = randomMessage(user = randomUser(), member = null)
+        val message = randomMessage(user = author, member = null, replyTo = quoted)
+
+        val result = message.withRefreshedMemberInfo(author.id, MemberInfo(channelRole = "channel_moderator"))
+
+        result.member?.channelRole shouldBeEqualTo "channel_moderator"
+        result.replyTo?.member.shouldBeNull()
+    }
+
+    @Test
+    fun `hasOutdatedMemberInfo should spot an outdated quoted copy`() {
+        val author = randomUser()
+        val memberInfo = MemberInfo(channelRole = "channel_moderator")
+        val quoted = randomMessage(user = author, member = null)
+        val message = randomMessage(user = randomUser(), member = null, replyTo = quoted)
+
+        message.hasOutdatedMemberInfo(author.id, memberInfo) shouldBeEqualTo true
     }
 
     @Test

@@ -17,7 +17,8 @@
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.extensions.internal.withMemberInfo
+import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
@@ -64,9 +65,9 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
      */
     fun updateMessagesMemberInfo(cid: String, userId: String, memberInfo: MemberInfo) {
         val outdated = mutableState.rawMessage.value.values
-            .filter { message -> message.cid == cid && message.user.id == userId && message.member != memberInfo }
+            .filter { message -> message.cid == cid && message.hasOutdatedMemberInfo(userId, memberInfo) }
         if (outdated.isEmpty()) return
-        mutableState.upsertMessages(outdated.map { message -> message.withMemberInfo(memberInfo) })
+        mutableState.upsertMessages(outdated.map { message -> message.withRefreshedMemberInfo(userId, memberInfo) })
     }
 
     /**
