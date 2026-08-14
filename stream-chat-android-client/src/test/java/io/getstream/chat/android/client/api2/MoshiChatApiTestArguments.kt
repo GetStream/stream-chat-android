@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
-import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
@@ -79,6 +78,7 @@ import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
+import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
@@ -901,7 +901,7 @@ internal object MoshiChatApiTestArguments {
             RetroSuccess(
                 PollOptionResponse(
                     duration = randomString(),
-                    poll_option = Mother.randomDownstreamOptionDto(),
+                    pollOption = Mother.randomPollOptionResponseData(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,

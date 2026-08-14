@@ -698,6 +698,8 @@ style:
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false
+    # Generated network models can have long fully-qualified nested-type lines; don't lint generated code.
+    excludes: ['**/io/getstream/chat/android/network/**']
     ignoreAnnotated: ['Test', 'ParameterizedTest', "Language"]
   MayBeConst:
     active: true

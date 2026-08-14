@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
-import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -35,5 +35,5 @@ internal interface PushPreferencesApi {
      * @param body The request body containing the push preferences to be upserted.
      */
     @POST("/push_preferences")
-    fun upsertPushPreferences(@Body body: UpsertPushPreferencesRequest): RetrofitCall<PushPreferencesResponse>
+    fun upsertPushPreferences(@Body body: UpsertPushPreferencesRequest): RetrofitCall<UpsertPushPreferencesResponse>
 }

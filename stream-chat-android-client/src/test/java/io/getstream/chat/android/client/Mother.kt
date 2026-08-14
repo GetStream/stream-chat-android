@@ -49,7 +49,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDt
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
@@ -98,11 +97,14 @@ import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.PollOptionResponseData
+import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -1007,7 +1009,7 @@ internal object Mother {
         createdByUserId: String = randomString(),
         createdBy: DownstreamUserDto = randomDownstreamUserDto(id = createdByUserId),
         participantCount: Int = randomInt(),
-        threadParticipants: List<DownstreamThreadParticipantDto> = emptyList(),
+        threadParticipants: List<ThreadParticipant> = emptyList(),
         lastMessageAt: Date = randomDate(),
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
@@ -1040,14 +1042,31 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamThreadParticipantDto(
+    fun randomThreadParticipantDto(
         userId: String = randomString(),
-        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
+        user: UserResponse? = randomUserResponse(id = userId),
         lastThreadMessageAt: Date? = randomDateOrNull(),
-    ): DownstreamThreadParticipantDto = DownstreamThreadParticipantDto(
-        user_id = userId,
+    ): ThreadParticipant = ThreadParticipant(
+        channelCid = randomCID(),
+        createdAt = randomDate(),
+        lastReadAt = randomDate(),
+        userId = userId,
         user = user,
-        last_thread_message_at = lastThreadMessageAt,
+        lastThreadMessageAt = lastThreadMessageAt,
+    )
+
+    fun randomUserResponse(
+        id: String = randomString(),
+        role: String = randomString(),
+        language: String = randomString(),
+    ): UserResponse = UserResponse(
+        id = id,
+        role = role,
+        language = language,
+        banned = randomBoolean(),
+        online = randomBoolean(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
     )
 
     fun randomDownstreamThreadInfoDto(
@@ -1060,7 +1079,7 @@ internal object Mother {
         replyCount: Int = randomInt(),
         participantCount: Int = randomInt(),
         activeParticipantCount: Int = randomInt(),
-        threadParticipants: List<DownstreamThreadParticipantDto> = emptyList(),
+        threadParticipants: List<ThreadParticipant> = emptyList(),
         lastMessageAt: Date = randomDate(),
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
@@ -1160,6 +1179,16 @@ internal object Mother {
         answers_count = answersCount,
         is_closed = isClosed,
         extraData = extraData,
+    )
+
+    fun randomPollOptionResponseData(
+        id: String = randomString(),
+        text: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): PollOptionResponseData = PollOptionResponseData(
+        id = id,
+        text = text,
+        custom = custom,
     )
 
     fun randomDownstreamOptionDto(
