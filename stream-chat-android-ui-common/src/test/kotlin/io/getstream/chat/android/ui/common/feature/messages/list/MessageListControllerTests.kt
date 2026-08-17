@@ -460,6 +460,23 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When the message list is empty markLastMessageRead should not invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = MutableStateFlow(emptyList()))
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(0)).markRead(any(), any())
+        controller.lastSeenMessageId.shouldBeNull()
+    }
+
+    @Test
     fun `When an error message is followed by a synced one markLastMessageRead should invoke markRead`() = runTest {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(

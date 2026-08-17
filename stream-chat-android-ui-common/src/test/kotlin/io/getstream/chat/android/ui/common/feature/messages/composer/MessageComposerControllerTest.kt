@@ -2212,6 +2212,26 @@ internal class MessageComposerControllerTest {
         }
 
     @Test
+    fun `Given markMessagesPending enabled When sent message is confirmed Then markMessageRead is not invoked`() =
+        runTest {
+            val currentUser = User("uid1")
+            val echo = randomMessage(cid = CID, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(currentUser)
+                .givenGlobalState()
+                .givenChannelState(configState = MutableStateFlow(Config(markMessagesPending = true)))
+                .givenSendMessage(echo)
+            val controller = fixture.get()
+
+            controller.sendMessage(Message(cid = CID, text = "Hello"), mock())
+            advanceUntilIdle()
+
+            verify(fixture.chatClient, never()).markMessageRead(any(), any(), any())
+        }
+
+    @Test
     fun `Given markMessagesPending disabled When send returns a rejected error echo Then markMessageRead is not invoked`() =
         runTest {
             // A send into a frozen channel returns 201 with a type "error" echo the server never persists.
