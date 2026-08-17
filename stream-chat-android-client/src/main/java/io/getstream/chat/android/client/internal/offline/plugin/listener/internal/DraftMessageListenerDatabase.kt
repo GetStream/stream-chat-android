@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.internal.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
@@ -25,7 +24,6 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Result
-import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
 
 internal class DraftMessageListenerDatabase(
@@ -33,7 +31,24 @@ internal class DraftMessageListenerDatabase(
 ) : DraftMessageListener {
 
     /**
-     * Method called when a request to create a draft message in the API happens
+     * Method called before the request to create a draft message in the API is launched. Persists the draft upfront so
+     * it is not lost if the process dies while the request is in flight.
+     *
+     * @param channelType The type of the channel
+     * @param channelId The id of the channel
+     * @param message The draft message to be created
+     */
+    override suspend fun onCreateDraftMessageRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        messageRepository.insertDraftMessage(message)
+    }
+
+    /**
+     * Method called when a request to create a draft message in the API happens. Replaces the draft persisted by
+     * [onCreateDraftMessageRequest] with the server copy, leaving it untouched on failure.
      *
      * @param result The result of the create draft message request
      * @param channelType The type of the channel
@@ -46,17 +61,28 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        result
-            .onSuccessSuspend { draftMessage -> messageRepository.insertDraftMessage(draftMessage) }
-            .onErrorSuspend { error ->
-                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
-                    messageRepository.insertDraftMessage(draftMessage)
-                }
-            }
+        result.onSuccessSuspend { draftMessage -> messageRepository.insertDraftMessage(draftMessage) }
     }
 
     /**
-     * Method called when a request to delete draft messages in the API happens
+     * Method called before the request to delete draft messages in the API is launched. Removes the draft upfront so it
+     * stays deleted if the process dies while the request is in flight.
+     *
+     * @param channelType The type of the channel
+     * @param channelId The id of the channel
+     * @param message The draft message to be deleted
+     */
+    override suspend fun onDeleteDraftMessagesRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        messageRepository.deleteDraftMessage(message)
+    }
+
+    /**
+     * Method called when a request to delete draft messages in the API happens. No-op, as the draft is already removed
+     * by [onDeleteDraftMessagesRequest].
      *
      * @param result The result of the delete draft messages request
      * @param channelType The type of the channel
@@ -69,13 +95,7 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        result
-            .onSuccessSuspend { messageRepository.deleteDraftMessage(message) }
-            .onErrorSuspend { error ->
-                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
-                    messageRepository.deleteDraftMessage(draftMessage)
-                }
-            }
+        /* No-Op */
     }
 
     /**
