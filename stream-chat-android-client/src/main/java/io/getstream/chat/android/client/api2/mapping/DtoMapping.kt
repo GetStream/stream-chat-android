@@ -59,6 +59,7 @@ import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.SharedLocation
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserRequest
+import io.getstream.chat.android.network.models.Attachment as AttachmentRequest
 
 @Suppress("TooManyFunctions")
 internal class DtoMapping(
@@ -175,9 +176,9 @@ internal class DtoMapping(
     )
 
     /**
-     * Maps the domain [Attachment] to the generated network Attachment model.
+     * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
      */
-    internal fun Attachment.toRequest(): io.getstream.chat.android.network.models.Attachment {
+    internal fun Attachment.toAttachmentRequest(): AttachmentRequest {
         // OpenAPI Attachment doesn't declare file_size/image/mime_type/name; fold them into `custom`
         // so the custom-flattening adapter writes them at the JSON root.
         val custom = extraData.toMutableMap()
@@ -185,7 +186,7 @@ internal class DtoMapping(
         name?.let { custom["name"] = it }
         mimeType?.let { custom["mime_type"] = it }
         custom["file_size"] = fileSize
-        return io.getstream.chat.android.network.models.Attachment(
+        return AttachmentRequest(
             assetUrl = assetUrl,
             authorName = authorName,
             fallback = fallback,
@@ -236,7 +237,7 @@ internal class DtoMapping(
                     id = id,
                     text = text,
                     type = MessageRequest.Type.fromString(upstreamType),
-                    attachments = attachments.map { it.toRequest() },
+                    attachments = attachments.map { it.toAttachmentRequest() },
                     mentionedUsers = mentionedUsersIds,
                     mentionedHere = mentionedHere,
                     mentionedChannel = mentionedChannel,
