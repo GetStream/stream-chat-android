@@ -28,12 +28,14 @@ import com.squareup.moshi.Json
 /**
  *
  */
-
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ChannelPushPreferencesResponse(
     @Json(name = "chat_level")
-    val chatLevel: kotlin.String? = null,
+    internal val chatLevel: String? = null,
 
     @Json(name = "disabled_until")
-    val disabledUntil: java.util.Date? = null,
+    internal val disabledUntil: java.util.Date? = null,
+
+    @Json(name = "chat_preferences")
+    internal val chatPreferences: io.getstream.chat.android.network.models.ChatPreferencesResponse? = null,
 )

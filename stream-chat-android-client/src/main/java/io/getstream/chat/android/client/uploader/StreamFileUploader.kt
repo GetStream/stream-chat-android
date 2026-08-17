@@ -17,12 +17,13 @@
 package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.api.RetrofitCdnApi
-import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.mapping.toUploadedFile
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.result.Result
+import io.getstream.result.flatMap
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
@@ -44,7 +45,7 @@ internal class StreamFileUploader(
         channelId = channelId,
         file = file.asBodyPart(),
         progressCallback = callback,
-    ).execute().map(UploadFileResponse::toUploadedFile)
+    ).execute().flatMap(FileUploadResponse::toUploadedFile)
 
     override fun sendFile(
         channelType: String,
@@ -56,7 +57,7 @@ internal class StreamFileUploader(
         channelId = channelId,
         file = file.asBodyPart(),
         progressCallback = null,
-    ).execute().map(UploadFileResponse::toUploadedFile)
+    ).execute().flatMap(FileUploadResponse::toUploadedFile)
 
     override fun sendImage(
         channelType: String,
@@ -69,7 +70,7 @@ internal class StreamFileUploader(
         channelId = channelId,
         file = file.asBodyPart(),
         progressCallback = callback,
-    ).execute().map(UploadFileResponse::toUploadedFile)
+    ).execute().flatMap(FileUploadResponse::toUploadedFile)
 
     override fun sendImage(
         channelType: String,
@@ -81,7 +82,7 @@ internal class StreamFileUploader(
         channelId = channelId,
         file = file.asBodyPart(),
         progressCallback = null,
-    ).execute().map(UploadFileResponse::toUploadedFile)
+    ).execute().flatMap(FileUploadResponse::toUploadedFile)
 
     override fun deleteFile(
         channelType: String,
@@ -111,7 +112,7 @@ internal class StreamFileUploader(
     ): Result<UploadedFile> = retrofitCdnApi.uploadFile(
         file = file.asBodyPart(),
         progressCallback = progressCallback,
-    ).execute().map(UploadFileResponse::toUploadedFile)
+    ).execute().flatMap(FileUploadResponse::toUploadedFile)
 
     override fun deleteFile(
         url: String,
@@ -124,7 +125,7 @@ internal class StreamFileUploader(
     ): Result<UploadedFile> = retrofitCdnApi.uploadImage(
         file = file.asBodyPart(),
         progressCallback = progressCallback,
-    ).execute().map(UploadFileResponse::toUploadedFile)
+    ).execute().flatMap(FileUploadResponse::toUploadedFile)
 
     override fun deleteImage(
         url: String,

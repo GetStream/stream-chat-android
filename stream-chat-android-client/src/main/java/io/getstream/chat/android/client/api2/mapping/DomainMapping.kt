@@ -987,7 +987,7 @@ internal class DomainMapping(
     internal fun ChannelPushPreferencesResponse.toDomain(): PushPreference = PushPreference(
         level = PushPreferenceLevel.fromValue(chatLevel),
         disabledUntil = disabledUntil,
-        chatPreferences = null,
+        chatPreferences = chatPreferences?.toDomain(),
     )
 
     internal fun ChatPreferencesResponse.toDomain(): ChatPreferences = ChatPreferences(
