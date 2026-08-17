@@ -281,7 +281,7 @@ internal class DtoMappingTest {
     @Test
     fun `Message is correctly mapped to the generated request model`() {
         val message = randomMessage(type = MessageType.REGULAR)
-        val messageTransformer = MessageTransformer { it }
+        val messageTransformer = spy(NoOpMessageTransformer)
         val mapping = Fixture().withMessageTransformer(messageTransformer).get()
 
         val request = with(mapping) { message.toMessageRequest() }
@@ -304,6 +304,7 @@ internal class DtoMappingTest {
         request.silent shouldBeEqualTo message.silent
         request.restrictedVisibility shouldBeEqualTo message.restrictedVisibility
         request.custom shouldBeEqualTo message.extraData
+        verify(messageTransformer, times(1)).transform(message)
     }
 
     @ParameterizedTest
