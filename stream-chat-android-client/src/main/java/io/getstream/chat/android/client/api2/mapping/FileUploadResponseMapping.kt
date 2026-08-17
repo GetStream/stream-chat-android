@@ -23,15 +23,13 @@ import io.getstream.result.Result
 
 /**
  * The upload endpoints omit `file` when the asset URL is empty, which leaves nothing to attach, so
- * that is reported as a failure rather than an upload with a blank URL.
+ * that is reported as a failure.
  */
 internal fun FileUploadResponse.toUploadedFile(): Result<UploadedFile> =
-    when (val uploadedFileUrl = file) {
-        null -> Result.Failure(Error.GenericError(message = "Missing file URL in the upload response"))
+    when {
+        file.isNullOrEmpty() ->
+            Result.Failure(Error.GenericError(message = "Missing file URL in the upload response"))
         else -> Result.Success(
-            UploadedFile(
-                file = uploadedFileUrl,
-                thumbUrl = thumbUrl,
-            ),
+            UploadedFile(file = file, thumbUrl = thumbUrl),
         )
     }

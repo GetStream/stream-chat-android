@@ -60,6 +60,15 @@ internal class FileUploadResponseMappingTest {
     }
 
     @Test
+    fun `A blank file URL fails rather than yielding an upload with no asset`() {
+        val dto = Mother.randomFileUploadResponse(file = "")
+
+        val result = dto.toUploadedFile()
+
+        result shouldBeInstanceOf Result.Failure::class
+    }
+
+    @Test
     fun `A response that omits the file URL parses and then fails to map`() {
         // The upload endpoints tag `file` omitempty, so an empty asset URL is absent rather than null.
         val response = ParserFactory.createMoshiChatParser()
