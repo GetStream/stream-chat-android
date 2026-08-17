@@ -42,6 +42,10 @@ streamProject {
             "stream-chat-android-markdown-transformer",
             "stream-chat-android-ui-common",
         )
+        sonarExclusions = listOf(
+            // Generated OpenAPI models
+            "**/io/getstream/chat/android/network/models/**",
+        )
     }
 
     publishing {
