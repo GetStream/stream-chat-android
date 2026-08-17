@@ -418,6 +418,79 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When current user's last message is a rejected error echo markLastMessageRead should not invoke markRead`() =
+        runTest {
+            // A send into a frozen channel returns 201 with a type "error" echo which is stored
+            // as COMPLETED, but the server never persists it. The peer message makes sure the
+            // error one is the item the gate sees, and not filtered out.
+            val chatClient: ChatClient = mock()
+            val messagesState = MutableStateFlow(
+                listOf(
+                    randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
+                    randomMessage(id = "2", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED),
+                ),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenMarkRead()
+                .givenChannelState(messagesState = messagesState)
+                .get()
+
+            controller.markLastMessageRead()
+            delay(1000)
+
+            verify(chatClient, times(0)).markRead(any(), any())
+            controller.lastSeenMessageId.shouldBeNull()
+        }
+
+    @Test
+    fun `When current user's last message is ephemeral markLastMessageRead should not invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
+                randomMessage(id = "2", user = user1, type = MessageType.EPHEMERAL, syncStatus = SyncStatus.COMPLETED),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(0)).markRead(any(), any())
+        controller.lastSeenMessageId.shouldBeNull()
+    }
+
+    @Test
+    fun `When an error message is followed by a synced one markLastMessageRead should invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(id = "1", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED),
+                randomMessage(id = "2", user = user1, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(1)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` "2"
+    }
+
+    @Test
     fun `When peer's last message is not COMPLETED markLastMessageRead should still invoke markRead`() = runTest {
         // syncStatus is local-only and not on the wire. Peer messages inherit the data
         // class default — the gate must not block them on that.

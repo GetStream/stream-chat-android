@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -54,7 +55,6 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
@@ -1725,13 +1725,14 @@ public class MessageListController(
         val messageText = message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
-        // Skip when our own message is at the bottom and hasn't been confirmed by the server.
-        // Without this, marking read on an empty channel (only an in-flight optimistic message
-        // exists) causes the server to persist last_read_message_id = "" because its view of
-        // the channel is empty.
+        // Skip when our own message is at the bottom and the server doesn't have it: still in
+        // flight, or persisted locally but rejected by the server (e.g. a send into a frozen
+        // channel returns 201 with a type "error" echo stored as COMPLETED). Without this,
+        // marking read on a channel the server sees as empty makes it emit message.read with
+        // no last_read_message_id.
         val currentUserId = clientState.user.value?.id
-        if (message != null && message.user.id == currentUserId && message.syncStatus != SyncStatus.COMPLETED) {
-            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (own unsynced): $messageId" }
+        if (message != null && message.user.id == currentUserId && message.isLocalOnly()) {
+            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (own local-only): $messageId" }
             return
         }
 

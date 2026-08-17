@@ -29,9 +29,14 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.internal.ComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.internal.NoOpComposerStateSaver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -40,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
@@ -48,8 +54,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.Date
@@ -288,6 +297,11 @@ internal class MessageComposerControllerTests {
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
         }
 
+        fun givenSendMessage(message: Message) = apply {
+            whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+            whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
+        }
+
         fun get(
             stateSaver: ComposerStateSaver = NoOpComposerStateSaver,
             config: MessageComposerController.Config = MessageComposerController.Config(),
@@ -424,6 +438,51 @@ internal class MessageComposerControllerTests {
 
         assertTrue(store.cleared)
     }
+
+    // endregion
+
+    // region Post-send mark read
+
+    @Test
+    fun `Given markMessagesPending disabled When sent message is confirmed Then markMessageRead is invoked`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val echo = randomMessage(cid = CID, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
+            val controller = Fixture(chatClient = chatClient)
+                .givenAppSettings(mock())
+                .givenAudioPlayer(mock())
+                .givenClientState(User("uid1"))
+                .givenGlobalState()
+                .givenChannelState()
+                .givenSendMessage(echo)
+                .get()
+
+            controller.sendMessage(Message(cid = CID, text = "Hello"), mock())
+            advanceUntilIdle()
+
+            verify(chatClient).markMessageRead(CHANNEL_TYPE, CHANNEL_ID, echo.id)
+        }
+
+    @Test
+    fun `Given markMessagesPending disabled When send returns a rejected error echo Then markMessageRead is not invoked`() =
+        runTest {
+            // A send into a frozen channel returns 201 with a type "error" echo the server never persists.
+            val chatClient: ChatClient = mock()
+            val echo = randomMessage(cid = CID, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)
+            val controller = Fixture(chatClient = chatClient)
+                .givenAppSettings(mock())
+                .givenAudioPlayer(mock())
+                .givenClientState(User("uid1"))
+                .givenGlobalState()
+                .givenChannelState()
+                .givenSendMessage(echo)
+                .get()
+
+            controller.sendMessage(Message(cid = CID, text = "Hello"), mock())
+            advanceUntilIdle()
+
+            verify(chatClient, never()).markMessageRead(any(), any(), any())
+        }
 
     // endregion
 
