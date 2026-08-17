@@ -305,6 +305,10 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun deleteDraftMessage(cid: String, parentId: String?) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deletePoll(pollId: String) {
         // No-op
     }
