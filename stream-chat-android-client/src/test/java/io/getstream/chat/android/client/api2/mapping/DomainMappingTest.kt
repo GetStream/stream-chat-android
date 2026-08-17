@@ -82,6 +82,7 @@ import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.ChatPreferenceToggle
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
@@ -102,6 +103,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
@@ -127,6 +129,8 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
@@ -137,6 +141,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -1296,6 +1301,33 @@ internal class DomainMappingTest {
                 descByName<Channel>("created_at").ascByName("name"),
             ),
         )
+    }
+
+    @Test
+    fun `Channel push preferences keep their chat preferences`() {
+        val sut = Fixture().get()
+
+        val result = with(sut) {
+            ChannelPushPreferencesResponse(
+                chatLevel = "all",
+                chatPreferences = ChatPreferencesResponse(directMentions = "all", threadReplies = "none"),
+            ).toDomain()
+        }
+
+        assertEquals(PushPreferenceLevel.all, result.level)
+        assertEquals(ChatPreferenceToggle.all, result.chatPreferences?.directMentions)
+        assertEquals(ChatPreferenceToggle.none, result.chatPreferences?.threadReplies)
+    }
+
+    @Test
+    fun `Channel push preferences without chat preferences map to null`() {
+        val sut = Fixture().get()
+
+        val result = with(sut) {
+            ChannelPushPreferencesResponse(chatLevel = "all").toDomain()
+        }
+
+        assertNull(result.chatPreferences)
     }
 
     internal class Fixture {
