@@ -209,6 +209,15 @@ public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(c
     (isError() && isModerationBounce())
 
 /**
+ * @return If the message exists only on this client and is not persisted server-side: it is
+ * still in flight, failed to send, or has a type the server never persists (ephemeral previews,
+ * error messages such as rejected or moderation-bounced sends).
+ */
+@InternalStreamChatApi
+public fun Message.isLocalOnly(): Boolean =
+    syncStatus != SyncStatus.COMPLETED || isEphemeral() || isError()
+
+/**
  * Checks whether we should attempt to delete the message remotely.
  *
  * @param currentUserId The ID of the currently logged in user.

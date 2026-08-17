@@ -39,6 +39,9 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.Date
 
 @ExperimentalCoroutinesApi
@@ -666,5 +669,31 @@ internal class MessageUtilsTest {
         )
         val result = message.shouldDeleteRemote(randomString())
         assertTrue(result is Result.Success)
+    }
+
+    @ParameterizedTest
+    @MethodSource("isLocalOnlyArguments")
+    fun `isLocalOnly returns whether the message exists only locally`(
+        syncStatus: SyncStatus,
+        type: String,
+        expected: Boolean,
+    ) {
+        val message = randomMessage(syncStatus = syncStatus, type = type)
+        message.isLocalOnly() shouldBeEqualTo expected
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun isLocalOnlyArguments() = listOf(
+            Arguments.of(SyncStatus.SYNC_NEEDED, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.IN_PROGRESS, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.AWAITING_ATTACHMENTS, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.FAILED_PERMANENTLY, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.EPHEMERAL, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.ERROR, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.REGULAR, false),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.SYSTEM, false),
+        )
     }
 }
