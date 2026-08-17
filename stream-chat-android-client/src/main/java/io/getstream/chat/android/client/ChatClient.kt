@@ -2165,7 +2165,7 @@ internal constructor(
      * @param latitude The latitude of the new location.
      * @param longitude The longitude of the new location.
      * @param deviceId DEPRECATED: has no effect, since this endpoint does not accept a device id. The
-     * stored value is the one set when the location was created. Remove in the next major.
+     * stored value is the one set when the location was created. Remove in the next major, AND-1402.
      */
     @CheckResult
     public fun updateLiveLocation(
@@ -2194,7 +2194,7 @@ internal constructor(
      *
      * @param messageId The ID of the message to stop sharing live location.
      * @param deviceId DEPRECATED: has no effect, since this endpoint does not accept a device id. The
-     * stored value is the one set when the location was created. Remove in the next major.
+     * stored value is the one set when the location was created. Remove in the next major, AND-1402.
      */
     @CheckResult
     public fun stopLiveLocationSharing(
