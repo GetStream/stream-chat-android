@@ -83,7 +83,6 @@ import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
-import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -167,6 +166,7 @@ import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
@@ -1872,7 +1872,7 @@ internal class MoshiChatApiTest {
         val language = randomString()
         val result = sut.translate(messageId, language).await()
         // then
-        val expectedBody = TranslateMessageRequest(language)
+        val expectedBody = TranslateMessageRequest(TranslateMessageRequest.Language.fromString(language))
         result `should be instance of` expected
         verify(api, times(1)).translate(messageId, expectedBody)
     }

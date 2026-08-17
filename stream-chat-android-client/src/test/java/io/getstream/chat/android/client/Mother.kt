@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
-import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
@@ -96,6 +95,7 @@ import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
+import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
@@ -1323,12 +1323,13 @@ internal object Mother {
         next = next,
     )
 
-    fun randomUploadFileResponse(
-        file: String = randomString(),
+    fun randomFileUploadResponse(
+        file: String? = randomString(),
         thumbUrl: String? = randomString(),
-    ): UploadFileResponse = UploadFileResponse(
+    ): FileUploadResponse = FileUploadResponse(
+        duration = randomString(),
         file = file,
-        thumb_url = thumbUrl,
+        thumbUrl = thumbUrl,
     )
 
     fun randomErrorDto(
