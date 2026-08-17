@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response for creating/updating a poll option.
  *
- * @param duration The duration of the request.
- * @param poll_option The poll option object.
  */
-@JsonClass(generateAdapter = true)
-internal data class PollOptionResponse(
-    val duration: String,
-    val poll_option: DownstreamPollOptionDto,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class FileUploadResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "file")
+    internal val file: String? = null,
+
+    @Json(name = "thumb_url")
+    internal val thumbUrl: String? = null,
 )

@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class UploadFileResponse(
-    val file: String,
-    val thumb_url: String?,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class PollOptionResponseData(
+    @Json(name = "id")
+    internal val id: String,
+
+    @Json(name = "text")
+    internal val text: String,
+
+    @Json(name = "custom")
+    internal val custom: Map<String, Any?> = emptyMap(),
 )

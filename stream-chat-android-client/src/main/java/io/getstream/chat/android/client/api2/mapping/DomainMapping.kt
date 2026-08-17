@@ -132,6 +132,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
@@ -524,6 +525,15 @@ internal class DomainMapping(
             extraData = extraData ?: emptyMap(),
         )
     }
+
+    /**
+     * Transforms [PollOptionResponseData] into [PollOption]
+     */
+    internal fun PollOptionResponseData.toDomain(): PollOption = PollOption(
+        id = id,
+        text = text,
+        extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+    )
 
     /**
      * Transforms [DownstreamPollOptionDto] to [Option]
@@ -977,7 +987,7 @@ internal class DomainMapping(
     internal fun ChannelPushPreferencesResponse.toDomain(): PushPreference = PushPreference(
         level = PushPreferenceLevel.fromValue(chatLevel),
         disabledUntil = disabledUntil,
-        chatPreferences = null,
+        chatPreferences = chatPreferences?.toDomain(),
     )
 
     internal fun ChatPreferencesResponse.toDomain(): ChatPreferences = ChatPreferences(
