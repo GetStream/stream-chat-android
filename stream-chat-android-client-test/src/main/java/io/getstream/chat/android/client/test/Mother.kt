@@ -25,6 +25,8 @@ import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -64,6 +66,7 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
@@ -82,6 +85,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
@@ -852,6 +856,26 @@ public fun randomPollDeletedEvent(
         poll = poll,
     )
 }
+
+public fun randomDraftMessageUpdatedEvent(
+    createdAt: Date = randomDate(),
+    draftMessage: DraftMessage = randomDraftMessage(),
+): DraftMessageUpdatedEvent = DraftMessageUpdatedEvent(
+    type = EventType.DRAFT_MESSAGE_UPDATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    draftMessage = draftMessage,
+)
+
+public fun randomDraftMessageDeletedEvent(
+    createdAt: Date = randomDate(),
+    draftMessage: DraftMessage = randomDraftMessage(),
+): DraftMessageDeletedEvent = DraftMessageDeletedEvent(
+    type = EventType.DRAFT_MESSAGE_DELETED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    draftMessage = draftMessage,
+)
 
 public fun randomPollUpdatedEvent(
     createdAt: Date = randomDate(),
