@@ -671,7 +671,6 @@ internal class MessageUtilsTest {
         assertTrue(result is Result.Success)
     }
 
-    /** [isLocalOnlyArguments] */
     @ParameterizedTest
     @MethodSource("isLocalOnlyArguments")
     fun `isLocalOnly returns whether the message exists only locally`(

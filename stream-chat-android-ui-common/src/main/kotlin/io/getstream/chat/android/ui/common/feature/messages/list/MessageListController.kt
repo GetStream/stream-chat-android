@@ -1725,11 +1725,8 @@ public class MessageListController(
         val messageText = message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
-        // Skip when our own message is at the bottom and the server doesn't have it: still in
-        // flight, or persisted locally but rejected by the server (e.g. a send into a frozen
-        // channel returns 201 with a type "error" echo stored as COMPLETED). Without this,
-        // marking read on a channel the server sees as empty makes it emit message.read with
-        // no last_read_message_id.
+        // Marking read while our own local-only message is at the bottom makes a channel the
+        // server sees as empty emit message.read with no last_read_message_id.
         val currentUserId = clientState.user.value?.id
         if (message != null && message.user.id == currentUserId && message.isLocalOnly()) {
             logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (own local-only): $messageId" }
