@@ -23,10 +23,28 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 
+/**
+ * Keys `ChannelMemberResponse` declares that `DownstreamMemberDto` did not, so they used to reach
+ * `Member.extraData` and would otherwise stop doing so. Only `user_id` is read at all, as the fallback
+ * for the user id when the payload carries no user, and that does not restore the map an app may already
+ * read. Drop with AND-1375.
+ */
+internal val GENERATED_MEMBER_EXTRA_DATA_KEYS = setOf(
+    "deleted_at",
+    "deleted_messages",
+    "is_moderator",
+    "role",
+    "user_id",
+)
+
 // Downstream (read-only) adapter for the generated ChannelMemberResponse: collects root-level custom fields
 // into `custom`, matching the wire's flattened extra data. extraDataPropertyName is its @Json name.
 internal object ChannelMemberResponseAdapter :
-    CustomObjectDtoAdapter<ChannelMemberResponse>(ChannelMemberResponse::class, extraDataPropertyName = "custom") {
+    CustomObjectDtoAdapter<ChannelMemberResponse>(
+        ChannelMemberResponse::class,
+        extraDataPropertyName = "custom",
+        alsoKeepInExtraData = GENERATED_MEMBER_EXTRA_DATA_KEYS,
+    ) {
 
     @FromJson
     fun fromJson(

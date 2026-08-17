@@ -426,6 +426,8 @@ internal object ChannelDtoTestData {
             "disabled" to true,
             "blocked" to true,
             "truncated_at" to "2020-06-10T11:04:31.588Z",
+            "hidden" to true,
+            "hide_messages_before" to "2020-06-10T11:04:31.588Z",
             "customKey1" to "customVal1",
         ),
     )

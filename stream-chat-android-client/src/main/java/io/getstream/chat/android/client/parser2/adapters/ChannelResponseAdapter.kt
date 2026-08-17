@@ -23,13 +23,28 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.ChannelResponse
 
+/**
+ * Keys `ChannelResponse` declares that `DownstreamChannelDto` did not, so they used to reach
+ * `Channel.extraData` and would otherwise stop doing so. Kept there as well as mapped, matching how
+ * [LEGACY_CHANNEL_EXTRA_DATA_KEYS] treats the keys the hand-written DTO declared. Drop with AND-1375.
+ */
+internal val GENERATED_CHANNEL_EXTRA_DATA_KEYS = setOf(
+    "auto_translation_enabled",
+    "auto_translation_language",
+    "hidden",
+    "hide_messages_before",
+    "mute_expires_at",
+    "muted",
+    "truncated_by",
+)
+
 // Downstream (read-only) adapter for the generated ChannelResponse: collects root-level custom fields
 // into `custom`, matching the wire's flattened extra data. extraDataPropertyName is its @Json name.
 internal object ChannelResponseAdapter :
     CustomObjectDtoAdapter<ChannelResponse>(
         ChannelResponse::class,
         extraDataPropertyName = "custom",
-        alsoKeepInExtraData = LEGACY_CHANNEL_EXTRA_DATA_KEYS,
+        alsoKeepInExtraData = LEGACY_CHANNEL_EXTRA_DATA_KEYS + GENERATED_CHANNEL_EXTRA_DATA_KEYS,
     ) {
 
     @FromJson
