@@ -35,7 +35,11 @@ internal object UserResponseAdapter :
         valueAdapter: JsonAdapter<UserResponse>,
     ): UserResponse? = parseWithExtraData(jsonReader, mapAdapter, valueAdapter)
 
+    // Upstream models embed a nullable UserResponse, so a null has to serialize as an omitted field
+    // instead of tripping the non-null check. An actual value is still not serializable.
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: UserResponse): Unit = error("Can't convert this to Json")
+    fun toJson(jsonWriter: JsonWriter, value: UserResponse?) {
+        if (value != null) error("Can't convert this to Json")
+        jsonWriter.nullValue()
+    }
 }

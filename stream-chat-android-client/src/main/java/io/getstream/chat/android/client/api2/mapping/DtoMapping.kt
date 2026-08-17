@@ -50,13 +50,18 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReactionRequest
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.SharedLocation
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserRequest
+import io.getstream.chat.android.network.models.Attachment as AttachmentRequest
 
+@Suppress("TooManyFunctions")
 internal class DtoMapping(
     private val messageTransformer: MessageTransformer,
     private val userTransformer: UserTransformer,
@@ -169,6 +174,87 @@ internal class DtoMapping(
         created_by_device_id = deviceId,
         end_at = endAt,
     )
+
+    /**
+     * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
+     */
+    internal fun Attachment.toAttachmentRequest(): AttachmentRequest {
+        // OpenAPI Attachment doesn't declare file_size/image/mime_type/name; fold them into `custom`
+        // so the custom-flattening adapter writes them at the JSON root.
+        val custom = extraData.toMutableMap()
+        image?.let { custom["image"] = it }
+        name?.let { custom["name"] = it }
+        mimeType?.let { custom["mime_type"] = it }
+        custom["file_size"] = fileSize
+        return AttachmentRequest(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            fallback = fallback,
+            imageUrl = imageUrl,
+            ogScrapeUrl = ogUrl,
+            text = text,
+            thumbUrl = thumbUrl,
+            title = title,
+            titleLink = titleLink,
+            authorLink = authorLink,
+            type = type,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            custom = custom,
+            actions = null,
+            fields = null,
+        )
+    }
+
+    /**
+     * Maps the domain [MemberData] to the generated network [ChannelMemberRequest] model.
+     */
+    internal fun MemberData.toChannelMemberRequest(): ChannelMemberRequest = ChannelMemberRequest(
+        userId = userId,
+        channelRole = null,
+        user = null,
+        custom = extraData,
+    )
+
+    /**
+     * Maps the domain [Location] to the generated network [SharedLocation] model.
+     */
+    internal fun Location.toSharedLocation(): SharedLocation = SharedLocation(
+        latitude = latitude,
+        longitude = longitude,
+        createdByDeviceId = deviceId,
+        endAt = endAt,
+    )
+
+    /**
+     * Transforms the domain [Message] to the generated network [MessageRequest] model.
+     */
+    internal fun Message.toMessageRequest(): MessageRequest =
+        messageTransformer.transform(this)
+            .run {
+                val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
+                MessageRequest(
+                    id = id,
+                    text = text,
+                    type = MessageRequest.Type.fromString(upstreamType),
+                    attachments = attachments.map { it.toAttachmentRequest() },
+                    mentionedUsers = mentionedUsersIds,
+                    mentionedHere = mentionedHere,
+                    mentionedChannel = mentionedChannel,
+                    mentionedGroupIds = mentionedGroups.map(UserGroup::id),
+                    mentionedRoles = mentionedRoles,
+                    parentId = parentId,
+                    pinExpires = pinExpires,
+                    pinned = pinned,
+                    pinnedAt = pinnedAt,
+                    quotedMessageId = replyMessageId,
+                    showInChannel = showInChannel,
+                    silent = silent,
+                    restrictedVisibility = restrictedVisibility,
+                    sharedLocation = sharedLocation?.toSharedLocation(),
+                    custom = extraData,
+                )
+            }
 
     internal fun DraftMessage.toDto(): UpstreamMessageDto = UpstreamMessageDto(
         attachments = attachments.map { it.toDto() },
