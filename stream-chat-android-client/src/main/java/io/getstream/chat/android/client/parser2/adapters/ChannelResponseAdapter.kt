@@ -26,7 +26,7 @@ import io.getstream.chat.android.network.models.ChannelResponse
 /**
  * Keys `ChannelResponse` declares that `DownstreamChannelDto` did not, so they used to reach
  * `Channel.extraData` and would otherwise stop doing so. Kept there as well as mapped, matching how
- * [LEGACY_CHANNEL_EXTRA_DATA_KEYS] treats the keys the hand-written DTO declared. Drop with AND-1375.
+ * [LEGACY_CHANNEL_EXTRA_DATA_KEYS] treats the keys the hand-written DTO declared. Drop with AND-1398.
  */
 internal val GENERATED_CHANNEL_EXTRA_DATA_KEYS = setOf(
     "auto_translation_enabled",

@@ -27,7 +27,7 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
  * Keys `ChannelMemberResponse` declares that `DownstreamMemberDto` did not, so they used to reach
  * `Member.extraData` and would otherwise stop doing so. Only `user_id` is read at all, as the fallback
  * for the user id when the payload carries no user, and that does not restore the map an app may already
- * read. Drop with AND-1375.
+ * read. Drop with AND-1398.
  */
 internal val GENERATED_MEMBER_EXTRA_DATA_KEYS = setOf(
     "deleted_at",
