@@ -37,9 +37,11 @@ import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.Date
 
 internal class MessageUtilsTest {
@@ -564,52 +566,16 @@ internal class MessageUtilsTest {
         Assertions.assertTrue(UuidRegex.matches(draftWithId.id))
     }
 
-    @Test
-    fun `isLocalOnly returns true for SyncStatus SYNC_NEEDED`() {
-        val message = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR)
-        assertTrue(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns true for SyncStatus IN_PROGRESS`() {
-        val message = randomMessage(syncStatus = SyncStatus.IN_PROGRESS, type = MessageType.REGULAR)
-        assertTrue(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns true for SyncStatus AWAITING_ATTACHMENTS`() {
-        val message = randomMessage(syncStatus = SyncStatus.AWAITING_ATTACHMENTS, type = MessageType.REGULAR)
-        assertTrue(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns true for SyncStatus FAILED_PERMANENTLY`() {
-        val message = randomMessage(syncStatus = SyncStatus.FAILED_PERMANENTLY, type = MessageType.REGULAR)
-        assertTrue(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns true for type ephemeral with COMPLETED syncStatus`() {
-        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.EPHEMERAL)
-        assertTrue(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns true for type error with COMPLETED syncStatus`() {
-        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.ERROR)
-        assertTrue(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns false for SyncStatus COMPLETED with type regular`() {
-        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
-        assertFalse(message.isLocalOnly())
-    }
-
-    @Test
-    fun `isLocalOnly returns false for system message with COMPLETED`() {
-        val message = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.SYSTEM)
-        assertFalse(message.isLocalOnly())
+    /** [isLocalOnlyArguments] */
+    @ParameterizedTest
+    @MethodSource("isLocalOnlyArguments")
+    fun `isLocalOnly returns whether the message exists only locally`(
+        syncStatus: SyncStatus,
+        type: String,
+        expected: Boolean,
+    ) {
+        val message = randomMessage(syncStatus = syncStatus, type = type)
+        message.isLocalOnly() shouldBeEqualTo expected
     }
 
     @Test
@@ -694,9 +660,21 @@ internal class MessageUtilsTest {
         assertTrue(result is Result.Success)
     }
 
-    private companion object {
+    companion object {
 
         // Regex matching lowercase UUID format
         private val UuidRegex = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$".toRegex()
+
+        @JvmStatic
+        fun isLocalOnlyArguments() = listOf(
+            Arguments.of(SyncStatus.SYNC_NEEDED, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.IN_PROGRESS, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.AWAITING_ATTACHMENTS, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.FAILED_PERMANENTLY, MessageType.REGULAR, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.EPHEMERAL, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.ERROR, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.REGULAR, false),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.SYSTEM, false),
+        )
     }
 }

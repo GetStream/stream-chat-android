@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.loadNewestMessages
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -883,7 +884,11 @@ public class MessageComposerController(
             .doOnStart(scope) { loadLatestMessagesIfNeeded() }
             .doOnResult(scope) { result ->
                 result.onSuccessSuspend { resultMessage ->
-                    if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
+                    // A local-only echo (e.g. a rejected send into a frozen channel) has no
+                    // server-side message to mark read.
+                    if (!resultMessage.isLocalOnly() &&
+                        channelState.value?.channelConfig?.value?.markMessagesPending == false
+                    ) {
                         chatClient.markMessageRead(
                             channelType = channelType,
                             channelId = channelId,

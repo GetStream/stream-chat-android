@@ -254,20 +254,12 @@ internal fun DraftMessage.ensureId(): DraftMessage =
 internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercase()
 
 /**
- * Returns true if this message is local-only and must be preserved across server message
- * window replacements. Local-only messages are never returned by the server after the
- * initial send attempt completes.
- *
- * Covers:
- * - Pending sends: SYNC_NEEDED, IN_PROGRESS
- * - Attachment upload in-flight: AWAITING_ATTACHMENTS
- * - Send failed: FAILED_PERMANENTLY (user must see to retry or dismiss)
- * - Ephemeral: type == "ephemeral" (e.g. Giphy previews — not re-delivered by server)
- * - Error type: type == "error" (client-generated, not re-delivered by server)
- *
- * DOES NOT include COMPLETED messages — those are already in the server response.
+ * @return If the message exists only on this client and is not persisted server-side: it is
+ * still in flight, failed to send, or has a type the server never persists (ephemeral previews,
+ * error messages such as rejected or moderation-bounced sends).
  */
-internal fun Message.isLocalOnly(): Boolean =
+@InternalStreamChatApi
+public fun Message.isLocalOnly(): Boolean =
     syncStatus in LocalOnlySyncStatuses || type in LocalOnlyMessageTypes
 
 internal val LocalOnlySyncStatuses = setOf(
