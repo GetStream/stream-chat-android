@@ -566,7 +566,6 @@ internal class MessageUtilsTest {
         Assertions.assertTrue(UuidRegex.matches(draftWithId.id))
     }
 
-    /** [isLocalOnlyArguments] */
     @ParameterizedTest
     @MethodSource("isLocalOnlyArguments")
     fun `isLocalOnly returns whether the message exists only locally`(
