@@ -254,9 +254,55 @@ internal class StringExtensionsKtTest {
 
     @Test
     fun `Given non-positive original dimensions Should return the url unchanged`() {
-        val negativeDimsUrl = createStreamCdnImageLink(originalWidth = -4000, originalHeight = -2000)
+        val nonPositiveDimensions = listOf(
+            -4000 to -2000, // Both negative - a positive product, missed by the old total-pixel check.
+            -4000 to 2000,
+            4000 to -2000,
+            0 to 2000,
+            4000 to 0,
+            0 to 0,
+        )
 
-        negativeDimsUrl.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo negativeDimsUrl
+        nonPositiveDimensions.forEach { (width, height) ->
+            val url = createStreamCdnImageLink(originalWidth = width, originalHeight = height)
+
+            url.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo url
+        }
+    }
+
+    @Test
+    fun `Given non-positive original dimensions Should return the url unchanged from the percentage overload`() {
+        val nonPositiveDimensions = listOf(
+            -4000 to -2000,
+            -4000 to 2000,
+            4000 to -2000,
+            0 to 2000,
+            4000 to 0,
+            0 to 0,
+        )
+
+        nonPositiveDimensions.forEach { (width, height) ->
+            val url = createStreamCdnImageLink(originalWidth = width, originalHeight = height)
+
+            url.createResizedStreamCdnImageUrl(
+                resizedWidthPercentage = 0.5f,
+                resizedHeightPercentage = 0.5f,
+            ) shouldBeEqualTo url
+        }
+    }
+
+    @Test
+    fun `Given a blank custom cdn host Should not resize an off-cdn url`() {
+        val offCdnUrl = "https://images.example.org/photo.jpg?oh=2000&ow=4000"
+
+        offCdnUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "",
+        ) shouldBeEqualTo offCdnUrl
+        offCdnUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "   ",
+        ) shouldBeEqualTo offCdnUrl
     }
 
     @Test
