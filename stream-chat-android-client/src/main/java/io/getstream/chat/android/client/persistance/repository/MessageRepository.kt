@@ -177,6 +177,20 @@ public interface MessageRepository {
     public suspend fun deleteDraftMessage(message: DraftMessage)
 
     /**
+     * Deletes the draft message of a channel, or of a thread when [parentId] is not null. Used when the draft is only
+     * identified by the channel/thread it belongs to, as happens with the `draft.deleted` event.
+     *
+     * The default implementation looks the draft up before deleting it. Override it to delete in a single query.
+     */
+    public suspend fun deleteDraftMessage(cid: String, parentId: String?) {
+        val draftMessage = when (parentId) {
+            null -> selectDraftMessagesByCid(cid)
+            else -> selectDraftMessageByParentId(parentId)
+        }
+        draftMessage?.let { deleteDraftMessage(it) }
+    }
+
+    /**
      * Evict messages from the repository.
      */
     public suspend fun evictMessages()

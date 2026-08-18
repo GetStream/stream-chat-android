@@ -30,7 +30,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
-import java.net.UnknownHostException
 
 internal class DraftMessageListenerDatabaseTest {
 
@@ -40,6 +39,19 @@ internal class DraftMessageListenerDatabaseTest {
     @BeforeEach
     fun setup() {
         Mockito.reset(messageRepository)
+    }
+
+    @Test
+    fun `onCreateDraftMessageRequest should persist the draft before the request completes`() = runTest {
+        val draftMessage = randomDraftMessage()
+
+        listener.onCreateDraftMessageRequest(
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
+
+        verify(messageRepository).insertDraftMessage(draftMessage)
     }
 
     @Test
@@ -57,65 +69,48 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onCreateDraftMessageResult with a non permanent error should update state`() = runTest {
+    fun `onCreateDraftMessageResult should keep the persisted draft on any error`() = runTest {
         val draftMessage = randomDraftMessage()
 
         listener.onCreateDraftMessageResult(
-            result = Result.Failure(Error.NetworkError(randomString(), randomInt(), cause = UnknownHostException())),
+            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
         )
 
-        verify(messageRepository).insertDraftMessage(draftMessage)
-    }
-
-    @Test
-    fun `onCreateDraftMessageResult should not update state on error`() = runTest {
-        listener.onCreateDraftMessageResult(
-            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
-            channelType = randomString(),
-            channelId = randomString(),
-            message = randomDraftMessage(),
-        )
-
+        verify(messageRepository, never()).deleteDraftMessage(any())
         verify(messageRepository, never()).insertDraftMessage(any())
     }
 
     @Test
-    fun `onDeleteDraftMessagesResult should remove message from state on success`() = runTest {
+    fun `onDeleteDraftMessagesRequest should remove the draft before the request completes`() = runTest {
         val draftMessage = randomDraftMessage()
 
+        listener.onDeleteDraftMessagesRequest(
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
+
+        verify(messageRepository).deleteDraftMessage(draftMessage)
+    }
+
+    @Test
+    fun `onDeleteDraftMessagesResult should not touch storage on any outcome`() = runTest {
+        val draftMessage = randomDraftMessage()
+
+        listener.onDeleteDraftMessagesResult(
+            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
         listener.onDeleteDraftMessagesResult(
             result = Result.Success(Unit),
             channelType = randomString(),
             channelId = randomString(),
             message = draftMessage,
-        )
-
-        verify(messageRepository).deleteDraftMessage(draftMessage)
-    }
-
-    @Test
-    fun `onDeleteDraftMessagesResult with a non permanent error should remove message from state`() = runTest {
-        val draftMessage = randomDraftMessage()
-        listener.onDeleteDraftMessagesResult(
-            result = Result.Failure(Error.NetworkError(randomString(), randomInt(), cause = UnknownHostException())),
-            channelType = randomString(),
-            channelId = randomString(),
-            message = draftMessage,
-        )
-
-        verify(messageRepository).deleteDraftMessage(draftMessage)
-    }
-
-    @Test
-    fun `onDeleteDraftMessagesResult should not remove message from state on error`() = runTest {
-        listener.onDeleteDraftMessagesResult(
-            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
-            channelType = randomString(),
-            channelId = randomString(),
-            message = randomDraftMessage(),
         )
 
         verify(messageRepository, never()).deleteDraftMessage(any())
