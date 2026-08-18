@@ -79,7 +79,6 @@ import io.getstream.chat.android.client.api2.model.response.SearchMessagesRespon
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
-import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -130,6 +129,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
+import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
@@ -1877,7 +1877,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getGuestUserInput")
-    fun testGetGuestUser(call: RetrofitCall<TokenResponse>, expected: KClass<*>) = runTest {
+    fun testGetGuestUser(call: RetrofitCall<CreateGuestResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<GuestApi>()
         whenever(api.getGuestUser(any())).doReturn(call)
@@ -1892,6 +1892,29 @@ internal class MoshiChatApiTest {
         val expectedBody = CreateGuestRequest(user = UserRequest(id = userId, name = userName))
         result `should be instance of` expected
         verify(api, times(1)).getGuestUser(expectedBody)
+    }
+
+    @Test
+    fun `getGuestUser maps the response user and access token onto the domain guest`() = runTest {
+        // given
+        val userResponse = Mother.randomUserResponse(id = "guest-1", role = "guest")
+        val response = CreateGuestResponse(
+            accessToken = "the-access-token",
+            duration = "12ms",
+            user = userResponse,
+        )
+        val api = mock<GuestApi>()
+        whenever(api.getGuestUser(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture()
+            .withGuestApi(api)
+            .get()
+        // when
+        val result = sut.getGuestUser(randomString(), randomString()).await()
+        // then
+        val guest = result.getOrThrow()
+        guest.token shouldBeEqualTo "the-access-token"
+        guest.user.id shouldBeEqualTo "guest-1"
+        guest.user.role shouldBeEqualTo "guest"
     }
 
     @ParameterizedTest
