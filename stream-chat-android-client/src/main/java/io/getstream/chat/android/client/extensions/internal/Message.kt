@@ -42,7 +42,7 @@ public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message =
  */
 @InternalStreamChatApi
 public fun Message.hasOutdatedMemberInfo(userId: String, memberInfo: MemberInfo?): Boolean =
-    isAuthoredBy(userId, memberInfo) || replyTo?.isAuthoredBy(userId, memberInfo) == true
+    hasOutdatedMemberInfoFor(userId, memberInfo) || replyTo?.hasOutdatedMemberInfoFor(userId, memberInfo) == true
 
 /**
  * Applies [memberInfo] to this message and to the quoted message it carries, whichever of the two [userId] authored.
@@ -59,7 +59,7 @@ public fun Message.withRefreshedMemberInfo(userId: String, memberInfo: MemberInf
     }
 }
 
-private fun Message.isAuthoredBy(userId: String, memberInfo: MemberInfo?): Boolean =
+private fun Message.hasOutdatedMemberInfoFor(userId: String, memberInfo: MemberInfo?): Boolean =
     user.id == userId && member != memberInfo
 
 /** Updates collection of messages with more recent data of [users]. */

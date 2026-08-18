@@ -35,9 +35,10 @@ public fun Collection<Member>.updateUsers(userMap: Map<String, User>): Collectio
 /**
  * Narrows a full [Member] down to the slim [MemberInfo] carried by [Message.member].
  *
- * [Member.extraData] holds every key the member DTO does not declare, which includes `user_id`. The projection the
- * backend puts on `message.member` never carries it, so it is dropped here to keep [MemberInfo.extraData] identical
- * no matter whether it came from a message payload or from a member event.
+ * [Member.extraData] holds every key the member DTO does not declare, which includes `user_id` and the deprecated
+ * member-level `role` that channel payloads send next to `channel_role`. The projection the backend puts on
+ * `message.member` carries neither, so both are dropped here to keep [MemberInfo.extraData] identical no matter
+ * whether it came from a message payload or from a member event.
  */
 @InternalStreamChatApi
 public fun Member.toMemberInfo(): MemberInfo = MemberInfo(
@@ -47,4 +48,4 @@ public fun Member.toMemberInfo(): MemberInfo = MemberInfo(
 )
 
 /** Keys that reach [Member.extraData] only because the member DTO does not declare them. */
-private val NON_CUSTOM_MEMBER_KEYS = setOf("user_id")
+private val NON_CUSTOM_MEMBER_KEYS = setOf("user_id", "role")

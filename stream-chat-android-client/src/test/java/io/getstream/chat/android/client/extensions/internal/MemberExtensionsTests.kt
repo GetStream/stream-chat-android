@@ -16,9 +16,13 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MemberUpdatedEvent
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.randomMember
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 
 internal class MemberExtensionsTests {
@@ -44,12 +48,50 @@ internal class MemberExtensionsTests {
 
     @Test
     fun `toMemberInfo should drop keys that are not member custom data`() {
-        // user_id is not declared on the member DTO, so it reaches Member.extraData. The projection the backend puts
-        // on message.member never carries it, so it must not leak into MemberInfo either.
+        // user_id and the deprecated member-level role are not declared on the member DTO, so they reach
+        // Member.extraData. The projection the backend puts on message.member carries neither, so they must not
+        // leak into MemberInfo either.
         val member = randomMember().copy(
-            extraData = mapOf("user_id" to "leandro", "flair" to mapOf("tier" to "gold")),
+            extraData = mapOf("user_id" to "leandro", "role" to "member", "flair" to mapOf("tier" to "gold")),
         )
 
         member.toMemberInfo().extraData shouldBeEqualTo mapOf("flair" to mapOf("tier" to "gold"))
+    }
+
+    @Test
+    fun `toMemberInfo should keep only custom data when the member comes off the wire`() {
+        val event = ParserFactory.createMoshiChatParser().fromJson(MEMBER_UPDATED_JSON, ChatEvent::class.java)
+
+        event.shouldBeInstanceOf<MemberUpdatedEvent>()
+        (event as MemberUpdatedEvent).member.toMemberInfo() shouldBeEqualTo MemberInfo(
+            channelRole = "channel_member",
+            notificationsMuted = false,
+            extraData = mapOf("flair" to mapOf("tier" to "gold")),
+        )
+    }
+
+    private companion object {
+        val MEMBER_UPDATED_JSON = """
+            {
+                "type": "member.updated",
+                "created_at": "2020-06-29T06:14:28.000Z",
+                "channel_type": "channelType",
+                "channel_id": "channelId",
+                "cid": "channelType:channelId",
+                "user": { "id": "leandro", "role": "user", "banned": false, "online": true },
+                "member": {
+                    "user_id": "leandro",
+                    "user": { "id": "leandro", "role": "user", "banned": false, "online": true },
+                    "role": "member",
+                    "channel_role": "channel_member",
+                    "notifications_muted": false,
+                    "banned": false,
+                    "shadow_banned": false,
+                    "created_at": "2020-06-29T06:14:28.000Z",
+                    "updated_at": "2020-06-29T06:14:28.000Z",
+                    "flair": { "tier": "gold" }
+                }
+            }
+        """.trimIndent()
     }
 }
