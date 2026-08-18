@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRe
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -161,6 +160,7 @@ import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest
+import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
@@ -1990,10 +1990,9 @@ constructor(
     override fun updateLiveLocation(location: Location): Call<Location> =
         userApi.updateLiveLocation(
             UpdateLiveLocationRequest(
-                message_id = location.messageId,
+                messageId = location.messageId,
                 latitude = location.latitude,
                 longitude = location.longitude,
-                created_by_device_id = location.deviceId,
             ),
         ).mapDomain { response ->
             response.toDomain()
@@ -2002,9 +2001,8 @@ constructor(
     override fun stopLiveLocation(location: Location): Call<Location> =
         userApi.updateLiveLocation(
             UpdateLiveLocationRequest(
-                message_id = location.messageId,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
+                messageId = location.messageId,
+                endAt = location.endAt,
             ),
         ).mapDomain { response ->
             response.toDomain()
