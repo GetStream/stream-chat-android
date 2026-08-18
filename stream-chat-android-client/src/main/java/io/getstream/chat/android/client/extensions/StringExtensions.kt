@@ -34,7 +34,7 @@ private val baseUrlRegex = "^(?:https?://)?(.*?)/*$".toRegex()
 /**
  * Matches the default Stream CDN hosts (imgix and stream-io-cdn). Shared with [AttachmentHelper] so the two
  * can't drift. Anchored on the host only — resizing of custom/proxied Stream CDN domains is opted into via the
- * `cdnHost` parameter of [createResizedStreamCdnImageUrl], mirroring iOS' `StreamCDNRequester(cdnHost:)`.
+ * `cdnHost` parameter of [createResizedStreamCdnImageUrl].
  */
 @InternalStreamChatApi
 public val STREAM_CDN_HOST_PATTERN: Regex =
@@ -43,18 +43,14 @@ public val STREAM_CDN_HOST_PATTERN: Regex =
 /**
  * Returns whether this URL is served from a Stream CDN host that understands resizing query parameters.
  *
- * @param cdnHost An optional custom Stream CDN host (e.g. a proxied domain). When provided, the URL host is
- * matched against it with a substring check, mirroring iOS' `StreamCDNRequester(cdnHost:)`; when null, the
- * default [STREAM_CDN_HOST_PATTERN] is used.
+ * @param cdnHost An optional custom Stream CDN host (e.g. a proxied domain), matched with a substring check
+ * in addition to the default [STREAM_CDN_HOST_PATTERN]. Blank values are treated as absent.
  */
 @InternalStreamChatApi
 public fun String.isStreamCdnHosted(cdnHost: String? = null): Boolean {
     val host = this.toUri().host ?: return false
-    return if (cdnHost != null) {
-        host.contains(cdnHost, ignoreCase = true)
-    } else {
-        STREAM_CDN_HOST_PATTERN.matches(host)
-    }
+    return STREAM_CDN_HOST_PATTERN.matches(host) ||
+        (!cdnHost.isNullOrBlank() && host.contains(cdnHost, ignoreCase = true))
 }
 
 /**
@@ -165,6 +161,16 @@ public fun String.createResizedStreamCdnImageUrl(
             return this@createResizedStreamCdnImageUrl
         }
 
+        if (streamCdnImageDimensions.originalWidth <= 0 || streamCdnImageDimensions.originalHeight <= 0) {
+            logger.w {
+                "Image URL reports non-positive original dimensions " +
+                    "(${streamCdnImageDimensions.originalWidth}x${streamCdnImageDimensions.originalHeight}) " +
+                    "and was not resized."
+            }
+
+            return this@createResizedStreamCdnImageUrl
+        }
+
         val resizedWidth: Int = (streamCdnImageDimensions.originalWidth * resizedWidthPercentage).toInt()
         val resizedHeight: Int = (streamCdnImageDimensions.originalHeight * resizedHeightPercentage).toInt()
 
@@ -205,14 +211,12 @@ public fun String.createResizedStreamCdnImageUrl(
 
 /**
  * Generates a URL with Stream CDN resizing parameters that cap the image to [maxImagePixels] total
- * pixels (width × height), preserving aspect ratio and never upscaling. Mirrors the iOS SDK's
- * `imageAttachmentMaxPixels`. Only affects images served from a Stream CDN host (see [cdnHost]) that carry
- * original width (ow) and height (oh) params; any other URL, or one already at/under the budget, is
- * returned unchanged.
+ * pixels (width × height), preserving aspect ratio and never upscaling. Only affects images served from
+ * a Stream CDN host (see [cdnHost]) that carry original width (ow) and height (oh) params; any other URL,
+ * or one already at/under the budget, is returned unchanged.
  *
  * @param cdnHost An optional custom Stream CDN host to resize in addition to the default Stream CDN hosts,
- * for integrations serving Stream images from a proxied or custom domain. Mirrors iOS'
- * `StreamCDNRequester(cdnHost:)`.
+ * for integrations serving Stream images from a proxied or custom domain. Blank values are treated as absent.
  */
 public fun String.createResizedStreamCdnImageUrl(
     maxImagePixels: Long,
@@ -223,8 +227,10 @@ public fun String.createResizedStreamCdnImageUrl(
     if (maxImagePixels <= 0L) return this
     if (!isStreamCdnHosted(cdnHost)) return this
     val dimensions = getStreamCdnHostedImageDimensions() ?: return this
+    // Short-circuits before the scale maths; the percentage overload holds the enforcing guard for both entry points.
+    if (dimensions.originalWidth <= 0 || dimensions.originalHeight <= 0) return this
     val totalPixels = dimensions.originalWidth.toLong() * dimensions.originalHeight.toLong()
-    if (totalPixels <= 0L || totalPixels <= maxImagePixels) return this
+    if (totalPixels <= maxImagePixels) return this
     val scale = sqrt(maxImagePixels.toDouble() / totalPixels.toDouble()).toFloat()
     return createResizedStreamCdnImageUrl(
         resizedWidthPercentage = scale,
