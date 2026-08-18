@@ -43,6 +43,8 @@ import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.client.utils.message.isLocalOnly
+import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -65,7 +67,6 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -1751,21 +1752,20 @@ public class MessageListController(
      * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     private fun markLastMessageReadInternal() {
-        val itemState = messagesState.messageItems.lastOrNull { messageItem ->
-            messageItem is HasMessageListItemState
-        } as? HasMessageListItemState
-        val message = itemState?.message
+        val messageItems = messagesState.messageItems.filterIsInstance<HasMessageListItemState>()
+        val message = messageItems.lastOrNull()?.message
         val messageId = message?.id
         val messageText = message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
-        // Skip when our own message is at the bottom and hasn't been confirmed by the server.
-        // Without this, marking read on an empty channel (only an in-flight optimistic message
-        // exists) causes the server to persist last_read_message_id = "" because its view of
-        // the channel is empty.
+        // The server keeps our own local-only messages out of its read state, so marking read
+        // without any other message makes it emit message.read with no last_read_message_id.
         val currentUserId = clientState.user.value?.id
-        if (message != null && message.user.id == currentUserId && message.syncStatus != SyncStatus.COMPLETED) {
-            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (own unsynced): $messageId" }
+        val hasServerSideMessage = messageItems.any { item ->
+            !(item.message.isMine(currentUserId) && item.message.isLocalOnly())
+        }
+        if (!hasServerSideMessage) {
+            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (no server-side message)" }
             return
         }
 
