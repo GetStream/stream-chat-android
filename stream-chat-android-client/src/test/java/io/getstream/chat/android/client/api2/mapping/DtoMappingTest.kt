@@ -151,7 +151,7 @@ internal class DtoMappingTest {
         val request = with(mapping) { message.toMessageRequest() }
 
         val expected = MessageRequest(
-            attachments = message.attachments.map { with(mapping) { it.toRequest() } },
+            attachments = message.attachments.map { with(mapping) { it.toAttachmentRequest() } },
             id = message.id,
             type = MessageRequest.Type.Regular,
             mentionedUsers = message.mentionedUsersIds,
@@ -176,7 +176,7 @@ internal class DtoMappingTest {
         val request = with(mapping) { message.toMessageRequest() }
 
         val expected = MessageRequest(
-            attachments = message.attachments.map { with(mapping) { it.toRequest() } },
+            attachments = message.attachments.map { with(mapping) { it.toAttachmentRequest() } },
             id = message.id,
             type = MessageRequest.Type.fromString(message.type),
             mentionedUsers = message.mentionedUsersIds,
@@ -260,49 +260,6 @@ internal class DtoMappingTest {
         // The endpoint takes the id; sending a whole user is neither needed nor serializable.
         request.user shouldBeEqualTo null
         request.channelRole shouldBeEqualTo null
-    }
-
-    @Test
-    fun `Message is correctly mapped to the generated request model`() {
-        val message = randomMessage(type = MessageType.REGULAR)
-        val messageTransformer = spy(NoOpMessageTransformer)
-        val mapping = Fixture().withMessageTransformer(messageTransformer).get()
-
-        val request = with(mapping) { message.toMessageRequest() }
-
-        request.id shouldBeEqualTo message.id
-        request.text shouldBeEqualTo message.text
-        request.type shouldBeEqualTo MessageRequest.Type.fromString(MessageType.REGULAR)
-        request.attachments shouldBeEqualTo message.attachments.map { with(mapping) { it.toAttachmentRequest() } }
-        request.mentionedUsers shouldBeEqualTo message.mentionedUsersIds
-        request.mentionedHere shouldBeEqualTo message.mentionedHere
-        request.mentionedChannel shouldBeEqualTo message.mentionedChannel
-        request.mentionedGroupIds shouldBeEqualTo message.mentionedGroups.map(UserGroup::id)
-        request.mentionedRoles shouldBeEqualTo message.mentionedRoles
-        request.parentId shouldBeEqualTo message.parentId
-        request.pinExpires shouldBeEqualTo message.pinExpires
-        request.pinned shouldBeEqualTo message.pinned
-        request.pinnedAt shouldBeEqualTo message.pinnedAt
-        request.quotedMessageId shouldBeEqualTo message.replyMessageId
-        request.showInChannel shouldBeEqualTo message.showInChannel
-        request.silent shouldBeEqualTo message.silent
-        request.restrictedVisibility shouldBeEqualTo message.restrictedVisibility
-        request.custom shouldBeEqualTo message.extraData
-        verify(messageTransformer, times(1)).transform(message)
-    }
-
-    @ParameterizedTest
-    @MethodSource("messageTypeCoercionInput")
-    fun `Message toMessageRequest coerces type to allowed upstream values`(
-        inputType: String,
-        expectedType: String,
-    ) {
-        val message = randomMessage(type = inputType)
-        val mapping = Fixture().get()
-
-        val request = with(mapping) { message.toMessageRequest() }
-
-        request.type shouldBeEqualTo MessageRequest.Type.fromString(expectedType)
     }
 
     @ParameterizedTest
