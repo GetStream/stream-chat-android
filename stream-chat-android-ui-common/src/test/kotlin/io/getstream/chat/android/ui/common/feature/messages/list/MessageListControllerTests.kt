@@ -418,16 +418,35 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When current user's last message is a rejected error echo markLastMessageRead should not invoke markRead`() =
+    fun `When the channel holds only our own rejected error echo markLastMessageRead should not invoke markRead`() =
         runTest {
             // A send into a frozen channel returns 201 with a type "error" echo which is stored
-            // as COMPLETED, but the server never persists it. The peer message makes sure the
-            // error one is the item the gate sees, and not filtered out.
+            // as COMPLETED, while the server keeps it out of its read state.
+            val chatClient: ChatClient = mock()
+            val messagesState = MutableStateFlow(
+                listOf(randomMessage(id = "1", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenMarkRead()
+                .givenChannelState(messagesState = messagesState)
+                .get()
+
+            controller.markLastMessageRead()
+            delay(1000)
+
+            verify(chatClient, times(0)).markRead(any(), any())
+            controller.lastSeenMessageId.shouldBeNull()
+        }
+
+    @Test
+    fun `When the channel holds only our own ephemeral message markLastMessageRead should not invoke markRead`() =
+        runTest {
             val chatClient: ChatClient = mock()
             val messagesState = MutableStateFlow(
                 listOf(
-                    randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
-                    randomMessage(id = "2", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED),
+                    randomMessage(id = "1", user = user1, type = MessageType.EPHEMERAL, syncStatus = SyncStatus.COMPLETED),
                 ),
             )
             val controller = Fixture(chatClient = chatClient)
@@ -445,12 +464,13 @@ internal class MessageListControllerTests {
         }
 
     @Test
-    fun `When current user's last message is ephemeral markLastMessageRead should not invoke markRead`() = runTest {
+    fun `When a server-side message precedes our own error echo markLastMessageRead should invoke markRead`() = runTest {
+        // The server has messages of its own to mark read, so it resolves the read state itself.
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
                 randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
-                randomMessage(id = "2", user = user1, type = MessageType.EPHEMERAL, syncStatus = SyncStatus.COMPLETED),
+                randomMessage(id = "2", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED),
             ),
         )
         val controller = Fixture(chatClient = chatClient)
@@ -463,8 +483,8 @@ internal class MessageListControllerTests {
         controller.markLastMessageRead()
         delay(1000)
 
-        verify(chatClient, times(0)).markRead(any(), any())
-        controller.lastSeenMessageId.shouldBeNull()
+        verify(chatClient, times(1)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` "2"
     }
 
     @Test
