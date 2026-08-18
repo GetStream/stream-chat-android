@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import retrofit2.http.Body
 import retrofit2.http.POST

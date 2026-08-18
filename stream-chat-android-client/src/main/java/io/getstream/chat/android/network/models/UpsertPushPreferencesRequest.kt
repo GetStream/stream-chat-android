@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Request DTO for upserting push notification preferences.
  *
- * @param preferences List of push preferences to be upserted.
  */
-@JsonClass(generateAdapter = true)
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpsertPushPreferencesRequest(
-    val preferences: List<UpstreamPushPreferenceInputDto>,
+    @Json(name = "preferences")
+    internal val preferences: List<io.getstream.chat.android.network.models.PushPreferenceInput> = emptyList(),
 )

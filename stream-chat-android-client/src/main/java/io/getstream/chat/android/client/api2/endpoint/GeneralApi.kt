@@ -19,12 +19,12 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.MembersResponse
+import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.SearchPayload
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import okhttp3.ResponseBody
@@ -52,7 +52,7 @@ internal interface GeneralApi {
 
     @GET("/members")
     fun queryMembers(
-        @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
+        @UrlQueryPayload @Query("payload") payload: QueryMembersPayload,
     ): RetrofitCall<MembersResponse>
 
     @GET("/unread")

@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
@@ -51,6 +50,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.models.ChannelMemberRequest
+import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -212,6 +212,20 @@ internal class DtoMapping(
     internal fun MemberData.toChannelMemberRequest(): ChannelMemberRequest = ChannelMemberRequest(
         userId = userId,
         channelRole = null,
+        user = null,
+        custom = extraData,
+    )
+
+    /**
+     * Maps the domain [Member] to the generated network [ChannelMemberRequest] model.
+     *
+     * The query endpoint hashes the user ids to resolve a distinct channel and reads nothing else, but the role
+     * and custom data are carried anyway since the domain member has them. `user` stays absent: the outgoing
+     * model embeds a read-only [io.getstream.chat.android.network.models.UserResponse].
+     */
+    internal fun Member.toChannelMemberRequest(): ChannelMemberRequest = ChannelMemberRequest(
+        userId = getUserId(),
+        channelRole = channelRole,
         user = null,
         custom = extraData,
     )
@@ -394,13 +408,13 @@ internal class DtoMapping(
         connection_id = connectionId,
     )
 
-    internal fun ChatPreferences.toDto(): UpstreamChatPreferencesDto = UpstreamChatPreferencesDto(
-        direct_mentions = directMentions?.value,
-        role_mentions = roleMentions?.value,
-        group_mentions = groupMentions?.value,
-        here_mentions = hereMentions?.value,
-        channel_mentions = channelMentions?.value,
-        thread_replies = threadReplies?.value,
-        default_preference = defaultPreference?.value,
+    internal fun ChatPreferences.toChatPreferencesInput(): ChatPreferencesInput = ChatPreferencesInput(
+        directMentions = directMentions?.value?.let(ChatPreferencesInput.DirectMentions::fromString),
+        roleMentions = roleMentions?.value?.let(ChatPreferencesInput.RoleMentions::fromString),
+        groupMentions = groupMentions?.value?.let(ChatPreferencesInput.GroupMentions::fromString),
+        hereMentions = hereMentions?.value?.let(ChatPreferencesInput.HereMentions::fromString),
+        channelMentions = channelMentions?.value?.let(ChatPreferencesInput.ChannelMentions::fromString),
+        threadReplies = threadReplies?.value?.let(ChatPreferencesInput.ThreadReplies::fromString),
+        defaultPreference = defaultPreference?.value?.let(ChatPreferencesInput.DefaultPreference::fromString),
     )
 }
