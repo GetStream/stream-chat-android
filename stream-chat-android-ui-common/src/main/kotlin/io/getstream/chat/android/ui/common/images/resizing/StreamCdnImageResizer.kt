@@ -25,7 +25,7 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
  * full-resolution originals. It is applied to image attachment URLs by the Compose and XML UI kits and
  * configured via `ChatTheme(streamCdnImageResizer = …)` / `ChatUI.streamCdnImageResizer`.
  *
- * Resizing is on by default at a 2MP cap ([StreamCdnMaxPixelsImageResizer]), matching the iOS SDK. Provide
+ * Resizing is on by default at a 2MP cap ([StreamCdnMaxPixelsImageResizer]). Provide
  * [NoOpStreamCdnImageResizer] to opt out, or implement this interface to apply a custom resizing strategy.
  * Only Stream CDN hosted URLs that carry the original dimensions are affected; any other URL is returned
  * unchanged.
@@ -35,7 +35,7 @@ public fun interface StreamCdnImageResizer {
     public fun resizeUrl(imageUrl: String): String
 
     public companion object {
-        /** Total-pixel budget matching the iOS SDK default (2MP). */
+        /** The default total-pixel budget (2MP). */
         public const val DEFAULT_MAX_IMAGE_PIXELS: Long = 2_000_000L
     }
 }
@@ -47,8 +47,7 @@ public fun interface StreamCdnImageResizer {
  * @param resizeMode The Stream CDN resize mode, or null for the CDN default.
  * @param cropMode The Stream CDN crop mode, or null for the CDN default.
  * @param cdnHost An optional custom Stream CDN host to resize in addition to the default Stream CDN hosts,
- * for integrations serving Stream images from a proxied or custom domain. Mirrors iOS'
- * `StreamCDNRequester(cdnHost:)`.
+ * for integrations serving Stream images from a proxied or custom domain. Blank values are treated as absent.
  */
 public class StreamCdnMaxPixelsImageResizer(
     private val maxImagePixels: Long = StreamCdnImageResizer.DEFAULT_MAX_IMAGE_PIXELS,

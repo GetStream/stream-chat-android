@@ -198,7 +198,7 @@ public object ChatUI {
 
     /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Defaults to a [StreamCdnMaxPixelsImageResizer]
-     * capping images to 2MP, mirroring the iOS SDK. Set it to [NoOpStreamCdnImageResizer] to disable resizing. Note
+     * capping images to 2MP. Set it to [NoOpStreamCdnImageResizer] to disable resizing. Note
      * that resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)
      * query parameters.
      */

@@ -163,7 +163,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param streamCdnImageResizer Sets the strategy for resizing images hosted on Stream's CDN. Defaults to a
- * [StreamCdnMaxPixelsImageResizer] capping images to 2MP, mirroring the iOS SDK. Set it to
+ * [StreamCdnMaxPixelsImageResizer] capping images to 2MP. Set it to
  * [io.getstream.chat.android.ui.common.images.resizing.NoOpStreamCdnImageResizer] to disable resizing.
  * @param messageTextFormatter [MessageTextFormatter] Used to format message text for display.
  * @param streamMediaRecorder Used for recording audio messages.
