@@ -230,13 +230,79 @@ internal class StringExtensionsKtTest {
         // Not a known Stream host, so no resizing by default.
         customHostUrl.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo customHostUrl
 
-        // Opting the custom/proxied host in resizes it (iOS StreamCDNRequester(cdnHost:) parity).
+        // Opting the custom/proxied host in resizes it.
         val resized = customHostUrl.createResizedStreamCdnImageUrl(
             maxImagePixels = 2_000_000L,
             cdnHost = "images.example.com",
         )
         (resized != customHostUrl) shouldBeEqualTo true
         (resized.toUri().getQueryParameter(QUERY_PARAMETER_KEY_RESIZED_WIDTH) != null) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `custom cdn host matching is additive - default Stream hosts still resize`() {
+        val streamUrl = createStreamCdnImageLink(originalWidth = 4000, originalHeight = 2000)
+
+        // With a custom host configured, default Stream CDN images must still be resized.
+        val resized = streamUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "images.example.com",
+        )
+        (resized != streamUrl) shouldBeEqualTo true
+        (resized.toUri().getQueryParameter(QUERY_PARAMETER_KEY_RESIZED_WIDTH) != null) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Given non-positive original dimensions Should return the url unchanged`() {
+        val nonPositiveDimensions = listOf(
+            -4000 to -2000, // Both negative - a positive product, missed by the old total-pixel check.
+            -4000 to 2000,
+            4000 to -2000,
+            0 to 2000,
+            4000 to 0,
+            0 to 0,
+        )
+
+        nonPositiveDimensions.forEach { (width, height) ->
+            val url = createStreamCdnImageLink(originalWidth = width, originalHeight = height)
+
+            url.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo url
+        }
+    }
+
+    @Test
+    fun `Given non-positive original dimensions Should return the url unchanged from the percentage overload`() {
+        val nonPositiveDimensions = listOf(
+            -4000 to -2000,
+            -4000 to 2000,
+            4000 to -2000,
+            0 to 2000,
+            4000 to 0,
+            0 to 0,
+        )
+
+        nonPositiveDimensions.forEach { (width, height) ->
+            val url = createStreamCdnImageLink(originalWidth = width, originalHeight = height)
+
+            url.createResizedStreamCdnImageUrl(
+                resizedWidthPercentage = 0.5f,
+                resizedHeightPercentage = 0.5f,
+            ) shouldBeEqualTo url
+        }
+    }
+
+    @Test
+    fun `Given a blank custom cdn host Should not resize an off-cdn url`() {
+        val offCdnUrl = "https://images.example.org/photo.jpg?oh=2000&ow=4000"
+
+        offCdnUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "",
+        ) shouldBeEqualTo offCdnUrl
+        offCdnUrl.createResizedStreamCdnImageUrl(
+            maxImagePixels = 2_000_000L,
+            cdnHost = "   ",
+        ) shouldBeEqualTo offCdnUrl
     }
 
     @Test
