@@ -2164,7 +2164,8 @@ internal constructor(
      * @param messageId The ID of the message to update.
      * @param latitude The latitude of the new location.
      * @param longitude The longitude of the new location.
-     * @param deviceId The device ID from which the location is shared.
+     * @param deviceId DEPRECATED: has no effect, since this endpoint does not accept a device id. The
+     * stored value is the one set when the location was created. Remove in the next major, AND-1402.
      */
     @CheckResult
     public fun updateLiveLocation(
@@ -2192,7 +2193,8 @@ internal constructor(
      * Stops the live location sharing for a message.
      *
      * @param messageId The ID of the message to stop sharing live location.
-     * @param deviceId The device ID from which the location is shared.
+     * @param deviceId DEPRECATED: has no effect, since this endpoint does not accept a device id. The
+     * stored value is the one set when the location was created. Remove in the next major, AND-1402.
      */
     @CheckResult
     public fun stopLiveLocationSharing(
@@ -2880,6 +2882,12 @@ internal constructor(
         return message.ensureId().let { processedDraftMessage ->
             api.createDraftMessage(channelType, channelId, processedDraftMessage)
                 .retry(userScope, retryPolicy)
+                .doOnStart(userScope) {
+                    logger.v { "[createDraftMessage] #doOnStart; cid: $channelType:$channelId" }
+                    plugins.forEach { listener ->
+                        listener.onCreateDraftMessageRequest(channelType, channelId, processedDraftMessage)
+                    }
+                }
                 .doOnResult(userScope) { result ->
                     logger.i { "[createDraftMessage] result: ${result.stringify { it.toString() }}" }
                     plugins.forEach { listener ->
@@ -2908,6 +2916,12 @@ internal constructor(
     ): Call<Unit> {
         return api.deleteDraftMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
+            .doOnStart(userScope) {
+                logger.v { "[deleteDraftMessages] #doOnStart; cid: $channelType:$channelId" }
+                plugins.forEach { listener ->
+                    listener.onDeleteDraftMessagesRequest(channelType, channelId, message)
+                }
+            }
             .doOnResult(userScope) { result ->
                 logger.i { "[deleteDraftMessages] result: ${result.stringify { it.toString() }}" }
                 plugins.forEach { listener ->

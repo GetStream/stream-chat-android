@@ -27,13 +27,13 @@ import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesRe
 import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
-import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendReactionRequest
+import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE

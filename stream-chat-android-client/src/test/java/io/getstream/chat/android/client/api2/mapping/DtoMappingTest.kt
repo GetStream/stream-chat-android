@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReactionRequest
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
@@ -215,6 +216,109 @@ internal class DtoMappingTest {
         dto shouldBeEqualTo expected
         // Verify the transformer is called
         verify(messageTransformer, times(1)).transform(message)
+    }
+
+    @Test
+    fun `Attachment is correctly mapped to the generated request model`() {
+        val attachment = randomAttachment()
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { attachment.toAttachmentRequest() }
+
+        request.assetUrl shouldBeEqualTo attachment.assetUrl
+        request.authorName shouldBeEqualTo attachment.authorName
+        request.authorLink shouldBeEqualTo attachment.authorLink
+        request.fallback shouldBeEqualTo attachment.fallback
+        request.imageUrl shouldBeEqualTo attachment.imageUrl
+        request.ogScrapeUrl shouldBeEqualTo attachment.ogUrl
+        request.text shouldBeEqualTo attachment.text
+        request.thumbUrl shouldBeEqualTo attachment.thumbUrl
+        request.title shouldBeEqualTo attachment.title
+        request.titleLink shouldBeEqualTo attachment.titleLink
+        request.type shouldBeEqualTo attachment.type
+        request.originalHeight shouldBeEqualTo attachment.originalHeight
+        request.originalWidth shouldBeEqualTo attachment.originalWidth
+    }
+
+    @Test
+    fun `Attachment folds the fields the spec omits into custom`() {
+        // The generated model declares none of these, so they have to travel in `custom` for the
+        // flattening adapter to write them back at the JSON root.
+        val attachment = randomAttachment().copy(
+            image = "https://example.com/i.png",
+            name = "i.png",
+            mimeType = "image/png",
+            fileSize = 2048,
+            extraData = mapOf("sentinel" to "keep-me"),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { attachment.toAttachmentRequest() }
+
+        request.custom shouldBeEqualTo mapOf(
+            "sentinel" to "keep-me",
+            "image" to "https://example.com/i.png",
+            "name" to "i.png",
+            "mime_type" to "image/png",
+            "file_size" to 2048,
+        )
+    }
+
+    @Test
+    fun `MemberData is correctly mapped to the generated request model`() {
+        val memberData = randomMemberData(extraData = mapOf("sentinel" to "keep-me"))
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { memberData.toChannelMemberRequest() }
+
+        request.userId shouldBeEqualTo memberData.userId
+        request.custom shouldBeEqualTo memberData.extraData
+        // The endpoint takes the id; sending a whole user is neither needed nor serializable.
+        request.user shouldBeEqualTo null
+        request.channelRole shouldBeEqualTo null
+    }
+
+    @Test
+    fun `Message is correctly mapped to the generated request model`() {
+        val message = randomMessage(type = MessageType.REGULAR)
+        val messageTransformer = spy(NoOpMessageTransformer)
+        val mapping = Fixture().withMessageTransformer(messageTransformer).get()
+
+        val request = with(mapping) { message.toMessageRequest() }
+
+        request.id shouldBeEqualTo message.id
+        request.text shouldBeEqualTo message.text
+        request.type shouldBeEqualTo MessageRequest.Type.fromString(MessageType.REGULAR)
+        request.attachments shouldBeEqualTo message.attachments.map { with(mapping) { it.toAttachmentRequest() } }
+        request.mentionedUsers shouldBeEqualTo message.mentionedUsersIds
+        request.mentionedHere shouldBeEqualTo message.mentionedHere
+        request.mentionedChannel shouldBeEqualTo message.mentionedChannel
+        request.mentionedGroupIds shouldBeEqualTo message.mentionedGroups.map(UserGroup::id)
+        request.mentionedRoles shouldBeEqualTo message.mentionedRoles
+        request.parentId shouldBeEqualTo message.parentId
+        request.pinExpires shouldBeEqualTo message.pinExpires
+        request.pinned shouldBeEqualTo message.pinned
+        request.pinnedAt shouldBeEqualTo message.pinnedAt
+        request.quotedMessageId shouldBeEqualTo message.replyMessageId
+        request.showInChannel shouldBeEqualTo message.showInChannel
+        request.silent shouldBeEqualTo message.silent
+        request.restrictedVisibility shouldBeEqualTo message.restrictedVisibility
+        request.custom shouldBeEqualTo message.extraData
+        verify(messageTransformer, times(1)).transform(message)
+    }
+
+    @ParameterizedTest
+    @MethodSource("messageTypeCoercionInput")
+    fun `Message toMessageRequest coerces type to allowed upstream values`(
+        inputType: String,
+        expectedType: String,
+    ) {
+        val message = randomMessage(type = inputType)
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { message.toMessageRequest() }
+
+        request.type shouldBeEqualTo MessageRequest.Type.fromString(expectedType)
     }
 
     @ParameterizedTest

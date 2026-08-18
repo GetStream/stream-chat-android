@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
@@ -34,8 +33,24 @@ internal class DraftMessageListenerState(
 ) : DraftMessageListener {
 
     /**
-     * Keeps a reference of the [DraftMessage] in the [MutableGlobalState] when the request to create a draft message
-     * is successful.
+     * Keeps a reference of the [DraftMessage] in the [MutableGlobalState] before the request to create a draft message
+     * is launched, so it shows up right away.
+     *
+     * @param channelType The type of the channel in which message is created.
+     * @param channelId The id of the the channel in which message is created.
+     * @param message [DraftMessage] to be created.
+     */
+    override suspend fun onCreateDraftMessageRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        mutableGlobalState.updateDraftMessage(message)
+    }
+
+    /**
+     * Replaces the reference of the [DraftMessage] in the [MutableGlobalState] with the server copy when the request to
+     * create a draft message is successful, leaving it untouched on failure.
      *
      * @param result [Result] response from the original request.
      * @param channelType The type of the channel in which message is created.
@@ -48,18 +63,28 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        result
-            .onSuccess { draftMessage -> mutableGlobalState.updateDraftMessage(draftMessage) }
-            .onError { error ->
-                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
-                    mutableGlobalState.updateDraftMessage(draftMessage)
-                }
-            }
+        result.onSuccess { draftMessage -> mutableGlobalState.updateDraftMessage(draftMessage) }
     }
 
     /**
-     * Removes the reference of the [DraftMessage] from the [MutableGlobalState] when the request to delete
-     * a draft message is successful.
+     * Removes the reference of the [DraftMessage] from the [MutableGlobalState] before the request to delete a draft
+     * message is launched, so it disappears right away.
+     *
+     * @param channelType The type of the channel in which message is updated.
+     * @param channelId The id of the the channel in which message is updated.
+     * @param message [DraftMessage] to be deleted.
+     */
+    override suspend fun onDeleteDraftMessagesRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        mutableGlobalState.removeDraftMessage(message)
+    }
+
+    /**
+     * Method called when a request to delete draft messages in the API happens. No-op, as the draft is already removed
+     * by [onDeleteDraftMessagesRequest].
      *
      * @param result [Result] response from the original request.
      * @param channelType The type of the channel in which message is updated.
@@ -72,13 +97,7 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        result
-            .onSuccess { mutableGlobalState.removeDraftMessage(message) }
-            .onError { error ->
-                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
-                    mutableGlobalState.removeDraftMessage(draftMessage)
-                }
-            }
+        /* No-Op */
     }
 
     /**

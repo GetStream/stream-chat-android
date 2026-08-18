@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -84,6 +83,7 @@ import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -671,10 +671,9 @@ internal object MoshiChatApiTestArguments {
         run {
             val location = randomLocation()
             val request = UpdateLiveLocationRequest(
-                message_id = location.messageId,
+                messageId = location.messageId,
                 latitude = location.latitude,
                 longitude = location.longitude,
-                created_by_device_id = location.deviceId,
             )
             val response = DownstreamLocationDto(
                 message_id = location.messageId,
@@ -694,9 +693,8 @@ internal object MoshiChatApiTestArguments {
         run {
             val location = randomLocation()
             val request = UpdateLiveLocationRequest(
-                message_id = location.messageId,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
+                messageId = location.messageId,
+                endAt = location.endAt,
             )
             val response = DownstreamLocationDto(
                 message_id = location.messageId,

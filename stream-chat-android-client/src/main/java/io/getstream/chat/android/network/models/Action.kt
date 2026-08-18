@@ -14,11 +14,34 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class RejectInviteRequest(
-    val reject_invite: Boolean = true,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class Action(
+    @Json(name = "name")
+    internal val name: String,
+
+    @Json(name = "text")
+    internal val text: String,
+
+    @Json(name = "type")
+    internal val type: String,
+
+    @Json(name = "style")
+    internal val style: String? = null,
+
+    @Json(name = "value")
+    internal val value: String? = null,
 )

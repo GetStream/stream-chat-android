@@ -115,6 +115,8 @@ complexity:
   LongMethod:
     active: true
     threshold: 60
+    # Generated code cannot be restructured to satisfy this rule: the next re-vendor would undo it.
+    excludes: [ '**/io/getstream/chat/android/network/**' ]
     ignoreAnnotated: [ 'ParameterizedRobolectricTestRunner.Parameters' ]
   LongParameterList:
     active: true

@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.Response
 import okhttp3.MultipartBody
 import retrofit2.http.DELETE
@@ -38,7 +38,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
-    ): RetrofitCall<UploadFileResponse>
+    ): RetrofitCall<FileUploadResponse>
 
     @Multipart
     @POST("/channels/{type}/{id}/file")
@@ -47,7 +47,7 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
-    ): RetrofitCall<UploadFileResponse>
+    ): RetrofitCall<FileUploadResponse>
 
     @DELETE("/channels/{type}/{id}/file")
     fun deleteFile(
@@ -68,7 +68,7 @@ internal interface RetrofitCdnApi {
     fun uploadFile(
         @Part file: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
-    ): RetrofitCall<UploadFileResponse>
+    ): RetrofitCall<FileUploadResponse>
 
     @DELETE("/uploads/file")
     fun deleteFile(
@@ -80,7 +80,7 @@ internal interface RetrofitCdnApi {
     fun uploadImage(
         @Part file: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
-    ): RetrofitCall<UploadFileResponse>
+    ): RetrofitCall<FileUploadResponse>
 
     @DELETE("/uploads/image")
     fun deleteImage(

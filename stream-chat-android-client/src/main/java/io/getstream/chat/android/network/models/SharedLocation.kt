@@ -14,14 +14,31 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class InviteMembersRequest(
-    val invites: List<String>,
-    val message: UpstreamMessageDto?,
-    val skip_push: Boolean?,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class SharedLocation(
+    @Json(name = "latitude")
+    internal val latitude: Double,
+
+    @Json(name = "longitude")
+    internal val longitude: Double,
+
+    @Json(name = "created_by_device_id")
+    internal val createdByDeviceId: String? = null,
+
+    @Json(name = "end_at")
+    internal val endAt: java.util.Date? = null,
 )
