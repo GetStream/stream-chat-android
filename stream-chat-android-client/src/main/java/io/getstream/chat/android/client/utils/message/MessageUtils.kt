@@ -254,9 +254,9 @@ internal fun DraftMessage.ensureId(): DraftMessage =
 internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercase()
 
 /**
- * @return If the message is not part of the server's message list: it is not synced yet, or has a
- * type the server leaves out of message queries and read state (ephemeral previews, error messages
- * such as rejected or moderation-bounced sends).
+ * @return If the message is not part of the server's message list: it is unsynced, or has a type
+ * the server leaves out of message queries and read state (ephemeral previews, error messages such
+ * as rejected or moderation-bounced sends).
  */
 @InternalStreamChatApi
 public fun Message.isLocalOnly(): Boolean =
