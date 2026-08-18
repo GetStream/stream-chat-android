@@ -39,7 +39,9 @@ public interface DraftMessageListener {
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    )
+    ) {
+        /* No-Op */
+    }
 
     /**
      * Side effect to be invoked when the original request is completed with a response.
@@ -67,7 +69,9 @@ public interface DraftMessageListener {
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    )
+    ) {
+        /* No-Op */
+    }
 
     /**
      * Side effect to be invoked when the original request is completed with a response.

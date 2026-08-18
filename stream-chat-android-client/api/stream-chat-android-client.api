@@ -3411,9 +3411,11 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/DraftMessageListener {
-	public abstract fun onCreateDraftMessageRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onCreateDraftMessageRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onCreateDraftMessageRequest$suspendImpl (Lio/getstream/chat/android/client/plugin/listeners/DraftMessageListener;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onCreateDraftMessageResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onDeleteDraftMessagesRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onDeleteDraftMessagesRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onDeleteDraftMessagesRequest$suspendImpl (Lio/getstream/chat/android/client/plugin/listeners/DraftMessageListener;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteDraftMessagesResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
