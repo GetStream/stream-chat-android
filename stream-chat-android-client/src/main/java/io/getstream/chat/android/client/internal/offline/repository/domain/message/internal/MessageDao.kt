@@ -245,6 +245,9 @@ internal interface MessageDao {
     @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid AND userId = :userId")
     suspend fun selectByCidAndUserId(cid: String, userId: String): List<MessageEntity>
 
+    @Query("UPDATE $MESSAGE_ENTITY_TABLE_NAME SET member = :member WHERE cid = :cid AND userId = :userId")
+    suspend fun updateMemberByCidAndUserId(cid: String, userId: String, member: MemberInfoEntity?)
+
     @Query(
         "SELECT id FROM $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE syncStatus = :syncStatus " +

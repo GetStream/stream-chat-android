@@ -267,7 +267,17 @@ public data class Message(
     /**
      * The role of the member(who sent the message) in the channel.
      */
+    @Deprecated(
+        message = "Use member?.channelRole instead.",
+        replaceWith = ReplaceWith("member?.channelRole"),
+        level = DeprecationLevel.WARNING,
+    )
     val channelRole: String? = null,
+
+    /**
+     * Data about the channel membership of the user who sent the message.
+     */
+    val member: MemberInfo? = null,
 
     /**
      * Whether the message was deleted for the current user.
@@ -412,7 +422,7 @@ public data class Message(
         if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
         if (moderation != null) append(", moderation=").append(moderation)
         if (poll != null) append(", poll=").append(poll)
-        if (channelRole != null) append(", channelRole=").append(channelRole)
+        if (member != null) append(", member=").append(member)
         append(", deletedForMe=").append(deletedForMe)
         if (mentionedHere) append(", mentionedHere=true")
         if (mentionedChannel) append(", mentionedChannel=true")
@@ -475,12 +485,14 @@ public data class Message(
         private var reminder: MessageReminderInfo? = null
         private var sharedLocation: Location? = null
         private var channelRole: String? = null
+        private var member: MemberInfo? = null
         private var deletedForMe: Boolean = false
         private var mentionedHere: Boolean = false
         private var mentionedChannel: Boolean = false
         private var mentionedGroups: List<UserGroup> = emptyList()
         private var mentionedRoles: List<String> = emptyList()
 
+        @Suppress("DEPRECATION")
         public constructor(message: Message) : this() {
             id = message.id
             cid = message.cid
@@ -529,6 +541,7 @@ public data class Message(
             reminder = message.reminder
             sharedLocation = message.sharedLocation
             channelRole = message.channelRole
+            member = message.member
             deletedForMe = message.deletedForMe
             mentionedHere = message.mentionedHere
             mentionedChannel = message.mentionedChannel
@@ -614,7 +627,14 @@ public data class Message(
         public fun withSharedLocation(sharedLocation: Location?): Builder = apply {
             this.sharedLocation = sharedLocation
         }
+
+        @Deprecated(
+            message = "Use withMember instead.",
+            replaceWith = ReplaceWith("withMember(MemberInfo(channelRole = channelRole))"),
+            level = DeprecationLevel.WARNING,
+        )
         public fun withChannelRole(channelRole: String?): Builder = apply { this.channelRole = channelRole }
+        public fun withMember(member: MemberInfo?): Builder = apply { this.member = member }
         public fun withDeletedForMe(deletedForMe: Boolean): Builder = apply { this.deletedForMe = deletedForMe }
         public fun withMentionedHere(mentionedHere: Boolean): Builder = apply { this.mentionedHere = mentionedHere }
         public fun withMentionedChannel(mentionedChannel: Boolean): Builder = apply {
@@ -627,7 +647,9 @@ public data class Message(
             this.mentionedRoles = mentionedRoles
         }
 
+        @Suppress("DEPRECATION")
         public fun build(): Message {
+            val resolvedMember = member ?: channelRole?.let { MemberInfo(channelRole = it) }
             return Message(
                 id = id,
                 cid = cid,
@@ -675,7 +697,8 @@ public data class Message(
                 poll = poll,
                 reminder = reminder,
                 sharedLocation = sharedLocation,
-                channelRole = channelRole,
+                channelRole = resolvedMember?.channelRole,
+                member = resolvedMember,
                 deletedForMe = deletedForMe,
                 mentionedHere = mentionedHere,
                 mentionedChannel = mentionedChannel,

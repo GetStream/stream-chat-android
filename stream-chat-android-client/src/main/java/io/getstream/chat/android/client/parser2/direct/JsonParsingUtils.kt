@@ -174,4 +174,26 @@ internal object JsonParsingUtils {
         reader.endObject()
         return map
     }
+
+    /**
+     * Parses a JSON object into a Map<String, Any>, keeping nested values as their natural JSON types.
+     *
+     * @param reader The JsonReader positioned at the object field.
+     * @return A map of string keys to arbitrary values, or null if the JSON value is null, missing, or not an object.
+     */
+    fun parseAnyMap(reader: JsonReader): Map<String, Any>? {
+        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
+        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
+            reader.skipValue()
+            return null
+        }
+        reader.beginObject()
+        val map = mutableMapOf<String, Any>()
+        while (reader.hasNext()) {
+            val key = reader.nextName()
+            reader.readJsonValue()?.let { map[key] = it }
+        }
+        reader.endObject()
+        return map
+    }
 }

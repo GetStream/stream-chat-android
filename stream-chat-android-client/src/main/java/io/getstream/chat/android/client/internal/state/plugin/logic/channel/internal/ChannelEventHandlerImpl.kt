@@ -263,6 +263,8 @@ internal class ChannelEventHandlerImpl(
 
             is MemberUpdatedEvent -> {
                 state.upsertMember(event.member)
+                // The backend does not emit message.updated for membership changes, so refresh the snapshot ourselves
+                state.updateMessagesMemberInfo(event.member)
                 // Update the channel.membership if the current user's member info is updated
                 if (event.member.getUserId() == getCurrentUserId()) {
                     state.setMembership(event.member)

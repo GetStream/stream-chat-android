@@ -299,6 +299,8 @@ internal class LogicRegistry internal constructor(
      */
     fun getActiveChannelsLogic(): List<ChannelLogic> = channels.values.toList()
 
+    fun getActiveThreadsLogic(): List<ThreadLogic> = threads.values.toList()
+
     fun isActiveThread(messageId: String): Boolean =
         threads.containsKey(messageId)
 

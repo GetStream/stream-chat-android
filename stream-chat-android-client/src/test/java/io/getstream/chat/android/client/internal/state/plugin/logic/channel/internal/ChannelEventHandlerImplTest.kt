@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.test.randomChannelVisibleEvent
 import io.getstream.chat.android.client.test.randomMarkAllReadEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
+import io.getstream.chat.android.client.test.randomMemberUpdatedEvent
 import io.getstream.chat.android.client.test.randomMessageDeliveredEvent
 import io.getstream.chat.android.client.test.randomMessageReadEvent
 import io.getstream.chat.android.client.test.randomMessageUpdateEvent
@@ -737,6 +738,17 @@ internal class ChannelEventHandlerImplTest {
 
         verify(state).upsertMember(member)
         verify(state).setMembership(member)
+    }
+
+    @Test
+    fun `When MemberUpdatedEvent is handled, Then the member snapshot on the author's messages is refreshed`() {
+        // The backend does not emit message.updated for membership changes, so the SDK refreshes the snapshot itself
+        val member = randomMember()
+        val event = randomMemberUpdatedEvent(cid = cid, member = member)
+
+        handler.handle(event)
+
+        verify(state).updateMessagesMemberInfo(member)
     }
 
     @Test

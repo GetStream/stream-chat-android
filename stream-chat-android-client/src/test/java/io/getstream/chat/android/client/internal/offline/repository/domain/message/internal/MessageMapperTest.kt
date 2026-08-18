@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.domain.message.internal
 
+import io.getstream.chat.android.client.internal.offline.randomMemberInfoEntity
 import io.getstream.chat.android.client.internal.offline.randomMessageEntity
 import io.getstream.chat.android.client.internal.offline.randomReactionGroupEntity
 import io.getstream.chat.android.client.internal.offline.randomReminderInfoEntity
@@ -122,7 +123,8 @@ internal class MessageMapperTest {
                     deviceId = deviceId,
                 )
             },
-            channelRole = messageEntity.messageInnerEntity.channelRole,
+            channelRole = messageEntity.messageInnerEntity.member?.channelRole,
+            member = messageEntity.messageInnerEntity.member?.toModel(),
             deletedForMe = messageEntity.messageInnerEntity.deletedForMe,
         )
 
@@ -198,7 +200,7 @@ internal class MessageMapperTest {
                         deviceId = deviceId,
                     )
                 },
-                channelRole = message.channelRole,
+                member = message.member?.toEntity(),
                 deletedForMe = message.deletedForMe,
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
@@ -296,7 +298,7 @@ internal class MessageMapperTest {
                 moderationDetails = message.moderationDetails?.toEntity(),
                 pollId = message.poll?.id,
                 reminder = message.reminder?.toEntity(),
-                channelRole = message.channelRole,
+                member = message.member?.toEntity(),
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
                 attachment.toReplyEntity(
@@ -353,7 +355,7 @@ internal class MessageMapperTest {
             pollId = null,
             restrictedVisibility = listOf(randomString()),
             reminder = randomReminderInfoEntity(),
-            channelRole = randomString(),
+            member = randomMemberInfoEntity(),
         )
         val replyMessageEntity = ReplyMessageEntity(
             replyMessageInnerEntity = innerEntity,
@@ -403,7 +405,8 @@ internal class MessageMapperTest {
             restrictedVisibility = innerEntity.restrictedVisibility,
             channelInfo = null,
             reminder = innerEntity.reminder?.toModel(),
-            channelRole = innerEntity.channelRole,
+            channelRole = innerEntity.member?.channelRole,
+            member = innerEntity.member?.toModel(),
         )
 
         val result = replyMessageEntity.toModel(

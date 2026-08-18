@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.UploadStateEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.AnswerEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.LocationEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MemberInfoEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MessageEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.OptionEntity
@@ -161,7 +162,7 @@ internal fun randomMessageEntity(
     pollId: String? = null,
     reminder: ReminderInfoEntity = randomReminderInfoEntity(),
     sharedLocation: LocationEntity? = randomLocationEntity(),
-    channelRole: String? = null,
+    member: MemberInfoEntity? = randomMemberInfoEntity(),
     deletedForMe: Boolean = randomBoolean(),
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
@@ -199,7 +200,7 @@ internal fun randomMessageEntity(
         pollId = pollId,
         reminder = reminder,
         sharedLocation = sharedLocation,
-        channelRole = channelRole,
+        member = member,
         deletedForMe = deletedForMe,
     ),
     attachments = attachments,
@@ -300,6 +301,16 @@ internal fun randomReplyAttachmentEntity(
     originalHeight = originalHeight,
     originalWidth = originalWidth,
     uploadState = uploadState,
+    extraData = extraData,
+)
+
+internal fun randomMemberInfoEntity(
+    channelRole: String? = randomString(),
+    notificationsMuted: Boolean = randomBoolean(),
+    extraData: Map<String, Any> = mapOf(randomString() to randomString()),
+): MemberInfoEntity = MemberInfoEntity(
+    channelRole = channelRole,
+    notificationsMuted = notificationsMuted,
     extraData = extraData,
 )
 

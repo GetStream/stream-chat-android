@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequest
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberInfoDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamModerationDetailsDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamPollDtoAdapter
@@ -100,6 +101,7 @@ internal class MoshiChatParser(
             .add(ChannelMemberRequestAdapter)
             .add(ChannelInputRequestAdapter)
             .add(DownstreamMemberDtoAdapter)
+            .add(DownstreamMemberInfoDtoAdapter)
             .add(UpstreamMemberDtoAdapter)
             .add(UpstreamMemberDataDtoAdapter)
             .add(FlagRequestAdapterFactory)

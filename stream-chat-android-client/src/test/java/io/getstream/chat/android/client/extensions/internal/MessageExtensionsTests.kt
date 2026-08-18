@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -28,6 +29,7 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -625,5 +627,78 @@ internal class MessageExtensionsTests {
 
         // then
         result shouldBeEqualTo false
+    }
+
+    @Test
+    fun `withMemberInfo should set the member snapshot and keep the deprecated channelRole in sync`() {
+        val message = randomMessage(member = null)
+        val memberInfo = MemberInfo(channelRole = "channel_moderator", extraData = mapOf("flair" to "gold"))
+
+        val result = message.withMemberInfo(memberInfo)
+
+        result.member shouldBeEqualTo memberInfo
+        @Suppress("DEPRECATION")
+        result.channelRole shouldBeEqualTo "channel_moderator"
+    }
+
+    @Test
+    fun `withMemberInfo should take the incoming snapshot verbatim`() {
+        // The same value has to reach the state, the repository cache and the database, and a blanket column update
+        // cannot preserve a previously known role, so nothing is carried over here either.
+        val message = randomMessage(member = MemberInfo(channelRole = "channel_moderator"))
+        val memberInfo = MemberInfo(channelRole = null, extraData = mapOf("flair" to "gold"))
+
+        val result = message.withMemberInfo(memberInfo)
+
+        result.member shouldBeEqualTo memberInfo
+        @Suppress("DEPRECATION")
+        result.channelRole shouldBeEqualTo null
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should refresh the quoted copy of the same author`() {
+        // The quoted message carries its own snapshot, so leaving it behind shows one author with two values.
+        val author = randomUser()
+        val quoted = randomMessage(user = author, member = null)
+        val message = randomMessage(user = author, member = null, replyTo = quoted)
+        val memberInfo = MemberInfo(channelRole = "channel_moderator", extraData = mapOf("flair" to "gold"))
+
+        val result = message.withRefreshedMemberInfo(author.id, memberInfo)
+
+        result.member shouldBeEqualTo memberInfo
+        result.replyTo?.member shouldBeEqualTo memberInfo
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should leave a quoted copy of another author alone`() {
+        val author = randomUser()
+        val quoted = randomMessage(user = randomUser(), member = null)
+        val message = randomMessage(user = author, member = null, replyTo = quoted)
+
+        val result = message.withRefreshedMemberInfo(author.id, MemberInfo(channelRole = "channel_moderator"))
+
+        result.member?.channelRole shouldBeEqualTo "channel_moderator"
+        result.replyTo?.member.shouldBeNull()
+    }
+
+    @Test
+    fun `hasOutdatedMemberInfo should spot an outdated quoted copy`() {
+        val author = randomUser()
+        val memberInfo = MemberInfo(channelRole = "channel_moderator")
+        val quoted = randomMessage(user = author, member = null)
+        val message = randomMessage(user = randomUser(), member = null, replyTo = quoted)
+
+        message.hasOutdatedMemberInfo(author.id, memberInfo) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `withMemberInfo should clear both fields when the member is absent`() {
+        val message = randomMessage(member = MemberInfo(channelRole = "channel_moderator"))
+
+        val result = message.withMemberInfo(null)
+
+        result.member shouldBeEqualTo null
+        @Suppress("DEPRECATION")
+        result.channelRole shouldBeEqualTo null
     }
 }

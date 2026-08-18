@@ -46,6 +46,9 @@ internal interface ReplyMessageDao {
     @Delete
     suspend fun delete(replyMessageInnerEntity: ReplyMessageInnerEntity)
 
+    @Query("UPDATE $REPLY_MESSAGE_ENTITY_TABLE_NAME SET member = :member WHERE cid = :cid AND userId = :userId")
+    suspend fun updateMemberByCidAndUserId(cid: String, userId: String, member: MemberInfoEntity?)
+
     @Query("DELETE FROM $REPLY_MESSAGE_ENTITY_TABLE_NAME")
     suspend fun deleteAll()
 }

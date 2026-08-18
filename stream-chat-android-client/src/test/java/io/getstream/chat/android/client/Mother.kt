@@ -761,8 +761,17 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamMemberInfoDto(channelRole: String? = randomString()): DownstreamMemberInfoDto =
-        DownstreamMemberInfoDto(channel_role = channelRole)
+    fun randomDownstreamMemberInfoDto(
+        channelRole: String? = randomString(),
+        notificationsMuted: Boolean? = randomBoolean(),
+        custom: Map<String, Any>? = null,
+        extraData: Map<String, Any> = mapOf(randomString() to randomString()),
+    ): DownstreamMemberInfoDto = DownstreamMemberInfoDto(
+        channel_role = channelRole,
+        notifications_muted = notificationsMuted,
+        custom = custom,
+        extraData = extraData,
+    )
 
     fun randomDownstreamChannelUserRead(
         user: DownstreamUserDto = randomDownstreamUserDto(),

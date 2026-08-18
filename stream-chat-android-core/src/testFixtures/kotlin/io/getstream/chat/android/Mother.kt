@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
@@ -387,6 +388,7 @@ public fun randomMessage(
     i18n: Map<String, String> = emptyMap(),
     reminder: MessageReminderInfo? = randomMessageReminderInfo(),
     channelRole: String? = null,
+    member: MemberInfo? = null,
     deletedForMe: Boolean = randomBoolean(),
     mentionedHere: Boolean = randomBoolean(),
     mentionedChannel: Boolean = randomBoolean(),
@@ -438,6 +440,7 @@ public fun randomMessage(
     i18n = i18n,
     reminder = reminder,
     channelRole = channelRole,
+    member = member,
     deletedForMe = deletedForMe,
     mentionedHere = mentionedHere,
     mentionedChannel = mentionedChannel,
@@ -731,6 +734,16 @@ public fun randomMember(
     banExpires = banExpires,
     pinnedAt = pinnedAt,
     archivedAt = archivedAt,
+)
+
+public fun randomMemberInfo(
+    channelRole: String? = randomString(),
+    notificationsMuted: Boolean = randomBoolean(),
+    extraData: Map<String, Any> = randomExtraData(),
+): MemberInfo = MemberInfo(
+    channelRole = channelRole,
+    notificationsMuted = notificationsMuted,
+    extraData = extraData,
 )
 
 public fun randomMemberData(

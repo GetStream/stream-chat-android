@@ -19,8 +19,11 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
@@ -555,6 +558,31 @@ internal class ChannelStateLegacyImpl(
             value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id }
         }
         _pinnedMessages?.apply { value = value.updateUsers(mapOf(user.id to user)) }
+    }
+
+    /**
+     * Refreshes the [Message.member] snapshot carried by the messages the [member] authored.
+     *
+     * The backend does not emit `message.updated` when a membership changes, so without this the snapshot stored on
+     * already delivered messages would stay stale until they are fetched again.
+     *
+     * @param member The member whose messages should be refreshed.
+     */
+    fun updateMessagesMemberInfo(member: Member) {
+        val userId = member.getUserId()
+        val memberInfo = member.toMemberInfo()
+        val refresh: (Map<String, Message>) -> Map<String, Message> = { messages ->
+            messages.mapValues { (_, message) ->
+                if (message.hasOutdatedMemberInfo(userId, memberInfo)) {
+                    message.withRefreshedMemberInfo(userId, memberInfo)
+                } else {
+                    message
+                }
+            }
+        }
+        _messages?.apply { value = refresh(value) }
+        _pinnedMessages?.apply { value = refresh(value) }
+        cachedLatestMessages.apply { value = refresh(value) }
     }
 
     fun upsertReads(reads: List<ChannelUserRead>) {

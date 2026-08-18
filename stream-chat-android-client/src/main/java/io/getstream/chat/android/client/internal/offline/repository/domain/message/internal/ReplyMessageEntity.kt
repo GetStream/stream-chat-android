@@ -115,8 +115,8 @@ internal data class ReplyMessageInnerEntity(
     val restrictedVisibility: List<String> = emptyList(),
     /** Info about the reminder for the message **/
     val reminder: ReminderInfoEntity? = null,
-    /** The role of the member(who sent the message) in the channel */
-    val channelRole: String? = null,
+    /** Limited data about the channel membership of the user who sent the message */
+    val member: MemberInfoEntity? = null,
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"

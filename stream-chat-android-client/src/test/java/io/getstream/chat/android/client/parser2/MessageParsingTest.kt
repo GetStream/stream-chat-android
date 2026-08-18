@@ -394,4 +394,32 @@ internal class MessageParsingTest {
     }
 
     // endregion
+    // region Member info (message.member)
+
+    @Test
+    fun `Both paths - member without projected custom keys`() {
+        val result = assertBothPaths(MessageTestData.jsonWithMemberWithoutCustom)
+        assertEquals(MessageTestData.expectedMemberWithoutCustom, result.member)
+        assertEquals(emptyMap<String, Any>(), result.member?.extraData)
+    }
+
+    @Test
+    fun `Both paths - member custom inlined by API v1 lands on the domain field`() {
+        val result = assertBothPaths(MessageTestData.jsonWithMemberCustomInlined)
+        assertEquals(MessageTestData.expectedMemberWithCustom, result.member)
+    }
+
+    @Test
+    fun `Both paths - member custom nested by API v2 lands on the same domain field`() {
+        val result = assertBothPaths(MessageTestData.jsonWithMemberCustomNested)
+        assertEquals(MessageTestData.expectedMemberWithCustom, result.member)
+    }
+
+    @Test
+    fun `Both paths - member absent yields a null member`() {
+        val result = assertBothPaths(MessageTestData.jsonOptionalFieldsMissing)
+        assertEquals(null, result.member)
+    }
+
+    // endregion
 }

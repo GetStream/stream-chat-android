@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.persistance.repository.noop
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
@@ -58,5 +59,11 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> = emptyList()
     override suspend fun selectAllUserMessages(userId: String): List<Message> = emptyList()
     override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> = emptyList()
+
+    override suspend fun updateChannelUserMessagesMember(
+        cid: String,
+        userId: String,
+        member: MemberInfo?,
+    ) { /* No-Op */ }
     override suspend fun selectLocalOnlyMessagesForChannel(cid: String): List<Message> = emptyList()
 }

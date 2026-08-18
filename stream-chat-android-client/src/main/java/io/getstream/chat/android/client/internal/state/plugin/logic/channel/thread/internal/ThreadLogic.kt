@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 
@@ -73,6 +74,9 @@ internal class ThreadLogic(
     internal fun upsertMessage(message: Message) = upsertMessages(listOf(message))
 
     internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
+
+    internal fun updateMessagesMemberInfo(cid: String, userId: String, memberInfo: MemberInfo) =
+        threadStateLogic.updateMessagesMemberInfo(cid, userId, memberInfo)
 
     internal fun removeLocalMessage(message: Message) {
         threadStateLogic.deleteMessage(message)

@@ -25,12 +25,14 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.toModel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 
+@Suppress("DEPRECATION")
 internal suspend fun MessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
     getReply: suspend (messageId: String) -> Message?,
@@ -87,11 +89,13 @@ internal suspend fun MessageEntity.toModel(
         poll = pollId?.let { getPoll(it) },
         reminder = reminder?.toModel(),
         sharedLocation = sharedLocation?.toModel(),
-        channelRole = channelRole,
+        channelRole = member?.channelRole,
+        member = member?.toModel(),
         deletedForMe = deletedForMe,
     )
 }
 
+@Suppress("DEPRECATION")
 internal fun Message.toEntity(): MessageEntity = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -140,7 +144,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         reminder = reminder?.toEntity(),
         restrictedVisibility = restrictedVisibility,
         sharedLocation = sharedLocation?.toEntity(),
-        channelRole = channelRole,
+        member = memberInfoToEntity(),
         deletedForMe = deletedForMe,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
@@ -148,6 +152,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
     ownReactions = ownReactions.map(Reaction::toEntity),
 )
 
+@Suppress("DEPRECATION")
 internal suspend fun ReplyMessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
     getPoll: suspend (pollId: String) -> Poll?,
@@ -197,11 +202,13 @@ internal suspend fun ReplyMessageEntity.toModel(
             restrictedVisibility = restrictedVisibility,
             channelInfo = channelInfo?.toModel(),
             reminder = reminder?.toModel(),
-            channelRole = channelRole,
+            channelRole = member?.channelRole,
+            member = member?.toModel(),
         )
     }
 }
 
+@Suppress("DEPRECATION")
 internal fun Message.toReplyEntity(): ReplyMessageEntity =
     ReplyMessageEntity(
         replyMessageInnerEntity = ReplyMessageInnerEntity(
@@ -239,7 +246,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             moderationDetails = moderationDetails?.toEntity(),
             pollId = poll?.id,
             reminder = reminder?.toEntity(),
-            channelRole = channelRole,
+            member = memberInfoToEntity(),
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
@@ -285,3 +292,23 @@ internal fun ReminderInfoEntity.toModel(): MessageReminderInfo = MessageReminder
     createdAt = createdAt,
     updatedAt = updatedAt,
 )
+
+internal fun MemberInfo.toEntity(): MemberInfoEntity = MemberInfoEntity(
+    channelRole = channelRole,
+    notificationsMuted = notificationsMuted,
+    extraData = extraData,
+)
+
+internal fun MemberInfoEntity.toModel(): MemberInfo = MemberInfo(
+    channelRole = channelRole,
+    notificationsMuted = notificationsMuted,
+    extraData = extraData,
+)
+
+/**
+ * Maps [Message.member] to its entity, falling back to the deprecated [Message.channelRole] when only that one is set.
+ * Without the fallback a message built with the deprecated field would silently lose its role on the way to the store.
+ */
+@Suppress("DEPRECATION")
+private fun Message.memberInfoToEntity(): MemberInfoEntity? =
+    member?.toEntity() ?: channelRole?.let { MemberInfoEntity(channelRole = it) }

@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.UploadedFile
@@ -228,6 +229,10 @@ internal class MockMessageRepository : MessageRepository {
     }
 
     override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateChannelUserMessagesMember(cid: String, userId: String, member: MemberInfo?) {
         TODO("Not yet implemented")
     }
 

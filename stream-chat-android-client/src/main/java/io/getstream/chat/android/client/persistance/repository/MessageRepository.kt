@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.persistance.repository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
@@ -66,6 +67,17 @@ public interface MessageRepository {
      * @param userId The user ID to filter messages.
      */
     public suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message>
+
+    /**
+     * Replaces the [Message.member] snapshot on every message a given user authored in a given channel.
+     *
+     * Only that field is written, so a message being modified elsewhere at the same time is not overwritten.
+     *
+     * @param cid The channel ID to filter messages.
+     * @param userId The user ID to filter messages.
+     * @param member The member snapshot to store, or null to clear it.
+     */
+    public suspend fun updateChannelUserMessagesMember(cid: String, userId: String, member: MemberInfo?)
 
     /**
      * Selects messages by IDs.

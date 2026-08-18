@@ -20,10 +20,47 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import java.util.Date
+
+/**
+ * Replaces the [Message.member] snapshot of this message, keeping the deprecated [Message.channelRole] in sync with it.
+ *
+ * The snapshot is taken verbatim: the same value reaches the in-memory state, the repository cache and the database, so
+ * the three cannot disagree. A blanket column update cannot preserve a previously known role, so neither does this.
+ */
+@InternalStreamChatApi
+@Suppress("DEPRECATION")
+public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message =
+    copy(member = memberInfo, channelRole = memberInfo?.channelRole)
+
+/**
+ * Whether this message, or the quoted message it carries, holds an out of date [Message.member] snapshot for [userId].
+ */
+@InternalStreamChatApi
+public fun Message.hasOutdatedMemberInfo(userId: String, memberInfo: MemberInfo?): Boolean =
+    hasOutdatedMemberInfoFor(userId, memberInfo) || replyTo?.hasOutdatedMemberInfoFor(userId, memberInfo) == true
+
+/**
+ * Applies [memberInfo] to this message and to the quoted message it carries, whichever of the two [userId] authored.
+ *
+ * The quoted copy is a snapshot of its own, so leaving it behind would show two different snapshots for one author.
+ */
+@InternalStreamChatApi
+public fun Message.withRefreshedMemberInfo(userId: String, memberInfo: MemberInfo?): Message {
+    val refreshed = if (user.id == userId) withMemberInfo(memberInfo) else this
+    val quoted = refreshed.replyTo
+    return when {
+        quoted == null || quoted.user.id != userId -> refreshed
+        else -> refreshed.copy(replyTo = quoted.withMemberInfo(memberInfo))
+    }
+}
+
+private fun Message.hasOutdatedMemberInfoFor(userId: String, memberInfo: MemberInfo?): Boolean =
+    user.id == userId && member != memberInfo
 
 /** Updates collection of messages with more recent data of [users]. */
 @InternalStreamChatApi

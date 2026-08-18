@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -1120,6 +1121,68 @@ internal object MessageTestData {
         "silent": false,
         "mentioned_roles": null
     }"""
+
+    // endregion
+    // region Member info (message.member)
+
+    private const val BASE_FIELDS = """
+        "id": "msg-1",
+        "cid": "messaging:general",
+        "text": "Hello world",
+        "html": "<p>Hello world</p>",
+        "type": "regular",
+        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+        "attachments": [],
+        "latest_reactions": [],
+        "own_reactions": [],
+        "mentioned_users": [],
+        "reply_count": 0,
+        "deleted_reply_count": 0,
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "updated_at": "2020-01-01T00:00:00.000Z",
+        "silent": false
+    """
+
+    /** Baseline shape: the member object without any projected custom keys. */
+    @Language("JSON")
+    val jsonWithMemberWithoutCustom = """{
+        $BASE_FIELDS,
+        "member": {"channel_role": "channel_member", "notifications_muted": false}
+    }"""
+
+    /** API v1 inlines the projected member custom keys next to `channel_role`. */
+    @Language("JSON")
+    val jsonWithMemberCustomInlined = """{
+        $BASE_FIELDS,
+        "member": {
+            "channel_role": "channel_moderator",
+            "notifications_muted": true,
+            "flair": {"tier": "gold"}
+        }
+    }"""
+
+    /** API v2 nests the same keys under `custom`. */
+    @Language("JSON")
+    val jsonWithMemberCustomNested = """{
+        $BASE_FIELDS,
+        "member": {
+            "channel_role": "channel_moderator",
+            "notifications_muted": true,
+            "custom": {"flair": {"tier": "gold"}}
+        }
+    }"""
+
+    val expectedMemberWithoutCustom = MemberInfo(
+        channelRole = "channel_member",
+        notificationsMuted = false,
+        extraData = emptyMap(),
+    )
+
+    val expectedMemberWithCustom = MemberInfo(
+        channelRole = "channel_moderator",
+        notificationsMuted = true,
+        extraData = mapOf("flair" to mapOf("tier" to "gold")),
+    )
 
     // endregion
 }

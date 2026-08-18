@@ -17,7 +17,10 @@
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
+import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 
@@ -50,6 +53,22 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
      * @param message The message to be added or updated.
      */
     fun upsertMessage(message: Message) = upsertMessages(listOf(message))
+
+    /**
+     * Refreshes the [Message.member] snapshot carried by the thread replies the given member authored.
+     *
+     * Thread replies live in this state rather than the channel one, so the channel refresh does not reach them.
+     *
+     * @param cid The channel the membership belongs to.
+     * @param userId The author whose replies should be refreshed.
+     * @param memberInfo The member snapshot to store.
+     */
+    fun updateMessagesMemberInfo(cid: String, userId: String, memberInfo: MemberInfo) {
+        val outdated = mutableState.rawMessage.value.values
+            .filter { message -> message.cid == cid && message.hasOutdatedMemberInfo(userId, memberInfo) }
+        if (outdated.isEmpty()) return
+        mutableState.upsertMessages(outdated.map { message -> message.withRefreshedMemberInfo(userId, memberInfo) })
+    }
 
     /**
      * Upsert messages in the channel.
