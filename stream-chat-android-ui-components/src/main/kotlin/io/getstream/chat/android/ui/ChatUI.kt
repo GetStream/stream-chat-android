@@ -190,15 +190,15 @@ public object ChatUI {
      */
     @Deprecated(
         "Use streamCdnImageResizer (defaults to a StreamCdnMaxPixelsImageResizer capping images to 2MP). " +
-            "For custom behavior, provide your own StreamCdnImageResizer.",
-        ReplaceWith("streamCdnImageResizer"),
+            "For custom behavior, provide your own StreamCdnImageResizer. This percentage-based config has no " +
+            "one-token replacement — migrate manually.",
     )
     @JvmStatic
     public var streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing()
 
     /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Defaults to a [StreamCdnMaxPixelsImageResizer]
-     * capping images to 2MP, mirroring the iOS SDK. Set it to [NoOpStreamCdnImageResizer] to disable resizing. Note
+     * capping images to 2MP. Set it to [NoOpStreamCdnImageResizer] to disable resizing. Note
      * that resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)
      * query parameters.
      */
