@@ -230,7 +230,7 @@ internal class StringExtensionsKtTest {
         // Not a known Stream host, so no resizing by default.
         customHostUrl.createResizedStreamCdnImageUrl(maxImagePixels = 2_000_000L) shouldBeEqualTo customHostUrl
 
-        // Opting the custom/proxied host in resizes it (iOS StreamCDNRequester(cdnHost:) parity).
+        // Opting the custom/proxied host in resizes it.
         val resized = customHostUrl.createResizedStreamCdnImageUrl(
             maxImagePixels = 2_000_000L,
             cdnHost = "images.example.com",

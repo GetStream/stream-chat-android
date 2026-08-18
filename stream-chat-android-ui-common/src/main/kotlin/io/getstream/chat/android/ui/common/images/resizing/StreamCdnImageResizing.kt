@@ -36,7 +36,7 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
  */
 @Deprecated(
     "Configure image resizing via a StreamCdnImageResizer — the default StreamCdnMaxPixelsImageResizer caps " +
-        "images to 2MP (iOS parity), or provide your own StreamCdnImageResizer. This percentage-based config is " +
+        "images to 2MP, or provide your own StreamCdnImageResizer. This percentage-based config is " +
         "only honored while enabled and will be removed in the next major version.",
 )
 public data class StreamCdnImageResizing(
@@ -57,7 +57,7 @@ public data class StreamCdnImageResizing(
          */
         @Deprecated(
             "Configure image resizing via a StreamCdnImageResizer — the default StreamCdnMaxPixelsImageResizer " +
-                "caps images to 2MP (iOS parity), or provide your own StreamCdnImageResizer. This percentage-based " +
+                "caps images to 2MP, or provide your own StreamCdnImageResizer. This percentage-based " +
                 "config will be removed in the next major version.",
         )
         @Suppress("DEPRECATION")
