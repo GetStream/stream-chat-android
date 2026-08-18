@@ -48,11 +48,16 @@ internal class MemberExtensionsTests {
 
     @Test
     fun `toMemberInfo should drop keys that are not member custom data`() {
-        // user_id and the deprecated member-level role are not declared on the member DTO, so they reach
-        // Member.extraData. The projection the backend puts on message.member carries neither, so they must not
-        // leak into MemberInfo either.
+        // Stored member fields the member DTO does not declare reach Member.extraData. The projection the backend
+        // puts on message.member carries none of them, so they must not leak into MemberInfo either.
         val member = randomMember().copy(
-            extraData = mapOf("user_id" to "leandro", "role" to "member", "flair" to mapOf("tier" to "gold")),
+            extraData = mapOf(
+                "user_id" to "leandro",
+                "role" to "member",
+                "is_moderator" to true,
+                "deleted_messages" to listOf("messageId"),
+                "flair" to mapOf("tier" to "gold"),
+            ),
         )
 
         member.toMemberInfo().extraData shouldBeEqualTo mapOf("flair" to mapOf("tier" to "gold"))
