@@ -210,6 +210,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.amshove.kluent.`should be instance of`
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -1856,6 +1857,29 @@ internal class MoshiChatApiTest {
         val expectedBody = CreateGuestRequest(user = UserRequest(id = userId, name = userName))
         result `should be instance of` expected
         verify(api, times(1)).getGuestUser(expectedBody)
+    }
+
+    @Test
+    fun `getGuestUser maps the response user and access token onto the domain guest`() = runTest {
+        // given
+        val userResponse = Mother.randomUserResponse(id = "guest-1", role = "guest")
+        val response = CreateGuestResponse(
+            accessToken = "the-access-token",
+            duration = "12ms",
+            user = userResponse,
+        )
+        val api = mock<GuestApi>()
+        whenever(api.getGuestUser(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture()
+            .withGuestApi(api)
+            .get()
+        // when
+        val result = sut.getGuestUser(randomString(), randomString()).await()
+        // then
+        val guest = result.getOrThrow()
+        guest.token shouldBeEqualTo "the-access-token"
+        guest.user.id shouldBeEqualTo "guest-1"
+        guest.user.role shouldBeEqualTo "guest"
     }
 
     @ParameterizedTest

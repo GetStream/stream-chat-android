@@ -27,28 +27,41 @@ internal class CreateGuestResponseParsingTest {
     fun `Deserialize guest response and map the embedded user with custom fields`() {
         val response = parser.fromJson(GUEST_JSON, CreateGuestResponse::class.java)
 
-        response.accessToken shouldBeEqualTo "guest-token"
-        response.user.id shouldBeEqualTo "guest-123"
+        response.accessToken shouldBeEqualTo GUEST_TOKEN
+        response.duration shouldBeEqualTo "12.65ms"
+        response.user.id shouldBeEqualTo "guest-a9466182-3293-43f2-8d80-b3b9892e98d3-probe"
+        response.user.name shouldBeEqualTo "Probe Guest"
         response.user.role shouldBeEqualTo "guest"
-        response.user.language shouldBeEqualTo "en"
+        response.user.language shouldBeEqualTo ""
         response.user.custom shouldBeEqualTo mapOf("nickname" to "Ghost")
     }
 
     companion object {
+        /** Shaped like a JWT, since the real one is a credential and the parse only cares about the string. */
+        private const val GUEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.redacted-payload.redacted-signature"
+
+        /**
+         * Captured from `POST /guest`, with the access token replaced and the guest id shortened. Note the
+         * server sends an empty `language`, sends `name` at the root where the model declares it, and leaves
+         * `nickname` next to it for the custom sweep to collect.
+         */
         private const val GUEST_JSON =
             """{
-                "access_token": "guest-token",
-                "duration": "12ms",
                 "user": {
-                    "id": "guest-123",
+                    "id": "guest-a9466182-3293-43f2-8d80-b3b9892e98d3-probe",
+                    "name": "Probe Guest",
+                    "language": "",
                     "role": "guest",
-                    "language": "en",
+                    "teams": [],
+                    "created_at": "2026-08-18T13:44:19.149154Z",
+                    "updated_at": "2026-08-18T13:44:19.149154Z",
                     "banned": false,
                     "online": false,
-                    "created_at": "2020-06-10T11:04:31.000Z",
-                    "updated_at": "2020-06-10T11:04:31.000Z",
+                    "blocked_user_ids": [],
                     "nickname": "Ghost"
-                }
+                },
+                "access_token": "$GUEST_TOKEN",
+                "duration": "12.65ms"
             }"""
     }
 }
