@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.core.utils
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, InternalStreamChatApi::class)
 internal class DebouncerTest {
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
@@ -121,6 +122,60 @@ internal class DebouncerTest {
         delay(300)
         // then
         acc `should be equal to` 2
+    }
+
+    @Test
+    fun testWorkWithCustomDebounceInterval() = runTest {
+        // given
+        val debouncer = Debouncer(200)
+        var acc = 0
+        // when
+        debouncer.submit(debounceMs = 500) {
+            acc += 1
+        }
+        delay(300)
+        // then
+        acc `should be equal to` 0
+        // when
+        delay(300)
+        // then
+        acc `should be equal to` 1
+    }
+
+    @Test
+    fun testSuspendableWorkWithCustomDebounceInterval() = runTest {
+        // given
+        val debouncer = Debouncer(200)
+        var acc = 0
+        // when
+        debouncer.submitSuspendable(debounceMs = 500) {
+            acc += 1
+        }
+        delay(300)
+        // then
+        acc `should be equal to` 0
+        // when
+        delay(300)
+        // then
+        acc `should be equal to` 1
+    }
+
+    @Test
+    fun testWorkWithCustomDebounceIntervalCancelsPendingWork() = runTest {
+        // given
+        val debouncer = Debouncer(200)
+        var acc = 0
+        // when
+        debouncer.submit(debounceMs = 500) {
+            acc += 1
+        }
+        delay(100)
+        debouncer.submit(debounceMs = 300) {
+            acc += 10
+        }
+        delay(400)
+        // then
+        acc `should be equal to` 10
     }
 
     @Test

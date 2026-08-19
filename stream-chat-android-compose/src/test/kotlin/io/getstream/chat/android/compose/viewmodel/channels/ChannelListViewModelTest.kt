@@ -57,10 +57,12 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.result.Error
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -76,6 +78,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -592,6 +595,82 @@ internal class ChannelListViewModelTest {
             assertEquals(2, captor.allValues.size)
             assertEquals(0, captor.firstValue.offset)
             assertEquals(30, captor.secondValue.offset)
+        }
+
+    @Test
+    fun `Given channel list When setting a short message search query Should debounce it for longer`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("ab"))
+            advanceTimeBy(ChannelListViewModel.SEARCH_DEBOUNCE_MS + 50)
+
+            verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
+
+            verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        }
+
+    @Test
+    fun `Given channel list When setting a regular message search query Should debounce it with the default debounce`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("abc"))
+            advanceTimeBy(ChannelListViewModel.SEARCH_DEBOUNCE_MS + 50)
+
+            verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        }
+
+    @Test
+    fun `Given a debounce longer than the short query one When setting a short search query Should keep it`() =
+        runTest {
+            val searchDebounceMs = SearchDebounce.SHORT_QUERY_DEBOUNCE_MS + 300
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .givenSearchDebounceMs(searchDebounceMs)
+                .get(this)
+
+            viewModel.setSearchQuery(SearchQuery.Messages("ab"))
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS + 50)
+
+            verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+
+            advanceTimeBy(searchDebounceMs)
+
+            verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         }
 
     @Test
@@ -1270,6 +1349,7 @@ internal class ChannelListViewModelTest {
         private var predefinedFilterName: String? = null
         private var predefinedFilterValues: Map<String, Any>? = null
         private var predefinedSortValues: Map<String, Any>? = null
+        private var searchDebounceMs: Long = ChannelListViewModel.SEARCH_DEBOUNCE_MS
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -1356,6 +1436,10 @@ internal class ChannelListViewModelTest {
             predefinedSortValues = sortValues
         }
 
+        fun givenSearchDebounceMs(searchDebounceMs: Long) = apply {
+            this.searchDebounceMs = searchDebounceMs
+        }
+
         fun givenSearchMessagesResult(result: SearchMessagesResult) = apply {
             whenever(
                 chatClient.searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
@@ -1395,6 +1479,7 @@ internal class ChannelListViewModelTest {
                 groupKey != null -> ChannelListViewModel(
                     chatClient = chatClient,
                     groupKey = groupKey,
+                    searchDebounceMs = searchDebounceMs,
                     draftMessagesEnabled = false,
                     messageSearchSort = messageSearchSort,
                     globalState = MutableStateFlow(globalState),
@@ -1405,6 +1490,7 @@ internal class ChannelListViewModelTest {
                     predefinedFilterName = name,
                     filterValues = predefinedFilterValues,
                     sortValues = predefinedSortValues,
+                    searchDebounceMs = searchDebounceMs,
                     draftMessagesEnabled = false,
                     chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
                     messageSearchSort = messageSearchSort,
@@ -1415,6 +1501,7 @@ internal class ChannelListViewModelTest {
                     chatClient = chatClient,
                     initialSort = initialSort,
                     initialFilters = initialFilters,
+                    searchDebounceMs = searchDebounceMs,
                     draftMessagesEnabled = false,
                     chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
                     messageSearchSort = messageSearchSort,

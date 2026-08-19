@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomGenericError
@@ -26,9 +27,11 @@ import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewState
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -40,6 +43,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
+@OptIn(InternalStreamChatApi::class)
 internal class AddMembersViewControllerTest {
 
     @Test
@@ -163,6 +167,29 @@ internal class AddMembersViewControllerTest {
             assertFalse(state.isLoading)
             assertEquals(query, state.query)
             assertEquals(users, state.searchResult)
+        }
+    }
+
+    @Test
+    fun `QueryChanged with a short query waits for the short query debounce`() = runTest {
+        val users = listOf(randomUser())
+        val sut = Fixture()
+            .givenQueryUsers(users = emptyList()) // initial empty-query search
+            .givenQueryUsers(users = users) // search for "Al"
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial state and empty-query search result
+
+            sut.onViewAction(AddMembersViewAction.QueryChanged("Al"))
+            skipItems(1) // Skip the query-only state update
+
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS - 50)
+            expectNoEvents() // Still debounced, no search started
+
+            advanceTimeBy(100)
+            assertTrue(awaitItem().isLoading) // Search triggered
+            assertEquals(users, awaitItem().searchResult)
         }
     }
 

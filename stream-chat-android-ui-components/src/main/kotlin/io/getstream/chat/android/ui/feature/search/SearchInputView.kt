@@ -28,6 +28,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import io.getstream.chat.android.core.utils.Debouncer
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.focusAndShowKeyboard
@@ -116,7 +117,7 @@ public class SearchInputView : FrameLayout {
 
             val newQuery = query
             continuousInputChangedListener?.onInputChanged(newQuery)
-            inputDebouncer.submit {
+            inputDebouncer.submit(SearchDebounce.debounceMsFor(newQuery, TYPING_DEBOUNCE_MS)) {
                 debouncedInputChangedListener?.onInputChanged(newQuery)
             }
         }
@@ -172,6 +173,9 @@ public class SearchInputView : FrameLayout {
         if (query.isEmpty()) {
             return false
         }
+
+        // A debounce pending from the last keystroke would notify with the query being cleared.
+        inputDebouncer.cancelLastDebounce()
 
         withoutListenerNotifications {
             binding.inputField.setText("")
