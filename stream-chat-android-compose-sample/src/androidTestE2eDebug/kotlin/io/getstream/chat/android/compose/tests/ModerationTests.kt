@@ -16,16 +16,18 @@
 
 package io.getstream.chat.android.compose.tests
 
+import io.getstream.chat.android.compose.robots.assertBlockMessageAuthorOption
 import io.getstream.chat.android.compose.robots.assertFlagMessageDialog
 import io.getstream.chat.android.compose.robots.assertMessage
+import io.getstream.chat.android.compose.robots.assertMuteMessageAuthorOption
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 /**
- * Covers flagging another user's message from the message menu. The option is absent on the user's
- * own messages.
+ * Covers the moderation options the message menu offers for another user's message: flagging the
+ * message, and muting or blocking its author. The options are absent on the user's own messages.
  */
 class ModerationTests : StreamTestCase() {
 
@@ -54,6 +56,80 @@ class ModerationTests : StreamTestCase() {
             userRobot
                 .assertFlagMessageDialog(isDisplayed = false)
                 .assertMessage(sampleText)
+        }
+    }
+
+    @AllureId("11563")
+    @Test
+    fun test_userMutesMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("WHEN user mutes the message author") {
+            userRobot.muteMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to unmute the author") {
+            userRobot.assertMuteMessageAuthorOption(sampleText, isAuthorMuted = true)
+        }
+    }
+
+    @AllureId("11566")
+    @Test
+    fun test_userUnmutesMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user mutes the message author") {
+            userRobot.muteMessageAuthor(sampleText)
+        }
+        step("WHEN user unmutes the message author") {
+            userRobot.unmuteMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to mute the author again") {
+            userRobot.assertMuteMessageAuthorOption(sampleText, isAuthorMuted = false)
+        }
+    }
+
+    @AllureId("6071")
+    @Test
+    fun test_userBlocksMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("WHEN user blocks the message author") {
+            userRobot.blockMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to unblock the author") {
+            userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = true)
+        }
+    }
+
+    @AllureId("11575")
+    @Test
+    fun test_userUnblocksMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user blocks the message author") {
+            userRobot.blockMessageAuthor(sampleText)
+        }
+        step("WHEN user unblocks the message author") {
+            userRobot.unblockMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to block the author again") {
+            userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = false)
         }
     }
 }

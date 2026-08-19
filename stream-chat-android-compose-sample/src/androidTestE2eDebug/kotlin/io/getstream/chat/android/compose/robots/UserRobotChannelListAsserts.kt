@@ -80,6 +80,15 @@ fun UserRobot.assertFailedMessageDeliveryStatusInPreview(): UserRobot {
     return this
 }
 
+fun UserRobot.assertChannelIsMuted(isMuted: Boolean): UserRobot {
+    if (isMuted) {
+        assertTrue(Channel.mutedIcon.waitDisplayed())
+    } else {
+        assertFalse(Channel.mutedIcon.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
 fun UserRobot.assertChannelListIsEmpty(): UserRobot {
     assertFalse(ChannelList.channels.waitToDisappear().isDisplayed())
     return this

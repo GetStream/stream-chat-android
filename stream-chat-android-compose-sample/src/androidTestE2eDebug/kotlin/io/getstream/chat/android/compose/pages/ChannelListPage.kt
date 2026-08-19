@@ -52,6 +52,7 @@ class ChannelListPage {
 
             companion object {
                 val mute = By.desc("Mute")
+                val unmute = By.desc("Unmute")
                 val more = By.desc("More")
             }
         }
