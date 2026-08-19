@@ -114,6 +114,7 @@ internal class DraftMessageListenerDatabaseTest {
         )
 
         verify(messageRepository, never()).deleteDraftMessage(any())
+        verify(messageRepository, never()).insertDraftMessage(any())
     }
 
     @Test

@@ -106,6 +106,7 @@ internal class DraftMessageListenerStateTest {
         )
 
         verify(mutableGlobalState, never()).removeDraftMessage(any())
+        verify(mutableGlobalState, never()).updateDraftMessage(any())
     }
 
     @Test
