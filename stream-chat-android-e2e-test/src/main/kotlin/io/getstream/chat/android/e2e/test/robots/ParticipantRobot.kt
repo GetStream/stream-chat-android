@@ -21,6 +21,7 @@ import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.net.URLEncoder
 
 public class ParticipantRobot(
     private val mockServer: MockServer,
@@ -207,6 +208,28 @@ public class ParticipantRobot(
         mockServer.postRequest(endpoint)
         return this
     }
+
+    /**
+     * Casts a vote in the poll of the newest poll message.
+     *
+     * @param option The text of the poll option to vote for.
+     */
+    public fun castPollVote(option: String): ParticipantRobot {
+        mockServer.postRequest("participant/poll_vote?option=${option.urlEncoded()}")
+        return this
+    }
+
+    /**
+     * Adds an answer (comment) to the poll of the newest poll message.
+     *
+     * @param answer The answer text.
+     */
+    public fun addPollAnswer(answer: String): ParticipantRobot {
+        mockServer.postRequest("participant/poll_vote?answer=${answer.urlEncoded()}")
+        return this
+    }
+
+    private fun String.urlEncoded(): String = URLEncoder.encode(this, Charsets.UTF_8.name())
 
     public fun addReaction(type: ReactionType, delay: Int = 0): ParticipantRobot {
         var endpoint = "participant/reaction?type=${type.reaction}"

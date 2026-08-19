@@ -22,6 +22,7 @@ import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import java.util.regex.Pattern
 import io.getstream.chat.android.compose.R as ComposeR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 open class MessageListPage {
 
@@ -42,6 +43,7 @@ open class MessageListPage {
             val filesTab get() = By.res("Stream_AttachmentPickerFilesTab")
             val mediaCaptureTab get() = By.res("Stream_AttachmentPickerMediaCaptureTab")
             val pollsTab get() = By.res("Stream_AttachmentPickerPollsTab")
+            val createPollButton get() = By.res("Stream_AttachmentPickerCreatePollButton")
             val findFilesButton get() = By.res("Stream_FindFilesButton")
             val rootsButton = By.descContains("Show roots")
             val downloadsView = By.text("Downloads")
@@ -137,6 +139,29 @@ open class MessageListPage {
                 val linkPreviewImage get() = By.res("Stream_LinkAttachmentPreview")
                 val linkPreviewTitle get() = By.res("Stream_LinkAttachmentTitle")
                 val linkPreviewDescription get() = By.res("Stream_LinkAttachmentDescription")
+            }
+
+            class Poll {
+
+                companion object {
+                    val singleVoteSubtitle get() = By.text(appContext.getString(UiCommonR.string.stream_ui_poll_description_single_answer))
+                    val closedSubtitle get() = By.text(appContext.getString(UiCommonR.string.stream_ui_poll_description_closed))
+                    val viewResultsButton get() = By.res("Stream_PollViewResultsButton")
+                    val endPollButton get() = By.res("Stream_PollEndButton")
+                    val endPollConfirmationAction get() = By.res("Stream_PollEndConfirmButton")
+                    val resultsTitle get() = By.text(appContext.getString(ComposeR.string.stream_compose_poll_results))
+
+                    // The row is the toggle: the option text is a plain child node, while the
+                    // node carrying the vote state (and the click handling) is the row around it.
+                    fun option(text: String): BySelector =
+                        By.res("Stream_PollOptionVotingRow").hasDescendant(By.text(text))
+
+                    fun optionWithVoteCount(text: String, count: Int): BySelector = option(text).hasDescendant(
+                        By.desc(appContext.resources.getQuantityString(ComposeR.plurals.stream_compose_poll_vote_counts, count, count)),
+                    )
+
+                    fun question(text: String): BySelector = By.text(text)
+                }
             }
 
             class Reactions {

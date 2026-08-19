@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.robots
 import androidx.test.uiautomator.By
 import io.getstream.chat.android.compose.pages.ChannelInfoPage
 import io.getstream.chat.android.compose.pages.ChannelListPage
+import io.getstream.chat.android.compose.pages.CreatePollPage
 import io.getstream.chat.android.compose.pages.LoginPage
 import io.getstream.chat.android.compose.pages.MessageListPage
 import io.getstream.chat.android.compose.pages.MessageListPage.AttachmentPicker
@@ -581,6 +582,43 @@ class UserRobot {
             attachment.waitToAppearAndClick()
         }
 
+        return this
+    }
+
+    fun createPoll(question: String, options: List<String>): UserRobot {
+        Composer.attachmentsButton.waitToAppearAndClick()
+        // Selecting the polls tab auto-opens the poll creation dialog (the default
+        // PollPickerMode has autoShowCreateDialog enabled), so the picker's Create Poll
+        // button is never tapped.
+        AttachmentPicker.pollsTab.waitToAppearAndClick()
+        CreatePollPage.questionInput.waitToAppear().typeText(question)
+        options.forEachIndexed { index, option ->
+            CreatePollPage.addOptionButton.waitToAppearAndClick()
+            CreatePollPage.optionInput.waitToAppear(withIndex = index).typeText(option)
+        }
+        CreatePollPage.createButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun castPollVote(option: String): UserRobot {
+        Message.Poll.option(option).waitToAppearAndClick()
+        return this
+    }
+
+    fun removePollVote(option: String): UserRobot {
+        // A tap on an option the user already voted for removes the vote.
+        Message.Poll.option(option).waitToAppearAndClick()
+        return this
+    }
+
+    fun openPollResults(): UserRobot {
+        Message.Poll.viewResultsButton.waitToAppearAndClick()
+        return this
+    }
+
+    fun endPoll(): UserRobot {
+        Message.Poll.endPollButton.waitToAppearAndClick()
+        Message.Poll.endPollConfirmationAction.waitToAppearAndClick()
         return this
     }
 
