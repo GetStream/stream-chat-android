@@ -144,6 +144,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isLocalUnreadCountEnabled by remember {
                         mutableStateOf(settings.isLocalUnreadCountEnabled)
                     }
+                    var isChannelSearchEnabled by remember {
+                        mutableStateOf(settings.isChannelSearchEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -217,6 +220,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isLocalUnreadCountEnabled = it
                                 settings.isLocalUnreadCountEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_channel_search_label),
+                            description = stringResource(R.string.custom_login_flag_channel_search_description),
+                            value = isChannelSearchEnabled,
+                            onValueChange = {
+                                isChannelSearchEnabled = it
+                                settings.isChannelSearchEnabled = it
                             },
                         ),
                     )

@@ -47,6 +47,8 @@ class StartupActivity : AppCompatActivity() {
                 ChatClient.instance().disconnect(flushPersistence = true).await()
                 ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, baseUrl)
                 customSettings().isComposerLinkPreviewEnabled = true
+                // Always assigned, so a flag left by a previous test cannot leak into this one.
+                customSettings().isChannelSearchEnabled = intent.getBooleanExtra("CHANNEL_SEARCH", false)
             }
 
             val initTestActivity = intent.getSerializableExtra("InitTestActivity") as? InitTestActivity
