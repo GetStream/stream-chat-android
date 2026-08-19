@@ -37,8 +37,7 @@ internal class CustomAdapterCoverageTest {
         val declaring = modelsDeclaringCustom()
         check(declaring.isNotEmpty()) { "Found no generated models declaring `custom`; is $MODELS_DIR correct?" }
 
-        val registered = registeredAdapterTargets()
-        val unprotected = declaring - registered - NESTED_CUSTOM.keys
+        val unprotected = declaring - adaptedModels() - NESTED_CUSTOM.keys
 
         check(unprotected.isEmpty()) {
             "These generated models declare `custom` but have no adapter registered in MoshiChatParser:\n" +
@@ -54,14 +53,24 @@ internal class CustomAdapterCoverageTest {
             .map { it.nameWithoutExtension }
             .toSet()
 
-    private fun registeredAdapterTargets(): Set<String> =
-        Regex("""\.add\((\w+)Adapter\)""").findAll(File(PARSER_FILE).readText())
+    private fun adaptedModels(): Set<String> {
+        val registered = Regex("""\.add\((\w+)\)""").findAll(File(PARSER_FILE).readText())
             .map { it.groupValues[1] }
             .toSet()
+        return File(ADAPTERS_DIR).listFiles { f -> f.extension == "kt" }.orEmpty()
+            .flatMap { file -> ADAPTER_DECLARATION.findAll(file.readText()).toList() }
+            .filter { it.groupValues[1] in registered }
+            .map { it.groupValues[2] }
+            .toSet()
+    }
 
     private companion object {
         private const val MODELS_DIR = "src/main/java/io/getstream/chat/android/network/models"
         private const val PARSER_FILE = "src/main/java/io/getstream/chat/android/client/parser2/MoshiChatParser.kt"
+        private const val ADAPTERS_DIR = "src/main/java/io/getstream/chat/android/client/parser2/adapters"
+
+        /** Read from the type parameter, since an adapter's name need not match the model it adapts. */
+        private val ADAPTER_DECLARATION = Regex("""object\s+(\w+)\s*:\s*CustomObjectDtoAdapter<(\w+)>""")
 
         /** The colon matters: without it this also matches unrelated properties like `customEvents`. */
         private const val CUSTOM_PROPERTY = "internal val custom:"
