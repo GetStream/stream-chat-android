@@ -26,6 +26,7 @@ import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 class PollsTests : StreamTestCase() {
@@ -37,6 +38,7 @@ class PollsTests : StreamTestCase() {
     private val secondOption = "Blue"
     private val options = listOf(firstOption, secondOption)
 
+    @AllureId("11787")
     @Test
     fun test_pollMessageIsShown_whenUserCreatesPoll() {
         step("GIVEN user opens the channel") {
@@ -53,6 +55,7 @@ class PollsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11788")
     @Test
     fun test_optionIsChecked_whenUserVotesInPoll() {
         step("GIVEN user creates a poll") {
@@ -66,6 +69,7 @@ class PollsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11789")
     @Test
     fun test_optionIsUnchecked_whenUserRemovesPollVote() {
         step("GIVEN user creates a poll and votes") {
@@ -84,6 +88,7 @@ class PollsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11790")
     @Test
     fun test_participantVoteIsShownInPollResults_whenParticipantVotesInPoll() {
         step("GIVEN user creates a poll") {
@@ -107,6 +112,7 @@ class PollsTests : StreamTestCase() {
         }
     }
 
+    @AllureId("11791")
     @Test
     fun test_pollIsClosed_whenUserEndsPoll() {
         step("GIVEN user creates a poll") {
