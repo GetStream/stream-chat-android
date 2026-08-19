@@ -55,11 +55,32 @@ internal class AudioPlayerControllerTest {
     }
 
     @Test
-    fun `play rejects attachment which is not an audio recording`() {
+    fun `play rejects an attachment which is not playable audio`() {
         controller.play(randomAttachment(type = AttachmentType.IMAGE))
 
         verify(audioPlayer, never()).play(any(), any())
         assertEquals(NO_ID, controller.state.value.current.playingId)
+    }
+
+    @Test
+    fun `resetAudio rejects an attachment which is not playable audio`() {
+        controller.resetAudio(randomAttachment(type = AttachmentType.IMAGE))
+
+        verify(audioPlayer, never()).resetAudio(any())
+    }
+
+    @Test
+    fun `startSeek rejects an attachment which is not playable audio`() {
+        controller.startSeek(randomAttachment(type = AttachmentType.IMAGE))
+
+        verify(audioPlayer, never()).startSeek(any())
+    }
+
+    @Test
+    fun `seekTo rejects an attachment which is not playable audio`() {
+        controller.seekTo(randomAttachment(type = AttachmentType.IMAGE), progress = 0.5f)
+
+        verify(audioPlayer, never()).seekTo(any(), any())
     }
 
     @Test
@@ -108,6 +129,43 @@ internal class AudioPlayerControllerTest {
         val current = controller.state.value.current
         assertEquals(HALF_DURATION_IN_MS, current.playbackInMs)
         assertEquals(0.5f, current.playingProgress)
+    }
+
+    @Test
+    fun `play starts playback of a regular audio attachment`() {
+        val attachment = audioFileAttachment()
+
+        controller.play(attachment)
+
+        verify(audioPlayer).play(RECORDING_URI, attachment.audioHash)
+        val current = controller.state.value.current
+        assertEquals(attachment.audioHash, current.playingId)
+        assertEquals(RECORDING_URI, current.audioUri)
+    }
+
+    @Test
+    fun `play of an attachment without a duration starts at zero progress`() {
+        val attachment = audioFileAttachment()
+
+        controller.play(attachment)
+
+        val current = controller.state.value.current
+        assertEquals(0, current.durationInMs)
+        assertEquals(0f, current.playingProgress)
+    }
+
+    @Test
+    fun `duration reported by the player drives the seek position of a regular audio attachment`() {
+        val attachment = audioFileAttachment()
+        val listeners = playAndCaptureListeners(attachment)
+        listeners.onProgress(
+            ProgressData(currentPosition = 0, progress = 0f, duration = DURATION_IN_MS),
+        )
+
+        controller.seekTo(attachment, progress = 0.5f)
+
+        verify(audioPlayer).seekTo(HALF_DURATION_IN_MS, attachment.audioHash)
+        assertEquals(HALF_DURATION_IN_MS, controller.state.value.current.playbackInMs)
     }
 
     @Test
@@ -241,7 +299,7 @@ internal class AudioPlayerControllerTest {
     }
 
     @Test
-    fun `changeSpeed rejects attachment which is not an audio recording`() {
+    fun `changeSpeed rejects an attachment which is not playable audio`() {
         controller.changeSpeed(randomAttachment(type = AttachmentType.IMAGE))
 
         verify(audioPlayer, never()).changeSpeed(any())
@@ -312,6 +370,47 @@ internal class AudioPlayerControllerTest {
         verify(audioPlayer).seekTo(2500, attachment.audioHash)
         assertEquals(NO_ID, controller.state.value.current.playingId)
         assertEquals(0.25f, controller.state.value.seekTo.getOrDefault(attachment.audioHash, 0f))
+    }
+
+    @Test
+    fun `seek made before the duration is known is applied once the player reports it`() {
+        val attachment = audioFileAttachment()
+        controller.seekTo(attachment, progress = 0.5f)
+        val listeners = playAndCaptureListeners(attachment)
+
+        listeners.onProgress(
+            ProgressData(currentPosition = 0, progress = 0f, duration = DURATION_IN_MS),
+        )
+
+        verify(audioPlayer).seekTo(HALF_DURATION_IN_MS, attachment.audioHash)
+    }
+
+    @Test
+    fun `seek on a loaded track whose duration is unknown is applied once it is reported`() {
+        val attachment = audioFileAttachment()
+        val listeners = playAndCaptureListeners(attachment)
+
+        controller.seekTo(attachment, progress = 0.5f)
+        listeners.onProgress(
+            ProgressData(currentPosition = 0, progress = 0f, duration = DURATION_IN_MS),
+        )
+
+        verify(audioPlayer).seekTo(HALF_DURATION_IN_MS, attachment.audioHash)
+    }
+
+    @Test
+    fun `seekTo leaves the track paused`() {
+        val attachment = audioRecordingAttachment()
+        val listeners = playAndCaptureListeners(attachment)
+        listeners.onAudioState(AudioState.PLAYING)
+        whenever(audioPlayer.currentState) doReturn AudioState.PLAYING
+
+        controller.startSeek(attachment)
+        listeners.onAudioState(AudioState.PAUSE)
+        whenever(audioPlayer.currentState) doReturn AudioState.PAUSE
+        controller.seekTo(attachment, progress = 0.5f)
+
+        verify(audioPlayer, never()).resume(any())
     }
 
     @Test
@@ -433,6 +532,11 @@ internal class AudioPlayerControllerTest {
         val onAudioState: (AudioState) -> Unit,
         val onProgress: (ProgressData) -> Unit,
         val onSpeed: (Float) -> Unit,
+    )
+
+    private fun audioFileAttachment(): Attachment = randomAttachment(
+        type = AttachmentType.AUDIO,
+        extraData = emptyMap(),
     )
 
     private fun audioRecordingAttachment(): Attachment = randomAttachment(

@@ -52,13 +52,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
+import io.getstream.chat.android.compose.ui.attachments.content.AudioAttachmentContentItem
+import io.getstream.chat.android.compose.ui.attachments.content.AudioAttachmentItem
 import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
@@ -170,7 +171,8 @@ import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.ui.util.bottomBorder
 import io.getstream.chat.android.compose.ui.util.topBorder
 import io.getstream.chat.android.compose.util.isImeAnimating
-import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.defaultAudioPlayerViewModelFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -179,6 +181,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.isAvailableFor
+import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
@@ -2588,15 +2591,39 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun AudioRecordAttachmentContent(params: AudioRecordAttachmentContentParams) {
-        val viewModelFactory = remember {
-            AudioPlayerViewModelFactory(
-                getAudioPlayer = { ChatClient.instance().audioPlayer },
-                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
-            )
-        }
+        val viewModelFactory = remember { defaultAudioPlayerViewModelFactory() }
         io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent(
             modifier = params.modifier,
             attachmentState = params.state,
+            viewModelFactory = viewModelFactory,
+        )
+    }
+
+    /**
+     * Factory method for creating a single regular audio file attachment item, rendered with an inline player.
+     *
+     * Audio attachments are routed through the file attachment path, and [FileAttachmentItem] delegates here for
+     * them, so overriding [FileAttachmentContent] or [FileAttachmentItem] keeps control over audio rendering too.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun AudioAttachmentItem(params: AudioAttachmentItemParams) {
+        if (LocalInspectionMode.current) {
+            // No ChatClient in previews and snapshot tests, so render the player in its idle state.
+            AudioAttachmentContentItem(
+                modifier = params.modifier,
+                attachment = params.attachment,
+                playerState = AudioPlayerState(getRecordingUri = Attachment::assetUrl),
+                isMine = params.isMine,
+            )
+            return
+        }
+        val viewModelFactory = remember { defaultAudioPlayerViewModelFactory() }
+        AudioAttachmentItem(
+            modifier = params.modifier,
+            attachment = params.attachment,
+            isMine = params.isMine,
             viewModelFactory = viewModelFactory,
         )
     }
@@ -2673,12 +2700,22 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun FileAttachmentItem(params: FileAttachmentItemParams) {
-        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
-            attachment = params.attachment,
-            isMine = params.isMine,
-            showFileSize = params.showFileSize,
-            modifier = params.modifier,
-        )
+        if (params.attachment.isAudio()) {
+            AudioAttachmentItem(
+                params = AudioAttachmentItemParams(
+                    attachment = params.attachment,
+                    isMine = params.isMine,
+                    modifier = params.modifier,
+                ),
+            )
+        } else {
+            io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
+                attachment = params.attachment,
+                isMine = params.isMine,
+                showFileSize = params.showFileSize,
+                modifier = params.modifier,
+            )
+        }
     }
 
     /**

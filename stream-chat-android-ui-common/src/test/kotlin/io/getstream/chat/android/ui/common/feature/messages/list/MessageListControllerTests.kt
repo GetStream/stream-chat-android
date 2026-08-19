@@ -1211,6 +1211,28 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When deleting message with a playing audio file, audio is stopped before deletion`() = runTest {
+        val messageId = randomString()
+        val audioFile = randomAttachment(type = AttachmentType.AUDIO)
+        val messages = listOf(
+            randomMessage(id = messageId, attachments = listOf(audioFile)),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val audioPlayer = mock<AudioPlayer>().apply {
+            whenever(currentState) doReturn AudioState.PLAYING
+            whenever(currentPlayingId) doReturn audioFile.audioHash
+        }
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .givenDeleteMessage(callFrom { messages.first() })
+            .get()
+        controller.deleteMessage(messages.first())
+        verify(audioPlayer).pause()
+    }
+
+    @Test
     fun `When deleting message with not playing audio, audio is not stopped before deletion`() = runTest {
         val messageId = randomString()
         val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)

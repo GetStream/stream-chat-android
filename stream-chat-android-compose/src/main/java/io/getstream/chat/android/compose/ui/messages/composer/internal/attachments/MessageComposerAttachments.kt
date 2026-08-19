@@ -31,12 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -48,7 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.extensions.internal.stableKey
 import io.getstream.chat.android.compose.ui.util.rememberAutoScrollLazyListState
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.defaultAudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
@@ -70,12 +68,7 @@ internal fun MessageComposerAttachments(
             onAttachmentRemoved = onAttachmentRemoved,
         )
     } else {
-        val viewModelFactory = remember {
-            AudioPlayerViewModelFactory(
-                getAudioPlayer = { ChatClient.instance().audioPlayer },
-                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
-            )
-        }
+        val viewModelFactory = remember { defaultAudioPlayerViewModelFactory() }
         val audioPlayerViewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
         val playerState by audioPlayerViewModel.state.collectAsStateWithLifecycle()
 

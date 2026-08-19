@@ -58,7 +58,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
 
         layoutParams = layoutParams.apply {
             when (attachment?.type) {
-                AttachmentType.FILE, AttachmentType.VIDEO -> {
+                AttachmentType.FILE, AttachmentType.VIDEO, AttachmentType.AUDIO -> {
                     width = style.fileAttachmentWidth
                     height = style.fileAttachmentHeight
                 }
@@ -79,7 +79,11 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     fun showAttachment(attachment: Attachment) {
         this.attachment = attachment
         when (attachment.type) {
-            AttachmentType.FILE, AttachmentType.VIDEO, AttachmentType.AUDIO_RECORDING -> loadAttachmentThumb(attachment)
+            AttachmentType.FILE,
+            AttachmentType.VIDEO,
+            AttachmentType.AUDIO,
+            AttachmentType.AUDIO_RECORDING,
+            -> loadAttachmentThumb(attachment)
             AttachmentType.IMAGE -> showAttachmentThumb(
                 attachment.imageUrl?.applyStreamCdnImageResizing(
                     ChatUI.streamCdnImageResizing,

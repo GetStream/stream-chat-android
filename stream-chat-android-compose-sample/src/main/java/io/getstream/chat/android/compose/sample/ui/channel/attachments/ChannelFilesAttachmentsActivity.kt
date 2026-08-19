@@ -47,7 +47,7 @@ class ChannelFilesAttachmentsActivity : ComponentActivity() {
     private val viewModelFactory by lazy {
         ChannelAttachmentsViewModelFactory(
             cid = requireNotNull(intent.getStringExtra(KEY_CID)),
-            attachmentTypes = listOf(AttachmentType.FILE),
+            attachmentTypes = listOf(AttachmentType.FILE, AttachmentType.AUDIO),
         )
     }
 

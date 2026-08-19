@@ -21,6 +21,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomFile
@@ -106,6 +107,36 @@ internal class AttachmentUploaderTests {
                 uploadState shouldBeEqualTo Attachment.UploadState.Success
             }
         }
+
+    @Test
+    fun `Should classify an audio file as an audio attachment when the type is not set`() = runTest {
+        val attachment = randomAttachments(size = 1)
+            .first()
+            .copy(type = null, mimeType = "audio/mpeg")
+
+        val sut = Fixture()
+            .givenMockedFileUploads(channelType, channelId, Result.Success(UploadedFile(file = "url")))
+            .get()
+
+        val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
+
+        result.value.type shouldBeEqualTo AttachmentType.AUDIO
+    }
+
+    @Test
+    fun `Should keep the type which was already set on the attachment`() = runTest {
+        val attachment = randomAttachments(size = 1)
+            .first()
+            .copy(type = AttachmentType.AUDIO_RECORDING, mimeType = "audio/aac")
+
+        val sut = Fixture()
+            .givenMockedFileUploads(channelType, channelId, Result.Success(UploadedFile(file = "url")))
+            .get()
+
+        val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
+
+        result.value.type shouldBeEqualTo AttachmentType.AUDIO_RECORDING
+    }
 
     @Test
     fun `Upload attachment should have the right format`() = runTest {

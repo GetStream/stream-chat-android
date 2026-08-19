@@ -22,12 +22,12 @@ import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
 import io.getstream.chat.android.client.audio.audioHash
-import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
-import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
+import io.getstream.chat.android.ui.common.utils.extensions.isPlayableAudio
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -43,9 +43,15 @@ public class AudioPlayerController(
         AudioPlayerState(getRecordingUri = getRecordingUri),
     )
 
+    /**
+     * A seek requested before the track duration was known, held as a fraction until a duration arrives and it can
+     * be converted to a position. Regular audio files carry no duration of their own.
+     */
+    private var pendingSeek: Pair<Int, Float>? = null
+
     public fun resetAudio(attachment: Attachment) {
-        if (attachment.isAudioRecording().not()) {
-            logger.v { "[resetAudio] rejected (not an audio recording): ${attachment.type}" }
+        if (attachment.isPlayableAudio().not()) {
+            logger.v { "[resetAudio] rejected (not a playable audio): ${attachment.type}" }
             return
         }
         getRecordingUri(attachment) ?: run {
@@ -58,15 +64,16 @@ public class AudioPlayerController(
             logger.v { "[resetAudio] rejected (not playing): $audioHash" }
             return
         }
+        pendingSeek = null
         audioPlayer.resetAudio(audioHash)
     }
 
     /**
-     * Plays or pauses the audio recording attachment.
+     * Plays or pauses a playable audio attachment: a voice recording or a regular audio file.
      */
     public fun togglePlayback(attachment: Attachment) {
-        if (attachment.isAudioRecording().not()) {
-            logger.v { "[togglePlayback] rejected (not an audio recording): ${attachment.type}" }
+        if (attachment.isPlayableAudio().not()) {
+            logger.v { "[togglePlayback] rejected (not a playable audio): ${attachment.type}" }
             return
         }
         getRecordingUri(attachment) ?: run {
@@ -101,8 +108,8 @@ public class AudioPlayerController(
     }
 
     public fun changeSpeed(attachment: Attachment) {
-        if (attachment.isAudioRecording().not()) {
-            logger.v { "[changeSpeed] rejected (not an audio recording): ${attachment.type}" }
+        if (attachment.isPlayableAudio().not()) {
+            logger.v { "[changeSpeed] rejected (not a playable audio): ${attachment.type}" }
             return
         }
         getRecordingUri(attachment) ?: run {
@@ -125,8 +132,8 @@ public class AudioPlayerController(
     }
 
     public fun startSeek(attachment: Attachment) {
-        if (attachment.isAudioRecording().not()) {
-            logger.v { "[startSeek] rejected (not an audio recording): ${attachment.type}" }
+        if (attachment.isPlayableAudio().not()) {
+            logger.v { "[startSeek] rejected (not a playable audio): ${attachment.type}" }
             return
         }
         getRecordingUri(attachment) ?: run {
@@ -157,8 +164,8 @@ public class AudioPlayerController(
     }
 
     public fun seekTo(attachment: Attachment, progress: Float) {
-        if (attachment.isAudioRecording().not()) {
-            logger.v { "[seekTo] rejected (not an audio recording): ${attachment.type}" }
+        if (attachment.isPlayableAudio().not()) {
+            logger.v { "[seekTo] rejected (not a playable audio): ${attachment.type}" }
             return
         }
         getRecordingUri(attachment) ?: run {
@@ -168,13 +175,18 @@ public class AudioPlayerController(
         val audioHash = attachment.audioHash
         val curState = state.value
         val isCurrentAudio = curState.current.playingId == audioHash
-        val durationInSeconds = attachment.duration ?: NULL_DURATION
-        val positionInMs = (progress * durationInSeconds * MILLIS_IN_SECOND).toInt()
+        val durationInMs = curState.trackDurationInMs(attachment)
+        val positionInMs = (progress * durationInMs).toInt()
         logger.i {
             "[seekTo] isCurrentAudio: $isCurrentAudio, positionInMs: $positionInMs, " +
                 "audioHash: $audioHash, state: ${curState.stringify()}"
         }
-        audioPlayer.seekTo(positionInMs, audioHash)
+        if (durationInMs > 0) {
+            audioPlayer.seekTo(positionInMs, audioHash)
+        } else {
+            pendingSeek = audioHash to progress
+            logger.v { "[seekTo] pending seek fraction: $progress" }
+        }
 
         val newState = curState.copy(
             current = when (isCurrentAudio) {
@@ -192,13 +204,13 @@ public class AudioPlayerController(
     }
 
     /**
-     * Plays the audio recording attachment.
+     * Plays a playable audio attachment: a voice recording or a regular audio file.
      *
      * @param attachment The attachment to play.
      */
     public fun play(attachment: Attachment) {
-        if (attachment.isAudioRecording().not()) {
-            logger.v { "[play] rejected (not an audio recording): ${attachment.type}" }
+        if (attachment.isPlayableAudio().not()) {
+            logger.v { "[play] rejected (not a playable audio): ${attachment.type}" }
             return
         }
         val recordingUri = getRecordingUri(attachment) ?: run {
@@ -210,11 +222,17 @@ public class AudioPlayerController(
         val audioHash = attachment.audioHash
         val waveform = attachment.waveformData ?: emptyList()
         var playbackInMs = audioPlayer.getCurrentPositionInMs(audioHash)
-        val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
+        val durationInMs = curState.trackDurationInMs(attachment)
         val seekTo = curState.seekTo.getOrDefault(audioHash, 0f)
+        pendingSeek = null
         if (seekTo > 0) {
-            playbackInMs = (seekTo * durationInMs).toInt()
-            logger.v { "[play] seekTo: $playbackInMs" }
+            if (durationInMs > 0) {
+                playbackInMs = (seekTo * durationInMs).toInt()
+                logger.v { "[play] seekTo: $playbackInMs" }
+            } else {
+                pendingSeek = audioHash to seekTo
+                logger.v { "[play] pending seek fraction: $seekTo" }
+            }
         }
         logger.d { "[play] audioHash: $audioHash, playbackInMs: $playbackInMs, state: ${curState.stringify()}" }
 
@@ -222,7 +240,7 @@ public class AudioPlayerController(
         val initialState = curState.newCurrentState(audioHash, recordingUri, waveform, playbackInMs, durationInMs)
         setState(initialState)
 
-        if (seekTo > 0) audioPlayer.seekTo(playbackInMs, audioHash)
+        if (seekTo > 0 && pendingSeek == null) audioPlayer.seekTo(playbackInMs, audioHash)
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
@@ -286,6 +304,7 @@ public class AudioPlayerController(
     public fun reset() {
         val curState = state.value
         logger.d { "[reset] state.playingId: ${curState.current.playingId}" }
+        pendingSeek = null
         audioPlayer.reset()
         setState(AudioPlayerState(getRecordingUri = getRecordingUri))
     }
@@ -312,11 +331,24 @@ public class AudioPlayerController(
             logger.v { "[onAudioPlayingProgress] rejected (no playingId)" }
             return
         }
+        // The reported position predates a pending seek, so publish the seeked position rather than letting the
+        // thumb drop to it first.
+        var progress = progressState.progress
+        var positionInMs = progressState.currentPosition
+        pendingSeek?.let { (audioHash, fraction) ->
+            if (audioHash == curState.current.playingId && progressState.duration > 0) {
+                pendingSeek = null
+                positionInMs = (fraction * progressState.duration).toInt()
+                progress = fraction
+                logger.i { "[onAudioPlayingProgress] applying pending seek: $positionInMs" }
+                audioPlayer.seekTo(positionInMs, audioHash)
+            }
+        }
         val newState = curState.copy(
             current = curState.current.copy(
                 isPlaying = true,
-                playingProgress = progressState.progress,
-                playbackInMs = progressState.currentPosition,
+                playingProgress = progress,
+                playbackInMs = positionInMs,
                 durationInMs = progressState.duration,
             ),
             seekTo = curState.seekTo - curState.current.playingId,
@@ -345,6 +377,15 @@ public class AudioPlayerController(
         state.value = newState
     }
 
+    /**
+     * Resolves the duration of [attachment] in milliseconds. Voice recordings carry it as an extra, while regular
+     * audio files only expose it once the player has loaded the track.
+     */
+    private fun AudioPlayerState.trackDurationInMs(attachment: Attachment): Int =
+        attachment.durationInMs?.takeIf { it > 0 }
+            ?: current.durationInMs.takeIf { current.playingId == attachment.audioHash }
+            ?: 0
+
     private fun AudioPlayerState.newCurrentState(
         audioHash: Int,
         recordingUri: String,
@@ -359,7 +400,7 @@ public class AudioPlayerController(
                 waveform = waveform,
                 durationInMs = durationInMs,
                 playbackInMs = playbackInMs,
-                playingProgress = playbackInMs.toFloat() / durationInMs,
+                playingProgress = if (durationInMs > 0) playbackInMs.toFloat() / durationInMs else 0f,
             ),
             seekTo = when (current.playingId != audioHash && current.playingId != NO_ID && current.playingProgress > 0) {
                 true -> seekTo + (current.playingId to current.playingProgress)
@@ -370,8 +411,6 @@ public class AudioPlayerController(
 
     private companion object {
         private const val NO_ID = -1
-        private const val NULL_DURATION = 0f
-        private const val MILLIS_IN_SECOND = 1000f
     }
 
     internal operator fun IntFloatMap.plus(that: Pair<Int, Float>): IntFloatMap {

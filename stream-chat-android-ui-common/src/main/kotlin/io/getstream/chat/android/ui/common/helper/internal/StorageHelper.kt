@@ -307,8 +307,14 @@ public class StorageHelper {
         return when {
             isImage(mimeType) -> AttachmentType.IMAGE
             isVideo(mimeType) -> AttachmentType.VIDEO
+            isAudio(mimeType) -> AttachmentType.AUDIO
             else -> AttachmentType.FILE
         }
+    }
+
+    // A MIME type is type/subtype, so audio means the top-level type, not the word appearing anywhere.
+    private fun isAudio(mimeType: String?): Boolean {
+        return mimeType?.startsWith("audio/") ?: false
     }
 
     private fun isImage(mimeType: String?): Boolean {

@@ -69,6 +69,11 @@ public val Attachment.giphyFallbackPreviewUrl: String?
 /**
  * Checks if the attachment is of any file type (file, video, audio or audio recording).
  */
+/**
+ * @return Whether the audio player can play this attachment back: either a voice recording or a regular audio file.
+ */
+internal fun Attachment.isPlayableAudio(): Boolean = isAudioRecording() || isAudio()
+
 public fun Attachment.isAnyFileType(): Boolean {
     return uploadId != null ||
         upload != null ||
