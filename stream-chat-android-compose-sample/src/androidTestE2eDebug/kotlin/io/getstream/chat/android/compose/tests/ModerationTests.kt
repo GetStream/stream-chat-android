@@ -17,10 +17,13 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertBlockMessageAuthorOption
+import io.getstream.chat.android.compose.robots.assertChannelCount
+import io.getstream.chat.android.compose.robots.assertChannelWithName
 import io.getstream.chat.android.compose.robots.assertFlagMessageDialog
 import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.robots.assertMuteMessageAuthorOption
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
@@ -33,6 +36,11 @@ class ModerationTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.UserLogin
     private val sampleText = "Test"
+
+    // Seeded messages alternate authors starting with the user, so with two seeded
+    // messages the one with text "2" belongs to the participant.
+    private val participantMessageText = "2"
+    private val groupChannelName = "1"
 
     @AllureId("11572")
     @Test
@@ -130,6 +138,59 @@ class ModerationTests : StreamTestCase() {
         }
         step("THEN the message menu offers to block the author again") {
             userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = false)
+        }
+    }
+
+    @AllureId("6070")
+    @Test
+    fun test_userBlocksUserInDirectMessageChannel() {
+        step("GIVEN a direct message channel with the participant exists") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 2, withDirectMessageChannel = true)
+        }
+        step("AND user opens the direct message channel") {
+            userRobot.login().openChannel(ParticipantRobot.name)
+        }
+        step("WHEN user blocks the participant") {
+            userRobot.blockMessageAuthor(participantMessageText)
+        }
+        step("THEN the message menu offers to unblock the participant") {
+            userRobot.assertBlockMessageAuthorOption(participantMessageText, isAuthorBlocked = true)
+        }
+    }
+
+    @AllureId("6072")
+    @Test
+    fun test_directMessageChannelDisappears_whenUserBlocksParticipant() {
+        step("GIVEN a direct message channel with the participant exists") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 2, withDirectMessageChannel = true)
+        }
+        step("AND user sees it in the channel list") {
+            userRobot
+                .login()
+                .assertChannelCount(2)
+                .assertChannelWithName(ParticipantRobot.name)
+        }
+        step("WHEN user blocks the participant in the direct message channel") {
+            userRobot
+                .openChannel(ParticipantRobot.name)
+                .blockMessageAuthor(participantMessageText)
+                .moveToChannelListFromMessageList()
+        }
+        step("THEN the direct message channel disappears from the channel list") {
+            userRobot
+                .assertChannelCount(1)
+                .assertChannelWithName(ParticipantRobot.name, isDisplayed = false)
+        }
+        step("WHEN user unblocks the participant from the group channel") {
+            userRobot
+                .openChannel(groupChannelName)
+                .unblockMessageAuthor(participantMessageText)
+                .moveToChannelListFromMessageList()
+        }
+        step("THEN the direct message channel is shown in the channel list again") {
+            userRobot
+                .assertChannelCount(2)
+                .assertChannelWithName(ParticipantRobot.name)
         }
     }
 }

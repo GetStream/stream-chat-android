@@ -25,6 +25,7 @@ import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.waitDisplayed
+import io.getstream.chat.android.e2e.test.uiautomator.waitForCount
 import io.getstream.chat.android.e2e.test.uiautomator.waitForText
 import io.getstream.chat.android.e2e.test.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
@@ -91,6 +92,20 @@ fun UserRobot.assertChannelIsMuted(isMuted: Boolean): UserRobot {
 
 fun UserRobot.assertChannelListIsEmpty(): UserRobot {
     assertFalse(ChannelList.channels.waitToDisappear().isDisplayed())
+    return this
+}
+
+fun UserRobot.assertChannelCount(count: Int): UserRobot {
+    assertEquals(count, ChannelList.channels.waitForCount(count).size)
+    return this
+}
+
+fun UserRobot.assertChannelWithName(name: String, isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Channel.name(name).waitDisplayed())
+    } else {
+        assertFalse(Channel.name(name).waitToDisappear().isDisplayed())
+    }
     return this
 }
 

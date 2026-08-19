@@ -42,6 +42,9 @@ abstract class StreamTestCase {
 
     lateinit var mockServer: MockServer
     open var useMockServer = true
+
+    /** Makes the channel list header search for channels instead of messages. */
+    open var useChannelSearch = false
     val userRobot = UserRobot()
     lateinit var backendRobot: BackendRobot
     lateinit var participantRobot: ParticipantRobot
@@ -93,6 +96,7 @@ abstract class StreamTestCase {
         testContext.packageManager.getLaunchIntentForPackage(packageName)?.let {
             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             it.putExtra("InitTestActivity", initTestActivity())
+            it.putExtra("CHANNEL_SEARCH", useChannelSearch)
             if (useMockServer) {
                 it.putExtra("BASE_URL", mockServer.url)
             }

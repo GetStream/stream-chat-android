@@ -24,8 +24,8 @@ import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 /**
- * Covers the message search wired into the channel list header. The sample configures the channel
- * list with `SearchMode.Messages` only, so channel search is not reachable.
+ * Covers the message search wired into the channel list header, the sample's default search mode.
+ * Channel search, behind the channel search flag, is covered by [ChannelSearchTests].
  */
 class SearchTests : StreamTestCase() {
 

@@ -88,6 +88,11 @@ class UserRobot {
         return this
     }
 
+    fun openChannel(channelName: String): UserRobot {
+        ChannelListPage.ChannelList.Channel.name(channelName).waitToAppearAndClick()
+        return this
+    }
+
     fun openContextMenu(messageCellIndex: Int = 0): UserRobot {
         val messages = MessageList.messages.waitToAppearBottomUp()
         val message = if (messages.size < messageCellIndex + 1) messages.last() else messages[messageCellIndex]
@@ -495,6 +500,12 @@ class UserRobot {
     }
 
     fun searchForMessage(text: String): UserRobot {
+        ChannelListPage.Header.searchField.waitToAppear().typeText(text)
+        return this
+    }
+
+    /** Same input as [searchForMessage]; what it searches depends on the app's search mode. */
+    fun searchForChannel(text: String): UserRobot {
         ChannelListPage.Header.searchField.waitToAppear().typeText(text)
         return this
     }

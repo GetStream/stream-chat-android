@@ -62,6 +62,10 @@ class ChannelListPage {
             companion object {
                 val avatar = By.res("Stream_ChannelAvatar")
                 val name = By.res("Stream_ChannelName")
+
+                // A fresh selector per call: BySelector chaining mutates the instance,
+                // so narrowing the shared `name` selector would poison later uses.
+                fun name(text: String): BySelector = By.res("Stream_ChannelName").text(text)
                 val messagePreview = By.res("Stream_MessagePreview")
                 val deliveryStatusIsRead = Message.deliveryStatusIsRead
                 val deliveryStatusIsPending = Message.deliveryStatusIsPending
