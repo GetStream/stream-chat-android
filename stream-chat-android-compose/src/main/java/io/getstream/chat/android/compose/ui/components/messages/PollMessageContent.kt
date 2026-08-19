@@ -38,10 +38,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -304,6 +306,7 @@ private fun PollButtons(
     ) {
         if (poll.options.size > PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS) {
             PollOptionButton(
+                modifier = Modifier.testTag("Stream_PollSeeAllOptionsButton"),
                 text = stringResource(id = UiCommonR.string.stream_ui_poll_action_see_all, poll.options.size),
                 style = ghostButtonStyle,
                 onButtonClicked = { selectPoll(message, poll, PollSelectionType.MoreOption) },
@@ -311,6 +314,7 @@ private fun PollButtons(
         }
 
         PollOptionButton(
+            modifier = Modifier.testTag("Stream_PollViewResultsButton"),
             text = stringResource(id = R.string.stream_compose_poll_view_result),
             style = outlinedButtonStyle,
             onButtonClicked = { selectPoll(message, poll, PollSelectionType.ViewResult) },
@@ -318,6 +322,7 @@ private fun PollButtons(
 
         if (isMine && !poll.closed) {
             PollOptionButton(
+                modifier = Modifier.testTag("Stream_PollEndButton"),
                 text = stringResource(id = R.string.stream_compose_poll_end_vote),
                 style = outlinedButtonStyle,
                 onButtonClicked = { onClosePoll.invoke(poll.id) },
@@ -326,6 +331,7 @@ private fun PollButtons(
 
         if (poll.allowUserSuggestedOptions && !poll.closed) {
             PollOptionButton(
+                modifier = Modifier.testTag("Stream_PollSuggestOptionButton"),
                 text = stringResource(id = R.string.stream_compose_poll_suggest_option),
                 style = ghostButtonStyle,
                 onButtonClicked = { showDialog.value = true },
@@ -333,24 +339,41 @@ private fun PollButtons(
         }
 
         if (poll.allowAnswers) {
-            if (poll.answers.isNotEmpty()) {
-                PollOptionButton(
-                    text = pluralStringResource(
-                        UiCommonR.plurals.stream_ui_poll_action_view_comments,
-                        poll.answers.size,
-                        poll.answers.size,
-                    ),
-                    style = ghostButtonStyle,
-                    onButtonClicked = { selectPoll(message, poll, PollSelectionType.ViewAnswers) },
-                )
-            } else if (!poll.closed) {
-                PollOptionButton(
-                    text = stringResource(R.string.stream_compose_add_answer),
-                    style = ghostButtonStyle,
-                    onButtonClicked = { showAddAnswerDialog.value = true },
-                )
-            }
+            PollAnswersButton(
+                poll = poll,
+                style = ghostButtonStyle,
+                onViewAnswers = { selectPoll(message, poll, PollSelectionType.ViewAnswers) },
+                onAddAnswer = { showAddAnswerDialog.value = true },
+            )
         }
+    }
+}
+
+@Composable
+private fun PollAnswersButton(
+    poll: Poll,
+    style: StreamButtonStyle,
+    onViewAnswers: () -> Unit,
+    onAddAnswer: () -> Unit,
+) {
+    if (poll.answers.isNotEmpty()) {
+        PollOptionButton(
+            modifier = Modifier.testTag("Stream_PollViewCommentsButton"),
+            text = pluralStringResource(
+                UiCommonR.plurals.stream_ui_poll_action_view_comments,
+                poll.answers.size,
+                poll.answers.size,
+            ),
+            style = style,
+            onButtonClicked = onViewAnswers,
+        )
+    } else if (!poll.closed) {
+        PollOptionButton(
+            modifier = Modifier.testTag("Stream_PollAddCommentButton"),
+            text = stringResource(R.string.stream_compose_add_answer),
+            style = style,
+            onButtonClicked = onAddAnswer,
+        )
     }
 }
 
@@ -419,6 +442,9 @@ private fun EndPollConfirmationDialog(
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
+        // The dialog renders in its own window, so the app-level `testTagsAsResourceId`
+        // does not apply here; without this, UI tests cannot resolve the tags inside.
+        modifier = Modifier.semantics { testTagsAsResourceId = true },
         onDismissRequest = onDismiss,
         title = {
             Text(
@@ -434,6 +460,7 @@ private fun EndPollConfirmationDialog(
         },
         confirmButton = {
             TextButton(
+                modifier = Modifier.testTag("Stream_PollEndConfirmButton"),
                 colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentError),
                 onClick = onConfirm,
             ) {
@@ -459,12 +486,13 @@ private fun PollOptionButton(
     text: String,
     style: StreamButtonStyle,
     onButtonClicked: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     StreamTextButton(
         onClick = onButtonClicked,
         text = text,
         style = style,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         size = StreamButtonSize.Small,
     )
 }

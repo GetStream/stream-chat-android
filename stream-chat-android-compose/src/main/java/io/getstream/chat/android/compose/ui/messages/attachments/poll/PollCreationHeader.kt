@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -128,6 +129,7 @@ private fun DefaultPollOptionsHeaderTrailingContent(
 ) {
     val onClickLabel = onPollCreateClickLabel ?: stringResource(R.string.stream_compose_poll_create_action)
     StreamButton(
+        modifier = Modifier.testTag("Stream_PollCreateButton"),
         onClick = onPollCreateClick,
         enabled = enabled,
         onClickLabel = onClickLabel,
