@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -436,8 +437,9 @@ private fun NewOptionDialog(
     )
 }
 
+@VisibleForTesting
 @Composable
-private fun EndPollConfirmationDialog(
+internal fun EndPollConfirmationDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -469,6 +471,7 @@ private fun EndPollConfirmationDialog(
         },
         dismissButton = {
             TextButton(
+                modifier = Modifier.testTag("Stream_PollEndDismissButton"),
                 colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.textPrimary),
                 onClick = onDismiss,
             ) {
