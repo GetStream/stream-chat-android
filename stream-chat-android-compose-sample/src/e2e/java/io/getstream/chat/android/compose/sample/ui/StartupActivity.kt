@@ -47,7 +47,12 @@ class StartupActivity : AppCompatActivity() {
                 ChatClient.instance().disconnect(flushPersistence = true).await()
                 ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, baseUrl)
                 customSettings().isComposerLinkPreviewEnabled = true
-                // Always assigned, so a flag left by a previous test cannot leak into this one.
+            }
+
+            // Assigned on every harness launch, with or without a mock server, so a flag left by
+            // a previous test cannot leak into the next one. A notification launch carries no
+            // extra and keeps the persisted value.
+            if (intent.hasExtra("CHANNEL_SEARCH")) {
                 customSettings().isChannelSearchEnabled = intent.getBooleanExtra("CHANNEL_SEARCH", false)
             }
 

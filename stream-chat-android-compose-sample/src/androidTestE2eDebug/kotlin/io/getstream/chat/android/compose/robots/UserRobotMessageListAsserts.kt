@@ -561,8 +561,10 @@ fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
  */
 fun UserRobot.assertMuteMessageAuthorOption(messageText: String, isAuthorMuted: Boolean): UserRobot {
     val expectedOption = if (isAuthorMuted) ContextMenu.unmuteUser else ContextMenu.muteUser
+    val oppositeOption = if (isAuthorMuted) ContextMenu.muteUser else ContextMenu.unmuteUser
     openContextMenuWithOption(messageText, expectedOption)
     assertTrue(expectedOption.isDisplayed())
+    assertFalse(oppositeOption.isDisplayed())
     return this
 }
 
@@ -573,7 +575,9 @@ fun UserRobot.assertMuteMessageAuthorOption(messageText: String, isAuthorMuted: 
  */
 fun UserRobot.assertBlockMessageAuthorOption(messageText: String, isAuthorBlocked: Boolean): UserRobot {
     val expectedOption = if (isAuthorBlocked) ContextMenu.unblock else ContextMenu.block
+    val oppositeOption = if (isAuthorBlocked) ContextMenu.block else ContextMenu.unblock
     openContextMenuWithOption(messageText, expectedOption)
     assertTrue(expectedOption.isDisplayed())
+    assertFalse(oppositeOption.isDisplayed())
     return this
 }
