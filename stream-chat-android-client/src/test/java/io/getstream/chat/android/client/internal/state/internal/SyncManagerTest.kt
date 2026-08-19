@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
@@ -256,6 +257,155 @@ internal class SyncManagerTest {
 
         /* Then */
         verify(chatClient).getSyncHistory(eq(expectedCids), any<Date>())
+    }
+
+    @Test
+    fun `performSync skips event replay and refreshes watched channels when the payload is oversized`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val createdAt = Date()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val watchedChannel = randomChannel(type = "messaging", id = "watched")
+            givenOversizedSyncPayload(eventCount = 3, createdAt = createdAt, rawCreatedAt = rawCreatedAt)
+            givenWatchedChannels(cids = setOf(watchedChannel.cid), foundChannels = listOf(watchedChannel))
+
+            val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+            /* When */
+            _syncEvents.test {
+                syncManager.performSync(cids = listOf("1", "2"))
+
+                /* Then */
+                expectNoEvents()
+            }
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient).queryChannelsInternal(capture())
+                val filter = firstValue.filter as InFilterObject
+                assertEquals(setOf(watchedChannel.cid), filter.values)
+                assertEquals(true, firstValue.watch)
+                assertEquals(true, firstValue.state)
+            }
+            verify(repositoryFacade).storeStateForChannels(listOf(watchedChannel))
+            // The timestamp moves to the newest skipped event so the same payload is not retried.
+            assertEquals(createdAt, _syncState.value?.lastSyncedAt)
+        }
+
+    @Test
+    fun `performSync replays events when the payload size equals the replay limit`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val events = givenOversizedSyncPayload(eventCount = 2, createdAt = createdAt, rawCreatedAt = rawCreatedAt)
+        givenWatchedChannels(cids = setOf(randomCID()), foundChannels = emptyList())
+
+        val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+        _syncEvents.test {
+            /* When */
+            syncManager.performSync(cids = listOf("1", "2"))
+
+            /* Then */
+            assertEquals(events, awaitItem())
+        }
+        verify(chatClient, never()).queryChannelsInternal(any<QueryChannelsRequest>())
+    }
+
+    @Test
+    fun `performSync refreshes watched channels when sync fails with too many events`() = runTest(testDispatcher) {
+        /* Given */
+        val watchedChannel = randomChannel(type = "messaging", id = "watched")
+        val error = Error.NetworkError(
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            message = "Too many events to sync, please use a more recent last_sync_at parameter",
+            statusCode = 400,
+        )
+        _syncState.value = null
+        whenever(repositoryFacade.selectSyncState(any())) doReturn null
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(Result.Failure(error))
+        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(Result.Failure(error))
+        givenWatchedChannels(cids = setOf(watchedChannel.cid), foundChannels = listOf(watchedChannel))
+
+        val syncManager = buildSyncManager()
+
+        /* When */
+        _syncEvents.test {
+            syncManager.performSync(cids = listOf("1", "2"))
+
+            /* Then */
+            expectNoEvents()
+        }
+        verify(chatClient).queryChannelsInternal(any<QueryChannelsRequest>())
+        verify(repositoryFacade).storeStateForChannels(listOf(watchedChannel))
+    }
+
+    @Test
+    fun `performSync batches the watched channels fallback by the queryChannels page limit`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val createdAt = Date()
+            val watchedCids = (1..35).map { "messaging:watched-$it" }.toSet()
+            givenOversizedSyncPayload(
+                eventCount = 3,
+                createdAt = createdAt,
+                rawCreatedAt = streamDateFormatter.format(createdAt),
+            )
+            givenWatchedChannels(cids = watchedCids, foundChannels = emptyList())
+
+            val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+            /* When */
+            syncManager.performSync(cids = listOf("1", "2"))
+
+            /* Then */
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient, times(2)).queryChannelsInternal(capture())
+                val requestedCids = allValues.flatMap { (it.filter as InFilterObject).values }
+                assertEquals(watchedCids, requestedCids.toSet())
+                assertEquals(30, allValues.first().limit)
+                assertEquals(5, allValues.last().limit)
+            }
+        }
+
+    /**
+     * Stubs `/sync` to return [eventCount] identical events, with no previously stored sync state.
+     */
+    private suspend fun givenOversizedSyncPayload(
+        eventCount: Int,
+        createdAt: Date,
+        rawCreatedAt: String,
+    ): List<ChatEvent> {
+        val previousSyncedAt = Date(createdAt.time - 60_000)
+        val previousSyncState = SyncState(
+            userId = user.id,
+            activeChannelIds = emptyList(),
+            lastSyncedAt = previousSyncedAt,
+            rawLastSyncedAt = streamDateFormatter.format(previousSyncedAt),
+            markedAllReadAt = previousSyncedAt,
+        )
+        _syncState.value = previousSyncState
+        whenever(repositoryFacade.selectSyncState(any())) doReturn previousSyncState
+        val events = List(eventCount) {
+            mock<ChatEvent> {
+                on(it.createdAt) doReturn createdAt
+                on(it.rawCreatedAt) doReturn rawCreatedAt
+            }
+        }
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(Result.Success(events))
+        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(Result.Success(events))
+        return events
+    }
+
+    /**
+     * Stubs the actively watched channels and the `queryChannels` response the fallback receives.
+     */
+    private fun givenWatchedChannels(cids: Set<String>, foundChannels: List<Channel>) {
+        whenever(clientState.isOnline) doReturn true
+        whenever(stateRegistry.getTrackedWatchedChannels()) doReturn cids
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+        whenever(logicRegistry.channel(any<ChannelId>())) doReturn mock()
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = foundChannels, predefinedFilter = null)),
+        )
     }
 
     @Test
@@ -1194,8 +1344,10 @@ internal class SyncManagerTest {
     private fun TestScope.buildSyncManager(
         isAutomaticSyncOnReconnectEnabled: Boolean = true,
         syncMaxThreshold: TimeDuration = TimeDuration.seconds(5),
+        eventReplayMaxCount: Int = 250,
     ): SyncManager {
         return SyncManager(
+            eventReplayMaxCount = eventReplayMaxCount,
             currentUserId = user.id,
             scope = backgroundScope,
             logicRegistry = logicRegistry,
