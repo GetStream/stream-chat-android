@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomConnectedEvent
+import io.getstream.chat.android.client.test.randomDraftMessageDeletedEvent
+import io.getstream.chat.android.client.test.randomDraftMessageUpdatedEvent
 import io.getstream.chat.android.client.test.randomMarkAllReadEvent
 import io.getstream.chat.android.client.test.randomMessageUpdateEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
@@ -48,6 +50,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
@@ -142,6 +145,72 @@ internal class EventHandlerSequentialTest {
         mutableGlobalState.muted.value `should be equal to` expectedMutedUsers
         mutableGlobalState.channelMutes.value `should be equal to` expectedChannelMutes
         mutableGlobalState.blockedUserIds.value `should be equal to` expectedBlockedUserIds
+    }
+
+    @Test
+    fun `When handling DraftMessageDeletedEvent, The draft should be deleted from local storage`() = runTest {
+        // given
+        val storedDraft = randomDraftMessage(parentId = null)
+        // The backend sends an empty message id on draft.deleted, so only the cid identifies the draft.
+        val event = randomDraftMessageDeletedEvent(draftMessage = storedDraft.copy(id = "", text = ""))
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn emptyList()
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            updateDraftMessage(storedDraft)
+        }
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .withMutableGlobalState(mutableGlobalState)
+            .get(this)
+        // when
+        handler.handleEvents(event)
+        // then
+        mutableGlobalState.channelDraftMessages.value `should be equal to` emptyMap()
+        verify(repos).deleteDraftMessage(storedDraft.cid, null)
+    }
+
+    @Test
+    fun `When handling DraftMessageDeletedEvent for a thread, The draft should be deleted from local storage`() =
+        runTest {
+            // given
+            val parentId = randomString()
+            val storedDraft = randomDraftMessage(parentId = parentId)
+            val event = randomDraftMessageDeletedEvent(draftMessage = storedDraft.copy(id = "", text = ""))
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn emptyList()
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            val handler = Fixture()
+                .withRepositoryFacade(repos)
+                .withMutableGlobalState(MutableGlobalState(currentUser.id))
+                .get(this)
+            // when
+            handler.handleEvents(event)
+            // then
+            verify(repos).deleteDraftMessage(storedDraft.cid, parentId)
+        }
+
+    @Test
+    fun `When handling DraftMessageUpdatedEvent, The draft should be stored in local storage`() = runTest {
+        // given
+        val draftMessage = randomDraftMessage(parentId = null)
+        val event = randomDraftMessageUpdatedEvent(draftMessage = draftMessage)
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn emptyList()
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        val mutableGlobalState = MutableGlobalState(currentUser.id)
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .withMutableGlobalState(mutableGlobalState)
+            .get(this)
+        // when
+        handler.handleEvents(event)
+        // then
+        mutableGlobalState.channelDraftMessages.value `should be equal to` mapOf(draftMessage.cid to draftMessage)
+        verify(repos).insertDraftMessage(draftMessage)
     }
 
     @Test

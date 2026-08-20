@@ -41,6 +41,7 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> = emptyList()
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> = emptyList()
     override suspend fun deleteDraftMessage(message: DraftMessage) { /* No-Op */ }
+    override suspend fun deleteDraftMessage(cid: String, parentId: String?) { /* No-Op */ }
     override suspend fun selectDraftMessages(): List<DraftMessage> = emptyList()
     override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? = null
     override suspend fun selectDraftMessageByParentId(parentId: String): DraftMessage? = null
