@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.ChannelInfoPage
 import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.CreatePollPage
@@ -37,6 +38,7 @@ import io.getstream.chat.android.e2e.test.uiautomator.device
 import io.getstream.chat.android.e2e.test.uiautomator.findObjects
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
 import io.getstream.chat.android.e2e.test.uiautomator.longPress
+import io.getstream.chat.android.e2e.test.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.uiautomator.sleep
 import io.getstream.chat.android.e2e.test.uiautomator.swipeDown
 import io.getstream.chat.android.e2e.test.uiautomator.swipeUp
@@ -84,6 +86,11 @@ class UserRobot {
 
     fun openChannel(channelCellIndex: Int = 0): UserRobot {
         ChannelListPage.ChannelList.channels.waitToAppearAndClick(withIndex = channelCellIndex)
+        return this
+    }
+
+    fun openChannel(channelName: String): UserRobot {
+        ChannelListPage.ChannelList.Channel.name(channelName).waitToAppearAndClick()
         return this
     }
 
@@ -202,6 +209,17 @@ class UserRobot {
         return this
     }
 
+    /**
+     * Opens the message menu of the message with [text] and waits for [option] to show. The open
+     * menu rebuilds its options when the own user state lands, so a moderation option that flips
+     * appears without reopening the menu.
+     */
+    internal fun openContextMenuWithOption(text: String, option: BySelector): UserRobot {
+        openContextMenu(text)
+        option.waitDisplayed(timeOutMillis = 15.seconds)
+        return this
+    }
+
     fun flagMessage(text: String): UserRobot {
         openContextMenu(text)
         ContextMenu.flag.waitToAppearAndClick()
@@ -210,6 +228,30 @@ class UserRobot {
 
     fun confirmFlagMessage(): UserRobot {
         ContextMenu.ok.waitToAppearAndClick()
+        return this
+    }
+
+    fun muteMessageAuthor(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.muteUser.waitToAppearAndClick()
+        return this
+    }
+
+    fun unmuteMessageAuthor(text: String): UserRobot {
+        openContextMenuWithOption(text, ContextMenu.unmuteUser)
+        ContextMenu.unmuteUser.waitToAppearAndClick()
+        return this
+    }
+
+    fun blockMessageAuthor(text: String): UserRobot {
+        openContextMenu(text)
+        ContextMenu.block.waitToAppearAndClick()
+        return this
+    }
+
+    fun unblockMessageAuthor(text: String): UserRobot {
+        openContextMenuWithOption(text, ContextMenu.unblock)
+        ContextMenu.unblock.waitToAppearAndClick()
         return this
     }
 
@@ -402,6 +444,16 @@ class UserRobot {
         return this
     }
 
+    fun tapOnMuteSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.mute.waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnUnmuteSwipeAction(): UserRobot {
+        ChannelListPage.ChannelList.SwipeActions.unmute.waitToAppearAndClick()
+        return this
+    }
+
     fun tapOnLeaveGroup(): UserRobot {
         ChannelListPage.ChannelMenu.leaveGroup.waitToAppearAndClick()
         return this
@@ -441,7 +493,9 @@ class UserRobot {
         return this
     }
 
-    fun searchForMessage(text: String): UserRobot {
+    /** Types into the channel list header search input; the app's search mode decides whether
+     * messages or channels are searched. */
+    fun search(text: String): UserRobot {
         ChannelListPage.Header.searchField.waitToAppear().typeText(text)
         return this
     }

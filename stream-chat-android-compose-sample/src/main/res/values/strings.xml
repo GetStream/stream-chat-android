@@ -47,6 +47,8 @@
     <string name="custom_login_flag_channel_pinning_description">Show the Pin/Unpin Chat action in the channel options menu</string>
     <string name="custom_login_flag_local_unread_count_label">Local unread count</string>
     <string name="custom_login_flag_local_unread_count_description">Track the unread count locally for channels with read events disabled. Also shows livestream channels in the channel list</string>
+    <string name="custom_login_flag_channel_search_label">Channel search</string>
+    <string name="custom_login_flag_channel_search_description">Search for channels instead of messages from the channel list header</string>
 
     <!-- Pinned Messages -->
     <string name="pinned_messages_title">Pinned Messages</string>
