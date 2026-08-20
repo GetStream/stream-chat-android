@@ -15,8 +15,6 @@
  */
 
 package io.getstream.chat.android.compose.ui.components.messages
-
-import androidx.annotation.UiThread
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -40,11 +38,9 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
-
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
 internal class PollMessageContentInteractionsTest : MockedChatClientTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -58,7 +54,6 @@ internal class PollMessageContentInteractionsTest : MockedChatClientTest {
     // rule under Robolectric, so the end-poll flow is split: this test pins that the End Poll
     // button never closes the poll directly, and the dialog itself is composed directly below.
     @Test
-    @UiThread
     fun `ending a poll does not close it without confirmation`() {
         var closedPollId: String? = null
         composeTestRule.setContent {
@@ -79,38 +74,29 @@ internal class PollMessageContentInteractionsTest : MockedChatClientTest {
                 )
             }
         }
-
         composeTestRule.onNodeWithTag("Stream_PollEndButton").performClick()
-
         assertNull(closedPollId)
     }
 
     @Test
-    @UiThread
     fun `end poll confirmation confirms`() {
         var confirmed = 0
         var dismissed = 0
         setConfirmationDialog(onConfirm = { confirmed++ }, onDismiss = { dismissed++ })
-
         composeTestRule.onNodeWithTag("Stream_PollEndConfirmButton").performClick()
-
         assertEquals(1, confirmed)
         assertEquals(0, dismissed)
     }
 
     @Test
-    @UiThread
     fun `end poll confirmation dismisses`() {
         var confirmed = 0
         var dismissed = 0
         setConfirmationDialog(onConfirm = { confirmed++ }, onDismiss = { dismissed++ })
-
         composeTestRule.onNodeWithTag("Stream_PollEndDismissButton").performClick()
-
         assertEquals(0, confirmed)
         assertEquals(1, dismissed)
     }
-
     private fun setConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
         composeTestRule.setContent {
             ChatTheme {

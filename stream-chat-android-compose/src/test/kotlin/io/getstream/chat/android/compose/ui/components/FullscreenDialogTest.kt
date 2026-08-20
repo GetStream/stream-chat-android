@@ -19,7 +19,11 @@ package io.getstream.chat.android.compose.ui.components
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsPropertiesAndroid
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -47,5 +51,24 @@ internal class FullscreenDialogTest {
         }
 
         composeTestRule.onNodeWithTag("DialogContent").assertIsDisplayed()
+    }
+
+    @Test
+    fun `exposes test tags inside the dialog window as resource ids`() {
+        composeTestRule.setContent {
+            FullscreenDialog(onDismissRequest = {}) {
+                Text(
+                    text = "dialog content",
+                    modifier = Modifier.testTag("DialogContent"),
+                )
+            }
+        }
+
+        // The dialog window has its own composition, so the app-level flag does not reach it;
+        // an ancestor inside the dialog has to carry `testTagsAsResourceId` for UiAutomator to
+        // resolve the tags below it as resource ids.
+        composeTestRule.onNodeWithTag("DialogContent").assert(
+            hasAnyAncestor(SemanticsMatcher.expectValue(SemanticsPropertiesAndroid.TestTagsAsResourceId, true)),
+        )
     }
 }

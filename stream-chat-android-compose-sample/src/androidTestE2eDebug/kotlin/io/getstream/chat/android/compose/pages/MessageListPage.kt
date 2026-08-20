@@ -43,7 +43,6 @@ open class MessageListPage {
             val filesTab get() = By.res("Stream_AttachmentPickerFilesTab")
             val mediaCaptureTab get() = By.res("Stream_AttachmentPickerMediaCaptureTab")
             val pollsTab get() = By.res("Stream_AttachmentPickerPollsTab")
-            val createPollButton get() = By.res("Stream_AttachmentPickerCreatePollButton")
             val findFilesButton get() = By.res("Stream_FindFilesButton")
             val rootsButton = By.descContains("Show roots")
             val downloadsView = By.text("Downloads")
