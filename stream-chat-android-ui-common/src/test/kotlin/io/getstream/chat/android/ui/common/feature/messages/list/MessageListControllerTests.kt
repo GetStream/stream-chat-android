@@ -1015,14 +1015,21 @@ internal class MessageListControllerTests {
             controller.unreadLabelState.value `should be equal to` null
 
             messagesState.value = listOf(
-                randomMessage(id = "last_read_message_id", user = user1, deletedAt = null, deletedForMe = false),
-                randomMessage(id = "unread_1", user = user2, deletedAt = null, deletedForMe = false),
+                randomMessage(
+                    id = "last_read_message_id",
+                    user = user1,
+                    deletedAt = null,
+                    deletedForMe = false,
+                    silent = false,
+                ),
+                randomMessage(id = "unread_1", user = user2, deletedAt = null, deletedForMe = false, silent = false),
                 randomMessage(
                     id = "unread_2",
                     user = user2,
                     syncStatus = SyncStatus.COMPLETED,
                     deletedAt = null,
                     deletedForMe = false,
+                    silent = false,
                 ),
             )
             controller.markLastMessageRead()
@@ -1035,7 +1042,12 @@ internal class MessageListControllerTests {
     fun `Keep unread label, when marking read zeroes the read state`() =
         runTest {
             val chatClient: ChatClient = mock()
-            val lastReadMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
+            val lastReadMessage = randomMessage(
+                id = "last_read_message_id",
+                deletedAt = null,
+                deletedForMe = false,
+                silent = false,
+            )
             val messages = listOf(
                 lastReadMessage,
                 randomMessage(
@@ -1044,6 +1056,7 @@ internal class MessageListControllerTests {
                     syncStatus = SyncStatus.COMPLETED,
                     deletedAt = null,
                     deletedForMe = false,
+                    silent = false,
                 ),
             )
             val channelRead = MutableStateFlow(
