@@ -87,7 +87,7 @@ public class AddMembersViewController(
         // Re-run search whenever the query changes, with debounce.
         _state
             .map { it.query }
-            .debounce { query -> SearchDebounce.debounceMsFor(query, TYPING_DEBOUNCE_TIMEOUT_MS) }
+            .debounce { query -> SearchDebounce.debounceMsFor(query.trim(), TYPING_DEBOUNCE_TIMEOUT_MS) }
             .distinctUntilChanged()
             .onEach { query -> searchUsers(query) }
             .launchIn(scope)

@@ -194,6 +194,31 @@ internal class AddMembersViewControllerTest {
     }
 
     @Test
+    fun `QueryChanged with a padded short query waits for the short query debounce`() = runTest {
+        val users = listOf(randomUser())
+        val sut = Fixture()
+            .givenQueryUsers(users = emptyList()) // initial empty-query search
+            .givenQueryUsers(users = users) // search for "a  "
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial state and empty-query search result
+
+            // Whitespace is preserved in the query but trimmed away before searching, so this is a
+            // one character search.
+            sut.onViewAction(AddMembersViewAction.QueryChanged("a  "))
+            skipItems(1) // Skip the query-only state update
+
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS - 50)
+            expectNoEvents() // Still debounced, no search started
+
+            advanceTimeBy(100)
+            assertTrue(awaitItem().isLoading) // Search triggered
+            assertEquals(users, awaitItem().searchResult)
+        }
+    }
+
+    @Test
     fun `QueryChanged search error clears loading state`() = runTest {
         val sut = Fixture()
             .givenQueryUsers(users = emptyList()) // initial search

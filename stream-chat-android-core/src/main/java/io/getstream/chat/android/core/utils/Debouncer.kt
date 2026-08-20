@@ -46,7 +46,7 @@ public class Debouncer(
     }
 
     /**
-     * Like [submit], but debounced by [debounceMs] instead of by the period this [Debouncer] was
+     * Like [submit], but debounced by the given period instead of the one this [Debouncer] was
      * created with.
      */
     @InternalStreamChatApi
@@ -63,7 +63,7 @@ public class Debouncer(
     }
 
     /**
-     * Like [submitSuspendable], but debounced by [debounceMs] instead of by the period this
+     * Like [submitSuspendable], but debounced by the given period instead of the one this
      * [Debouncer] was created with.
      */
     @InternalStreamChatApi
