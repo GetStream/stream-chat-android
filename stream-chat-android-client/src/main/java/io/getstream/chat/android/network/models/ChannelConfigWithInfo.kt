@@ -62,6 +62,9 @@ internal data class ChannelConfigWithInfo(
     @Json(name = "max_message_length")
     internal val maxMessageLength: Int,
 
+    @Json(name = "message_retention")
+    internal val messageRetention: String,
+
     @Json(name = "mutes")
     internal val mutes: Boolean,
 

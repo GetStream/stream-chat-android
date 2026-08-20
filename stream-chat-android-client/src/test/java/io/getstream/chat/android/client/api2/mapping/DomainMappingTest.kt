@@ -388,12 +388,12 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `ChannelConfigWithInfo keeps the domain messageRetention the wire field is absent from the model`() {
+    fun `ChannelConfigWithInfo is correctly mapped to Config`() {
         val sut = Fixture().get()
 
         val config = with(sut) { ChannelDtoTestData.channelResponse.config!!.toDomain() }
 
-        assertEquals("infinite", config.messageRetention)
+        assertEquals("retention", config.messageRetention)
         assertEquals("disabled", config.automod)
         assertEquals("flag", config.automodBehavior)
         assertEquals("block", config.blocklistBehavior)

@@ -292,7 +292,6 @@ internal object ChannelDtoTestData {
 
     /**
      * The config as sent for a generated [io.getstream.chat.android.network.models.ChannelResponse].
-     * `message_retention` is on the wire but absent from the model, which drops it.
      */
     @Language("JSON")
     private val channelResponseConfigJson =
@@ -372,6 +371,7 @@ internal object ChannelDtoTestData {
         userMessageReminders = false,
         sharedLocations = true,
         markMessagesPending = false,
+        messageRetention = "retention",
     )
 
     /**

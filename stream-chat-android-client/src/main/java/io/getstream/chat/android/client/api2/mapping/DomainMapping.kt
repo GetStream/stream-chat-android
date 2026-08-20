@@ -819,9 +819,7 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [ChannelConfigWithInfo] to [Config]. The wire carries `message_retention`, but Go
-     * tags it `openapi:"-"` so it is absent from the generated model; we keep the domain default
-     * until the spec describes it.
+     * Transforms [ChannelConfigWithInfo] to [Config].
      */
     internal fun ChannelConfigWithInfo.toDomain(): Config = Config(
         createdAt = createdAt,
@@ -841,6 +839,7 @@ internal class DomainMapping(
         pushNotificationsEnabled = pushNotifications,
         skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
         pollsEnabled = polls,
+        messageRetention = messageRetention,
         maxMessageLength = maxMessageLength,
         automod = automod.value,
         automodBehavior = automodBehavior.value,
