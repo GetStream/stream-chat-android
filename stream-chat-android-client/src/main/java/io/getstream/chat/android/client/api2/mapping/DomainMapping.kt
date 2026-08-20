@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
@@ -130,6 +129,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
@@ -902,18 +902,18 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DownstreamUserBlockDto] into [UserBlock]
+     * Transforms [BlockedUserResponse] into [UserBlock]
      */
-    internal fun DownstreamUserBlockDto.toDomain(): UserBlock = UserBlock(
-        blockedBy = user_id,
-        userId = blocked_user_id,
-        blockedAt = created_at,
+    internal fun BlockedUserResponse.toDomain(): UserBlock = UserBlock(
+        blockedBy = userId,
+        userId = blockedUserId,
+        blockedAt = createdAt,
     )
 
     /**
-     * Transforms a list of [DownstreamUserBlockDto] into a list of [UserBlock]
+     * Transforms a list of [BlockedUserResponse] into a list of [UserBlock]
      */
-    internal fun List<DownstreamUserBlockDto>.toDomain(): List<UserBlock> = map { it.toDomain() }
+    internal fun List<BlockedUserResponse>.toDomain(): List<UserBlock> = map { it.toDomain() }
 
     /**
      * Transforms [BlockUsersResponse] into [UserBlock].

@@ -130,6 +130,29 @@ internal class PollMessageContentTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `closed poll content`() {
+        val poll = PreviewPollData.poll1.copy(closed = true)
+        snapshotWithDarkMode {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                PollMessageContent(
+                    modifier = Modifier,
+                    onCastVote = { _, _, _ -> },
+                    onRemoveVote = { _, _, _ -> },
+                    selectPoll = { _, _, _ -> },
+                    onAddAnswer = { _, _, _ -> },
+                    onClosePoll = {},
+                    onAddPollOption = { _, _ -> },
+                    messageItem = MessageItemState(
+                        message = PreviewMessageData.messageWithPoll.copy(poll = poll),
+                        isMine = true,
+                        ownCapabilities = ChannelCapabilities.toSet(),
+                    ),
+                )
+            }
+        }
+    }
+
+    @Test
     fun `error poll content`() {
         snapshotWithDarkMode {
             Box(modifier = Modifier.fillMaxWidth()) {

@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilt
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
-import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
@@ -74,6 +73,7 @@ import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
@@ -406,11 +406,13 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryBlockedUsersInput() = listOf(
         Arguments.of(
-            RetroSuccess(QueryBlockedUsersResponse(listOf(Mother.randomDownstreamUserBlockDto()))).toRetrofitCall(),
+            RetroSuccess(
+                GetBlockedUsersResponse(duration = "1ms", blocks = listOf(Mother.randomBlockedUserResponse())),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<QueryBlockedUsersResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<GetBlockedUsersResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
     )

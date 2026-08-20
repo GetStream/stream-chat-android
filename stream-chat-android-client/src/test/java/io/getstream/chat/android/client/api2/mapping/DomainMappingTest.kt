@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
 import io.getstream.chat.android.client.Mother.randomBannedUserResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
+import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
 import io.getstream.chat.android.client.Mother.randomChannelInfoDto
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
@@ -48,7 +49,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
-import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
@@ -1007,19 +1007,21 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamUserBlockDto is correctly mapped to UserBlock`() {
-        val downstreamUserBlockDto = randomDownstreamUserBlockDto()
-        val downstreamBlocklist = listOf(downstreamUserBlockDto)
-        val sut = Fixture().get()
-        val blocklist = with(sut) { downstreamBlocklist.toDomain() }
-        val expected = listOf(
-            UserBlock(
-                blockedBy = downstreamUserBlockDto.user_id,
-                userId = downstreamUserBlockDto.blocked_user_id,
-                blockedAt = downstreamUserBlockDto.created_at,
-            ),
+    fun `BlockedUserResponse is correctly mapped to UserBlock`() {
+        val blockedAt = Date(1000)
+        val response = randomBlockedUserResponse(
+            userId = "blocker-1",
+            blockedUserId = "blocked-1",
+            createdAt = blockedAt,
         )
-        assertEquals(expected, blocklist)
+        val sut = Fixture().get()
+
+        val blocklist = with(sut) { listOf(response).toDomain() }
+
+        assertEquals(
+            listOf(UserBlock(blockedBy = "blocker-1", userId = "blocked-1", blockedAt = blockedAt)),
+            blocklist,
+        )
     }
 
     @Test

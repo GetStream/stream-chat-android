@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDt
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
@@ -92,6 +91,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
@@ -1114,14 +1114,16 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamUserBlockDto(
+    fun randomBlockedUserResponse(
         userId: String = randomString(),
         blockedUserId: String = randomString(),
         createdAt: Date = randomDate(),
-    ): DownstreamUserBlockDto = DownstreamUserBlockDto(
-        user_id = userId,
-        blocked_user_id = blockedUserId,
-        created_at = createdAt,
+    ): BlockedUserResponse = BlockedUserResponse(
+        userId = userId,
+        blockedUserId = blockedUserId,
+        createdAt = createdAt,
+        blockedUser = randomUserResponse(id = blockedUserId),
+        user = randomUserResponse(id = userId),
     )
 
     fun randomBlockUsersResponse(
