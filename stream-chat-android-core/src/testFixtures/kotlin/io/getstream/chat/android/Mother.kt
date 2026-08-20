@@ -773,10 +773,17 @@ public fun randomFiles(
     creationFunction: (Int) -> File = { randomFile() },
 ): List<File> = (1..size).map(creationFunction)
 
+/**
+ * The last instant the SDK can serialise: the ISO-8601 formatter writes a four digit year, so anything past year 9999
+ * is written as a different date, or as one that cannot be read back at all. Generated dates stay inside this range so
+ * that a fixture date survives a round trip through JSON, and therefore through the database converters.
+ */
+private const val MAX_SERIALIZABLE_DATE_MILLIS: Long = 253_402_300_799_999L // 9999-12-31T23:59:59.999Z
+
 public fun randomDateOrNull(): Date? = randomDate().takeIf { randomBoolean() }
-public fun randomDate(): Date = Date(positiveRandomLong())
+public fun randomDate(): Date = Date(positiveRandomLong(MAX_SERIALIZABLE_DATE_MILLIS))
 public fun randomDateBefore(date: Date): Date = Date(date.time - positiveRandomInt())
-public fun randomDateAfter(date: Date): Date = Date(randomLongBetween(date.time))
+public fun randomDateAfter(date: Date): Date = Date(randomLongBetween(date.time, MAX_SERIALIZABLE_DATE_MILLIS))
 
 public fun createDate(
     year: Int = positiveRandomInt(),
