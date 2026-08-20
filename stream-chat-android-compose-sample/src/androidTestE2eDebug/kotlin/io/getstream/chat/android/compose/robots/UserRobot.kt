@@ -210,20 +210,13 @@ class UserRobot {
     }
 
     /**
-     * Opens the message menu of the message with [text], reopening it while [option] is missing.
-     * The menu builds its options when it opens and keeps them while it stays open, so an option
-     * that flips because of a moderation action shows up only on a later open.
+     * Opens the message menu of the message with [text] and waits for [option] to show. The open
+     * menu rebuilds its options when the own user state lands, so a moderation option that flips
+     * appears without reopening the menu.
      */
     internal fun openContextMenuWithOption(text: String, option: BySelector): UserRobot {
-        repeat(contextMenuOpenAttempts) { attempt ->
-            openContextMenu(text)
-            if (option.waitDisplayed(timeOutMillis = 5.seconds)) {
-                return this
-            }
-            if (attempt < contextMenuOpenAttempts - 1) {
-                pressBack()
-            }
-        }
+        openContextMenu(text)
+        option.waitDisplayed(timeOutMillis = 15.seconds)
         return this
     }
 
@@ -500,13 +493,9 @@ class UserRobot {
         return this
     }
 
-    fun searchForMessage(text: String): UserRobot {
-        ChannelListPage.Header.searchField.waitToAppear().typeText(text)
-        return this
-    }
-
-    /** Same input as [searchForMessage]; what it searches depends on the app's search mode. */
-    fun searchForChannel(text: String): UserRobot {
+    /** Types into the channel list header search input; the app's search mode decides whether
+     * messages or channels are searched. */
+    fun search(text: String): UserRobot {
         ChannelListPage.Header.searchField.waitToAppear().typeText(text)
         return this
     }
@@ -701,5 +690,3 @@ class UserRobot {
         return this
     }
 }
-
-private const val contextMenuOpenAttempts = 3

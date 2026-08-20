@@ -46,9 +46,10 @@ class ChannelSearchTests : StreamTestCase() {
             userRobot
                 .login()
                 .waitForChannelListToLoad()
+                .assertChannelCount(3)
         }
         step("WHEN user searches for the channel by its name") {
-            userRobot.searchForChannel(searchQuery)
+            userRobot.search(searchQuery)
         }
         step("THEN only the matching channel is shown") {
             userRobot

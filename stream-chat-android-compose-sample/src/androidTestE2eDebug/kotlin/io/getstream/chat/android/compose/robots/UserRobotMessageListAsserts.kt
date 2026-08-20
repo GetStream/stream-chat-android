@@ -565,6 +565,7 @@ fun UserRobot.assertMuteMessageAuthorOption(messageText: String, isAuthorMuted: 
     openContextMenuWithOption(messageText, expectedOption)
     assertTrue(expectedOption.isDisplayed())
     assertFalse(oppositeOption.isDisplayed())
+    pressBack()
     return this
 }
 
@@ -579,5 +580,6 @@ fun UserRobot.assertBlockMessageAuthorOption(messageText: String, isAuthorBlocke
     openContextMenuWithOption(messageText, expectedOption)
     assertTrue(expectedOption.isDisplayed())
     assertFalse(oppositeOption.isDisplayed())
+    pressBack()
     return this
 }

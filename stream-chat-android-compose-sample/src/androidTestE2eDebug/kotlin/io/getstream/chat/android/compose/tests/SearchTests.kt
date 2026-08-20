@@ -44,7 +44,7 @@ class SearchTests : StreamTestCase() {
         step("WHEN user searches for the message on the channel list") {
             userRobot
                 .moveToChannelListFromMessageList()
-                .searchForMessage(sampleText)
+                .search(sampleText)
         }
         step("THEN the message is shown in the search results") {
             userRobot.assertMessageInChannelPreview(sampleText, fromCurrentUser = false)
@@ -63,7 +63,7 @@ class SearchTests : StreamTestCase() {
         step("AND user searches for the message on the channel list") {
             userRobot
                 .moveToChannelListFromMessageList()
-                .searchForMessage(sampleText)
+                .search(sampleText)
                 .assertMessageInChannelPreview(sampleText, fromCurrentUser = false)
         }
         step("WHEN user taps on the search result") {
