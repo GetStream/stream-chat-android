@@ -351,9 +351,9 @@ internal class MessageListControllerTests {
     fun `When repetitive markLastMessageRead calls appear only single API call should be sent`() = runTest {
         val chatClient: ChatClient = mock()
         val messages = arrayListOf(
-            randomMessage(id = "1", syncStatus = SyncStatus.COMPLETED),
-            randomMessage(id = "2", syncStatus = SyncStatus.COMPLETED),
-            randomMessage(id = "3", syncStatus = SyncStatus.COMPLETED),
+            randomMessage(id = "1", syncStatus = SyncStatus.COMPLETED, silent = false),
+            randomMessage(id = "2", syncStatus = SyncStatus.COMPLETED, silent = false),
+            randomMessage(id = "3", syncStatus = SyncStatus.COMPLETED, silent = false),
         )
         val messagesState = MutableStateFlow(messages)
         val controller = Fixture(chatClient = chatClient)
@@ -381,7 +381,7 @@ internal class MessageListControllerTests {
     fun `When current user's last message is COMPLETED markLastMessageRead should invoke markRead`() = runTest {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
-            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.COMPLETED)),
+            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.COMPLETED, silent = false)),
         )
         val controller = Fixture(chatClient = chatClient)
             .givenCurrentUser()
@@ -401,7 +401,7 @@ internal class MessageListControllerTests {
     fun `When current user's last message is not COMPLETED markLastMessageRead should not invoke markRead`() = runTest {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
-            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.IN_PROGRESS)),
+            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.IN_PROGRESS, silent = false)),
         )
         val controller = Fixture(chatClient = chatClient)
             .givenCurrentUser()
@@ -424,7 +424,15 @@ internal class MessageListControllerTests {
             // as COMPLETED, while the server keeps it out of its read state.
             val chatClient: ChatClient = mock()
             val messagesState = MutableStateFlow(
-                listOf(randomMessage(id = "1", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)),
+                listOf(
+                    randomMessage(
+                        id = "1",
+                        user = user1,
+                        type = MessageType.ERROR,
+                        syncStatus = SyncStatus.COMPLETED,
+                        silent = false,
+                    ),
+                ),
             )
             val controller = Fixture(chatClient = chatClient)
                 .givenCurrentUser()
@@ -446,7 +454,13 @@ internal class MessageListControllerTests {
             val chatClient: ChatClient = mock()
             val messagesState = MutableStateFlow(
                 listOf(
-                    randomMessage(id = "1", user = user1, type = MessageType.EPHEMERAL, syncStatus = SyncStatus.COMPLETED),
+                    randomMessage(
+                        id = "1",
+                        user = user1,
+                        type = MessageType.EPHEMERAL,
+                        syncStatus = SyncStatus.COMPLETED,
+                        silent = false,
+                    ),
                 ),
             )
             val controller = Fixture(chatClient = chatClient)
@@ -469,8 +483,89 @@ internal class MessageListControllerTests {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
-                randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
-                randomMessage(id = "2", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED),
+                randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = false),
+                randomMessage(id = "2", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED, silent = false),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(1)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` "2"
+    }
+
+    @Test
+    fun `When the channel holds only a silent message markLastMessageRead should not invoke markRead`() = runTest {
+        // A silent message does not mark a channel unread, so the server has nothing to resolve.
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(
+                    id = "1",
+                    user = user2,
+                    type = MessageType.REGULAR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = true,
+                ),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(0)).markRead(any(), any())
+        controller.lastSeenMessageId.shouldBeNull()
+    }
+
+    @Test
+    fun `When the channel holds only a shadowed message markLastMessageRead should not invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(
+                    id = "1",
+                    user = user1,
+                    type = MessageType.REGULAR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = false,
+                    shadowed = true,
+                ),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(0)).markRead(any(), any())
+        controller.lastSeenMessageId.shouldBeNull()
+    }
+
+    @Test
+    fun `When a silent message follows a tracked one markLastMessageRead should invoke markRead`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = false),
+                randomMessage(id = "2", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = true),
             ),
         )
         val controller = Fixture(chatClient = chatClient)
@@ -509,8 +604,8 @@ internal class MessageListControllerTests {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
-                randomMessage(id = "1", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED),
-                randomMessage(id = "2", user = user1, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED),
+                randomMessage(id = "1", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED, silent = false),
+                randomMessage(id = "2", user = user1, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = false),
             ),
         )
         val controller = Fixture(chatClient = chatClient)
@@ -533,7 +628,7 @@ internal class MessageListControllerTests {
         // class default — the gate must not block them on that.
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
-            listOf(randomMessage(id = "1", user = user2, syncStatus = SyncStatus.IN_PROGRESS)),
+            listOf(randomMessage(id = "1", user = user2, syncStatus = SyncStatus.IN_PROGRESS, silent = false)),
         )
         val controller = Fixture(chatClient = chatClient)
             .givenCurrentUser()
@@ -1474,6 +1569,8 @@ internal class MessageListControllerTests {
                 type = type,
                 text = text,
                 syncStatus = syncStatus,
+                // randomMessage randomises silent, which the mark-read gate keys on.
+                silent = false,
                 createdAt = nowDate,
                 updatedAt = nowDate,
                 deletedAt = null,
