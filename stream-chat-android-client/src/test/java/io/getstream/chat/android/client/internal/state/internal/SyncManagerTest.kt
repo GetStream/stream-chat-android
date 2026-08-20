@@ -366,6 +366,88 @@ internal class SyncManagerTest {
             }
         }
 
+    @Test
+    fun `performSync keeps lastSyncedAt when the watched channels fallback fails`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = Date()
+        givenOversizedSyncPayload(
+            eventCount = 3,
+            createdAt = createdAt,
+            rawCreatedAt = streamDateFormatter.format(createdAt),
+        )
+        val previousSyncedAt = _syncState.value!!.lastSyncedAt
+        givenWatchedChannels(cids = setOf(randomCID()), foundChannels = emptyList())
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Failure(Error.NetworkError(serverErrorCode = 0, message = "boom", statusCode = 500)),
+        )
+
+        val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+        /* When */
+        syncManager.performSync(cids = listOf("1", "2"))
+
+        /* Then */
+        // Advancing here would make the skipped events unrecoverable on the next reconnect.
+        assertEquals(previousSyncedAt, _syncState.value?.lastSyncedAt)
+        verify(repositoryFacade, never()).insertSyncState(any())
+    }
+
+    @Test
+    fun `performSync keeps lastSyncedAt when only one fallback batch fails`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = Date()
+        givenOversizedSyncPayload(
+            eventCount = 3,
+            createdAt = createdAt,
+            rawCreatedAt = streamDateFormatter.format(createdAt),
+        )
+        val previousSyncedAt = _syncState.value!!.lastSyncedAt
+        val foundChannel = randomChannel(type = "messaging", id = "watched-1")
+        givenWatchedChannels(
+            cids = (1..35).map { "messaging:watched-$it" }.toSet(),
+            foundChannels = listOf(foundChannel),
+        )
+        // First batch succeeds, second fails.
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>()))
+            .doReturn(
+                TestCall(Result.Success(QueryChannelsResult(channels = listOf(foundChannel), predefinedFilter = null))),
+                TestCall(Result.Failure(Error.NetworkError(serverErrorCode = 0, message = "boom", statusCode = 500))),
+            )
+
+        val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+        /* When */
+        syncManager.performSync(cids = listOf("1", "2"))
+
+        /* Then */
+        verify(chatClient, times(2)).queryChannelsInternal(any<QueryChannelsRequest>())
+        assertEquals(previousSyncedAt, _syncState.value?.lastSyncedAt)
+    }
+
+    @Test
+    fun `performSync advances lastSyncedAt when there are no watched channels to refresh`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val createdAt = Date()
+            givenOversizedSyncPayload(
+                eventCount = 3,
+                createdAt = createdAt,
+                rawCreatedAt = streamDateFormatter.format(createdAt),
+            )
+            // Nothing is being watched, so nothing visible can go stale - this must not be treated
+            // as a failed refresh, or the oversized payload is re-fetched on every reconnect.
+            givenWatchedChannels(cids = emptySet(), foundChannels = emptyList())
+
+            val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+            /* When */
+            syncManager.performSync(cids = listOf("1", "2"))
+
+            /* Then */
+            verify(chatClient, never()).queryChannelsInternal(any<QueryChannelsRequest>())
+            assertEquals(createdAt, _syncState.value?.lastSyncedAt)
+        }
+
     /**
      * Stubs `/sync` to return [eventCount] identical events, with no previously stored sync state.
      */
@@ -517,6 +599,12 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
         whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(result)
         whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(result)
+        // The timestamp only advances once the watched-channels fallback succeeded, so the client
+        // has to be able to run it. The failure and offline cases are covered separately.
+        whenever(clientState.isOnline) doReturn true
+        whenever(chatClient.queryChannelsInternal(any<QueryChannelsRequest>())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+        )
 
         val syncManager = buildSyncManager()
 
