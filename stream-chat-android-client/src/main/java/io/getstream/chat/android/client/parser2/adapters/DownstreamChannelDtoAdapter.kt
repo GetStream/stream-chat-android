@@ -44,6 +44,6 @@ internal object DownstreamChannelDtoAdapter :
 /**
  * Channel fields that were only reachable through `Channel.extraData` before they became declared properties.
  *
- * TODO(AND-1375): drop in the next major, along with the [CustomObjectDtoAdapter.alsoKeepInExtraData] plumbing.
+ * TODO(AND-1398): drop in the next major, along with the [CustomObjectDtoAdapter.alsoKeepInExtraData] plumbing.
  */
 internal val LEGACY_CHANNEL_EXTRA_DATA_KEYS = setOf("disabled", "blocked", "truncated_at")

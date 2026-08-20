@@ -92,6 +92,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
+import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
@@ -1012,7 +1013,7 @@ internal object Mother {
     fun randomDownstreamThreadDto(
         activeParticipantCount: Int = randomInt(),
         channelCid: String = randomString(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
+        channel: ChannelResponse? = randomChannelResponse(id = channelCid),
         parentMessageId: String = randomString(),
         parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(),
         createdByUserId: String = randomString(),
@@ -1078,9 +1079,24 @@ internal object Mother {
         updatedAt = randomDate(),
     )
 
+    fun randomChannelResponse(
+        id: String = randomString(),
+        type: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): ChannelResponse = ChannelResponse(
+        cid = "$type:$id",
+        id = id,
+        type = type,
+        disabled = randomBoolean(),
+        frozen = randomBoolean(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        custom = custom,
+    )
+
     fun randomDownstreamThreadInfoDto(
         channelCid: String = randomString(),
-        channel: DownstreamChannelDto? = randomDownstreamChannelDto(id = channelCid),
+        channel: ChannelResponse? = randomChannelResponse(id = channelCid),
         parentMessageId: String = randomString(),
         parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(id = parentMessageId),
         createdByUserId: String = randomString(),
