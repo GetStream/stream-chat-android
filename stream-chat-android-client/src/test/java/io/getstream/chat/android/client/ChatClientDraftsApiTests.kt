@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
+import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
@@ -33,12 +34,54 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 /**
  * Test class for the drafts functionality of the [ChatClient].
  */
 internal class ChatClientDraftsApiTests : BaseChatClientTest() {
+
+    @Test
+    fun createDraftNotifiesPluginsBeforeTheResponseArrives() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val draft = randomDraftMessage()
+        val plugin = mock<Plugin>()
+        plugins.add(plugin)
+        whenever(api.createDraftMessage(any(), any(), any()))
+            .doReturn(RetroSuccess(draft).toRetrofitCall())
+        // when
+        chatClient.createDraftMessage(channelType, channelId, draft).await()
+        // then
+        inOrder(plugin).apply {
+            verify(plugin).onCreateDraftMessageRequest(eq(channelType), eq(channelId), any())
+            verify(plugin).onCreateDraftMessageResult(any(), eq(channelType), eq(channelId), any())
+        }
+    }
+
+    @Test
+    fun deleteDraftNotifiesPluginsBeforeTheResponseArrives() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val draft = randomDraftMessage()
+        val plugin = mock<Plugin>()
+        plugins.add(plugin)
+        whenever(api.deleteDraftMessage(any(), any(), any()))
+            .doReturn(RetroSuccess(Unit).toRetrofitCall())
+        // when
+        chatClient.deleteDraftMessages(channelType, channelId, draft).await()
+        // then
+        inOrder(plugin).apply {
+            verify(plugin).onDeleteDraftMessagesRequest(eq(channelType), eq(channelId), eq(draft))
+            verify(plugin).onDeleteDraftMessagesResult(any(), eq(channelType), eq(channelId), eq(draft))
+        }
+    }
 
     @Test
     fun createDraftSuccess() = runTest {

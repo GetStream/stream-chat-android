@@ -2686,6 +2686,12 @@ internal constructor(
         return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
             api.createDraftMessage(channelType, channelId, processedDraftMessage)
                 .retry(userScope, retryPolicy)
+                .doOnStart(userScope) {
+                    logger.v { "[createDraftMessage] #doOnStart; cid: $channelType:$channelId" }
+                    plugins.forEach { listener ->
+                        listener.onCreateDraftMessageRequest(channelType, channelId, processedDraftMessage)
+                    }
+                }
                 .doOnResult(userScope) { result ->
                     logger.i { "[createDraftMessage] result: ${result.stringify { it.toString() }}" }
                     plugins.forEach { listener ->
@@ -2714,6 +2720,12 @@ internal constructor(
     ): Call<Unit> {
         return api.deleteDraftMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
+            .doOnStart(userScope) {
+                logger.v { "[deleteDraftMessages] #doOnStart; cid: $channelType:$channelId" }
+                plugins.forEach { listener ->
+                    listener.onDeleteDraftMessagesRequest(channelType, channelId, message)
+                }
+            }
             .doOnResult(userScope) { result ->
                 logger.i { "[deleteDraftMessages] result: ${result.stringify { it.toString() }}" }
                 plugins.forEach { listener ->

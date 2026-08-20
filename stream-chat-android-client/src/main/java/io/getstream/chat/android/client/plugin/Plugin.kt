@@ -459,8 +459,24 @@ public interface Plugin :
         /* No-Op */
     }
 
+    override suspend fun onCreateDraftMessageRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        /* No-Op */
+    }
+
     override suspend fun onCreateDraftMessageResult(
         result: Result<DraftMessage>,
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onDeleteDraftMessagesRequest(
         channelType: String,
         channelId: String,
         message: DraftMessage,

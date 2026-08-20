@@ -170,6 +170,13 @@ internal class DatabaseMessageRepository(
         messageDao.deleteDraftMessage(message.id)
     }
 
+    override suspend fun deleteDraftMessage(cid: String, parentId: String?) {
+        when (parentId) {
+            null -> messageDao.deleteDraftMessageByCid(cid)
+            else -> messageDao.deleteDraftMessageByParentId(parentId)
+        }
+    }
+
     override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()
         .map { it.toModel(::selectMessage) }
 
