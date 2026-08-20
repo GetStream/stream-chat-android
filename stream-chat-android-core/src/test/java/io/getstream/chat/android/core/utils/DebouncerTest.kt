@@ -132,11 +132,11 @@ internal class DebouncerTest {
         debouncer.submit(debounceMs = 500) {
             acc += 1
         }
-        delay(300)
+        delay(499)
         // then
         acc `should be equal to` 0
         // when
-        delay(300)
+        delay(1)
         // then
         acc `should be equal to` 1
     }
@@ -150,11 +150,11 @@ internal class DebouncerTest {
         debouncer.submitSuspendable(debounceMs = 500) {
             acc += 1
         }
-        delay(300)
+        delay(499)
         // then
         acc `should be equal to` 0
         // when
-        delay(300)
+        delay(1)
         // then
         acc `should be equal to` 1
     }
@@ -172,7 +172,11 @@ internal class DebouncerTest {
         debouncer.submit(debounceMs = 300) {
             acc += 10
         }
-        delay(400)
+        delay(299)
+        // then
+        acc `should be equal to` 0
+        // when
+        delay(1)
         // then
         acc `should be equal to` 10
     }

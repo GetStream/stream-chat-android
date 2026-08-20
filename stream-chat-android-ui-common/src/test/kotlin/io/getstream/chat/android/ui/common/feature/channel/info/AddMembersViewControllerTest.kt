@@ -31,6 +31,7 @@ import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -182,10 +183,10 @@ internal class AddMembersViewControllerTest {
             sut.onViewAction(AddMembersViewAction.QueryChanged("Al"))
             skipItems(1) // Skip the query-only state update
 
-            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS - 50)
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
             expectNoEvents() // Still debounced, no search started
 
-            advanceTimeBy(100)
+            runCurrent()
             assertTrue(awaitItem().isLoading) // Search triggered
             assertEquals(users, awaitItem().searchResult)
         }
@@ -207,10 +208,10 @@ internal class AddMembersViewControllerTest {
             sut.onViewAction(AddMembersViewAction.QueryChanged("a  "))
             skipItems(1) // Skip the query-only state update
 
-            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS - 50)
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
             expectNoEvents() // Still debounced, no search started
 
-            advanceTimeBy(100)
+            runCurrent()
             assertTrue(awaitItem().isLoading) // Search triggered
             assertEquals(users, awaitItem().searchResult)
         }

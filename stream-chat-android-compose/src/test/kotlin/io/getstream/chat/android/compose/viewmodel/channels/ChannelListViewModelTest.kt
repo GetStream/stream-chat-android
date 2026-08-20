@@ -64,6 +64,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -614,11 +615,11 @@ internal class ChannelListViewModelTest {
                 .get(this)
 
             viewModel.setSearchQuery(SearchQuery.Messages("ab"))
-            advanceTimeBy(ChannelListViewModel.SEARCH_DEBOUNCE_MS + 50)
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
 
             verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
 
-            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
+            runCurrent()
 
             verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         }
@@ -640,7 +641,11 @@ internal class ChannelListViewModelTest {
                 .get(this)
 
             viewModel.setSearchQuery(SearchQuery.Messages("abc"))
-            advanceTimeBy(ChannelListViewModel.SEARCH_DEBOUNCE_MS + 50)
+            advanceTimeBy(ChannelListViewModel.SEARCH_DEBOUNCE_MS)
+
+            verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+
+            runCurrent()
 
             verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         }
@@ -664,11 +669,11 @@ internal class ChannelListViewModelTest {
                 .get(this)
 
             viewModel.setSearchQuery(SearchQuery.Messages("ab"))
-            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS + 50)
+            advanceTimeBy(searchDebounceMs)
 
             verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
 
-            advanceTimeBy(searchDebounceMs)
+            runCurrent()
 
             verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         }
