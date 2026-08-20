@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isLocalOnly
+import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -1717,19 +1718,17 @@ public class MessageListController(
      * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     private fun markLastMessageReadInternal() {
-        val itemState = messagesState.messageItems.lastOrNull { messageItem ->
-            messageItem is HasMessageListItemState
-        } as? HasMessageListItemState
-        val message = itemState?.message
+        val messageItems = messagesState.messageItems.filterIsInstance<HasMessageListItemState>()
+        val message = messageItems.lastOrNull()?.message
         val messageId = message?.id
         val messageText = message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
-        // Marking read while our own local-only message is at the bottom makes a channel the
-        // server sees as empty emit message.read with no last_read_message_id.
+        // Marking read with nothing the server tracks makes it emit message.read with no
+        // last_read_message_id.
         val currentUserId = clientState.user.value?.id
-        if (message != null && message.user.id == currentUserId && message.isLocalOnly()) {
-            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (own local-only): $messageId" }
+        if (messageItems.none { it.message.isInServerReadState(currentUserId) }) {
+            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (no server-side message)" }
             return
         }
 
@@ -1746,6 +1745,11 @@ public class MessageListController(
             markChannelAsRead()
         }
     }
+
+    // The server keeps our own local-only messages out of its read state, and silent and shadowed
+    // ones from anyone, so none of them can resolve a mark-read call.
+    private fun Message.isInServerReadState(currentUserId: String?): Boolean =
+        !(isMine(currentUserId) && isLocalOnly()) && !silent && !shadowed
 
     private fun markChannelAsRead() {
         val (channelType, channelId) = cid.cidToTypeAndId()
