@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.ui.common.utils
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
-@OptIn(InternalStreamChatApi::class)
 internal class SearchDebounceTest {
 
     @Test

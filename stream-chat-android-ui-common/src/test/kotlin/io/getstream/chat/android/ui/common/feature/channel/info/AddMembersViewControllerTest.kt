@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomGenericError
@@ -43,7 +42,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@OptIn(InternalStreamChatApi::class)
 internal class AddMembersViewControllerTest {
 
     @Test
