@@ -2047,7 +2047,6 @@ internal class MessageListControllerTests {
                 syncStatus = syncStatus,
                 // randomMessage randomises silent and deletedAt, which the mark-read gate keys on.
                 silent = false,
-                deletedAt = null,
                 createdAt = nowDate,
                 updatedAt = nowDate,
                 deletedAt = null,
