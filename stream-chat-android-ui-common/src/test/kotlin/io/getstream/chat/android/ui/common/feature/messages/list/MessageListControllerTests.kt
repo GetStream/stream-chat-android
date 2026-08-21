@@ -343,9 +343,9 @@ internal class MessageListControllerTests {
     fun `When repetitive markLastMessageRead calls appear only single API call should be sent`() = runTest {
         val chatClient: ChatClient = mock()
         val messages = arrayListOf(
-            randomMessage(id = "1", syncStatus = SyncStatus.COMPLETED, silent = false),
-            randomMessage(id = "2", syncStatus = SyncStatus.COMPLETED, silent = false),
-            randomMessage(id = "3", syncStatus = SyncStatus.COMPLETED, silent = false),
+            trackedMessage(id = "1"),
+            trackedMessage(id = "2"),
+            trackedMessage(id = "3"),
         )
         val messagesState = MutableStateFlow(messages)
         val controller = Fixture(chatClient = chatClient)
@@ -373,7 +373,7 @@ internal class MessageListControllerTests {
     fun `When current user's last message is COMPLETED markLastMessageRead should invoke markRead`() = runTest {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
-            listOf(randomMessage(id = "1", user = user1, syncStatus = SyncStatus.COMPLETED, silent = false)),
+            listOf(trackedMessage(id = "1", user = user1)),
         )
         val controller = Fixture(chatClient = chatClient)
             .givenCurrentUser()
@@ -475,8 +475,15 @@ internal class MessageListControllerTests {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
-                randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = false),
-                randomMessage(id = "2", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED, silent = false),
+                trackedMessage(id = "1", user = user2),
+                randomMessage(
+                    id = "2",
+                    user = user1,
+                    type = MessageType.ERROR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = false,
+                    deletedAt = null,
+                ),
             ),
         )
         val controller = Fixture(chatClient = chatClient)
@@ -524,6 +531,8 @@ internal class MessageListControllerTests {
 
     @Test
     fun `When the channel holds only a shadowed message markLastMessageRead should not invoke markRead`() = runTest {
+        // Defensive only: the server clears shadowed for the author, and ChannelStateImpl drops
+        // other users' shadowed messages, so this state does not reach the list today.
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
@@ -552,12 +561,81 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When the channel holds only a deleted message markLastMessageRead should not invoke markRead`() = runTest {
+        // The server drops a deleted message from its read state, so it has nothing to resolve.
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(
+                    id = "1",
+                    user = user2,
+                    type = MessageType.REGULAR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = false,
+                    deletedAt = randomDate(),
+                ),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(0)).markRead(any(), any())
+        controller.lastSeenMessageId.shouldBeNull()
+    }
+
+    @Test
+    fun `When a message is deleted for the current user only markLastMessageRead should invoke markRead`() = runTest {
+        // Deleted for me leaves the message in place for everyone else, so the server can still
+        // resolve the read state.
+        val chatClient: ChatClient = mock()
+        val messagesState = MutableStateFlow(
+            listOf(
+                randomMessage(
+                    id = "1",
+                    user = user2,
+                    type = MessageType.REGULAR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = false,
+                    deletedAt = null,
+                    deletedForMe = true,
+                ),
+            ),
+        )
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messagesState = messagesState)
+            .get()
+
+        controller.markLastMessageRead()
+        delay(1000)
+
+        verify(chatClient, times(1)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` "1"
+    }
+
+    @Test
     fun `When a silent message follows a tracked one markLastMessageRead should invoke markRead`() = runTest {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
-                randomMessage(id = "1", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = false),
-                randomMessage(id = "2", user = user2, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = true),
+                trackedMessage(id = "1", user = user2),
+                randomMessage(
+                    id = "2",
+                    user = user2,
+                    type = MessageType.REGULAR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = true,
+                    deletedAt = null,
+                ),
             ),
         )
         val controller = Fixture(chatClient = chatClient)
@@ -596,8 +674,15 @@ internal class MessageListControllerTests {
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
             listOf(
-                randomMessage(id = "1", user = user1, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED, silent = false),
-                randomMessage(id = "2", user = user1, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED, silent = false),
+                randomMessage(
+                    id = "1",
+                    user = user1,
+                    type = MessageType.ERROR,
+                    syncStatus = SyncStatus.COMPLETED,
+                    silent = false,
+                    deletedAt = null,
+                ),
+                trackedMessage(id = "2", user = user1),
             ),
         )
         val controller = Fixture(chatClient = chatClient)
@@ -620,7 +705,7 @@ internal class MessageListControllerTests {
         // class default — the gate must not block them on that.
         val chatClient: ChatClient = mock()
         val messagesState = MutableStateFlow(
-            listOf(randomMessage(id = "1", user = user2, syncStatus = SyncStatus.IN_PROGRESS, silent = false)),
+            listOf(trackedMessage(id = "1", user = user2, syncStatus = SyncStatus.IN_PROGRESS)),
         )
         val controller = Fixture(chatClient = chatClient)
             .givenCurrentUser()
@@ -1930,6 +2015,24 @@ internal class MessageListControllerTests {
         @OptIn(ExperimentalCoroutinesApi::class)
         private fun nowDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)
 
+        /**
+         * A message the server tracks in its read state. [randomMessage] randomises `silent` and
+         * `deletedAt`, which the mark-read gate keys on, so both are pinned here.
+         */
+        private fun trackedMessage(
+            id: String = randomString(),
+            user: User = randomUser(),
+            syncStatus: SyncStatus = SyncStatus.COMPLETED,
+        ) = randomMessage(
+            id = id,
+            user = user,
+            type = MessageType.REGULAR,
+            syncStatus = syncStatus,
+            silent = false,
+            shadowed = false,
+            deletedAt = null,
+        )
+
         private fun nowMessage(
             author: User,
             type: String,
@@ -1942,8 +2045,9 @@ internal class MessageListControllerTests {
                 type = type,
                 text = text,
                 syncStatus = syncStatus,
-                // randomMessage randomises silent, which the mark-read gate keys on.
+                // randomMessage randomises silent and deletedAt, which the mark-read gate keys on.
                 silent = false,
+                deletedAt = null,
                 createdAt = nowDate,
                 updatedAt = nowDate,
                 deletedAt = null,
