@@ -124,6 +124,64 @@ internal class DebouncerTest {
     }
 
     @Test
+    fun testWorkWithCustomDebounceInterval() = runTest {
+        // given
+        val debouncer = Debouncer(200)
+        var acc = 0
+        // when
+        debouncer.submit(debounceMs = 500) {
+            acc += 1
+        }
+        delay(499)
+        // then
+        acc `should be equal to` 0
+        // when
+        delay(1)
+        // then
+        acc `should be equal to` 1
+    }
+
+    @Test
+    fun testSuspendableWorkWithCustomDebounceInterval() = runTest {
+        // given
+        val debouncer = Debouncer(200)
+        var acc = 0
+        // when
+        debouncer.submitSuspendable(debounceMs = 500) {
+            acc += 1
+        }
+        delay(499)
+        // then
+        acc `should be equal to` 0
+        // when
+        delay(1)
+        // then
+        acc `should be equal to` 1
+    }
+
+    @Test
+    fun testWorkWithCustomDebounceIntervalCancelsPendingWork() = runTest {
+        // given
+        val debouncer = Debouncer(200)
+        var acc = 0
+        // when
+        debouncer.submit(debounceMs = 500) {
+            acc += 1
+        }
+        delay(100)
+        debouncer.submit(debounceMs = 300) {
+            acc += 10
+        }
+        delay(299)
+        // then
+        acc `should be equal to` 0
+        // when
+        delay(1)
+        // then
+        acc `should be equal to` 10
+    }
+
+    @Test
     fun testCancelLastDebounce() = runTest {
         // given
         val debouncer = Debouncer(200)

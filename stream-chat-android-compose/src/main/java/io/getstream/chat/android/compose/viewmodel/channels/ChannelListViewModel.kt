@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 import io.getstream.log.taggedLogger
@@ -94,7 +95,8 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
- * @param searchDebounceMs The debounce time for search queries.
+ * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+ * are debounced for at least 500ms.
  * @param draftMessagesEnabled If the draft message feature is enabled.
  * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
  * @param globalState A flow emitting the current [GlobalState].
@@ -108,7 +110,7 @@ public class ChannelListViewModel internal constructor(
     private val memberLimit: Int?,
     private val messageLimit: Int?,
     private val chatEventHandlerFactory: ChatEventHandlerFactory,
-    searchDebounceMs: Long,
+    private val searchDebounceMs: Long,
     private val draftMessagesEnabled: Boolean,
     private val messageSearchSort: QuerySorter<Message>?,
     private val globalState: Flow<GlobalState>,
@@ -143,7 +145,8 @@ public class ChannelListViewModel internal constructor(
      * @param messageLimit How many messages are fetched for each channel item when loading channels.
      * When `null`, the server-side default is used.
      * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
-     * @param searchDebounceMs The debounce time for search queries.
+     * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+     * are debounced for at least 500ms.
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
@@ -190,7 +193,8 @@ public class ChannelListViewModel internal constructor(
      * @param messageLimit How many messages are fetched for each channel item when loading channels.
      * When `null`, the server-side default is used.
      * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
-     * @param searchDebounceMs The debounce time for search queries.
+     * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+     * are debounced for at least 500ms.
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
@@ -234,7 +238,8 @@ public class ChannelListViewModel internal constructor(
      *
      * @param groupKey The name of the channels group.
      * @param chatClient The prepared [ChatClient] instance required for fetching the data.
-     * @param searchDebounceMs The debounce time for search queries.
+     * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+     * are debounced for at least 500ms.
      * @param draftMessagesEnabled If the draft message feature is enabled.
      * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
      * @param globalState A flow emitting the current [GlobalState].
@@ -805,8 +810,9 @@ public class ChannelListViewModel internal constructor(
     }
 
     private fun handleSearchQuery(query: String) {
-        logger.d { "[handleSearchQuery] query: '$query'" }
-        searchDebouncer.submitSuspendable {
+        val debounceMs = SearchDebounce.debounceMsFor(query.trim(), searchDebounceMs)
+        logger.d { "[handleSearchQuery] query: '$query', debounceMs: $debounceMs" }
+        searchDebouncer.submitSuspendable(debounceMs) {
             searchMessagesForQuery(query)
         }
     }
