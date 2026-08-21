@@ -779,9 +779,9 @@ public fun randomFiles(
  * The upper bound is the last instant the SDK can serialise: the ISO-8601 formatter writes a four digit year, so
  * anything past year 9999 is written as a different date, or as one that cannot be read back at all.
  *
- * The lower bound keeps generated dates in the future, which is what callers already relied on. Drawing from the whole
- * positive `Long` range put every date millions of years ahead, so production code that keeps only future dates, live
- * locations for one, never saw a generated date fall behind the clock. Use [randomDateBefore] for a date in the past.
+ * The lower bound keeps generated dates in the future, which callers rely on: production code that holds on to future
+ * dates only, live locations for one, drops a date that sits behind the clock, leaving a test asserting on an empty
+ * result. Use `randomDateBefore(Date())` for a date in the past.
  */
 private const val MIN_GENERATED_DATE_MILLIS: Long = 32_503_680_000_000L // 3000-01-01T00:00:00.000Z
 private const val MAX_GENERATED_DATE_MILLIS: Long = 253_402_300_799_999L // 9999-12-31T23:59:59.999Z

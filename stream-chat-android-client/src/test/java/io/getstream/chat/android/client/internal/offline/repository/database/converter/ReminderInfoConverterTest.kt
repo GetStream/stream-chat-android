@@ -51,7 +51,7 @@ internal class ReminderInfoConverterTest {
     @Test
     fun `a reminder at the last serializable instant survives the round trip`() {
         // Guards the upper bound the date fixtures generate up to: past it the year no longer fits the wire format,
-        // and a reminder comes back holding a different date, or fails to be read back at all.
+        // so a reminder comes back holding a different date, or cannot be read back at all.
         val lastSerializable = Date(LAST_SERIALIZABLE_DATE_MILLIS)
         val reminder = ReminderInfoEntity(
             remindAt = lastSerializable,
@@ -63,8 +63,8 @@ internal class ReminderInfoConverterTest {
     }
 
     private companion object {
-        // Enough draws that a fixture generating unserializable dates again fails here, rather than
-        // intermittently somewhere downstream.
+        // Enough draws that a fixture generating unserializable dates fails here, rather than intermittently
+        // somewhere downstream.
         const val ROUNDS = 5_000
         const val LAST_SERIALIZABLE_DATE_MILLIS = 253_402_300_799_999L // 9999-12-31T23:59:59.999Z
     }

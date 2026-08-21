@@ -21,15 +21,15 @@ import org.junit.jupiter.api.Test
 import java.util.Date
 
 /**
- * The two properties the rest of the suite leans on. Both have broken before, and because the generator is random,
- * breaking either shows up as an unrelated test failing once in a few hundred CI runs rather than as a failure here.
+ * The two properties the rest of the suite leans on. Because the generator is random, breaking either surfaces as an
+ * unrelated test failing in a fraction of CI runs, far from the cause, rather than as a failure here.
  */
 internal class RandomDateTest {
 
     @Test
     fun `a generated date is always in the future`() {
-        // Production code that keeps only future dates, live locations for one, drops a fixture date that is already
-        // in the past, leaving the test asserting on an empty result.
+        // Production code that holds on to future dates only, live locations for one, drops a fixture date that
+        // sits behind the clock, leaving the test asserting on an empty result.
         val now = Date()
 
         val past = List(ROUNDS) { randomDate() }.filter { it.before(now) }
