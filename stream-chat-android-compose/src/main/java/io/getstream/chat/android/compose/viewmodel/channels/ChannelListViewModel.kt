@@ -95,7 +95,8 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
- * @param searchDebounceMs The debounce time for search queries.
+ * @param searchDebounceMs The debounce time for search queries. Message search queries of 1-2 characters
+ * are debounced for at least 500ms.
  * @param draftMessagesEnabled If the draft message feature is enabled.
  * @param messageSearchSort Sorting for message search results. When `null`, the server-side default is used.
  * @param globalState A flow emitting the current [GlobalState].
@@ -809,7 +810,7 @@ public class ChannelListViewModel internal constructor(
     }
 
     private fun handleSearchQuery(query: String) {
-        val debounceMs = SearchDebounce.debounceMsFor(query, searchDebounceMs)
+        val debounceMs = SearchDebounce.debounceMsFor(query.trim(), searchDebounceMs)
         logger.d { "[handleSearchQuery] query: '$query', debounceMs: $debounceMs" }
         searchDebouncer.submitSuspendable(debounceMs) {
             searchMessagesForQuery(query)

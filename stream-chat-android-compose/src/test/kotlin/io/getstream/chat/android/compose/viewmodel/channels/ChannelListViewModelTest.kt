@@ -625,6 +625,33 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
+    fun `Given channel list When setting a padded short message search query Should debounce it for longer`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenSearchMessagesResult(SearchMessagesResult())
+                .givenRepositorySelectChannels()
+                .get(this)
+
+            // Whitespace makes this three characters long, while the term searched for is one.
+            viewModel.setSearchQuery(SearchQuery.Messages("a  "))
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
+
+            verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+
+            runCurrent()
+
+            verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        }
+
+    @Test
     fun `Given channel list When setting a regular message search query Should debounce it with the default debounce`() =
         runTest {
             val chatClient: ChatClient = mock()

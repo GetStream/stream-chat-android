@@ -209,6 +209,9 @@ public class SearchInputView : FrameLayout {
     /**
      * Sets a listener for debounced input events. Quick changes to the input will not be passed to
      * this listener, it will only be invoked when the input has been stable for a short while.
+     *
+     * Input of 1-2 characters is held for longer than that, as such queries are the most expensive
+     * ones to search for.
      */
     public fun setDebouncedInputChangedListener(inputChangedListener: InputChangedListener?) {
         this.debouncedInputChangedListener = inputChangedListener

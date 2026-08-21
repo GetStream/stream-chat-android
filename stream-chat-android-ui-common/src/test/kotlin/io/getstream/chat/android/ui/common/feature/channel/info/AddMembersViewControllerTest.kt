@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewStat
 import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
@@ -49,6 +50,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AddMembersViewControllerTest {
 
     @Test
