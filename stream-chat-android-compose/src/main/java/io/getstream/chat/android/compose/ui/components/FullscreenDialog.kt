@@ -17,9 +17,13 @@
 package io.getstream.chat.android.compose.ui.components
 
 import android.view.WindowManager
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
@@ -55,6 +59,10 @@ internal fun FullscreenDialog(
             }
         }
 
-        content()
+        // The dialog renders in its own window, so the app-level `testTagsAsResourceId`
+        // does not apply here; without this, UI tests cannot resolve the tags inside.
+        Box(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
+            content()
+        }
     }
 }

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import java.util.Date
 
@@ -47,7 +48,7 @@ import java.util.Date
 @JsonClass(generateAdapter = true)
 internal data class DownstreamThreadDto(
     val active_participant_count: Int?,
-    val channel: DownstreamChannelDto?,
+    val channel: ChannelResponse?,
     val channel_cid: String,
     val created_at: Date,
     val created_by: DownstreamUserDto?,
@@ -91,7 +92,7 @@ internal data class DownstreamThreadDto(
 @JsonClass(generateAdapter = true)
 internal data class DownstreamThreadInfoDto(
     val channel_cid: String,
-    val channel: DownstreamChannelDto?,
+    val channel: ChannelResponse?,
     val parent_message_id: String,
     val parent_message: DownstreamMessageDto?,
     val created_by_user_id: String,

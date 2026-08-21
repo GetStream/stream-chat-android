@@ -16,21 +16,31 @@
 
 package io.getstream.chat.android.compose.tests
 
+import io.getstream.chat.android.compose.robots.assertBlockMessageAuthorOption
+import io.getstream.chat.android.compose.robots.assertChannelCount
+import io.getstream.chat.android.compose.robots.assertChannelWithName
 import io.getstream.chat.android.compose.robots.assertFlagMessageDialog
 import io.getstream.chat.android.compose.robots.assertMessage
+import io.getstream.chat.android.compose.robots.assertMuteMessageAuthorOption
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 /**
- * Covers flagging another user's message from the message menu. The option is absent on the user's
- * own messages.
+ * Covers the moderation options the message menu offers for another user's message: flagging the
+ * message, and muting or blocking its author. The options are absent on the user's own messages.
  */
 class ModerationTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.UserLogin
     private val sampleText = "Test"
+
+    // Seeded messages alternate authors starting with the user, so with two seeded
+    // messages the one with text "2" belongs to the participant.
+    private val participantMessageText = "2"
+    private val groupChannelName = "1"
 
     @AllureId("11572")
     @Test
@@ -54,6 +64,133 @@ class ModerationTests : StreamTestCase() {
             userRobot
                 .assertFlagMessageDialog(isDisplayed = false)
                 .assertMessage(sampleText)
+        }
+    }
+
+    @AllureId("11563")
+    @Test
+    fun test_userMutesMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("WHEN user mutes the message author") {
+            userRobot.muteMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to unmute the author") {
+            userRobot.assertMuteMessageAuthorOption(sampleText, isAuthorMuted = true)
+        }
+    }
+
+    @AllureId("11566")
+    @Test
+    fun test_userUnmutesMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user mutes the message author") {
+            userRobot.muteMessageAuthor(sampleText)
+        }
+        step("WHEN user unmutes the message author") {
+            userRobot.unmuteMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to mute the author again") {
+            userRobot.assertMuteMessageAuthorOption(sampleText, isAuthorMuted = false)
+        }
+    }
+
+    @AllureId("6071")
+    @Test
+    fun test_userBlocksMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("WHEN user blocks the message author") {
+            userRobot.blockMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to unblock the author") {
+            userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = true)
+        }
+    }
+
+    @AllureId("11575")
+    @Test
+    fun test_userUnblocksMessageAuthor() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends the message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user blocks the message author") {
+            userRobot.blockMessageAuthor(sampleText)
+        }
+        step("WHEN user unblocks the message author") {
+            userRobot.unblockMessageAuthor(sampleText)
+        }
+        step("THEN the message menu offers to block the author again") {
+            userRobot.assertBlockMessageAuthorOption(sampleText, isAuthorBlocked = false)
+        }
+    }
+
+    @AllureId("6070")
+    @Test
+    fun test_userBlocksUserInDirectMessageChannel() {
+        step("GIVEN a direct message channel with the participant exists") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 2, withDirectMessageChannel = true)
+        }
+        step("AND user opens the direct message channel") {
+            userRobot.login().openChannel(ParticipantRobot.name)
+        }
+        step("WHEN user blocks the participant") {
+            userRobot.blockMessageAuthor(participantMessageText)
+        }
+        step("THEN the message menu offers to unblock the participant") {
+            userRobot.assertBlockMessageAuthorOption(participantMessageText, isAuthorBlocked = true)
+        }
+    }
+
+    @AllureId("6072")
+    @Test
+    fun test_directMessageChannelDisappears_whenUserBlocksParticipant() {
+        step("GIVEN a direct message channel with the participant exists") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 2, withDirectMessageChannel = true)
+        }
+        step("AND user sees it in the channel list") {
+            userRobot
+                .login()
+                .assertChannelCount(2)
+                .assertChannelWithName(ParticipantRobot.name)
+        }
+        step("WHEN user blocks the participant in the direct message channel") {
+            userRobot
+                .openChannel(ParticipantRobot.name)
+                .blockMessageAuthor(participantMessageText)
+                .moveToChannelListFromMessageList()
+        }
+        step("THEN the direct message channel disappears from the channel list") {
+            userRobot
+                .assertChannelCount(1)
+                .assertChannelWithName(ParticipantRobot.name, isDisplayed = false)
+        }
+        step("WHEN user unblocks the participant from the group channel") {
+            userRobot
+                .openChannel(groupChannelName)
+                .unblockMessageAuthor(participantMessageText)
+                .moveToChannelListFromMessageList()
+        }
+        step("THEN the direct message channel is shown in the channel list again") {
+            userRobot
+                .assertChannelCount(2)
+                .assertChannelWithName(ParticipantRobot.name)
         }
     }
 }

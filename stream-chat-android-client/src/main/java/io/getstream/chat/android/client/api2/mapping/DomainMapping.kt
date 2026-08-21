@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
@@ -130,7 +129,12 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.BlockedUserResponse
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
@@ -226,6 +230,53 @@ internal class DomainMapping(
             name = name,
             type = type,
             image = image,
+        )
+
+    /**
+     * Transforms [ChannelResponse] into [Channel]. Channel-level wire fields only: the type carries
+     * no `messages`, `watchers`, `read`, `pinned_messages`, `membership` or `active_live_locations`,
+     * so those stay empty. `name` and `image` are custom data on the wire.
+     */
+    internal fun ChannelResponse.toDomain(): Channel =
+        Channel(
+            id = id,
+            type = type,
+            name = custom["name"] as? String ?: "",
+            image = custom["image"] as? String ?: "",
+            filterTags = filterTags.orEmpty(),
+            frozen = frozen,
+            createdAt = createdAt,
+            deletedAt = deletedAt,
+            updatedAt = updatedAt,
+            memberCount = memberCount ?: 0,
+            members = members.orEmpty().map { it.toDomain() },
+            hidden = hidden,
+            hiddenMessagesBefore = hideMessagesBefore,
+            truncatedAt = truncatedAt,
+            disabled = disabled,
+            blocked = blocked,
+            config = config?.toDomain() ?: Config(),
+            createdBy = createdBy?.toDomain() ?: User(),
+            team = team.orEmpty(),
+            cooldown = cooldown ?: 0,
+            ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
+            messageCount = messageCount,
+            lastMessageAt = lastMessageAt,
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }
+                .toMap()
+                .minus(listOf("name", "image"))
+                .toMutableMap(),
+        ).syncUnreadCountWithReads(currentUserIdProvider())
+            .let(channelTransformer::transform)
+
+    internal fun ChannelResponse.toChannelInfo(): ChannelInfo =
+        ChannelInfo(
+            cid = cid,
+            id = id,
+            memberCount = memberCount ?: 0,
+            name = custom["name"] as? String,
+            type = type,
+            image = custom["image"] as? String,
         )
 
     /**
@@ -449,6 +500,25 @@ internal class DomainMapping(
             pinnedAt = pinned_at,
             archivedAt = archived_at,
             extraData = extraData,
+        )
+
+    internal fun ChannelMemberResponse.toDomain(): Member =
+        Member(
+            user = user?.toDomain() ?: User(id = userId.orEmpty()),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            isInvited = invited,
+            inviteAcceptedAt = inviteAcceptedAt,
+            inviteRejectedAt = inviteRejectedAt,
+            shadowBanned = shadowBanned,
+            banned = banned,
+            channelRole = channelRole,
+            notificationsMuted = notificationsMuted,
+            status = status,
+            banExpires = banExpires,
+            pinnedAt = pinnedAt,
+            archivedAt = archivedAt,
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
 
     internal fun UserResponse.toDomain(): User =
@@ -749,6 +819,39 @@ internal class DomainMapping(
     )
 
     /**
+     * Transforms [ChannelConfigWithInfo] to [Config].
+     */
+    internal fun ChannelConfigWithInfo.toDomain(): Config = Config(
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        name = name,
+        typingEventsEnabled = typingEvents,
+        readEventsEnabled = readEvents,
+        deliveryEventsEnabled = deliveryEvents,
+        connectEventsEnabled = connectEvents,
+        searchEnabled = search,
+        isReactionsEnabled = reactions,
+        isThreadEnabled = replies,
+        muteEnabled = mutes,
+        uploadsEnabled = uploads,
+        urlEnrichmentEnabled = urlEnrichment,
+        customEventsEnabled = customEvents,
+        pushNotificationsEnabled = pushNotifications,
+        skipLastMsgUpdateForSystemMsgs = skipLastMsgUpdateForSystemMsgs,
+        pollsEnabled = polls,
+        messageRetention = messageRetention,
+        maxMessageLength = maxMessageLength,
+        automod = automod.value,
+        automodBehavior = automodBehavior.value,
+        blocklistBehavior = blocklistBehavior?.value.orEmpty(),
+        commands = commands.map { it.toDomain() },
+        messageRemindersEnabled = userMessageReminders,
+        sharedLocationsEnabled = sharedLocations,
+        markMessagesPending = markMessagesPending,
+        pushLevel = pushLevel?.value,
+    )
+
+    /**
      * Transforms [DeviceResponse] to [Device].
      */
     internal fun DeviceResponse.toDomain(): Device = Device(
@@ -902,18 +1005,18 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DownstreamUserBlockDto] into [UserBlock]
+     * Transforms [BlockedUserResponse] into [UserBlock]
      */
-    internal fun DownstreamUserBlockDto.toDomain(): UserBlock = UserBlock(
-        blockedBy = user_id,
-        userId = blocked_user_id,
-        blockedAt = created_at,
+    internal fun BlockedUserResponse.toDomain(): UserBlock = UserBlock(
+        blockedBy = userId,
+        userId = blockedUserId,
+        blockedAt = createdAt,
     )
 
     /**
-     * Transforms a list of [DownstreamUserBlockDto] into a list of [UserBlock]
+     * Transforms a list of [BlockedUserResponse] into a list of [UserBlock]
      */
-    internal fun List<DownstreamUserBlockDto>.toDomain(): List<UserBlock> = map { it.toDomain() }
+    internal fun List<BlockedUserResponse>.toDomain(): List<UserBlock> = map { it.toDomain() }
 
     /**
      * Transforms [BlockUsersResponse] into [UserBlock].

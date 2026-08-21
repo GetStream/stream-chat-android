@@ -22,6 +22,7 @@ import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import java.util.regex.Pattern
 import io.getstream.chat.android.compose.R as ComposeR
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 open class MessageListPage {
 
@@ -139,6 +140,29 @@ open class MessageListPage {
                 val linkPreviewDescription get() = By.res("Stream_LinkAttachmentDescription")
             }
 
+            class Poll {
+
+                companion object {
+                    val singleVoteSubtitle get() = By.text(appContext.getString(UiCommonR.string.stream_ui_poll_description_single_answer))
+                    val closedSubtitle get() = By.text(appContext.getString(UiCommonR.string.stream_ui_poll_description_closed))
+                    val viewResultsButton get() = By.res("Stream_PollViewResultsButton")
+                    val endPollButton get() = By.res("Stream_PollEndButton")
+                    val endPollConfirmationAction get() = By.res("Stream_PollEndConfirmButton")
+                    val resultsTitle get() = By.text(appContext.getString(ComposeR.string.stream_compose_poll_results))
+
+                    // The row is the toggle: the option text is a plain child node, while the
+                    // node carrying the vote state (and the click handling) is the row around it.
+                    fun option(text: String): BySelector =
+                        By.res("Stream_PollOptionVotingRow").hasDescendant(By.text(text))
+
+                    fun optionWithVoteCount(text: String, count: Int): BySelector = option(text).hasDescendant(
+                        By.desc(appContext.resources.getQuantityString(ComposeR.plurals.stream_compose_poll_vote_counts, count, count)),
+                    )
+
+                    fun question(text: String): BySelector = By.text(text)
+                }
+            }
+
             class Reactions {
 
                 companion object {
@@ -171,7 +195,10 @@ open class MessageListPage {
                     val flag get() = By.res("Stream_ContextMenu_Flag Message")
                     val pin get() = By.res("Stream_ContextMenu_Pin to this Chat")
                     val unpin get() = By.res("Stream_ContextMenu_Unpin from this Chat")
+                    val muteUser get() = By.res("Stream_ContextMenu_Mute User")
+                    val unmuteUser get() = By.res("Stream_ContextMenu_Unmute User")
                     val block get() = By.res("Stream_ContextMenu_Block user")
+                    val unblock get() = By.res("Stream_ContextMenu_Unblock user")
                     val delete get() = By.res("Stream_ContextMenu_Delete Message")
                     val showMoreReactions = By.desc("Show more reactions")
                     val ok = By.text("OK")

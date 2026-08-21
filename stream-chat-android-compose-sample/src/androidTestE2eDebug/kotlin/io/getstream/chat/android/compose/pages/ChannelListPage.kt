@@ -52,6 +52,7 @@ class ChannelListPage {
 
             companion object {
                 val mute = By.desc("Mute")
+                val unmute = By.desc("Unmute")
                 val more = By.desc("More")
             }
         }
@@ -60,7 +61,9 @@ class ChannelListPage {
 
             companion object {
                 val avatar = By.res("Stream_ChannelAvatar")
-                val name = By.res("Stream_ChannelName")
+                val name get() = By.res("Stream_ChannelName")
+
+                fun name(text: String): BySelector = name.text(text)
                 val messagePreview = By.res("Stream_MessagePreview")
                 val deliveryStatusIsRead = Message.deliveryStatusIsRead
                 val deliveryStatusIsPending = Message.deliveryStatusIsPending

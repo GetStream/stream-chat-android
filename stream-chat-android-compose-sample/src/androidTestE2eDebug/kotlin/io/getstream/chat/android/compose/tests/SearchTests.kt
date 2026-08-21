@@ -24,8 +24,8 @@ import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 /**
- * Covers the message search wired into the channel list header. The sample configures the channel
- * list with `SearchMode.Messages` only, so channel search is not reachable.
+ * Covers the message search wired into the channel list header, the sample's default search mode.
+ * Channel search, behind the channel search flag, is covered by [ChannelSearchTests].
  */
 class SearchTests : StreamTestCase() {
 
@@ -44,7 +44,7 @@ class SearchTests : StreamTestCase() {
         step("WHEN user searches for the message on the channel list") {
             userRobot
                 .moveToChannelListFromMessageList()
-                .searchForMessage(sampleText)
+                .search(sampleText)
         }
         step("THEN the message is shown in the search results") {
             userRobot.assertMessageInChannelPreview(sampleText, fromCurrentUser = false)
@@ -63,7 +63,7 @@ class SearchTests : StreamTestCase() {
         step("AND user searches for the message on the channel list") {
             userRobot
                 .moveToChannelListFromMessageList()
-                .searchForMessage(sampleText)
+                .search(sampleText)
                 .assertMessageInChannelPreview(sampleText, fromCurrentUser = false)
         }
         step("WHEN user taps on the search result") {

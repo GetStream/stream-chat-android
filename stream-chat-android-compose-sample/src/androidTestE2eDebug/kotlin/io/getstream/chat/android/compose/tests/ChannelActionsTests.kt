@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelActionsSheetForGroupChannel
+import io.getstream.chat.android.compose.robots.assertChannelIsMuted
 import io.getstream.chat.android.compose.robots.assertChannelListIsEmpty
 import io.getstream.chat.android.compose.robots.assertGroupChannelInfoScreen
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
@@ -108,6 +109,44 @@ class ChannelActionsTests : StreamTestCase() {
         }
         step("THEN the channel is gone from the channel list") {
             userRobot.assertChannelListIsEmpty()
+        }
+    }
+
+    @AllureId("11560")
+    @Test
+    fun test_userMutesChannelFromTheSwipeAction() {
+        step("GIVEN user logs in") {
+            userRobot.login().waitForChannelListToLoad()
+        }
+        step("WHEN user swipes the channel and taps on the mute action") {
+            userRobot
+                .swipeChannel()
+                .tapOnMuteSwipeAction()
+        }
+        step("THEN the channel shows the muted icon") {
+            userRobot.assertChannelIsMuted(isMuted = true)
+        }
+    }
+
+    @AllureId("11567")
+    @Test
+    fun test_userUnmutesChannelFromTheSwipeAction() {
+        step("GIVEN user logs in") {
+            userRobot.login().waitForChannelListToLoad()
+        }
+        step("AND user mutes the channel from the swipe action") {
+            userRobot
+                .swipeChannel()
+                .tapOnMuteSwipeAction()
+                .assertChannelIsMuted(isMuted = true)
+        }
+        step("WHEN user swipes the channel and taps on the unmute action") {
+            userRobot
+                .swipeChannel()
+                .tapOnUnmuteSwipeAction()
+        }
+        step("THEN the channel shows no muted icon") {
+            userRobot.assertChannelIsMuted(isMuted = false)
         }
     }
 }

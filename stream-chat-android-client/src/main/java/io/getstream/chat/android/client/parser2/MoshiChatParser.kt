@@ -34,6 +34,8 @@ import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.AttachmentRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.ChannelMemberResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.ChannelResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
@@ -67,6 +69,9 @@ import io.getstream.chat.android.client.parser2.adapters.UserResponseAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.BlockListOptions
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ConfigOverridesRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.MessageRequest
@@ -100,6 +105,8 @@ internal class MoshiChatParser(
             .add(MessageRequestAdapter)
             .add(ChannelMemberRequestAdapter)
             .add(ChannelInputRequestAdapter)
+            .add(ChannelResponseAdapter)
+            .add(ChannelMemberResponseAdapter)
             .add(DownstreamMemberDtoAdapter)
             .add(DownstreamMemberInfoDtoAdapter)
             .add(UpstreamMemberDtoAdapter)
@@ -140,6 +147,30 @@ internal class MoshiChatParser(
             .add(
                 TranslateMessageRequest.Language::class.java,
                 TranslateMessageRequest.Language.LanguageAdapter(),
+            )
+            .add(
+                ChannelOwnCapability::class.java,
+                ChannelOwnCapability.ChannelOwnCapabilityAdapter(),
+            )
+            .add(
+                ChannelConfigWithInfo.Automod::class.java,
+                ChannelConfigWithInfo.Automod.AutomodAdapter(),
+            )
+            .add(
+                ChannelConfigWithInfo.AutomodBehavior::class.java,
+                ChannelConfigWithInfo.AutomodBehavior.AutomodBehaviorAdapter(),
+            )
+            .add(
+                ChannelConfigWithInfo.BlocklistBehavior::class.java,
+                ChannelConfigWithInfo.BlocklistBehavior.BlocklistBehaviorAdapter(),
+            )
+            .add(
+                ChannelConfigWithInfo.PushLevel::class.java,
+                ChannelConfigWithInfo.PushLevel.PushLevelAdapter(),
+            )
+            .add(
+                BlockListOptions.Behavior::class.java,
+                BlockListOptions.Behavior.BehaviorAdapter(),
             )
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)

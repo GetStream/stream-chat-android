@@ -28,7 +28,7 @@ internal object ThreadDtoTestData {
     val downstreamThreadJson =
         """{
           "active_participant_count": 3,
-          "channel": ${ChannelDtoTestData.downstreamJsonWithoutExtraData},
+          "channel": ${ChannelDtoTestData.channelResponseJson},
           "channel_cid": "messaging:123",
           "created_at": "2020-06-10T11:04:31.000Z",
           "created_by": ${UserDtoTestData.downstreamJson},
@@ -74,7 +74,7 @@ internal object ThreadDtoTestData {
 
     val downstreamThread = DownstreamThreadDto(
         active_participant_count = 3,
-        channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
+        channel = ChannelDtoTestData.channelResponse,
         channel_cid = "messaging:123",
         created_at = Date(1591787071000),
         created_by = UserDtoTestData.downstreamUser,
@@ -122,7 +122,7 @@ internal object ThreadDtoTestData {
     val downstreamThreadJsonWithoutExtraData =
         """{
           "active_participant_count": 2,
-          "channel": ${ChannelDtoTestData.downstreamJsonWithoutExtraData},
+          "channel": ${ChannelDtoTestData.channelResponseJson},
           "channel_cid": "messaging:456",
           "created_at": "2020-06-10T11:04:31.000Z",
           "created_by": ${UserDtoTestData.downstreamJson},
@@ -143,7 +143,7 @@ internal object ThreadDtoTestData {
 
     val downstreamThreadWithoutExtraData = DownstreamThreadDto(
         active_participant_count = 2,
-        channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
+        channel = ChannelDtoTestData.channelResponse,
         channel_cid = "messaging:456",
         created_at = Date(1591787071000),
         created_by = UserDtoTestData.downstreamUser,
@@ -167,7 +167,7 @@ internal object ThreadDtoTestData {
     val downstreamThreadInfoJson =
         """{
           "channel_cid": "messaging:789",
-          "channel": ${ChannelDtoTestData.downstreamJsonWithoutExtraData},
+          "channel": ${ChannelDtoTestData.channelResponseJson},
           "parent_message_id": "parent_msg_id_3",
           "parent_message": ${MessageDtoTestData.downstreamJsonWithoutExtraData},
           "created_by_user_id": "user3",
@@ -201,7 +201,7 @@ internal object ThreadDtoTestData {
 
     val downstreamThreadInfo = DownstreamThreadInfoDto(
         channel_cid = "messaging:789",
-        channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
+        channel = ChannelDtoTestData.channelResponse,
         parent_message_id = "parent_msg_id_3",
         parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
         created_by_user_id = "user3",

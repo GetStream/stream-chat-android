@@ -49,6 +49,13 @@ class StartupActivity : AppCompatActivity() {
                 customSettings().isComposerLinkPreviewEnabled = true
             }
 
+            // Assigned on every harness launch, with or without a mock server, so a flag left by
+            // a previous test cannot leak into the next one. A notification launch carries no
+            // extra and keeps the persisted value.
+            if (intent.hasExtra("CHANNEL_SEARCH")) {
+                customSettings().isChannelSearchEnabled = intent.getBooleanExtra("CHANNEL_SEARCH", false)
+            }
+
             val initTestActivity = intent.getSerializableExtra("InitTestActivity") as? InitTestActivity
             if (initTestActivity != null) {
                 startActivity(initTestActivity.createIntent(this@StartupActivity))
