@@ -100,6 +100,15 @@ private const val SYNC_EVENT_REPLAY_MAX_COUNT = 250
 private const val QUERY_CHANNELS_MAX_LIMIT = 30
 
 /**
+ * Age at which the last-synced date is abandoned instead of synced from.
+ *
+ * `/sync` cannot serve a range this old anyway, and without a ceiling a checkpoint that stops
+ * advancing - because every fallback refresh keeps failing - would be retried on every reconnect
+ * forever. Past this age the checkpoint is moved to now and the range is given up on.
+ */
+private const val SYNC_MAX_AGE_DAYS = 30
+
+/**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
  * when connection is reestablished or when a health check event happens.
  */
@@ -115,6 +124,7 @@ internal class SyncManager(
     private val userPresence: Boolean,
     private val isAutomaticSyncOnReconnectEnabled: Boolean,
     private val syncMaxThreshold: TimeDuration,
+    /** Overridable for tests only; production always uses [SYNC_EVENT_REPLAY_MAX_COUNT]. */
     private val eventReplayMaxCount: Int = SYNC_EVENT_REPLAY_MAX_COUNT,
     private val now: () -> Long,
     private val serverClockOffset: ServerClockOffset,
@@ -332,6 +342,11 @@ internal class SyncManager(
         val lastSyncAt = syncState?.lastSyncedAt ?: Date(now())
         val rawLastSyncAt = syncState?.rawLastSyncedAt
         logger.v { "[performSync] lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
+        if (lastSyncAt.exceedsMaxSyncAge()) {
+            logger.i { "[performSync] skipping sync; lastSyncAt ($lastSyncAt) is older than $SYNC_MAX_AGE_DAYS days" }
+            updateLastSyncedDate(latestEventDate = Date(now()), rawLatestEventDate = null)
+            return emptySet()
+        }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistory(cappedCids, rawLastSyncAt).await()
@@ -343,13 +358,7 @@ internal class SyncManager(
             // is unavailable, hence the timestamp moves to now - but only once the refresh
             // succeeded, otherwise the skipped events would become unrecoverable.
             logger.e { "[performSync] failed (too many events to sync): $result" }
-            val refresh = refreshActiveWatchedChannels()
-            if (refresh !is Result.Success) {
-                logger.e { "[performSync] fallback refresh failed, keeping lastSyncedAt: ${refresh.errorOrNull()}" }
-                return emptySet()
-            }
-            updateLastSyncedDate(latestEventDate = Date(now()), rawLatestEventDate = null)
-            return refresh.value
+            return skipRefusedEventRange()
         }
         if (result !is Result.Success) {
             logger.e { "[performSync] failed($result)" }
@@ -386,6 +395,26 @@ internal class SyncManager(
     }
 
     /**
+     * Handles a `/sync` range the backend refused for holding too many events.
+     *
+     * Event replay is impossible here - the payload never arrived - so the watched channels are
+     * refreshed instead and the checkpoint is abandoned to now. As in [skipEventReplay], the
+     * checkpoint only moves once that refresh succeeded; [SYNC_MAX_AGE_DAYS] is what stops a
+     * permanently failing refresh from retrying this range forever.
+     *
+     * @return The channel ids that were refreshed, empty when the refresh failed.
+     */
+    private suspend fun skipRefusedEventRange(): Set<String> {
+        val refresh = refreshActiveWatchedChannels()
+        if (!refresh.isSuccess) {
+            logger.e { "[skipRefusedEventRange] fallback refresh failed, keeping lastSyncedAt: ${refresh.error}" }
+            return refresh.refreshedCids
+        }
+        updateLastSyncedDate(latestEventDate = Date(now()), rawLatestEventDate = null)
+        return refresh.refreshedCids
+    }
+
+    /**
      * Skips the replay of an oversized `/sync` payload.
      *
      * Replaying this many events would hold the state and persistence pipeline long enough to slow
@@ -404,13 +433,21 @@ internal class SyncManager(
             "[performSync] skipping event replay; events.size: ${sortedEvents.size} exceeds $eventReplayMaxCount"
         }
         val refresh = refreshActiveWatchedChannels()
-        if (refresh !is Result.Success) {
-            logger.e { "[skipEventReplay] fallback refresh failed, keeping lastSyncedAt: ${refresh.errorOrNull()}" }
-            return emptySet()
+        if (!refresh.isSuccess) {
+            logger.e { "[skipEventReplay] fallback refresh failed, keeping lastSyncedAt: ${refresh.error}" }
+            return refresh.refreshedCids
+        }
+        // Read state is not carried by the refresh, so keep honouring these the way the replay path
+        // does rather than losing them with the rest of the payload.
+        sortedEvents.forEach {
+            if (it is MarkAllReadEvent) {
+                logger.v { "[skipEventReplay] found MarkAllReadEvent (in ${sortedEvents.size} events)" }
+                updateAllReadStateForDate(it.user.id, it.createdAt)
+            }
         }
         val skippedLatestEvent = sortedEvents.last()
         updateLastSyncedDate(skippedLatestEvent.createdAt, skippedLatestEvent.rawCreatedAt)
-        return refresh.value
+        return refresh.refreshedCids
     }
 
     /**
@@ -494,8 +531,8 @@ internal class SyncManager(
             val refreshed = updateGroupedQueryChannels(recoverAll)
             // Re-watch tracked channels (specific for this path, where we don't re-watch the groups, just the manually
             // opened/tracked channels)
-            val rewatched = rewatchTrackedWatchedChannels()
-            refreshed + rewatched
+            val rewatched = rewatchTrackedWatchedChannels(cidsToExclude = alreadyRefreshedCids)
+            refreshed + rewatched + alreadyRefreshedCids
         } else {
             emptySet()
         }
@@ -584,10 +621,13 @@ internal class SyncManager(
      * [io.getstream.chat.android.client.internal.state.plugin.state.internal.WatchedChannelStateFlow]
      * weak references in [StateRegistry]).
      */
-    private suspend fun rewatchTrackedWatchedChannels(): Set<String> {
+    private suspend fun rewatchTrackedWatchedChannels(cidsToExclude: Set<String> = emptySet()): Set<String> {
         val online = clientState.isOnline
-        val watchedCids = stateRegistry.getTrackedWatchedChannels()
-        logger.d { "[rewatchTrackedWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online" }
+        val watchedCids = stateRegistry.getTrackedWatchedChannels() - cidsToExclude
+        logger.d {
+            "[rewatchTrackedWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online, " +
+                "cidsToExclude.size: ${cidsToExclude.size}"
+        }
         if (watchedCids.isEmpty() || !online) return emptySet()
 
         watchedCids.forEach { cid ->
@@ -683,45 +723,47 @@ internal class SyncManager(
     }
 
     /**
-     * Refreshes the actively watched channels through `queryChannels` instead of replaying an
-     * oversized `/sync` payload event by event.
+     * Refreshes the channels the user is actively watching through `queryChannels`, instead of
+     * replaying an oversized `/sync` payload event by event.
      *
      * A `queryChannels` response carries the latest channel state, messages, members, watchers and
-     * read state, and re-registers the watch for the requested cids, which is what the currently
-     * visible surfaces need. Channels that are not actively watched are left to a future explicit
+     * read state, and re-registers the watch for the requested cids, which is what the surfaces the
+     * user is looking at need. Channels that are not actively watched are left to a future explicit
      * query.
      *
-     * Having nothing to refresh is a success: with no watched channels there is nothing visible that
-     * can go stale. A failed request is not, and the caller must not advance the last-synced date on
-     * it, or the events it skipped become unrecoverable.
+     * The source is [StateRegistry.getTrackedWatchedChannels] only - channels an explicitly opened
+     * screen subscribed to. It is deliberately *not* [LogicRegistry.getActiveChannelsLogic], which
+     * holds an entry for every channel any query has paged through and would turn this into dozens
+     * of `watch` requests for channels nobody is viewing.
      *
-     * @param cidsToExclude Channel ids already refreshed elsewhere in the recovery flow.
+     * The set is empty before any screen has subscribed, so on a cold start this refreshes nothing
+     * and only the checkpoint moves. That is a known limitation of the approach rather than a bug
+     * here; nothing is on screen to go stale, and the next query brings those channels up to date.
      *
-     * @return The channel ids that were refreshed, or a failure when any request failed.
+     * Having nothing to refresh is a success. A failed request is not, and the caller must not
+     * advance the last-synced date on it, or the events it skipped become unrecoverable.
+     *
+     * @return The cids that were refreshed, and the error that stopped the refresh, if any. The
+     * refreshed cids are reported even on failure so the caller can still skip re-querying them.
      */
-    private suspend fun refreshActiveWatchedChannels(
-        cidsToExclude: Set<String> = emptySet(),
-    ): Result<Set<String>> {
+    private suspend fun refreshActiveWatchedChannels(): WatchedChannelsRefresh {
         val online = clientState.isOnline
-        val watchedCids = buildSet {
-            addAll(stateRegistry.getTrackedWatchedChannels())
-            logicRegistry.getActiveChannelsLogic().mapTo(this) { it.cid }
-        } - cidsToExclude
-        logger.d {
-            "[refreshActiveWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online, " +
-                "cidsToExclude.size: ${cidsToExclude.size}"
-        }
+        val watchedCids = stateRegistry.getTrackedWatchedChannels()
+        logger.d { "[refreshActiveWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online" }
         if (watchedCids.isEmpty()) {
-            return Result.Success(emptySet())
+            return WatchedChannelsRefresh(refreshedCids = emptySet())
         }
         if (!online) {
             logger.w { "[refreshActiveWatchedChannels] rejected (offline)" }
-            return Result.Failure(Error.GenericError("Cannot refresh watched channels while offline"))
+            return WatchedChannelsRefresh(
+                refreshedCids = emptySet(),
+                error = Error.GenericError("Cannot refresh watched channels while offline"),
+            )
         }
 
         val failed = AtomicReference<Error>()
         val refreshedCids = mutableSetOf<String>()
-        watchedCids.chunked(QUERY_CHANNELS_MAX_LIMIT).forEach { batch ->
+        for (batch in watchedCids.chunked(QUERY_CHANNELS_MAX_LIMIT)) {
             val request = QueryChannelsRequest(
                 filter = Filters.`in`("cid", batch),
                 offset = 0,
@@ -744,6 +786,11 @@ internal class SyncManager(
                     repos.storeStateForChannels(foundChannels)
                     foundChannels.mapTo(refreshedCids, Channel::cid)
                 }
+            // Stop at the first failure: the remaining requests would be spent on a refresh the
+            // caller is going to reject anyway.
+            if (failed.get() != null) {
+                break
+            }
         }
         // A cid the server did not return is not a failure: it can be deleted or no longer visible
         // to this user, and holding the checkpoint for it would re-fetch the payload on every
@@ -753,10 +800,7 @@ internal class SyncManager(
             logger.w { "[refreshActiveWatchedChannels] not returned by the server; cids.size: ${missedCids.size}" }
         }
         logger.v { "[refreshActiveWatchedChannels] refreshedCids.size: ${refreshedCids.size}" }
-        return when (val error = failed.get()) {
-            null -> Result.Success(refreshedCids)
-            else -> Result.Failure(error)
-        }
+        return WatchedChannelsRefresh(refreshedCids = refreshedCids, error = failed.get())
     }
 
     private suspend fun retryChannels() {
@@ -1000,6 +1044,14 @@ internal class SyncManager(
     }
 
     /**
+     * Whether the last-synced date is too old for `/sync` to serve. Distinct from
+     * [exceedsSyncThreshold], which gates retrying local entities, not the sync range.
+     */
+    private fun Date.exceedsMaxSyncAge(): Boolean {
+        return diff(now()) > TimeDuration.days(SYNC_MAX_AGE_DAYS)
+    }
+
+    /**
      * Important: Use only for local dates created with [ServerClockOffset.estimatedServerTime].
      * Use for comparing:
      *  - [Message.createdLocallyAt]
@@ -1010,5 +1062,19 @@ internal class SyncManager(
 
     private enum class State {
         Idle, Syncing
+    }
+
+    /**
+     * Outcome of [refreshActiveWatchedChannels].
+     *
+     * Carries both halves because they are needed independently: [error] decides whether the
+     * last-synced date may advance, while [refreshedCids] is still worth reporting on failure so
+     * the recovery flow does not query those channels a second time.
+     */
+    private data class WatchedChannelsRefresh(
+        val refreshedCids: Set<String>,
+        val error: Error? = null,
+    ) {
+        val isSuccess: Boolean get() = error == null
     }
 }
