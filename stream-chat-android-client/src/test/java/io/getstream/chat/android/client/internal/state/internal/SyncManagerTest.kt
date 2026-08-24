@@ -428,30 +428,6 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `performSync advances lastSyncedAt when there are no watched channels to refresh`() =
-        runTest(testDispatcher) {
-            /* Given */
-            val createdAt = localDate()
-            givenOversizedSyncPayload(
-                eventCount = 3,
-                createdAt = createdAt,
-                rawCreatedAt = streamDateFormatter.format(createdAt),
-            )
-            // Nothing is being watched, so nothing visible can go stale - this must not be treated
-            // as a failed refresh, or the oversized payload is re-fetched on every reconnect.
-            givenWatchedChannels(cids = emptySet(), foundChannels = emptyList())
-
-            val syncManager = buildSyncManager(eventReplayMaxCount = 2)
-
-            /* When */
-            syncManager.performSync(cids = listOf("1", "2"))
-
-            /* Then */
-            verify(chatClient, never()).queryChannelsInternal(any<QueryChannelsRequest>())
-            assertEquals(createdAt, _syncState.value?.lastSyncedAt)
-        }
-
-    @Test
     fun `performSync skips sync entirely when lastSyncedAt is older than the max age`() = runTest(testDispatcher) {
         /* Given */
         val staleSyncedAt = Date(currentTime - TimeUnit.DAYS.toMillis(31))
@@ -497,11 +473,41 @@ internal class SyncManagerTest {
             val syncManager = buildSyncManager(eventReplayMaxCount = 2)
 
             /* When */
-            syncManager.performSync(cids = listOf("1", "2"))
+            syncManager.performSync(cids = listOf("messaging:synced-1"))
 
             /* Then */
-            verify(chatClient, never()).queryChannelsInternal(any<QueryChannelsRequest>())
+            // Only the synced cid, none of the 40 paged ones.
+            argumentCaptor<QueryChannelsRequest> {
+                verify(chatClient).queryChannelsInternal(capture())
+                assertEquals(setOf("messaging:synced-1"), (firstValue.filter as InFilterObject).values)
+            }
         }
+
+    @Test
+    fun `performSync fallback refreshes the synced cids when no channel is watched yet`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = localDate()
+        givenOversizedSyncPayload(
+            eventCount = 3,
+            createdAt = createdAt,
+            rawCreatedAt = streamDateFormatter.format(createdAt),
+        )
+        // Cold start: nothing has subscribed, which is also when the payload is most likely oversized.
+        givenWatchedChannels(cids = emptySet(), foundChannels = emptyList())
+        val syncedCids = listOf("messaging:synced-1", "messaging:synced-2")
+
+        val syncManager = buildSyncManager(eventReplayMaxCount = 2)
+
+        /* When */
+        syncManager.performSync(cids = syncedCids)
+
+        /* Then */
+        argumentCaptor<QueryChannelsRequest> {
+            verify(chatClient).queryChannelsInternal(capture())
+            val filter = firstValue.filter as InFilterObject
+            assertEquals(syncedCids.toSet(), filter.values)
+        }
+    }
 
     @Test
     fun `performSync stops the fallback at the first failed batch`() = runTest(testDispatcher) {

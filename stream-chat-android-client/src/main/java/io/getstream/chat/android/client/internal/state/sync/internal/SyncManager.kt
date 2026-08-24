@@ -358,7 +358,7 @@ internal class SyncManager(
             // is unavailable, hence the timestamp moves to now - but only once the refresh
             // succeeded, otherwise the skipped events would become unrecoverable.
             logger.e { "[performSync] failed (too many events to sync): $result" }
-            return skipRefusedEventRange()
+            return skipRefusedEventRange(cappedCids)
         }
         if (result !is Result.Success) {
             logger.e { "[performSync] failed($result)" }
@@ -368,7 +368,7 @@ internal class SyncManager(
         logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
 
         if (sortedEvents.size > eventReplayMaxCount) {
-            return skipEventReplay(sortedEvents)
+            return skipEventReplay(sortedEvents, cappedCids)
         }
 
         val latestEvent = sortedEvents.lastOrNull()
@@ -404,8 +404,8 @@ internal class SyncManager(
      *
      * @return The channel ids that were refreshed, empty when the refresh failed.
      */
-    private suspend fun skipRefusedEventRange(): Set<String> {
-        val refresh = refreshActiveWatchedChannels()
+    private suspend fun skipRefusedEventRange(syncedCids: List<String>): Set<String> {
+        val refresh = refreshActiveWatchedChannels(syncedCids)
         if (!refresh.isSuccess) {
             logger.e { "[skipRefusedEventRange] fallback refresh failed, keeping lastSyncedAt: ${refresh.error}" }
             return refresh.refreshedCids
@@ -428,11 +428,11 @@ internal class SyncManager(
      *
      * @return The channel ids that were refreshed, empty when the refresh failed.
      */
-    private suspend fun skipEventReplay(sortedEvents: List<ChatEvent>): Set<String> {
+    private suspend fun skipEventReplay(sortedEvents: List<ChatEvent>, syncedCids: List<String>): Set<String> {
         logger.i {
             "[performSync] skipping event replay; events.size: ${sortedEvents.size} exceeds $eventReplayMaxCount"
         }
-        val refresh = refreshActiveWatchedChannels()
+        val refresh = refreshActiveWatchedChannels(syncedCids)
         if (!refresh.isSuccess) {
             logger.e { "[skipEventReplay] fallback refresh failed, keeping lastSyncedAt: ${refresh.error}" }
             return refresh.refreshedCids
@@ -731,24 +731,27 @@ internal class SyncManager(
      * user is looking at need. Channels that are not actively watched are left to a future explicit
      * query.
      *
-     * The source is [StateRegistry.getTrackedWatchedChannels] only - channels an explicitly opened
-     * screen subscribed to. It is deliberately *not* [LogicRegistry.getActiveChannelsLogic], which
-     * holds an entry for every channel any query has paged through and would turn this into dozens
-     * of `watch` requests for channels nobody is viewing.
+     * The preferred source is [StateRegistry.getTrackedWatchedChannels] - channels an explicitly
+     * opened screen subscribed to. It is deliberately *not* [LogicRegistry.getActiveChannelsLogic],
+     * which holds an entry for every channel any query has paged through and would turn this into
+     * dozens of `watch` requests for channels nobody is viewing.
      *
-     * The set is empty before any screen has subscribed, so on a cold start this refreshes nothing
-     * and only the checkpoint moves. That is a known limitation of the approach rather than a bug
-     * here; nothing is on screen to go stale, and the next query brings those channels up to date.
+     * Nothing has subscribed yet on a cold start, which is also when a payload is most likely to be
+     * oversized. Falling back to [syncedCids] keeps the refresh symmetric with the request: the
+     * channels the range was requested for are the ones brought up to date by discarding it. They
+     * are already capped at [SYNC_MAX_CIDS], so this stays bounded.
      *
      * Having nothing to refresh is a success. A failed request is not, and the caller must not
      * advance the last-synced date on it, or the events it skipped become unrecoverable.
      *
+     * @param syncedCids The cids `/sync` was asked about, used when no channel is being watched yet.
+     *
      * @return The cids that were refreshed, and the error that stopped the refresh, if any. The
      * refreshed cids are reported even on failure so the caller can still skip re-querying them.
      */
-    private suspend fun refreshActiveWatchedChannels(): WatchedChannelsRefresh {
+    private suspend fun refreshActiveWatchedChannels(syncedCids: List<String>): WatchedChannelsRefresh {
         val online = clientState.isOnline
-        val watchedCids = stateRegistry.getTrackedWatchedChannels()
+        val watchedCids = stateRegistry.getTrackedWatchedChannels().ifEmpty { syncedCids.toSet() }
         logger.d { "[refreshActiveWatchedChannels] watchedCids.size: ${watchedCids.size}, online: $online" }
         if (watchedCids.isEmpty()) {
             return WatchedChannelsRefresh(refreshedCids = emptySet())
