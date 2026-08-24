@@ -56,7 +56,6 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
@@ -128,6 +127,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.models.AppResponseFields
+import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
@@ -748,16 +748,19 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms [BannedUserResponse] to [BannedUser].
+     * Transforms [BanResponse] to [BannedUser], or to null when the ban carries no user.
+     *
+     * A ban always names the user it targets, so a null one means the response cannot be mapped rather
+     * than that the ban has no target.
      */
-    internal fun BannedUserResponse.toDomain(): BannedUser {
+    internal fun BanResponse.toDomain(): BannedUser? {
         return BannedUser(
-            user = user.toDomain(),
-            bannedBy = banned_by?.toDomain(),
+            user = user?.toDomain() ?: return null,
+            bannedBy = bannedBy?.toDomain(),
             channel = channel?.toDomain(),
-            createdAt = created_at,
+            createdAt = createdAt,
             expires = expires,
-            shadow = shadow,
+            shadow = shadow ?: false,
             reason = reason,
         )
     }

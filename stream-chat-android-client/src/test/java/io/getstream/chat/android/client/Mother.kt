@@ -58,7 +58,6 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
@@ -90,6 +89,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
+import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
@@ -845,19 +845,19 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomBannedUserResponse(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
-        bannedBy: DownstreamUserDto = randomDownstreamUserDto(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(),
+    fun randomBanResponse(
+        user: UserResponse? = randomUserResponse(),
+        bannedBy: UserResponse = randomUserResponse(),
+        channel: ChannelResponse = randomChannelResponse(),
         createdAt: Date = randomDate(),
         expires: Date = randomDate(),
-        shadow: Boolean = randomBoolean(),
+        shadow: Boolean? = randomBoolean(),
         reason: String = randomString(),
-    ): BannedUserResponse = BannedUserResponse(
+    ): BanResponse = BanResponse(
         user = user,
-        banned_by = bannedBy,
+        bannedBy = bannedBy,
         channel = channel,
-        created_at = createdAt,
+        createdAt = createdAt,
         expires = expires,
         shadow = shadow,
         reason = reason,

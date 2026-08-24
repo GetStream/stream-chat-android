@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.Mother.randomAnswerDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomAppResponseFields
 import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
-import io.getstream.chat.android.client.Mother.randomBannedUserResponse
+import io.getstream.chat.android.client.Mother.randomBanResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
 import io.getstream.chat.android.client.Mother.randomChannelInfoDto
@@ -144,6 +144,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -892,20 +893,36 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `BannedUserResponse is correctly mapped to BannedUser`() {
-        val bannedUserResponse = randomBannedUserResponse()
+    fun `BanResponse is correctly mapped to BannedUser`() {
+        val banResponse = randomBanResponse()
         val sut = Fixture().get()
-        val bannedUser = with(sut) { bannedUserResponse.toDomain() }
+        val bannedUser = with(sut) { banResponse.toDomain() }
         val expected = BannedUser(
-            user = with(sut) { bannedUserResponse.user.toDomain() },
-            bannedBy = with(sut) { bannedUserResponse.banned_by?.toDomain() },
-            channel = with(sut) { bannedUserResponse.channel?.toDomain() },
-            createdAt = bannedUserResponse.created_at,
-            expires = bannedUserResponse.expires,
-            shadow = bannedUserResponse.shadow,
-            reason = bannedUserResponse.reason,
+            user = with(sut) { banResponse.user!!.toDomain() },
+            bannedBy = with(sut) { banResponse.bannedBy?.toDomain() },
+            channel = with(sut) { banResponse.channel?.toDomain() },
+            createdAt = banResponse.createdAt,
+            expires = banResponse.expires,
+            shadow = banResponse.shadow!!,
+            reason = banResponse.reason,
         )
         assertEquals(expected, bannedUser)
+    }
+
+    @Test
+    fun `BanResponse without a user is not mapped`() {
+        val banResponse = randomBanResponse(user = null)
+        val sut = Fixture().get()
+
+        assertNull(with(sut) { banResponse.toDomain() })
+    }
+
+    @Test
+    fun `BanResponse without a shadow flag is mapped to a ban that is not shadow`() {
+        val banResponse = randomBanResponse(shadow = null)
+        val sut = Fixture().get()
+
+        assertFalse(with(sut) { banResponse.toDomain()!!.shadow })
     }
 
     @Test
