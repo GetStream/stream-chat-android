@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
-import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
@@ -78,6 +77,7 @@ import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
+import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
@@ -289,11 +289,23 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryBannedUsersInput() = listOf(
         Arguments.of(
-            RetroSuccess(QueryBannedUsersResponse(listOf(Mother.randomBannedUserResponse()))).toRetrofitCall(),
+            RetroSuccess(
+                QueryBannedUsersResponse(duration = randomString(), bans = listOf(Mother.randomBanResponse())),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             RetroError<QueryBannedUsersResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        // A ban the mapper cannot map fails the whole call rather than being dropped from the list.
+        Arguments.of(
+            RetroSuccess(
+                QueryBannedUsersResponse(
+                    duration = randomString(),
+                    bans = listOf(Mother.randomBanResponse(user = null)),
+                ),
+            ).toRetrofitCall(),
             Result.Failure::class,
         ),
     )

@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import java.util.Date
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class BannedUserResponse(
-    val user: DownstreamUserDto,
-    val banned_by: DownstreamUserDto?,
-    val channel: DownstreamChannelDto?,
-    val created_at: Date?,
-    val expires: Date?,
-    val shadow: Boolean = false,
-    val reason: String?,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class QueryBannedUsersResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "bans")
+    internal val bans: List<io.getstream.chat.android.network.models.BanResponse> = emptyList(),
 )

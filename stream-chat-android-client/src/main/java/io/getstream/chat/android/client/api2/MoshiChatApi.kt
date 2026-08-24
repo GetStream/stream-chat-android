@@ -998,9 +998,14 @@ constructor(
                 created_at_before = createdAtBefore,
                 created_at_before_or_equal = createdAtBeforeOrEqual,
             ),
-        ).mapDomain { response ->
-            response.bans.map {
-                it.toDomain()
+        ).flatMapDomain { response ->
+            val bans = response.bans.mapNotNull { it.toDomain() }
+            if (bans.size == response.bans.size) {
+                CoroutineCall(coroutineScope) { Result.Success(bans) }
+            } else {
+                // A ban always names the user it targets, so a missing one means the response cannot be mapped.
+                val error = Error.GenericError("A ban in the query banned users response carried no user")
+                ErrorCall(coroutineScope, error)
             }
         }
     }
