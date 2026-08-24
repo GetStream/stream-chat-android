@@ -73,8 +73,6 @@ import io.getstream.chat.android.client.api2.model.response.SearchMessagesRespon
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
-import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.ClientScope
@@ -159,6 +157,7 @@ import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryRemindersRequest
+import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
@@ -182,6 +181,7 @@ import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
+import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import io.getstream.chat.android.network.models.UserRequest
@@ -2352,7 +2352,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryUsersInput")
-    fun testQueryUsers(call: RetrofitCall<UsersResponse>, expected: KClass<*>) = runTest {
+    fun testQueryUsers(call: RetrofitCall<QueryUsersResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<UserApi>()
         whenever(api.queryUsers(any(), any())).doReturn(call)

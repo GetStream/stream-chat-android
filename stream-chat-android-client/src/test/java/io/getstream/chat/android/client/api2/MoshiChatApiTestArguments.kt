@@ -55,8 +55,6 @@ import io.getstream.chat.android.client.api2.model.response.SearchMessagesRespon
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
-import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
@@ -78,6 +76,7 @@ import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
+import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
@@ -85,6 +84,7 @@ import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
+import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
@@ -535,10 +535,12 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryUsersInput() = listOf(
         Arguments.of(
-            RetroSuccess(UsersResponse(listOf(Mother.randomDownstreamUserDto()))).toRetrofitCall(),
+            RetroSuccess(
+                QueryUsersResponse(duration = randomString(), users = listOf(Mother.randomFullUserResponse())),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<UsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<QueryUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -848,8 +850,12 @@ internal object MoshiChatApiTestArguments {
 
     private fun updateUsersResponseArguments(): List<Arguments> {
         val userId = randomString()
-        val user = Mother.randomDownstreamUserDto()
-        val response = UpdateUsersResponse(mapOf(userId to user))
+        val user = Mother.randomFullUserResponse()
+        val response = UpdateUsersResponse(
+            duration = randomString(),
+            membershipDeletionTaskId = randomString(),
+            users = mapOf(userId to user),
+        )
         return listOf(
             Arguments.of(RetroSuccess(response).toRetrofitCall(), Result.Success::class),
             Arguments.of(RetroError<UpdateUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),

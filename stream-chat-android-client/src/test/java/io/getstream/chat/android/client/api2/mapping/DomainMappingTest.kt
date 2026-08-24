@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
+import io.getstream.chat.android.client.Mother.randomFullUserResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
@@ -621,6 +622,47 @@ internal class DomainMappingTest {
             extraData = mapOf("birthland" to "Polis Massa"),
         )
         assertEquals(expected, user)
+    }
+
+    @Test
+    fun `FullUserResponse is correctly mapped to User`() {
+        val userResponse = randomFullUserResponse()
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        assertEquals(userResponse.id, user.id)
+        assertEquals(userResponse.role, user.role)
+        assertEquals(userResponse.language, user.language)
+        assertEquals(userResponse.banned, user.banned)
+        assertEquals(userResponse.invisible, user.invisible)
+        assertEquals(userResponse.online, user.online)
+        assertEquals(userResponse.totalUnreadCount, user.totalUnreadCount)
+        assertEquals(userResponse.unreadChannels, user.unreadChannels)
+        assertEquals(userResponse.unreadThreads, user.unreadThreads)
+        assertEquals(userResponse.createdAt, user.createdAt)
+        assertEquals(userResponse.updatedAt, user.updatedAt)
+    }
+
+    @Test
+    fun `FullUserResponse without a name or image is mapped to empty strings`() {
+        val userResponse = randomFullUserResponse().copy(name = null, image = null)
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        assertEquals("", user.name)
+        assertEquals("", user.image)
+    }
+
+    @Test
+    fun `FullUserResponse custom data is mapped to extraData without its null values`() {
+        val userResponse = randomFullUserResponse(custom = mapOf("customKey" to "customValue", "nullKey" to null))
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), user.extraData)
     }
 
     @Test

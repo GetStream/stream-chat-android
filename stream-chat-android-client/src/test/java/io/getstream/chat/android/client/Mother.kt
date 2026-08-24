@@ -98,6 +98,7 @@ import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.FileUploadResponse
+import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
@@ -1078,6 +1079,28 @@ internal object Mother {
         userId = userId,
         user = user,
         lastThreadMessageAt = lastThreadMessageAt,
+    )
+
+    fun randomFullUserResponse(
+        id: String = randomString(),
+        role: String = randomString(),
+        language: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): FullUserResponse = FullUserResponse(
+        id = id,
+        role = role,
+        language = language,
+        banned = randomBoolean(),
+        invisible = randomBoolean(),
+        online = randomBoolean(),
+        shadowBanned = randomBoolean(),
+        totalUnreadCount = randomInt(),
+        unreadChannels = randomInt(),
+        unreadCount = randomInt(),
+        unreadThreads = randomInt(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        custom = custom,
     )
 
     fun randomUserResponse(
