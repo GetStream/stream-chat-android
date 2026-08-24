@@ -1758,13 +1758,10 @@ public class MessageListController(
         val messageText = message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
-        // The server keeps our own local-only messages out of its read state, so marking read
-        // without any other message makes it emit message.read with no last_read_message_id.
+        // Marking read with nothing the server tracks makes it emit message.read with no
+        // last_read_message_id.
         val currentUserId = clientState.user.value?.id
-        val hasServerSideMessage = messageItems.any { item ->
-            !(item.message.isMine(currentUserId) && item.message.isLocalOnly())
-        }
-        if (!hasServerSideMessage) {
+        if (messageItems.none { it.message.isInServerReadState(currentUserId) }) {
             logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (no server-side message)" }
             return
         }
@@ -1793,6 +1790,12 @@ public class MessageListController(
             markChannelAsRead()
         }
     }
+
+    // The server keeps our own local-only messages out of its channel read state, along with
+    // silent, shadowed and deleted ones, so none of them can resolve a mark-read call. Deleted for
+    // the current user only does not count: the message is still there for everyone else.
+    private fun Message.isInServerReadState(currentUserId: String?): Boolean =
+        !(isMine(currentUserId) && isLocalOnly()) && !silent && !shadowed && deletedAt == null
 
     private fun markChannelAsRead() {
         val (channelType, channelId) = cid.cidToTypeAndId()
