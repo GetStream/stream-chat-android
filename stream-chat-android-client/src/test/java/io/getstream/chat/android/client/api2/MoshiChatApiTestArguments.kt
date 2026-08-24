@@ -298,6 +298,16 @@ internal object MoshiChatApiTestArguments {
             RetroError<QueryBannedUsersResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
+        // A ban the mapper cannot map fails the whole call rather than being dropped from the list.
+        Arguments.of(
+            RetroSuccess(
+                QueryBannedUsersResponse(
+                    duration = randomString(),
+                    bans = listOf(Mother.randomBanResponse(user = null)),
+                ),
+            ).toRetrofitCall(),
+            Result.Failure::class,
+        ),
     )
 
     @JvmStatic

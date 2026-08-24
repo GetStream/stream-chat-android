@@ -1000,14 +1000,13 @@ constructor(
             ),
         ).flatMapDomain { response ->
             val bans = response.bans.mapNotNull { it.toDomain() }
-            val result = if (bans.size == response.bans.size) {
-                Result.Success(bans)
+            if (bans.size == response.bans.size) {
+                CoroutineCall(coroutineScope) { Result.Success(bans) }
             } else {
-                Result.Failure(
-                    Error.GenericError("A ban in the query banned users response carried no user"),
-                )
+                // A ban always names the user it targets, so a missing one means the response cannot be mapped.
+                val error = Error.GenericError("A ban in the query banned users response carried no user")
+                ErrorCall(coroutineScope, error)
             }
-            CoroutineCall(coroutineScope) { result }
         }
     }
 
