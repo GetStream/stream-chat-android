@@ -1746,10 +1746,11 @@ public class MessageListController(
         }
     }
 
-    // The server keeps our own local-only messages out of its read state, and silent and shadowed
-    // ones from anyone, so none of them can resolve a mark-read call.
+    // The server keeps our own local-only messages out of its channel read state, along with
+    // silent, shadowed and deleted ones, so none of them can resolve a mark-read call. Deleted for
+    // the current user only does not count: the message is still there for everyone else.
     private fun Message.isInServerReadState(currentUserId: String?): Boolean =
-        !(isMine(currentUserId) && isLocalOnly()) && !silent && !shadowed
+        !(isMine(currentUserId) && isLocalOnly()) && !silent && !shadowed && deletedAt == null
 
     private fun markChannelAsRead() {
         val (channelType, channelId) = cid.cidToTypeAndId()
