@@ -21,6 +21,7 @@ import junit.framework.TestCase.fail
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 
 public class BackendRobot(
     private val mockServer: MockServer,
@@ -32,14 +33,24 @@ public class BackendRobot(
         repliesCount: Int = 0,
         messagesText: String? = null,
         repliesText: String? = null,
+        channelNames: List<String> = emptyList(),
+        withDirectMessageChannel: Boolean = false,
     ): BackendRobot {
         waitForMockServerToStart()
         val messagesTextQueryParam = if (messagesText != null) "messages_text=$messagesText&" else ""
         val repliesTextQueryParam = if (repliesText != null) "replies_text=$repliesText&" else ""
+        val channelNamesQueryParam = if (channelNames.isNotEmpty()) {
+            "channel_names=${URLEncoder.encode(channelNames.joinToString(","), "UTF-8")}&"
+        } else {
+            ""
+        }
+        val dmQueryParam = if (withDirectMessageChannel) "dm=true&" else ""
         mockServer.postRequest(
             "mock?" +
                 messagesTextQueryParam +
                 repliesTextQueryParam +
+                channelNamesQueryParam +
+                dmQueryParam +
                 "channels=$channelsCount&" +
                 "messages=$messagesCount&" +
                 "replies=$repliesCount",

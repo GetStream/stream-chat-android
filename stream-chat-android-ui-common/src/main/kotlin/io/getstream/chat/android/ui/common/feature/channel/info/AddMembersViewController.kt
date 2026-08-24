@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewState
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -86,7 +87,7 @@ public class AddMembersViewController(
         // Re-run search whenever the query changes, with debounce.
         _state
             .map { it.query }
-            .debounce(TYPING_DEBOUNCE_TIMEOUT_MS)
+            .debounce { query -> SearchDebounce.debounceMsFor(query.trim(), TYPING_DEBOUNCE_TIMEOUT_MS) }
             .distinctUntilChanged()
             .onEach { query -> searchUsers(query) }
             .launchIn(scope)

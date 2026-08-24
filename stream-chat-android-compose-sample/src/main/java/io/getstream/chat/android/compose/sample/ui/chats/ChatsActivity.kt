@@ -183,7 +183,7 @@ class ChatsActivity : ComponentActivity() {
                 }
             },
             title = stringResource(id = R.string.app_name),
-            searchMode = SearchMode.Messages,
+            searchMode = if (settings.isChannelSearchEnabled) SearchMode.Channels else SearchMode.Messages,
             listContentMode = listContentMode,
             onBackPress = ::finish,
             onListTopBarAvatarClick = {

@@ -25,7 +25,10 @@ import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
 import io.getstream.chat.android.client.Mother.randomBannedUserResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
+import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
 import io.getstream.chat.android.client.Mother.randomChannelInfoDto
+import io.getstream.chat.android.client.Mother.randomChannelMemberResponse
+import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomConfigDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
@@ -48,7 +51,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
-import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
@@ -72,6 +74,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
+import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -307,6 +310,95 @@ internal class DomainMappingTest {
         }
 
         assertEquals(transformedChannel, result)
+    }
+
+    @Test
+    fun `ChannelResponse promotes name and image out of custom and keeps the rest as extraData`() {
+        val channelResponse = randomChannelResponse(
+            custom = mapOf(
+                "name" to "channelName",
+                "image" to "channelImage",
+                "customKey" to "customValue",
+                "nullKey" to null,
+            ),
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        assertEquals("channelName", channel.name)
+        assertEquals("channelImage", channel.image)
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), channel.extraData)
+    }
+
+    @Test
+    fun `ChannelResponse is correctly mapped to Channel`() {
+        val channelResponse = ChannelDtoTestData.channelResponse
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        assertEquals(channelResponse.id, channel.id)
+        assertEquals(channelResponse.type, channel.type)
+        assertEquals(channelResponse.frozen, channel.frozen)
+        assertEquals(channelResponse.createdAt, channel.createdAt)
+        assertEquals(channelResponse.updatedAt, channel.updatedAt)
+        assertEquals(channelResponse.memberCount, channel.memberCount)
+        assertEquals(setOf("connect-events", "pin-message"), channel.ownCapabilities)
+        assertEquals(channelResponse.hidden, channel.hidden)
+        assertEquals(channelResponse.hideMessagesBefore, channel.hiddenMessagesBefore)
+        assertEquals(with(sut) { channelResponse.config?.toDomain() }, channel.config)
+    }
+
+    @Test
+    fun `ChannelResponse maps the channel state to properties and keeps it in extraData`() {
+        val channelResponse = ChannelDtoTestData.channelResponse
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        channel.disabled shouldBeEqualTo true
+        channel.blocked shouldBeEqualTo true
+        channel.truncatedAt shouldBeEqualTo Date(1591787071588)
+        channel.hidden shouldBeEqualTo true
+        channel.hiddenMessagesBefore shouldBeEqualTo Date(1591787071588)
+        // Still reachable through extraData, matching the hand-written channel path.
+        channel.extraData["disabled"] shouldBeEqualTo true
+        channel.extraData["blocked"] shouldBeEqualTo true
+        channel.extraData["truncated_at"] shouldBeEqualTo "2020-06-10T11:04:31.588Z"
+    }
+
+    @Test
+    fun `ChannelResponse is correctly mapped to ChannelInfo`() {
+        val channelResponse = ChannelDtoTestData.channelResponse
+        val sut = Fixture().get()
+
+        val channelInfo = with(sut) { channelResponse.toChannelInfo() }
+
+        assertEquals(
+            ChannelInfo(
+                cid = channelResponse.cid,
+                id = channelResponse.id,
+                memberCount = 2,
+                name = "channelName",
+                type = channelResponse.type,
+                image = "channelImage",
+            ),
+            channelInfo,
+        )
+    }
+
+    @Test
+    fun `ChannelConfigWithInfo is correctly mapped to Config`() {
+        val sut = Fixture().get()
+
+        val config = with(sut) { ChannelDtoTestData.channelResponse.config!!.toDomain() }
+
+        assertEquals("retention", config.messageRetention)
+        assertEquals("disabled", config.automod)
+        assertEquals("flag", config.automodBehavior)
+        assertEquals("block", config.blocklistBehavior)
+        assertEquals(500, config.maxMessageLength)
     }
 
     @Test
@@ -580,6 +672,54 @@ internal class DomainMappingTest {
             extraData = downstreamMemberDto.extraData,
         )
         assertEquals(expected, member)
+    }
+
+    @Test
+    fun `ChannelMemberResponse is correctly mapped to Member`() {
+        val memberResponse = randomChannelMemberResponse()
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        val expected = Member(
+            user = with(sut) { memberResponse.user!!.toDomain() },
+            createdAt = memberResponse.createdAt,
+            updatedAt = memberResponse.updatedAt,
+            isInvited = memberResponse.invited,
+            inviteAcceptedAt = memberResponse.inviteAcceptedAt,
+            inviteRejectedAt = memberResponse.inviteRejectedAt,
+            shadowBanned = memberResponse.shadowBanned,
+            banned = memberResponse.banned,
+            channelRole = memberResponse.channelRole,
+            notificationsMuted = memberResponse.notificationsMuted,
+            status = memberResponse.status,
+            banExpires = memberResponse.banExpires,
+            pinnedAt = memberResponse.pinnedAt,
+            archivedAt = memberResponse.archivedAt,
+            extraData = emptyMap(),
+        )
+        assertEquals(expected, member)
+    }
+
+    @Test
+    fun `ChannelMemberResponse without a user is mapped to a Member holding only the user id`() {
+        val memberResponse = randomChannelMemberResponse().copy(user = null)
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        assertEquals(User(id = memberResponse.userId.orEmpty()), member.user)
+    }
+
+    @Test
+    fun `ChannelMemberResponse custom data is mapped to extraData without its null values`() {
+        val memberResponse = randomChannelMemberResponse()
+            .copy(custom = mapOf("customKey" to "customValue", "nullKey" to null))
+        val sut = Fixture().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), member.extraData)
     }
 
     @Test
@@ -1007,19 +1147,21 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamUserBlockDto is correctly mapped to UserBlock`() {
-        val downstreamUserBlockDto = randomDownstreamUserBlockDto()
-        val downstreamBlocklist = listOf(downstreamUserBlockDto)
-        val sut = Fixture().get()
-        val blocklist = with(sut) { downstreamBlocklist.toDomain() }
-        val expected = listOf(
-            UserBlock(
-                blockedBy = downstreamUserBlockDto.user_id,
-                userId = downstreamUserBlockDto.blocked_user_id,
-                blockedAt = downstreamUserBlockDto.created_at,
-            ),
+    fun `BlockedUserResponse is correctly mapped to UserBlock`() {
+        val blockedAt = Date(1000)
+        val response = randomBlockedUserResponse(
+            userId = "blocker-1",
+            blockedUserId = "blocked-1",
+            createdAt = blockedAt,
         )
-        assertEquals(expected, blocklist)
+        val sut = Fixture().get()
+
+        val blocklist = with(sut) { listOf(response).toDomain() }
+
+        assertEquals(
+            listOf(UserBlock(blockedBy = "blocker-1", userId = "blocked-1", blockedAt = blockedAt)),
+            blocklist,
+        )
     }
 
     @Test

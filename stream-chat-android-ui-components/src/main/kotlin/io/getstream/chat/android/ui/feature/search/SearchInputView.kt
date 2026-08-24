@@ -28,6 +28,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import io.getstream.chat.android.core.utils.Debouncer
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.focusAndShowKeyboard
@@ -116,7 +117,7 @@ public class SearchInputView : FrameLayout {
 
             val newQuery = query
             continuousInputChangedListener?.onInputChanged(newQuery)
-            inputDebouncer.submit {
+            inputDebouncer.submit(SearchDebounce.debounceMsFor(newQuery, TYPING_DEBOUNCE_MS)) {
                 debouncedInputChangedListener?.onInputChanged(newQuery)
             }
         }
@@ -173,6 +174,9 @@ public class SearchInputView : FrameLayout {
             return false
         }
 
+        // A debounce pending from the last keystroke would notify with the query being cleared.
+        inputDebouncer.cancelLastDebounce()
+
         withoutListenerNotifications {
             binding.inputField.setText("")
 
@@ -205,6 +209,9 @@ public class SearchInputView : FrameLayout {
     /**
      * Sets a listener for debounced input events. Quick changes to the input will not be passed to
      * this listener, it will only be invoked when the input has been stable for a short while.
+     *
+     * Input of 1-2 characters is held for longer than that, as such queries are the most expensive
+     * ones to search for.
      */
     public fun setDebouncedInputChangedListener(inputChangedListener: InputChangedListener?) {
         this.debouncedInputChangedListener = inputChangedListener

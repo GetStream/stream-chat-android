@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.core.utils
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -41,11 +42,16 @@ public class Debouncer(
      * containing the new work.
      */
     public fun submit(work: () -> Unit) {
-        job?.cancel()
-        job = scope.launch {
-            delay(debounceMs)
-            work()
-        }
+        submitInternal(debounceMs) { work() }
+    }
+
+    /**
+     * Like [submit], but debounced by the given period instead of the one this [Debouncer] was
+     * created with.
+     */
+    @InternalStreamChatApi
+    public fun submit(debounceMs: Long, work: () -> Unit) {
+        submitInternal(debounceMs) { work() }
     }
 
     /**
@@ -53,6 +59,19 @@ public class Debouncer(
      * containing the new suspendable work.
      */
     public fun submitSuspendable(work: suspend () -> Unit) {
+        submitInternal(debounceMs, work)
+    }
+
+    /**
+     * Like [submitSuspendable], but debounced by the given period instead of the one this
+     * [Debouncer] was created with.
+     */
+    @InternalStreamChatApi
+    public fun submitSuspendable(debounceMs: Long, work: suspend () -> Unit) {
+        submitInternal(debounceMs, work)
+    }
+
+    private fun submitInternal(debounceMs: Long, work: suspend () -> Unit) {
         job?.cancel()
         job = scope.launch {
             delay(debounceMs)

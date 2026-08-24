@@ -14,12 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class QueryMembersResponse(
-    val members: List<DownstreamMemberDto>,
+import com.squareup.moshi.Json
+
+/**
+ * Sets thresholds for AI moderation
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class Thresholds(
+    @Json(name = "explicit")
+    internal val explicit: LabelThresholds? = null,
+
+    @Json(name = "spam")
+    internal val spam: LabelThresholds? = null,
+
+    @Json(name = "toxic")
+    internal val toxic: LabelThresholds? = null,
 )

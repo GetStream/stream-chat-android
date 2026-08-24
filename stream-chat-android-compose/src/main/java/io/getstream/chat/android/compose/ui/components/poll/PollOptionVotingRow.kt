@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -117,6 +118,7 @@ internal fun PollOptionVotingRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .testTag("Stream_PollOptionVotingRow")
             .clip(RoundedCornerShape(StreamTokens.radiusLg))
             .applyIf(!poll.closed) {
                 // The toggle's own gesture handling would otherwise consume the long-press as a

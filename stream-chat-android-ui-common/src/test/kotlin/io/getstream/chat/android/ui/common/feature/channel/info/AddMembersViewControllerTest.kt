@@ -18,28 +18,39 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.models.AutocompleteFilterObject
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.OrFilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomGenericError
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.AddMembersViewState
+import io.getstream.chat.android.ui.common.utils.SearchDebounce
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AddMembersViewControllerTest {
 
     @Test
@@ -164,6 +175,63 @@ internal class AddMembersViewControllerTest {
             assertEquals(query, state.query)
             assertEquals(users, state.searchResult)
         }
+    }
+
+    @Test
+    fun `QueryChanged with a short query waits for the short query debounce`() = runTest {
+        val users = listOf(randomUser())
+        val sut = Fixture()
+            .givenQueryUsers(users = emptyList()) // initial empty-query search
+            .givenQueryUsers(users = users) // search for "Al"
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial state and empty-query search result
+
+            sut.onViewAction(AddMembersViewAction.QueryChanged("Al"))
+            skipItems(1) // Skip the query-only state update
+
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
+            expectNoEvents() // Still debounced, no search started
+
+            runCurrent()
+            assertTrue(awaitItem().isLoading) // Search triggered
+            assertEquals(users, awaitItem().searchResult)
+        }
+    }
+
+    @Test
+    fun `QueryChanged with a padded short query waits for the short query debounce`() = runTest {
+        val users = listOf(randomUser())
+        val fixture = Fixture()
+            .givenQueryUsers(users = emptyList()) // initial empty-query search
+            .givenQueryUsers(users = users) // search for "a  "
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial state and empty-query search result
+
+            // Whitespace is preserved in the query but trimmed away before searching, so this is a
+            // one character search.
+            sut.onViewAction(AddMembersViewAction.QueryChanged("a  "))
+            skipItems(1) // Skip the query-only state update
+
+            advanceTimeBy(SearchDebounce.SHORT_QUERY_DEBOUNCE_MS)
+            expectNoEvents() // Still debounced, no search started
+
+            runCurrent()
+            assertTrue(awaitItem().isLoading) // Search triggered
+            assertEquals(users, awaitItem().searchResult)
+        }
+
+        // The debounce is resolved on the trimmed query because that is what gets sent.
+        val requestCaptor = argumentCaptor<QueryUsersRequest>()
+        verify(fixture.chatClient, times(2)).queryUsers(requestCaptor.capture())
+        val filter = requestCaptor.secondValue.filter as OrFilterObject
+        assertEquals(
+            setOf("a"),
+            filter.filterObjects.map { (it as AutocompleteFilterObject).value }.toSet(),
+        )
     }
 
     @Test
@@ -322,7 +390,7 @@ internal class AddMembersViewControllerTest {
         private val channelState: ChannelState = mock {
             on { members } doReturn channelMembers
         }
-        private val chatClient: ChatClient = mock()
+        val chatClient: ChatClient = mock()
         private val queryUsersResults = mutableListOf<Pair<List<User>?, Error?>>()
         private var callCount = 0
 

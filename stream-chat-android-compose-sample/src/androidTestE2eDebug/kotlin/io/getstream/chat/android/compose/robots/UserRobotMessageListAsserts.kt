@@ -24,6 +24,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.pages.MessageListPage
 import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
+import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
@@ -550,5 +551,35 @@ fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
 
 fun UserRobot.assertFlagMessageDialog(isDisplayed: Boolean): UserRobot {
     assertVisibility(MessageListPage.FlagMessageDialog.body, isDisplayed)
+    return this
+}
+
+/**
+ * Opens the message menu of the message with [messageText] and asserts the mute option it offers
+ * for the author. The sample has no muted users list, so the option label is the only place the
+ * mute state is visible.
+ */
+fun UserRobot.assertMuteMessageAuthorOption(messageText: String, isAuthorMuted: Boolean): UserRobot {
+    val expectedOption = if (isAuthorMuted) ContextMenu.unmuteUser else ContextMenu.muteUser
+    val oppositeOption = if (isAuthorMuted) ContextMenu.muteUser else ContextMenu.unmuteUser
+    openContextMenuWithOption(messageText, expectedOption)
+    assertTrue(expectedOption.isDisplayed())
+    assertFalse(oppositeOption.isDisplayed())
+    pressBack()
+    return this
+}
+
+/**
+ * Opens the message menu of the message with [messageText] and asserts the block option it offers
+ * for the author. The sample has no blocked users list, so the option label is the only place the
+ * block state is visible.
+ */
+fun UserRobot.assertBlockMessageAuthorOption(messageText: String, isAuthorBlocked: Boolean): UserRobot {
+    val expectedOption = if (isAuthorBlocked) ContextMenu.unblock else ContextMenu.block
+    val oppositeOption = if (isAuthorBlocked) ContextMenu.block else ContextMenu.unblock
+    openContextMenuWithOption(messageText, expectedOption)
+    assertTrue(expectedOption.isDisplayed())
+    assertFalse(oppositeOption.isDisplayed())
+    pressBack()
     return this
 }

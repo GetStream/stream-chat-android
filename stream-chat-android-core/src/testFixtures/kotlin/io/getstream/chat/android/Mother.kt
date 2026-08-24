@@ -773,10 +773,23 @@ public fun randomFiles(
     creationFunction: (Int) -> File = { randomFile() },
 ): List<File> = (1..size).map(creationFunction)
 
+/**
+ * The window generated dates are drawn from.
+ *
+ * The upper bound is the last instant the SDK can serialise: the ISO-8601 formatter writes a four digit year, so
+ * anything past year 9999 is written as a different date, or as one that cannot be read back at all.
+ *
+ * The lower bound keeps generated dates in the future, which callers rely on: production code that holds on to future
+ * dates only, live locations for one, drops a date that sits behind the clock, leaving a test asserting on an empty
+ * result. Use `randomDateBefore(Date())` for a date in the past.
+ */
+private const val MIN_GENERATED_DATE_MILLIS: Long = 32_503_680_000_000L // 3000-01-01T00:00:00.000Z
+private const val MAX_GENERATED_DATE_MILLIS: Long = 253_402_300_799_999L // 9999-12-31T23:59:59.999Z
+
 public fun randomDateOrNull(): Date? = randomDate().takeIf { randomBoolean() }
-public fun randomDate(): Date = Date(positiveRandomLong())
+public fun randomDate(): Date = Date(randomLongBetween(MIN_GENERATED_DATE_MILLIS, MAX_GENERATED_DATE_MILLIS))
 public fun randomDateBefore(date: Date): Date = Date(date.time - positiveRandomInt())
-public fun randomDateAfter(date: Date): Date = Date(randomLongBetween(date.time))
+public fun randomDateAfter(date: Date): Date = Date(randomLongBetween(date.time, MAX_GENERATED_DATE_MILLIS))
 
 public fun createDate(
     year: Int = positiveRandomInt(),

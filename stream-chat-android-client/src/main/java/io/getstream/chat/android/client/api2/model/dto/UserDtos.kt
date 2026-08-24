@@ -82,10 +82,3 @@ internal data class DownstreamUserDto(
     val push_preferences: DownstreamPushPreferenceDto?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamUserBlockDto(
-    val user_id: String,
-    val blocked_user_id: String,
-    val created_at: Date,
-)
