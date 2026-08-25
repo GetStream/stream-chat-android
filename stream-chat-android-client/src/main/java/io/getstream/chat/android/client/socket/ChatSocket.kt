@@ -154,7 +154,9 @@ internal open class ChatSocket(
                             }
                             is State.Disconnected.NetworkDisconnected -> {
                                 streamWebSocket?.close()
-                                healthMonitor.stop()
+                                // Keep a backed-off retry armed. Recovery must not depend solely on
+                                // a network callback arriving, or a missed one strands the socket.
+                                healthMonitor.onDisconnected()
                             }
                             is State.Disconnected.Stopped -> {
                                 streamWebSocket?.close()
