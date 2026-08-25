@@ -208,6 +208,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
                 onEvent<Event.RequiredDisconnection> { State.Disconnected.DisconnectedByRequest }
                 onEvent<Event.Stop> { State.Disconnected.Stopped }
                 onEvent<Event.NetworkAvailable> { State.RestartConnection(RestartReason.NETWORK_AVAILABLE) }
+                onEvent<Event.Resume> { State.RestartConnection(RestartReason.LIFECYCLE_RESUME) }
             }
 
             state<State.Disconnected.WebSocketEventLost> {
