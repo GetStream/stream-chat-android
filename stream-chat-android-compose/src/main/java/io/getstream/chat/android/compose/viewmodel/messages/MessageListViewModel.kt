@@ -410,6 +410,12 @@ public class MessageListViewModel(
      *
      * @param userId The ID of the user to un-flag.
      */
+    @Deprecated(
+        message = "The backend no longer supports un-flagging. This call does nothing and will be removed " +
+            "in the next major version.",
+        level = DeprecationLevel.WARNING,
+    )
+    @Suppress("DEPRECATION")
     public fun unflagUser(userId: String) {
         messageListController.unflagUser(userId)
     }

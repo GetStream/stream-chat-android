@@ -2246,6 +2246,12 @@ public class MessageListController(
      *
      * @param userId The ID of the user to un-flag.
      */
+    @Deprecated(
+        message = "The backend no longer supports un-flagging. This call does nothing and will be removed " +
+            "in the next major version.",
+        level = DeprecationLevel.WARNING,
+    )
+    @Suppress("DEPRECATION")
     public fun unflagUser(userId: String) {
         chatClient
             .unflagUser(userId = userId)
@@ -2610,6 +2616,11 @@ public class MessageListController(
          *
          * @param streamError Contains the original [Throwable] along with a message.
          */
+        @Deprecated(
+            message = "The backend no longer supports un-flagging. This call does nothing and will be removed " +
+                "in the next major version.",
+            level = DeprecationLevel.WARNING,
+        )
         public data class UnflagUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
