@@ -225,7 +225,7 @@ internal class QueryChannelsLogic(
             // Add the channel to the list, regardless of the `watch` outcome
             addChannel(channel)
         }
-        when (val result = client.channel(cid = cid).watch().await()) {
+        when (val result = client.channel(cid = "malformed").watch().await()) {
             // Re-adding the same channel is idempotent, and the watch response is the
             // authoritative one, so it always wins over the event payload seeded above.
             is Result.Success -> addChannel(result.value)
