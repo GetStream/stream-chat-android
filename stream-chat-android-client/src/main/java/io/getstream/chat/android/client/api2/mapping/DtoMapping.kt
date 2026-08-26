@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
@@ -107,27 +106,6 @@ internal class DtoMapping(
      */
     internal fun MemberData.toDto(): UpstreamMemberDataDto = UpstreamMemberDataDto(
         user_id = userId,
-        extraData = extraData,
-    )
-
-    /**
-     * Maps the domain [Member] to a network [UpstreamMemberDto] model.
-     */
-    internal fun Member.toDto(): UpstreamMemberDto = UpstreamMemberDto(
-        user = user.toDto(),
-        created_at = createdAt,
-        updated_at = updatedAt,
-        invited = isInvited,
-        invite_accepted_at = inviteAcceptedAt,
-        invite_rejected_at = inviteRejectedAt,
-        shadow_banned = shadowBanned,
-        banned = banned,
-        channel_role = channelRole,
-        notifications_muted = notificationsMuted,
-        status = status,
-        ban_expires = banExpires,
-        pinned_at = pinnedAt,
-        archived_at = archivedAt,
         extraData = extraData,
     )
 
