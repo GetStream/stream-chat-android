@@ -60,7 +60,6 @@ import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataA
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
@@ -72,9 +71,12 @@ import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.BlockListOptions
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelOwnCapability
+import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ConfigOverridesRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
+import io.getstream.chat.android.network.models.FeedsPreferences
 import io.getstream.chat.android.network.models.MessageRequest
+import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.Retrofit
@@ -109,7 +111,6 @@ internal class MoshiChatParser(
             .add(ChannelMemberResponseAdapter)
             .add(DownstreamMemberDtoAdapter)
             .add(DownstreamMemberInfoDtoAdapter)
-            .add(UpstreamMemberDtoAdapter)
             .add(UpstreamMemberDataDtoAdapter)
             .add(FlagRequestAdapterFactory)
             .add(DownstreamThreadDtoAdapter)
@@ -171,6 +172,74 @@ internal class MoshiChatParser(
             .add(
                 BlockListOptions.Behavior::class.java,
                 BlockListOptions.Behavior.BehaviorAdapter(),
+            )
+            .add(
+                PushPreferenceInput.CallLevel::class.java,
+                PushPreferenceInput.CallLevel.CallLevelAdapter(),
+            )
+            .add(
+                PushPreferenceInput.ChatLevel::class.java,
+                PushPreferenceInput.ChatLevel.ChatLevelAdapter(),
+            )
+            .add(
+                PushPreferenceInput.FeedsLevel::class.java,
+                PushPreferenceInput.FeedsLevel.FeedsLevelAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.ChannelMentions::class.java,
+                ChatPreferencesInput.ChannelMentions.ChannelMentionsAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.DefaultPreference::class.java,
+                ChatPreferencesInput.DefaultPreference.DefaultPreferenceAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.DirectMentions::class.java,
+                ChatPreferencesInput.DirectMentions.DirectMentionsAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.GroupMentions::class.java,
+                ChatPreferencesInput.GroupMentions.GroupMentionsAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.HereMentions::class.java,
+                ChatPreferencesInput.HereMentions.HereMentionsAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.RoleMentions::class.java,
+                ChatPreferencesInput.RoleMentions.RoleMentionsAdapter(),
+            )
+            .add(
+                ChatPreferencesInput.ThreadReplies::class.java,
+                ChatPreferencesInput.ThreadReplies.ThreadRepliesAdapter(),
+            )
+            .add(
+                FeedsPreferences.Comment::class.java,
+                FeedsPreferences.Comment.CommentAdapter(),
+            )
+            .add(
+                FeedsPreferences.CommentMention::class.java,
+                FeedsPreferences.CommentMention.CommentMentionAdapter(),
+            )
+            .add(
+                FeedsPreferences.CommentReaction::class.java,
+                FeedsPreferences.CommentReaction.CommentReactionAdapter(),
+            )
+            .add(
+                FeedsPreferences.CommentReply::class.java,
+                FeedsPreferences.CommentReply.CommentReplyAdapter(),
+            )
+            .add(
+                FeedsPreferences.Follow::class.java,
+                FeedsPreferences.Follow.FollowAdapter(),
+            )
+            .add(
+                FeedsPreferences.Mention::class.java,
+                FeedsPreferences.Mention.MentionAdapter(),
+            )
+            .add(
+                FeedsPreferences.Reaction::class.java,
+                FeedsPreferences.Reaction.ReactionAdapter(),
             )
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)

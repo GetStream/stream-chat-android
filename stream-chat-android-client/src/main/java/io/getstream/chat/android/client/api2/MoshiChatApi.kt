@@ -47,7 +47,6 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
-import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
@@ -60,7 +59,6 @@ import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
@@ -145,7 +143,9 @@ import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
+import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
@@ -172,6 +172,7 @@ import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUserPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersRequest
+import io.getstream.chat.android.network.models.UpsertPushPreferencesRequest
 import io.getstream.chat.android.network.models.UpsertPushPreferencesResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserRequest
@@ -495,11 +496,11 @@ constructor(
     }
 
     override fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
-        val input = UpstreamPushPreferenceInputDto(
-            channel_cid = null,
-            chat_level = level.value,
-            disabled_until = null,
-            remove_disable = true,
+        val input = PushPreferenceInput(
+            channelCid = null,
+            chatLevel = PushPreferenceInput.ChatLevel.fromString(level.value),
+            disabledUntil = null,
+            removeDisable = true,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -508,11 +509,11 @@ constructor(
     }
 
     override fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
-        val input = UpstreamPushPreferenceInputDto(
-            channel_cid = null,
-            chat_level = null,
-            disabled_until = until,
-            remove_disable = null,
+        val input = PushPreferenceInput(
+            channelCid = null,
+            chatLevel = null,
+            disabledUntil = until,
+            removeDisable = null,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -521,11 +522,11 @@ constructor(
     }
 
     override fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> {
-        val input = UpstreamPushPreferenceInputDto(
-            channel_cid = cid,
-            chat_level = level.value,
-            disabled_until = null,
-            remove_disable = true,
+        val input = PushPreferenceInput(
+            channelCid = cid,
+            chatLevel = PushPreferenceInput.ChatLevel.fromString(level.value),
+            disabledUntil = null,
+            removeDisable = true,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -534,11 +535,11 @@ constructor(
     }
 
     override fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> {
-        val input = UpstreamPushPreferenceInputDto(
-            channel_cid = cid,
-            chat_level = null,
-            disabled_until = until,
-            remove_disable = null,
+        val input = PushPreferenceInput(
+            channelCid = cid,
+            chatLevel = null,
+            disabledUntil = until,
+            removeDisable = null,
         )
         val request = UpsertPushPreferencesRequest(listOf(input))
         return pushPreferencesApi
@@ -547,12 +548,12 @@ constructor(
     }
 
     override fun setUserChatPreferences(preferences: ChatPreferences): Call<PushPreference> {
-        val input = UpstreamPushPreferenceInputDto(
-            channel_cid = null,
-            chat_level = null,
-            disabled_until = null,
-            remove_disable = null,
-            chat_preferences = with(dtoMapping) { preferences.toDto() },
+        val input = PushPreferenceInput(
+            channelCid = null,
+            chatLevel = null,
+            disabledUntil = null,
+            removeDisable = null,
+            chatPreferences = with(dtoMapping) { preferences.toChatPreferencesInput() },
         )
         return pushPreferencesApi
             .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
@@ -560,12 +561,12 @@ constructor(
     }
 
     override fun setChannelChatPreferences(cid: String, preferences: ChatPreferences): Call<PushPreference> {
-        val input = UpstreamPushPreferenceInputDto(
-            channel_cid = cid,
-            chat_level = null,
-            disabled_until = null,
-            remove_disable = null,
-            chat_preferences = with(dtoMapping) { preferences.toDto() },
+        val input = PushPreferenceInput(
+            channelCid = cid,
+            chatLevel = null,
+            disabledUntil = null,
+            removeDisable = null,
+            chatPreferences = with(dtoMapping) { preferences.toChatPreferencesInput() },
         )
         return pushPreferencesApi
             .upsertPushPreferences(UpsertPushPreferencesRequest(listOf(input)))
@@ -1650,14 +1651,14 @@ constructor(
         members: List<Member>,
     ): Call<List<Member>> {
         val request = with(dtoMapping) {
-            io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
+            QueryMembersPayload(
                 type = channelType,
                 id = channelId,
-                filter_conditions = filter.toMap(),
+                filterConditions = filter.toMap(),
                 offset = offset,
                 limit = limit,
-                sort = sort.toDto(),
-                members = members.map { it.toDto() },
+                sort = sort.toSortParams(),
+                members = members.map { it.toChannelMemberRequest() },
             )
         }
 

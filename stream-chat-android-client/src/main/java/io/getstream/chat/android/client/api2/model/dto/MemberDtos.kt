@@ -21,33 +21,6 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
 import java.util.Date
 
 /**
- * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class UpstreamMemberDto(
-    val user: UpstreamUserDto,
-    val created_at: Date?,
-    val updated_at: Date?,
-    val invited: Boolean?,
-    val invite_accepted_at: Date?,
-    val invite_rejected_at: Date?,
-    val shadow_banned: Boolean?,
-    val banned: Boolean? = false,
-    val channel_role: String?,
-    val notifications_muted: Boolean?,
-    val status: String?,
-    val ban_expires: Date?,
-    val pinned_at: Date?,
-    val archived_at: Date?,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
-/**
  * See [io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter] for
  * special [extraData] handling.
  */
