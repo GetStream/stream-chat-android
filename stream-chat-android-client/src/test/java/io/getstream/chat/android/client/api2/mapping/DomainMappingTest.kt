@@ -135,6 +135,11 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.des
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
@@ -622,6 +627,96 @@ internal class DomainMappingTest {
             extraData = mapOf("birthland" to "Polis Massa"),
         )
         assertEquals(expected, user)
+    }
+
+    @Test
+    fun `UserMuteResponse is correctly mapped to Mute`() {
+        val muteResponse = UserMuteResponse(
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            expires = Date(3000),
+            user = randomUserResponse(id = "muter"),
+            target = randomUserResponse(id = "muted"),
+        )
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertEquals("muter", mute.user?.id)
+        assertEquals("muted", mute.target?.id)
+        assertEquals(Date(1000), mute.createdAt)
+        assertEquals(Date(2000), mute.updatedAt)
+        assertEquals(Date(3000), mute.expires)
+    }
+
+    @Test
+    fun `UserMuteResponse without users is mapped to a Mute without users`() {
+        val muteResponse = UserMuteResponse(createdAt = Date(1000), updatedAt = Date(2000))
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertNull(mute.user)
+        assertNull(mute.target)
+        assertNull(mute.expires)
+    }
+
+    @Test
+    fun `ChannelMute is correctly mapped to the domain channel mute`() {
+        val muteResponse = io.getstream.chat.android.network.models.ChannelMute(
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            expires = Date(3000),
+            user = randomUserResponse(id = "muter"),
+            channel = randomChannelResponse(id = "c1", type = "messaging"),
+        )
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertEquals("muter", mute.user?.id)
+        assertEquals("c1", mute.channel?.id)
+        assertEquals(Date(1000), mute.createdAt)
+        assertEquals(Date(3000), mute.expires)
+    }
+
+    @Test
+    fun `ChannelMute without a user or channel is mapped without them`() {
+        val muteResponse =
+            io.getstream.chat.android.network.models.ChannelMute(createdAt = Date(1000), updatedAt = Date(2000))
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertNull(mute.user)
+        assertNull(mute.channel)
+    }
+
+    @Test
+    fun `PrivacySettingsResponse maps each setting it carries`() {
+        val response = PrivacySettingsResponse(
+            typingIndicators = TypingIndicatorsResponse(enabled = true),
+            deliveryReceipts = DeliveryReceiptsResponse(enabled = false),
+            readReceipts = ReadReceiptsResponse(enabled = true),
+        )
+        val sut = Fixture().get()
+
+        val settings = with(sut) { response.toDomain() }
+
+        assertEquals(true, settings.typingIndicators?.enabled)
+        assertEquals(false, settings.deliveryReceipts?.enabled)
+        assertEquals(true, settings.readReceipts?.enabled)
+    }
+
+    @Test
+    fun `PrivacySettingsResponse leaves absent settings null`() {
+        val sut = Fixture().get()
+
+        val settings = with(sut) { PrivacySettingsResponse().toDomain() }
+
+        assertNull(settings.typingIndicators)
+        assertNull(settings.deliveryReceipts)
+        assertNull(settings.readReceipts)
     }
 
     @Test
