@@ -208,6 +208,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUploadedFile
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -1682,6 +1683,28 @@ internal class MoshiChatApiTest {
         val expectedBody = UpdateMemberPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
         verify(api, times(1)).partialUpdateMember(channelType, channelId, userId, expectedBody)
+    }
+
+    @Test
+    fun `partialUpdateMember reports a missing member as an error rather than crashing`() = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = null)
+        whenever(api.partialUpdateMember(any(), any(), any(), any()))
+            .doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        // when
+        val result = sut.partialUpdateMember(randomString(), randomString(), randomString(), emptyMap(), emptyList())
+            .await()
+
+        // then
+        // Asserting the error, not just Result.Failure: a throw inside the mapping also lands as a
+        // Failure, so the type alone cannot tell a clean failure from a crash.
+        result `should be instance of` Result.Failure::class
+        val error = (result as Result.Failure).value
+        error `should be instance of` Error.GenericError::class
+        error.message shouldBeEqualTo "The updated member is missing from the response"
     }
 
     @ParameterizedTest
