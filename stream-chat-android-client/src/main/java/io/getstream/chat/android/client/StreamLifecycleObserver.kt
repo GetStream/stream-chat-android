@@ -42,7 +42,10 @@ internal class StreamLifecycleObserver(
         withContext(DispatcherProvider.Main) {
             handlers = handlers + handler
             if (isObserving.compareAndSet(false, true)) {
-                recurringResumeEvent = false
+                // addObserver replays ON_RESUME when the owner is already resumed, and that replay
+                // is the only event worth ignoring. Subscribing from a non-resumed process gets no
+                // replay, so the next ON_RESUME is a real foregrounding and must be delivered.
+                recurringResumeEvent = !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
                 lifecycle.addObserver(this@StreamLifecycleObserver)
                 logger.v { "[observe] subscribed" }
             }
