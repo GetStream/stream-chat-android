@@ -864,6 +864,42 @@ internal class DomainMapping(
         )
 
     /**
+     * Transforms the generated attachment model to [Attachment].
+     *
+     * The spec does not declare `file_size`, `image`, `mime_type` and `name`, but the wire sends them at
+     * the root, so they arrive in the collected `custom` map. They are read back into their own fields and
+     * removed, otherwise an attachment loses its size, name and mime type and carries them under their
+     * wire names in `extraData` instead.
+     */
+    internal fun io.getstream.chat.android.network.models.Attachment.toDomain(): Attachment {
+        val extras = custom.toMutableMap()
+        val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
+        val image = extras.remove("image") as? String
+        val mimeType = extras.remove("mime_type") as? String
+        val name = extras.remove("name") as? String
+        return Attachment(
+            assetUrl = assetUrl,
+            authorName = authorName,
+            authorLink = authorLink,
+            fallback = fallback,
+            fileSize = fileSize,
+            image = image,
+            imageUrl = imageUrl,
+            mimeType = mimeType,
+            name = name,
+            ogUrl = ogScrapeUrl,
+            text = text,
+            thumbUrl = thumbUrl,
+            title = title,
+            titleLink = titleLink,
+            type = type,
+            originalHeight = originalHeight,
+            originalWidth = originalWidth,
+            extraData = extras.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+        )
+    }
+
+    /**
      * Transforms [AttachmentDto] to [Attachment].
      */
     internal fun AttachmentDto.toDomain(): Attachment =
