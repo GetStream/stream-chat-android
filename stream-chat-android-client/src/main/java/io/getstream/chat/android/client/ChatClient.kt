@@ -4289,6 +4289,11 @@ internal constructor(
      *
      * @param userId The ID of the user to un-flag.
      */
+    @Deprecated(
+        message = "The backend no longer supports un-flagging. This call does nothing and will be removed " +
+            "in the next major version.",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
 
@@ -4315,6 +4320,11 @@ internal constructor(
      *
      * @param messageId The ID of the message to un-flag.
      */
+    @Deprecated(
+        message = "The backend no longer supports un-flagging. This call does nothing and will be removed " +
+            "in the next major version.",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)
 

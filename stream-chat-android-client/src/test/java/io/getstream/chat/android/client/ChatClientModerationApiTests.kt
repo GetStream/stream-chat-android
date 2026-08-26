@@ -44,6 +44,7 @@ import org.mockito.kotlin.whenever
 /**
  * Tests for the moderation functionalities of the [ChatClient].
  */
+@Suppress("DEPRECATION")
 internal class ChatClientModerationApiTests : BaseChatClientTest() {
 
     @Test

@@ -301,6 +301,7 @@ public class MessageListView : ConstraintLayout {
         }
     }
 
+    @Suppress("DEPRECATION")
     private var errorEventHandler = ErrorEventHandler { error ->
         when (error) {
             is MessageListController.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user

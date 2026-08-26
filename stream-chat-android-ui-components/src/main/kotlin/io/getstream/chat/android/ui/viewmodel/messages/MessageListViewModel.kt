@@ -213,7 +213,7 @@ public class MessageListViewModel(
     /**
      * Handles an [Event] coming from the View layer.
      */
-    @Suppress("LongMethod", "ComplexMethod")
+    @Suppress("LongMethod", "ComplexMethod", "DEPRECATION")
     public fun onEvent(event: Event) {
         logger.v { "[onEvent] event: $event" }
         when (event) {
@@ -735,6 +735,11 @@ public class MessageListViewModel(
          *
          * @param userId The ID of the user to un-flag.
          */
+        @Deprecated(
+            message = "The backend no longer supports un-flagging. This call does nothing and will be removed " +
+                "in the next major version.",
+            level = DeprecationLevel.WARNING,
+        )
         public data class UnflagUser(val userId: String) : Event()
 
         /**
