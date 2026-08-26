@@ -154,6 +154,7 @@ import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryReactionsRequest
@@ -2392,11 +2393,30 @@ internal class MoshiChatApiTest {
         val limit = randomInt()
         val filter = Filters.neutral()
         val sort = QuerySortByField.ascByName<Member>("created_at")
-        val members = listOf(randomMember())
+        val members = listOf(
+            randomMember(channelRole = "channel_moderator")
+                .copy(user = randomUser(id = "leandro"), extraData = mapOf("sentinel" to "keep-me")),
+        )
         val result = sut.queryMembers(channelType, channelId, offset, limit, filter, sort, members).await()
         // then
+        val expectedPayload = QueryMembersPayload(
+            type = channelType,
+            id = channelId,
+            filterConditions = emptyMap(),
+            offset = offset,
+            limit = limit,
+            sort = listOf(SortParamRequest(field = "created_at", direction = 1)),
+            members = listOf(
+                ChannelMemberRequest(
+                    userId = "leandro",
+                    channelRole = "channel_moderator",
+                    user = null,
+                    custom = mapOf("sentinel" to "keep-me"),
+                ),
+            ),
+        )
         result `should be instance of` expected
-        verify(api, times(1)).queryMembers(any())
+        verify(api, times(1)).queryMembers(expectedPayload)
     }
 
     @ParameterizedTest

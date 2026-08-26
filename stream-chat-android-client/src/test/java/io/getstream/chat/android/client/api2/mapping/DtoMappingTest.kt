@@ -279,6 +279,21 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `Member is correctly mapped to the generated request model`() {
+        val member = randomMember(channelRole = "channel_moderator")
+            .copy(user = randomUser(id = "leandro"), extraData = mapOf("sentinel" to "keep-me"))
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { member.toChannelMemberRequest() }
+
+        request.userId shouldBeEqualTo "leandro"
+        request.channelRole shouldBeEqualTo "channel_moderator"
+        request.custom shouldBeEqualTo mapOf("sentinel" to "keep-me")
+        // The endpoint takes the id; sending a whole user is neither needed nor serializable.
+        request.user shouldBeEqualTo null
+    }
+
+    @Test
     fun `Message is correctly mapped to the generated request model`() {
         val message = randomMessage(type = MessageType.REGULAR)
         val messageTransformer = spy(NoOpMessageTransformer)
