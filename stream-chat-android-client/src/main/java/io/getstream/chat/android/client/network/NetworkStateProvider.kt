@@ -97,20 +97,28 @@ internal class NetworkStateProvider(
     /**
      * Reports whether the network is currently usable.
      *
-     * The answer is recorded, so that a caller which concludes "no network" from this cannot leave
-     * the last known state stale. If it did, the following reconnection would not be seen as a
-     * transition and listeners would never be notified that the network came back.
+     * Only a `false` answer is recorded. A caller that concludes "no network" from this must not
+     * leave the last known state stale, or the following reconnection is not seen as a transition
+     * and listeners are never told the network came back.
+     *
+     * A `true` answer is deliberately not recorded: doing so would consume the very transition the
+     * listeners are waiting for, whenever this is read after the network returns but before the
+     * system callback lands.
      */
-    fun isConnected(): Boolean = queryConnectivity().also {
-        synchronized(lock) { lastKnownConnected = it }
+    fun isConnected(): Boolean = queryConnectivity().also { connected ->
+        if (!connected) {
+            synchronized(lock) { lastKnownConnected = false }
+        }
     }
 
     private fun queryConnectivity(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             runCatching {
                 connectivityManager.run {
-                    getNetworkCapabilities(activeNetwork)
-                        ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    getNetworkCapabilities(activeNetwork)?.run {
+                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                            hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    }
                 }
             }.getOrNull() ?: false
         } else {
