@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response model of the partial member update.
  *
- * @param channel_member The updated member object.
  */
-@JsonClass(generateAdapter = true)
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class UpdateMemberPartialResponse(
-    val channel_member: DownstreamMemberDto,
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "channel_member")
+    internal val channelMember: ChannelMemberResponse? = null,
 )
