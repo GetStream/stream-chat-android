@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.network.models.Attachment
 import org.intellij.lang.annotations.Language
 
 internal object AttachmentDtoTestData {
@@ -44,6 +45,31 @@ internal object AttachmentDtoTestData {
           "draft": true
         }
         """.withoutWhitespace()
+    val generatedAttachment = Attachment(
+        assetUrl = "assetUrl",
+        authorName = "authorName",
+        authorLink = "authorLink",
+        fallback = "fallback",
+        imageUrl = "imageUrl",
+        ogScrapeUrl = "ogScrapeUrl",
+        text = "text",
+        thumbUrl = "thumbUrl",
+        title = "title",
+        titleLink = "titleLink",
+        type = "type",
+        originalHeight = 100,
+        originalWidth = 100,
+        // file_size, image, mime_type and name are undeclared by the spec, so they arrive here.
+        // An undeclared number is parsed untyped, which makes it a Double.
+        custom = mapOf(
+            "draft" to true,
+            "file_size" to 1.0,
+            "image" to "image",
+            "mime_type" to "mimeType",
+            "name" to "name",
+        ),
+    )
+
     val attachment = AttachmentDto(
         asset_url = "assetUrl",
         author_name = "authorName",

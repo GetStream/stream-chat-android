@@ -89,6 +89,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AppResponseFields
+import io.getstream.chat.android.network.models.Attachment
 import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
@@ -274,7 +275,7 @@ internal object Mother {
         text: String = randomString(),
         command: String? = null,
         args: String? = null,
-        attachments: List<AttachmentDto>? = emptyList(),
+        attachments: List<Attachment>? = emptyList(),
         mentionedUsers: List<DownstreamUserDto>? = emptyList(),
         silent: Boolean = randomBoolean(),
         showInChannel: Boolean = randomBoolean(),
@@ -290,7 +291,7 @@ internal object Mother {
     )
 
     fun randomDownstreamMessageDto(
-        attachments: List<AttachmentDto> = emptyList(),
+        attachments: List<Attachment> = emptyList(),
         channel: ChannelInfoDto? = randomChannelInfoDto(),
         cid: String = randomString(),
         command: String? = randomString(),
@@ -818,6 +819,18 @@ internal object Mother {
         type = type,
         ogScrapeUrl = ogScrapeUrl,
         imageUrl = imageUrl,
+        custom = custom,
+    )
+
+    fun randomAttachment(
+        assetUrl: String? = randomString(),
+        imageUrl: String? = randomString(),
+        type: String? = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): Attachment = Attachment(
+        assetUrl = assetUrl,
+        imageUrl = imageUrl,
+        type = type,
         custom = custom,
     )
 

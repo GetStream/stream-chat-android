@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
+import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomAnswerDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomAppResponseFields
 import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
@@ -582,6 +583,42 @@ internal class DomainMappingTest {
             lastReactionAt = downstreamReactionGroupDto.last_reaction_at,
         )
         assertEquals(expected, reactionGroup)
+    }
+
+    @Test
+    fun `Attachment is correctly mapped, recovering the fields the spec does not declare`() {
+        val attachment = Mother.randomAttachment(
+            type = "file",
+            custom = mapOf(
+                // Undeclared numbers arrive untyped, so file_size is a Double here.
+                "file_size" to 2048.0,
+                "image" to "https://example.com/i.png",
+                "mime_type" to "image/png",
+                "name" to "i.png",
+                "sentinel" to "keep-me",
+            ),
+        )
+        val sut = Fixture().get()
+
+        val domain = with(sut) { attachment.toDomain() }
+
+        domain.fileSize shouldBeEqualTo 2048
+        domain.image shouldBeEqualTo "https://example.com/i.png"
+        domain.mimeType shouldBeEqualTo "image/png"
+        domain.name shouldBeEqualTo "i.png"
+        // Recovered into their own fields, so they must not also linger under their wire names.
+        domain.extraData shouldBeEqualTo mapOf("sentinel" to "keep-me")
+    }
+
+    @Test
+    fun `Attachment keeps the giphy map the UI reads`() {
+        val giphy = mapOf("original" to mapOf("url" to "https://giphy.com/o.gif", "width" to "480"))
+        val attachment = Mother.randomAttachment(type = "giphy", custom = mapOf("giphy" to giphy))
+        val sut = Fixture().get()
+
+        val domain = with(sut) { attachment.toDomain() }
+
+        domain.extraData["giphy"] shouldBeEqualTo giphy
     }
 
     @Test

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.network.models.Attachment
 import java.util.Date
 
 /**
@@ -68,7 +69,7 @@ internal data class UpstreamMessageDto(
 )
 @JsonClass(generateAdapter = true)
 internal data class DownstreamMessageDto(
-    val attachments: List<AttachmentDto>,
+    val attachments: List<Attachment>,
     val channel: ChannelInfoDto?,
     val cid: String,
     val command: String?,
@@ -130,7 +131,7 @@ internal data class DownstreamDraftMessageDto(
     val text: String,
     val command: String? = null,
     val args: String? = null,
-    val attachments: List<AttachmentDto>? = null,
+    val attachments: List<Attachment>? = null,
     val mentioned_users: List<DownstreamUserDto>? = null,
     val silent: Boolean = false,
     val show_in_channel: Boolean = false,

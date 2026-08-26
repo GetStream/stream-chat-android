@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.AttachmentRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberResponseAdapter
@@ -55,6 +54,7 @@ import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
@@ -106,7 +106,7 @@ internal class MoshiChatParser(
             .add(FullUserResponseAdapter)
             .add(UserResponseAdapter)
             .add(UserRequestAdapter)
-            .add(AttachmentRequestAdapter)
+            .add(NetworkAttachmentAdapter)
             .add(MessageRequestAdapter)
             .add(ChannelMemberRequestAdapter)
             .add(ChannelInputRequestAdapter)
