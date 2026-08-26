@@ -50,6 +50,7 @@ internal class NetworkStateProviderTest {
 
     private fun givenNetworkUsable(usable: Boolean) {
         whenever(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) doReturn usable
+        whenever(capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) doReturn usable
     }
 
     private fun givenConnectivityManager() {
@@ -85,6 +86,36 @@ internal class NetworkStateProviderTest {
         provider.isConnected() `should be equal to` false
 
         givenNetworkUsable(true)
+        callback.onCapabilitiesChanged(mock(), capabilities)
+        advanceUntilIdle()
+
+        verifyBlocking(listener) { onConnected() }
+    }
+
+    /**
+     * Regression test. Reading [NetworkStateProvider.isConnected] after the network has returned
+     * but before the system callback lands must not consume the transition. Recording a `true`
+     * answer here would leave the callback with nothing to report, stranding the socket exactly as
+     * the stale `true` did.
+     */
+    @Test
+    fun `when the network is read as usable before the callback lands, the callback still reports it`() = runTest {
+        givenConnectivityManager()
+        givenNetworkUsable(true)
+        val provider = NetworkStateProvider(
+            CoroutineScope(UnconfinedTestDispatcher(testScheduler)),
+            connectivityManager,
+        )
+        val listener: NetworkStateProvider.NetworkStateListener = mock()
+        provider.subscribe(listener)
+        val callback = captureCallback()
+
+        givenNetworkUsable(false)
+        provider.isConnected() `should be equal to` false
+
+        givenNetworkUsable(true)
+        provider.isConnected() `should be equal to` true
+
         callback.onCapabilitiesChanged(mock(), capabilities)
         advanceUntilIdle()
 
