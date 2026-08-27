@@ -150,6 +150,7 @@ import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
@@ -475,9 +476,9 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms the generated channel mute to [ChannelMute].
+     * Transforms [ChannelMuteResponse] to [ChannelMute].
      */
-    internal fun io.getstream.chat.android.network.models.ChannelMute.toDomain(): ChannelMute =
+    internal fun ChannelMuteResponse.toDomain(): ChannelMute =
         ChannelMute(
             user = user?.toDomain(),
             channel = channel?.toDomain(),
