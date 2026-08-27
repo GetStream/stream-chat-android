@@ -16,6 +16,10 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.PollResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldHaveSize
@@ -23,6 +27,13 @@ import org.junit.jupiter.api.Test
 
 internal class PollResponseParsingTest {
     private val parser = ParserFactory.createMoshiChatParser()
+
+    private val domainMapping = DomainMapping(
+        currentUserIdProvider = { null },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+    )
 
     @Test
     fun `Deserialize a poll response`() {
@@ -41,6 +52,17 @@ internal class PollResponseParsingTest {
 
         poll.custom shouldBeEqualTo mapOf("category" to "cinema")
         poll.options.first().custom shouldBeEqualTo mapOf("episode" to "V")
+    }
+
+    @Test
+    fun `Option custom data survives the mapping to the domain`() {
+        val response = parser.fromJson(POLL_JSON, PollResponse::class.java).poll
+
+        val poll = with(domainMapping) { response.toDomain() }
+
+        // Collected into `custom` on the way in, and it has to reach `Option.extraData` too: the
+        // hand-written DTO path and the direct path both carry it.
+        poll.options.first().extraData shouldBeEqualTo mapOf("episode" to "V")
     }
 
     @Test

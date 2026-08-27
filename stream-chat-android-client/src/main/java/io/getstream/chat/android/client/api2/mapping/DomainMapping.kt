@@ -701,7 +701,7 @@ internal class DomainMapping(
             id = id,
             name = name,
             description = description,
-            options = options.map { option -> Option(id = option.id, text = option.text) },
+            options = options.map { it.toOption() },
             votingVisibility = votingVisibility.toVotingVisibility(),
             enforceUniqueVote = enforceUniqueVote,
             maxVotesAllowed = maxVotesAllowed,
@@ -764,6 +764,18 @@ internal class DomainMapping(
     /**
      * Transforms [PollOptionResponseData] into [PollOption]
      */
+    /**
+     * Transforms [PollOptionResponseData] to [Option].
+     *
+     * Not named `toDomain` because that maps to [PollOption], mirroring the hand-written
+     * [DownstreamPollOptionDto.toDomain] / [DownstreamPollOptionDto.toPollOption] pair.
+     */
+    internal fun PollOptionResponseData.toOption(): Option = Option(
+        id = id,
+        text = text,
+        extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+    )
+
     internal fun PollOptionResponseData.toDomain(): PollOption = PollOption(
         id = id,
         text = text,
