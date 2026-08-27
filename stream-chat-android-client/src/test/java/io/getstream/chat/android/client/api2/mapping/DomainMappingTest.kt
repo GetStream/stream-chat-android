@@ -136,6 +136,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
@@ -160,6 +161,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -663,7 +665,7 @@ internal class DomainMappingTest {
 
     @Test
     fun `ChannelMute is correctly mapped to the domain channel mute`() {
-        val muteResponse = io.getstream.chat.android.network.models.ChannelMute(
+        val muteResponse = ChannelMuteResponse(
             createdAt = Date(1000),
             updatedAt = Date(2000),
             expires = Date(3000),
@@ -682,8 +684,7 @@ internal class DomainMappingTest {
 
     @Test
     fun `ChannelMute without a user or channel is mapped without them`() {
-        val muteResponse =
-            io.getstream.chat.android.network.models.ChannelMute(createdAt = Date(1000), updatedAt = Date(2000))
+        val muteResponse = ChannelMuteResponse(createdAt = Date(1000), updatedAt = Date(2000))
         val sut = Fixture().get()
 
         val mute = with(sut) { muteResponse.toDomain() }
@@ -721,22 +722,67 @@ internal class DomainMappingTest {
 
     @Test
     fun `FullUserResponse is correctly mapped to User`() {
-        val userResponse = randomFullUserResponse()
+        val userResponse = FullUserResponse(
+            id = "userId",
+            role = "admin",
+            language = "pt",
+            banned = true,
+            invisible = true,
+            online = true,
+            shadowBanned = false,
+            totalUnreadCount = 7,
+            unreadChannels = 3,
+            unreadCount = 7,
+            unreadThreads = 2,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            name = "Padme",
+            image = "image.png",
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            avgResponseTime = 42,
+            devices = listOf(randomDeviceResponse(id = "device")),
+            mutes = listOf(UserMuteResponse(createdAt = Date(5000), updatedAt = Date(6000))),
+            channelMutes = listOf(ChannelMuteResponse(createdAt = Date(7000), updatedAt = Date(8000))),
+            privacySettings = PrivacySettingsResponse(typingIndicators = TypingIndicatorsResponse(enabled = true)),
+            custom = mapOf("birthland" to "Polis Massa", "absent" to null),
+        )
         val sut = Fixture().get()
 
         val user = with(sut) { userResponse.toDomain() }
 
-        assertEquals(userResponse.id, user.id)
-        assertEquals(userResponse.role, user.role)
-        assertEquals(userResponse.language, user.language)
-        assertEquals(userResponse.banned, user.banned)
-        assertEquals(userResponse.invisible, user.invisible)
-        assertEquals(userResponse.online, user.online)
-        assertEquals(userResponse.totalUnreadCount, user.totalUnreadCount)
-        assertEquals(userResponse.unreadChannels, user.unreadChannels)
-        assertEquals(userResponse.unreadThreads, user.unreadThreads)
-        assertEquals(userResponse.createdAt, user.createdAt)
-        assertEquals(userResponse.updatedAt, user.updatedAt)
+        val expected = User(
+            id = "userId",
+            role = "admin",
+            name = "Padme",
+            image = "image.png",
+            language = "pt",
+            banned = true,
+            invisible = true,
+            online = true,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            totalUnreadCount = 7,
+            unreadChannels = 3,
+            unreadThreads = 2,
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            // The response carries an Int, the domain a Long.
+            avgResponseTime = 42L,
+            devices = with(sut) { userResponse.devices.map { it.toDomain() } },
+            mutes = with(sut) { userResponse.mutes.map { it.toDomain() } },
+            channelMutes = with(sut) { userResponse.channelMutes.map { it.toDomain() } },
+            privacySettings = PrivacySettings(typingIndicators = TypingIndicators(enabled = true)),
+            // `absent` is dropped: the domain map does not hold null values.
+            extraData = mutableMapOf("birthland" to "Polis Massa"),
+        )
+        assertEquals(expected, user)
     }
 
     @Test
