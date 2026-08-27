@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
+import io.getstream.chat.android.compose.sample.feature.poc.uploadcontext.LinkingFileUploader
+import io.getstream.chat.android.compose.sample.feature.poc.uploadcontext.UploadContextPoc
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EventType
@@ -104,6 +106,9 @@ object ChatHelper {
                 baseUrl?.let {
                     if (it.startsWith("http://")) forceInsecureConnection()
                     baseUrl(it)
+                }
+                if (UploadContextPoc.ENABLED) {
+                    fileUploader(LinkingFileUploader())
                 }
             }
             .build()
