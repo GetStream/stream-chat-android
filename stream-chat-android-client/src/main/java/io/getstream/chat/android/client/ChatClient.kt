@@ -1026,7 +1026,33 @@ internal constructor(
         file: File,
         callback: ProgressCallback? = null,
     ): Call<UploadedFile> {
-        return api.sendFile(channelType, channelId, file, callback)
+        return sendFile(channelType, channelId, file, messageId = null, callback = callback)
+    }
+
+    /**
+     * Uploads a file that belongs to the message with [messageId], so the id can be propagated to the
+     * [FileUploader] as part of the upload context.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param file The file that needs to be uploaded.
+     * @param messageId The id of the message the file belongs to, or null when the upload is not part of
+     * sending a message.
+     * @param callback The callback to track progress.
+     *
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
+     * if the file was successfully uploaded.
+     */
+    @CheckResult
+    @InternalStreamChatApi
+    public fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        messageId: String?,
+        callback: ProgressCallback?,
+    ): Call<UploadedFile> {
+        return api.sendFile(channelType, channelId, file, messageId, callback)
     }
 
     /**
@@ -1056,7 +1082,33 @@ internal constructor(
         file: File,
         callback: ProgressCallback? = null,
     ): Call<UploadedFile> {
-        return api.sendImage(channelType, channelId, file, callback)
+        return sendImage(channelType, channelId, file, messageId = null, callback = callback)
+    }
+
+    /**
+     * Uploads an image that belongs to the message with [messageId], so the id can be propagated to the
+     * [FileUploader] as part of the upload context.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param file The image file that needs to be uploaded.
+     * @param messageId The id of the message the image belongs to, or null when the upload is not part of
+     * sending a message.
+     * @param callback The callback to track progress.
+     *
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
+     * if the image was successfully uploaded.
+     */
+    @CheckResult
+    @InternalStreamChatApi
+    public fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        messageId: String?,
+        callback: ProgressCallback?,
+    ): Call<UploadedFile> {
+        return api.sendImage(channelType, channelId, file, messageId, callback)
     }
 
     /**

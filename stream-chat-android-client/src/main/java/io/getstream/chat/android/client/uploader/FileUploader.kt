@@ -24,7 +24,54 @@ import java.io.File
 /**
  * The FileUploader is responsible for sending and deleting files from given channel
  */
+@Suppress("TooManyFunctions")
 public interface FileUploader {
+
+    /**
+     * Uploads a file within the given [uploadContext]. Progress can be accessed via [callback].
+     *
+     * When the upload is part of sending a message, [FileUploadContext.messageId] carries the id the message
+     * will be sent with, allowing implementations to link the uploaded file to the message on their own backend.
+     *
+     * The default implementation ignores the extra context and delegates to the corresponding legacy
+     * overload: `sendFile(channelType, channelId, userId, file, callback)` when [callback] is not null,
+     * `sendFile(channelType, channelId, userId, file)` otherwise.
+     *
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload had failed.
+     */
+    public fun sendFile(
+        uploadContext: FileUploadContext,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Result<UploadedFile> = if (callback != null) {
+        sendFile(uploadContext.channelType, uploadContext.channelId, uploadContext.userId, file, callback)
+    } else {
+        sendFile(uploadContext.channelType, uploadContext.channelId, uploadContext.userId, file)
+    }
+
+    /**
+     * Uploads an image within the given [uploadContext]. Progress can be accessed via [callback].
+     *
+     * When the upload is part of sending a message, [FileUploadContext.messageId] carries the id the message
+     * will be sent with, allowing implementations to link the uploaded image to the message on their own backend.
+     *
+     * The default implementation ignores the extra context and delegates to the corresponding legacy
+     * overload: `sendImage(channelType, channelId, userId, file, callback)` when [callback] is not null,
+     * `sendImage(channelType, channelId, userId, file)` otherwise.
+     *
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload had failed.
+     */
+    public fun sendImage(
+        uploadContext: FileUploadContext,
+        file: File,
+        callback: ProgressCallback? = null,
+    ): Result<UploadedFile> = if (callback != null) {
+        sendImage(uploadContext.channelType, uploadContext.channelId, uploadContext.userId, file, callback)
+    } else {
+        sendImage(uploadContext.channelType, uploadContext.channelId, uploadContext.userId, file)
+    }
 
     /**
      * Uploads a file for the given channel. Progress can be accessed via [callback].

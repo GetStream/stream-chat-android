@@ -2,12 +2,27 @@ package io.getstream.chat.docs.kotlin.client.helpers
 
 import io.getstream.result.Error
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.result.Result
 import java.io.File
 
 class MyFileUploader : FileUploader {
+    override fun sendFile(
+        uploadContext: FileUploadContext,
+        file: File,
+        callback: ProgressCallback?,
+    ): Result<UploadedFile> {
+        // uploadContext.messageId is the id of the message this file belongs to. Use it to link the upload
+        // to the message on your own backend before the message is sent.
+        return try {
+            Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
+        } catch (e: Exception) {
+            Result.Failure(Error.ThrowableError(message = "Could not send file.", cause = e))
+        }
+    }
+
     override fun sendFile(
         channelType: String,
         channelId: String,

@@ -31,6 +31,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 /**
@@ -46,7 +49,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.sendFile(any(), any(), any(), any()))
+        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()))
             .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
         // when
         val result = chatClient.sendFile(channelType, channelId, file, callback).await()
@@ -62,7 +65,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val errorCode = positiveRandomInt()
-        whenever(api.sendFile(any(), any(), any(), any()))
+        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()))
             .thenReturn(RetroError<UploadedFile>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.sendFile(channelType, channelId, file, callback).await()
@@ -78,7 +81,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.sendImage(any(), any(), any(), any()))
+        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()))
             .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
         // when
         val result = chatClient.sendImage(channelType, channelId, file, callback).await()
@@ -94,12 +97,48 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val errorCode = positiveRandomInt()
-        whenever(api.sendImage(any(), any(), any(), any()))
+        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()))
             .thenReturn(RetroError<UploadedFile>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.sendImage(channelType, channelId, file, callback).await()
         // then
         verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun sendFileForwardsMessageId() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val file = randomFile()
+        val messageId = randomString()
+        val callback = mock<ProgressCallback>()
+        val uploadedFile = randomUploadedFile()
+        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()))
+            .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
+        // when
+        val result = chatClient.sendFile(channelType, channelId, file, messageId, callback).await()
+        // then
+        verifySuccess(result, uploadedFile)
+        verify(api).sendFile(eq(channelType), eq(channelId), eq(file), eq(messageId), eq(callback))
+    }
+
+    @Test
+    fun sendImageForwardsMessageId() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val file = randomFile()
+        val messageId = randomString()
+        val callback = mock<ProgressCallback>()
+        val uploadedFile = randomUploadedFile()
+        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()))
+            .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
+        // when
+        val result = chatClient.sendImage(channelType, channelId, file, messageId, callback).await()
+        // then
+        verifySuccess(result, uploadedFile)
+        verify(api).sendImage(eq(channelType), eq(channelId), eq(file), eq(messageId), eq(callback))
     }
 
     @Test

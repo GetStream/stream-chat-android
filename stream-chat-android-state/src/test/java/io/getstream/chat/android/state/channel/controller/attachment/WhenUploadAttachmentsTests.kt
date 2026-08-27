@@ -37,6 +37,7 @@ import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -128,7 +129,7 @@ internal class WhenUploadAttachmentsTests {
     fun `Given exception when upload Should insert message with failed sync status to repo`() = runTest {
         val attachmentUploader =
             mock<AttachmentUploader> {
-                on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+                on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doThrow IllegalStateException("Error")
             }
         val repository = mock<MessageRepository>()
         val message = randomMessage(
@@ -160,7 +161,7 @@ internal class WhenUploadAttachmentsTests {
         runTest {
             val attachmentUploader =
                 mock<AttachmentUploader> {
-                    on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+                    on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doThrow IllegalStateException("Error")
                 }
             val repository = mock<MessageRepository>()
             val message = randomMessage(
@@ -205,7 +206,8 @@ internal class WhenUploadAttachmentsTests {
                             any(),
                             any(),
                             any(),
-                            any(),
+                            anyOrNull(),
+                            anyOrNull(),
                         ),
                     ) doReturn Result.Failure(
                         Error.ThrowableError(
@@ -252,7 +254,7 @@ internal class WhenUploadAttachmentsTests {
         runTest {
             val attachmentUploader =
                 mock<AttachmentUploader> {
-                    on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
+                    on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doAnswer { invocation ->
                         val attachment = invocation.arguments[2] as Attachment
                         Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
                     }
