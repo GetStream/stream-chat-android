@@ -100,6 +100,7 @@ import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -804,6 +805,20 @@ internal object Mother {
         last_read_message_id = lastReadMessageId,
         last_delivered_at = lastDeliveredAt,
         last_delivered_message_id = lastDeliveredMessageId,
+    )
+
+    fun randomGetOGResponse(
+        duration: String = randomString(),
+        type: String? = randomString(),
+        ogScrapeUrl: String? = randomString(),
+        imageUrl: String? = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): GetOGResponse = GetOGResponse(
+        duration = duration,
+        type = type,
+        ogScrapeUrl = ogScrapeUrl,
+        imageUrl = imageUrl,
+        custom = custom,
     )
 
     fun randomAttachmentDto(
