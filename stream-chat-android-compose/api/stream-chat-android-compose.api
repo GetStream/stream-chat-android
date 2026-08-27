@@ -3006,6 +3006,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun ThreadListLoadingMoreContent (Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListUnreadThreadsBanner (ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun UserAvatar (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/text/TextStyle;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun messageListItemKey (ILio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;)Ljava/lang/Object;
 	public abstract fun messageListItemModifier (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
 }
 
@@ -3188,6 +3189,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ThreadListLoadingMoreContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListUnreadThreadsBanner (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun UserAvatar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/text/TextStyle;ZLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static fun messageListItemKey (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;ILio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;)Ljava/lang/Object;
 	public static fun messageListItemModifier (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
 }
 

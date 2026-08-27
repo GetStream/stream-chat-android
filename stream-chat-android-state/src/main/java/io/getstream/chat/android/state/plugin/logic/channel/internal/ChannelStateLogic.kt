@@ -437,6 +437,17 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Atomically replaces [oldMessage] with [newMessage] in the channel state.
+     * Used when the id of an outgoing message changes before sending.
+     *
+     * @param oldMessage The message to be removed.
+     * @param newMessage The message to be added in its place.
+     */
+    fun replaceMessage(oldMessage: Message, newMessage: Message) {
+        mutableState.replaceMessage(oldMessage, newMessage)
+    }
+
+    /**
      * Removes messages before a certain date
      *
      * @param date all messages will be removed before this date.

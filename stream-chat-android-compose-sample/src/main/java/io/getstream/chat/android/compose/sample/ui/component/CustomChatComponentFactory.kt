@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.compose.sample.feature.poc.serverid.ServerIdPoc
 import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersComponentFactory
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -38,12 +39,26 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 class CustomChatComponentFactory(
     private val delegate: ChatComponentFactory = MessageRemindersComponentFactory(),
 ) : ChatComponentFactory by delegate {
+
+    /**
+     * PoC (see [ServerIdPoc]): key message items by the original local message id, so that a message whose id
+     * is rewritten to a backend-assigned id while being sent is not removed and re-added by the list.
+     */
+    override fun messageListItemKey(index: Int, item: MessageListItemState): Any {
+        if (ServerIdPoc.ENABLED && item is HasMessageListItemState) {
+            val localId = item.message.extraData[ServerIdPoc.KEY_LOCAL_ID] as? String
+            if (localId != null) return localId
+        }
+        return super.messageListItemKey(index, item)
+    }
 
     @Composable
     override fun LazyItemScope.ChannelListItemContent(

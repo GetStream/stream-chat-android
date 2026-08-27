@@ -922,6 +922,17 @@ public interface ChatComponentFactory {
         }
 
     /**
+     * The key that identifies a message list [item] in the lazy list.
+     *
+     * Override this to key items by something other than the message id, e.g. a stable identifier stored in
+     * the message's extra data, so that a message whose id changes while being sent is not treated as a
+     * removal plus an insertion by the list.
+     *
+     * The returned key must be unique within the list and of a type that can be stored in a [android.os.Bundle].
+     */
+    public fun messageListItemKey(index: Int, item: MessageListItemState): Any = item.id
+
+    /**
      * The default loading more item of the message list,
      * when the next page of messages is loading.
      */

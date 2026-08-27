@@ -144,6 +144,7 @@ public fun Messages(
     val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
 
     val density = LocalDensity.current
+    val componentFactory = ChatTheme.componentFactory
 
     Box(modifier = modifier) {
         LazyColumn(
@@ -188,7 +189,7 @@ public fun Messages(
 
             itemsIndexed(
                 items = messages,
-                key = { _, item -> item.id },
+                key = { index, item -> componentFactory.messageListItemKey(index, item) },
             ) { index, item ->
                 val messageItemModifier =
                     if (item is MessageItemState && item.focusState == MessageFocused) {

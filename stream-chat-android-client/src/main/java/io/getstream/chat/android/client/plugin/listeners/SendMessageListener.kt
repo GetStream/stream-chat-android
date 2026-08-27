@@ -39,4 +39,23 @@ public interface SendMessageListener {
         channelId: String,
         message: Message,
     )
+
+    /**
+     * Side effect to be invoked when the id of an outgoing message changes right before it is sent to the API
+     * (see [io.getstream.chat.android.client.interceptor.message.PreSendMessageTransformer]). Implementations
+     * should reconcile the locally persisted optimistic message with the new id.
+     *
+     * @param channelType The type of the channel in which the message is sent.
+     * @param channelId The id of the channel in which the message is sent.
+     * @param oldMessage The message as it was persisted locally, with the original id.
+     * @param newMessage The message about to be sent, with the new id.
+     */
+    public suspend fun onMessageIdChanged(
+        channelType: String,
+        channelId: String,
+        oldMessage: Message,
+        newMessage: Message,
+    ) {
+        // No-Op by default.
+    }
 }

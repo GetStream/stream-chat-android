@@ -63,6 +63,22 @@ internal class SendMessageListenerDatabase(
         }
     }
 
+    /**
+     * Replaces the persisted optimistic message with the same message under its new id, so that the message is
+     * stored (and later retried, if needed) exclusively under the id it is about to be sent with.
+     */
+    override suspend fun onMessageIdChanged(
+        channelType: String,
+        channelId: String,
+        oldMessage: Message,
+        newMessage: Message,
+    ) {
+        StreamLog.d(TAG) { "[onMessageIdChanged] ${oldMessage.id} -> ${newMessage.id}" }
+        messageRepository.deleteChannelMessage(oldMessage)
+        userRepository.insertUsers(newMessage.users())
+        messageRepository.insertMessage(newMessage)
+    }
+
     private suspend fun handleSendMessageSuccess(
         cid: String,
         processedMessage: Message,

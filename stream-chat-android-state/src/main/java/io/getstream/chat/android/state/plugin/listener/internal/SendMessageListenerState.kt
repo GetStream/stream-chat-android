@@ -59,6 +59,22 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
     }
 
     /**
+     * Atomically replaces the optimistically inserted message with the same message under its new id.
+     *
+     * Note: only the channel state is updated. Thread and query-threads state are not reconciled yet, so an id
+     * change of a thread reply is not fully supported.
+     */
+    override suspend fun onMessageIdChanged(
+        channelType: String,
+        channelId: String,
+        oldMessage: Message,
+        newMessage: Message,
+    ) {
+        StreamLog.d(TAG) { "[onMessageIdChanged] ${oldMessage.id} -> ${newMessage.id}" }
+        logic.channelStateLogic(channelType, channelId).replaceMessage(oldMessage, newMessage)
+    }
+
+    /**
      * Updates the message object and local database with new message state after message is sent successfully.
      *
      * @param processedMessage [Message] returned from API response.

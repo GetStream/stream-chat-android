@@ -24,7 +24,11 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.compose.sample.data.UserCredentials
+import io.getstream.chat.android.compose.sample.feature.poc.serverid.ServerIdFileUploader
+import io.getstream.chat.android.compose.sample.feature.poc.serverid.ServerIdMessageTransformer
+import io.getstream.chat.android.compose.sample.feature.poc.serverid.ServerIdPoc
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
@@ -48,6 +52,7 @@ object ChatHelper {
     /**
      * Initializes the SDK with the given API key.
      */
+    @OptIn(ExperimentalStreamChatApi::class)
     fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null) {
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
@@ -104,6 +109,10 @@ object ChatHelper {
                 baseUrl?.let {
                     if (it.startsWith("http://")) forceInsecureConnection()
                     baseUrl(it)
+                }
+                if (ServerIdPoc.ENABLED) {
+                    fileUploader(ServerIdFileUploader())
+                    preSendMessageTransformer(ServerIdMessageTransformer())
                 }
             }
             .build()

@@ -113,6 +113,7 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.message.PreSendMessageTransformer
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -171,6 +172,7 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.core.utils.date.max
@@ -244,6 +246,7 @@ import io.getstream.result.call.toUnitCall
 import io.getstream.result.call.withPrecondition
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -305,6 +308,7 @@ internal constructor(
     public val cdn: CDN? = null,
     @InternalStreamChatApi
     public val videoCache: VideoMediaCache? = null,
+    private val preSendMessageTransformer: PreSendMessageTransformer? = null,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -2623,10 +2627,11 @@ internal constructor(
                     debugger.onStart(messageWithLocalDate)
                     sendAttachments(channelType, channelId, messageWithLocalDate, isRetrying, debugger)
                         .flatMapSuspend { newMessage ->
-                            debugger.onSendStart(newMessage)
-                            doSendMessage(channelType, channelId, newMessage).also { result ->
-                                debugger.onSendStop(result, newMessage)
-                                debugger.onStop(result, newMessage)
+                            val outgoingMessage = transformBeforeSend(channelType, channelId, newMessage)
+                            debugger.onSendStart(outgoingMessage)
+                            doSendMessage(channelType, channelId, outgoingMessage).also { result ->
+                                debugger.onSendStop(result, outgoingMessage)
+                                debugger.onStop(result, outgoingMessage)
                             }
                         }
                 }
@@ -2775,6 +2780,36 @@ internal constructor(
                     listener.onQueryDraftMessagesResult(result, filter, limit, next, sort)
                 }
             }
+    }
+
+    /**
+     * Applies the [preSendMessageTransformer] (if any) to a fully prepared message with uploaded attachments.
+     * If the transformation changes the message id, plugins are notified via
+     * [io.getstream.chat.android.client.plugin.listeners.SendMessageListener.onMessageIdChanged] so the locally
+     * persisted optimistic message (state and offline storage) is reconciled with the new id before the message
+     * is sent.
+     */
+    private suspend fun transformBeforeSend(
+        channelType: String,
+        channelId: String,
+        message: Message,
+    ): Message {
+        val transformer = preSendMessageTransformer ?: return message
+        val transformedMessage = try {
+            transformer.transform(message)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+            logger.w { "[transformBeforeSend] transformer failed: $e; sending the original message" }
+            message
+        }
+        if (transformedMessage.id != message.id) {
+            logger.i { "[transformBeforeSend] message id changed: ${message.id} -> ${transformedMessage.id}" }
+            plugins.forEach { listener ->
+                listener.onMessageIdChanged(channelType, channelId, message, transformedMessage)
+            }
+        }
+        return transformedMessage
     }
 
     private suspend fun doSendMessage(
@@ -4830,6 +4865,7 @@ internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private var sendMessageInterceptor: SendMessageInterceptor? = null
+        private var preSendMessageTransformer: PreSendMessageTransformer? = null
         private var shareFileDownloadRequestInterceptor: Interceptor? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
@@ -4962,6 +4998,22 @@ internal constructor(
          */
         public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
             this.sendMessageInterceptor = sendMessageInterceptor
+            return this
+        }
+
+        /**
+         * Sets a [PreSendMessageTransformer] invoked right before an outgoing message is sent to the API,
+         * after all of its attachments have finished uploading. This is the last point at which the message
+         * can be modified on the client. If the transformation changes the message id, the SDK reconciles the
+         * locally persisted optimistic message with the new id before sending.
+         *
+         * IMPORTANT: This is an experimental API and can be changed or removed in the future.
+         *
+         * @param transformer Your custom implementation of [PreSendMessageTransformer].
+         */
+        @ExperimentalStreamChatApi
+        public fun preSendMessageTransformer(transformer: PreSendMessageTransformer): Builder {
+            this.preSendMessageTransformer = transformer
             return this
         }
 
@@ -5302,6 +5354,7 @@ internal constructor(
                 ),
                 cdn = cdn,
                 videoCache = videoCache,
+                preSendMessageTransformer = preSendMessageTransformer,
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,

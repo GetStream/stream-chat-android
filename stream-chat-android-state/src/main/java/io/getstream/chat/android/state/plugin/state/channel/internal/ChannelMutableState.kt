@@ -631,6 +631,15 @@ internal class ChannelMutableState(
         _messages?.value = applyMessageLimitIfNeeded(messages).associateBy(Message::id)
     }
 
+    /**
+     * Atomically replaces [oldMessage] with [newMessage] in a single emission, so observers never see a state
+     * containing both messages or neither. Used when the id of an outgoing message changes before sending.
+     */
+    fun replaceMessage(oldMessage: Message, newMessage: Message) {
+        logger.v { "[replaceMessage] oldMessage.id: ${oldMessage.id}, newMessage.id: ${newMessage.id}" }
+        _messages?.apply { value = value - oldMessage.id + (newMessage.id to newMessage) }
+    }
+
     fun setPinnedMessages(messages: List<Message>) {
         logger.d { "[setPinnedMessages] messages.size: ${messages.size}" }
         setPinned { messages.associateBy(Message::id) }
