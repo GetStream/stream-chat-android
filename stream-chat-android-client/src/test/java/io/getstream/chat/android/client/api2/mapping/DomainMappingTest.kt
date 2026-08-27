@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
+import io.getstream.chat.android.client.Mother.randomFullUserResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
@@ -134,6 +135,12 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.des
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.FullUserResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
@@ -154,6 +161,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -621,6 +629,181 @@ internal class DomainMappingTest {
             extraData = mapOf("birthland" to "Polis Massa"),
         )
         assertEquals(expected, user)
+    }
+
+    @Test
+    fun `UserMuteResponse is correctly mapped to Mute`() {
+        val muteResponse = UserMuteResponse(
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            expires = Date(3000),
+            user = randomUserResponse(id = "muter"),
+            target = randomUserResponse(id = "muted"),
+        )
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertEquals("muter", mute.user?.id)
+        assertEquals("muted", mute.target?.id)
+        assertEquals(Date(1000), mute.createdAt)
+        assertEquals(Date(2000), mute.updatedAt)
+        assertEquals(Date(3000), mute.expires)
+    }
+
+    @Test
+    fun `UserMuteResponse without users is mapped to a Mute without users`() {
+        val muteResponse = UserMuteResponse(createdAt = Date(1000), updatedAt = Date(2000))
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertNull(mute.user)
+        assertNull(mute.target)
+        assertNull(mute.expires)
+    }
+
+    @Test
+    fun `ChannelMute is correctly mapped to the domain channel mute`() {
+        val muteResponse = ChannelMuteResponse(
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            expires = Date(3000),
+            user = randomUserResponse(id = "muter"),
+            channel = randomChannelResponse(id = "c1", type = "messaging"),
+        )
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertEquals("muter", mute.user?.id)
+        assertEquals("c1", mute.channel?.id)
+        assertEquals(Date(1000), mute.createdAt)
+        assertEquals(Date(3000), mute.expires)
+    }
+
+    @Test
+    fun `ChannelMute without a user or channel is mapped without them`() {
+        val muteResponse = ChannelMuteResponse(createdAt = Date(1000), updatedAt = Date(2000))
+        val sut = Fixture().get()
+
+        val mute = with(sut) { muteResponse.toDomain() }
+
+        assertNull(mute.user)
+        assertNull(mute.channel)
+    }
+
+    @Test
+    fun `PrivacySettingsResponse maps each setting it carries`() {
+        val response = PrivacySettingsResponse(
+            typingIndicators = TypingIndicatorsResponse(enabled = true),
+            deliveryReceipts = DeliveryReceiptsResponse(enabled = false),
+            readReceipts = ReadReceiptsResponse(enabled = true),
+        )
+        val sut = Fixture().get()
+
+        val settings = with(sut) { response.toDomain() }
+
+        assertEquals(true, settings.typingIndicators?.enabled)
+        assertEquals(false, settings.deliveryReceipts?.enabled)
+        assertEquals(true, settings.readReceipts?.enabled)
+    }
+
+    @Test
+    fun `PrivacySettingsResponse leaves absent settings null`() {
+        val sut = Fixture().get()
+
+        val settings = with(sut) { PrivacySettingsResponse().toDomain() }
+
+        assertNull(settings.typingIndicators)
+        assertNull(settings.deliveryReceipts)
+        assertNull(settings.readReceipts)
+    }
+
+    @Test
+    fun `FullUserResponse is correctly mapped to User`() {
+        val userResponse = FullUserResponse(
+            id = "userId",
+            role = "admin",
+            language = "pt",
+            banned = true,
+            invisible = true,
+            online = true,
+            shadowBanned = false,
+            totalUnreadCount = 7,
+            unreadChannels = 3,
+            unreadCount = 7,
+            unreadThreads = 2,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            name = "Padme",
+            image = "image.png",
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            avgResponseTime = 42,
+            devices = listOf(randomDeviceResponse(id = "device")),
+            mutes = listOf(UserMuteResponse(createdAt = Date(5000), updatedAt = Date(6000))),
+            channelMutes = listOf(ChannelMuteResponse(createdAt = Date(7000), updatedAt = Date(8000))),
+            privacySettings = PrivacySettingsResponse(typingIndicators = TypingIndicatorsResponse(enabled = true)),
+            custom = mapOf("birthland" to "Polis Massa", "absent" to null),
+        )
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        val expected = User(
+            id = "userId",
+            role = "admin",
+            name = "Padme",
+            image = "image.png",
+            language = "pt",
+            banned = true,
+            invisible = true,
+            online = true,
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            lastActive = Date(3000),
+            deactivatedAt = Date(4000),
+            totalUnreadCount = 7,
+            unreadChannels = 3,
+            unreadThreads = 2,
+            teams = listOf("red"),
+            teamsRole = mapOf("red" to "moderator"),
+            blockedUserIds = listOf("blocked"),
+            // The response carries an Int, the domain a Long.
+            avgResponseTime = 42L,
+            devices = with(sut) { userResponse.devices.map { it.toDomain() } },
+            mutes = with(sut) { userResponse.mutes.map { it.toDomain() } },
+            channelMutes = with(sut) { userResponse.channelMutes.map { it.toDomain() } },
+            privacySettings = PrivacySettings(typingIndicators = TypingIndicators(enabled = true)),
+            // `absent` is dropped: the domain map does not hold null values.
+            extraData = mutableMapOf("birthland" to "Polis Massa"),
+        )
+        assertEquals(expected, user)
+    }
+
+    @Test
+    fun `FullUserResponse without a name or image is mapped to empty strings`() {
+        val userResponse = randomFullUserResponse().copy(name = null, image = null)
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        assertEquals("", user.name)
+        assertEquals("", user.image)
+    }
+
+    @Test
+    fun `FullUserResponse custom data is mapped to extraData without its null values`() {
+        val userResponse = randomFullUserResponse(custom = mapOf("customKey" to "customValue", "nullKey" to null))
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), user.extraData)
     }
 
     @Test

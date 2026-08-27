@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.FullUserResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContainAll
 import org.junit.jupiter.api.Test
@@ -102,5 +103,34 @@ internal class GeneratedExtraDataParityTest {
         )
         // Still parsed into its own field, not only kept in the map.
         member.role shouldBeEqualTo "member"
+    }
+
+    @Test
+    fun `A user keeps the keys the hand-written DTO did not declare`() {
+        val user = parser.fromJson(
+            """
+            {
+              "id": "u1", "role": "user", "language": "en", "banned": false, "invisible": false,
+              "online": true, "shadow_banned": true,
+              "total_unread_count": 0, "unread_channels": 0, "unread_count": 0, "unread_threads": 0,
+              "created_at": "2026-08-14T10:00:00.000Z", "updated_at": "2026-08-14T10:00:00.000Z",
+              "deleted_at": "2026-08-14T12:00:00.000Z",
+              "ban_expires": "2026-08-15T10:00:00.000Z",
+              "revoke_tokens_issued_before": "2026-08-13T10:00:00.000Z",
+              "sentinel": "keep-me"
+            }
+            """.trimIndent(),
+            FullUserResponse::class.java,
+        )
+
+        user.custom shouldBeEqualTo mapOf(
+            "shadow_banned" to true,
+            "deleted_at" to "2026-08-14T12:00:00.000Z",
+            "ban_expires" to "2026-08-15T10:00:00.000Z",
+            "revoke_tokens_issued_before" to "2026-08-13T10:00:00.000Z",
+            "sentinel" to "keep-me",
+        )
+        // Still parsed into its own field, not only kept in the map.
+        user.shadowBanned shouldBeEqualTo true
     }
 }

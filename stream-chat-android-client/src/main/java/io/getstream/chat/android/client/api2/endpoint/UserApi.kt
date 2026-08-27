@@ -21,18 +21,18 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
-import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
-import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.QueryUsersPayload
+import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateUsersPartialRequest
 import io.getstream.chat.android.network.models.UpdateUsersRequest
+import io.getstream.chat.android.network.models.UpdateUsersResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -70,7 +70,7 @@ internal interface UserApi {
     fun queryUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryUsersPayload,
-    ): RetrofitCall<UsersResponse>
+    ): RetrofitCall<QueryUsersResponse>
 
     @GET("/users/live_locations")
     fun liveLocations(): RetrofitCall<LiveLocationsResponse>

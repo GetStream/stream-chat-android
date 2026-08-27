@@ -137,16 +137,20 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
@@ -427,6 +431,61 @@ internal class DomainMapping(
             pushPreference = push_preferences?.toDomain(),
             extraData = extraData.toMutableMap(),
         ).let(userTransformer::transform)
+
+    /**
+     * Transforms [FullUserResponse] to [User].
+     */
+    internal fun FullUserResponse.toDomain(): User =
+        User(
+            id = id,
+            name = name.orEmpty(),
+            image = image.orEmpty(),
+            role = role,
+            invisible = invisible,
+            privacySettings = privacySettings?.toDomain(),
+            language = language,
+            banned = banned,
+            devices = devices.map { it.toDomain() },
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            unreadThreads = unreadThreads,
+            mutes = mutes.map { it.toDomain() },
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            channelMutes = channelMutes.map { it.toDomain() },
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+        ).let(userTransformer::transform)
+
+    /**
+     * Transforms [UserMuteResponse] to [Mute].
+     */
+    internal fun UserMuteResponse.toDomain(): Mute =
+        Mute(
+            user = user?.toDomain(),
+            target = target?.toDomain(),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            expires = expires,
+        )
+
+    /**
+     * Transforms [ChannelMuteResponse] to [ChannelMute].
+     */
+    internal fun ChannelMuteResponse.toDomain(): ChannelMute =
+        ChannelMute(
+            user = user?.toDomain(),
+            channel = channel?.toDomain(),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            expires = expires,
+        )
 
     /**
      * Transforms [DownstreamReactionDto] to [Reaction].
@@ -935,6 +994,15 @@ internal class DomainMapping(
      */
     internal fun ReadReceiptsDto.toDomain(): ReadReceipts = ReadReceipts(
         enabled = enabled,
+    )
+
+    /**
+     * Transforms [PrivacySettingsResponse] to [PrivacySettings].
+     */
+    internal fun PrivacySettingsResponse.toDomain(): PrivacySettings = PrivacySettings(
+        typingIndicators = typingIndicators?.let { TypingIndicators(enabled = it.enabled) },
+        deliveryReceipts = deliveryReceipts?.let { DeliveryReceipts(enabled = it.enabled) },
+        readReceipts = readReceipts?.let { ReadReceipts(enabled = it.enabled) },
     )
 
     /**
