@@ -26,8 +26,9 @@ import io.getstream.chat.android.network.models.GetOGResponse
 /**
  * Collects the root-level custom fields of an OG scrape into `custom`, which is how the API sends them.
  *
- * The endpoint also ships `file_size`, `image`, `mime_type` and `name` at the root even though the spec
- * does not declare them, so they arrive here too; `GetOGResponse.toDomain()` reads them back out.
+ * `file_size`, `image`, `mime_type` and `name` are undeclared by the spec, so when they are sent at the
+ * root they arrive here too; `GetOGResponse.toDomain()` reads them back out. A scrape does not produce
+ * them, so on this endpoint that is a guard rather than an observed shape.
  */
 internal object GetOGResponseAdapter :
     CustomObjectDtoAdapter<GetOGResponse>(GetOGResponse::class, extraDataPropertyName = "custom") {

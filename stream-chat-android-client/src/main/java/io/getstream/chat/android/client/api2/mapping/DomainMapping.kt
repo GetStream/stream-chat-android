@@ -808,8 +808,16 @@ internal class DomainMapping(
         )
 
     internal fun GetOGResponse.toDomain(): Attachment {
-        // The spec does not declare file_size/image/mime_type/name, so when the wire sends them they
-        // arrive in `custom`. Read them back out and remove them, or they would also sit in extraData
+        // The model declares `author_icon`, `color`, `footer`, `footer_icon`, `pretext`, `actions`,
+        // `fields` and `giphy`, none of which the hand-written DTO declared, so they no longer reach
+        // `extraData`. A scrape cannot produce any of them: the response is built from a fresh attachment
+        // that only ever receives title, title_link, author_name, author_link, text, image_url, thumb_url,
+        // type, asset_url and og_scrape_url. `giphy` in particular has a single producer, the giphy slash
+        // command writing to a message attachment, so the slice adopting the shared Attachment model owns
+        // it and must keep `extraData["giphy"]` populated or `Attachment.giphyInfo()` stops finding urls.
+        //
+        // The spec does not declare file_size/image/mime_type/name either, so if the wire ever sends them
+        // they arrive in `custom`. Read them back out and remove them, or they would also sit in extraData
         // under their wire names, which the hand-written DTO never did.
         val extras = custom.toMutableMap()
         val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
@@ -836,10 +844,6 @@ internal class DomainMapping(
             originalWidth = originalWidth,
             extraData = extras.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
-        // `giphy` is deliberately not mapped: unlike the fields above, it has a single producer -- the
-        // giphy slash command, which writes it to a message attachment -- so it cannot reach /og. The
-        // slice that adopts the shared Attachment model owns it, and must re-emit it into
-        // extraData["giphy"] or Attachment.giphyInfo() stops finding gif urls.
     }
 
     /**
