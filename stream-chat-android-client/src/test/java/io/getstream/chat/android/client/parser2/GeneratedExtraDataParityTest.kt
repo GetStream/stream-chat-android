@@ -117,7 +117,6 @@ internal class GeneratedExtraDataParityTest {
               "deleted_at": "2026-08-14T12:00:00.000Z",
               "ban_expires": "2026-08-15T10:00:00.000Z",
               "revoke_tokens_issued_before": "2026-08-13T10:00:00.000Z",
-              "latest_hidden_channels": ["messaging:c1"],
               "sentinel": "keep-me"
             }
             """.trimIndent(),
@@ -129,7 +128,6 @@ internal class GeneratedExtraDataParityTest {
             "deleted_at" to "2026-08-14T12:00:00.000Z",
             "ban_expires" to "2026-08-15T10:00:00.000Z",
             "revoke_tokens_issued_before" to "2026-08-13T10:00:00.000Z",
-            "latest_hidden_channels" to listOf("messaging:c1"),
             "sentinel" to "keep-me",
         )
         // Still parsed into its own field, not only kept in the map.

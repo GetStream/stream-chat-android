@@ -32,8 +32,11 @@ internal val GENERATED_FULL_USER_EXTRA_DATA_KEYS = setOf(
     "ban_expires",
     "deleted_at",
     "revoke_tokens_issued_before",
-    "latest_hidden_channels",
 )
+
+// `latest_hidden_channels` is declared by the model but is not kept: every endpoint decoding this model
+// builds its response through `MyUserFromUser`, which clears the field before serialization, so it never
+// reaches the payload and was never in `extraData` to begin with.
 
 // Downstream (read-only) adapter for the generated FullUserResponse: collects root-level custom fields
 // into `custom`, matching the wire's flattened extra data.
