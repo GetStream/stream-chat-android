@@ -23,6 +23,20 @@ class MyFileUploader : FileUploader {
         }
     }
 
+    override fun sendImage(
+        uploadContext: FileUploadContext,
+        file: File,
+        callback: ProgressCallback?,
+    ): Result<UploadedFile> {
+        // uploadContext.messageId is the id of the message this image belongs to. Use it to link the upload
+        // to the message on your own backend before the message is sent.
+        return try {
+            Result.Success(UploadedFile(file = "url"))
+        } catch (e: Exception) {
+            Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
+        }
+    }
+
     override fun sendFile(
         channelType: String,
         channelId: String,
