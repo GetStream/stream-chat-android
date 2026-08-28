@@ -872,21 +872,17 @@ internal class DomainMapping(
      * wire names in `extraData` instead.
      */
     internal fun io.getstream.chat.android.network.models.Attachment.toDomain(): Attachment {
-        val extras = custom.toMutableMap()
-        val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
-        val image = extras.remove("image") as? String
-        val mimeType = extras.remove("mime_type") as? String
-        val name = extras.remove("name") as? String
+        val undeclared = custom.takeUndeclaredAttachmentFields()
         return Attachment(
             assetUrl = assetUrl,
             authorName = authorName,
             authorLink = authorLink,
             fallback = fallback,
-            fileSize = fileSize,
-            image = image,
+            fileSize = undeclared.fileSize,
+            image = undeclared.image,
             imageUrl = imageUrl,
-            mimeType = mimeType,
-            name = name,
+            mimeType = undeclared.mimeType,
+            name = undeclared.name,
             ogUrl = ogScrapeUrl,
             text = text,
             thumbUrl = thumbUrl,
@@ -895,7 +891,9 @@ internal class DomainMapping(
             type = type,
             originalHeight = originalHeight,
             originalWidth = originalWidth,
-            extraData = extras.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = undeclared.remaining
+                .mapNotNull { (key, value) -> value?.let { key to it } }
+                .toMap().toMutableMap(),
         )
     }
 
@@ -924,6 +922,31 @@ internal class DomainMapping(
             extraData = extraData.toMutableMap(),
         )
 
+    /**
+     * The four fields the spec declares on no attachment shape. The wire sends them at the root, so they
+     * arrive in the collected custom data: they have to be read back out and removed, or an attachment
+     * loses its size, name and mime type and carries them under their wire names in `extraData` instead.
+     */
+    private class UndeclaredAttachmentFields(
+        val fileSize: Int,
+        val image: String?,
+        val mimeType: String?,
+        val name: String?,
+        val remaining: Map<String, Any?>,
+    )
+
+    private fun Map<String, Any?>.takeUndeclaredAttachmentFields(): UndeclaredAttachmentFields {
+        val remaining = toMutableMap()
+        return UndeclaredAttachmentFields(
+            // An undeclared number arrives untyped, so it is a Double and needs converting, not casting.
+            fileSize = (remaining.remove("file_size") as? Number)?.toInt() ?: 0,
+            image = remaining.remove("image") as? String,
+            mimeType = remaining.remove("mime_type") as? String,
+            name = remaining.remove("name") as? String,
+            remaining = remaining,
+        )
+    }
+
     internal fun GetOGResponse.toDomain(): Attachment {
         // The model declares `author_icon`, `color`, `footer`, `footer_icon`, `pretext`, `actions`,
         // `fields` and `giphy`, none of which the hand-written DTO declared, so they no longer reach
@@ -936,21 +959,17 @@ internal class DomainMapping(
         // The spec does not declare file_size/image/mime_type/name either, so if the wire ever sends them
         // they arrive in `custom`. Read them back out and remove them, or they would also sit in extraData
         // under their wire names, which the hand-written DTO never did.
-        val extras = custom.toMutableMap()
-        val fileSize = (extras.remove("file_size") as? Number)?.toInt() ?: 0
-        val image = extras.remove("image") as? String
-        val mimeType = extras.remove("mime_type") as? String
-        val name = extras.remove("name") as? String
+        val undeclared = custom.takeUndeclaredAttachmentFields()
         return Attachment(
             assetUrl = assetUrl,
             authorName = authorName,
             authorLink = authorLink,
             fallback = fallback,
-            fileSize = fileSize,
-            image = image,
+            fileSize = undeclared.fileSize,
+            image = undeclared.image,
             imageUrl = imageUrl,
-            mimeType = mimeType,
-            name = name,
+            mimeType = undeclared.mimeType,
+            name = undeclared.name,
             ogUrl = ogScrapeUrl,
             text = text,
             thumbUrl = thumbUrl,
@@ -959,7 +978,9 @@ internal class DomainMapping(
             type = type,
             originalHeight = originalHeight,
             originalWidth = originalWidth,
-            extraData = extras.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            extraData = undeclared.remaining
+                .mapNotNull { (key, value) -> value?.let { key to it } }
+                .toMap(),
         )
     }
 
