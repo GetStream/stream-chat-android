@@ -90,6 +90,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         file: File,
+        messageId: String?,
         callback: ProgressCallback? = null,
     ): Call<UploadedFile>
 
@@ -98,6 +99,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         file: File,
+        messageId: String?,
         callback: ProgressCallback? = null,
     ): Call<UploadedFile>
 

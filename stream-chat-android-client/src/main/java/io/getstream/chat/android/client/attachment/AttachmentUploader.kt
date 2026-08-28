@@ -40,6 +40,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * @param channelType The type of the channel.
      * @param channelId The ID of the channel.
      * @param attachment The attachment to be uploaded.
+     * @param messageId The id of the message the attachment belongs to, or null when the upload is not part
+     * of sending a message.
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      *
@@ -50,6 +52,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         channelType: String,
         channelId: String,
         attachment: Attachment,
+        messageId: String? = null,
         progressCallback: ProgressCallback? = null,
     ): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
@@ -63,6 +66,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             uploadImage(
                 channelType = channelType,
                 channelId = channelId,
+                messageId = messageId,
                 file = file,
                 progressCallback = progressCallback,
                 attachment = attachment,
@@ -74,6 +78,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             uploadFile(
                 channelType = channelType,
                 channelId = channelId,
+                messageId = messageId,
                 file = file,
                 progressCallback = progressCallback,
                 attachment = attachment,
@@ -88,6 +93,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      *
      * @param channelType The type of the channel.
      * @param channelId The ID of the channel.
+     * @param messageId The id of the message the attachment belongs to, or null when the upload is not part
+     * of sending a message.
      * @param file The file that will be uploaded.
      * @param attachment The attachment to be uploaded.
      * @param progressCallback Used to listen to file upload
@@ -102,6 +109,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
     private suspend fun uploadImage(
         channelType: String,
         channelId: String,
+        messageId: String?,
         file: File,
         progressCallback: ProgressCallback?,
         attachment: Attachment,
@@ -112,7 +120,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.sendImage(channelType, channelId, file, progressCallback)
+        val result = client.sendImage(channelType, channelId, file, messageId, progressCallback)
             .await()
         logger.v { "[uploadImage] #uploader; result: $result" }
         return when (result) {
@@ -144,6 +152,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      *
      * @param channelType The type of the channel.
      * @param channelId The ID of the channel.
+     * @param messageId The id of the message the attachment belongs to, or null when the upload is not part
+     * of sending a message.
      * @param file The file that will be uploaded.
      * @param attachment The attachment to be uploaded.
      * @param progressCallback Used to listen to file upload
@@ -158,6 +168,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
     private suspend fun uploadFile(
         channelType: String,
         channelId: String,
+        messageId: String?,
         file: File,
         progressCallback: ProgressCallback?,
         attachment: Attachment,
@@ -168,7 +179,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.sendFile(channelType, channelId, file, progressCallback)
+        val result = client.sendFile(channelType, channelId, file, messageId, progressCallback)
             .await()
         logger.v { "[uploadFile] #uploader; result: $result" }
         return when (result) {

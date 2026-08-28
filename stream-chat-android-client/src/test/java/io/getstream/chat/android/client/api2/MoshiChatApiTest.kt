@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
+import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.NoOpFileTransformer
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -213,8 +214,10 @@ import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -224,9 +227,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
@@ -735,7 +740,7 @@ internal class MoshiChatApiTest {
     fun testSendFileWithCallback(fileUploaderResult: Result<UploadedFile>, expected: KClass<*>) = runTest {
         // given
         val fileUploader = mock<FileUploader>()
-        whenever(fileUploader.sendFile(any(), any(), any(), any(), any())).doReturn(fileUploaderResult)
+        whenever(fileUploader.sendFile(any(), any(), anyOrNull())).doReturn(fileUploaderResult)
         val fileTransformer = spy<NoOpFileTransformer>()
         val sut = Fixture()
             .withFileUploader(fileUploader)
@@ -748,12 +753,20 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val file = randomFile()
         val callback = mock<ProgressCallback>()
+        val messageId = randomString()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.sendFile(channelType, channelId, file, callback).await()
+        val result = sut.sendFile(channelType, channelId, file, messageId, callback).await()
         // then
         result `should be instance of` expected
-        verify(fileUploader, times(1)).sendFile(channelType, channelId, userId, file, callback)
+        val contextCaptor = argumentCaptor<FileUploadContext>()
+        verify(fileUploader, times(1)).sendFile(contextCaptor.capture(), eq(file), eq(callback))
+        val uploadContext = contextCaptor.firstValue
+        uploadContext.channelType `should be equal to` channelType
+        uploadContext.channelId `should be equal to` channelId
+        uploadContext.userId `should be equal to` userId
+        uploadContext.messageId `should be equal to` messageId
         verify(fileUploader, never()).sendFile(any(), any(), any(), any())
+        verify(fileUploader, never()).sendFile(any(), any(), any(), any(), any())
         verify(fileTransformer, times(1)).transform(file)
     }
 
@@ -762,7 +775,7 @@ internal class MoshiChatApiTest {
     fun testSendFileWithoutCallback(fileUploaderResult: Result<UploadedFile>, expected: KClass<*>) = runTest {
         // given
         val fileUploader = mock<FileUploader>()
-        whenever(fileUploader.sendFile(any(), any(), any(), any())).doReturn(fileUploaderResult)
+        whenever(fileUploader.sendFile(any(), any(), anyOrNull())).doReturn(fileUploaderResult)
         val fileTransformer = spy<NoOpFileTransformer>()
         val sut = Fixture()
             .withFileUploader(fileUploader)
@@ -775,10 +788,17 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val file = randomFile()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.sendFile(channelType, channelId, file).await()
+        val result = sut.sendFile(channelType, channelId, file, messageId = null).await()
         // then
         result `should be instance of` expected
-        verify(fileUploader, times(1)).sendFile(channelType, channelId, userId, file)
+        val contextCaptor = argumentCaptor<FileUploadContext>()
+        verify(fileUploader, times(1)).sendFile(contextCaptor.capture(), eq(file), isNull())
+        val uploadContext = contextCaptor.firstValue
+        uploadContext.channelType `should be equal to` channelType
+        uploadContext.channelId `should be equal to` channelId
+        uploadContext.userId `should be equal to` userId
+        uploadContext.messageId.shouldBeNull()
+        verify(fileUploader, never()).sendFile(any(), any(), any(), any())
         verify(fileUploader, never()).sendFile(any(), any(), any(), any(), any())
         verify(fileTransformer, times(1)).transform(file)
     }
@@ -788,7 +808,7 @@ internal class MoshiChatApiTest {
     fun testSendImageWithCallback(fileUploaderResult: Result<UploadedFile>, expected: KClass<*>) = runTest {
         // given
         val fileUploader = mock<FileUploader>()
-        whenever(fileUploader.sendImage(any(), any(), any(), any(), any())).doReturn(fileUploaderResult)
+        whenever(fileUploader.sendImage(any(), any(), anyOrNull())).doReturn(fileUploaderResult)
         val fileTransformer = spy<NoOpFileTransformer>()
         val sut = Fixture()
             .withFileUploader(fileUploader)
@@ -801,12 +821,20 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val file = randomFile()
         val callback = mock<ProgressCallback>()
+        val messageId = randomString()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.sendImage(channelType, channelId, file, callback).await()
+        val result = sut.sendImage(channelType, channelId, file, messageId, callback).await()
         // then
         result `should be instance of` expected
-        verify(fileUploader, times(1)).sendImage(channelType, channelId, userId, file, callback)
+        val contextCaptor = argumentCaptor<FileUploadContext>()
+        verify(fileUploader, times(1)).sendImage(contextCaptor.capture(), eq(file), eq(callback))
+        val uploadContext = contextCaptor.firstValue
+        uploadContext.channelType `should be equal to` channelType
+        uploadContext.channelId `should be equal to` channelId
+        uploadContext.userId `should be equal to` userId
+        uploadContext.messageId `should be equal to` messageId
         verify(fileUploader, never()).sendImage(any(), any(), any(), any())
+        verify(fileUploader, never()).sendImage(any(), any(), any(), any(), any())
         verify(fileTransformer, times(1)).transform(file)
     }
 
@@ -815,7 +843,7 @@ internal class MoshiChatApiTest {
     fun testSendImageWithoutCallback(fileUploaderResult: Result<UploadedFile>, expected: KClass<*>) = runTest {
         // given
         val fileUploader = mock<FileUploader>()
-        whenever(fileUploader.sendImage(any(), any(), any(), any())).doReturn(fileUploaderResult)
+        whenever(fileUploader.sendImage(any(), any(), anyOrNull())).doReturn(fileUploaderResult)
         val fileTransformer = spy<NoOpFileTransformer>()
         val sut = Fixture()
             .withFileUploader(fileUploader)
@@ -828,10 +856,17 @@ internal class MoshiChatApiTest {
         val channelId = randomString()
         val file = randomFile()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.sendImage(channelType, channelId, file).await()
+        val result = sut.sendImage(channelType, channelId, file, messageId = null).await()
         // then
         result `should be instance of` expected
-        verify(fileUploader, times(1)).sendImage(channelType, channelId, userId, file)
+        val contextCaptor = argumentCaptor<FileUploadContext>()
+        verify(fileUploader, times(1)).sendImage(contextCaptor.capture(), eq(file), isNull())
+        val uploadContext = contextCaptor.firstValue
+        uploadContext.channelType `should be equal to` channelType
+        uploadContext.channelId `should be equal to` channelId
+        uploadContext.userId `should be equal to` userId
+        uploadContext.messageId.shouldBeNull()
+        verify(fileUploader, never()).sendImage(any(), any(), any(), any())
         verify(fileUploader, never()).sendImage(any(), any(), any(), any(), any())
         verify(fileTransformer, times(1)).transform(file)
     }
