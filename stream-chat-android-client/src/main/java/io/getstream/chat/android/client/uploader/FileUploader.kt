@@ -31,7 +31,7 @@ public interface FileUploader {
      * Uploads a file within the given [uploadContext]. Progress can be accessed via [callback].
      *
      * When the upload is part of sending a message, [FileUploadContext.messageId] carries the id the message
-     * will be sent with, allowing implementations to link the uploaded file to the message on their own backend.
+     * will be sent with.
      *
      * The default implementation ignores the extra context and delegates to the corresponding legacy
      * overload: `sendFile(channelType, channelId, userId, file, callback)` when [callback] is not null,
@@ -54,7 +54,7 @@ public interface FileUploader {
      * Uploads an image within the given [uploadContext]. Progress can be accessed via [callback].
      *
      * When the upload is part of sending a message, [FileUploadContext.messageId] carries the id the message
-     * will be sent with, allowing implementations to link the uploaded image to the message on their own backend.
+     * will be sent with.
      *
      * The default implementation ignores the extra context and delegates to the corresponding legacy
      * overload: `sendImage(channelType, channelId, userId, file, callback)` when [callback] is not null,

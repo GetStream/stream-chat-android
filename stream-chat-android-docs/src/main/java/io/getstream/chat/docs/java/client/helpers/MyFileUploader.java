@@ -19,8 +19,7 @@ public class MyFileUploader implements FileUploader {
     @Override
     public Result<UploadedFile> sendFile(@NotNull FileUploadContext uploadContext, @NotNull File file, @Nullable ProgressCallback callback) {
         try {
-            // uploadContext.getMessageId() is the id of the message this file belongs to. Use it to link
-            // the upload to the message on your own backend before the message is sent.
+            // uploadContext.getMessageId() is the id the message containing this file will be sent with.
             return new Result.Success<>(new UploadedFile("file url", "thumb url"));
         } catch (Exception e) {
             return new Result.Failure(new Error.ThrowableError("Could not send file.", e));
@@ -31,8 +30,7 @@ public class MyFileUploader implements FileUploader {
     @Override
     public Result<UploadedFile> sendImage(@NotNull FileUploadContext uploadContext, @NotNull File file, @Nullable ProgressCallback callback) {
         try {
-            // uploadContext.getMessageId() is the id of the message this image belongs to. Use it to link
-            // the upload to the message on your own backend before the message is sent.
+            // uploadContext.getMessageId() is the id the message containing this image will be sent with.
             return new Result.Success<>(new UploadedFile("url", null));
         } catch (Exception e) {
             return new Result.Failure(new Error.ThrowableError("Could not send image.", e));

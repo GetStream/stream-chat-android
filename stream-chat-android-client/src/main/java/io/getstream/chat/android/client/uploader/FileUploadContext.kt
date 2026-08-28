@@ -24,9 +24,8 @@ package io.getstream.chat.android.client.uploader
  * @property channelId The id of the channel the file is uploaded to.
  * @property userId The id of the user uploading the file.
  * @property messageId The id of the message the uploaded file belongs to, or null when the upload is not part
- * of sending a message. For message attachments this is the id the message will be sent with, so a custom
- * [FileUploader] can link the uploaded file to the message on its own backend before the message reaches the
- * Stream API.
+ * of sending a message. For message attachments this is the id the message will be sent with, known before
+ * the message reaches the Stream API.
  */
 public class FileUploadContext internal constructor(
     public val channelType: String,

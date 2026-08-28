@@ -14,8 +14,7 @@ class MyFileUploader : FileUploader {
         file: File,
         callback: ProgressCallback?,
     ): Result<UploadedFile> {
-        // uploadContext.messageId is the id of the message this file belongs to. Use it to link the upload
-        // to the message on your own backend before the message is sent.
+        // uploadContext.messageId is the id the message containing this file will be sent with.
         return try {
             Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
@@ -28,8 +27,7 @@ class MyFileUploader : FileUploader {
         file: File,
         callback: ProgressCallback?,
     ): Result<UploadedFile> {
-        // uploadContext.messageId is the id of the message this image belongs to. Use it to link the upload
-        // to the message on your own backend before the message is sent.
+        // uploadContext.messageId is the id the message containing this image will be sent with.
         return try {
             Result.Success(UploadedFile(file = "url"))
         } catch (e: Exception) {
