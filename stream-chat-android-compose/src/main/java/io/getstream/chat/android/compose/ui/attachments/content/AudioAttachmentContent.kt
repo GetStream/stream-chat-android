@@ -208,7 +208,8 @@ private fun AudioPlaybackProgress(
             isPlaying = playback.playing,
             modifier = Modifier
                 .weight(1f)
-                .height(SliderHeight),
+                .height(SliderHeight)
+                .testTag("Stream_AudioAttachmentSlider"),
             enabled = playback.hasSource,
             animationDurationMs = ProgressUpdateIntervalMs,
             onDragStart = {

@@ -109,7 +109,10 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     @Test
     fun `file attachment content with an audio file`() {
         snapshotWithDarkMode {
-            FileAttachmentContentWithAudio(isMine = false)
+            Column {
+                FileAttachmentContentWithAudio(isMine = false)
+                FileAttachmentContentWithAudio(isMine = true)
+            }
         }
     }
 
