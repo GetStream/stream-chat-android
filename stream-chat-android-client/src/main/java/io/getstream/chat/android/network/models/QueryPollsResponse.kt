@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response for [io.getstream.chat.android.client.api2.endpoint.PollsApi.queryPollVotes]
  *
- * @param next The identifier for the next page of poll votes.
- * @param prev The identifier for the previous page of poll votes.
- * @param votes The list of poll votes.
  */
-@JsonClass(generateAdapter = true)
-internal data class QueryPollVotesResponse(
-    val next: String?,
-    val prev: String?,
-    val votes: List<DownstreamVoteDto>,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class QueryPollsResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "polls")
+    internal val polls: List<PollResponseData> = emptyList(),
+
+    @Json(name = "next")
+    internal val next: String? = null,
+
+    @Json(name = "prev")
+    internal val prev: String? = null,
 )

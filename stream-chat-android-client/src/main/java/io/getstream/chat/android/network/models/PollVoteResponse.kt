@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response for voting on a poll.
  *
- * @property duration The duration of the request.
- * @property vote The vote object.
  */
-@JsonClass(generateAdapter = true)
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class PollVoteResponse(
-    val duration: String,
-    val vote: DownstreamVoteDto,
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "poll")
+    internal val poll: PollResponseData? = null,
+
+    @Json(name = "vote")
+    internal val vote: PollVoteResponseData? = null,
 )

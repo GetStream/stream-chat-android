@@ -57,6 +57,8 @@ import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.same
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import java.io.File
@@ -117,7 +119,7 @@ internal class UploadAttachmentsIntegrationTests {
     @Test
     fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
         runTest {
-            whenever(uploader!!.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+            whenever(uploader!!.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doThrow IllegalStateException("Error")
 
             val attachments = randomAttachmentsWithFile().map {
                 it.copy(uploadState = Attachment.UploadState.Idle)
@@ -138,7 +140,7 @@ internal class UploadAttachmentsIntegrationTests {
     @Test
     fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
         runTest {
-            whenever(uploader!!.uploadAttachment(any(), any(), any(), any()))
+            whenever(uploader!!.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull()))
                 .doAnswer { invocation ->
                     val attachment = invocation.arguments[2] as Attachment
                     Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
@@ -155,6 +157,8 @@ internal class UploadAttachmentsIntegrationTests {
 
             uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
 
+            verify(uploader!!, times(attachments.size))
+                .uploadAttachment(eq(channelType), eq(channelId), any(), eq(message.id), anyOrNull())
             val persistedMessage = messageRepository.selectMessage(message.id)!!
             persistedMessage.attachments.size shouldBeEqualTo attachments.size
 
@@ -172,6 +176,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelId),
                     same(file),
                     anyOrNull(),
+                    anyOrNull(),
                 ),
             ) doReturn TestCall(fileResult)
             whenever(
@@ -179,6 +184,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelType),
                     eq(channelId),
                     same(file),
+                    anyOrNull(),
                     anyOrNull(),
                 ),
             ) doReturn TestCall(imageResult)
@@ -195,6 +201,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelId),
                     any(),
                     anyOrNull(),
+                    anyOrNull(),
                 ),
             ) doReturn TestCall(fileResult)
             whenever(
@@ -202,6 +209,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelType),
                     eq(channelId),
                     any(),
+                    anyOrNull(),
                     anyOrNull(),
                 ),
             ) doReturn TestCall(fileResult)

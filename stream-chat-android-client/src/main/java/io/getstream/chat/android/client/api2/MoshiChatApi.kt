@@ -68,6 +68,7 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
+import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -143,6 +144,7 @@ import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
+import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
@@ -775,59 +777,50 @@ constructor(
         channelType: String,
         channelId: String,
         file: File,
+        messageId: String?,
         callback: ProgressCallback?,
     ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
-        fileTransformer.transform(file)
-            .let { transformedFile ->
-                if (callback != null) {
-                    fileUploader.sendFile(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                        callback = callback,
-                    ).onSuccess { uploadedFile ->
-                        callback.onSuccess(url = uploadedFile.file)
-                    }.onError(callback::onError)
-                } else {
-                    fileUploader.sendFile(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                    )
-                }
-            }
+        val transformedFile = fileTransformer.transform(file)
+        // Read userId only after the (potentially slow) file transform, so a connection established in the
+        // meantime is picked up.
+        val uploadContext = FileUploadContext(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            messageId = messageId,
+        )
+        fileUploader.sendFile(uploadContext, transformedFile, callback)
+            .notifyProgressCallback(callback)
     }
 
     override fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
+        messageId: String?,
         callback: ProgressCallback?,
     ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
-        fileTransformer.transform(file)
-            .let { transformedFile ->
-                if (callback != null) {
-                    fileUploader.sendImage(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                        callback = callback,
-                    ).onSuccess { uploadedFile ->
-                        callback.onSuccess(url = uploadedFile.file)
-                    }.onError(callback::onError)
-                } else {
-                    fileUploader.sendImage(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                    )
-                }
-            }
+        val transformedFile = fileTransformer.transform(file)
+        // Read userId only after the (potentially slow) file transform, so a connection established in the
+        // meantime is picked up.
+        val uploadContext = FileUploadContext(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            messageId = messageId,
+        )
+        fileUploader.sendImage(uploadContext, transformedFile, callback)
+            .notifyProgressCallback(callback)
     }
+
+    private fun Result<UploadedFile>.notifyProgressCallback(callback: ProgressCallback?): Result<UploadedFile> =
+        also { result ->
+            callback?.let { cb ->
+                result
+                    .onSuccess { uploadedFile -> cb.onSuccess(url = uploadedFile.file) }
+                    .onError(cb::onError)
+            }
+        }
 
     override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
         return CoroutineCall(coroutineScope) {
@@ -1814,14 +1807,14 @@ constructor(
             messageId,
             pollId,
             CastPollVoteRequest(vote),
-        ).mapDomain { it.vote.toDomain() }
+        ).flatMapDomain { toVoteCall(it) }
 
     override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
         pollsApi.removePollVote(
             messageId,
             pollId,
             voteId,
-        ).mapDomain { it.vote.toDomain() }
+        ).flatMapDomain { toVoteCall(it) }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
         val request = UpdatePollPartialRequest(set = set, unset = unset)
@@ -2066,6 +2059,20 @@ constructor(
             CoroutineCall(coroutineScope) { Result.Success(member.toDomain()) }
         } else {
             val error = Error.GenericError("The updated member is missing from the response")
+            ErrorCall(coroutineScope, error)
+        }
+    }
+
+    /**
+     * The vote is optional in the response schema, so a missing one is surfaced as a failure rather
+     * than crashing the mapping.
+     */
+    private fun DomainMapping.toVoteCall(response: PollVoteResponse): Call<Vote> {
+        val vote = response.vote
+        return if (vote != null) {
+            CoroutineCall(coroutineScope) { Result.Success(vote.toDomain()) }
+        } else {
+            val error = Error.GenericError("The vote is missing from the response")
             ErrorCall(coroutineScope, error)
         }
     }
