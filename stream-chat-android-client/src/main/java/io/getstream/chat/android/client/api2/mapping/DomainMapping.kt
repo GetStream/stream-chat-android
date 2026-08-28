@@ -762,9 +762,6 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [PollOptionResponseData] into [PollOption]
-     */
-    /**
      * Transforms [PollOptionResponseData] to [Option].
      *
      * Not named `toDomain` because that maps to [PollOption], mirroring the hand-written
@@ -776,6 +773,9 @@ internal class DomainMapping(
         extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
     )
 
+    /**
+     * Transforms [PollOptionResponseData] into [PollOption]
+     */
     internal fun PollOptionResponseData.toDomain(): PollOption = PollOption(
         id = id,
         text = text,

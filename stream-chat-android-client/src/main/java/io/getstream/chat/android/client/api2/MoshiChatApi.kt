@@ -2080,7 +2080,7 @@ constructor(
         return if (vote != null) {
             CoroutineCall(coroutineScope) { Result.Success(vote.toDomain()) }
         } else {
-            val error = Error.GenericError("The cast vote is missing from the response")
+            val error = Error.GenericError("The vote is missing from the response")
             ErrorCall(coroutineScope, error)
         }
     }
