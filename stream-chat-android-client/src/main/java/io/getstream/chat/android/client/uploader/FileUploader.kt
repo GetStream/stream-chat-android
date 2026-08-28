@@ -24,6 +24,8 @@ import java.io.File
 /**
  * The FileUploader is responsible for sending and deleting files from given channel
  */
+// The context-aware and legacy overload sets must coexist: the context overloads delegate to the legacy
+// ones by default so that existing implementations keep working unchanged.
 @Suppress("TooManyFunctions")
 public interface FileUploader {
 
