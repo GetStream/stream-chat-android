@@ -119,6 +119,7 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
+import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -598,59 +599,50 @@ constructor(
         channelType: String,
         channelId: String,
         file: File,
+        messageId: String?,
         callback: ProgressCallback?,
     ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
-        fileTransformer.transform(file)
-            .let { transformedFile ->
-                if (callback != null) {
-                    fileUploader.sendFile(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                        callback = callback,
-                    ).onSuccess { uploadedFile ->
-                        callback.onSuccess(url = uploadedFile.file)
-                    }.onError(callback::onError)
-                } else {
-                    fileUploader.sendFile(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                    )
-                }
-            }
+        val transformedFile = fileTransformer.transform(file)
+        // Read userId only after the (potentially slow) file transform, so a connection established in the
+        // meantime is picked up.
+        val uploadContext = FileUploadContext(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            messageId = messageId,
+        )
+        fileUploader.sendFile(uploadContext, transformedFile, callback)
+            .notifyProgressCallback(callback)
     }
 
     override fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
+        messageId: String?,
         callback: ProgressCallback?,
     ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
-        fileTransformer.transform(file)
-            .let { transformedFile ->
-                if (callback != null) {
-                    fileUploader.sendImage(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                        callback = callback,
-                    ).onSuccess { uploadedFile ->
-                        callback.onSuccess(url = uploadedFile.file)
-                    }.onError(callback::onError)
-                } else {
-                    fileUploader.sendImage(
-                        channelType = channelType,
-                        channelId = channelId,
-                        userId = userId,
-                        file = transformedFile,
-                    )
-                }
-            }
+        val transformedFile = fileTransformer.transform(file)
+        // Read userId only after the (potentially slow) file transform, so a connection established in the
+        // meantime is picked up.
+        val uploadContext = FileUploadContext(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            messageId = messageId,
+        )
+        fileUploader.sendImage(uploadContext, transformedFile, callback)
+            .notifyProgressCallback(callback)
     }
+
+    private fun Result<UploadedFile>.notifyProgressCallback(callback: ProgressCallback?): Result<UploadedFile> =
+        also { result ->
+            callback?.let { cb ->
+                result
+                    .onSuccess { uploadedFile -> cb.onSuccess(url = uploadedFile.file) }
+                    .onError(cb::onError)
+            }
+        }
 
     override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
         return CoroutineCall(coroutineScope) {
