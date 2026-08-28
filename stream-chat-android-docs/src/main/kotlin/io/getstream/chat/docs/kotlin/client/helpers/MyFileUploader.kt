@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin.client.helpers
 
+import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.UploadedFile
@@ -8,6 +9,32 @@ import io.getstream.result.Result
 import java.io.File
 
 class MyFileUploader : FileUploader {
+    override fun sendFile(
+        uploadContext: FileUploadContext,
+        file: File,
+        callback: ProgressCallback?,
+    ): Result<UploadedFile> {
+        // uploadContext.messageId is the id the message containing this file will be sent with.
+        return try {
+            Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
+        } catch (e: Exception) {
+            Result.Failure(Error.ThrowableError(message = "Could not send file.", cause = e))
+        }
+    }
+
+    override fun sendImage(
+        uploadContext: FileUploadContext,
+        file: File,
+        callback: ProgressCallback?,
+    ): Result<UploadedFile> {
+        // uploadContext.messageId is the id the message containing this image will be sent with.
+        return try {
+            Result.Success(UploadedFile(file = "url"))
+        } catch (e: Exception) {
+            Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
+        }
+    }
+
     override fun sendFile(
         channelType: String,
         channelId: String,
