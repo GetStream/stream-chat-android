@@ -42,13 +42,11 @@ import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMemberDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
-import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamOptionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
-import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
@@ -57,10 +55,12 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
+import io.getstream.chat.android.client.Mother.randomModerationV2Response
 import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
+import io.getstream.chat.android.client.Mother.randomReactionGroupResponse
 import io.getstream.chat.android.client.Mother.randomReactionResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
@@ -201,7 +201,7 @@ internal class DomainMappingTest {
                 pinned_by = randomDownstreamUserDto(),
                 quoted_message = randomDownstreamMessageDto(),
                 moderation_details = randomDownstreamModerationDetailsDto(),
-                moderation = randomDownstreamModerationDto(),
+                moderation = randomModerationV2Response(),
                 poll = randomDownstreamPollDto(),
                 deleted_for_me = randomBoolean(),
             ).toDomain()
@@ -572,19 +572,19 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamReactionGroupDto is correctly mapped to ReactionGroup`() {
-        val downstreamReactionGroupDto = randomDownstreamReactionGroupDto()
+    fun `ReactionGroupResponse is correctly mapped to ReactionGroup`() {
+        val reactionGroupResponse = randomReactionGroupResponse()
         val sut = Fixture().get()
         val type = randomString()
         val reactionGroup = with(sut) {
-            downstreamReactionGroupDto.toDomain(type)
+            reactionGroupResponse.toDomain(type)
         }
         val expected = ReactionGroup(
             type = type,
-            count = downstreamReactionGroupDto.count,
-            sumScore = downstreamReactionGroupDto.sum_scores,
-            firstReactionAt = downstreamReactionGroupDto.first_reaction_at,
-            lastReactionAt = downstreamReactionGroupDto.last_reaction_at,
+            count = reactionGroupResponse.count,
+            sumScore = reactionGroupResponse.sumScores,
+            firstReactionAt = reactionGroupResponse.firstReactionAt,
+            lastReactionAt = reactionGroupResponse.lastReactionAt,
         )
         assertEquals(expected, reactionGroup)
     }
@@ -1263,18 +1263,18 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamModerationDto is correctly mapped to Moderation`() {
-        val downstreamModerationDto = randomDownstreamModerationDto()
+    fun `ModerationV2Response is correctly mapped to Moderation`() {
+        val moderationResponse = randomModerationV2Response()
         val sut = Fixture().get()
-        val moderation = with(sut) { downstreamModerationDto.toDomain() }
+        val moderation = with(sut) { moderationResponse.toDomain() }
         val expected = Moderation(
-            action = ModerationAction(downstreamModerationDto.action),
-            originalText = downstreamModerationDto.original_text,
-            textHarms = downstreamModerationDto.text_harms ?: emptyList(),
-            imageHarms = downstreamModerationDto.image_harms ?: emptyList(),
-            blocklistMatched = downstreamModerationDto.blocklist_matched,
-            semanticFilterMatched = downstreamModerationDto.semantic_filter_matched,
-            platformCircumvented = downstreamModerationDto.platform_circumvented ?: false,
+            action = ModerationAction(moderationResponse.action),
+            originalText = moderationResponse.originalText,
+            textHarms = moderationResponse.textHarms ?: emptyList(),
+            imageHarms = moderationResponse.imageHarms ?: emptyList(),
+            blocklistMatched = moderationResponse.blocklistMatched,
+            semanticFilterMatched = moderationResponse.semanticFilterMatched,
+            platformCircumvented = moderationResponse.platformCircumvented ?: false,
         )
         assertEquals(expected, moderation)
     }

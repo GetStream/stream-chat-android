@@ -37,14 +37,12 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
@@ -100,11 +98,13 @@ import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -320,7 +320,7 @@ internal object Mother {
         quoted_message_id: String? = randomString(),
         reaction_counts: Map<String, Int>? = emptyMap(),
         reaction_scores: Map<String, Int>? = emptyMap(),
-        reaction_groups: Map<String, DownstreamReactionGroupDto>? = emptyMap(),
+        reaction_groups: Map<String, ReactionGroupResponse>? = emptyMap(),
         reply_count: Int = randomInt(),
         deleted_reply_count: Int = randomInt(),
         shadowed: Boolean = randomBoolean(),
@@ -332,7 +332,7 @@ internal object Mother {
         updated_at: Date = randomDate(),
         user: DownstreamUserDto = randomDownstreamUserDto(),
         moderation_details: DownstreamModerationDetailsDto? = null,
-        moderation: DownstreamModerationDto? = null,
+        moderation: ModerationV2Response? = null,
         poll: DownstreamPollDto? = null,
         member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
         deleted_for_me: Boolean? = null,
@@ -723,16 +723,16 @@ internal object Mother {
         expires = expires,
     )
 
-    fun randomDownstreamReactionGroupDto(
+    fun randomReactionGroupResponse(
         count: Int = randomInt(),
         sumScores: Int = randomInt(),
         firstReactionAt: Date = randomDate(),
         lastReactionAt: Date = randomDate(),
-    ): DownstreamReactionGroupDto = DownstreamReactionGroupDto(
+    ): ReactionGroupResponse = ReactionGroupResponse(
         count = count,
-        sum_scores = sumScores,
-        first_reaction_at = firstReactionAt,
-        last_reaction_at = lastReactionAt,
+        sumScores = sumScores,
+        firstReactionAt = firstReactionAt,
+        lastReactionAt = lastReactionAt,
     )
 
     fun randomChannelMemberResponse(
@@ -967,7 +967,7 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamModerationDto(
+    fun randomModerationV2Response(
         action: String = randomString(),
         originalText: String = randomString(),
         textHarms: List<String> = listOf(randomString()),
@@ -975,14 +975,14 @@ internal object Mother {
         blocklistMatched: String = randomString(),
         semanticFilterMatched: String = randomString(),
         platformCircumvented: Boolean = randomBoolean(),
-    ): DownstreamModerationDto = DownstreamModerationDto(
+    ): ModerationV2Response = ModerationV2Response(
         action = action,
-        original_text = originalText,
-        text_harms = textHarms,
-        image_harms = imageHarms,
-        blocklist_matched = blocklistMatched,
-        semantic_filter_matched = semanticFilterMatched,
-        platform_circumvented = platformCircumvented,
+        originalText = originalText,
+        textHarms = textHarms,
+        imageHarms = imageHarms,
+        blocklistMatched = blocklistMatched,
+        semanticFilterMatched = semanticFilterMatched,
+        platformCircumvented = platformCircumvented,
     )
 
     fun randomPrivacySettingsDto(

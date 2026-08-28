@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.Attachment
+import io.getstream.chat.android.network.models.ModerationV2Response
+import io.getstream.chat.android.network.models.ReactionGroupResponse
 import java.util.Date
 
 /**
@@ -57,7 +59,7 @@ internal data class DownstreamMessageDto(
     val quoted_message_id: String?,
     val reaction_counts: Map<String, Int>?,
     val reaction_scores: Map<String, Int>?,
-    val reaction_groups: Map<String, DownstreamReactionGroupDto>?,
+    val reaction_groups: Map<String, ReactionGroupResponse>?,
     val reply_count: Int,
     val deleted_reply_count: Int,
     val shadowed: Boolean = false,
@@ -69,7 +71,7 @@ internal data class DownstreamMessageDto(
     val updated_at: Date,
     val user: DownstreamUserDto,
     val moderation_details: DownstreamModerationDetailsDto? = null, // Used for Moderation V1
-    val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
+    val moderation: ModerationV2Response? = null, // Used for Moderation V2
     val poll: DownstreamPollDto? = null,
     val reminder: DownstreamReminderInfoDto? = null,
     val shared_location: DownstreamLocationDto? = null,

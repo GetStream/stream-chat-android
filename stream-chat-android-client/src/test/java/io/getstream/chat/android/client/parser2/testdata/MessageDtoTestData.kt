@@ -18,9 +18,9 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.network.models.MessageRequest
+import io.getstream.chat.android.network.models.ReactionGroupResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -151,11 +151,11 @@ internal object MessageDtoTestData {
         reaction_scores = mapOf("like" to 10),
         reaction_groups = mapOf(
             "like" to
-                DownstreamReactionGroupDto(
+                ReactionGroupResponse(
                     count = 2,
-                    sum_scores = 10,
-                    first_reaction_at = Date(1591787071588),
-                    last_reaction_at = Date(1591787071588),
+                    sumScores = 10,
+                    firstReactionAt = Date(1591787071588),
+                    lastReactionAt = Date(1591787071588),
                 ),
         ),
         latest_reactions = listOf(ReactionDtoTestData.downstreamReactionWithoutExtraData),

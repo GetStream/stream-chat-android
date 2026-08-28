@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.dto
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Downstream JSON holding the data related to Moderation V2.
+ * Contains information about a user who reacted with this reaction type.
  */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamModerationDto(
-    val action: String,
-    val original_text: String,
-    val text_harms: List<String>?,
-    val image_harms: List<String>?,
-    val blocklist_matched: String?,
-    val semantic_filter_matched: String?,
-    val platform_circumvented: Boolean?,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class ReactionGroupUserResponse(
+    @Json(name = "created_at")
+    internal val createdAt: java.util.Date,
+
+    @Json(name = "user_id")
+    internal val userId: String,
+
+    @Json(name = "user")
+    internal val user: io.getstream.chat.android.network.models.UserResponse? = null,
 )

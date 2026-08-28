@@ -35,14 +35,12 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
@@ -137,6 +135,7 @@ import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -144,6 +143,7 @@ import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
@@ -531,15 +531,15 @@ internal class DomainMapping(
         )
 
     /**
-     * Transforms [DownstreamReactionGroupDto] to [ReactionGroup].
+     * Transforms [ReactionGroupResponse] to [ReactionGroup].
      */
-    internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
+    internal fun ReactionGroupResponse.toDomain(type: String): ReactionGroup =
         ReactionGroup(
             type = type,
             count = count,
-            sumScore = sum_scores,
-            firstReactionAt = first_reaction_at,
-            lastReactionAt = last_reaction_at,
+            sumScore = sumScores,
+            firstReactionAt = firstReactionAt,
+            lastReactionAt = lastReactionAt,
         )
 
     /**
@@ -1158,16 +1158,16 @@ internal class DomainMapping(
     )
 
     /**
-     * Maps the network [DownstreamModerationDto] to the domain model [Moderation].
+     * Maps the network [ModerationV2Response] to the domain model [Moderation].
      */
-    internal fun DownstreamModerationDto.toDomain() = Moderation(
-        action = ModerationAction.fromValue(this.action),
-        originalText = this.original_text,
-        textHarms = this.text_harms.orEmpty(),
-        imageHarms = this.image_harms.orEmpty(),
-        blocklistMatched = this.blocklist_matched,
-        semanticFilterMatched = this.semantic_filter_matched,
-        platformCircumvented = this.platform_circumvented ?: false,
+    internal fun ModerationV2Response.toDomain() = Moderation(
+        action = ModerationAction.fromValue(action),
+        originalText = originalText,
+        textHarms = textHarms.orEmpty(),
+        imageHarms = imageHarms.orEmpty(),
+        blocklistMatched = blocklistMatched,
+        semanticFilterMatched = semanticFilterMatched,
+        platformCircumvented = platformCircumvented ?: false,
     )
 
     /**
