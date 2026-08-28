@@ -36,14 +36,10 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
-import io.getstream.chat.android.client.api2.model.response.PollResponse
-import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
@@ -74,7 +70,11 @@ import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
+import io.getstream.chat.android.network.models.PollResponse
+import io.getstream.chat.android.network.models.PollVoteResponse
+import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
+import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
@@ -660,11 +660,11 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryPollVotesInput() = listOf(
         Arguments.of(
-            RetroSuccess(Mother.randomQueryPollVotesResponse()).toRetrofitCall(),
+            RetroSuccess(Mother.randomPollVotesResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<QueryPollVotesResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<PollVotesResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
@@ -919,7 +919,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 PollResponse(
-                    poll = Mother.randomDownstreamPollDto(),
+                    poll = Mother.randomPollResponseData(),
                     duration = randomString(),
                 ),
             ).toRetrofitCall(),
@@ -946,7 +946,7 @@ internal object MoshiChatApiTestArguments {
             RetroSuccess(
                 PollVoteResponse(
                     duration = randomString(),
-                    vote = Mother.randomDownstreamVoteDto(),
+                    vote = Mother.randomPollVoteResponseData(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,

@@ -143,6 +143,7 @@ import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
+import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
@@ -1814,14 +1815,14 @@ constructor(
             messageId,
             pollId,
             CastPollVoteRequest(vote),
-        ).mapDomain { it.vote.toDomain() }
+        ).flatMapDomain { toVoteCall(it) }
 
     override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
         pollsApi.removePollVote(
             messageId,
             pollId,
             voteId,
-        ).mapDomain { it.vote.toDomain() }
+        ).flatMapDomain { toVoteCall(it) }
 
     override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
         val request = UpdatePollPartialRequest(set = set, unset = unset)
@@ -2066,6 +2067,20 @@ constructor(
             CoroutineCall(coroutineScope) { Result.Success(member.toDomain()) }
         } else {
             val error = Error.GenericError("The updated member is missing from the response")
+            ErrorCall(coroutineScope, error)
+        }
+    }
+
+    /**
+     * The vote is optional in the response schema, so a missing one is surfaced as a failure rather
+     * than crashing the mapping.
+     */
+    private fun DomainMapping.toVoteCall(response: PollVoteResponse): Call<Vote> {
+        val vote = response.vote
+        return if (vote != null) {
+            CoroutineCall(coroutineScope) { Result.Success(vote.toDomain()) }
+        } else {
+            val error = Error.GenericError("The vote is missing from the response")
             ErrorCall(coroutineScope, error)
         }
     }
