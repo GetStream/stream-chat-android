@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.ChannelMemberPartialResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelResponseAdapter
@@ -48,12 +49,14 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAd
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadInfoDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DraftPayloadResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.MessageResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
@@ -109,6 +112,9 @@ internal class MoshiChatParser(
             .add(UserResponseAdapter)
             .add(UserRequestAdapter)
             .add(NetworkAttachmentAdapter)
+            .add(MessageResponseAdapter)
+            .add(ChannelMemberPartialResponseAdapter)
+            .add(DraftPayloadResponseAdapter)
             .add(MessageRequestAdapter)
             .add(ChannelMemberRequestAdapter)
             .add(ChannelInputRequestAdapter)

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.parser2
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.FullUserResponse
+import io.getstream.chat.android.network.models.MessageResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContainAll
 import org.junit.jupiter.api.Test
@@ -132,5 +133,45 @@ internal class GeneratedExtraDataParityTest {
         )
         // Still parsed into its own field, not only kept in the map.
         user.shadowBanned shouldBeEqualTo true
+    }
+
+    @Test
+    fun `A message keeps the keys the hand-written DTO did not declare`() {
+        val message = parser.fromJson(
+            """
+            {
+              "id": "m1", "cid": "messaging:c1", "text": "hi", "html": "", "type": "regular",
+              "created_at": "2026-08-28T10:00:00.000Z", "updated_at": "2026-08-28T10:00:00.000Z",
+              "deleted_reply_count": 0, "reply_count": 0, "pinned": false, "shadowed": false,
+              "silent": false, "mentioned_channel": false, "mentioned_here": false,
+              "restricted_visibility": ["u1"], "mml": "<mml/>", "poll_id": "p1",
+              "mentioned_group_ids": ["g1"], "image_labels": { "cat": ["fluffy"] },
+              "draft": { "channel_cid": "messaging:c1", "created_at": "2026-08-28T10:00:00.000Z",
+                         "message": { "id": "d1", "text": "draft" } },
+              "sentinel": "keep-me",
+              "user": {
+                "id": "u1", "role": "user", "language": "en", "banned": false, "online": false,
+                "created_at": "2026-08-28T10:00:00.000Z", "updated_at": "2026-08-28T10:00:00.000Z"
+              }
+            }
+            """.trimIndent(),
+            MessageResponse::class.java,
+        )
+
+        message.custom.keys shouldContainAll setOf(
+            "sentinel",
+            "restricted_visibility",
+            "mml",
+            "poll_id",
+            "mentioned_group_ids",
+            "draft",
+            "image_labels",
+        )
+        message.custom["mml"] shouldBeEqualTo "<mml/>"
+        message.custom["poll_id"] shouldBeEqualTo "p1"
+        // Still parsed into their own fields, not only kept in the map.
+        message.mml shouldBeEqualTo "<mml/>"
+        message.pollId shouldBeEqualTo "p1"
+        message.restrictedVisibility shouldBeEqualTo listOf("u1")
     }
 }
