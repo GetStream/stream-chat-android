@@ -40,6 +40,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.same
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
@@ -56,6 +57,34 @@ internal class AttachmentUploaderTests {
     fun setup() {
         Shadows.shadowOf(MimeTypeMap.getSingleton())
             .addExtensionMimeTypMapping("jpg", "image/jpeg")
+    }
+
+    @Test
+    fun `Should forward the message id to the client when uploading an attachment`() = runTest {
+        val messageId = randomString()
+        val attachment = randomAttachments(size = 1).first()
+        val clientMock = mock<ChatClient>()
+        whenever(
+            clientMock.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()),
+        ) doReturn TestCall(Result.Success(UploadedFile(file = "url")))
+
+        AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment, messageId = messageId)
+
+        verify(clientMock).sendFile(eq(channelType), eq(channelId), any(), eq(messageId), anyOrNull())
+    }
+
+    @Test
+    fun `Should forward the message id to the client when uploading an image attachment`() = runTest {
+        val messageId = randomString()
+        val attachment = randomAttachments(size = 1).first().copy(upload = randomFile(extension = "jpg"))
+        val clientMock = mock<ChatClient>()
+        whenever(
+            clientMock.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()),
+        ) doReturn TestCall(Result.Success(UploadedFile(file = "url")))
+
+        AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment, messageId = messageId)
+
+        verify(clientMock).sendImage(eq(channelType), eq(channelId), any(), eq(messageId), anyOrNull())
     }
 
     @Test
@@ -182,6 +211,7 @@ internal class AttachmentUploaderTests {
                     eq(channelId),
                     any(),
                     anyOrNull(),
+                    anyOrNull(),
                 ),
             ) doReturn TestCall(result)
         }
@@ -196,6 +226,7 @@ internal class AttachmentUploaderTests {
                         eq(channelId),
                         same(file),
                         anyOrNull(),
+                        anyOrNull(),
                     ),
                 ) doReturn TestCall(fileResult)
                 whenever(
@@ -203,6 +234,7 @@ internal class AttachmentUploaderTests {
                         eq(channelType),
                         eq(channelId),
                         same(file),
+                        anyOrNull(),
                         anyOrNull(),
                     ),
                 ) doReturn TestCall(fileResult)

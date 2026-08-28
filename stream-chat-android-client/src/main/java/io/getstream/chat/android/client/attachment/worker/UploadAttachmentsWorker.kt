@@ -126,7 +126,8 @@ public class UploadAttachmentsWorker(
                                 )
                             }
 
-                            attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
+                            attachmentUploader
+                                .uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
                                 .recover { error ->
                                     attachment.copy(uploadState = Attachment.UploadState.Failed(error))
                                 }

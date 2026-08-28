@@ -3593,15 +3593,29 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileTr
 	public abstract fun transform (Ljava/io/File;)Ljava/io/File;
 }
 
+public final class io/getstream/chat/android/client/uploader/FileUploadContext {
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelId ()Ljava/lang/String;
+	public final fun getChannelType ()Ljava/lang/String;
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getUserId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/client/uploader/FileUploader {
 	public fun deleteFile (Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
 	public fun deleteImage (Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
+	public fun sendFile (Lio/getstream/chat/android/client/uploader/FileUploadContext;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public static synthetic fun sendFile$default (Lio/getstream/chat/android/client/uploader/FileUploader;Lio/getstream/chat/android/client/uploader/FileUploadContext;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/Result;
+	public fun sendImage (Lio/getstream/chat/android/client/uploader/FileUploadContext;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/uploader/FileUploader;Lio/getstream/chat/android/client/uploader/FileUploadContext;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/Result;
 	public fun uploadFile (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public fun uploadImage (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 }
