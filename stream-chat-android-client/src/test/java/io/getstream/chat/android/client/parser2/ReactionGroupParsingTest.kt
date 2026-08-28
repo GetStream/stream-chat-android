@@ -19,14 +19,15 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.testdata.ReactionGroupTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
+import io.getstream.chat.android.network.models.ReactionGroupResponse
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.Date
@@ -48,11 +49,11 @@ internal class ReactionGroupParsingTest {
 
     private val testType = "like"
 
-    // region DTO path (JSON → DownstreamReactionGroupDto → ReactionGroup)
+    // region Generated path (JSON → ReactionGroupResponse → ReactionGroup)
 
     @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(ReactionGroupTestData.jsonAllFields, DownstreamReactionGroupDto::class.java)
+    fun `Generated path - deserializes all fields`() {
+        val dto = parser.fromJson(ReactionGroupTestData.jsonAllFields, ReactionGroupResponse::class.java)
         val reactionGroup = with(domainMapping) { dto.toDomain(testType) }
         assertEquals(ReactionGroupTestData.expectedReactionGroupAllFields, reactionGroup)
     }
@@ -90,8 +91,9 @@ internal class ReactionGroupParsingTest {
 
     @Test
     fun `Both paths - same error on missing count`() {
+        val field = "count"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingCount, DownstreamReactionGroupDto::class.java)
+            parser.fromJson(ReactionGroupTestData.jsonMissingCount, ReactionGroupResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -101,13 +103,17 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
+        // Both paths must fail on the same wire field. The wording differs by design: the generated model
+        // names the Kotlin property and its @Json name, the direct adapter names the wire key.
+        assertTrue(dtoException.message.orEmpty().contains(field))
+        assertTrue(directException.message.orEmpty().contains(field))
     }
 
     @Test
     fun `Both paths - same error on missing sum_scores`() {
+        val field = "sum_scores"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingSumScores, DownstreamReactionGroupDto::class.java)
+            parser.fromJson(ReactionGroupTestData.jsonMissingSumScores, ReactionGroupResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -117,13 +123,17 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
+        // Both paths must fail on the same wire field. The wording differs by design: the generated model
+        // names the Kotlin property and its @Json name, the direct adapter names the wire key.
+        assertTrue(dtoException.message.orEmpty().contains(field))
+        assertTrue(directException.message.orEmpty().contains(field))
     }
 
     @Test
     fun `Both paths - same error on missing first_reaction_at`() {
+        val field = "first_reaction_at"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingFirstReactionAt, DownstreamReactionGroupDto::class.java)
+            parser.fromJson(ReactionGroupTestData.jsonMissingFirstReactionAt, ReactionGroupResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -133,13 +143,17 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
+        // Both paths must fail on the same wire field. The wording differs by design: the generated model
+        // names the Kotlin property and its @Json name, the direct adapter names the wire key.
+        assertTrue(dtoException.message.orEmpty().contains(field))
+        assertTrue(directException.message.orEmpty().contains(field))
     }
 
     @Test
     fun `Both paths - same error on missing last_reaction_at`() {
+        val field = "last_reaction_at"
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(ReactionGroupTestData.jsonMissingLastReactionAt, DownstreamReactionGroupDto::class.java)
+            parser.fromJson(ReactionGroupTestData.jsonMissingLastReactionAt, ReactionGroupResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             reactionGroupAdapter.parseWithType(
@@ -149,7 +163,10 @@ internal class ReactionGroupParsingTest {
                 testType,
             )
         }
-        assertEquals(dtoException.message, directException.message)
+        // Both paths must fail on the same wire field. The wording differs by design: the generated model
+        // names the Kotlin property and its @Json name, the direct adapter names the wire key.
+        assertTrue(dtoException.message.orEmpty().contains(field))
+        assertTrue(directException.message.orEmpty().contains(field))
     }
 
     // endregion
