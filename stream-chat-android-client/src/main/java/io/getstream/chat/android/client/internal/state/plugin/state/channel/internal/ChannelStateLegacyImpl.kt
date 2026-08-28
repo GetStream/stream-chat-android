@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
@@ -124,6 +125,15 @@ internal class ChannelStateLegacyImpl(
 
     override val hidden: StateFlow<Boolean> = _hidden!!
     override val muted: StateFlow<Boolean> = _muted!!
+    private val _servedFromCache = MutableStateFlow<Boolean?>(null)
+
+    override val servedFromCache: StateFlow<Boolean?> = _servedFromCache.asStateFlow()
+
+    /** Records the outcome of the local read for the current query. Null resets it for a new query. */
+    fun setServedFromCache(servedFromCache: Boolean?) {
+        _servedFromCache.value = servedFromCache
+    }
+
     override val loading: StateFlow<Boolean> = _loading!!
     override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages!!
     override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages!!

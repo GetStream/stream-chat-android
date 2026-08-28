@@ -81,11 +81,17 @@ internal class ChannelLogicLegacyImpl(
         /* It is not possible to guarantee that the next page of newer messages is the same of backend,
          * so we force the backend usage */
         if (!query.isFilteringNewerMessages()) {
-            runChannelQueryOffline(query)
+            val localChannel = runChannelQueryOffline(query)
+            if (!query.isFilteringMessages()) {
+                stateLogic.setServedFromCache(!localChannel?.messages.isNullOrEmpty())
+            }
         }
     }
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
+        if (!query.isFilteringMessages() && !query.isNotificationUpdate) {
+            stateLogic.setServedFromCache(null)
+        }
         when {
             query.filteringOlderMessages() -> stateLogic.loadingOlderMessages()
             query.isFilteringNewerMessages() -> stateLogic.loadingNewerMessages()

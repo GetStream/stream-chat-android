@@ -39,6 +39,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
@@ -164,6 +165,15 @@ internal class QueryChannelsMutableState(
     }
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest!!
+    private val _servedFromCache = MutableStateFlow<Boolean?>(null)
+
+    override val servedFromCache: StateFlow<Boolean?> = _servedFromCache.asStateFlow()
+
+    /** Records the outcome of the local read for the current query. Null resets it for a new query. */
+    fun setServedFromCache(servedFromCache: Boolean?) {
+        _servedFromCache.value = servedFromCache
+    }
+
     override val loading: StateFlow<Boolean> = _loading!!
     override val loadingMore: StateFlow<Boolean> = _loadingMore!!
     override val endOfChannels: StateFlow<Boolean> = _endOfChannels!!

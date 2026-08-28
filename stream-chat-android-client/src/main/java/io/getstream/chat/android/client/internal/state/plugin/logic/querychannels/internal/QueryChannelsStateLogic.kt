@@ -95,6 +95,11 @@ internal class QueryChannelsStateLogic(
      *
      * @param request [QueryChannelsRequest]
      */
+    /** Records whether the first page was served by the local read. */
+    internal fun setServedFromCache(servedFromCache: Boolean?) {
+        mutableState.setServedFromCache(servedFromCache)
+    }
+
     internal fun setCurrentRequest(request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsRequest] request: $request" }
         mutableState.setCurrentRequest(request)

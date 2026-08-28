@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -89,6 +90,27 @@ public interface QueryChannelsState {
 
     /** The channels loaded state. See [ChannelsStateData]. */
     public val channelsStateData: StateFlow<ChannelsStateData>
+
+    /**
+     * Whether the data currently in this state was produced by the local read rather than by
+     * the network response.
+     *
+     * Emits `null` until the local read for the current query completes -- content rendered while
+     * this is still `null` was already in memory and needed no read at all. `true` means the local
+     * read found data, which the SDK pushes into state before the request is sent, so that data is
+     * on screen ahead of any network response. `false` means the local read came back empty and the
+     * first content to appear can only have come from the network.
+     *
+     * Scoped to the first page of the query; loading further pages leaves it untouched. Grouped
+     * queries have no separate request step -- the local read is where the query begins -- so the
+     * value is set once when that read completes.
+     *
+     * Intended for load-performance instrumentation: read it at the moment the screen first shows
+     * content to attribute that render to memory, disk, or network. It is deliberately independent
+     * of [loading], which reflects a UI decision and may change as the UX does.
+     */
+    public val servedFromCache: StateFlow<Boolean?>
+        get() = MutableStateFlow(null)
 
     /**
      * Factory that produces [ChatEventHandler], which decides whether the set of channels should be updated.

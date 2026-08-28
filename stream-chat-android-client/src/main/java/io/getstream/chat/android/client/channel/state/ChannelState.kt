@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
@@ -124,6 +125,26 @@ public interface ChannelState {
 
     /** Number of messages in the channel. */
     public val messageCount: StateFlow<Int?>
+
+    /**
+     * Whether the data currently in this state was produced by the local read that precedes the
+     * network request, rather than by the network response.
+     *
+     * Emits `null` until the local read for the current query completes -- content rendered while
+     * this is still `null` was already in memory and needed no read at all. `true` means the local
+     * read found data, which the SDK pushes into state before the request is sent, so that data is
+     * on screen ahead of any network response. `false` means the local read came back empty and the
+     * first content to appear can only have come from the network.
+     *
+     * Scoped to the initial query for the channel; paginating older or newer messages leaves it
+     * untouched. Reset to `null` when a new initial query starts.
+     *
+     * Intended for load-performance instrumentation: read it at the moment the screen first shows
+     * content to attribute that render to memory, disk, or network. It is deliberately independent
+     * of [loading], which reflects a UI decision and may change as the UX does.
+     */
+    public val servedFromCache: StateFlow<Boolean?>
+        get() = MutableStateFlow(null)
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel

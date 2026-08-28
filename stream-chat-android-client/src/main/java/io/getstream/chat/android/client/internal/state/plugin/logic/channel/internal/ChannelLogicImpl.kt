@@ -91,7 +91,11 @@ internal class ChannelLogicImpl(
         if (query.isNotificationUpdate) return
         if (query.isFilteringMessages()) return
         // Populate from DB ONLY if loading latest messages
-        val channel = fetchOfflineChannel(cid, query) ?: return
+        val channel = fetchOfflineChannel(cid, query)
+        // Record where the first content on screen will have come from. This runs before the
+        // request is sent, so a hit here is guaranteed to reach the state ahead of any response.
+        state.setServedFromCache(!channel?.messages.isNullOrEmpty())
+        if (channel == null) return
         val localOnlyMessages = repository.selectLocalOnlyMessagesForChannel(cid)
         updateDataForChannel(
             channel = channel,
@@ -108,6 +112,10 @@ internal class ChannelLogicImpl(
     }
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
+        // A fresh initial query invalidates the previous attribution; pagination leaves it alone.
+        if (!query.isFilteringMessages() && !query.isNotificationUpdate) {
+            state.setServedFromCache(null)
+        }
         state.paginationManager.begin(query)
     }
 

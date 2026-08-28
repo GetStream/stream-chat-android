@@ -883,6 +883,11 @@ internal class ChannelStateLogic(
      * Called when the user is loading the newest messages.
      * Resets the current message limit.
      */
+    /** Records whether the local read for the current query produced data. */
+    fun setServedFromCache(servedFromCache: Boolean?) {
+        mutableState.setServedFromCache(servedFromCache)
+    }
+
     fun loadingNewestMessages() {
         mutableState.resetMessageLimit()
     }

@@ -253,6 +253,15 @@ internal class ChannelStateImpl(
 
     override val muted: StateFlow<Boolean> = _muted.asStateFlow()
 
+    private val _servedFromCache = MutableStateFlow<Boolean?>(null)
+
+    override val servedFromCache: StateFlow<Boolean?> = _servedFromCache.asStateFlow()
+
+    /** Records the outcome of the local read for the current query. Null resets it for a new query. */
+    fun setServedFromCache(servedFromCache: Boolean?) {
+        _servedFromCache.value = servedFromCache
+    }
+
     override val loading: StateFlow<Boolean> = _loading
 
     override val loadingOlderMessages: StateFlow<Boolean> =

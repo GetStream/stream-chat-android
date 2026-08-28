@@ -951,6 +951,7 @@ public abstract interface class io/getstream/chat/android/client/api/state/Query
 	public abstract fun getNextCursor ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getNextPageRequest ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getServedFromCache ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/models/querysort/QuerySorter;
 	public abstract fun setChatEventHandlerFactory (Lio/getstream/chat/android/client/api/event/ChatEventHandlerFactory;)V
 }
@@ -1214,6 +1215,7 @@ public abstract interface class io/getstream/chat/android/client/channel/state/C
 	public abstract fun getReads ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getRecoveryNeeded ()Z
 	public abstract fun getRepliedMessage ()Lkotlinx/coroutines/flow/StateFlow;
+	public fun getServedFromCache ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTyping ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getWatcherCount ()Lkotlinx/coroutines/flow/StateFlow;

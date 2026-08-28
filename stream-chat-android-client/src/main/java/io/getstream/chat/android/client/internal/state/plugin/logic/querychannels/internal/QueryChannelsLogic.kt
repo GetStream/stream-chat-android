@@ -100,6 +100,7 @@ internal class QueryChannelsLogic(
             channelLimit = CHANNEL_LIMIT
         }
         val cachedChannels = fetchChannelsFromCache(pagination)
+        queryChannelsStateLogic.setServedFromCache(!cachedChannels.isNullOrEmpty())
         groupedResultMutex.withLock {
             val existing = queryChannelsStateLogic.getChannels()
             if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
@@ -120,7 +121,13 @@ internal class QueryChannelsLogic(
         val hasOffset = pagination.channelOffset > 0
         loadingPerPage(true, hasOffset)
 
-        when (val cached = queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, identifier)) {
+        val cachedForPage = queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, identifier)
+        // Only the first page attributes the screen; later pages are not what the user waited for.
+        if (!hasOffset) {
+            queryChannelsStateLogic.setServedFromCache(!cachedForPage?.channels.isNullOrEmpty())
+        }
+
+        when (val cached = cachedForPage) {
             null -> {
                 // No cached spec found, rely on online data. Don't reset loading state here, and await online data.
             }
