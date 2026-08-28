@@ -60,8 +60,6 @@ import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -102,6 +100,10 @@ import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
+import io.getstream.chat.android.network.models.PollResponseData
+import io.getstream.chat.android.network.models.PollVoteResponseData
+import io.getstream.chat.android.network.models.PollVotesResponse
+import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -1384,21 +1386,55 @@ internal object Mother {
         next = next,
     )
 
+    fun randomPollResponseData(
+        id: String = randomString(),
+        name: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): PollResponseData = PollResponseData(
+        id = id,
+        name = name,
+        description = randomString(),
+        allowAnswers = randomBoolean(),
+        allowUserSuggestedOptions = randomBoolean(),
+        answersCount = randomInt(),
+        createdAt = randomDate(),
+        createdById = randomString(),
+        enforceUniqueVote = randomBoolean(),
+        updatedAt = randomDate(),
+        voteCount = randomInt(),
+        votingVisibility = "public",
+        custom = custom,
+    )
+
+    fun randomPollVoteResponseData(
+        id: String = randomString(),
+        pollId: String = randomString(),
+        optionId: String = randomString(),
+    ): PollVoteResponseData = PollVoteResponseData(
+        id = id,
+        pollId = pollId,
+        optionId = optionId,
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+    )
+
     fun randomQueryPollsResponse(
-        polls: List<DownstreamPollDto> = listOf(randomDownstreamPollDto()),
+        polls: List<PollResponseData> = listOf(randomPollResponseData()),
         next: String? = randomString(),
         prev: String? = randomString(),
     ): QueryPollsResponse = QueryPollsResponse(
+        duration = randomString(),
         polls = polls,
         next = next,
         prev = prev,
     )
 
-    fun randomQueryPollVotesResponse(
-        votes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
+    fun randomPollVotesResponse(
+        votes: List<PollVoteResponseData> = listOf(randomPollVoteResponseData()),
         next: String? = randomString(),
         prev: String? = randomString(),
-    ): QueryPollVotesResponse = QueryPollVotesResponse(
+    ): PollVotesResponse = PollVotesResponse(
+        duration = randomString(),
         votes = votes,
         next = next,
         prev = prev,
