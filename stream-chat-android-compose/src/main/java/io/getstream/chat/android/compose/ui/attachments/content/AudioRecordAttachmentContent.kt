@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.audio.playbackOf
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.common.PlaybackSpeedToggle
@@ -236,11 +237,9 @@ internal fun AudioRecordAttachmentContentItemBase(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable () -> Unit = {},
 ) {
-    val attachmentUrl = playerState.getRecordingUri(attachment)
-    val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
-    val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
-        ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
-    val playing = isCurrentAttachment && playerState.current.isPlaying
+    val playback = playerState.playbackOf(attachment)
+    val trackProgress = playback.progress
+    val playing = playback.playing
     val waveform = (if (playing) playerState.current.waveform else attachment.waveformData) ?: emptyList()
     val uploadProgress = attachment.uploadState as? UploadState.InProgress
 
@@ -263,7 +262,7 @@ internal fun AudioRecordAttachmentContentItemBase(
                 modifier = Modifier.weight(1f),
             )
         } else {
-            val isSeeking = isCurrentAttachment && playerState.current.isSeeking
+            val isSeeking = playback.isSeeking
             var currentProgress by remember { mutableFloatStateOf(trackProgress) }
             LaunchedEffect(trackProgress) {
                 if (!isSeeking) currentProgress = trackProgress
@@ -272,7 +271,7 @@ internal fun AudioRecordAttachmentContentItemBase(
             val timerTextColor = if (playing) ChatTheme.colors.accentPrimary else textColor
             PlaybackTimerText(
                 progress = currentProgress,
-                durationInMs = currentAttachment.durationInMs,
+                durationInMs = playback.durationInMs,
                 color = timerTextColor,
                 countdown = true,
             )
@@ -343,7 +342,7 @@ internal fun PlaybackToggleButton(
 }
 
 @Composable
-private fun UploadProgressIndicator(
+internal fun UploadProgressIndicator(
     uploadState: UploadState.InProgress,
     modifier: Modifier = Modifier,
 ) {

@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
@@ -119,6 +118,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.stringify
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import io.getstream.chat.android.ui.common.utils.extensions.isPlayableAudio
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -2413,10 +2413,10 @@ public class MessageListController(
         _showSystemMessagesState.value = areSystemMessagesVisible
     }
 
-    /** Pauses any running audio recordings from the given [Message] */
+    /** Pauses any running audio playback from the given [Message] */
     private fun pauseRunningAudioRecordings(message: Message) {
         val audioRecordingsIds = message.attachments
-            .filter(Attachment::isAudioRecording)
+            .filter(Attachment::isPlayableAudio)
             .map(Attachment::audioHash)
         val audioPlayer = chatClient.audioPlayer
         val isCurrentlyPlaying = audioPlayer.currentState == AudioState.PLAYING

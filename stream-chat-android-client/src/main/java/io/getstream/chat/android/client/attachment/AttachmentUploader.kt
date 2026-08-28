@@ -289,6 +289,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         return when {
             StreamCdnImageMimeTypes.isImageMimeTypeSupported(this) -> AttachmentType.IMAGE
             this.contains("video") -> AttachmentType.VIDEO
+            // A MIME type is type/subtype, so audio means the top-level type, not the word appearing anywhere.
+            this.startsWith("audio/") -> AttachmentType.AUDIO
             else -> AttachmentType.FILE
         }
     }
@@ -296,6 +298,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
     private enum class AttachmentType(private val value: String) {
         IMAGE("image"),
         VIDEO("video"),
+        AUDIO("audio"),
         FILE("file"),
         ;
 

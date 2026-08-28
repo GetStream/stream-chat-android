@@ -536,7 +536,7 @@ class ChatsActivity : ComponentActivity() {
     ) {
         val viewModelFactory = ChannelAttachmentsViewModelFactory(
             cid = cid,
-            attachmentTypes = listOf(AttachmentType.FILE),
+            attachmentTypes = listOf(AttachmentType.FILE, AttachmentType.AUDIO),
         )
         val viewModel = viewModel<ChannelAttachmentsViewModel>(
             factory = viewModelFactory,

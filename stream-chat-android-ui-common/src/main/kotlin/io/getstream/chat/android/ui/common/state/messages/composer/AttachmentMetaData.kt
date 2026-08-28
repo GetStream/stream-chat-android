@@ -64,6 +64,10 @@ public data class AttachmentMetaData(
             type.contains("video") -> {
                 AttachmentType.VIDEO
             }
+            // A MIME type is type/subtype, so audio means the top-level type, not the word appearing anywhere.
+            type.startsWith("audio/") -> {
+                AttachmentType.AUDIO
+            }
             else -> {
                 AttachmentType.FILE
             }

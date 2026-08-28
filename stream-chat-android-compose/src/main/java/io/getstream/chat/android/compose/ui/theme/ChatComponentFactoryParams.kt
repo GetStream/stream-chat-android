@@ -2396,6 +2396,19 @@ public data class AudioRecordAttachmentContentParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.AudioAttachmentItem].
+ *
+ * @param attachment The audio attachment to render.
+ * @param isMine Whether the message is sent by the current user or not.
+ * @param modifier Modifier for styling.
+ */
+public data class AudioAttachmentItemParams(
+    val attachment: Attachment,
+    val isMine: Boolean,
+    val modifier: Modifier = Modifier,
+)
+
+/**
  * Parameters for [ChatComponentFactory.FileAttachmentContent].
  *
  * @param state State providing context for the attachment.

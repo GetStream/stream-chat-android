@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
@@ -84,6 +86,15 @@ public class AudioPlayerViewModel(
         controller.resetAudio(attachment)
     }
 }
+
+/**
+ * The [AudioPlayerViewModelFactory] used by the built-in audio attachment components: it plays from the uploaded
+ * asset, falling back to the local file while the attachment is still being uploaded.
+ */
+internal fun defaultAudioPlayerViewModelFactory(): AudioPlayerViewModelFactory = AudioPlayerViewModelFactory(
+    getAudioPlayer = { ChatClient.instance().audioPlayer },
+    getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
+)
 
 @InternalStreamChatApi
 public class AudioPlayerViewModelFactory(

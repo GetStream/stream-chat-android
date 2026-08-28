@@ -75,6 +75,13 @@ public object PreviewAttachmentData {
         mimeType = "application/pdf",
     )
 
+    public val attachmentAudio1: Attachment = Attachment(
+        name = "audio-snippet-v1.mp3",
+        fileSize = 1400000,
+        type = AttachmentType.AUDIO,
+        mimeType = "audio/mp3",
+    )
+
     public val attachmentAudioRecording1: Attachment = Attachment(
         type = AttachmentType.AUDIO_RECORDING,
         extraData = mutableMapOf(

@@ -41,12 +41,12 @@ import java.util.Date
 
 class ChatInfoSharedFilesFragment : Fragment() {
 
-    private val attachmentsType = AttachmentType.FILE
+    private val attachmentsTypes = listOf(AttachmentType.FILE, AttachmentType.AUDIO)
     private val args: ChatInfoSharedFilesFragmentArgs by navArgs()
     private val viewModel: ChannelAttachmentsViewModel by viewModels {
         ChannelAttachmentsViewModelFactory(
             cid = args.cid!!,
-            attachmentTypes = listOf(attachmentsType),
+            attachmentTypes = attachmentsTypes,
         )
     }
     private val adapter: ChatInfoSharedFilesAdapter = ChatInfoSharedFilesAdapter()

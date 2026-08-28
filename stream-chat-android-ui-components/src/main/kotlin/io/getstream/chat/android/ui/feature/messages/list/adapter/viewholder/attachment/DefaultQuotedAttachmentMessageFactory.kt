@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 
 import android.view.View
 import android.view.ViewGroup
+import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isGiphy
@@ -43,6 +44,7 @@ public class DefaultQuotedAttachmentMessageFactory : QuotedAttachmentFactory {
             attachment.isImage() ||
             attachment.isGiphy() ||
             attachment.isVideo() ||
+            attachment.isAudio() ||
             attachment.isAudioRecording()
     }
 

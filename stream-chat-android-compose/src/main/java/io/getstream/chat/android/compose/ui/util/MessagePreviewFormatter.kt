@@ -223,7 +223,7 @@ private class DefaultMessagePreviewFormatter(
             it.type == AttachmentType.IMAGE && it.ogUrl == null && it.titleLink == null
         }
         val videos = attachments.filter { it.type == AttachmentType.VIDEO }
-        val files = attachments.filter { it.type == AttachmentType.FILE }
+        val files = attachments.filter { it.type == AttachmentType.FILE || it.type == AttachmentType.AUDIO }
         val giphy = attachments.filter { it.type == AttachmentType.GIPHY }
 
         when {

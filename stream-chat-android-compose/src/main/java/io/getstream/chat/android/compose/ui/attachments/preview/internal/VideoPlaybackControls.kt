@@ -16,22 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.snap
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.progressSemantics
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -44,27 +32,19 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.audio.PlaybackSlider
 import io.getstream.chat.android.compose.ui.components.audio.rememberSpokenDurationFormatter
 import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
@@ -72,7 +52,6 @@ import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleD
 import io.getstream.chat.android.compose.ui.components.common.PlaybackSpeedToggle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.dragPointerInput
 import kotlinx.coroutines.delay
 
 /**
@@ -134,6 +113,7 @@ internal fun VideoPlaybackControls(
                 .weight(1f)
                 .height(20.dp)
                 .padding(horizontal = StreamTokens.spacingMd),
+            animationDurationMs = PositionPollingIntervalMs.toInt(),
             onDragStart = { state.onDragStart() },
             onDrag = state::onDrag,
             onDragStop = state::onDragStop,
@@ -146,120 +126,9 @@ internal fun VideoPlaybackControls(
     }
 }
 
-/**
- * A progress bar matching the Figma "Mobile / Playback Progress Bar" component.
- *
- * Displays a rounded track (4dp) with a 12dp white circular thumb with border and shadow.
- *
- * @param progress The current progress (0f..1f).
- * @param isPlaying Whether playback is active (changes thumb and track colors).
- * @param modifier The [Modifier] to be applied.
- * @param onDragStart Callback when the user starts dragging.
- * @param onDrag Callback during drag with the current progress.
- * @param onDragStop Callback when the user stops dragging with the final progress.
- */
-@Composable
-private fun PlaybackSlider(
-    progress: Float,
-    isPlaying: Boolean,
-    modifier: Modifier = Modifier,
-    onDragStart: (Float) -> Unit = {},
-    onDrag: (Float) -> Unit = {},
-    onDragStop: (Float) -> Unit = {},
-) {
-    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val currentProgress by rememberUpdatedState(progress)
-    var widthPx by remember { mutableFloatStateOf(0f) }
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = if (isPlaying) {
-            tween(durationMillis = PositionPollingIntervalMs.toInt(), easing = LinearEasing)
-        } else {
-            snap()
-        },
-        label = "playback-progress",
-    )
-    Box(
-        modifier = modifier
-            .progressSemantics(value = progress)
-            .onSizeChanged { size -> widthPx = size.width.toFloat() }
-            .dragPointerInput(
-                enabled = true,
-                onDragStart = { onDragStart(it.toHorizontalProgress(widthPx, isRtl)) },
-                onDrag = { onDrag(it.toHorizontalProgress(widthPx, isRtl)) },
-                onDragStop = { onDragStop(it?.toHorizontalProgress(widthPx, isRtl) ?: currentProgress) },
-            ),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        // Track background
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(TrackHeight)
-                .clip(CircleShape)
-                .background(ChatTheme.colors.chatWaveformBar),
-        )
-        // Active track
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(fraction = animatedProgress)
-                .height(TrackHeight)
-                .clip(CircleShape)
-                .background(ChatTheme.colors.chatWaveformBarPlaying),
-        )
-        // Thumb
-        PlaybackThumb(progress = animatedProgress, isPlaying = isPlaying, parentWidthPx = widthPx)
-    }
-}
-
-@Composable
-private fun BoxScope.PlaybackThumb(
-    progress: Float,
-    isPlaying: Boolean,
-    parentWidthPx: Float,
-) {
-    val thumbOffset = if (parentWidthPx > 0) {
-        with(LocalDensity.current) {
-            val parentWidth = parentWidthPx.toDp()
-            val center = parentWidth * progress
-            val left = center - (ThumbSize / 2)
-            left.coerceIn(0.dp, parentWidth - ThumbSize)
-        }
-    } else {
-        0.dp
-    }
-    val colors = ChatTheme.colors
-    val bgColor = if (isPlaying) {
-        colors.controlPlaybackThumbBgActive
-    } else {
-        colors.controlPlaybackThumbBgDefault
-    }
-    val borderColor = if (isPlaying) {
-        colors.controlPlaybackThumbBorderActive
-    } else {
-        colors.controlPlaybackThumbBorderDefault
-    }
-    Box(
-        modifier = Modifier
-            .align(Alignment.CenterStart)
-            .offset(x = thumbOffset)
-            .size(ThumbSize)
-            .shadow(2.dp, CircleShape)
-            .background(bgColor, CircleShape)
-            .border(1.dp, borderColor, CircleShape),
-    )
-}
-
-private fun Offset.toHorizontalProgress(widthPx: Float, isRtl: Boolean): Float {
-    val raw = (x / widthPx).coerceIn(0f, 1f)
-    return if (isRtl) 1f - raw else raw
-}
-
 @Suppress("MagicNumber")
 private val PlaybackSpeeds = floatArrayOf(1f, 1.5f, 2f)
 private const val PositionPollingIntervalMs = 100L
-private val TrackHeight = 4.dp
-private val ThumbSize = 12.dp
 
 /**
  * Observable state holder for [VideoPlaybackControls].

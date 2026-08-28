@@ -69,6 +69,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Attachment.UploadState
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
@@ -370,6 +371,34 @@ internal fun FileAttachmentContent(isMine: Boolean, isUploading: Boolean = false
             isMine = isMine,
         ),
     )
+}
+
+@Composable
+internal fun FileAttachmentContentWithAudio(isMine: Boolean) {
+    FileAttachmentContent(
+        attachmentState = AttachmentState(
+            message = Message(
+                attachments = listOf(
+                    Attachment(
+                        mimeType = MimeType.MIME_TYPE_PDF,
+                        type = AttachmentType.FILE,
+                        title = "test_document.pdf",
+                        fileSize = 1_500_000,
+                    ),
+                    PreviewAttachmentData.attachmentAudio1.copy(assetUrl = "https://example.com/audio.mp3"),
+                ),
+            ),
+            isMine = isMine,
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FileAttachmentContentWithAudioPreview() {
+    ChatTheme {
+        FileAttachmentContentWithAudio(isMine = false)
+    }
 }
 
 @Preview(showBackground = true)
