@@ -43,16 +43,36 @@ internal class QueryGroupedChannelsListenerState(
         // parameters. When `groups == null` the caller is relying on the server's default group
         // set — we don't know the keys until the response, so we defer to the result-side capture
         // (which only fires on success, but in that case there is no failure to recover from).
+        // Only named groups get a loader: with `groups == null` the keys are unknown until the response.
         groups?.forEach { (key, groupQuery) ->
-            logic.queryChannels(QueryChannelsIdentifier.Grouped(key))
-                .setGroupedQueryConfig(
-                    GroupedQueryConfig(
-                        limit = limit,
-                        pageSize = groupQuery.limit,
-                        watch = watch,
-                        presence = presence,
-                    ),
-                )
+            val queryLogic = logic.queryChannels(QueryChannelsIdentifier.Grouped(key))
+            queryLogic.setGroupedQueryConfig(
+                GroupedQueryConfig(
+                    limit = limit,
+                    pageSize = groupQuery.limit,
+                    watch = watch,
+                    presence = presence,
+                ),
+            )
+            // The only point that knows a fetch is starting: grouped state is initialised separately
+            // from the query, so the offline load cannot tell an in-flight first page from no fetch.
+            if (groupQuery.isFirstPage()) {
+                queryLogic.startLoadingFirstPageIfNeverLoaded()
+            }
+        }
+    }
+
+    private fun GroupedChannelsGroupQuery.isFirstPage(): Boolean = next == null && prev == null
+
+    /** Ends the first-page load for every [keys] entry that was requested as a first page. */
+    private suspend fun finishFirstPageLoads(
+        keys: Set<String>,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+    ) {
+        keys.forEach { key ->
+            if (groups?.get(key)?.isFirstPage() == true) {
+                logic.queryChannels(QueryChannelsIdentifier.Grouped(key)).finishFirstPageLoad()
+            }
         }
     }
 
@@ -63,10 +83,14 @@ internal class QueryGroupedChannelsListenerState(
         watch: Boolean,
         presence: Boolean,
     ) {
-        if (result !is Result.Success) return
+        if (result !is Result.Success) {
+            // The success path ends the load while applying the result, so failures must do it here.
+            finishFirstPageLoads(groups.orEmpty().keys, groups)
+            return
+        }
 
         // Only the first page carries initial unread counts.
-        val isFirstPageRequest = groups.orEmpty().values.none { it.next != null || it.prev != null }
+        val isFirstPageRequest = groups.orEmpty().values.all { it.isFirstPage() }
         if (isFirstPageRequest) {
             val next = groupedUnreadChannelsUpdater.calculateUpdatedCounts(
                 current = globalState.groupedUnreadChannels.value,
@@ -78,11 +102,14 @@ internal class QueryGroupedChannelsListenerState(
         // Route each returned group's channels into the per-group state. The captured config lets
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
         // reuse the caller's original parameters on paginated and recovery calls respectively.
+        // A requested group the response omits never reaches applyGroupedResult, so end it here.
+        finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups)
+
         result.value.groups.forEach { (key, group) ->
             // A request without `next`/`prev` cursors for this key (or no per-group query at all)
             // is a first-page request → replace channels. With a cursor → paginated → append.
             val perGroupQuery = groups?.get(key)
-            val isFirstPage = perGroupQuery?.let { it.next == null && it.prev == null } ?: true
+            val isFirstPage = perGroupQuery?.isFirstPage() ?: true
             val perGroupLimit = perGroupQuery?.limit
             val queryLogic = logic.queryChannels(QueryChannelsIdentifier.Grouped(key))
             queryLogic.setGroupedQueryConfig(

@@ -26,11 +26,14 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -341,9 +344,92 @@ internal class QueryChannelsLogicGroupedTest {
         // When
         logic.loadOfflineGroupedChannels()
 
-        // Then — no channels to add, but state is initialized and loading flag reset.
+        // Then — no channels to add, state is initialized, and the loading flag is left alone so an
+        // in-flight first page keeps its loader instead of falling through to the empty state.
         verify(queryChannelsStateLogic, never()).addChannelsState(any())
         verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    @Test
+    fun `loadOfflineGroupedChannels leaves the loading flag alone when the cache is empty`() = runTest {
+        // Given — a spec exists but its channels are gone, which reads the same as a miss.
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn CachedQueryChannels(spec = queryChannelsSpec, channels = emptyList())
+
+        // When
+        logic.loadOfflineGroupedChannels()
+
+        // Then
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    @Test
+    fun `startLoadingFirstPageIfNeverLoaded raises the flag for a group that never loaded`() = runTest {
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+
+        logic.startLoadingFirstPageIfNeverLoaded()
+
+        verify(queryChannelsStateLogic).setLoadingFirstPage(true)
+    }
+
+    @Test
+    fun `startLoadingFirstPageIfNeverLoaded does not hide an already populated list behind a loader`() = runTest {
+        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf("messaging:ch1" to randomChannel(id = "ch1"))
+
+        logic.startLoadingFirstPageIfNeverLoaded()
+
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    @Test
+    fun `a settled empty group is not put back into the loader by a later request`() = runTest {
+        // Given — a group that loaded and came back empty holds a non-null empty map. This is the
+        // shape SyncManager recovery hits on every reconnect.
+        whenever(queryChannelsStateLogic.getChannels()) doReturn emptyMap()
+
+        // When
+        logic.startLoadingFirstPageIfNeverLoaded()
+
+        // Then — no spinner over a tab the user has already seen settle as empty.
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    @Test
+    fun `finishFirstPageLoad ends Loading even when the request failed before the offline read`() = runTest {
+        // Given — nothing has initialised channels yet, so rawChannels is still null.
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+
+        // When
+        logic.finishFirstPageLoad()
+
+        // Then — clearing the flag alone is not enough: ChannelsStateData reports Loading while
+        // channels are null, so the state has to be initialised too or the spinner never ends.
+        verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
+        verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+    }
+
+    @Test
+    fun `loadOfflineGroupedChannels stops loading when a concurrent result already populated state`() = runTest {
+        // Given — applyGroupedResult landed during the DB read; the cache itself has nothing.
+        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf("messaging:ch1" to randomChannel(id = "ch1"))
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn null
+
+        // When
+        logic.loadOfflineGroupedChannels()
+
+        // Then — there are channels on screen, so the loader must not stay up over them.
         verify(queryChannelsStateLogic).setLoadingFirstPage(false)
     }
 
@@ -368,6 +454,48 @@ internal class QueryChannelsLogicGroupedTest {
         verify(queryChannelsStateLogic, never()).addChannelsState(any())
         verify(queryChannelsStateLogic, never()).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    // endregion
+
+    // region channelsStateData contract
+
+    @Test
+    fun `an in-flight first page never emits the empty state on a cache miss`() = runTest {
+        // Given — real state rather than a mock, so the assertion is the sequence the UI sees
+        // rather than which setters happened to be called.
+        val mutableState = QueryChannelsMutableState(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            scope = testCoroutines.scope,
+            latestUsers = MutableStateFlow(emptyMap()),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+        )
+        val stateLogic = QueryChannelsStateLogic(
+            mutableState = mutableState,
+            stateRegistry = mock(),
+            logicRegistry = mock(),
+            coroutineScope = testCoroutines.scope,
+        )
+        val realLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            client = client,
+            queryChannelsStateLogic = stateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn null
+
+        // When — the request starts, then the offline read misses
+        realLogic.startLoadingFirstPageIfNeverLoaded()
+        realLogic.loadOfflineGroupedChannels()
+
+        // Then — still Loading. Reinstating the unconditional clear in loadOfflineGroupedChannels
+        // turns this into OfflineNoResults, which is the flash this change removes.
+        assertEquals(ChannelsStateData.Loading, mutableState.channelsStateData.value)
     }
 
     // endregion

@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
+import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
@@ -102,12 +103,17 @@ internal class QueryChannelsLogic(
         val cachedChannels = fetchChannelsFromCache(pagination)
         groupedResultMutex.withLock {
             val existing = queryChannelsStateLogic.getChannels()
-            if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
+            val hasCachedChannels = !cachedChannels.isNullOrEmpty()
+            if (existing.isNullOrEmpty() && hasCachedChannels) {
                 logger.d { "[loadOfflineGroupedChannels] showing ${cachedChannels.size} cached channels" }
                 queryChannelsStateLogic.addChannelsState(cachedChannels)
             }
             queryChannelsStateLogic.initializeChannelsIfNeeded()
-            queryChannelsStateLogic.setLoadingFirstPage(false)
+            // Only stop loading once there is something to show. On a miss the flag is left as it
+            // is: raised if a request is in flight, false if none is coming.
+            if (hasCachedChannels || !existing.isNullOrEmpty()) {
+                queryChannelsStateLogic.setLoadingFirstPage(false)
+            }
         }
     }
 
@@ -144,6 +150,37 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setLoadingMore(isLoading)
         } else {
             queryChannelsStateLogic.setLoadingFirstPage(isLoading)
+        }
+    }
+
+    /**
+     * Marks a grouped first page as loading, but only for a group that has never loaded.
+     *
+     * The guard is `== null` rather than `isNullOrEmpty()`: a group that loaded and came back empty
+     * holds a non-null empty map, and re-raising for it would put every settled empty tab back into
+     * a spinner on each reconnect, since `SyncManager` recovers grouped lists through this listener.
+     *
+     * Shares [groupedResultMutex] so the check cannot read a half-applied update.
+     */
+    internal suspend fun startLoadingFirstPageIfNeverLoaded() {
+        groupedResultMutex.withLock {
+            if (queryChannelsStateLogic.getChannels() == null) {
+                queryChannelsStateLogic.setLoadingFirstPage(true)
+            }
+        }
+    }
+
+    /**
+     * Ends a grouped first-page load that produced no channels of its own: a failed request, or a
+     * requested group the response left out.
+     *
+     * Both steps are needed to leave `Loading`, which [ChannelsStateData] reports while the flag is
+     * set *or* while channels are still null.
+     */
+    internal suspend fun finishFirstPageLoad() {
+        groupedResultMutex.withLock {
+            queryChannelsStateLogic.initializeChannelsIfNeeded()
+            loadingPerPage(isLoading = false, hasOffset = false)
         }
     }
 
