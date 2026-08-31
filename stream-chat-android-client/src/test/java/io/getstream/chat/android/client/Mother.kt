@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
@@ -90,6 +89,7 @@ import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
@@ -461,7 +461,7 @@ internal object Mother {
         members: List<DownstreamMemberDto> = emptyList(),
         watchers: List<DownstreamUserDto> = emptyList(),
         read: List<DownstreamChannelUserRead> = emptyList(),
-        config: ConfigDto = randomConfigDto(),
+        config: ChannelConfigWithInfo = randomChannelConfigWithInfo(),
         created_by: DownstreamUserDto? = randomDownstreamUserDto(),
         team: String = randomString(),
         cooldown: Int = randomInt(),
@@ -516,67 +516,39 @@ internal object Mother {
         image = image,
     )
 
-    fun randomConfigDto(
-        created_at: Date? = randomDateOrNull(),
-        updated_at: Date? = randomDateOrNull(),
-        name: String? = randomString(),
-        typing_events: Boolean = randomBoolean(),
-        read_events: Boolean = randomBoolean(),
-        delivery_events: Boolean = randomBoolean(),
-        connect_events: Boolean = randomBoolean(),
-        search: Boolean = randomBoolean(),
-        reactions: Boolean = randomBoolean(),
-        replies: Boolean = randomBoolean(),
-        mutes: Boolean = randomBoolean(),
-        uploads: Boolean = randomBoolean(),
-        url_enrichment: Boolean = randomBoolean(),
-        custom_events: Boolean = randomBoolean(),
-        push_notifications: Boolean = randomBoolean(),
-        skip_last_msg_update_for_system_msgs: Boolean? = randomBoolean(),
-        polls: Boolean = randomBoolean(),
-        message_retention: String = randomString(),
-        max_message_length: Int = randomInt(),
-        automod: String = randomString(),
-        automod_behavior: String = randomString(),
-        blocklist_behavior: String? = randomString(),
+    fun randomChannelConfigWithInfo(
         commands: List<CommandDto> = emptyList(),
-        user_message_reminders: Boolean? = randomBoolean(),
-        shared_locations: Boolean = randomBoolean(),
-        mark_messages_pending: Boolean = randomBoolean(),
-        push_level: String? = randomString(),
-    ): ConfigDto = ConfigDto(
-        created_at = created_at,
-        updated_at = updated_at,
-        name = name,
-        typing_events = typing_events,
-        read_events = read_events,
-        delivery_events = delivery_events,
-        connect_events = connect_events,
-        search = search,
-        reactions = reactions,
-        replies = replies,
-        mutes = mutes,
-        uploads = uploads,
-        url_enrichment = url_enrichment,
-        custom_events = custom_events,
-        push_notifications = push_notifications,
-        skip_last_msg_update_for_system_msgs = skip_last_msg_update_for_system_msgs,
-        polls = polls,
-        message_retention = message_retention,
-        max_message_length = max_message_length,
-        automod = automod,
-        automod_behavior = automod_behavior,
-        blocklist_behavior = blocklist_behavior,
+    ): ChannelConfigWithInfo = ChannelConfigWithInfo(
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        name = randomString(),
+        typingEvents = randomBoolean(),
+        readEvents = randomBoolean(),
+        deliveryEvents = randomBoolean(),
+        connectEvents = randomBoolean(),
+        search = randomBoolean(),
+        reactions = randomBoolean(),
+        replies = randomBoolean(),
+        quotes = randomBoolean(),
+        mutes = randomBoolean(),
+        uploads = randomBoolean(),
+        urlEnrichment = randomBoolean(),
+        customEvents = randomBoolean(),
+        pushNotifications = randomBoolean(),
+        reminders = randomBoolean(),
+        countMessages = randomBoolean(),
+        skipLastMsgUpdateForSystemMsgs = randomBoolean(),
+        polls = randomBoolean(),
+        messageRetention = randomString(),
+        maxMessageLength = randomInt(),
+        automod = ChannelConfigWithInfo.Automod.Disabled,
+        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
         commands = commands,
-        user_message_reminders = user_message_reminders,
-        shared_locations = shared_locations,
-        mark_messages_pending = mark_messages_pending,
-        push_level = push_level,
+        userMessageReminders = randomBoolean(),
+        sharedLocations = randomBoolean(),
+        markMessagesPending = randomBoolean(),
     )
 
-    /**
-     * Provides a [QueryChannelsRequest] with random parameters (that can also be customized).
-     */
     fun randomQueryChannelRequest(
         state: Boolean = randomBoolean(),
         watch: Boolean = randomBoolean(),

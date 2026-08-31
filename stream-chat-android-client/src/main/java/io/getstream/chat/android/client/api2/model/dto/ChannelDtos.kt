@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
@@ -41,7 +42,7 @@ internal data class DownstreamChannelDto(
     val members: List<DownstreamMemberDto> = emptyList(),
     val watchers: List<DownstreamUserDto> = emptyList(),
     val read: List<DownstreamChannelUserRead> = emptyList(),
-    val config: ConfigDto,
+    val config: ChannelConfigWithInfo,
     val created_by: DownstreamUserDto?,
     val team: String = "",
     val cooldown: Int = 0,
