@@ -57,6 +57,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
+import io.getstream.chat.android.client.Mother.randomPollResponseData
 import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
@@ -199,7 +200,7 @@ internal class DomainMappingTest {
                 quoted_message = randomDownstreamMessageDto(),
                 moderation_details = randomDownstreamModerationDetailsDto(),
                 moderation = randomDownstreamModerationDto(),
-                poll = randomDownstreamPollDto(),
+                poll = randomPollResponseData(),
                 deleted_for_me = randomBoolean(),
             ).toDomain()
         }
