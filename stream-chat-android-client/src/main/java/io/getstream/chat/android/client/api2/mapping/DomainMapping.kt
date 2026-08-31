@@ -161,6 +161,9 @@ import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
+/** `emoji_code` is sent as custom data rather than a declared field, in both directions. */
+internal const val EMOJI_CODE_KEY = "emoji_code"
+
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
     val currentUserIdProvider: () -> UserId?,
@@ -1405,9 +1408,6 @@ internal class DomainMapping(
     )
 
     private companion object {
-        /** `emoji_code` is sent as custom data rather than a declared field. */
-        private const val EMOJI_CODE_KEY = "emoji_code"
-
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
         private const val FIELD_LAST_UPDATED = "last_updated"
     }

@@ -1390,6 +1390,7 @@ internal object Mother {
     fun randomReactionResponse(
         messageId: String = randomString(),
         type: String = randomString(),
+        userId: String = randomString(),
         custom: Map<String, Any?> = emptyMap(),
     ): ReactionResponse = ReactionResponse(
         messageId = messageId,
@@ -1397,8 +1398,8 @@ internal object Mother {
         score = randomInt(),
         createdAt = randomDate(),
         updatedAt = randomDate(),
-        userId = randomString(),
-        user = randomUserResponse(),
+        userId = userId,
+        user = randomUserResponse(id = userId),
         custom = custom,
     )
 
