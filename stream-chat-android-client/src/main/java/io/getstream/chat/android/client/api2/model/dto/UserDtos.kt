@@ -59,7 +59,7 @@ internal data class DownstreamUserDto(
     val name: String?,
     val image: String?,
     val role: String,
-    val invisible: Boolean? = false,
+    val invisible: Boolean? = null,
     val privacy_settings: PrivacySettingsDto?,
     val language: String?,
     val banned: Boolean,

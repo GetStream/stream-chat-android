@@ -211,7 +211,7 @@ internal object NewMessageEventTestData {
     private val minimalUser = User(
         id = "user-1",
         role = "user",
-        invisible = false,
+        invisible = null,
         banned = false,
         online = true,
     )

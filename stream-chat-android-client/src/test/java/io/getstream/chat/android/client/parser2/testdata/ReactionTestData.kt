@@ -79,7 +79,7 @@ internal object ReactionTestData {
         userId = "user1",
         createdAt = Date(1577836800000),
         updatedAt = Date(1577923200000),
-        user = User(id = "user1", role = "user", banned = false, online = true, invisible = false),
+        user = User(id = "user1", role = "user", banned = false, online = true, invisible = null),
         emojiCode = "👍",
         extraData = mapOf("custom_field" to "custom_value"),
     )
