@@ -168,7 +168,7 @@ internal object MessageDtoTestData {
         mentioned_roles = listOf("admin", "moderator"),
         i18n = emptyMap(),
         thread_participants = emptyList(),
-        attachments = listOf(AttachmentDtoTestData.attachment),
+        attachments = listOf(AttachmentDtoTestData.generatedAttachment),
         quoted_message_id = "messageId",
         quoted_message = null,
         pinned = false,

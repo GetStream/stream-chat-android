@@ -23,14 +23,38 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.Attachment
 
+/**
+ * Wire keys the generated model declares and the hand-written attachment DTO did not, so they reached
+ * `Attachment.extraData` and would otherwise stop doing so. `giphy` is among them, which is where
+ * `Attachment.giphyInfo()` reads gif urls: keeping the raw object preserves the exact map the UI already
+ * reads, rather than rebuilding it from the typed field. Drop with AND-1398.
+ */
+internal val GENERATED_ATTACHMENT_EXTRA_DATA_KEYS = setOf(
+    "author_icon",
+    "color",
+    "footer",
+    "footer_icon",
+    "pretext",
+    "actions",
+    "fields",
+    "giphy",
+)
+
 // The generated Attachment carries custom data in a `custom` field that must be flattened to the
-// JSON root on the wire; extraDataPropertyName matches its @Json(name = "custom").
-internal object AttachmentRequestAdapter :
-    CustomObjectDtoAdapter<Attachment>(Attachment::class, extraDataPropertyName = "custom") {
+// JSON root on the wire; extraDataPropertyName matches its @Json(name = "custom"). The same model is
+// both the request and the response body, so this adapter handles both directions.
+internal object NetworkAttachmentAdapter : CustomObjectDtoAdapter<Attachment>(
+    Attachment::class,
+    extraDataPropertyName = "custom",
+    alsoKeepInExtraData = GENERATED_ATTACHMENT_EXTRA_DATA_KEYS,
+) {
 
     @FromJson
-    @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): Attachment = error("Can't parse this from Json")
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        valueAdapter: JsonAdapter<Attachment>,
+    ): Attachment? = parseWithExtraData(jsonReader, mapAdapter, valueAdapter)
 
     @ToJson
     fun toJson(
