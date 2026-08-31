@@ -292,7 +292,7 @@ internal class DtoMapping(
         createdAt = createdAt,
         score = score,
         updatedAt = updatedAt,
-        custom = if (emojiCode != null) extraData + ("emoji_code" to emojiCode) else extraData,
+        custom = if (emojiCode != null) extraData + (EMOJI_CODE_KEY to emojiCode) else extraData,
     )
 
     /**

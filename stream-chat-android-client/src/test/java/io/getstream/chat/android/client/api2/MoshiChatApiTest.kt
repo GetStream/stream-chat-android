@@ -57,11 +57,9 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -128,6 +126,7 @@ import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.GroupedChannelsGroupRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
@@ -156,6 +155,7 @@ import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
+import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
@@ -455,7 +455,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getReactionsInput")
-    fun testGetReactions(call: RetrofitCall<ReactionsResponse>, expected: KClass<*>) = runTest {
+    fun testGetReactions(call: RetrofitCall<GetReactionsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getReactions(any(), any(), any())).doReturn(call)

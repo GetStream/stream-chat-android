@@ -60,6 +60,7 @@ import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
+import io.getstream.chat.android.client.Mother.randomReactionResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
@@ -1702,5 +1703,54 @@ internal class DomainMappingTest {
                 userTransformer = userTransformer,
             )
         }
+    }
+
+    @Test
+    fun `ReactionResponse is correctly mapped to Reaction`() {
+        val response = randomReactionResponse(custom = mapOf("weight" to 3))
+        val sut = Fixture().get()
+
+        val reaction = with(sut) { response.toDomain() }
+
+        val expected = Reaction(
+            messageId = response.messageId,
+            type = response.type,
+            score = response.score,
+            user = with(sut) { response.user.toDomain() },
+            userId = response.userId,
+            createdAt = response.createdAt,
+            updatedAt = response.updatedAt,
+            extraData = mapOf("weight" to 3),
+            deletedAt = null,
+            emojiCode = null,
+        )
+        assertEquals(expected, reaction)
+    }
+
+    @Test
+    fun `ReactionResponse takes userId from the top level field rather than the nested user`() {
+        // The fixture deliberately disagrees with itself: while the two ids match, as they do on the
+        // wire, either source satisfies the assertion and the mapper could read the wrong one unnoticed.
+        val response = randomReactionResponse(userId = "reaction-user")
+            .copy(user = randomUserResponse(id = "nested-user"))
+        val sut = Fixture().get()
+
+        val reaction = with(sut) { response.toDomain() }
+
+        assertEquals("reaction-user", reaction.userId)
+        assertEquals("nested-user", reaction.user?.id)
+    }
+
+    @Test
+    fun `ReactionResponse maps emoji_code out of custom and keeps it out of extraData`() {
+        val dto = randomReactionResponse(
+            custom = mapOf("emoji_code" to "\uD83D\uDE04", "weight" to 3),
+        )
+        val sut = Fixture().get()
+
+        val reaction = with(sut) { dto.toDomain() }
+
+        assertEquals("\uD83D\uDE04", reaction.emojiCode)
+        assertEquals(mapOf("weight" to 3), reaction.extraData)
     }
 }
