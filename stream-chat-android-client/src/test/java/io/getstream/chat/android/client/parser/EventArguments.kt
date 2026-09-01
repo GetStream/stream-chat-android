@@ -187,6 +187,7 @@ internal object EventArguments {
     private val user = User(
         id = "bender",
         role = "user",
+        language = "en",
         invisible = false,
         banned = false,
         online = true,
@@ -267,13 +268,31 @@ internal object EventArguments {
         mimeType = "image/png",
     )
 
+    /**
+     * A reaction embedded in a message is parsed by the generated model, so its user is the shape the
+     * wire sends for anyone but the connected user: no unread counts, devices, mutes or `invisible`.
+     */
+    private val reactionUser = User(
+        id = "bender",
+        role = "user",
+        language = "en",
+        banned = false,
+        online = true,
+        createdAt = date,
+        updatedAt = date,
+        lastActive = date,
+        name = "Bender",
+        image = "https://api.adorable.io/avatars/285/bender.png",
+    )
+
     private val messageReaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "like",
         score = 1,
-        user = user,
+        user = reactionUser,
         userId = "bender",
         createdAt = date,
+        updatedAt = date,
     )
 
     private val message = Message(

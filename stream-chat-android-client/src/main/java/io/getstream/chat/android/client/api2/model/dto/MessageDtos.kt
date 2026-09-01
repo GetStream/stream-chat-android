@@ -20,6 +20,7 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.Attachment
 import io.getstream.chat.android.network.models.PollResponseData
+import io.getstream.chat.android.network.models.ReactionResponse
 import java.util.Date
 
 /**
@@ -41,13 +42,13 @@ internal data class DownstreamMessageDto(
     val html: String,
     val i18n: Map<String, String> = emptyMap(),
     val id: String,
-    val latest_reactions: List<DownstreamReactionDto>,
+    val latest_reactions: List<ReactionResponse>,
     val mentioned_users: List<DownstreamUserDto>,
     val mentioned_here: Boolean? = null,
     val mentioned_channel: Boolean? = null,
     val mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
     val mentioned_roles: List<String> = emptyList(),
-    val own_reactions: List<DownstreamReactionDto>,
+    val own_reactions: List<ReactionResponse>,
     val parent_id: String?,
     val pin_expires: Date?,
     val pinned: Boolean = false,

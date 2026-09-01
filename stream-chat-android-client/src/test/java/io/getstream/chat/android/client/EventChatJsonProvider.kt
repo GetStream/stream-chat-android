@@ -814,6 +814,7 @@ private fun createUserJsonString() =
         {
             "id": "bender",
             "role": "user",
+            "language": "en",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
             "last_active": "2020-06-29T06:14:28.000Z",
@@ -879,15 +880,33 @@ private fun createMessageAttachmentJsonString() =
     """.trimIndent()
 
 @Language("JSON")
+private fun createReactionUserJsonString() =
+    """
+        {
+            "id": "bender",
+            "role": "user",
+            "language": "en",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "last_active": "2020-06-29T06:14:28.000Z",
+            "banned": false,
+            "online": true,
+            "image": "https://api.adorable.io/avatars/285/bender.png",
+            "name": "Bender"
+        }
+    """.trimIndent()
+
+@Language("JSON")
 private fun createMessageReactionJsonString() =
     """
         {
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "type": "like",
             "score": 1,
-            "user": ${createUserJsonString()},
+            "user": ${createReactionUserJsonString()},
             "user_id": "bender",
-            "created_at": "2020-06-29T06:14:28.000Z"
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 
