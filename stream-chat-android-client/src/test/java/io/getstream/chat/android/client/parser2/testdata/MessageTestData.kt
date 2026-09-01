@@ -61,7 +61,7 @@ internal object MessageTestData {
                 "type": "like",
                 "score": 1,
                 "user_id": "user-2",
-                "user": {"id": "user-2", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-2", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T01:00:00.000Z",
                 "updated_at": "2020-01-01T01:00:00.000Z"
             }
@@ -72,7 +72,7 @@ internal object MessageTestData {
                 "type": "love",
                 "score": 1,
                 "user_id": "user-1",
-                "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T00:30:00.000Z",
                 "updated_at": "2020-01-01T00:30:00.000Z"
             }
@@ -865,7 +865,7 @@ internal object MessageTestData {
                 "type": "like",
                 "score": 1,
                 "user_id": "user-2",
-                "user": {"id": "user-2", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-2", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T01:00:00.000Z",
                 "updated_at": "2020-01-01T01:00:00.000Z"
             },
@@ -874,7 +874,7 @@ internal object MessageTestData {
                 "type": "love",
                 "score": 1,
                 "user_id": "user-3",
-                "user": {"id": "user-3", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-3", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T01:01:00.000Z",
                 "updated_at": "2020-01-01T01:01:00.000Z"
             },
@@ -883,7 +883,7 @@ internal object MessageTestData {
                 "type": "haha",
                 "score": 1,
                 "user_id": "user-4",
-                "user": {"id": "user-4", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-4", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T01:02:00.000Z",
                 "updated_at": "2020-01-01T01:02:00.000Z"
             }
@@ -894,7 +894,7 @@ internal object MessageTestData {
                 "type": "love",
                 "score": 1,
                 "user_id": "user-1",
-                "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T00:30:00.000Z",
                 "updated_at": "2020-01-01T00:30:00.000Z"
             },
@@ -903,7 +903,7 @@ internal object MessageTestData {
                 "type": "wow",
                 "score": 1,
                 "user_id": "user-1",
-                "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+                "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                 "created_at": "2020-01-01T00:31:00.000Z",
                 "updated_at": "2020-01-01T00:31:00.000Z"
             }
@@ -934,7 +934,16 @@ internal object MessageTestData {
                 type = "like",
                 score = 1,
                 userId = "user-2",
-                user = User(id = "user-2", role = "user", invisible = null, banned = false, online = true),
+                user = User(
+                    id = "user-2",
+                    role = "user",
+                    invisible = null,
+                    banned = false,
+                    online = true,
+                    language = "en",
+                    createdAt = Date(1577836800000L),
+                    updatedAt = Date(1577836800000L),
+                ),
                 createdAt = Date(1577840400000L),
                 updatedAt = Date(1577840400000L),
             ),
@@ -945,7 +954,16 @@ internal object MessageTestData {
                 type = "love",
                 score = 1,
                 userId = "user-1",
-                user = User(id = "user-1", role = "user", invisible = null, banned = false, online = true),
+                user = User(
+                    id = "user-1",
+                    role = "user",
+                    invisible = null,
+                    banned = false,
+                    online = true,
+                    language = "en",
+                    createdAt = Date(1577836800000L),
+                    updatedAt = Date(1577836800000L),
+                ),
                 createdAt = Date(1577838600000L),
                 updatedAt = Date(1577838600000L),
             ),

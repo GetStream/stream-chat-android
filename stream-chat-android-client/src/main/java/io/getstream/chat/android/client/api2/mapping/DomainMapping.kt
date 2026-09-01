@@ -306,17 +306,13 @@ internal class DomainMapping(
                 html = html,
                 i18n = i18n,
                 id = id,
-                latestReactions = latest_reactions.toDomain(
-                    messageId = id,
-                ),
+                latestReactions = latest_reactions.toReactions(messageId = id),
                 mentionedUsers = mentioned_users.map { it.toDomain() },
                 mentionedHere = mentioned_here ?: false,
                 mentionedChannel = mentioned_channel ?: false,
                 mentionedGroups = mentioned_groups.map { it.toDomain() },
                 mentionedRoles = mentioned_roles,
-                ownReactions = own_reactions.toDomain(
-                    messageId = id,
-                ),
+                ownReactions = own_reactions.toReactions(messageId = id),
                 parentId = parent_id,
                 pinExpires = pin_expires,
                 pinned = pinned,
@@ -388,18 +384,13 @@ internal class DomainMapping(
         )
 
     /**
-     * Map a list of [DownstreamReactionDto] to a list of [Reaction].
-     * They are filtered by [messageId] and mapped to domain model.
-     *
-     * @param messageId the message id
+     * Maps the reactions of one message, dropping any the response attributes to another message.
      */
     @StreamHandsOff(
         reason = "Backend response is including wrong reactions for the message, so we need to filter them manually.",
     )
-    private fun List<DownstreamReactionDto>.toDomain(
-        messageId: String,
-    ): List<Reaction> =
-        filter { it.message_id == messageId }
+    private fun List<ReactionResponse>.toReactions(messageId: String): List<Reaction> =
+        filter { it.messageId == messageId }
             .map { it.toDomain() }
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
