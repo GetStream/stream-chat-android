@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.network.models.MessageRequest
 
 /**
  * Used to form a send message request.
@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 // REST documentation: https://getstream.io/chat/docs/rest/#messages-sendmessage
 @JsonClass(generateAdapter = true)
 internal data class SendMessageRequest(
-    val message: UpstreamMessageDto,
+    val message: MessageRequest,
     val skip_push: Boolean = false,
     val skip_enrich_url: Boolean = false,
 )

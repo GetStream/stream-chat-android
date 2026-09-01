@@ -16,17 +16,17 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamJson
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamMessage
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.upstreamMessageWithoutExtraData
+import io.getstream.chat.android.network.models.MessageRequest
 import io.kotest.assertions.json.shouldEqualJson
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
-internal class UpstreamMessageDtoAdapterTest {
+internal class MessageRequestAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
@@ -42,9 +42,9 @@ internal class UpstreamMessageDtoAdapterTest {
     }
 
     @Test
-    fun `Can't parse upstream message`() {
+    fun `Can't parse message request`() {
         invoking {
-            parser.fromJson(upstreamJson, UpstreamMessageDto::class.java)
+            parser.fromJson(upstreamJson, MessageRequest::class.java)
         }.shouldThrow(RuntimeException::class)
     }
 }

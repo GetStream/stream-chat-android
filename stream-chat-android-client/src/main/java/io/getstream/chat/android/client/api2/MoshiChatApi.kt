@@ -277,7 +277,7 @@ constructor(
         channelType = channelType,
         channelId = channelId,
         message = SendMessageRequest(
-            message = with(dtoMapping) { message.toDto() },
+            message = with(dtoMapping) { message.toMessageRequest() },
             skip_push = message.skipPushNotification,
             skip_enrich_url = message.skipEnrichUrl,
         ),
@@ -293,7 +293,7 @@ constructor(
         channelType = channelType,
         channelId = channelId,
         message = SendMessageRequest(
-            message = with(dtoMapping) { message.toDto() },
+            message = with(dtoMapping) { message.toMessageRequest() },
         ),
     ).mapDomain { response ->
         response.draft.toDomain()
@@ -348,7 +348,7 @@ constructor(
         return messageApi.updateMessage(
             messageId = message.id,
             message = UpdateMessageRequest(
-                message = with(dtoMapping) { message.toDto() },
+                message = with(dtoMapping) { message.toMessageRequest() },
                 skip_enrich_url = message.skipEnrichUrl,
                 skip_push = message.skipPushNotification,
             ),
@@ -1129,7 +1129,7 @@ constructor(
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toDto()) },
+            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toMessageRequest()) },
         ).map(this::flattenChannel)
     }
 

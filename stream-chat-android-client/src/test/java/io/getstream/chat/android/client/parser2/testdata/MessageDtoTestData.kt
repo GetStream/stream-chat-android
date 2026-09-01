@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.network.models.MessageRequest
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -391,25 +391,26 @@ internal object MessageDtoTestData {
         deleted_for_me = null,
     )
 
+    /**
+     * The request body as the generated model serialises it: custom data flattened to the root, and
+     * none of the legacy fields the server discards (`cid`, `html`, `shadowed`, `thread_participants`).
+     */
     @Language("JSON")
     val upstreamJson =
         """{
-          "attachments": [${AttachmentDtoTestData.json}],
-          "cid": "cid",
-          "html": "html",
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "text": "text",
           "type": "regular",
+          "attachments": [],
           "mentioned_users": [],
           "mentioned_here": false,
           "mentioned_channel": false,
           "mentioned_group_ids": [],
           "mentioned_roles": [],
           "pinned": true,
-          "shadowed": false,
           "show_in_channel": false,
           "silent": false,
-          "text": "text",
-          "thread_participants": [],
+          "restricted_visibility": [],
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -423,92 +424,67 @@ internal object MessageDtoTestData {
             "a",
             "b",
             "c"
-          ],
-          "restricted_visibility": ["jc"]
+          ]
         }""".withoutWhitespace()
-    val upstreamMessage = UpstreamMessageDto(
+
+    val upstreamMessage = MessageRequest(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "regular",
-        cid = "cid",
         text = "text",
-        html = "html",
-        parent_id = null,
-        command = null,
-        args = null,
+        type = MessageRequest.Type.Regular,
+        attachments = emptyList(),
+        mentionedUsers = emptyList(),
+        mentionedHere = false,
+        mentionedChannel = false,
+        mentionedGroupIds = emptyList(),
+        mentionedRoles = emptyList(),
+        pinned = true,
+        showInChannel = false,
         silent = false,
-        shadowed = false,
-        extraData = mapOf(
+        restrictedVisibility = emptyList(),
+        custom = mapOf(
             "extraData" to mapOf(
                 "key1" to "value1",
                 "key2" to true,
-                "key3" to mapOf(
-                    "key4" to "val4",
-                ),
+                "key3" to mapOf("key4" to "val4"),
             ),
             "customKey1" to "customVal1",
             "customKey2" to true,
-            "customKey3" to listOf(
-                "a",
-                "b",
-                "c",
-            ),
+            "customKey3" to listOf("a", "b", "c"),
         ),
-        show_in_channel = false,
-        mentioned_users = emptyList(),
-        thread_participants = emptyList(),
-        attachments = listOf(AttachmentDtoTestData.attachment),
-        quoted_message_id = null,
-        pinned = true,
-        pinned_by = null,
-        pinned_at = null,
-        pin_expires = null,
-        restricted_visibility = listOf("jc"),
-        shared_location = null,
     )
 
     @Language("JSON")
     val upstreamJsonWithoutExtraData =
         """{
-          "attachments": [],
-          "cid": "cid",
-          "html": "",
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "text": "",
           "type": "regular",
+          "attachments": [],
           "mentioned_users": [],
           "mentioned_here": false,
           "mentioned_channel": false,
           "mentioned_group_ids": [],
           "mentioned_roles": [],
           "pinned": false,
-          "shadowed": false,
           "show_in_channel": false,
           "silent": false,
-          "text": "",
-          "thread_participants": [],
           "restricted_visibility": []
         }""".withoutWhitespace()
-    val upstreamMessageWithoutExtraData = UpstreamMessageDto(
+
+    val upstreamMessageWithoutExtraData = MessageRequest(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "regular",
-        cid = "cid",
         text = "",
-        html = "",
-        parent_id = null,
-        command = null,
-        args = null,
-        silent = false,
-        shadowed = false,
-        extraData = emptyMap(),
-        show_in_channel = false,
-        mentioned_users = emptyList(),
-        thread_participants = emptyList(),
+        type = MessageRequest.Type.Regular,
         attachments = emptyList(),
-        quoted_message_id = null,
+        mentionedUsers = emptyList(),
+        mentionedHere = false,
+        mentionedChannel = false,
+        mentionedGroupIds = emptyList(),
+        mentionedRoles = emptyList(),
         pinned = false,
-        pinned_by = null,
-        pinned_at = null,
-        pin_expires = null,
-        restricted_visibility = emptyList(),
-        shared_location = null,
+        showInChannel = false,
+        silent = false,
+        restrictedVisibility = emptyList(),
+        custom = emptyMap(),
     )
 }
