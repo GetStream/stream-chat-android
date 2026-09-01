@@ -29,7 +29,8 @@ import java.util.Date
  * @param name User's name.
  * @param image User's image.
  * @param invisible Determines if the user should share its online status. Can only be changed while connecting
- * the user.
+ * the user, and is only populated for the connected user: it is null for everyone else, since the server does
+ * not disclose it. Prefer [User.isInvisible] over reading this directly.
  * @param privacySettings The privacy settings for the user.
  * @param banned Whether a user is banned or not.
  * @param devices The list of devices for the current user.

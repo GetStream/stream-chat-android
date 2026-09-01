@@ -42,7 +42,7 @@ internal class UserAdapter(
         var name: String? = null
         var image: String? = null
         var role: String? = null
-        var invisible: Boolean? = false // DTO default
+        var invisible: Boolean? = null // the wire only sends invisible for the own user
         var privacySettings: PrivacySettings? = null
         var language: String? = null
         var banned: Boolean? = null

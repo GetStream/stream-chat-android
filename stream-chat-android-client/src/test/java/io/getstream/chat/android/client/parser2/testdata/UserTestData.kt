@@ -171,7 +171,7 @@ internal object UserTestData {
         name = "",
         image = "",
         role = "admin",
-        invisible = false,
+        invisible = null,
         privacySettings = null,
         language = "",
         banned = true,

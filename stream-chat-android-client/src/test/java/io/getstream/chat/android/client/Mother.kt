@@ -390,7 +390,7 @@ internal object Mother {
         name: String? = randomString(),
         image: String? = randomString(),
         role: String = randomString(),
-        invisible: Boolean? = false,
+        invisible: Boolean? = null,
         privacy_settings: PrivacySettingsDto? = null,
         language: String? = randomString(),
         banned: Boolean = randomBoolean(),
