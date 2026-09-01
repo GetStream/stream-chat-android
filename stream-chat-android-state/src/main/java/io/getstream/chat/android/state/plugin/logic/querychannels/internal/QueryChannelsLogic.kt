@@ -59,6 +59,14 @@ internal class QueryChannelsLogic(
     private val groupedResultMutex = Mutex()
 
     /**
+     * Whether a grouped query has ever finished for this group, successfully or not. Distinguishes
+     * a group that has never loaded from one that loaded and is genuinely empty, which state alone
+     * cannot express: both hold an empty channel map.
+     */
+    @Volatile
+    private var hasCompletedAQuery = false
+
+    /**
      * Sets the current request and optimistically loads any cached channels for the given
      * [request] from the local database. The cached channels are added to the in-memory state.
      * No remote API call is made.
@@ -154,17 +162,19 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Marks a grouped first page as loading, but only for a group that has never loaded.
+     * Marks a grouped first page as loading, for a group that has nothing to show and has never had
+     * a query finish.
      *
-     * The guard is `== null` rather than `isNullOrEmpty()`: a group that loaded and came back empty
-     * holds a non-null empty map, and re-raising for it would put every settled empty tab back into
-     * a spinner on each reconnect, since `SyncManager` recovers grouped lists through this listener.
+     * Both halves are needed. Without [hasCompletedAQuery] a settled empty group would go back to a
+     * spinner on every reconnect, since `SyncManager` recovers grouped lists through this listener.
+     * Without the emptiness check a request would hide cached channels behind a spinner, because
+     * [ChannelsStateData] reports `Loading` whenever the flag is set, regardless of content.
      *
      * Shares [groupedResultMutex] so the check cannot read a half-applied update.
      */
     internal suspend fun startLoadingFirstPageIfNeverLoaded() {
         groupedResultMutex.withLock {
-            if (queryChannelsStateLogic.getChannels() == null) {
+            if (!hasCompletedAQuery && queryChannelsStateLogic.getChannels().isNullOrEmpty()) {
                 queryChannelsStateLogic.setLoadingFirstPage(true)
             }
         }
@@ -178,6 +188,7 @@ internal class QueryChannelsLogic(
      * set *or* while channels are still null.
      */
     internal suspend fun finishFirstPageLoad() {
+        hasCompletedAQuery = true
         groupedResultMutex.withLock {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
             queryChannelsStateLogic.setLoadingFirstPage(false)
@@ -301,6 +312,7 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
             queryChannelsStateLogic.setRecoveryNeeded(false)
+            hasCompletedAQuery = true
 
             // Persist
             queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())

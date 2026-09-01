@@ -389,16 +389,29 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
+    fun `cached channels are not hidden behind a loader before the first query finishes`() = runTest {
+        // Given — the offline read populated the list; no query has completed yet.
+        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf("messaging:ch1" to randomChannel(id = "ch1"))
+
+        // When
+        logic.startLoadingFirstPageIfNeverLoaded()
+
+        // Then
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+    }
+
+    @Test
     fun `a settled empty group is not put back into the loader by a later request`() = runTest {
-        // Given — a group that loaded and came back empty holds a non-null empty map. This is the
-        // shape SyncManager recovery hits on every reconnect.
+        // Given — a query finished and the group came back empty. This is the shape SyncManager
+        // recovery hits on every reconnect.
         whenever(queryChannelsStateLogic.getChannels()) doReturn emptyMap()
+        logic.finishFirstPageLoad()
 
         // When
         logic.startLoadingFirstPageIfNeverLoaded()
 
         // Then — no spinner over a tab the user has already seen settle as empty.
-        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
+        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(true)
     }
 
     @Test
@@ -500,6 +513,42 @@ internal class QueryChannelsLogicGroupedTest {
         // And when the request fails, the load ends rather than leaving the list spinning.
         realLogic.finishFirstPageLoad()
         assertEquals(ChannelsStateData.OfflineNoResults, mutableState.channelsStateData.value)
+    }
+
+    @Test
+    fun `a request after the offline read still raises the loader`() = runTest {
+        // Given — the offline read runs first and misses, so the channel map is already non-null.
+        val mutableState = QueryChannelsMutableState(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            scope = testCoroutines.scope,
+            latestUsers = MutableStateFlow(emptyMap()),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+        )
+        val realLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            client = client,
+            queryChannelsStateLogic = QueryChannelsStateLogic(
+                mutableState = mutableState,
+                stateRegistry = mock(),
+                logicRegistry = mock(),
+                coroutineScope = testCoroutines.scope,
+            ),
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn null
+        realLogic.loadOfflineGroupedChannels()
+        assertEquals(ChannelsStateData.OfflineNoResults, mutableState.channelsStateData.value)
+
+        // When
+        realLogic.startLoadingFirstPageIfNeverLoaded()
+
+        // Then — a non-null empty map no longer blocks the raise; only a finished query does.
+        assertEquals(ChannelsStateData.Loading, mutableState.channelsStateData.value)
     }
 
     // endregion
