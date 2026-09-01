@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import java.util.Date
 
 /**
@@ -30,16 +31,5 @@ import java.util.Date
 internal data class DownstreamPushPreferenceDto(
     val chat_level: String?,
     val disabled_until: Date?,
-    val chat_preferences: DownstreamChatPreferencesDto? = null,
-)
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamChatPreferencesDto(
-    val direct_mentions: String? = null,
-    val role_mentions: String? = null,
-    val group_mentions: String? = null,
-    val here_mentions: String? = null,
-    val channel_mentions: String? = null,
-    val thread_replies: String? = null,
-    val default_preference: String? = null,
+    val chat_preferences: ChatPreferencesResponse? = null,
 )
