@@ -180,7 +180,7 @@ internal class QueryChannelsLogic(
     internal suspend fun finishFirstPageLoad() {
         groupedResultMutex.withLock {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
-            loadingPerPage(isLoading = false, hasOffset = false)
+            queryChannelsStateLogic.setLoadingFirstPage(false)
         }
     }
 

@@ -461,7 +461,7 @@ internal class QueryChannelsLogicGroupedTest {
     // region channelsStateData contract
 
     @Test
-    fun `an in-flight first page never emits the empty state on a cache miss`() = runTest {
+    fun `an in-flight first page holds Loading on a cache miss and ends on failure`() = runTest {
         // Given — real state rather than a mock, so the assertion is the sequence the UI sees
         // rather than which setters happened to be called.
         val mutableState = QueryChannelsMutableState(
@@ -496,6 +496,10 @@ internal class QueryChannelsLogicGroupedTest {
         // Then — still Loading. Reinstating the unconditional clear in loadOfflineGroupedChannels
         // turns this into OfflineNoResults, which is the flash this change removes.
         assertEquals(ChannelsStateData.Loading, mutableState.channelsStateData.value)
+
+        // And when the request fails, the load ends rather than leaving the list spinning.
+        realLogic.finishFirstPageLoad()
+        assertEquals(ChannelsStateData.OfflineNoResults, mutableState.channelsStateData.value)
     }
 
     // endregion

@@ -43,7 +43,6 @@ internal class QueryGroupedChannelsListenerState(
         // parameters. When `groups == null` the caller is relying on the server's default group
         // set — we don't know the keys until the response, so we defer to the result-side capture
         // (which only fires on success, but in that case there is no failure to recover from).
-        // Only named groups get a loader: with `groups == null` the keys are unknown until the response.
         groups?.forEach { (key, groupQuery) ->
             val queryLogic = logic.queryChannels(QueryChannelsIdentifier.Grouped(key))
             queryLogic.setGroupedQueryConfig(
