@@ -186,9 +186,14 @@ internal class QueryChannelsLogic(
      *
      * Both steps are needed to leave `Loading`, which [ChannelsStateData] reports while the flag is
      * set *or* while channels are still null.
+     *
+     * [completed] tells the two apart. A group the response omits has been answered, so it settles
+     * and a later request leaves it on the empty state. A failure has not, so the group stays
+     * never-loaded and a retry raises the loader again, which is what `queryOffline` does for a
+     * standard list after a failed empty first page.
      */
-    internal suspend fun finishFirstPageLoad() {
-        hasCompletedAQuery = true
+    internal suspend fun finishFirstPageLoad(completed: Boolean) {
+        if (completed) hasCompletedAQuery = true
         groupedResultMutex.withLock {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
             queryChannelsStateLogic.setLoadingFirstPage(false)

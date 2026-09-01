@@ -107,7 +107,7 @@ internal class QueryGroupedChannelsListenerStateTest {
 
         // then — the success path ends it while applying the result, so a failure that skipped
         // that path would otherwise leave a permanent spinner.
-        verify(logicFor("support")).finishFirstPageLoad()
+        verify(logicFor("support")).finishFirstPageLoad(completed = false)
     }
 
     @Test
@@ -136,8 +136,8 @@ internal class QueryGroupedChannelsListenerStateTest {
         )
 
         // then — the omitted group never reaches applyGroupedResult, so its loader is ended here.
-        verify(logicFor("direct")).finishFirstPageLoad()
-        verify(logicFor("support"), never()).finishFirstPageLoad()
+        verify(logicFor("direct")).finishFirstPageLoad(completed = true)
+        verify(logicFor("support"), never()).finishFirstPageLoad(any())
     }
 
     @Test
@@ -152,7 +152,7 @@ internal class QueryGroupedChannelsListenerStateTest {
         )
 
         // then
-        verify(logicFor("support"), never()).finishFirstPageLoad()
+        verify(logicFor("support"), never()).finishFirstPageLoad(any())
     }
 
     @Test

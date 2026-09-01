@@ -405,7 +405,7 @@ internal class QueryChannelsLogicGroupedTest {
         // Given — a query finished and the group came back empty. This is the shape SyncManager
         // recovery hits on every reconnect.
         whenever(queryChannelsStateLogic.getChannels()) doReturn emptyMap()
-        logic.finishFirstPageLoad()
+        logic.finishFirstPageLoad(completed = true)
 
         // When
         logic.startLoadingFirstPageIfNeverLoaded()
@@ -415,12 +415,23 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
+    fun `a failed first page stays retryable, so a later request raises the loader again`() = runTest {
+        whenever(queryChannelsStateLogic.getChannels()) doReturn emptyMap()
+        logic.finishFirstPageLoad(completed = false)
+
+        logic.startLoadingFirstPageIfNeverLoaded()
+
+        // A retry after a failure shows the loader, matching queryOffline for a standard list.
+        verify(queryChannelsStateLogic).setLoadingFirstPage(true)
+    }
+
+    @Test
     fun `finishFirstPageLoad ends Loading even when the request failed before the offline read`() = runTest {
         // Given — nothing has initialised channels yet, so rawChannels is still null.
         whenever(queryChannelsStateLogic.getChannels()) doReturn null
 
         // When
-        logic.finishFirstPageLoad()
+        logic.finishFirstPageLoad(completed = false)
 
         // Then — clearing the flag alone is not enough: ChannelsStateData reports Loading while
         // channels are null, so the state has to be initialised too or the spinner never ends.
@@ -511,7 +522,7 @@ internal class QueryChannelsLogicGroupedTest {
         assertEquals(ChannelsStateData.Loading, mutableState.channelsStateData.value)
 
         // And when the request fails, the load ends rather than leaving the list spinning.
-        realLogic.finishFirstPageLoad()
+        realLogic.finishFirstPageLoad(completed = false)
         assertEquals(ChannelsStateData.OfflineNoResults, mutableState.channelsStateData.value)
     }
 

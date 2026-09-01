@@ -67,10 +67,11 @@ internal class QueryGroupedChannelsListenerState(
     private suspend fun finishFirstPageLoads(
         keys: Set<String>,
         groups: Map<String, GroupedChannelsGroupQuery>?,
+        completed: Boolean,
     ) {
         keys.forEach { key ->
             if (groups?.get(key)?.isFirstPage() == true) {
-                logic.queryChannels(QueryChannelsIdentifier.Grouped(key)).finishFirstPageLoad()
+                logic.queryChannels(QueryChannelsIdentifier.Grouped(key)).finishFirstPageLoad(completed)
             }
         }
     }
@@ -84,7 +85,7 @@ internal class QueryGroupedChannelsListenerState(
     ) {
         if (result !is Result.Success) {
             // The success path ends the load while applying the result, so failures must do it here.
-            finishFirstPageLoads(groups.orEmpty().keys, groups)
+            finishFirstPageLoads(groups.orEmpty().keys, groups, completed = false)
             return
         }
 
@@ -102,7 +103,7 @@ internal class QueryGroupedChannelsListenerState(
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
         // reuse the caller's original parameters on paginated and recovery calls respectively.
         // A requested group the response omits never reaches applyGroupedResult, so end it here.
-        finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups)
+        finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups, completed = true)
 
         result.value.groups.forEach { (key, group) ->
             // A request without `next`/`prev` cursors for this key (or no per-group query at all)
