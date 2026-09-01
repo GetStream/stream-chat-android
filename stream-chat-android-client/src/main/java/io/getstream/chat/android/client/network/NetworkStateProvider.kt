@@ -47,16 +47,17 @@ internal class NetworkStateProvider(
 
         override fun onLost(network: Network) {
             availableNetworks.remove(network)
-            notifyListenersIfNetworkStateChanged()
             if (availableNetworks.isEmpty()) {
-                // No available networks, notify listeners about disconnection
-                listeners.onDisconnected()
+                // No available networks, the capability read may still lag behind
+                setConnected(false)
+            } else {
+                notifyListenersIfNetworkStateChanged()
             }
         }
     }
 
     @Volatile
-    private var isConnected: Boolean = isConnected()
+    private var lastKnownConnected: Boolean = queryConnectivity()
 
     @Volatile
     private var listeners: Set<NetworkStateListener> = setOf()
@@ -64,15 +65,20 @@ internal class NetworkStateProvider(
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
     private fun notifyListenersIfNetworkStateChanged() {
-        val isNowConnected = isConnected()
-        if (!isConnected && isNowConnected) {
-            logger.i { "Network connected." }
-            isConnected = true
-            listeners.onConnected()
-        } else if (isConnected && !isNowConnected) {
-            logger.i { "Network disconnected." }
-            isConnected = false
-            listeners.onDisconnected()
+        setConnected(queryConnectivity())
+    }
+
+    private fun setConnected(isNowConnected: Boolean) {
+        synchronized(lock) {
+            if (lastKnownConnected == isNowConnected) return
+            lastKnownConnected = isNowConnected
+            if (isNowConnected) {
+                logger.i { "Network connected." }
+                listeners.onConnected()
+            } else {
+                logger.i { "Network disconnected." }
+                listeners.onDisconnected()
+            }
         }
     }
 
@@ -88,7 +94,24 @@ internal class NetworkStateProvider(
         }
     }
 
-    fun isConnected(): Boolean {
+    /**
+     * Reports whether the network is currently usable.
+     *
+     * Only a `false` answer is recorded. A caller that concludes "no network" from this must not
+     * leave the last known state stale, or the following reconnection is not seen as a transition
+     * and listeners are never told the network came back.
+     *
+     * A `true` answer is deliberately not recorded: doing so would consume the very transition the
+     * listeners are waiting for, whenever this is read after the network returns but before the
+     * system callback lands.
+     */
+    fun isConnected(): Boolean = queryConnectivity().also { connected ->
+        if (!connected) {
+            synchronized(lock) { lastKnownConnected = false }
+        }
+    }
+
+    private fun queryConnectivity(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             runCatching {
                 connectivityManager.run {

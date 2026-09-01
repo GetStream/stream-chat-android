@@ -413,7 +413,7 @@ internal class ChatSocketStateServiceTest {
             ),
             Arguments.of(
                 State.Disconnected.NetworkDisconnected,
-                State.Disconnected.NetworkDisconnected,
+                State.RestartConnection(RestartReason.LIFECYCLE_RESUME),
             ),
             Arguments.of(
                 State.Disconnected.WebSocketEventLost,
