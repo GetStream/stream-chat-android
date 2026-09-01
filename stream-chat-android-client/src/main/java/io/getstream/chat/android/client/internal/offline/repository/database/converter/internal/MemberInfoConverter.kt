@@ -28,6 +28,9 @@ internal class MemberInfoConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val adapter = moshi.adapter<MemberInfoEntity>()
 
+    @OptIn(ExperimentalStdlibApi::class)
+    private val mapAdapter = moshi.adapter<Map<String, MemberInfoEntity>>()
+
     /**
      * Converts a [String] to a [MemberInfoEntity].
      */
@@ -45,5 +48,24 @@ internal class MemberInfoConverter {
     @TypeConverter
     fun memberInfoToString(memberInfo: MemberInfoEntity?): String? {
         return memberInfo?.let(adapter::toJson)
+    }
+
+    /**
+     * Converts a [String] to a map of user id to [MemberInfoEntity].
+     */
+    @TypeConverter
+    fun stringToMemberInfoMap(data: String?): Map<String, MemberInfoEntity> {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyMap()
+        }
+        return mapAdapter.fromJson(data).orEmpty()
+    }
+
+    /**
+     * Converts a map of user id to [MemberInfoEntity] to a [String].
+     */
+    @TypeConverter
+    fun memberInfoMapToString(memberInfo: Map<String, MemberInfoEntity>?): String? {
+        return mapAdapter.toJson(memberInfo.orEmpty())
     }
 }

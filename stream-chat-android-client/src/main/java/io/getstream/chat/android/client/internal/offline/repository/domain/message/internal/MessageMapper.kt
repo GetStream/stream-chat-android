@@ -91,6 +91,7 @@ internal suspend fun MessageEntity.toModel(
         sharedLocation = sharedLocation?.toModel(),
         channelRole = member?.channelRole,
         member = member?.toModel(),
+        mentionedChannelMembers = mentionedChannelMembers.mapValues { (_, entity) -> entity.toModel() },
         deletedForMe = deletedForMe,
     )
 }
@@ -145,6 +146,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         restrictedVisibility = restrictedVisibility,
         sharedLocation = sharedLocation?.toEntity(),
         member = memberInfoToEntity(),
+        mentionedChannelMembers = mentionedChannelMembers.mapValues { (_, info) -> info.toEntity() },
         deletedForMe = deletedForMe,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
@@ -204,6 +206,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             reminder = reminder?.toModel(),
             channelRole = member?.channelRole,
             member = member?.toModel(),
+            mentionedChannelMembers = mentionedChannelMembers.mapValues { (_, entity) -> entity.toModel() },
         )
     }
 }
@@ -247,6 +250,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             pollId = poll?.id,
             reminder = reminder?.toEntity(),
             member = memberInfoToEntity(),
+            mentionedChannelMembers = mentionedChannelMembers.mapValues { (_, info) -> info.toEntity() },
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )

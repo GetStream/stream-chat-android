@@ -68,6 +68,33 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
+    fun `mentioned channel members survive the round trip`(): Unit = runTest {
+        val mentioned = mapOf(
+            "user-42" to MemberInfo(
+                channelRole = "channel_moderator",
+                notificationsMuted = true,
+                extraData = mapOf("nickname" to "Padme"),
+            ),
+            "user-7" to MemberInfo(channelRole = "channel_member", notificationsMuted = false),
+        )
+        val message = randomMessage(mentionedChannelMembers = mentioned, replyTo = null, poll = null)
+
+        messageDao.insert(message.toEntity())
+
+        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo
+            mentioned.mapValues { (_, info) -> info.toEntity() }
+    }
+
+    @Test
+    fun `no mentioned channel members round trips as an empty map`(): Unit = runTest {
+        val message = randomMessage(mentionedChannelMembers = emptyMap(), replyTo = null, poll = null)
+
+        messageDao.insert(message.toEntity())
+
+        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo emptyMap()
+    }
+
+    @Test
     fun `a member without custom data survives the round trip`(): Unit = runTest {
         val member = MemberInfo(channelRole = "channel_member", notificationsMuted = false, extraData = emptyMap())
         val message = randomMessage(member = member, replyTo = null, poll = null)
