@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.ChannelsStateData
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -562,6 +563,68 @@ internal class QueryChannelsLogicGroupedTest {
 
         // Then — a non-null empty map no longer blocks the raise; only a finished query does.
         assertEquals(ChannelsStateData.Loading, mutableState.channelsStateData.value)
+    }
+
+    @Test
+    fun `two overlapping first pages, the earlier one failing, end on the later result`() = runTest {
+        // Given — nothing dedupes concurrent grouped requests, so two first pages for one group can
+        // be in flight together: an app query and a SyncManager recovery, for instance.
+        val mutableState = QueryChannelsMutableState(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            scope = testCoroutines.scope,
+            latestUsers = MutableStateFlow(emptyMap()),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+        )
+        // applyGroupedResult writes through to per-channel logic, so the registry needs to answer.
+        val logicRegistry = mock<LogicRegistry>()
+        whenever(logicRegistry.channel(any())) doReturn mock()
+        val realLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            client = client,
+            queryChannelsStateLogic = QueryChannelsStateLogic(
+                mutableState = mutableState,
+                stateRegistry = mock(),
+                logicRegistry = logicRegistry,
+                coroutineScope = testCoroutines.scope,
+                isLocalUnreadCountEnabled = false,
+            ),
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn null
+
+        // When — both requests start and the offline read misses
+        realLogic.startLoadingFirstPageIfNeverLoaded()
+        realLogic.startLoadingFirstPageIfNeverLoaded()
+        realLogic.loadOfflineGroupedChannels()
+        assertEquals(ChannelsStateData.Loading, mutableState.channelsStateData.value)
+
+        // And the first request fails while the second is still running
+        realLogic.finishFirstPageLoad(completed = false)
+
+        // Then — the loader drops for the rest of the second request. The flag is shared, so the
+        // earlier completion ends it; this is the pre-fix empty state, narrowed to that window.
+        // Gating the clear on an in-flight count would avoid it, but a count that leaks a start
+        // never returns to zero and the loader would never drop again.
+        assertEquals(ChannelsStateData.OfflineNoResults, mutableState.channelsStateData.value)
+
+        // And when the second request answers, its channels land. The list recovers on its own,
+        // which is what keeps the window above acceptable rather than a stuck spinner.
+        val channels = listOf(randomChannel(id = "ch1"))
+        realLogic.applyGroupedResult(
+            group = GroupedChannelsGroup(
+                groupKey = GROUP_KEY,
+                channels = channels,
+                next = null,
+                prev = null,
+            ),
+            isFirstPage = true,
+        )
+        assertEquals(ChannelsStateData.Result(channels), mutableState.channelsStateData.value)
     }
 
     // endregion
