@@ -30,6 +30,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 internal class MarkdownEmitter {
 
     private val text = StringBuilder()
+    private var linePrefix = ""
     private val spanStyles = mutableListOf<AnnotatedString.Range<SpanStyle>>()
     private val annotations = mutableListOf<AnnotatedString.Range<String>>()
 
@@ -41,12 +42,26 @@ internal class MarkdownEmitter {
     }
 
     /**
-     * Appends a line break for a break inside a block. Consecutive breaks collapse, because a
-     * hard break is spelled as a marker plus the newline it sits on and both reach the walker.
+     * Appends a line break for a break inside a block, then re-opens the line with [linePrefix] so
+     * a construct that marks every one of its lines keeps doing so. Consecutive breaks collapse,
+     * because a hard break is spelled as a marker plus the newline it sits on and both reach the
+     * walker.
      */
     fun appendLineBreak() {
         if (text.isNotEmpty() && text.last() == '\n') return
         text.append('\n')
+        text.append(linePrefix)
+    }
+
+    /** Marks every line [block] emits with [prefix], as a block quote marks its whole span. */
+    fun withLinePrefix(prefix: String, block: () -> Unit) {
+        val previous = linePrefix
+        linePrefix = prefix
+        try {
+            block()
+        } finally {
+            linePrefix = previous
+        }
     }
 
     fun addSpan(style: SpanStyle, start: Int, end: Int = length) {

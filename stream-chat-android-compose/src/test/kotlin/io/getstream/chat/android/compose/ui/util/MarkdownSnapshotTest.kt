@@ -73,6 +73,8 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
             > a quoted line
             > and its continuation
 
+            > a separate quote
+
             ```kotlin
             fun main() {
                 println("hi")

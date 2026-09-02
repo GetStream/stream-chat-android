@@ -169,8 +169,11 @@ internal class MarkdownRendererTest {
             Arguments.of("first<br/>second", "first\nsecond"),
             Arguments.of("# Title\nbody", "Title\nbody"),
             Arguments.of("> quoted", "|quoted"),
-            // Continuation lines carry their own marker, which must not reach the output.
-            Arguments.of("> quoted\n> continued", "|quoted\ncontinued"),
+            // One quote spanning two lines: CommonMark treats a soft break inside a quote as one
+            // block, and every line of it is marked so it reads as a single quote.
+            Arguments.of("> quoted\n> continued", "|quoted\n|continued"),
+            // A blank line ends a quote, so this is two of them, kept apart.
+            Arguments.of("> first\n\n> second", "|first\n\n|second"),
             Arguments.of("- one\n- two", "• one\n• two"),
             Arguments.of("---\nafter", "***\nafter"),
             // Escapes are resolved, and a backslash that escapes nothing is left alone.

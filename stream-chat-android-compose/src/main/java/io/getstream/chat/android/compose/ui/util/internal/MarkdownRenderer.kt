@@ -113,10 +113,16 @@ private class Walker(
     private fun blockQuote(node: ASTNode) {
         val start = emitter.length
         emitter.append(styles.blockQuotePrefix)
-        visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
+        // Marking every line, rather than just the first, is what makes a multi-line quote read as
+        // one quote instead of a quoted line followed by loose text.
+        emitter.withLinePrefix(styles.blockQuotePrefix) {
+            visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
+        }
         emitter.trimTrailingNewlines()
         emitter.addSpan(styles.blockQuote, start)
-        emitter.endBlock(newlines = 1)
+        // Two newlines keep consecutive quotes apart, so that two of them cannot be mistaken for
+        // one quote spanning two lines.
+        emitter.endBlock(newlines = 2)
     }
 
     private fun list(node: ASTNode, level: Int) {
