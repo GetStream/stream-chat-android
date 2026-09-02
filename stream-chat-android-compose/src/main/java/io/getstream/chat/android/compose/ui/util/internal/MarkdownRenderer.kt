@@ -280,7 +280,10 @@ private class Walker(
                 bracketsEmailAutolink -> afterQuoteMarker = false
                 else -> {
                     afterQuoteMarker = false
-                    afterHardBreak = node.type == MarkdownTokenTypes.HARD_LINE_BREAK
+                    // A break written as a tag absorbs the following line feed just as one written
+                    // with trailing spaces does, so ending a line with it produces one break.
+                    afterHardBreak = node.type == MarkdownTokenTypes.HARD_LINE_BREAK ||
+                        (node.type == MarkdownTokenTypes.HTML_TAG && node.text().toString().isLineBreakTag())
                     visitInlineNode(node)
                 }
             }

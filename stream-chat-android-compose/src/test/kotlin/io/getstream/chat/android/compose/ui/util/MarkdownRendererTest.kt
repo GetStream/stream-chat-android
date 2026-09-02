@@ -205,6 +205,8 @@ internal class MarkdownRendererTest {
             Arguments.of("first  \nsecond", "first\nsecond"),
             Arguments.of("first\\\nsecond", "first\nsecond"),
             Arguments.of("first<br/>second", "first\nsecond"),
+            // A tag ending a line absorbs that line's feed, exactly as trailing spaces do.
+            Arguments.of("first<br/>\nsecond", "first\nsecond"),
             Arguments.of("# Title\nbody", "Title\nbody"),
             Arguments.of("> quoted", "|quoted"),
             // One quote spanning two lines: CommonMark treats a soft break inside a quote as one
