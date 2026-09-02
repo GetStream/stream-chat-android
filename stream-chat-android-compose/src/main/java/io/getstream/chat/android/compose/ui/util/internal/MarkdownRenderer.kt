@@ -169,8 +169,9 @@ private class Walker(
         emitter.append(styles.listIndent.repeat(level - 1))
         emitter.append(marker)
 
-        // The item's own text shares the marker's line; anything after it starts a line of its
-        // own, indented to sit under that text rather than running into it.
+        // Whatever comes first shares the marker's line, so a marker is never left alone on one.
+        // Everything after it starts a line of its own, indented to sit under the item's text
+        // rather than running into it.
         var markerLineTaken = false
         for (child in node.children) {
             when (child.type) {
@@ -191,14 +192,14 @@ private class Walker(
 
                 // A nested list emits its own indent, so it only needs the line closing.
                 MarkdownElementTypes.UNORDERED_LIST, MarkdownElementTypes.ORDERED_LIST -> {
+                    if (markerLineTaken) endItemLine()
                     markerLineTaken = true
-                    endItemLine()
                     list(child, level + 1)
                 }
 
                 else -> {
+                    if (markerLineTaken) continueItemLine(level)
                     markerLineTaken = true
-                    continueItemLine(level)
                     visitBlock(child)
                 }
             }

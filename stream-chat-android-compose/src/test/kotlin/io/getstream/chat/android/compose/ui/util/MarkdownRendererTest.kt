@@ -233,8 +233,15 @@ internal class MarkdownRendererTest {
             Arguments.of("a &notreal; b", "a &notreal; b"),
             // Code content is literal, so a reference inside it stays as written.
             Arguments.of("`a &amp; b`", "a &amp; b"),
-            // A block inside a list item starts its own line, indented under the item's text,
-            // rather than running into the marker line.
+            // An item whose only content is a block keeps it on the marker's line, so no marker
+            // is ever left sitting alone.
+            Arguments.of("- # H", "• H"),
+            Arguments.of("- > quoted", "• |quoted"),
+            Arguments.of("- ```\n  x\n  ```", "• x"),
+            Arguments.of("- - a", "• >• a"),
+            Arguments.of("1. # H\n1. next", "1. H\n2. next"),
+            // A second block inside a list item starts its own line, indented under the item's
+            // text, rather than running into the marker line.
             Arguments.of("- item\n\n  # H\n- next", "• item\n>H\n• next"),
             Arguments.of("- item\n\n  > q\n- next", "• item\n>|q\n• next"),
             // Content following a nested list stays indented, and the next item still gets a line.
