@@ -158,6 +158,31 @@ internal class MarkdownRendererTest {
         result.urlAt("label") shouldBeEqualTo null
     }
 
+    @ParameterizedTest
+    @MethodSource("hostileSchemes")
+    fun `does not annotate a scheme a message has no business carrying`(destination: String) {
+        // A tapped link is handed to the system, so a message must not be able to reach an
+        // arbitrary scheme through one.
+        val result = renderer.render("[tap]($destination)")
+
+        result.text shouldBeEqualTo "tap"
+        result.urlAt("tap") shouldBeEqualTo null
+    }
+
+    @ParameterizedTest
+    @MethodSource("openableSchemes")
+    fun `annotates a scheme a message may carry`(destination: String) {
+        renderer.render("[tap]($destination)").urlAt("tap") shouldBeEqualTo destination
+    }
+
+    @Test
+    fun `falls back to plain text when a document cannot be rendered`() {
+        // Nesting this deep exhausts the stack while parsing, and this runs during composition.
+        val source = ">".repeat(2000) + " x"
+
+        renderer.render(source).text shouldBeEqualTo source
+    }
+
     @Test
     fun `resolves a full reference link`() {
         val result = renderer.render("see [the docs][d] now\n\n[d]: https://getstream.io")
@@ -192,6 +217,25 @@ internal class MarkdownRendererTest {
         @JvmStatic
         @Suppress("unused")
         fun unopenableDestinations(): List<String> = listOf("#section", "/docs/page", "foo bar")
+
+        @JvmStatic
+        @Suppress("unused")
+        fun hostileSchemes(): List<String> = listOf(
+            "javascript:alert(1)",
+            "intent://scan/#Intent;scheme=zxing;end",
+            "file:///data/data/x",
+            "myapp://reset?token=1",
+            "unknown-scheme:whatever",
+        )
+
+        @JvmStatic
+        @Suppress("unused")
+        fun openableSchemes(): List<String> = listOf(
+            "http://x.com",
+            "https://x.com",
+            "mailto:a@b.com",
+            "tel:+123",
+        )
 
         @JvmStatic
         @Suppress("unused")
@@ -267,6 +311,21 @@ internal class MarkdownRendererTest {
             // A document that renders to nothing falls back to what was typed, rather than
             // leaving an empty bubble.
             Arguments.of("[d]: https://getstream.io", "[d]: https://getstream.io"),
+            // A checkbox belongs beside the marker rather than pushing the item onto a new line.
+            Arguments.of("- [x] done", "• [x] done"),
+            Arguments.of("- [ ] todo", "• [ ] todo"),
+            // Tab indentation declares an indented code block just as four spaces do.
+            Arguments.of("\tone\n\ttwo", "one\ntwo"),
+            // Every line of a block inside a list item is indented, not only the first.
+            Arguments.of("- item\n\n      one\n      two", "• item\n>one\n>two"),
+            // The specification turns a line ending inside a code span into a space.
+            Arguments.of("> `a\n> b`", "|a  b"),
+            // A reference to an invalid code point becomes the replacement character.
+            Arguments.of("a &#xD800; b", "a \uFFFD b"),
+            Arguments.of("a &#0; b", "a \uFFFD b"),
+            // A link or image with an empty label keeps its source, rather than disappearing.
+            Arguments.of("see [](https://x.com) here", "see [](https://x.com) here"),
+            Arguments.of("![](https://x.com/a.png)", "![](https://x.com/a.png)"),
             // Unsupported constructs keep their source text so nothing is lost.
             Arguments.of("| a | b |\n| --- | --- |\n| 1 | 2 |", "| a | b |\n| --- | --- |\n| 1 | 2 |"),
         )

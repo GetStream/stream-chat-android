@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import io.getstream.chat.android.compose.ui.util.AnnotationTagLiteral
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.MarkdownStyles
+import io.getstream.log.taggedLogger
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -44,10 +45,25 @@ import org.intellij.markdown.parser.MarkdownParser
  */
 internal class MarkdownRenderer(private val styles: MarkdownStyles) {
 
+    private val logger by taggedLogger("Chat:MarkdownRenderer")
+
     fun render(text: String): AnnotatedString {
         // The parser only recognises line feeds, so a carriage return would otherwise survive into
         // the output and hide the break it belongs to.
         val source = text.replace("\r\n", "\n").replace('\r', '\n')
+        // Message text comes from other people, and this runs during composition. Deeply nested
+        // markdown recurses far enough to exhaust the stack, which would otherwise take the whole
+        // message list down for everyone in the channel, and again on every reopen. Nothing here
+        // is worth failing a message for, so anything thrown falls back to the text as typed.
+        return try {
+            renderOrThrow(source)
+        } catch (@Suppress("TooGenericExceptionCaught") error: Throwable) {
+            logger.e(error) { "[render] failed, falling back to plain text" }
+            AnnotatedString(source)
+        }
+    }
+
+    private fun renderOrThrow(source: String): AnnotatedString {
         val emitter = MarkdownEmitter()
         val tree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(source)
         val links = LinkMap.buildLinkMap(tree, source)
@@ -187,6 +203,9 @@ private class Walker(
         var markerLineTaken = false
         for (child in node.children) {
             when (child.type) {
+                // A task list's checkbox belongs beside the marker, so it must not take the line.
+                GFMTokenTypes.CHECK_BOX -> emitter.append(child.text())
+
                 // Markers are replaced, and the breaks between an item's blocks are structural.
                 MarkdownTokenTypes.LIST_BULLET,
                 MarkdownTokenTypes.LIST_NUMBER,
@@ -212,7 +231,14 @@ private class Walker(
                 else -> {
                     if (markerLineTaken) continueItemLine(level)
                     markerLineTaken = true
-                    visitBlock(child)
+                    // continueItemLine indents the first line; the prefix carries the rest, which
+                    // a block spanning several lines needs.
+                    emitter.withLinePrefix(emitter.currentLinePrefix + styles.listIndent.repeat(level)) {
+                        visitBlock(child)
+                        // Trim while the item's prefix is current, or the line it marked is left
+                        // dangling at the end of the block.
+                        emitter.trimTrailingNewlines()
+                    }
                 }
             }
         }
@@ -248,7 +274,7 @@ private class Walker(
         // one of its lines. Blank lines are significant here, so they are opened unconditionally.
         code.trim('\n').split('\n').forEachIndexed { index, line ->
             if (index > 0) emitter.appendLineBreak()
-            emitter.append(if (stripIndent) line.removePrefix(IndentedCodePrefix) else line)
+            emitter.append(if (stripIndent) line.stripCodeIndent() else line)
         }
         emitter.addSpan(styles.codeBlock, start)
         emitter.addAnnotation(AnnotationTagLiteral, "", start)
@@ -302,9 +328,16 @@ private class Walker(
             }
 
             MarkdownElementTypes.CODE_SPAN -> literal(styles.codeSpan) {
+                // The specification turns a line ending inside a code span into a space, so the
+                // span stays on one line and the marker opening a quoted continuation line goes.
                 node.children
-                    .filter { it.type != MarkdownTokenTypes.BACKTICK }
-                    .forEach { emitter.append(it.text()) }
+                    .filter { it.type !in CodeSpanSyntaxTypes }
+                    .forEach { child ->
+                        when (child.type) {
+                            MarkdownTokenTypes.EOL -> emitter.append(" ")
+                            else -> emitter.append(child.text())
+                        }
+                    }
             }
 
             MarkdownElementTypes.INLINE_LINK -> inlineLink(node)
@@ -352,6 +385,11 @@ private class Walker(
         val shown = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT } ?: label
         val start = emitter.length
         visitInlineChildren(shown, skip = LinkLabelMarkerTypes)
+        // A link with nothing between its brackets would otherwise vanish from the message.
+        if (emitter.length == start) {
+            emitter.appendText(node.text())
+            return
+        }
         destination.toString().toOpenableUrl()?.let { url ->
             emitter.addAnnotation(AnnotationTagUrl, url, start)
         }
@@ -366,7 +404,10 @@ private class Walker(
             emitter.appendText(node.text())
             return
         }
+        val start = emitter.length
         visitInlineChildren(label, skip = LinkLabelMarkerTypes)
+        // An image with no alt text has nothing to stand in for it, so its source does.
+        if (emitter.length == start) emitter.appendText(node.text())
     }
 
     private fun inlineLink(node: ASTNode) {
@@ -378,6 +419,11 @@ private class Walker(
         }
         val start = emitter.length
         visitInlineChildren(label, skip = LinkLabelMarkerTypes)
+        // A link with nothing between its brackets would otherwise vanish from the message.
+        if (emitter.length == start) {
+            emitter.appendText(node.text())
+            return
+        }
         destination.text().toString().toOpenableUrl()?.let { url ->
             emitter.addAnnotation(AnnotationTagUrl, url, start)
         }
@@ -453,7 +499,12 @@ private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
         body.startsWith("#x", ignoreCase = true) -> body.drop(2).toIntOrNull(radix = 16)
         else -> body.drop(1).toIntOrNull()
     } ?: return null
-    if (codePoint <= 0 || codePoint > Character.MAX_CODE_POINT) return null
+    // A reference to an invalid code point, a surrogate included, becomes the replacement
+    // character rather than being left as written.
+    val invalid = codePoint <= 0 ||
+        codePoint > Character.MAX_CODE_POINT ||
+        codePoint in MinSurrogate..MaxSurrogate
+    if (invalid) return ReplacementCharacter to length
     return String(Character.toChars(codePoint)) to length
 }
 
@@ -474,12 +525,21 @@ private fun String.toOpenableUrl(): String? {
     val destination = removeSurrounding("<", ">").trim()
     return when {
         destination.isEmpty() || destination.any(Char::isWhitespace) -> null
-        SchemePattern.containsMatchIn(destination) -> destination
+        SchemePattern.containsMatchIn(destination) -> destination.takeIf { it.hasOpenableScheme() }
         destination.contains('@') && !destination.contains('/') -> "mailto:$destination"
         HostPattern.containsMatchIn(destination) -> "https://$destination"
         else -> null
     }
 }
+
+/**
+ * Message text arrives from other people, and a tapped link is handed to the system to open, so a
+ * destination is only annotated when its scheme is one a message has any business carrying. Without
+ * this, a link reading as ordinary text could open a `javascript:` or `intent://` target, or deep
+ * link into the host app.
+ */
+private fun String.hasOpenableScheme(): Boolean =
+    OpenableSchemes.any { startsWith(it, ignoreCase = true) }
 
 /**
  * Both spellings of a hard break: the marker left by trailing spaces or a backslash, and the tag.
@@ -501,11 +561,15 @@ private val StrikethroughSpan = SpanStyle(textDecoration = TextDecoration.LineTh
 
 private const val UnorderedListMarker = "•"
 
+private val OpenableSchemes = listOf("http://", "https://", "mailto:", "tel:")
 private val SchemePattern = Regex("^[a-zA-Z][a-zA-Z0-9+.\\-]*:")
 private val HostPattern = Regex("^[\\w\\-]+(\\.[\\w\\-]+)+")
 private val LineBreakTagPattern = Regex("<br\\s*/?>", RegexOption.IGNORE_CASE)
 private const val EscapablePunctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 private const val MaxCharacterReferenceLength = 32
+private const val ReplacementCharacter = "\uFFFD"
+private const val MinSurrogate = 0xD800
+private const val MaxSurrogate = 0xDFFF
 
 private val NamedCharacterReferences = mapOf(
     "amp" to "&",
@@ -525,6 +589,7 @@ private val HeadingMarkerTypes = setOf(
 private val EmphasisMarkerTypes = setOf(MarkdownTokenTypes.EMPH, GFMTokenTypes.TILDE)
 private val LinkLabelMarkerTypes = setOf(MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET)
 private val AutolinkMarkerTypes = setOf(MarkdownTokenTypes.LT, MarkdownTokenTypes.GT)
+private val CodeSpanSyntaxTypes = setOf(MarkdownTokenTypes.BACKTICK, MarkdownTokenTypes.BLOCK_QUOTE)
 private val ImageLinkTypes = setOf(
     MarkdownElementTypes.INLINE_LINK,
     MarkdownElementTypes.FULL_REFERENCE_LINK,
@@ -533,8 +598,13 @@ private val ImageLinkTypes = setOf(
 private val FenceContentTypes = setOf(MarkdownTokenTypes.CODE_FENCE_CONTENT)
 private val IndentedCodeContentTypes = setOf(MarkdownTokenTypes.CODE_LINE)
 
-/** CommonMark strips this much indentation from every line of an indented code block. */
-private const val IndentedCodePrefix = "    "
+/** CommonMark strips the indentation that declared an indented code block, in either spelling. */
+private fun String.stripCodeIndent(): String = when {
+    startsWith(IndentedCodeSpaces) -> removePrefix(IndentedCodeSpaces)
+    else -> removePrefix("\t")
+}
+
+private const val IndentedCodeSpaces = "    "
 
 /** Constructs with no styled form; their source text is shown so the content still reads. */
 private val SourceTextTypes = setOf(GFMElementTypes.TABLE)
