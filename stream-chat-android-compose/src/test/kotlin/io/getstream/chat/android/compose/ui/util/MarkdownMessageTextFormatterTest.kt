@@ -131,6 +131,18 @@ internal class MarkdownMessageTextFormatterTest {
     }
 
     @Test
+    fun `keeps the markdown styling underneath a link`() {
+        // The link contributes colour, not a whole text style, so what markdown put under it stays.
+        val bold = formatter.format(message(text = "**[link](https://x.com)**"), currentUser)
+        bold.spanAt("link")?.fontWeight shouldBeEqualTo FontWeight.Bold
+        bold.spanAt("link")?.color shouldBeEqualTo Color.Blue
+
+        val heading = formatter.format(message(text = "# [link](https://x.com)"), currentUser)
+        heading.spanAt("link")?.fontSize shouldBeEqualTo 30.sp
+        heading.spanAt("link")?.color shouldBeEqualTo Color.Blue
+    }
+
+    @Test
     fun `leaves plain text with line breaks untouched`() {
         val text = "first line\nsecond line"
 

@@ -176,6 +176,19 @@ internal class MarkdownRendererTest {
     }
 
     @Test
+    fun `links a destination carrying a port`() {
+        renderer.render("[label](example.com:8080)").urlAt("label") shouldBeEqualTo
+            "https://example.com:8080"
+    }
+
+    @Test
+    fun `resolves escapes and references inside a destination`() {
+        renderer.render("[x](https://a.com?a=1&amp;b=2)").urlAt("x") shouldBeEqualTo
+            "https://a.com?a=1&b=2"
+        renderer.render("[x](https://a.com/a\\_b)").urlAt("x") shouldBeEqualTo "https://a.com/a_b"
+    }
+
+    @Test
     fun `falls back to plain text when a document cannot be rendered`() {
         // Nesting this deep exhausts the stack while parsing, and this runs during composition.
         val source = ">".repeat(2000) + " x"
@@ -326,6 +339,13 @@ internal class MarkdownRendererTest {
             // A link or image with an empty label keeps its source, rather than disappearing.
             Arguments.of("see [](https://x.com) here", "see [](https://x.com) here"),
             Arguments.of("![](https://x.com/a.png)", "![](https://x.com/a.png)"),
+            // Only the delimiter runs are syntax, so a backtick between them is content.
+            Arguments.of("``a `b` c``", "a `b` c"),
+            // Verbatim source drops the quote markers of the lines it continues on.
+            Arguments.of("> <div>\n> x\n> </div>", "|<div>\n|x\n|</div>"),
+            Arguments.of("> | a |\n> | - |", "|| a |\n|| - |"),
+            // A message of only whitespace is still text the sender typed.
+            Arguments.of("   ", "   "),
             // Unsupported constructs keep their source text so nothing is lost.
             Arguments.of("| a | b |\n| --- | --- |\n| 1 | 2 |", "| a | b |\n| --- | --- |\n| 1 | 2 |"),
         )

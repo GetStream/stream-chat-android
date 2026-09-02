@@ -85,7 +85,9 @@ public class MarkdownMessageTextFormatter internal constructor(
             color = textStyle(isMine, message).color,
         )
         val markdown = renderer.render(displayedText)
-        val linkSpan = linkStyle(isMine).toSpanStyle()
+        // Only the colour and decoration, because a full text style would overwrite the weight,
+        // size and family that markdown put underneath the link.
+        val linkSpan = linkStyle(isMine).let { SpanStyle(color = it.color, textDecoration = it.textDecoration) }
         return buildAnnotatedString {
             append(markdown.text)
             // The base style goes on first so the markdown spans layered over it win.

@@ -73,12 +73,15 @@ internal class MarkdownRenderer(private val styles: MarkdownStyles) {
         // Some documents render to nothing at all - a message holding only link definitions, for
         // one. Showing what was typed beats showing an empty bubble.
         return when {
-            rendered.text.isEmpty() && source.isNotBlank() -> AnnotatedString(source)
+            rendered.text.isEmpty() && source.isNotEmpty() -> AnnotatedString(source)
             else -> rendered
         }
     }
 }
 
+// A visitor needs a member per construct it renders, and markdown has more constructs than the
+// threshold allows for.
+@Suppress("TooManyFunctions")
 private class Walker(
     private val source: String,
     private val styles: MarkdownStyles,
@@ -119,7 +122,7 @@ private class Walker(
             // Neither has a styled form, so their source stands in, but both are still blocks
             // and must not run into the next one.
             GFMElementTypes.TABLE, MarkdownElementTypes.HTML_BLOCK -> {
-                emitter.appendText(node.text())
+                verbatimBlock(node)
                 emitter.endBlock(newlines = 1)
             }
 
@@ -130,6 +133,18 @@ private class Walker(
             MarkdownTokenTypes.EOL, MarkdownTokenTypes.WHITE_SPACE -> Unit
 
             else -> visitInlineNode(node)
+        }
+    }
+
+    /**
+     * Emits a construct's source text as it was written. The source of a line continuing inside a
+     * quote still opens with that quote's marker, which our own line prefix already stands for.
+     */
+    private fun verbatimBlock(node: ASTNode) {
+        val quoted = emitter.currentLinePrefix.isNotEmpty()
+        node.text().toString().split('\n').forEachIndexed { index, line ->
+            if (index > 0) emitter.appendLineBreak()
+            emitter.appendText(if (index > 0 && quoted) line.trimStart('>', ' ') else line)
         }
     }
 
@@ -331,7 +346,9 @@ private class Walker(
                 // The specification turns a line ending inside a code span into a space, so the
                 // span stays on one line and the marker opening a quoted continuation line goes.
                 node.children
-                    .filter { it.type !in CodeSpanSyntaxTypes }
+                    .dropWhile { it.type == MarkdownTokenTypes.BACKTICK }
+                    .dropLastWhile { it.type == MarkdownTokenTypes.BACKTICK }
+                    .filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE }
                     .forEach { child ->
                         when (child.type) {
                             MarkdownTokenTypes.EOL -> emitter.append(" ")
@@ -390,7 +407,7 @@ private class Walker(
             emitter.appendText(node.text())
             return
         }
-        destination.toString().toOpenableUrl()?.let { url ->
+        destination.toString().resolveMarkdownText().toOpenableUrl()?.let { url ->
             emitter.addAnnotation(AnnotationTagUrl, url, start)
         }
     }
@@ -424,7 +441,7 @@ private class Walker(
             emitter.appendText(node.text())
             return
         }
-        destination.text().toString().toOpenableUrl()?.let { url ->
+        destination.text().toString().resolveMarkdownText().toOpenableUrl()?.let { url ->
             emitter.addAnnotation(AnnotationTagUrl, url, start)
         }
     }
@@ -451,14 +468,26 @@ private class Walker(
  * in place. Code content is appended as-is instead, where neither carries special meaning.
  */
 private fun MarkdownEmitter.appendText(value: CharSequence) {
+    value.toString().resolveMarkdownText().split('\n').forEachIndexed { index, line ->
+        if (index > 0) appendLineBreak()
+        append(line)
+    }
+}
+
+/**
+ * Resolves the backslash escapes and character references the parser leaves in the source. Applies
+ * to a link's destination as much as to the text, since both are written in the same source.
+ */
+private fun String.resolveMarkdownText(): String = buildString {
+    val source = this@resolveMarkdownText
     var index = 0
-    while (index < value.length) {
-        val char = value[index]
-        val next = value.getOrNull(index + 1)
-        val reference = if (char == '&') value.characterReferenceAt(index) else null
+    while (index < source.length) {
+        val char = source[index]
+        val next = source.getOrNull(index + 1)
+        val reference = if (char == '&') source.characterReferenceAt(index) else null
         when {
             char == '\\' && next != null && next in EscapablePunctuation -> {
-                append(next.toString())
+                append(next)
                 index += 2
             }
 
@@ -467,13 +496,8 @@ private fun MarkdownEmitter.appendText(value: CharSequence) {
                 index += reference.second
             }
 
-            char == '\n' -> {
-                appendLineBreak()
-                index++
-            }
-
             else -> {
-                append(char.toString())
+                append(char)
                 index++
             }
         }
@@ -525,8 +549,10 @@ private fun String.toOpenableUrl(): String? {
     val destination = removeSurrounding("<", ">").trim()
     return when {
         destination.isEmpty() || destination.any(Char::isWhitespace) -> null
-        SchemePattern.containsMatchIn(destination) -> destination.takeIf { it.hasOpenableScheme() }
+        destination.hasOpenableScheme() -> destination
         destination.contains('@') && !destination.contains('/') -> "mailto:$destination"
+        // Reached by a destination carrying a port, whose host reads as a scheme to the pattern
+        // above. HostPattern is anchored on a dotted host, so a hostile scheme cannot match here.
         HostPattern.containsMatchIn(destination) -> "https://$destination"
         else -> null
     }
@@ -562,7 +588,6 @@ private val StrikethroughSpan = SpanStyle(textDecoration = TextDecoration.LineTh
 private const val UnorderedListMarker = "•"
 
 private val OpenableSchemes = listOf("http://", "https://", "mailto:", "tel:")
-private val SchemePattern = Regex("^[a-zA-Z][a-zA-Z0-9+.\\-]*:")
 private val HostPattern = Regex("^[\\w\\-]+(\\.[\\w\\-]+)+")
 private val LineBreakTagPattern = Regex("<br\\s*/?>", RegexOption.IGNORE_CASE)
 private const val EscapablePunctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
@@ -589,7 +614,6 @@ private val HeadingMarkerTypes = setOf(
 private val EmphasisMarkerTypes = setOf(MarkdownTokenTypes.EMPH, GFMTokenTypes.TILDE)
 private val LinkLabelMarkerTypes = setOf(MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET)
 private val AutolinkMarkerTypes = setOf(MarkdownTokenTypes.LT, MarkdownTokenTypes.GT)
-private val CodeSpanSyntaxTypes = setOf(MarkdownTokenTypes.BACKTICK, MarkdownTokenTypes.BLOCK_QUOTE)
 private val ImageLinkTypes = setOf(
     MarkdownElementTypes.INLINE_LINK,
     MarkdownElementTypes.FULL_REFERENCE_LINK,
