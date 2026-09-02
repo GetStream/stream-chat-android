@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.UserResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -191,7 +192,16 @@ internal object UserDtoTestData {
             "avg_response_time": 1000,
             "push_preferences": {
                 "chat_level": "default",
-                "disabled_until": "2020-06-10T11:04:31.588Z"
+                "disabled_until": "2020-06-10T11:04:31.588Z",
+                "chat_preferences": {
+                  "direct_mentions": "all",
+                  "role_mentions": "none",
+                  "group_mentions": "all",
+                  "here_mentions": "none",
+                  "channel_mentions": "all",
+                  "thread_replies": "none",
+                  "default_preference": "all"
+                }
             }
          }"""
     const val userResponseJson =
@@ -275,6 +285,16 @@ internal object UserDtoTestData {
             push_preferences = DownstreamPushPreferenceDto(
                 chat_level = "default",
                 disabled_until = Date(1591787071588),
+                // Toggles alternate so a key read into the wrong property cannot look correct.
+                chat_preferences = ChatPreferencesResponse(
+                    directMentions = "all",
+                    roleMentions = "none",
+                    groupMentions = "all",
+                    hereMentions = "none",
+                    channelMentions = "all",
+                    threadReplies = "none",
+                    defaultPreference = "all",
+                ),
             ),
             extraData = emptyMap(),
         )

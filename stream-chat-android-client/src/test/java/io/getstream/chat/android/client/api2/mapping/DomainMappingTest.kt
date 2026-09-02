@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
 import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -89,6 +90,7 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ChatPreferenceToggle
+import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
@@ -109,6 +111,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryPollVotesResult
@@ -1681,6 +1684,42 @@ internal class DomainMappingTest {
                 descByName<Channel>("created_at").ascByName("name"),
             ),
         )
+    }
+
+    @Test
+    fun `DownstreamPushPreferenceDto keeps every chat preference toggle`() {
+        val sut = Fixture().get()
+
+        val result = with(sut) {
+            DownstreamPushPreferenceDto(
+                chat_level = "all",
+                disabled_until = Date(1000),
+                chat_preferences = ChatPreferencesResponse(
+                    directMentions = "all",
+                    roleMentions = "none",
+                    groupMentions = "all",
+                    hereMentions = "none",
+                    channelMentions = "all",
+                    threadReplies = "none",
+                    defaultPreference = "all",
+                ),
+            ).toDomain()
+        }
+
+        val expected = PushPreference(
+            level = PushPreferenceLevel.all,
+            disabledUntil = Date(1000),
+            chatPreferences = ChatPreferences(
+                directMentions = ChatPreferenceToggle.all,
+                roleMentions = ChatPreferenceToggle.none,
+                groupMentions = ChatPreferenceToggle.all,
+                hereMentions = ChatPreferenceToggle.none,
+                channelMentions = ChatPreferenceToggle.all,
+                threadReplies = ChatPreferenceToggle.none,
+                defaultPreference = ChatPreferenceToggle.all,
+            ),
+        )
+        assertEquals(expected, result)
     }
 
     @Test

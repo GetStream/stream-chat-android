@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChatPreferencesDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
@@ -1363,16 +1362,6 @@ internal class DomainMapping(
         level = PushPreferenceLevel.fromValue(chat_level),
         disabledUntil = disabled_until,
         chatPreferences = chat_preferences?.toDomain(),
-    )
-
-    internal fun DownstreamChatPreferencesDto.toDomain(): ChatPreferences = ChatPreferences(
-        directMentions = ChatPreferenceToggle.fromValue(direct_mentions),
-        roleMentions = ChatPreferenceToggle.fromValue(role_mentions),
-        groupMentions = ChatPreferenceToggle.fromValue(group_mentions),
-        hereMentions = ChatPreferenceToggle.fromValue(here_mentions),
-        channelMentions = ChatPreferenceToggle.fromValue(channel_mentions),
-        threadReplies = ChatPreferenceToggle.fromValue(thread_replies),
-        defaultPreference = ChatPreferenceToggle.fromValue(default_preference),
     )
 
     internal fun PushPreferencesResponse.toDomain(): PushPreference = PushPreference(
