@@ -55,6 +55,9 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
             """
             Plain, **bold**, *italic*, ***both***, ~~struck~~ and `code()`.
             A [link](https://getstream.io) and a bare https://getstream.io too.
+            A [reference][d] link, and ![an image](https://x.com/a.png) as alt text.
+
+            [d]: https://getstream.io
 
             # Heading 1
             ## Heading 2

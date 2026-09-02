@@ -31,7 +31,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
- * A [MessageTextFormatter] that renders the message text as markdown.
+ * A [MessageTextFormatter] that renders the message text as GitHub Flavored Markdown.
  *
  * Install it in place of the default formatter:
  * ```
@@ -42,6 +42,22 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * without it. Because markdown drops the syntax characters, the formatted text is shorter than
  * [Message.text], so this formatter cannot be combined through [MessageTextFormatter.composite]
  * with formatters that style by offsets into the original text.
+ *
+ * ### One deliberate departure from the specification
+ *
+ * A single line break inside a paragraph renders as a line break, where the specification calls for
+ * a soft break that collapses to a space. Complying would mean a line break could only be written
+ * as two trailing spaces or a trailing backslash, which is not something anyone can type on a phone
+ * keyboard, and it would reflow every multi-line message that renders correctly as plain text
+ * today. Chat clients broadly make the same choice, and so does the View-based UI kit, which
+ * configures Markwon with `SoftBreakAddsNewLinePlugin`.
+ *
+ * ### Constructs a single styled string cannot express
+ *
+ * Images render as their alt text, which is the fallback the specification defines for an image
+ * that cannot be shown. Tables keep their source text, and a task list keeps its `[ ]` marker
+ * rather than becoming a checkbox. Drawing any of the three needs real layout, which means
+ * rendering message text as a tree of composables instead of one styled string.
  */
 // Mirrors the parameters of the default message text formatter, plus the markdown styling.
 @Suppress("LongParameterList")

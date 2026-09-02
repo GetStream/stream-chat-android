@@ -31,21 +31,23 @@ import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.flavours.gfm.GFMElementTypes
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
+import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkdownParser
 
 /**
  * Renders markdown as an [AnnotatedString]: inline constructs become spans, and block constructs
  * are laid out with line breaks and paragraph indentation.
  *
- * Constructs with no styled representation, such as images and tables, are emitted as their source
- * text so nothing the sender typed is lost.
+ * Constructs with no styled representation fall back to something readable rather than vanishing:
+ * an image shows its alt text, and a table its source text.
  */
 internal class MarkdownRenderer(private val styles: MarkdownStyles) {
 
     fun render(source: String): AnnotatedString {
         val emitter = MarkdownEmitter()
         val tree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(source)
-        Walker(source, styles, emitter).visitBlocks(tree.children)
+        val links = LinkMap.buildLinkMap(tree, source)
+        Walker(source, styles, emitter, links).visitBlocks(tree.children)
         emitter.trimTrailingNewlines()
         return emitter.build()
     }
@@ -55,6 +57,7 @@ private class Walker(
     private val source: String,
     private val styles: MarkdownStyles,
     private val emitter: MarkdownEmitter,
+    private val links: LinkMap,
 ) {
 
     fun visitBlocks(nodes: List<ASTNode>) = nodes.forEach(::visitBlock)
@@ -207,10 +210,17 @@ private class Walker(
         // Every line of a quote carries its own marker, and continuation lines keep theirs inside
         // the quoted paragraph. The marker and the space that separates it from the text both go.
         var afterQuoteMarker = false
-        for (node in nodes) {
+        nodes.forEachIndexed { index, node ->
+            val bracketsEmailAutolink = node.type == MarkdownTokenTypes.LT &&
+                nodes.getOrNull(index + 1)?.type == MarkdownTokenTypes.EMAIL_AUTOLINK ||
+                node.type == MarkdownTokenTypes.GT &&
+                nodes.getOrNull(index - 1)?.type == MarkdownTokenTypes.EMAIL_AUTOLINK
             when {
                 node.type == MarkdownTokenTypes.BLOCK_QUOTE -> afterQuoteMarker = true
                 afterQuoteMarker && node.type == MarkdownTokenTypes.WHITE_SPACE -> afterQuoteMarker = false
+                // An email autolink arrives as a bare token between its brackets, unlike a URL
+                // autolink, which the parser wraps in a node of its own.
+                bracketsEmailAutolink -> afterQuoteMarker = false
                 else -> {
                     afterQuoteMarker = false
                     visitInlineNode(node)
@@ -241,6 +251,19 @@ private class Walker(
 
             MarkdownElementTypes.INLINE_LINK -> inlineLink(node)
 
+            MarkdownElementTypes.FULL_REFERENCE_LINK,
+            MarkdownElementTypes.SHORT_REFERENCE_LINK,
+            -> referenceLink(node)
+
+            // Images cannot be drawn inside a single text, so the alt text stands in for them,
+            // which is the fallback the spec itself defines.
+            MarkdownElementTypes.IMAGE -> imageAltText(node)
+
+            // The angle brackets are syntax, not content. The URL is left as plain text for the
+            // entity pass to linkify, so bracketed and bare URLs end up handled the same way.
+            MarkdownElementTypes.AUTOLINK -> visitInlineChildren(node, skip = AutolinkMarkerTypes)
+            MarkdownTokenTypes.EMAIL_AUTOLINK, MarkdownTokenTypes.AUTOLINK -> emitter.append(node.text())
+
             MarkdownTokenTypes.HARD_LINE_BREAK, MarkdownTokenTypes.EOL -> emitter.appendLineBreak()
 
             MarkdownTokenTypes.HTML_TAG -> {
@@ -255,6 +278,36 @@ private class Walker(
                     visitInlineChildren(node)
                 }
         }
+    }
+
+    /** Resolves `[text][label]` and `[label]` against the document's link definitions. */
+    private fun referenceLink(node: ASTNode) {
+        val label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL }
+        val destination = label
+            ?.let { links.getLinkInfo(LinkMap.normalizeLabel(it.text())) }
+            ?.destination
+        if (destination == null) {
+            emitter.appendText(node.text())
+            return
+        }
+        // A full reference shows its own text; a short one shows the label it was written as.
+        val shown = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT } ?: label
+        val start = emitter.length
+        visitInlineChildren(shown, skip = LinkLabelMarkerTypes)
+        emitter.addAnnotation(AnnotationTagUrl, destination.toString().toAbsoluteUrl(), start)
+    }
+
+    private fun imageAltText(node: ASTNode) {
+        val label = node.children
+            .firstOrNull { it.type == MarkdownElementTypes.INLINE_LINK }
+            ?.children
+            ?.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
+            ?: node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
+        if (label == null) {
+            emitter.appendText(node.text())
+            return
+        }
+        visitInlineChildren(label, skip = LinkLabelMarkerTypes)
     }
 
     private fun inlineLink(node: ASTNode) {
@@ -279,22 +332,55 @@ private class Walker(
 }
 
 /**
- * Appends source text, resolving the backslash escapes the parser leaves in place. Code content is
- * appended as-is instead, where a backslash carries no special meaning.
+ * Appends source text, resolving the backslash escapes and character references the parser leaves
+ * in place. Code content is appended as-is instead, where neither carries special meaning.
  */
 private fun MarkdownEmitter.appendText(value: CharSequence) {
     var index = 0
     while (index < value.length) {
         val char = value[index]
         val next = value.getOrNull(index + 1)
-        if (char == '\\' && next != null && next in EscapablePunctuation) {
-            append(next.toString())
-            index += 2
-        } else {
-            append(char.toString())
-            index++
+        val reference = if (char == '&') value.characterReferenceAt(index) else null
+        when {
+            char == '\\' && next != null && next in EscapablePunctuation -> {
+                append(next.toString())
+                index += 2
+            }
+
+            reference != null -> {
+                append(reference.first)
+                index += reference.second
+            }
+
+            else -> {
+                append(char.toString())
+                index++
+            }
         }
     }
+}
+
+/**
+ * Decodes the character reference starting at [start], returning its text and how many characters
+ * it spanned, or null when what follows the `&` is not one.
+ *
+ * Only the named references that carry meaning in markdown source are decoded, plus the numeric
+ * forms; anything else is left as typed, which is what a reader of a chat message expects.
+ */
+private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
+    val semicolon = indexOf(';', start + 1)
+    if (semicolon < 0 || semicolon - start > MaxCharacterReferenceLength) return null
+    val body = subSequence(start + 1, semicolon).toString()
+    if (body.isEmpty()) return null
+    val length = semicolon - start + 1
+    NamedCharacterReferences[body]?.let { return it to length }
+    if (!body.startsWith("#")) return null
+    val codePoint = when {
+        body.startsWith("#x", ignoreCase = true) -> body.drop(2).toIntOrNull(radix = 16)
+        else -> body.drop(1).toIntOrNull()
+    } ?: return null
+    if (codePoint <= 0 || codePoint > Character.MAX_CODE_POINT) return null
+    return String(Character.toChars(codePoint)) to length
 }
 
 private fun CharSequence.getOrNull(index: Int): Char? = if (index in indices) this[index] else null
@@ -320,6 +406,16 @@ private const val UnorderedListMarker = "•"
 private val SchemePattern = Regex("^[a-zA-Z][a-zA-Z0-9+.\\-]*:")
 private val LineBreakTagPattern = Regex("<br\\s*/?>", RegexOption.IGNORE_CASE)
 private const val EscapablePunctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+private const val MaxCharacterReferenceLength = 32
+
+private val NamedCharacterReferences = mapOf(
+    "amp" to "&",
+    "lt" to "<",
+    "gt" to ">",
+    "quot" to "\"",
+    "apos" to "'",
+    "nbsp" to "\u00A0",
+)
 
 private val HeadingContentTypes = setOf(MarkdownTokenTypes.ATX_CONTENT, MarkdownTokenTypes.SETEXT_CONTENT)
 private val HeadingMarkerTypes = setOf(
@@ -329,13 +425,9 @@ private val HeadingMarkerTypes = setOf(
 )
 private val EmphasisMarkerTypes = setOf(MarkdownTokenTypes.EMPH, GFMTokenTypes.TILDE)
 private val LinkLabelMarkerTypes = setOf(MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET)
+private val AutolinkMarkerTypes = setOf(MarkdownTokenTypes.LT, MarkdownTokenTypes.GT)
 private val FenceContentTypes = setOf(MarkdownTokenTypes.CODE_FENCE_CONTENT)
 private val IndentedCodeContentTypes = setOf(MarkdownTokenTypes.CODE_LINE)
 
 /** Constructs with no styled form; their source text is shown so the content still reads. */
-private val SourceTextTypes = setOf(
-    MarkdownElementTypes.IMAGE,
-    MarkdownElementTypes.FULL_REFERENCE_LINK,
-    MarkdownElementTypes.SHORT_REFERENCE_LINK,
-    GFMElementTypes.TABLE,
-)
+private val SourceTextTypes = setOf(GFMElementTypes.TABLE)

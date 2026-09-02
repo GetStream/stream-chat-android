@@ -140,9 +140,29 @@ internal class MarkdownRendererTest {
     }
 
     @Test
-    fun `renders an image as its source, since images are not supported`() {
-        renderer.render("![alt](https://example.com/a.png)").text shouldBeEqualTo
-            "![alt](https://example.com/a.png)"
+    fun `renders an image as its alt text, since images cannot be drawn`() {
+        renderer.render("![alt text](https://example.com/a.png)").text shouldBeEqualTo "alt text"
+    }
+
+    @Test
+    fun `resolves a full reference link`() {
+        val result = renderer.render("see [the docs][d] now\n\n[d]: https://getstream.io")
+
+        result.text shouldBeEqualTo "see the docs now"
+        result.urlAt("the docs") shouldBeEqualTo "https://getstream.io"
+    }
+
+    @Test
+    fun `resolves a short reference link`() {
+        val result = renderer.render("see [d] now\n\n[d]: getstream.io")
+
+        result.text shouldBeEqualTo "see d now"
+        result.urlAt("d") shouldBeEqualTo "https://getstream.io"
+    }
+
+    @Test
+    fun `leaves a reference link with no definition as written`() {
+        renderer.render("see [the docs][nope] now").text shouldBeEqualTo "see [the docs][nope] now"
     }
 
     @Test
@@ -185,6 +205,16 @@ internal class MarkdownRendererTest {
             // Escapes are resolved, and a backslash that escapes nothing is left alone.
             Arguments.of("5 \\* 3", "5 * 3"),
             Arguments.of("C:\\path\\to", "C:\\path\\to"),
+            // Autolink brackets are syntax; the bare URL is left for the entity pass to linkify.
+            Arguments.of("visit <https://getstream.io> now", "visit https://getstream.io now"),
+            Arguments.of("mail <a@b.com> now", "mail a@b.com now"),
+            // Character references are resolved, named and numeric alike.
+            Arguments.of("a &amp; b &lt;c&gt;", "a & b <c>"),
+            Arguments.of("a &#38; b &#x26; c", "a & b & c"),
+            // Anything that only looks like one is left as typed.
+            Arguments.of("a &notreal; b", "a &notreal; b"),
+            // Code content is literal, so a reference inside it stays as written.
+            Arguments.of("`a &amp; b`", "a &amp; b"),
             // Unsupported constructs keep their source text so nothing is lost.
             Arguments.of("| a | b |\n| --- | --- |\n| 1 | 2 |", "| a | b |\n| --- | --- |\n| 1 | 2 |"),
         )

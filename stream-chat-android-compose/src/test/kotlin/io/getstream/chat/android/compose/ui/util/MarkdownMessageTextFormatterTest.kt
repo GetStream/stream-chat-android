@@ -104,6 +104,14 @@ internal class MarkdownMessageTextFormatterTest {
     }
 
     @Test
+    fun `linkifies an autolink once its brackets are gone`() {
+        val result = formatter.format(message(text = "visit <https://getstream.io> now"), currentUser)
+
+        result.text shouldBeEqualTo "visit https://getstream.io now"
+        result.annotation(AnnotationTagUrl, "https://getstream.io") shouldBeEqualTo "https://getstream.io"
+    }
+
+    @Test
     fun `leaves plain text with line breaks untouched`() {
         val text = "first line\nsecond line"
 
