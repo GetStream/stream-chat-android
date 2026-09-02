@@ -43,7 +43,10 @@ import org.intellij.markdown.parser.MarkdownParser
  */
 internal class MarkdownRenderer(private val styles: MarkdownStyles) {
 
-    fun render(source: String): AnnotatedString {
+    fun render(text: String): AnnotatedString {
+        // The parser only recognises line feeds, so a carriage return would otherwise survive into
+        // the output and hide the break it belongs to.
+        val source = text.replace("\r\n", "\n").replace('\r', '\n')
         val emitter = MarkdownEmitter()
         val tree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(source)
         val links = LinkMap.buildLinkMap(tree, source)
@@ -82,10 +85,18 @@ private class Walker(
             MarkdownElementTypes.BLOCK_QUOTE -> blockQuote(node)
             MarkdownElementTypes.UNORDERED_LIST, MarkdownElementTypes.ORDERED_LIST -> list(node, level = 1)
             MarkdownElementTypes.CODE_FENCE -> codeBlock(node, contentTypes = FenceContentTypes)
-            MarkdownElementTypes.CODE_BLOCK -> codeBlock(node, contentTypes = IndentedCodeContentTypes)
+            MarkdownElementTypes.CODE_BLOCK ->
+                codeBlock(node, contentTypes = IndentedCodeContentTypes, stripIndent = true)
 
             MarkdownTokenTypes.HORIZONTAL_RULE -> {
                 emitter.append(styles.thematicBreak)
+                emitter.endBlock(newlines = 1)
+            }
+
+            // A table has no styled form, so its source stands in, but it is still a block and
+            // must not run into the next one.
+            GFMElementTypes.TABLE -> {
+                emitter.appendText(node.text())
                 emitter.endBlock(newlines = 1)
             }
 
@@ -158,36 +169,59 @@ private class Walker(
         emitter.append(styles.listIndent.repeat(level - 1))
         emitter.append(marker)
 
-        // A nested list starts its own lines, so the current line's indent is closed before it.
-        var lineClosed = false
+        // The item's own text shares the marker's line; anything after it starts a line of its
+        // own, indented to sit under that text rather than running into it.
+        var markerLineTaken = false
         for (child in node.children) {
             when (child.type) {
+                // Markers are replaced, and the breaks between an item's blocks are structural.
+                MarkdownTokenTypes.LIST_BULLET,
+                MarkdownTokenTypes.LIST_NUMBER,
+                MarkdownTokenTypes.EOL,
+                MarkdownTokenTypes.WHITE_SPACE,
+                -> Unit
+
+                MarkdownElementTypes.PARAGRAPH -> {
+                    if (markerLineTaken) continueItemLine(level)
+                    markerLineTaken = true
+                    // Items hold their content in paragraphs; rendering those as blocks would put
+                    // a blank line between every item.
+                    visitInlineChildren(child)
+                }
+
+                // A nested list emits its own indent, so it only needs the line closing.
                 MarkdownElementTypes.UNORDERED_LIST, MarkdownElementTypes.ORDERED_LIST -> {
-                    if (!lineClosed) {
-                        lineClosed = true
-                        closeItemLine()
-                    }
+                    markerLineTaken = true
+                    endItemLine()
                     list(child, level + 1)
                 }
 
-                MarkdownTokenTypes.LIST_BULLET, MarkdownTokenTypes.LIST_NUMBER -> Unit
-
-                // Items hold their content in paragraphs; rendering those as blocks would put a
-                // blank line between every item.
-                MarkdownElementTypes.PARAGRAPH -> visitInlineChildren(child)
-
-                else -> visitBlock(child)
+                else -> {
+                    markerLineTaken = true
+                    continueItemLine(level)
+                    visitBlock(child)
+                }
             }
         }
-        if (!lineClosed) closeItemLine()
+        endItemLine()
     }
 
-    private fun closeItemLine() {
+    private fun endItemLine() {
         emitter.trimTrailingNewlines()
         emitter.endBlock(newlines = 1)
     }
 
-    private fun codeBlock(node: ASTNode, contentTypes: Set<IElementType>) {
+    /** Ends the current line and indents the next one to line up under the item's text. */
+    private fun continueItemLine(level: Int) {
+        endItemLine()
+        emitter.append(styles.listIndent.repeat(level))
+    }
+
+    private fun codeBlock(
+        node: ASTNode,
+        contentTypes: Set<IElementType>,
+        stripIndent: Boolean = false,
+    ) {
         val code = StringBuilder()
         for (child in node.children) {
             when (child.type) {
@@ -197,7 +231,12 @@ private class Walker(
             }
         }
         val start = emitter.length
-        emitter.append(code.trim('\n'))
+        // Emitted line by line, so a code block inside a quote keeps the quote's marker on every
+        // one of its lines. Blank lines are significant here, so they are opened unconditionally.
+        code.trim('\n').split('\n').forEachIndexed { index, line ->
+            if (index > 0) emitter.appendNewLine()
+            emitter.append(if (stripIndent) line.removePrefix(IndentedCodePrefix) else line)
+        }
         emitter.addSpan(styles.codeBlock, start)
         emitter.endBlock(newlines = 1)
     }
@@ -294,15 +333,16 @@ private class Walker(
         val shown = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT } ?: label
         val start = emitter.length
         visitInlineChildren(shown, skip = LinkLabelMarkerTypes)
-        emitter.addAnnotation(AnnotationTagUrl, destination.toString().toAbsoluteUrl(), start)
+        destination.toString().toOpenableUrl()?.let { url ->
+            emitter.addAnnotation(AnnotationTagUrl, url, start)
+        }
     }
 
     private fun imageAltText(node: ASTNode) {
-        val label = node.children
-            .firstOrNull { it.type == MarkdownElementTypes.INLINE_LINK }
-            ?.children
-            ?.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
-            ?: node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
+        // The alt text sits inside whichever link form the image was written with.
+        val link = node.children.firstOrNull { it.type in ImageLinkTypes } ?: node
+        val label = link.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
+            ?: link.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL }
         if (label == null) {
             emitter.appendText(node.text())
             return
@@ -319,7 +359,9 @@ private class Walker(
         }
         val start = emitter.length
         visitInlineChildren(label, skip = LinkLabelMarkerTypes)
-        emitter.addAnnotation(AnnotationTagUrl, destination.text().toString().toAbsoluteUrl(), start)
+        destination.text().toString().toOpenableUrl()?.let { url ->
+            emitter.addAnnotation(AnnotationTagUrl, url, start)
+        }
     }
 
     private inline fun styled(style: SpanStyle, content: () -> Unit) {
@@ -385,12 +427,22 @@ private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
 
 private fun CharSequence.getOrNull(index: Int): Char? = if (index in indices) this[index] else null
 
-/** Angle-bracketed destinations and schemeless ones both have to become something openable. */
-private fun String.toAbsoluteUrl(): String {
+/**
+ * Turns a link destination into something that can actually be opened, or null when it cannot be.
+ *
+ * A fragment, a relative path, or anything holding whitespace only means something inside a
+ * document. Giving one a scheme would produce a URL that fails to resolve when tapped, and the
+ * message list opens links by handing them straight to the system.
+ */
+private fun String.toOpenableUrl(): String? {
     val destination = removeSurrounding("<", ">").trim()
-    if (SchemePattern.containsMatchIn(destination)) return destination
-    val looksLikeEmail = destination.contains('@') && !destination.contains('/')
-    return if (looksLikeEmail) "mailto:$destination" else "https://$destination"
+    return when {
+        destination.isEmpty() || destination.any(Char::isWhitespace) -> null
+        SchemePattern.containsMatchIn(destination) -> destination
+        destination.contains('@') && !destination.contains('/') -> "mailto:$destination"
+        HostPattern.containsMatchIn(destination) -> "https://$destination"
+        else -> null
+    }
 }
 
 private fun String.isLineBreakTag(): Boolean = LineBreakTagPattern.matches(trim())
@@ -404,6 +456,7 @@ private val StrikethroughSpan = SpanStyle(textDecoration = TextDecoration.LineTh
 private const val UnorderedListMarker = "•"
 
 private val SchemePattern = Regex("^[a-zA-Z][a-zA-Z0-9+.\\-]*:")
+private val HostPattern = Regex("^[\\w\\-]+(\\.[\\w\\-]+)+")
 private val LineBreakTagPattern = Regex("<br\\s*/?>", RegexOption.IGNORE_CASE)
 private const val EscapablePunctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 private const val MaxCharacterReferenceLength = 32
@@ -426,8 +479,16 @@ private val HeadingMarkerTypes = setOf(
 private val EmphasisMarkerTypes = setOf(MarkdownTokenTypes.EMPH, GFMTokenTypes.TILDE)
 private val LinkLabelMarkerTypes = setOf(MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET)
 private val AutolinkMarkerTypes = setOf(MarkdownTokenTypes.LT, MarkdownTokenTypes.GT)
+private val ImageLinkTypes = setOf(
+    MarkdownElementTypes.INLINE_LINK,
+    MarkdownElementTypes.FULL_REFERENCE_LINK,
+    MarkdownElementTypes.SHORT_REFERENCE_LINK,
+)
 private val FenceContentTypes = setOf(MarkdownTokenTypes.CODE_FENCE_CONTENT)
 private val IndentedCodeContentTypes = setOf(MarkdownTokenTypes.CODE_LINE)
+
+/** CommonMark strips this much indentation from every line of an indented code block. */
+private const val IndentedCodePrefix = "    "
 
 /** Constructs with no styled form; their source text is shown so the content still reads. */
 private val SourceTextTypes = setOf(GFMElementTypes.TABLE)

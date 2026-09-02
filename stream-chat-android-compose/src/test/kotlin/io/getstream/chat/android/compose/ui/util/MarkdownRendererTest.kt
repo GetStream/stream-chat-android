@@ -145,6 +145,20 @@ internal class MarkdownRendererTest {
     }
 
     @Test
+    fun `renders a reference image as its alt text too`() {
+        renderer.render("![alt][d]\n\n[d]: https://x.com/a.png").text shouldBeEqualTo "alt"
+    }
+
+    @ParameterizedTest
+    @MethodSource("unopenableDestinations")
+    fun `does not annotate a destination that cannot be opened`(destination: String) {
+        val result = renderer.render("[label]($destination)")
+
+        result.text shouldBeEqualTo "label"
+        result.urlAt("label") shouldBeEqualTo null
+    }
+
+    @Test
     fun `resolves a full reference link`() {
         val result = renderer.render("see [the docs][d] now\n\n[d]: https://getstream.io")
 
@@ -174,6 +188,10 @@ internal class MarkdownRendererTest {
     }
 
     companion object {
+
+        @JvmStatic
+        @Suppress("unused")
+        fun unopenableDestinations(): List<String> = listOf("#section", "/docs/page", "foo bar")
 
         @JvmStatic
         @Suppress("unused")
@@ -215,6 +233,21 @@ internal class MarkdownRendererTest {
             Arguments.of("a &notreal; b", "a &notreal; b"),
             // Code content is literal, so a reference inside it stays as written.
             Arguments.of("`a &amp; b`", "a &amp; b"),
+            // A block inside a list item starts its own line, indented under the item's text,
+            // rather than running into the marker line.
+            Arguments.of("- item\n\n  # H\n- next", "• item\n>H\n• next"),
+            Arguments.of("- item\n\n  > q\n- next", "• item\n>|q\n• next"),
+            // Content following a nested list stays indented, and the next item still gets a line.
+            Arguments.of("- a\n    - b\n\n  more\n- c", "• a\n>• b\n>more\n• c"),
+            // A code block inside a quote keeps the marker on every line.
+            Arguments.of("> ```\n> one\n> two\n> ```", "|one\n|two"),
+            // An indented code block loses the indentation that declared it.
+            Arguments.of("    one\n    two", "one\ntwo"),
+            // A table is still a block, so what follows it starts on a new line.
+            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\nafter"),
+            // Carriage returns never survive into the output.
+            Arguments.of("a\r\n\r\nb", "a\n\nb"),
+            Arguments.of("a\r\nb", "a\nb"),
             // Unsupported constructs keep their source text so nothing is lost.
             Arguments.of("| a | b |\n| --- | --- |\n| 1 | 2 |", "| a | b |\n| --- | --- |\n| 1 | 2 |"),
         )

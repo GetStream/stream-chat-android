@@ -81,10 +81,7 @@ public class MarkdownMessageTextFormatter internal constructor(
             fontStyle = typography.bodyDefault.fontStyle,
             color = textStyle(isMine, message).color,
         )
-        val markdown = when {
-            displayedText.mayContainMarkdown() -> renderer.render(displayedText)
-            else -> AnnotatedString(displayedText)
-        }
+        val markdown = renderer.render(displayedText)
         val linkSpan = linkStyle(isMine).toSpanStyle()
         return buildAnnotatedString {
             append(markdown.text)
@@ -156,11 +153,3 @@ public class MarkdownMessageTextFormatter internal constructor(
         )
     }
 }
-
-/**
- * Cheap pre-check that skips parsing for text that cannot hold any markdown. Parsing plain text is
- * lossless, so a false positive costs a parse and nothing else.
- */
-private fun String.mayContainMarkdown(): Boolean = any { it in MarkdownMarkers }
-
-private const val MarkdownMarkers = "*_~`[]()#>-+|\\"

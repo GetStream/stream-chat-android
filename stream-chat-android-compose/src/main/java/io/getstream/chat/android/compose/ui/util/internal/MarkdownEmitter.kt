@@ -52,6 +52,14 @@ internal class MarkdownEmitter {
         openLine()
     }
 
+    /**
+     * Opens a new line even when one has just been opened, for content whose blank lines carry
+     * meaning, such as the body of a code block.
+     */
+    fun appendNewLine() {
+        openLine()
+    }
+
     /** The prefix every line currently opens with, so nested constructs can build on it. */
     val currentLinePrefix: String get() = linePrefix
 
