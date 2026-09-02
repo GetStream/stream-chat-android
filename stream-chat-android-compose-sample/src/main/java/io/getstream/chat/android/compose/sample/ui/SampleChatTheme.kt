@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.util.MarkdownMessageTextFormatter
 
 /**
  * Sample app wrapper around [ChatTheme] that enables test tags as resource IDs for UIAutomator E2E tests.
@@ -41,6 +42,11 @@ internal fun SampleChatTheme(
         ChatTheme(
             config = config,
             componentFactory = componentFactory,
+            // Renders message text as markdown, the same opt-in the XML sample makes with
+            // MarkdownTextTransformer.
+            messageTextFormatter = MarkdownMessageTextFormatter.defaultFormatter(
+                autoTranslationEnabled = config.translation.enabled,
+            ),
             content = content,
         )
     }

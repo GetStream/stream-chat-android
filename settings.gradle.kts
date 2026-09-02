@@ -90,7 +90,6 @@ dependencyResolutionManagement {
 
 		maven(url = "https://jitpack.io") {
 			content {
-				includeModule("com.github.jeziellago", "compose-markdown")
 				includeModule("com.github.jeziellago", "Markwon")
 			}
 		}
