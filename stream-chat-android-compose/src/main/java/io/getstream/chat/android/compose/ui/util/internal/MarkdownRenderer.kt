@@ -280,10 +280,7 @@ private class Walker(
                 bracketsEmailAutolink -> afterQuoteMarker = false
                 else -> {
                     afterQuoteMarker = false
-                    // A break written as a tag absorbs the following line feed just as one written
-                    // with trailing spaces does, so ending a line with it produces one break.
-                    afterHardBreak = node.type == MarkdownTokenTypes.HARD_LINE_BREAK ||
-                        (node.type == MarkdownTokenTypes.HTML_TAG && node.text().toString().isLineBreakTag())
+                    afterHardBreak = node.isHardBreak(source)
                     visitInlineNode(node)
                 }
             }
@@ -327,9 +324,9 @@ private class Walker(
 
             MarkdownTokenTypes.HARD_LINE_BREAK, MarkdownTokenTypes.EOL -> emitter.appendLineBreak()
 
-            MarkdownTokenTypes.HTML_TAG -> {
-                val tag = node.text().toString()
-                if (tag.isLineBreakTag()) emitter.appendLineBreak() else emitter.appendText(tag)
+            MarkdownTokenTypes.HTML_TAG -> when {
+                node.isHardBreak(source) -> emitter.appendLineBreak()
+                else -> emitter.appendText(node.text())
             }
 
             else ->
@@ -482,6 +479,16 @@ private fun String.toOpenableUrl(): String? {
         HostPattern.containsMatchIn(destination) -> "https://$destination"
         else -> null
     }
+}
+
+/**
+ * Both spellings of a hard break: the marker left by trailing spaces or a backslash, and the tag.
+ * Either one absorbs the line feed it sits on, so ending a line with it produces a single break.
+ */
+private fun ASTNode.isHardBreak(source: String): Boolean = when (type) {
+    MarkdownTokenTypes.HARD_LINE_BREAK -> true
+    MarkdownTokenTypes.HTML_TAG -> getTextInNode(source).toString().isLineBreakTag()
+    else -> false
 }
 
 private fun String.isLineBreakTag(): Boolean = LineBreakTagPattern.matches(trim())
