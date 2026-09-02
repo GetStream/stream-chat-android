@@ -114,11 +114,14 @@ private class Walker(
         val start = emitter.length
         emitter.append(styles.blockQuotePrefix)
         // Marking every line, rather than just the first, is what makes a multi-line quote read as
-        // one quote instead of a quoted line followed by loose text.
-        emitter.withLinePrefix(styles.blockQuotePrefix) {
+        // one quote instead of a quoted line followed by loose text. Nesting stacks the markers,
+        // so a quote inside a quote is visibly two levels deep.
+        emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
             visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
+            // Trim while the quote's prefix is still current, or its own marked blank lines are
+            // not recognised as trailing ones.
+            emitter.trimTrailingNewlines()
         }
-        emitter.trimTrailingNewlines()
         emitter.addSpan(styles.blockQuote, start)
         // Two newlines keep consecutive quotes apart, so that two of them cannot be mistaken for
         // one quote spanning two lines.

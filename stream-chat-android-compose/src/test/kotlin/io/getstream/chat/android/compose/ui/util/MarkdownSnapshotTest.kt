@@ -72,6 +72,8 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
 
             > a quoted line
             > and its continuation
+            >
+            > a second paragraph, still quoted
 
             > a separate quote
 

@@ -48,10 +48,12 @@ internal class MarkdownEmitter {
      * walker.
      */
     fun appendLineBreak() {
-        if (text.isNotEmpty() && text.last() == '\n') return
-        text.append('\n')
-        text.append(linePrefix)
+        if (endsWithOpenLine()) return
+        openLine()
     }
+
+    /** The prefix every line currently opens with, so nested constructs can build on it. */
+    val currentLinePrefix: String get() = linePrefix
 
     /** Marks every line [block] emits with [prefix], as a block quote marks its whole span. */
     fun withLinePrefix(prefix: String, block: () -> Unit) {
@@ -63,6 +65,13 @@ internal class MarkdownEmitter {
             linePrefix = previous
         }
     }
+
+    private fun openLine() {
+        text.append('\n').append(linePrefix)
+    }
+
+    /** True when the text already ends on a freshly opened line, prefix included. */
+    private fun endsWithOpenLine(): Boolean = text.endsWith("\n$linePrefix")
 
     fun addSpan(style: SpanStyle, start: Int, end: Int = length) {
         if (end > start) spanStyles += AnnotatedString.Range(style, start, end)
@@ -80,18 +89,24 @@ internal class MarkdownEmitter {
     fun endBlock(newlines: Int) {
         if (text.isEmpty()) return
         var present = 0
-        var index = text.length - 1
-        while (index >= 0 && text[index] == '\n') {
+        var end = text.length
+        val opening = "\n$linePrefix"
+        while (end >= opening.length && text.substring(end - opening.length, end) == opening) {
             present++
-            index--
+            end -= opening.length
         }
-        repeat((newlines - present).coerceAtLeast(0)) { text.append('\n') }
+        repeat((newlines - present).coerceAtLeast(0)) { openLine() }
     }
 
-    /** Drops trailing line breaks, so a trailing block separator does not pad the bubble. */
+    /** Drops trailing blank lines, so a trailing block separator does not pad the bubble. */
     fun trimTrailingNewlines() {
-        while (text.isNotEmpty() && text.last() == '\n') {
-            text.deleteCharAt(text.length - 1)
+        val opening = "\n$linePrefix"
+        while (text.isNotEmpty()) {
+            when {
+                text.endsWith(opening) -> text.setLength(text.length - opening.length)
+                text.last() == '\n' -> text.setLength(text.length - 1)
+                else -> break
+            }
         }
         clampRangesToText()
     }

@@ -174,6 +174,12 @@ internal class MarkdownRendererTest {
             Arguments.of("> quoted\n> continued", "|quoted\n|continued"),
             // A blank line ends a quote, so this is two of them, kept apart.
             Arguments.of("> first\n\n> second", "|first\n\n|second"),
+            // A quote holding two paragraphs marks the blank line between them too.
+            Arguments.of("> one\n>\n> two", "|one\n|\n|two"),
+            // A hard break inside a quote opens exactly one new marked line.
+            Arguments.of("> one  \n> two", "|one\n|two"),
+            // Nesting stacks the markers.
+            Arguments.of("> outer\n> > inner", "|outer\n|\n||inner"),
             Arguments.of("- one\n- two", "• one\n• two"),
             Arguments.of("---\nafter", "***\nafter"),
             // Escapes are resolved, and a backslash that escapes nothing is left alone.
