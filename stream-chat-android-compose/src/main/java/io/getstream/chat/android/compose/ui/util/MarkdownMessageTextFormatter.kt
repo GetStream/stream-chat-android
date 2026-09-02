@@ -39,9 +39,12 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * ```
  *
  * Mentions, links and emails are highlighted on top of the rendered markdown, exactly as they are
- * without it. Because markdown drops the syntax characters, the formatted text is shorter than
- * [Message.text], so this formatter cannot be combined through [MessageTextFormatter.composite]
- * with formatters that style by offsets into the original text.
+ * without it.
+ *
+ * Rendering changes the length of the text in both directions: syntax characters are dropped, and
+ * markers such as a quote's are added. Offsets into the result therefore do not line up with
+ * [Message.text], so this formatter replaces the default rather than being combined with it
+ * through [MessageTextFormatter.composite], which styles by offsets into the original.
  *
  * ### One deliberate departure from the specification
  *

@@ -68,9 +68,11 @@ public data class MarkdownStyles(
             heading1 = typography.headingLarge.toSpanStyle(),
             heading2 = typography.headingMedium.toSpanStyle(),
             heading3 = typography.headingSmall.toSpanStyle(),
+            // The type scale runs out of heading sizes at four levels, and the remaining two share
+            // the smallest rather than growing back up. The last is set apart by colour instead.
             heading4 = typography.headingExtraSmall.toSpanStyle(),
-            heading5 = typography.bodyEmphasis.toSpanStyle(),
-            heading6 = typography.bodyEmphasis.toSpanStyle().copy(color = colors.textSecondary),
+            heading5 = typography.headingExtraSmall.toSpanStyle(),
+            heading6 = typography.headingExtraSmall.toSpanStyle().copy(color = colors.textSecondary),
             codeSpan = SpanStyle(
                 fontFamily = FontFamily.Monospace,
                 background = colors.backgroundCoreSurfaceSubtle,

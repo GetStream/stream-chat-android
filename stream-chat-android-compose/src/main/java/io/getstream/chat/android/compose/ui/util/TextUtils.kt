@@ -47,6 +47,12 @@ internal const val AnnotationTagUrl: AnnotationTag = "URL"
 internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 
 /**
+ * The tag marking text that must be taken literally, such as the content of a markdown code span
+ * or code block, so that nothing inside it is detected as a URL, an email or a mention.
+ */
+internal const val AnnotationTagLiteral: AnnotationTag = "LITERAL"
+
+/**
  * The tag used to annotate user mentions (`@<user>`) in the message text.
  */
 internal const val AnnotationTagUserMention: AnnotationTag = "MENTION"
@@ -171,8 +177,10 @@ internal fun buildAnnotatedMessageText(
  * Adds the annotations Stream recognises in message text - URLs, emails, and [message]'s mentions -
  * on top of an already styled string.
  *
- * Ranges that already carry an [AnnotationTagUrl] annotation are left alone, so a link whose label
- * is itself a URL keeps the destination it was built with instead of linking to its own label.
+ * Two kinds of range are left alone. One already carrying an [AnnotationTagUrl] annotation keeps
+ * the destination it was built with, instead of a link whose label is itself a URL being made to
+ * point at its own label. One marked [AnnotationTagLiteral] is code, whose content markdown treats
+ * as written rather than as something to detect entities in.
  *
  * @param message The message whose mentions are highlighted.
  * @param colors The colors backing the per-type mention tokens.
@@ -192,7 +200,8 @@ internal fun AnnotatedString.annotateStreamEntities(
             text = styled.text,
             linkStyle = linkStyle,
             mentions = message.collectTextMentions(colors = colors, textColorOverride = mentionColor),
-            skipRanges = styled.getStringAnnotations(AnnotationTagUrl, 0, styled.length)
+            skipRanges = styled.stringAnnotations
+                .filter { it.tag == AnnotationTagUrl || it.tag == AnnotationTagLiteral }
                 .map { it.start until it.end },
         )
     }
@@ -229,7 +238,7 @@ private fun AnnotatedString.Builder.annotateEntities(
         skipRanges = skipRanges,
     )
     mentions.forEach { mention ->
-        tagMention(text = text, mention = mention)
+        tagMention(text = text, mention = mention, skipRanges = skipRanges)
     }
 }
 
@@ -350,10 +359,14 @@ private fun AnnotatedString.Builder.linkify(
 private fun AnnotatedString.Builder.tagMention(
     text: String,
     mention: TextMention,
+    skipRanges: List<IntRange> = emptyList(),
 ) {
     if (mention.token.isEmpty()) return
     val pattern = mentionRegex(mention.token)
     pattern.findAll(text).forEach { match ->
+        if (skipRanges.any { match.range.first <= it.last && it.first <= match.range.last }) {
+            return@forEach
+        }
         addStyle(
             style = SpanStyle(color = mention.color, background = mention.background),
             start = match.range.first,

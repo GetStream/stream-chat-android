@@ -42,21 +42,11 @@ internal class MarkdownEmitter {
     }
 
     /**
-     * Appends a line break for a break inside a block, then re-opens the line with [linePrefix] so
-     * a construct that marks every one of its lines keeps doing so. Consecutive breaks collapse,
-     * because a hard break is spelled as a marker plus the newline it sits on and both reach the
-     * walker.
+     * Ends the current line and opens the next one with [linePrefix], so a construct that marks
+     * every one of its lines keeps doing so. Every call produces a break, which is what keeps two
+     * consecutive breaks in the source from collapsing into one.
      */
     fun appendLineBreak() {
-        if (endsWithOpenLine()) return
-        openLine()
-    }
-
-    /**
-     * Opens a new line even when one has just been opened, for content whose blank lines carry
-     * meaning, such as the body of a code block.
-     */
-    fun appendNewLine() {
         openLine()
     }
 
@@ -77,9 +67,6 @@ internal class MarkdownEmitter {
     private fun openLine() {
         text.append('\n').append(linePrefix)
     }
-
-    /** True when the text already ends on a freshly opened line, prefix included. */
-    private fun endsWithOpenLine(): Boolean = text.endsWith("\n$linePrefix")
 
     fun addSpan(style: SpanStyle, start: Int, end: Int = length) {
         if (end > start) spanStyles += AnnotatedString.Range(style, start, end)

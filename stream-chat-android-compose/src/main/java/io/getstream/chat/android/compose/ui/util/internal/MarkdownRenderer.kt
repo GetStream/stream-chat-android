@@ -21,6 +21,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import io.getstream.chat.android.compose.ui.util.AnnotationTagLiteral
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.MarkdownStyles
 import org.intellij.markdown.IElementType
@@ -52,7 +53,13 @@ internal class MarkdownRenderer(private val styles: MarkdownStyles) {
         val links = LinkMap.buildLinkMap(tree, source)
         Walker(source, styles, emitter, links).visitBlocks(tree.children)
         emitter.trimTrailingNewlines()
-        return emitter.build()
+        val rendered = emitter.build()
+        // Some documents render to nothing at all - a message holding only link definitions, for
+        // one. Showing what was typed beats showing an empty bubble.
+        return when {
+            rendered.text.isEmpty() && source.isNotBlank() -> AnnotatedString(source)
+            else -> rendered
+        }
     }
 }
 
@@ -93,9 +100,9 @@ private class Walker(
                 emitter.endBlock(newlines = 1)
             }
 
-            // A table has no styled form, so its source stands in, but it is still a block and
-            // must not run into the next one.
-            GFMElementTypes.TABLE -> {
+            // Neither has a styled form, so their source stands in, but both are still blocks
+            // and must not run into the next one.
+            GFMElementTypes.TABLE, MarkdownElementTypes.HTML_BLOCK -> {
                 emitter.appendText(node.text())
                 emitter.endBlock(newlines = 1)
             }
@@ -117,8 +124,13 @@ private class Walker(
             // Setext headings hold their text directly, ATX headings wrap it in a content node.
             visitInlineChildren(node, skip = HeadingMarkerTypes)
         } else {
-            // The content node keeps the space that separated the text from the marker.
-            content.forEach { visitInlineNodes(it.children.dropWhile(ASTNode::isWhitespace)) }
+            // The content node keeps the space separating the text from the opening marker, and
+            // from a closing one when the heading was written with it.
+            content.forEach {
+                visitInlineNodes(
+                    it.children.dropWhile(ASTNode::isWhitespace).dropLastWhile(ASTNode::isWhitespace),
+                )
+            }
         }
         emitter.addSpan(styles.heading(level), start)
         emitter.endBlock(newlines = 1)
@@ -235,10 +247,11 @@ private class Walker(
         // Emitted line by line, so a code block inside a quote keeps the quote's marker on every
         // one of its lines. Blank lines are significant here, so they are opened unconditionally.
         code.trim('\n').split('\n').forEachIndexed { index, line ->
-            if (index > 0) emitter.appendNewLine()
+            if (index > 0) emitter.appendLineBreak()
             emitter.append(if (stripIndent) line.removePrefix(IndentedCodePrefix) else line)
         }
         emitter.addSpan(styles.codeBlock, start)
+        emitter.addAnnotation(AnnotationTagLiteral, "", start)
         emitter.endBlock(newlines = 1)
     }
 
@@ -250,6 +263,7 @@ private class Walker(
         // Every line of a quote carries its own marker, and continuation lines keep theirs inside
         // the quoted paragraph. The marker and the space that separates it from the text both go.
         var afterQuoteMarker = false
+        var afterHardBreak = false
         nodes.forEachIndexed { index, node ->
             val bracketsEmailAutolink = node.type == MarkdownTokenTypes.LT &&
                 nodes.getOrNull(index + 1)?.type == MarkdownTokenTypes.EMAIL_AUTOLINK ||
@@ -258,11 +272,15 @@ private class Walker(
             when {
                 node.type == MarkdownTokenTypes.BLOCK_QUOTE -> afterQuoteMarker = true
                 afterQuoteMarker && node.type == MarkdownTokenTypes.WHITE_SPACE -> afterQuoteMarker = false
+                // A hard break is written as a marker plus the line feed it sits on, and both
+                // reach the walker; only the marker becomes the break.
+                afterHardBreak && node.type == MarkdownTokenTypes.EOL -> afterHardBreak = false
                 // An email autolink arrives as a bare token between its brackets, unlike a URL
                 // autolink, which the parser wraps in a node of its own.
                 bracketsEmailAutolink -> afterQuoteMarker = false
                 else -> {
                     afterQuoteMarker = false
+                    afterHardBreak = node.type == MarkdownTokenTypes.HARD_LINE_BREAK
                     visitInlineNode(node)
                 }
             }
@@ -283,7 +301,7 @@ private class Walker(
                 visitInlineChildren(node, skip = EmphasisMarkerTypes)
             }
 
-            MarkdownElementTypes.CODE_SPAN -> styled(styles.codeSpan) {
+            MarkdownElementTypes.CODE_SPAN -> literal(styles.codeSpan) {
                 node.children
                     .filter { it.type != MarkdownTokenTypes.BACKTICK }
                     .forEach { emitter.append(it.text()) }
@@ -371,6 +389,14 @@ private class Walker(
         emitter.addSpan(style, start)
     }
 
+    /** Styles [content] and marks it as text to be taken literally, as code is. */
+    private inline fun literal(style: SpanStyle, content: () -> Unit) {
+        val start = emitter.length
+        content()
+        emitter.addSpan(style, start)
+        emitter.addAnnotation(AnnotationTagLiteral, "", start)
+    }
+
     private fun ASTNode.text(): CharSequence = getTextInNode(source)
 }
 
@@ -393,6 +419,11 @@ private fun MarkdownEmitter.appendText(value: CharSequence) {
             reference != null -> {
                 append(reference.first)
                 index += reference.second
+            }
+
+            char == '\n' -> {
+                appendLineBreak()
+                index++
             }
 
             else -> {
@@ -431,9 +462,13 @@ private fun CharSequence.getOrNull(index: Int): Char? = if (index in indices) th
 /**
  * Turns a link destination into something that can actually be opened, or null when it cannot be.
  *
- * A fragment, a relative path, or anything holding whitespace only means something inside a
- * document. Giving one a scheme would produce a URL that fails to resolve when tapped, and the
- * message list opens links by handing them straight to the system.
+ * A fragment, a path, or anything holding whitespace only means something inside a document, and
+ * giving one a scheme would produce a URL that fails to resolve when tapped, which matters because
+ * the message list opens links by handing them straight to the system.
+ *
+ * A dotted destination with no path is taken for a host, so `getstream.io` becomes a link. That
+ * cannot be told apart from a file name like `readme.md`, which is treated the same way; both the
+ * View-based kit and the iOS SDK resolve the ambiguity in the same direction.
  */
 private fun String.toOpenableUrl(): String? {
     val destination = removeSurrounding("<", ">").trim()

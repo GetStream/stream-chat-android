@@ -112,6 +112,25 @@ internal class MarkdownMessageTextFormatterTest {
     }
 
     @Test
+    fun `does not linkify a url inside a code span`() {
+        val result = formatter.format(message(text = "run `curl https://getstream.io` now"), currentUser)
+
+        result.text shouldBeEqualTo "run curl https://getstream.io now"
+        result.annotation(AnnotationTagUrl, "https://getstream.io") shouldBeEqualTo null
+    }
+
+    @Test
+    fun `does not highlight a mention inside a code span`() {
+        val mentioned = User(id = "u1", name = "Martin")
+        val message = message(text = "see `@Martin` here", mentionedUsers = listOf(mentioned))
+
+        val result = formatter.format(message, currentUser)
+
+        result.text shouldBeEqualTo "see @Martin here"
+        result.annotation(UserMentionTag, "@Martin") shouldBeEqualTo null
+    }
+
+    @Test
     fun `leaves plain text with line breaks untouched`() {
         val text = "first line\nsecond line"
 

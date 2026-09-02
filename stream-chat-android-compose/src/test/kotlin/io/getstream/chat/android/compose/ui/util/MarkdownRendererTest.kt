@@ -255,6 +255,16 @@ internal class MarkdownRendererTest {
             // Carriage returns never survive into the output.
             Arguments.of("a\r\n\r\nb", "a\n\nb"),
             Arguments.of("a\r\nb", "a\nb"),
+            // A heading keeps neither the space before its text nor the one after it.
+            Arguments.of("# H \nnext", "H\nnext"),
+            Arguments.of("# H #\nnext", "H\nnext"),
+            // Two breaks in the source stay two breaks.
+            Arguments.of("a<br/><br/>b", "a\n\nb"),
+            // An HTML block is a block, so what follows it starts on a new line.
+            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\nafter"),
+            // A document that renders to nothing falls back to what was typed, rather than
+            // leaving an empty bubble.
+            Arguments.of("[d]: https://getstream.io", "[d]: https://getstream.io"),
             // Unsupported constructs keep their source text so nothing is lost.
             Arguments.of("| a | b |\n| --- | --- |\n| 1 | 2 |", "| a | b |\n| --- | --- |\n| 1 | 2 |"),
         )
