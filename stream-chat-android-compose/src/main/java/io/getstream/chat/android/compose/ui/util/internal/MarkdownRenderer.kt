@@ -82,15 +82,28 @@ private class Walker(
     private val links: LinkMap,
 ) {
 
-    fun visitBlocks(nodes: List<ASTNode>) = nodes.forEach(::visitBlock)
+    fun visitBlocks(nodes: List<ASTNode>) {
+        // The breaks between two blocks are how the author spaced them, so carry that across
+        // rather than imposing a fixed separation per block type.
+        var breaks = 0
+        var started = false
+        for (node in nodes) {
+            when (node.type) {
+                MarkdownTokenTypes.EOL -> if (started) breaks++
+                MarkdownTokenTypes.WHITE_SPACE -> Unit
+                else -> {
+                    if (started) emitter.endBlock(breaks.coerceIn(1, MaxBlockBreaks))
+                    breaks = 0
+                    started = true
+                    visitBlock(node)
+                }
+            }
+        }
+    }
 
     private fun visitBlock(node: ASTNode) {
         when (node.type) {
-            MarkdownElementTypes.PARAGRAPH -> {
-                visitInlineChildren(node)
-                // A paragraph break in the source is a blank line, so keep it as one.
-                emitter.endBlock(newlines = 2)
-            }
+            MarkdownElementTypes.PARAGRAPH -> visitInlineChildren(node)
 
             MarkdownElementTypes.ATX_1 -> heading(node, level = 1)
             MarkdownElementTypes.ATX_2 -> heading(node, level = 2)
@@ -107,16 +120,10 @@ private class Walker(
             MarkdownElementTypes.CODE_BLOCK ->
                 codeBlock(node, contentType = MarkdownTokenTypes.CODE_LINE, stripIndent = true)
 
-            MarkdownTokenTypes.HORIZONTAL_RULE -> {
-                emitter.append(styles.thematicBreak)
-                emitter.endBlock(newlines = 1)
-            }
+            MarkdownTokenTypes.HORIZONTAL_RULE -> emitter.append(styles.thematicBreak)
 
             // No styled form, so the source stands in, but both are still blocks.
-            GFMElementTypes.TABLE, MarkdownElementTypes.HTML_BLOCK -> {
-                verbatimBlock(node)
-                emitter.endBlock(newlines = 1)
-            }
+            GFMElementTypes.TABLE, MarkdownElementTypes.HTML_BLOCK -> verbatimBlock(node)
 
             // A definition declares a reference target and renders nothing itself.
             MarkdownElementTypes.LINK_DEFINITION -> Unit
@@ -133,10 +140,9 @@ private class Walker(
      * which the line prefix already stands for.
      */
     private fun verbatimBlock(node: ASTNode) {
-        val quoted = emitter.currentLinePrefix.isNotEmpty()
         node.text().toString().split('\n').forEachIndexed { index, line ->
             if (index > 0) emitter.appendLineBreak()
-            emitter.appendText(if (index > 0 && quoted) line.trimStart('>', ' ') else line)
+            emitter.appendText(if (index > 0) QuoteMarkers.replace(line, "") else line)
         }
     }
 
@@ -155,7 +161,6 @@ private class Walker(
             }
         }
         emitter.addSpan(styles.heading(level), start)
-        emitter.endBlock(newlines = 1)
     }
 
     private fun blockQuote(node: ASTNode) {
@@ -169,8 +174,6 @@ private class Walker(
             emitter.trimTrailingNewlines()
         }
         emitter.addSpan(styles.blockQuote, start)
-        // Two newlines keep consecutive quotes from reading as one spanning two lines.
-        emitter.endBlock(newlines = 2)
     }
 
     private fun list(node: ASTNode, level: Int) {
@@ -270,7 +273,6 @@ private class Walker(
         }
         emitter.addSpan(styles.codeBlock, start)
         emitter.addAnnotation(AnnotationTagLiteral, "", start)
-        emitter.endBlock(newlines = 1)
     }
 
     private fun visitInlineChildren(node: ASTNode, skip: Set<IElementType> = emptySet()) {
@@ -318,16 +320,19 @@ private class Walker(
 
             MarkdownElementTypes.CODE_SPAN -> literal(styles.codeSpan) {
                 // The specification turns a line ending in a code span into a space.
-                node.children
+                val content = node.children
                     .dropWhile { it.type == MarkdownTokenTypes.BACKTICK }
                     .dropLastWhile { it.type == MarkdownTokenTypes.BACKTICK }
-                    .filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE }
-                    .forEach { child ->
-                        when (child.type) {
-                            MarkdownTokenTypes.EOL -> emitter.append(" ")
-                            else -> emitter.append(child.text())
-                        }
+                content.forEachIndexed { index, child ->
+                    val opensQuotedLine =
+                        content.getOrNull(index - 1)?.type == MarkdownTokenTypes.BLOCK_QUOTE
+                    when {
+                        child.type == MarkdownTokenTypes.BLOCK_QUOTE -> Unit
+                        opensQuotedLine && child.type == MarkdownTokenTypes.WHITE_SPACE -> Unit
+                        child.type == MarkdownTokenTypes.EOL -> emitter.append(" ")
+                        else -> emitter.append(child.text())
                     }
+                }
             }
 
             MarkdownElementTypes.INLINE_LINK -> inlineLink(node)
@@ -359,7 +364,6 @@ private class Walker(
         }
     }
 
-    /** Resolves `[text][label]` and `[label]` against the document's link definitions. */
     /**
      * Emits what a link, reference or image shows, annotated with [destination] when there is one
      * worth opening. Showing nothing falls back to the source, so nothing vanishes.
@@ -392,6 +396,7 @@ private class Walker(
         }
     }
 
+    /** Resolves `[text][label]` and `[label]` against the document's link definitions. */
     private fun referenceLink(node: ASTNode) {
         val label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL }
         val destination = label
@@ -509,7 +514,7 @@ private fun String.toOpenableUrl(): String? {
     val destination = removeSurrounding("<", ">").trim()
     return when {
         destination.isEmpty() || destination.any(Char::isWhitespace) -> null
-        destination.hasOpenableScheme() -> destination
+        destination.hasOpenableScheme() -> destination.lowercaseScheme()
         destination.contains('@') && !destination.contains('/') -> "mailto:$destination"
         // Also reached by a host carrying a port, which reads as a scheme above. HostPattern is
         // anchored on a dotted host, so a hostile scheme cannot match here.
@@ -523,6 +528,12 @@ private fun String.toOpenableUrl(): String? {
  * annotated. Otherwise text reading as ordinary prose could open a `javascript:` or `intent://`
  * target, or deep link into the host app.
  */
+/** Android matches an intent filter's scheme case-sensitively, so it has to be lowercase. */
+private fun String.lowercaseScheme(): String {
+    val separator = indexOf(':')
+    return substring(0, separator).lowercase() + substring(separator)
+}
+
 private fun String.hasOpenableScheme(): Boolean =
     OpenableSchemes.any { startsWith(it, ignoreCase = true) }
 
@@ -545,6 +556,9 @@ private val BoldSpan = SpanStyle(fontWeight = FontWeight.Bold)
 private val StrikethroughSpan = SpanStyle(textDecoration = TextDecoration.LineThrough)
 
 private const val UnorderedListMarker = "•"
+
+/** Blocks are separated by at most a blank line, however many breaks the source holds. */
+private const val MaxBlockBreaks = 2
 
 private val OpenableSchemes = listOf("http://", "https://", "mailto:", "tel:")
 private val HostPattern = Regex("^[\\w\\-]+(\\.[\\w\\-]+)+")
@@ -573,6 +587,7 @@ private val HeadingMarkerTypes = setOf(
 private val EmphasisMarkerTypes = setOf(MarkdownTokenTypes.EMPH, GFMTokenTypes.TILDE)
 private val LinkLabelMarkerTypes = setOf(MarkdownTokenTypes.LBRACKET, MarkdownTokenTypes.RBRACKET)
 private val AutolinkMarkerTypes = setOf(MarkdownTokenTypes.LT, MarkdownTokenTypes.GT)
+private val QuoteMarkers = Regex("^(?:> ?)+")
 private val ImageLinkTypes = setOf(
     MarkdownElementTypes.INLINE_LINK,
     MarkdownElementTypes.FULL_REFERENCE_LINK,

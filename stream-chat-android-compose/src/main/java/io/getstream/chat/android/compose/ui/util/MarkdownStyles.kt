@@ -52,13 +52,13 @@ internal data class MarkdownStyles(
             typography: StreamDesign.Typography = ChatTheme.typography,
             colors: StreamDesign.Colors = ChatTheme.colors,
         ): MarkdownStyles = MarkdownStyles(
-            // The type scale has four heading sizes, so the last three share the smallest and
-            // the sixth is set apart by colour instead.
+            // Four heading sizes for six levels, so two pairs collide. The fourth stays at body
+            // size, as it does on the web, and the sixth is set apart by colour.
             headings = listOf(
                 typography.headingLarge.toSpanStyle(),
                 typography.headingMedium.toSpanStyle(),
                 typography.headingSmall.toSpanStyle(),
-                typography.headingExtraSmall.toSpanStyle(),
+                typography.headingSmall.toSpanStyle(),
                 typography.headingExtraSmall.toSpanStyle(),
                 typography.headingExtraSmall.toSpanStyle().copy(color = colors.textSecondary),
             ),

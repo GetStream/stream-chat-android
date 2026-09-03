@@ -249,8 +249,17 @@ internal class MarkdownRendererTest {
 
         @JvmStatic
         @Suppress("unused")
-        fun renderedTextArguments(): List<Arguments> = listOf(
+        fun renderedTextArguments(): List<Arguments> = textArguments() + blockArguments()
+
+        private fun textArguments(): List<Arguments> = listOf(
             Arguments.of("plain text", "plain text"),
+            // Blocks are separated by the breaks the author wrote, no more and no fewer.
+            Arguments.of("Shopping list:\n- milk\n- eggs", "Shopping list:\n• milk\n• eggs"),
+            Arguments.of("intro\n# Heading", "intro\nHeading"),
+            Arguments.of("# Heading\n\nbody", "Heading\n\nbody"),
+            // A block inside a list item or quote keeps its own indentation; only the quote
+            // markers of a continuation line go.
+            Arguments.of("> <div>\n>   x\n> </div>", "|<div>\n|  x\n|</div>"),
             // A soft break stays a line break, or enabling markdown would join lines.
             Arguments.of("first\nsecond", "first\nsecond"),
             Arguments.of("first\n\nsecond", "first\n\nsecond"),
@@ -271,7 +280,7 @@ internal class MarkdownRendererTest {
             // A hard break inside a quote opens exactly one new marked line.
             Arguments.of("> one  \n> two", "|one\n|two"),
             // Nesting stacks the markers.
-            Arguments.of("> outer\n> > inner", "|outer\n|\n||inner"),
+            Arguments.of("> outer\n> > inner", "|outer\n||inner"),
             Arguments.of("- one\n- two", "• one\n• two"),
             Arguments.of("---\nafter", "***\nafter"),
             // Escapes are resolved, and a backslash that escapes nothing is left alone.
@@ -287,6 +296,9 @@ internal class MarkdownRendererTest {
             Arguments.of("a &notreal; b", "a &notreal; b"),
             // Code content is literal, so a reference inside it stays as written.
             Arguments.of("`a &amp; b`", "a &amp; b"),
+        )
+
+        private fun blockArguments(): List<Arguments> = listOf(
             // An item whose only content is a block keeps it on the marker's line.
             Arguments.of("- # H", "• H"),
             Arguments.of("- > quoted", "• |quoted"),
@@ -303,7 +315,7 @@ internal class MarkdownRendererTest {
             // An indented code block loses the indentation that declared it.
             Arguments.of("    one\n    two", "one\ntwo"),
             // A table is still a block, so what follows it starts on a new line.
-            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\nafter"),
+            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\n\nafter"),
             // Carriage returns never survive into the output.
             Arguments.of("a\r\n\r\nb", "a\n\nb"),
             Arguments.of("a\r\nb", "a\nb"),
@@ -313,7 +325,7 @@ internal class MarkdownRendererTest {
             // Two breaks in the source stay two breaks.
             Arguments.of("a<br/><br/>b", "a\n\nb"),
             // An HTML block is a block, so what follows it starts on a new line.
-            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\nafter"),
+            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\n\nafter"),
             // A document that renders to nothing falls back to what was typed.
             Arguments.of("[d]: https://getstream.io", "[d]: https://getstream.io"),
             // A checkbox belongs beside the marker rather than pushing the item onto a new line.
@@ -324,7 +336,7 @@ internal class MarkdownRendererTest {
             // Every line of a block inside a list item is indented, not only the first.
             Arguments.of("- item\n\n      one\n      two", "• item\n>one\n>two"),
             // The specification turns a line ending inside a code span into a space.
-            Arguments.of("> `a\n> b`", "|a  b"),
+            Arguments.of("> `a\n> b`", "|a b"),
             // A reference to an invalid code point becomes the replacement character.
             Arguments.of("a &#xD800; b", "a \uFFFD b"),
             Arguments.of("a &#0; b", "a \uFFFD b"),

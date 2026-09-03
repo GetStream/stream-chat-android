@@ -138,6 +138,15 @@ internal class MarkdownMessageTextFormatterTest {
     }
 
     @Test
+    fun `keeps the markdown styling underneath a detected link`() {
+        // The entity pass styles links it finds itself, and must narrow them the same way.
+        val result = formatter.format(message(text = "# See https://getstream.io"), currentUser)
+
+        result.spanAt("https://getstream.io")?.fontSize shouldBeEqualTo 30.sp
+        result.spanAt("https://getstream.io")?.color shouldBeEqualTo Color.Blue
+    }
+
+    @Test
     fun `leaves plain text with line breaks untouched`() {
         val text = "first line\nsecond line"
 

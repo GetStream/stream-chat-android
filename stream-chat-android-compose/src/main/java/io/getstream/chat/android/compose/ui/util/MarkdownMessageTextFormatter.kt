@@ -53,8 +53,9 @@ internal class MarkdownMessageTextFormatter(
             color = textStyle(isMine, message).color,
         )
         val markdown = renderer.render(displayedText)
-        // Colour only: a full text style would overwrite the weight and size markdown set.
-        val linkSpan = linkStyle(isMine).let { SpanStyle(color = it.color, textDecoration = it.textDecoration) }
+        // Colour only: a full text style would overwrite the weight and size markdown set, both
+        // for the links markdown carried and for the ones the entity pass detects.
+        val link = linkStyle(isMine).let { TextStyle(color = it.color, textDecoration = it.textDecoration) }
         return buildAnnotatedString {
             append(markdown.text)
             // The base style goes on first so the markdown spans layered over it win.
@@ -63,13 +64,13 @@ internal class MarkdownMessageTextFormatter(
             markdown.getStringAnnotations(0, markdown.length).forEach {
                 addStringAnnotation(it.tag, it.item, it.start, it.end)
                 // The entity pass below skips annotated ranges, so markdown links style here.
-                if (it.tag == AnnotationTagUrl) addStyle(linkSpan, it.start, it.end)
+                if (it.tag == AnnotationTagUrl) addStyle(link.toSpanStyle(), it.start, it.end)
             }
         }
             .annotateStreamEntities(
                 message = message,
                 colors = colors,
-                linkStyle = linkStyle(isMine),
+                linkStyle = link,
                 mentionColor = mentionColor(isMine),
             )
             .let { annotated ->
