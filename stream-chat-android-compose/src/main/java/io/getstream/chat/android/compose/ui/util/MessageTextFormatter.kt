@@ -118,20 +118,15 @@ public fun interface MessageTextFormatter {
                 true -> StreamDesign.Colors.defaultDark()
                 else -> StreamDesign.Colors.default()
             },
-            textStyle: (isMine: Boolean, message: Message) -> TextStyle =
-                { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
-            linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.linkStyle(typography, colors) },
-            mentionColor: (isMine: Boolean) -> Color = { Color.Unspecified },
-            builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter = MarkdownMessageTextFormatter(
             autoTranslationEnabled = autoTranslationEnabled,
             colors = colors,
             typography = typography,
             styles = MarkdownStyles.defaults(typography = typography, colors = colors),
-            textStyle = textStyle,
-            linkStyle = linkStyle,
-            mentionColor = mentionColor,
-            builder = builder,
+            textStyle = { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
+            linkStyle = { MessageStyling.linkStyle(typography, colors) },
+            mentionColor = { Color.Unspecified },
+            builder = null,
         )
 
         /**
