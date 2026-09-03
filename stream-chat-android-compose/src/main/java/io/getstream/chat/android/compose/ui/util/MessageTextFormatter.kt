@@ -121,7 +121,8 @@ public fun interface MessageTextFormatter {
          * layout, which means rendering message text as a tree of composables instead of one
          * styled string.
          *
-         * @param styles The styling applied to the markdown constructs.
+         * Markdown styling follows [typography] and [colors], so overriding either carries into
+         * the rendered headings, code and quotes.
          */
         @Composable
         public fun markdownFormatter(
@@ -132,7 +133,6 @@ public fun interface MessageTextFormatter {
                 true -> StreamDesign.Colors.defaultDark()
                 else -> StreamDesign.Colors.default()
             },
-            styles: MarkdownStyles = MarkdownStyles.defaults(typography = typography, colors = colors),
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
                 { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
             linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.linkStyle(typography, colors) },
@@ -142,7 +142,7 @@ public fun interface MessageTextFormatter {
             autoTranslationEnabled = autoTranslationEnabled,
             colors = colors,
             typography = typography,
-            styles = styles,
+            styles = MarkdownStyles.defaults(typography = typography, colors = colors),
             textStyle = textStyle,
             linkStyle = linkStyle,
             mentionColor = mentionColor,

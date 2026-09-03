@@ -6724,46 +6724,6 @@ public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoa
 	public static final fun getLocalStreamImageLoader ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
 
-public final class io/getstream/chat/android/compose/ui/util/MarkdownStyles {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MarkdownStyles$Companion;
-	public fun <init> (Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component10 ()Ljava/lang/String;
-	public final fun component11 ()Ljava/lang/String;
-	public final fun component12 ()Ljava/lang/String;
-	public final fun component2 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component3 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component4 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component5 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component6 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component7 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component8 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun component9 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun copy (Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Landroidx/compose/ui/text/SpanStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBlockQuote ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getBlockQuotePrefix ()Ljava/lang/String;
-	public final fun getCodeBlock ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getCodeSpan ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getHeading1 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getHeading2 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getHeading3 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getHeading4 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getHeading5 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getHeading6 ()Landroidx/compose/ui/text/SpanStyle;
-	public final fun getListIndent ()Ljava/lang/String;
-	public final fun getThematicBreak ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/util/MarkdownStyles$Companion {
-	public final fun defaults (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;
-}
-
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessageAlignmentProvider {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider$Companion;
 	public abstract fun provideMessageAlignment (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;)Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
@@ -6805,7 +6765,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/util/Messag
 public final class io/getstream/chat/android/compose/ui/util/MessageTextFormatter$Companion {
 	public final fun composite ([Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
 	public final fun defaultFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
-	public final fun markdownFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
+	public final fun markdownFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/MessageUtilsKt {

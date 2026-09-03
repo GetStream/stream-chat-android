@@ -24,26 +24,27 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 
 /**
- * Styling applied to the markdown constructs rendered inside a message bubble.
+ * Styling applied to the markdown constructs rendered inside a message bubble. Derived from the
+ * design system, and not yet exposed: nothing outside the kit needs to override it.
  *
  * @param listIndent Prepended once per level of list nesting.
  * @param blockQuotePrefix Prepended to every quoted block.
  * @param thematicBreak Rendered in place of a thematic break (`---`).
  */
 @Immutable
-public data class MarkdownStyles(
-    public val heading1: SpanStyle,
-    public val heading2: SpanStyle,
-    public val heading3: SpanStyle,
-    public val heading4: SpanStyle,
-    public val heading5: SpanStyle,
-    public val heading6: SpanStyle,
-    public val codeSpan: SpanStyle,
-    public val codeBlock: SpanStyle,
-    public val blockQuote: SpanStyle,
-    public val listIndent: String = "    ",
-    public val blockQuotePrefix: String = "┃ ",
-    public val thematicBreak: String = "⸻",
+internal data class MarkdownStyles(
+    val heading1: SpanStyle,
+    val heading2: SpanStyle,
+    val heading3: SpanStyle,
+    val heading4: SpanStyle,
+    val heading5: SpanStyle,
+    val heading6: SpanStyle,
+    val codeSpan: SpanStyle,
+    val codeBlock: SpanStyle,
+    val blockQuote: SpanStyle,
+    val listIndent: String = "    ",
+    val blockQuotePrefix: String = "┃ ",
+    val thematicBreak: String = "⸻",
 ) {
 
     /**
@@ -55,13 +56,13 @@ public data class MarkdownStyles(
         return levels.getOrElse(level - 1) { levels.last() }
     }
 
-    public companion object {
+    companion object {
 
         /**
          * Builds the default styling from the design system's type scale and colors.
          */
         @Composable
-        public fun defaults(
+        fun defaults(
             typography: StreamDesign.Typography = ChatTheme.typography,
             colors: StreamDesign.Colors = ChatTheme.colors,
         ): MarkdownStyles = MarkdownStyles(
