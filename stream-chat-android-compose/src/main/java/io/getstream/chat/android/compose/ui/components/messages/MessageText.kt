@@ -67,9 +67,6 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
-import io.getstream.log.StreamLog
-
-private const val MessageTextLogTag = "Chat:MessageText"
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -147,11 +144,11 @@ public fun MessageText(
                 onMentionClick = onMentionClick,
                 onUserMentionClick = onUserMentionClick,
                 fallback = { url ->
-                    // Nothing guarantees an app exists for the link's scheme.
                     try {
                         context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                     } catch (_: ActivityNotFoundException) {
-                        StreamLog.w(MessageTextLogTag) { "[onLinkClick] nothing can open $url" }
+                        // Nothing guarantees an app exists for the link's scheme, and a tap on one
+                        // must not bring the message list down.
                     }
                 },
             )

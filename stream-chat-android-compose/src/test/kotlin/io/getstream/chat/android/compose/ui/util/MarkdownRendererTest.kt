@@ -222,6 +222,7 @@ internal class MarkdownRendererTest {
         renderer.render(source).text.isNotEmpty() shouldBeEqualTo true
     }
 
+    // JUnit resolves these by name for @MethodSource, so nothing references them in code.
     companion object {
 
         @JvmStatic

@@ -484,8 +484,9 @@ private fun String.resolveMarkdownText(): String = buildString {
  * the `&` is not one. Only the numeric forms and the named ones below are decoded.
  */
 private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
-    val semicolon = indexOf(';', start + 1)
-    if (semicolon < 0 || semicolon - start > MaxCharacterReferenceLength) return null
+    // Bounded, so that a message full of ampersands does not scan its own tail for each one.
+    val limit = minOf(length, start + 1 + MaxCharacterReferenceLength)
+    val semicolon = (start + 1 until limit).firstOrNull { this[it] == ';' } ?: return null
     val body = subSequence(start + 1, semicolon).toString()
     if (body.isEmpty()) return null
     val length = semicolon - start + 1
