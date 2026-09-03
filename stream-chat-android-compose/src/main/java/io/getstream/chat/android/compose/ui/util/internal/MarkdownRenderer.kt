@@ -110,9 +110,9 @@ private class Walker(
 
             MarkdownElementTypes.BLOCK_QUOTE -> blockQuote(node)
             MarkdownElementTypes.UNORDERED_LIST, MarkdownElementTypes.ORDERED_LIST -> list(node, level = 1)
-            MarkdownElementTypes.CODE_FENCE -> codeBlock(node, contentTypes = FenceContentTypes)
+            MarkdownElementTypes.CODE_FENCE -> codeBlock(node, contentType = MarkdownTokenTypes.CODE_FENCE_CONTENT)
             MarkdownElementTypes.CODE_BLOCK ->
-                codeBlock(node, contentTypes = IndentedCodeContentTypes, stripIndent = true)
+                codeBlock(node, contentType = MarkdownTokenTypes.CODE_LINE, stripIndent = true)
 
             MarkdownTokenTypes.HORIZONTAL_RULE -> {
                 emitter.append(styles.thematicBreak)
@@ -271,15 +271,11 @@ private class Walker(
         emitter.append(styles.listIndent.repeat(level))
     }
 
-    private fun codeBlock(
-        node: ASTNode,
-        contentTypes: Set<IElementType>,
-        stripIndent: Boolean = false,
-    ) {
+    private fun codeBlock(node: ASTNode, contentType: IElementType, stripIndent: Boolean = false) {
         val code = StringBuilder()
         for (child in node.children) {
             when (child.type) {
-                in contentTypes -> code.append(child.text())
+                contentType -> code.append(child.text())
                 MarkdownTokenTypes.EOL -> code.append('\n')
                 else -> Unit
             }
@@ -380,7 +376,7 @@ private class Walker(
             }
 
             else ->
-                if (node.children.isEmpty() || node.type in SourceTextTypes) {
+                if (node.children.isEmpty()) {
                     emitter.appendText(node.text())
                 } else {
                     visitInlineChildren(node)
@@ -389,61 +385,65 @@ private class Walker(
     }
 
     /** Resolves `[text][label]` and `[label]` against the document's link definitions. */
-    private fun referenceLink(node: ASTNode) {
-        val label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL }
-        val destination = label
-            ?.let { links.getLinkInfo(LinkMap.normalizeLabel(it.text())) }
-            ?.destination
-        if (destination == null) {
-            emitter.appendText(node.text())
-            return
-        }
-        // A full reference shows its own text; a short one shows the label it was written as.
-        val shown = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT } ?: label
-        val start = emitter.length
-        visitInlineChildren(shown, skip = LinkLabelMarkerTypes)
-        // A link with nothing between its brackets would otherwise vanish from the message.
-        if (emitter.length == start) {
-            emitter.appendText(node.text())
-            return
-        }
-        destination.toString().resolveMarkdownText().toOpenableUrl()?.let { url ->
-            emitter.addAnnotation(AnnotationTagUrl, url, start)
-        }
-    }
-
-    private fun imageAltText(node: ASTNode) {
-        // The alt text sits inside whichever link form the image was written with.
-        val link = node.children.firstOrNull { it.type in ImageLinkTypes } ?: node
-        val label = link.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
-            ?: link.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL }
+    /**
+     * Emits the text a link, reference or image shows, and annotates it with [destination] when
+     * there is one worth opening. Falling back to the source keeps a construct that shows nothing
+     * from vanishing out of the message.
+     */
+    private fun linkLike(node: ASTNode, label: ASTNode?, destination: String?) {
         if (label == null) {
             emitter.appendText(node.text())
             return
         }
         val start = emitter.length
         visitInlineChildren(label, skip = LinkLabelMarkerTypes)
-        // An image with no alt text has nothing to stand in for it, so its source does.
-        if (emitter.length == start) emitter.appendText(node.text())
-    }
-
-    private fun inlineLink(node: ASTNode) {
-        val label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
-        val destination = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_DESTINATION }
-        if (label == null || destination == null) {
-            emitter.appendText(node.text())
-            return
-        }
-        val start = emitter.length
-        visitInlineChildren(label, skip = LinkLabelMarkerTypes)
-        // A link with nothing between its brackets would otherwise vanish from the message.
         if (emitter.length == start) {
             emitter.appendText(node.text())
             return
         }
-        destination.text().toString().resolveMarkdownText().toOpenableUrl()?.let { url ->
+        destination?.resolveMarkdownText()?.toOpenableUrl()?.let { url ->
             emitter.addAnnotation(AnnotationTagUrl, url, start)
         }
+    }
+
+    private fun inlineLink(node: ASTNode) {
+        val destination = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_DESTINATION }
+        when (destination) {
+            null -> emitter.appendText(node.text())
+            else -> linkLike(
+                node = node,
+                label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT },
+                destination = destination.text().toString(),
+            )
+        }
+    }
+
+    private fun referenceLink(node: ASTNode) {
+        val label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL }
+        val destination = label
+            ?.let { links.getLinkInfo(LinkMap.normalizeLabel(it.text())) }
+            ?.destination
+        when (destination) {
+            // With no definition to resolve against, the reference reads as it was written.
+            null -> emitter.appendText(node.text())
+            else -> linkLike(
+                node = node,
+                // A full reference shows its own text; a short one shows the label it was written as.
+                label = node.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT } ?: label,
+                destination = destination.toString(),
+            )
+        }
+    }
+
+    /** An image cannot be drawn, so its alt text stands in, with nothing to open. */
+    private fun imageAltText(node: ASTNode) {
+        val link = node.children.firstOrNull { it.type in ImageLinkTypes } ?: node
+        linkLike(
+            node = node,
+            label = link.children.firstOrNull { it.type == MarkdownElementTypes.LINK_TEXT }
+                ?: link.children.firstOrNull { it.type == MarkdownElementTypes.LINK_LABEL },
+            destination = null,
+        )
     }
 
     private inline fun styled(style: SpanStyle, content: () -> Unit) {
@@ -532,8 +532,6 @@ private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
     return String(Character.toChars(codePoint)) to length
 }
 
-private fun CharSequence.getOrNull(index: Int): Char? = if (index in indices) this[index] else null
-
 /**
  * Turns a link destination into something that can actually be opened, or null when it cannot be.
  *
@@ -619,8 +617,6 @@ private val ImageLinkTypes = setOf(
     MarkdownElementTypes.FULL_REFERENCE_LINK,
     MarkdownElementTypes.SHORT_REFERENCE_LINK,
 )
-private val FenceContentTypes = setOf(MarkdownTokenTypes.CODE_FENCE_CONTENT)
-private val IndentedCodeContentTypes = setOf(MarkdownTokenTypes.CODE_LINE)
 
 /** CommonMark strips the indentation that declared an indented code block, in either spelling. */
 private fun String.stripCodeIndent(): String = when {
@@ -629,6 +625,3 @@ private fun String.stripCodeIndent(): String = when {
 }
 
 private const val IndentedCodeSpaces = "    "
-
-/** Constructs with no styled form; their source text is shown so the content still reads. */
-private val SourceTextTypes = setOf(GFMElementTypes.TABLE)

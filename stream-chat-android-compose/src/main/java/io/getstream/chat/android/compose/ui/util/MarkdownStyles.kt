@@ -27,18 +27,14 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
  * Styling applied to the markdown constructs rendered inside a message bubble. Derived from the
  * design system, and not yet exposed: nothing outside the kit needs to override it.
  *
+ * @param headings One style per heading level, from one upwards.
  * @param listIndent Prepended once per level of list nesting.
  * @param blockQuotePrefix Prepended to every quoted block.
  * @param thematicBreak Rendered in place of a thematic break (`---`).
  */
 @Immutable
 internal data class MarkdownStyles(
-    val heading1: SpanStyle,
-    val heading2: SpanStyle,
-    val heading3: SpanStyle,
-    val heading4: SpanStyle,
-    val heading5: SpanStyle,
-    val heading6: SpanStyle,
+    val headings: List<SpanStyle>,
     val codeSpan: SpanStyle,
     val codeBlock: SpanStyle,
     val blockQuote: SpanStyle,
@@ -47,14 +43,8 @@ internal data class MarkdownStyles(
     val thematicBreak: String = "⸻",
 ) {
 
-    /**
-     * The style for an ATX heading of the given [level], counting from 1. Levels past the ones the
-     * design system has sizes for share the smallest style.
-     */
-    internal fun heading(level: Int): SpanStyle {
-        val levels = listOf(heading1, heading2, heading3, heading4, heading5, heading6)
-        return levels.getOrElse(level - 1) { levels.last() }
-    }
+    /** The style for a heading of the given [level], counting from 1. */
+    fun heading(level: Int): SpanStyle = headings.getOrElse(level - 1) { headings.last() }
 
     companion object {
 
@@ -66,14 +56,16 @@ internal data class MarkdownStyles(
             typography: StreamDesign.Typography = ChatTheme.typography,
             colors: StreamDesign.Colors = ChatTheme.colors,
         ): MarkdownStyles = MarkdownStyles(
-            heading1 = typography.headingLarge.toSpanStyle(),
-            heading2 = typography.headingMedium.toSpanStyle(),
-            heading3 = typography.headingSmall.toSpanStyle(),
-            // The type scale runs out of heading sizes at four levels, and the remaining two share
-            // the smallest rather than growing back up. The last is set apart by colour instead.
-            heading4 = typography.headingExtraSmall.toSpanStyle(),
-            heading5 = typography.headingExtraSmall.toSpanStyle(),
-            heading6 = typography.headingExtraSmall.toSpanStyle().copy(color = colors.textSecondary),
+            // The type scale runs out of heading sizes at four levels, so the remaining two share
+            // the smallest rather than growing back up, and the last is set apart by colour.
+            headings = listOf(
+                typography.headingLarge.toSpanStyle(),
+                typography.headingMedium.toSpanStyle(),
+                typography.headingSmall.toSpanStyle(),
+                typography.headingExtraSmall.toSpanStyle(),
+                typography.headingExtraSmall.toSpanStyle(),
+                typography.headingExtraSmall.toSpanStyle().copy(color = colors.textSecondary),
+            ),
             codeSpan = SpanStyle(
                 fontFamily = FontFamily.Monospace,
                 background = colors.backgroundCoreSurfaceSubtle,

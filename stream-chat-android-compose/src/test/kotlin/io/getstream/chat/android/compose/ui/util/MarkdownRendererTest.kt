@@ -353,12 +353,7 @@ internal class MarkdownRendererTest {
 }
 
 private val TestStyles = MarkdownStyles(
-    heading1 = SpanStyle(fontSize = 30.sp),
-    heading2 = SpanStyle(fontSize = 26.sp),
-    heading3 = SpanStyle(fontSize = 22.sp),
-    heading4 = SpanStyle(fontSize = 18.sp),
-    heading5 = SpanStyle(fontSize = 16.sp),
-    heading6 = SpanStyle(fontSize = 14.sp),
+    headings = listOf(30, 26, 22, 18, 16, 14).map { SpanStyle(fontSize = it.sp) },
     codeSpan = SpanStyle(fontFamily = FontFamily.Monospace),
     codeBlock = SpanStyle(fontFamily = FontFamily.Monospace),
     blockQuote = SpanStyle(color = Color.Gray),

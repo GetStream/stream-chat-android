@@ -103,11 +103,7 @@ internal class MarkdownEmitter {
                 else -> break
             }
         }
-        clampRangesToText()
-    }
-
-    /** Keeps recorded ranges inside the text after characters have been removed from the end. */
-    private fun clampRangesToText() {
+        // Recorded ranges have to stay inside the text the characters were removed from.
         clamp(spanStyles)
         clamp(annotations)
     }
