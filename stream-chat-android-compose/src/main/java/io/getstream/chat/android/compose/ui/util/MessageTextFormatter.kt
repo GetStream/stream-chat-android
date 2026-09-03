@@ -87,6 +87,69 @@ public fun interface MessageTextFormatter {
         }
 
         /**
+         * Builds a formatter that renders the message text as GitHub Flavored Markdown, in place
+         * of [defaultFormatter]:
+         * ```
+         * ChatTheme(
+         *     messageTextFormatter = MessageTextFormatter.markdownFormatter(autoTranslationEnabled = true),
+         * )
+         * ```
+         *
+         * Mentions, links and emails are highlighted on top of the rendered markdown, exactly as
+         * they are without it.
+         *
+         * Rendering changes the length of the text in both directions: syntax characters are
+         * dropped, and markers such as a quote's are added. Offsets into the result therefore do
+         * not line up with [Message.text], so this replaces the default formatter rather than
+         * being combined with it through [composite], which styles by offsets into the original.
+         *
+         * ### One deliberate departure from the specification
+         *
+         * A single line break inside a paragraph renders as a line break, where the specification
+         * calls for a soft break that collapses to a space. Complying would mean a line break
+         * could only be written as two trailing spaces or a trailing backslash, which is not
+         * something anyone can type on a phone keyboard, and it would reflow every multi-line
+         * message that renders correctly as plain text today. Chat clients broadly make the same
+         * choice, and so does the View-based UI kit, which configures Markwon with
+         * `SoftBreakAddsNewLinePlugin`.
+         *
+         * ### Constructs a single styled string cannot express
+         *
+         * Images render as their alt text, which is the fallback the specification defines for an
+         * image that cannot be shown. Tables keep their source text, and a task list keeps its
+         * `[ ]` marker rather than becoming a checkbox. Drawing any of the three needs real
+         * layout, which means rendering message text as a tree of composables instead of one
+         * styled string.
+         *
+         * @param styles The styling applied to the markdown constructs.
+         */
+        @Composable
+        public fun markdownFormatter(
+            autoTranslationEnabled: Boolean,
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
+            colors: StreamDesign.Colors = when (isInDarkMode) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
+            },
+            styles: MarkdownStyles = MarkdownStyles.defaults(typography = typography, colors = colors),
+            textStyle: (isMine: Boolean, message: Message) -> TextStyle =
+                { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
+            linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.linkStyle(typography, colors) },
+            mentionColor: (isMine: Boolean) -> Color = { Color.Unspecified },
+            builder: AnnotatedMessageTextBuilder? = null,
+        ): MessageTextFormatter = MarkdownMessageTextFormatter(
+            autoTranslationEnabled = autoTranslationEnabled,
+            colors = colors,
+            typography = typography,
+            styles = styles,
+            textStyle = textStyle,
+            linkStyle = linkStyle,
+            mentionColor = mentionColor,
+            builder = builder,
+        )
+
+        /**
          * Builds a composite message text formatter.
          *
          * @param formatters The list of formatters to use.

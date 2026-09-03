@@ -33,7 +33,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * Renders every supported markdown construct through [MarkdownMessageTextFormatter], in light and
+ * Renders every supported markdown construct through the markdown formatter, in light and
  * dark mode, so that changes to the styling or to the block layout are visible in review.
  *
  * Span-level styling is asserted precisely in [MarkdownRendererTest]; this covers what only a
@@ -94,7 +94,7 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
 
     @Composable
     private fun MarkdownText(text: String) {
-        val formatter = MarkdownMessageTextFormatter.defaultFormatter(
+        val formatter = MessageTextFormatter.markdownFormatter(
             autoTranslationEnabled = false,
             typography = ChatTheme.typography,
             colors = ChatTheme.colors,

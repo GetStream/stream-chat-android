@@ -6724,16 +6724,6 @@ public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoa
 	public static final fun getLocalStreamImageLoader ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
 
-public final class io/getstream/chat/android/compose/ui/util/MarkdownMessageTextFormatter : io/getstream/chat/android/compose/ui/util/MessageTextFormatter {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MarkdownMessageTextFormatter$Companion;
-	public fun format (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;)Landroidx/compose/ui/text/AnnotatedString;
-}
-
-public final class io/getstream/chat/android/compose/ui/util/MarkdownMessageTextFormatter$Companion {
-	public final fun defaultFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MarkdownMessageTextFormatter;
-}
-
 public final class io/getstream/chat/android/compose/ui/util/MarkdownStyles {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/MarkdownStyles$Companion;
@@ -6815,6 +6805,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/util/Messag
 public final class io/getstream/chat/android/compose/ui/util/MessageTextFormatter$Companion {
 	public final fun composite ([Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
 	public final fun defaultFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
+	public final fun markdownFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;Lio/getstream/chat/android/compose/ui/util/MarkdownStyles;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/MessageUtilsKt {
