@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
- * Renders message text as GitHub Flavored Markdown. Built by
+ * Renders message text as markdown. Built by
  * [MessageTextFormatter.markdownFormatter], which documents what is and is not supported.
  */
 @Suppress("LongParameterList")

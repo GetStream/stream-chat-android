@@ -87,8 +87,8 @@ public fun interface MessageTextFormatter {
         }
 
         /**
-         * Builds a formatter that renders the message text as GitHub Flavored Markdown, in place
-         * of [defaultFormatter]:
+         * Builds a formatter that renders the message text as markdown, in place of
+         * [defaultFormatter]:
          * ```
          * ChatTheme(
          *     messageTextFormatter = MessageTextFormatter.markdownFormatter(autoTranslationEnabled = true),
@@ -105,8 +105,9 @@ public fun interface MessageTextFormatter {
          * reflow every multi-line message that reads correctly as plain text today. The View-based
          * kit deviates the same way.
          *
-         * Images render as their alt text, tables and task lists as their source: none of the three
-         * can be drawn in a styled string.
+         * Emphasis, strikethrough, code, headings, lists, quotes and links are rendered. An image
+         * falls back to its alt text, and a table or task list to its source, since none of the
+         * three can be drawn in a styled string.
          */
         @Composable
         public fun markdownFormatter(
