@@ -107,6 +107,7 @@ internal class DtoMapping(
         user_id = userId,
         extraData = extraData,
     )
+
     internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
         latitude = latitude,
         longitude = longitude,
@@ -216,7 +217,7 @@ internal class DtoMapping(
     internal fun DraftMessage.toMessageRequest(): MessageRequest = MessageRequest(
         id = id,
         text = text,
-        type = MessageRequest.Type.fromString("regular"),
+        type = MessageRequest.Type.Regular,
         attachments = attachments.map { it.toAttachmentRequest() },
         mentionedUsers = mentionedUsersIds,
         parentId = parentId,
@@ -226,6 +227,9 @@ internal class DtoMapping(
         custom = extraData,
     )
 
+    /**
+     * Maps the domain [Mute] model to a network [UpstreamMuteDto] model.
+     */
     internal fun Mute.toDto(): UpstreamMuteDto = UpstreamMuteDto(
         user = user?.toDto(),
         target = target?.toDto(),

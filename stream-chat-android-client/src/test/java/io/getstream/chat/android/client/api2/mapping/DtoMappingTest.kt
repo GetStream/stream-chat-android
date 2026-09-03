@@ -124,6 +124,7 @@ internal class DtoMappingTest {
         val message = randomDraftMessage(
             silent = true,
             extraData = mapOf("draftKey" to "draftValue"),
+            attachments = listOf(randomAttachment()),
         )
         val mapping = Fixture().get()
 
@@ -221,9 +222,12 @@ internal class DtoMappingTest {
 
     @Test
     fun `Message is correctly mapped to the generated request model`() {
+        // Pinned rather than random: the helper leaves attachments empty, which would let a mapper
+        // that drops them pass.
         val message = randomMessage(
             type = MessageType.REGULAR,
             extraData = mutableMapOf("messageKey" to "messageValue"),
+            attachments = listOf(randomAttachment()),
         )
         val messageTransformer = spy(NoOpMessageTransformer)
         val mapping = Fixture().withMessageTransformer(messageTransformer).get()
@@ -247,6 +251,7 @@ internal class DtoMappingTest {
         request.showInChannel shouldBeEqualTo message.showInChannel
         request.silent shouldBeEqualTo message.silent
         request.restrictedVisibility shouldBeEqualTo message.restrictedVisibility
+        request.sharedLocation shouldBeEqualTo with(mapping) { message.sharedLocation?.toSharedLocation() }
         request.custom shouldBeEqualTo message.extraData
         verify(messageTransformer, times(1)).transform(message)
     }
