@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.network.models.MessageRequest
 
 /**
  * Represents the body part of the truncate channel request.
@@ -26,5 +26,5 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
  */
 @JsonClass(generateAdapter = true)
 internal data class TruncateChannelRequest(
-    val message: UpstreamMessageDto?,
+    val message: MessageRequest?,
 )

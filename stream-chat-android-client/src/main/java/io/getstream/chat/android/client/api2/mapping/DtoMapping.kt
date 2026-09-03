@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -108,43 +107,6 @@ internal class DtoMapping(
         user_id = userId,
         extraData = extraData,
     )
-
-    /**
-     * Transforms [Message] to [UpstreamMessageDto].
-     */
-    internal fun Message.toDto(): UpstreamMessageDto =
-        messageTransformer.transform(this)
-            .run {
-                val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
-                UpstreamMessageDto(
-                    attachments = attachments.map { it.toDto() },
-                    cid = cid,
-                    command = command,
-                    args = null,
-                    html = html,
-                    id = id,
-                    type = upstreamType,
-                    mentioned_users = mentionedUsersIds,
-                    mentioned_here = mentionedHere,
-                    mentioned_channel = mentionedChannel,
-                    mentioned_group_ids = mentionedGroups.map(UserGroup::id),
-                    mentioned_roles = mentionedRoles,
-                    parent_id = parentId,
-                    pin_expires = pinExpires,
-                    pinned = pinned,
-                    pinned_at = pinnedAt,
-                    pinned_by = pinnedBy?.toDto(),
-                    quoted_message_id = replyMessageId,
-                    shadowed = shadowed,
-                    show_in_channel = showInChannel,
-                    silent = silent,
-                    text = text,
-                    thread_participants = threadParticipants.map { it.toDto() },
-                    restricted_visibility = restrictedVisibility,
-                    shared_location = sharedLocation?.toDto(),
-                    extraData = extraData,
-                )
-            }
 
     internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
         latitude = latitude,
@@ -248,29 +210,21 @@ internal class DtoMapping(
                 )
             }
 
-    internal fun DraftMessage.toDto(): UpstreamMessageDto = UpstreamMessageDto(
-        attachments = attachments.map { it.toDto() },
-        cid = cid,
-        command = command,
-        args = args,
+    /**
+     * Maps the domain [DraftMessage] to the generated network [MessageRequest] model. The draft endpoint
+     * takes the same request body as sending a message.
+     */
+    internal fun DraftMessage.toMessageRequest(): MessageRequest = MessageRequest(
         id = id,
-        html = "",
-        mentioned_users = mentionedUsersIds,
-        parent_id = parentId,
-        pin_expires = null,
-        pinned = null,
-        pinned_at = null,
-        pinned_by = null,
-        quoted_message_id = replyMessage?.id,
-        shadowed = false,
-        show_in_channel = showInChannel,
-        silent = silent,
         text = text,
-        type = "regular",
-        thread_participants = emptyList(),
-        restricted_visibility = emptyList(),
-        shared_location = null,
-        extraData = extraData,
+        type = MessageRequest.Type.Regular,
+        attachments = attachments.map { it.toAttachmentRequest() },
+        mentionedUsers = mentionedUsersIds,
+        parentId = parentId,
+        quotedMessageId = replyMessage?.id,
+        showInChannel = showInChannel,
+        silent = silent,
+        custom = extraData,
     )
 
     /**

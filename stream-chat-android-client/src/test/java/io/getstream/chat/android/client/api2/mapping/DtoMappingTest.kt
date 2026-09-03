@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.test.randomConnectedEvent
@@ -53,7 +52,9 @@ import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.randomUserGroup
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -119,77 +120,32 @@ internal class DtoMappingTest {
     }
 
     @Test
-    fun `DraftMessage is correctly mapped to Dto`() {
-        val message = randomDraftMessage()
+    fun `DraftMessage is correctly mapped to the generated request model`() {
+        // Pinned rather than random: an empty extraData or a random `silent` would let a mapper
+        // that drops either of them pass.
+        val message = randomDraftMessage(
+            silent = true,
+            extraData = mapOf("draftKey" to "draftValue"),
+            attachments = listOf(randomAttachment()),
+            mentionedUsers = listOf(randomUser()),
+        )
         val mapping = Fixture().get()
-        val dto = with(mapping) { message.toDto() }
-        val expected = UpstreamMessageDto(
-            attachments = message.attachments.map { with(mapping) { it.toDto() } },
-            cid = message.cid,
-            command = message.command,
-            args = message.args,
-            html = "",
-            id = message.id,
-            type = "regular",
-            mentioned_users = message.mentionedUsersIds,
-            parent_id = message.parentId,
-            pin_expires = null,
-            pinned = null,
-            pinned_at = null,
-            pinned_by = null,
-            quoted_message_id = message.replyMessage?.id,
-            shadowed = false,
-            show_in_channel = message.showInChannel,
-            silent = message.silent,
-            text = message.text,
-            thread_participants = emptyList(),
-            restricted_visibility = emptyList(),
-            shared_location = null,
-            extraData = message.extraData,
-        )
-        dto shouldBeEqualTo expected
-    }
 
-    @Test
-    fun `Message is correctly mapped to Dto`() {
-        val messageTransformer = spy(NoOpMessageTransformer)
-        val message = randomMessage(type = MessageType.REGULAR)
-        val mapping = Fixture()
-            .withMessageTransformer(messageTransformer)
-            .get()
-        val dto = with(mapping) { message.toDto() }
-        val expected = UpstreamMessageDto(
-            attachments = message.attachments.map { with(mapping) { it.toDto() } },
-            cid = message.cid,
-            command = message.command,
-            args = null,
-            html = message.html,
-            id = message.id,
-            type = message.type,
-            mentioned_users = message.mentionedUsersIds,
-            mentioned_here = message.mentionedHere,
-            mentioned_channel = message.mentionedChannel,
-            mentioned_roles = message.mentionedRoles,
-            mentioned_group_ids = message.mentionedGroups.map(UserGroup::id),
-            parent_id = message.parentId,
-            pin_expires = message.pinExpires,
-            pinned = message.pinned,
-            pinned_at = message.pinnedAt,
-            pinned_by = message.pinnedBy?.let { with(mapping) { it.toDto() } },
-            quoted_message_id = message.replyMessageId,
-            shadowed = message.shadowed,
-            show_in_channel = message.showInChannel,
-            silent = message.silent,
-            text = message.text,
-            thread_participants = message.threadParticipants.map { with(mapping) { it.toDto() } },
-            restricted_visibility = message.restrictedVisibility,
-            shared_location = message.sharedLocation?.let { with(mapping) { it.toDto() } },
-            extraData = message.extraData,
-        )
+        val request = with(mapping) { message.toMessageRequest() }
 
-        dto shouldBeEqualTo expected
-        // Verify the transformer is called
-        verify(messageTransformer, times(1)).transform(message)
+        val expected = MessageRequest(
+            id = message.id,
+            text = message.text,
+            type = MessageRequest.Type.Regular,
+            attachments = message.attachments.map { with(mapping) { it.toAttachmentRequest() } },
+            mentionedUsers = message.mentionedUsersIds,
+            parentId = message.parentId,
+            quotedMessageId = message.replyMessage?.id,
+            showInChannel = message.showInChannel,
+            silent = message.silent,
+            custom = message.extraData,
+        )
+        request shouldBeEqualTo expected
     }
 
     @Test
@@ -269,7 +225,19 @@ internal class DtoMappingTest {
 
     @Test
     fun `Message is correctly mapped to the generated request model`() {
-        val message = randomMessage(type = MessageType.REGULAR)
+        // Pinned rather than random: the helper leaves attachments empty, which would let a mapper
+        // that drops them pass.
+        // Every collection is populated: the helper leaves them empty, so a mapper that drops one
+        // maps to the same empty list the assertion expects.
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            extraData = mutableMapOf("messageKey" to "messageValue"),
+            attachments = listOf(randomAttachment()),
+            mentionedUsers = listOf(randomUser()),
+            mentionedGroups = listOf(randomUserGroup()),
+            mentionedRoles = listOf(randomString()),
+            restrictedVisibility = listOf(randomString()),
+        )
         val messageTransformer = spy(NoOpMessageTransformer)
         val mapping = Fixture().withMessageTransformer(messageTransformer).get()
 
@@ -292,6 +260,7 @@ internal class DtoMappingTest {
         request.showInChannel shouldBeEqualTo message.showInChannel
         request.silent shouldBeEqualTo message.silent
         request.restrictedVisibility shouldBeEqualTo message.restrictedVisibility
+        request.sharedLocation shouldBeEqualTo with(mapping) { message.sharedLocation?.toSharedLocation() }
         request.custom shouldBeEqualTo message.extraData
         verify(messageTransformer, times(1)).transform(message)
     }
@@ -308,17 +277,6 @@ internal class DtoMappingTest {
         val request = with(mapping) { message.toMessageRequest() }
 
         request.type shouldBeEqualTo MessageRequest.Type.fromString(expectedType)
-    }
-
-    @ParameterizedTest
-    @MethodSource("messageTypeCoercionInput")
-    fun `Message toDto coerces type to allowed upstream values`(inputType: String, expectedType: String) {
-        val message = randomMessage(type = inputType)
-        val mapping = Fixture().get()
-
-        val dto = with(mapping) { message.toDto() }
-
-        dto.type shouldBeEqualTo expectedType
     }
 
     @Test

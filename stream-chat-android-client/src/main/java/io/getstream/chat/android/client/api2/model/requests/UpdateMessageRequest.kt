@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.network.models.MessageRequest
 
 /**
  * Used to form an update message request.
@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
  * */
 @JsonClass(generateAdapter = true)
 internal data class UpdateMessageRequest(
-    val message: UpstreamMessageDto,
+    val message: MessageRequest,
     val skip_enrich_url: Boolean = false,
     val skip_push: Boolean = false,
 )
