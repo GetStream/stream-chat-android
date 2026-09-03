@@ -37,24 +37,19 @@ import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkdownParser
 
 /**
- * Renders markdown as an [AnnotatedString]: inline constructs become spans, and block constructs
- * are laid out with line breaks and paragraph indentation.
- *
- * Constructs with no styled representation fall back to something readable rather than vanishing:
- * an image shows its alt text, and a table its source text.
+ * Renders markdown as an [AnnotatedString]: inline constructs become spans, blocks are laid out
+ * with line breaks and indentation. A construct with no styled form falls back to something
+ * readable, an image to its alt text and a table to its source.
  */
 internal class MarkdownRenderer(private val styles: MarkdownStyles) {
 
     private val logger by taggedLogger("Chat:MarkdownRenderer")
 
     fun render(text: String): AnnotatedString {
-        // The parser only recognises line feeds, so a carriage return would otherwise survive into
-        // the output and hide the break it belongs to.
+        // The parser only recognises line feeds; a carriage return would reach the output.
         val source = text.replace("\r\n", "\n").replace('\r', '\n')
-        // Message text comes from other people, and this runs during composition. Deeply nested
-        // markdown recurses far enough to exhaust the stack, which would otherwise take the whole
-        // message list down for everyone in the channel, and again on every reopen. Nothing here
-        // is worth failing a message for, so anything thrown falls back to the text as typed.
+        // Runs during composition on text from other people, and nesting deep enough exhausts the
+        // stack while parsing. Failing here would take the message list down on every reopen.
         return try {
             renderOrThrow(source)
         } catch (@Suppress("TooGenericExceptionCaught") error: Throwable) {
@@ -70,8 +65,7 @@ internal class MarkdownRenderer(private val styles: MarkdownStyles) {
         Walker(source, styles, emitter, links).visitBlocks(tree.children)
         emitter.trimTrailingNewlines()
         val rendered = emitter.build()
-        // Some documents render to nothing at all - a message holding only link definitions, for
-        // one. Showing what was typed beats showing an empty bubble.
+        // A message holding only link definitions renders nothing, so show what was typed.
         return when {
             rendered.text.isEmpty() && source.isNotEmpty() -> AnnotatedString(source)
             else -> rendered
@@ -79,8 +73,7 @@ internal class MarkdownRenderer(private val styles: MarkdownStyles) {
     }
 }
 
-// A visitor needs a member per construct it renders, and markdown has more constructs than the
-// threshold allows for.
+// A visitor needs a member per construct, and markdown has more than the threshold allows.
 @Suppress("TooManyFunctions")
 private class Walker(
     private val source: String,
@@ -119,17 +112,16 @@ private class Walker(
                 emitter.endBlock(newlines = 1)
             }
 
-            // Neither has a styled form, so their source stands in, but both are still blocks
-            // and must not run into the next one.
+            // No styled form, so the source stands in, but both are still blocks.
             GFMElementTypes.TABLE, MarkdownElementTypes.HTML_BLOCK -> {
                 verbatimBlock(node)
                 emitter.endBlock(newlines = 1)
             }
 
-            // Link definitions declare a reference target and render nothing themselves.
+            // A definition declares a reference target and renders nothing itself.
             MarkdownElementTypes.LINK_DEFINITION -> Unit
 
-            // Separation between blocks is driven by endBlock, so structural breaks are dropped.
+            // endBlock drives the separation, so structural breaks are dropped.
             MarkdownTokenTypes.EOL, MarkdownTokenTypes.WHITE_SPACE -> Unit
 
             else -> visitInlineNode(node)
@@ -137,8 +129,8 @@ private class Walker(
     }
 
     /**
-     * Emits a construct's source text as it was written. The source of a line continuing inside a
-     * quote still opens with that quote's marker, which our own line prefix already stands for.
+     * Emits a construct's source as written, less the quote markers its continuation lines carry,
+     * which the line prefix already stands for.
      */
     private fun verbatimBlock(node: ASTNode) {
         val quoted = emitter.currentLinePrefix.isNotEmpty()
@@ -155,8 +147,7 @@ private class Walker(
             // Setext headings hold their text directly, ATX headings wrap it in a content node.
             visitInlineChildren(node, skip = HeadingMarkerTypes)
         } else {
-            // The content node keeps the space separating the text from the opening marker, and
-            // from a closing one when the heading was written with it.
+            // The content node keeps the spaces separating the text from either marker.
             content.forEach {
                 visitInlineNodes(
                     it.children.dropWhile(ASTNode::isWhitespace).dropLastWhile(ASTNode::isWhitespace),
@@ -170,26 +161,22 @@ private class Walker(
     private fun blockQuote(node: ASTNode) {
         val start = emitter.length
         emitter.append(styles.blockQuotePrefix)
-        // Marking every line, rather than just the first, is what makes a multi-line quote read as
-        // one quote instead of a quoted line followed by loose text. Nesting stacks the markers,
-        // so a quote inside a quote is visibly two levels deep.
+        // Marking every line, not just the first, is what makes a multi-line quote read as one.
+        // Nesting stacks the markers, so a quote inside a quote reads as two levels.
         emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
             visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
-            // Trim while the quote's prefix is still current, or its own marked blank lines are
-            // not recognised as trailing ones.
+            // Trim under the quote's prefix, or its marked blank lines are not seen as trailing.
             emitter.trimTrailingNewlines()
         }
         emitter.addSpan(styles.blockQuote, start)
-        // Two newlines keep consecutive quotes apart, so that two of them cannot be mistaken for
-        // one quote spanning two lines.
+        // Two newlines keep consecutive quotes from reading as one spanning two lines.
         emitter.endBlock(newlines = 2)
     }
 
     private fun list(node: ASTNode, level: Int) {
         val items = node.children.filter { it.type == MarkdownElementTypes.LIST_ITEM }
         val ordered = node.type == MarkdownElementTypes.ORDERED_LIST
-        // Ordered lists are numbered from the first marker onwards, so that a list written
-        // entirely as "1." still reads as 1, 2, 3.
+        // Numbered from the first marker on, so a list written entirely as "1." reads 1, 2, 3.
         val firstNumber = items.firstNotNullOfOrNull(::orderedMarkerNumber) ?: 1
         items.forEachIndexed { index, item ->
             val marker = when {
@@ -212,13 +199,12 @@ private class Walker(
         emitter.append(styles.listIndent.repeat(level - 1))
         emitter.append(marker)
 
-        // Whatever comes first shares the marker's line, so a marker is never left alone on one.
-        // Everything after it starts a line of its own, indented to sit under the item's text
-        // rather than running into it.
+        // Whatever comes first shares the marker's line, so no marker is left alone on one.
+        // Everything after starts its own line, indented under the item's text.
         var markerLineTaken = false
         for (child in node.children) {
             when (child.type) {
-                // A task list's checkbox belongs beside the marker, so it must not take the line.
+                // A checkbox belongs beside the marker, so it must not take the line.
                 GFMTokenTypes.CHECK_BOX -> emitter.append(child.text())
 
                 // Markers are replaced, and the breaks between an item's blocks are structural.
@@ -231,8 +217,7 @@ private class Walker(
                 MarkdownElementTypes.PARAGRAPH -> {
                     if (markerLineTaken) continueItemLine(level)
                     markerLineTaken = true
-                    // Items hold their content in paragraphs; rendering those as blocks would put
-                    // a blank line between every item.
+                    // Items hold content in paragraphs; as blocks they would gain blank lines.
                     visitInlineChildren(child)
                 }
 
@@ -246,12 +231,10 @@ private class Walker(
                 else -> {
                     if (markerLineTaken) continueItemLine(level)
                     markerLineTaken = true
-                    // continueItemLine indents the first line; the prefix carries the rest, which
-                    // a block spanning several lines needs.
+                    // continueItemLine indents the first line, the prefix carries the rest.
                     emitter.withLinePrefix(emitter.currentLinePrefix + styles.listIndent.repeat(level)) {
                         visitBlock(child)
-                        // Trim while the item's prefix is current, or the line it marked is left
-                        // dangling at the end of the block.
+                        // Trim under the item's prefix, or its last marked line is left dangling.
                         emitter.trimTrailingNewlines()
                     }
                 }
@@ -265,7 +248,6 @@ private class Walker(
         emitter.endBlock(newlines = 1)
     }
 
-    /** Ends the current line and indents the next one to line up under the item's text. */
     private fun continueItemLine(level: Int) {
         endItemLine()
         emitter.append(styles.listIndent.repeat(level))
@@ -281,8 +263,7 @@ private class Walker(
             }
         }
         val start = emitter.length
-        // Emitted line by line, so a code block inside a quote keeps the quote's marker on every
-        // one of its lines. Blank lines are significant here, so they are opened unconditionally.
+        // Line by line, so a code block inside a quote keeps the quote's marker on each.
         code.trim('\n').split('\n').forEachIndexed { index, line ->
             if (index > 0) emitter.appendLineBreak()
             emitter.append(if (stripIndent) line.stripCodeIndent() else line)
@@ -297,8 +278,7 @@ private class Walker(
     }
 
     private fun visitInlineNodes(nodes: List<ASTNode>) {
-        // Every line of a quote carries its own marker, and continuation lines keep theirs inside
-        // the quoted paragraph. The marker and the space that separates it from the text both go.
+        // A quote marks every line, so a continuation line carries one inside the paragraph.
         var afterQuoteMarker = false
         var afterHardBreak = false
         nodes.forEachIndexed { index, node ->
@@ -309,11 +289,9 @@ private class Walker(
             when {
                 node.type == MarkdownTokenTypes.BLOCK_QUOTE -> afterQuoteMarker = true
                 afterQuoteMarker && node.type == MarkdownTokenTypes.WHITE_SPACE -> afterQuoteMarker = false
-                // A hard break is written as a marker plus the line feed it sits on, and both
-                // reach the walker; only the marker becomes the break.
+                // A hard break is a marker plus the feed it sits on; only the marker breaks.
                 afterHardBreak && node.type == MarkdownTokenTypes.EOL -> afterHardBreak = false
-                // An email autolink arrives as a bare token between its brackets, unlike a URL
-                // autolink, which the parser wraps in a node of its own.
+                // An email autolink is a bare token between brackets, unlike a URL autolink.
                 bracketsEmailAutolink -> afterQuoteMarker = false
                 else -> {
                     afterQuoteMarker = false
@@ -339,8 +317,7 @@ private class Walker(
             }
 
             MarkdownElementTypes.CODE_SPAN -> literal(styles.codeSpan) {
-                // The specification turns a line ending inside a code span into a space, so the
-                // span stays on one line and the marker opening a quoted continuation line goes.
+                // The specification turns a line ending in a code span into a space.
                 node.children
                     .dropWhile { it.type == MarkdownTokenTypes.BACKTICK }
                     .dropLastWhile { it.type == MarkdownTokenTypes.BACKTICK }
@@ -359,12 +336,10 @@ private class Walker(
             MarkdownElementTypes.SHORT_REFERENCE_LINK,
             -> referenceLink(node)
 
-            // Images cannot be drawn inside a single text, so the alt text stands in for them,
-            // which is the fallback the spec itself defines.
+            // An image cannot be drawn, so its alt text stands in, as the specification says.
             MarkdownElementTypes.IMAGE -> imageAltText(node)
 
-            // The angle brackets are syntax, not content. The URL is left as plain text for the
-            // entity pass to linkify, so bracketed and bare URLs end up handled the same way.
+            // The brackets are syntax; the entity pass linkifies the URL like any bare one.
             MarkdownElementTypes.AUTOLINK -> visitInlineChildren(node, skip = AutolinkMarkerTypes)
             MarkdownTokenTypes.EMAIL_AUTOLINK, MarkdownTokenTypes.AUTOLINK -> emitter.append(node.text())
 
@@ -386,9 +361,8 @@ private class Walker(
 
     /** Resolves `[text][label]` and `[label]` against the document's link definitions. */
     /**
-     * Emits the text a link, reference or image shows, and annotates it with [destination] when
-     * there is one worth opening. Falling back to the source keeps a construct that shows nothing
-     * from vanishing out of the message.
+     * Emits what a link, reference or image shows, annotated with [destination] when there is one
+     * worth opening. Showing nothing falls back to the source, so nothing vanishes.
      */
     private fun linkLike(node: ASTNode, label: ASTNode?, destination: String?) {
         if (label == null) {
@@ -435,7 +409,6 @@ private class Walker(
         }
     }
 
-    /** An image cannot be drawn, so its alt text stands in, with nothing to open. */
     private fun imageAltText(node: ASTNode) {
         val link = node.children.firstOrNull { it.type in ImageLinkTypes } ?: node
         linkLike(
@@ -452,7 +425,7 @@ private class Walker(
         emitter.addSpan(style, start)
     }
 
-    /** Styles [content] and marks it as text to be taken literally, as code is. */
+    /** Styles [content] and marks it literal, as code is. */
     private inline fun literal(style: SpanStyle, content: () -> Unit) {
         val start = emitter.length
         content()
@@ -463,10 +436,7 @@ private class Walker(
     private fun ASTNode.text(): CharSequence = getTextInNode(source)
 }
 
-/**
- * Appends source text, resolving the backslash escapes and character references the parser leaves
- * in place. Code content is appended as-is instead, where neither carries special meaning.
- */
+/** Appends source text with its escapes and character references resolved. */
 private fun MarkdownEmitter.appendText(value: CharSequence) {
     value.toString().resolveMarkdownText().split('\n').forEachIndexed { index, line ->
         if (index > 0) appendLineBreak()
@@ -475,8 +445,8 @@ private fun MarkdownEmitter.appendText(value: CharSequence) {
 }
 
 /**
- * Resolves the backslash escapes and character references the parser leaves in the source. Applies
- * to a link's destination as much as to the text, since both are written in the same source.
+ * Resolves the backslash escapes and character references the parser leaves in place, in a link's
+ * destination as much as in the text.
  */
 private fun String.resolveMarkdownText(): String = buildString {
     val source = this@resolveMarkdownText
@@ -505,11 +475,8 @@ private fun String.resolveMarkdownText(): String = buildString {
 }
 
 /**
- * Decodes the character reference starting at [start], returning its text and how many characters
- * it spanned, or null when what follows the `&` is not one.
- *
- * Only the named references that carry meaning in markdown source are decoded, plus the numeric
- * forms; anything else is left as typed, which is what a reader of a chat message expects.
+ * Decodes the character reference at [start] into its text and length, or null when what follows
+ * the `&` is not one. Only the numeric forms and the named ones below are decoded.
  */
 private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
     val semicolon = indexOf(';', start + 1)
@@ -523,8 +490,7 @@ private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
         body.startsWith("#x", ignoreCase = true) -> body.drop(2).toIntOrNull(radix = 16)
         else -> body.drop(1).toIntOrNull()
     } ?: return null
-    // A reference to an invalid code point, a surrogate included, becomes the replacement
-    // character rather than being left as written.
+    // An invalid code point, a surrogate included, becomes the replacement character.
     val invalid = codePoint <= 0 ||
         codePoint > Character.MAX_CODE_POINT ||
         codePoint in MinSurrogate..MaxSurrogate
@@ -533,15 +499,11 @@ private fun CharSequence.characterReferenceAt(start: Int): Pair<String, Int>? {
 }
 
 /**
- * Turns a link destination into something that can actually be opened, or null when it cannot be.
+ * Turns a link destination into something openable, or null when it is not. A fragment or a path
+ * only means something inside a document, and a URL invented from one fails when tapped.
  *
- * A fragment, a path, or anything holding whitespace only means something inside a document, and
- * giving one a scheme would produce a URL that fails to resolve when tapped, which matters because
- * the message list opens links by handing them straight to the system.
- *
- * A dotted destination with no path is taken for a host, so `getstream.io` becomes a link. That
- * cannot be told apart from a file name like `readme.md`, which is treated the same way; both the
- * View-based kit and the iOS SDK resolve the ambiguity in the same direction.
+ * A dotted destination with no path is taken for a host, so `getstream.io` links. A file name like
+ * `readme.md` cannot be told apart and links too, as it does in the View-based and iOS kits.
  */
 private fun String.toOpenableUrl(): String? {
     val destination = removeSurrounding("<", ">").trim()
@@ -549,25 +511,24 @@ private fun String.toOpenableUrl(): String? {
         destination.isEmpty() || destination.any(Char::isWhitespace) -> null
         destination.hasOpenableScheme() -> destination
         destination.contains('@') && !destination.contains('/') -> "mailto:$destination"
-        // Reached by a destination carrying a port, whose host reads as a scheme to the pattern
-        // above. HostPattern is anchored on a dotted host, so a hostile scheme cannot match here.
+        // Also reached by a host carrying a port, which reads as a scheme above. HostPattern is
+        // anchored on a dotted host, so a hostile scheme cannot match here.
         HostPattern.containsMatchIn(destination) -> "https://$destination"
         else -> null
     }
 }
 
 /**
- * Message text arrives from other people, and a tapped link is handed to the system to open, so a
- * destination is only annotated when its scheme is one a message has any business carrying. Without
- * this, a link reading as ordinary text could open a `javascript:` or `intent://` target, or deep
- * link into the host app.
+ * A tapped link is handed to the system, so only a scheme a message has business carrying is
+ * annotated. Otherwise text reading as ordinary prose could open a `javascript:` or `intent://`
+ * target, or deep link into the host app.
  */
 private fun String.hasOpenableScheme(): Boolean =
     OpenableSchemes.any { startsWith(it, ignoreCase = true) }
 
 /**
  * Both spellings of a hard break: the marker left by trailing spaces or a backslash, and the tag.
- * Either one absorbs the line feed it sits on, so ending a line with it produces a single break.
+ * Either absorbs the line feed it sits on, so ending a line with one breaks it once.
  */
 private fun ASTNode.isHardBreak(source: String): Boolean = when (type) {
     MarkdownTokenTypes.HARD_LINE_BREAK -> true

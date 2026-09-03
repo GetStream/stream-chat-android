@@ -31,7 +31,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * Renders message text as GitHub Flavored Markdown. Built by
  * [MessageTextFormatter.markdownFormatter], which documents what is and is not supported.
  */
-// Mirrors the parameters of the default message text formatter, plus the markdown styling.
 @Suppress("LongParameterList")
 internal class MarkdownMessageTextFormatter(
     private val autoTranslationEnabled: Boolean,
@@ -54,8 +53,7 @@ internal class MarkdownMessageTextFormatter(
             color = textStyle(isMine, message).color,
         )
         val markdown = renderer.render(displayedText)
-        // Only the colour and decoration, because a full text style would overwrite the weight,
-        // size and family that markdown put underneath the link.
+        // Colour only: a full text style would overwrite the weight and size markdown set.
         val linkSpan = linkStyle(isMine).let { SpanStyle(color = it.color, textDecoration = it.textDecoration) }
         return buildAnnotatedString {
             append(markdown.text)
@@ -64,8 +62,7 @@ internal class MarkdownMessageTextFormatter(
             markdown.spanStyles.forEach { addStyle(it.item, it.start, it.end) }
             markdown.getStringAnnotations(0, markdown.length).forEach {
                 addStringAnnotation(it.tag, it.item, it.start, it.end)
-                // Links the markdown carried are styled here, since the entity pass below leaves
-                // already-annotated ranges alone.
+                // The entity pass below skips annotated ranges, so markdown links style here.
                 if (it.tag == AnnotationTagUrl) addStyle(linkSpan, it.start, it.end)
             }
         }

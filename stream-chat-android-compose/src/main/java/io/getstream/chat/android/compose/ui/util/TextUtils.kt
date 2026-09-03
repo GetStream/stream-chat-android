@@ -47,8 +47,8 @@ internal const val AnnotationTagUrl: AnnotationTag = "URL"
 internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 
 /**
- * The tag marking text that must be taken literally, such as the content of a markdown code span
- * or code block, so that nothing inside it is detected as a URL, an email or a mention.
+ * The tag marking text to take literally, such as markdown code, so that nothing inside it is
+ * detected as a URL, an email or a mention.
  */
 internal const val AnnotationTagLiteral: AnnotationTag = "LITERAL"
 
@@ -177,10 +177,8 @@ internal fun buildAnnotatedMessageText(
  * Adds the annotations Stream recognises in message text - URLs, emails, and [message]'s mentions -
  * on top of an already styled string.
  *
- * Two kinds of range are left alone. One already carrying an [AnnotationTagUrl] annotation keeps
- * the destination it was built with, instead of a link whose label is itself a URL being made to
- * point at its own label. One marked [AnnotationTagLiteral] is code, whose content markdown treats
- * as written rather than as something to detect entities in.
+ * Ranges already tagged [AnnotationTagUrl] keep the destination they were built with, and ranges
+ * tagged [AnnotationTagLiteral] are left as written.
  *
  * @param message The message whose mentions are highlighted.
  * @param colors The colors backing the per-type mention tokens.
@@ -208,8 +206,8 @@ internal fun AnnotatedString.annotateStreamEntities(
 }
 
 /**
- * Styles and annotates every URL, email and mention found in [text]. The receiver is expected to
- * already hold [text] as its content, so that the match offsets line up.
+ * Styles and annotates every URL, email and mention in [text], which the receiver must already
+ * hold as its content for the match offsets to line up.
  */
 @SuppressLint("RestrictedApi")
 private fun AnnotatedString.Builder.annotateEntities(

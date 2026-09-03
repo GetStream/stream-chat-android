@@ -127,7 +127,7 @@ internal class MarkdownMessageTextFormatterTest {
 
     @Test
     fun `keeps the markdown styling underneath a link`() {
-        // The link contributes colour, not a whole text style, so what markdown put under it stays.
+        // The link contributes colour only, so markdown styling underneath survives.
         val bold = formatter.format(message(text = "**[link](https://x.com)**"), currentUser)
         bold.spanAt("link")?.fontWeight shouldBeEqualTo FontWeight.Bold
         bold.spanAt("link")?.color shouldBeEqualTo Color.Blue

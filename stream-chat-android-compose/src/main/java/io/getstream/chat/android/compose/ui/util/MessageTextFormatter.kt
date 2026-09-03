@@ -95,34 +95,18 @@ public fun interface MessageTextFormatter {
          * )
          * ```
          *
-         * Mentions, links and emails are highlighted on top of the rendered markdown, exactly as
-         * they are without it.
+         * Mentions, links and emails are highlighted on top of the rendered markdown. Rendering
+         * changes the text's length, so offsets no longer line up with [Message.text] and this
+         * cannot be combined through [composite], which styles by those offsets. Styling follows
+         * [typography] and [colors].
          *
-         * Rendering changes the length of the text in both directions: syntax characters are
-         * dropped, and markers such as a quote's are added. Offsets into the result therefore do
-         * not line up with [Message.text], so this replaces the default formatter rather than
-         * being combined with it through [composite], which styles by offsets into the original.
+         * A single line break renders as a line break, where the specification collapses it to a
+         * space. Complying would leave two trailing spaces as the only way to write one, and would
+         * reflow every multi-line message that reads correctly as plain text today. The View-based
+         * kit deviates the same way.
          *
-         * ### One deliberate departure from the specification
-         *
-         * A single line break inside a paragraph renders as a line break, where the specification
-         * calls for a soft break that collapses to a space. Complying would mean a line break
-         * could only be written as two trailing spaces or a trailing backslash, which is not
-         * something anyone can type on a phone keyboard, and it would reflow every multi-line
-         * message that renders correctly as plain text today. Chat clients broadly make the same
-         * choice, and so does the View-based UI kit, which configures Markwon with
-         * `SoftBreakAddsNewLinePlugin`.
-         *
-         * ### Constructs a single styled string cannot express
-         *
-         * Images render as their alt text, which is the fallback the specification defines for an
-         * image that cannot be shown. Tables keep their source text, and a task list keeps its
-         * `[ ]` marker rather than becoming a checkbox. Drawing any of the three needs real
-         * layout, which means rendering message text as a tree of composables instead of one
-         * styled string.
-         *
-         * Markdown styling follows [typography] and [colors], so overriding either carries into
-         * the rendered headings, code and quotes.
+         * Images render as their alt text, tables and task lists as their source: none of the three
+         * can be drawn in a styled string.
          */
         @Composable
         public fun markdownFormatter(

@@ -42,8 +42,6 @@ internal fun SampleChatTheme(
         ChatTheme(
             config = config,
             componentFactory = componentFactory,
-            // Renders message text as markdown, the same opt-in the XML sample makes with
-            // MarkdownTextTransformer.
             messageTextFormatter = MessageTextFormatter.markdownFormatter(
                 autoTranslationEnabled = config.translation.enabled,
             ),

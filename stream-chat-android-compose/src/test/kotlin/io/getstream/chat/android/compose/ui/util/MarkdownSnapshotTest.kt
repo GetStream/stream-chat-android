@@ -43,8 +43,7 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi: Paparazzi = Paparazzi(
-        // The whole construct set in both themes is taller than a phone screen, and SHRINK trims
-        // the render down to the content, so the device only has to be tall enough not to clip.
+        // SHRINK trims to the content, so the device only has to be tall enough not to clip.
         deviceConfig = PIXEL_2_HDPI.copy(screenHeight = TallEnoughForEveryConstruct),
         renderingMode = SessionParams.RenderingMode.SHRINK,
     )

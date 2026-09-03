@@ -24,13 +24,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 
 /**
- * Styling applied to the markdown constructs rendered inside a message bubble. Derived from the
- * design system, and not yet exposed: nothing outside the kit needs to override it.
+ * Styling for the markdown constructs rendered inside a message bubble.
  *
- * @param headings One style per heading level, from one upwards.
  * @param listIndent Prepended once per level of list nesting.
- * @param blockQuotePrefix Prepended to every quoted block.
- * @param thematicBreak Rendered in place of a thematic break (`---`).
+ * @param blockQuotePrefix Prepended to every line of a quote.
+ * @param thematicBreak Stands in for a thematic break (`---`).
  */
 @Immutable
 internal data class MarkdownStyles(
@@ -48,16 +46,14 @@ internal data class MarkdownStyles(
 
     companion object {
 
-        /**
-         * Builds the default styling from the design system's type scale and colors.
-         */
+        /** Builds the default styling from the design system. */
         @Composable
         fun defaults(
             typography: StreamDesign.Typography = ChatTheme.typography,
             colors: StreamDesign.Colors = ChatTheme.colors,
         ): MarkdownStyles = MarkdownStyles(
-            // The type scale runs out of heading sizes at four levels, so the remaining two share
-            // the smallest rather than growing back up, and the last is set apart by colour.
+            // The type scale has four heading sizes, so the last three share the smallest and
+            // the sixth is set apart by colour instead.
             headings = listOf(
                 typography.headingLarge.toSpanStyle(),
                 typography.headingMedium.toSpanStyle(),

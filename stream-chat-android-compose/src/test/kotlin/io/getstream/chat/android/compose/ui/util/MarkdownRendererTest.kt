@@ -105,8 +105,7 @@ internal class MarkdownRendererTest {
     fun `indents nested list items`() {
         val result = renderer.render("- one\n    - two\n        - three")
 
-        // Indenting with text rather than a paragraph style keeps every item on one line: a
-        // paragraph range that ends in a line break renders an empty line after it.
+        // A paragraph range ending in a line break would render an empty line after it.
         result.text shouldBeEqualTo "• one\n>• two\n>>• three"
         result.paragraphStyles.shouldBeEmpty()
     }
@@ -161,8 +160,6 @@ internal class MarkdownRendererTest {
     @ParameterizedTest
     @MethodSource("hostileSchemes")
     fun `does not annotate a scheme a message has no business carrying`(destination: String) {
-        // A tapped link is handed to the system, so a message must not be able to reach an
-        // arbitrary scheme through one.
         val result = renderer.render("[tap]($destination)")
 
         result.text shouldBeEqualTo "tap"
@@ -190,7 +187,7 @@ internal class MarkdownRendererTest {
 
     @Test
     fun `falls back to plain text when a document cannot be rendered`() {
-        // Nesting this deep exhausts the stack while parsing, and this runs during composition.
+        // Nesting this deep exhausts the stack while parsing.
         val source = ">".repeat(2000) + " x"
 
         renderer.render(source).text shouldBeEqualTo source
@@ -254,8 +251,7 @@ internal class MarkdownRendererTest {
         @Suppress("unused")
         fun renderedTextArguments(): List<Arguments> = listOf(
             Arguments.of("plain text", "plain text"),
-            // A soft break has to stay a line break, or enabling markdown would join lines that
-            // render correctly today.
+            // A soft break stays a line break, or enabling markdown would join lines.
             Arguments.of("first\nsecond", "first\nsecond"),
             Arguments.of("first\n\nsecond", "first\n\nsecond"),
             // Hard breaks, in their three spellings.
@@ -266,8 +262,7 @@ internal class MarkdownRendererTest {
             Arguments.of("first<br/>\nsecond", "first\nsecond"),
             Arguments.of("# Title\nbody", "Title\nbody"),
             Arguments.of("> quoted", "|quoted"),
-            // One quote spanning two lines: CommonMark treats a soft break inside a quote as one
-            // block, and every line of it is marked so it reads as a single quote.
+            // A soft break inside a quote is one block, and every line of it is marked.
             Arguments.of("> quoted\n> continued", "|quoted\n|continued"),
             // A blank line ends a quote, so this is two of them, kept apart.
             Arguments.of("> first\n\n> second", "|first\n\n|second"),
@@ -282,7 +277,7 @@ internal class MarkdownRendererTest {
             // Escapes are resolved, and a backslash that escapes nothing is left alone.
             Arguments.of("5 \\* 3", "5 * 3"),
             Arguments.of("C:\\path\\to", "C:\\path\\to"),
-            // Autolink brackets are syntax; the bare URL is left for the entity pass to linkify.
+            // Autolink brackets are syntax; the entity pass linkifies the bare URL.
             Arguments.of("visit <https://getstream.io> now", "visit https://getstream.io now"),
             Arguments.of("mail <a@b.com> now", "mail a@b.com now"),
             // Character references are resolved, named and numeric alike.
@@ -292,15 +287,13 @@ internal class MarkdownRendererTest {
             Arguments.of("a &notreal; b", "a &notreal; b"),
             // Code content is literal, so a reference inside it stays as written.
             Arguments.of("`a &amp; b`", "a &amp; b"),
-            // An item whose only content is a block keeps it on the marker's line, so no marker
-            // is ever left sitting alone.
+            // An item whose only content is a block keeps it on the marker's line.
             Arguments.of("- # H", "• H"),
             Arguments.of("- > quoted", "• |quoted"),
             Arguments.of("- ```\n  x\n  ```", "• x"),
             Arguments.of("- - a", "• >• a"),
             Arguments.of("1. # H\n1. next", "1. H\n2. next"),
-            // A second block inside a list item starts its own line, indented under the item's
-            // text, rather than running into the marker line.
+            // A second block starts its own line, indented under the item's text.
             Arguments.of("- item\n\n  # H\n- next", "• item\n>H\n• next"),
             Arguments.of("- item\n\n  > q\n- next", "• item\n>|q\n• next"),
             // Content following a nested list stays indented, and the next item still gets a line.
@@ -321,8 +314,7 @@ internal class MarkdownRendererTest {
             Arguments.of("a<br/><br/>b", "a\n\nb"),
             // An HTML block is a block, so what follows it starts on a new line.
             Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\nafter"),
-            // A document that renders to nothing falls back to what was typed, rather than
-            // leaving an empty bubble.
+            // A document that renders to nothing falls back to what was typed.
             Arguments.of("[d]: https://getstream.io", "[d]: https://getstream.io"),
             // A checkbox belongs beside the marker rather than pushing the item onto a new line.
             Arguments.of("- [x] done", "• [x] done"),

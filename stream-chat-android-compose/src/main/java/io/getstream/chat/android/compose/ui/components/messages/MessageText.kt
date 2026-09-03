@@ -147,8 +147,7 @@ public fun MessageText(
                 onMentionClick = onMentionClick,
                 onUserMentionClick = onUserMentionClick,
                 fallback = { url ->
-                    // Nothing guarantees the device has an app for the link's scheme, and a
-                    // tapped link must not be able to bring the message list down.
+                    // Nothing guarantees an app exists for the link's scheme.
                     try {
                         context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
                     } catch (_: ActivityNotFoundException) {

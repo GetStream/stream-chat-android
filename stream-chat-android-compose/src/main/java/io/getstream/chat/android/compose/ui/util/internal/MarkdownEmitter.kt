@@ -34,7 +34,6 @@ internal class MarkdownEmitter {
     private val spanStyles = mutableListOf<AnnotatedString.Range<SpanStyle>>()
     private val annotations = mutableListOf<AnnotatedString.Range<String>>()
 
-    /** The offset the next emitted character will land on. */
     val length: Int get() = text.length
 
     fun append(value: CharSequence) {
@@ -42,15 +41,13 @@ internal class MarkdownEmitter {
     }
 
     /**
-     * Ends the current line and opens the next one with [linePrefix], so a construct that marks
-     * every one of its lines keeps doing so. Every call produces a break, which is what keeps two
-     * consecutive breaks in the source from collapsing into one.
+     * Ends the current line and opens the next with [linePrefix], so a construct marking every one
+     * of its lines keeps doing so. Every call breaks, so two breaks in the source stay two.
      */
     fun appendLineBreak() {
         openLine()
     }
 
-    /** The prefix every line currently opens with, so nested constructs can build on it. */
     val currentLinePrefix: String get() = linePrefix
 
     /** Marks every line [block] emits with [prefix], as a block quote marks its whole span. */
@@ -77,9 +74,8 @@ internal class MarkdownEmitter {
     }
 
     /**
-     * Separates the block just emitted from the next one with [newlines] line breaks, counting the
-     * ones already present so blocks never stack up extra blank lines. Does nothing while the
-     * output is still empty, so the result never starts with a blank line.
+     * Separates the block just emitted from the next with [newlines] breaks, counting those already
+     * present. Does nothing while the output is empty, so it never starts with a blank line.
      */
     fun endBlock(newlines: Int) {
         if (text.isEmpty()) return
@@ -103,7 +99,6 @@ internal class MarkdownEmitter {
                 else -> break
             }
         }
-        // Recorded ranges have to stay inside the text the characters were removed from.
         clamp(spanStyles)
         clamp(annotations)
     }
