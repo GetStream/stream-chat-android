@@ -40,6 +40,7 @@ class CustomSettings(private val context: Context) {
     var isLocationSharingEnabled: Boolean by booleanPref(LocationSharing)
     var isLocalUnreadCountEnabled: Boolean by booleanPref(LocalUnreadCount)
     var isChannelSearchEnabled: Boolean by booleanPref(ChannelSearch)
+    var isMarkdownEnabled: Boolean by booleanPref(Markdown)
 
     private fun booleanPref(key: String, default: Boolean = false) =
         object : ReadWriteProperty<Any?, Boolean> {
@@ -59,5 +60,6 @@ private const val SystemAttachmentPicker = "system_attachment_picker"
 private const val LocationSharing = "location_sharing"
 private const val LocalUnreadCount = "local_unread_count"
 private const val ChannelSearch = "channel_search"
+private const val Markdown = "markdown"
 
 fun Context.customSettings(): CustomSettings = CustomSettings(this)
