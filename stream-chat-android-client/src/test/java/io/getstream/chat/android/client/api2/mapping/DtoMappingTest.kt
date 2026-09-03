@@ -52,7 +52,9 @@ import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.randomUserGroup
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -125,6 +127,7 @@ internal class DtoMappingTest {
             silent = true,
             extraData = mapOf("draftKey" to "draftValue"),
             attachments = listOf(randomAttachment()),
+            mentionedUsers = listOf(randomUser()),
         )
         val mapping = Fixture().get()
 
@@ -224,10 +227,16 @@ internal class DtoMappingTest {
     fun `Message is correctly mapped to the generated request model`() {
         // Pinned rather than random: the helper leaves attachments empty, which would let a mapper
         // that drops them pass.
+        // Every collection is populated: the helper leaves them empty, so a mapper that drops one
+        // maps to the same empty list the assertion expects.
         val message = randomMessage(
             type = MessageType.REGULAR,
             extraData = mutableMapOf("messageKey" to "messageValue"),
             attachments = listOf(randomAttachment()),
+            mentionedUsers = listOf(randomUser()),
+            mentionedGroups = listOf(randomUserGroup()),
+            mentionedRoles = listOf(randomString()),
+            restrictedVisibility = listOf(randomString()),
         )
         val messageTransformer = spy(NoOpMessageTransformer)
         val mapping = Fixture().withMessageTransformer(messageTransformer).get()
