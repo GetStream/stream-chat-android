@@ -147,6 +147,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     var isChannelSearchEnabled by remember {
                         mutableStateOf(settings.isChannelSearchEnabled)
                     }
+                    var isMarkdownEnabled by remember {
+                        mutableStateOf(settings.isMarkdownEnabled)
+                    }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -229,6 +232,15 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = {
                                 isChannelSearchEnabled = it
                                 settings.isChannelSearchEnabled = it
+                            },
+                        ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_markdown_label),
+                            description = stringResource(R.string.custom_login_flag_markdown_description),
+                            value = isMarkdownEnabled,
+                            onValueChange = {
+                                isMarkdownEnabled = it
+                                settings.isMarkdownEnabled = it
                             },
                         ),
                     )

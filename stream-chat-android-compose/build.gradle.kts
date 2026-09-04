@@ -96,6 +96,9 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // Markdown
+    implementation(libs.markdown)
     implementation(libs.coil.gif)
     implementation(libs.coil.network.okhttp)
     implementation(libs.coil.video)

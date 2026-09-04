@@ -47,6 +47,12 @@ internal const val AnnotationTagUrl: AnnotationTag = "URL"
 internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 
 /**
+ * The tag marking text to take literally, such as markdown code, so that nothing inside it is
+ * detected as a URL, an email or a mention.
+ */
+internal const val AnnotationTagLiteral: AnnotationTag = "LITERAL"
+
+/**
  * The tag used to annotate user mentions (`@<user>`) in the message text.
  */
 internal const val AnnotationTagUserMention: AnnotationTag = "MENTION"
@@ -140,7 +146,6 @@ internal fun StreamDesign.Colors.mentionBackgroundFor(tag: AnnotationTag): Color
  * @param mentions The list of mentions to highlight in the text.
  * @param builder An optional lambda to apply additional styles or annotations.
  */
-@SuppressLint("RestrictedApi")
 internal fun buildAnnotatedMessageText(
     text: String,
     textColor: Color,
@@ -161,29 +166,77 @@ internal fun buildAnnotatedMessageText(
             end = text.length,
         )
 
-        // Then for each available link in the text, we add a different style, to represent the links,
-        // as well as add a String annotation to it. This gives us the ability to open the URL on click.
-        linkify(
-            text = text,
-            tag = AnnotationTagUrl,
-            pattern = PatternsCompat.AUTOLINK_WEB_URL,
-            matchFilter = Linkify.sUrlMatchFilter,
-            schemes = URL_SCHEMES,
-            textStyle = linkStyle,
-        )
-        linkify(
-            text = text,
-            tag = AnnotationTagEmail,
-            pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
-            schemes = EMAIL_SCHEMES,
-            textStyle = linkStyle,
-        )
-        mentions.forEach { mention ->
-            tagMention(text = text, mention = mention)
-        }
+        annotateEntities(text = text, linkStyle = linkStyle, mentions = mentions)
 
         // Finally, we apply any additional styling that was passed in.
         builder(this)
+    }
+}
+
+/**
+ * Adds the annotations Stream recognises in message text - URLs, emails, and [message]'s mentions -
+ * on top of an already styled string.
+ *
+ * Ranges already tagged [AnnotationTagUrl] keep the destination they were built with, and ranges
+ * tagged [AnnotationTagLiteral] are left as written.
+ *
+ * @param message The message whose mentions are highlighted.
+ * @param colors The colors backing the per-type mention tokens.
+ * @param linkStyle The style applied to URLs and emails.
+ * @param mentionColor Applied to every mention when specified; per-type tokens from [colors] otherwise.
+ */
+internal fun AnnotatedString.annotateStreamEntities(
+    message: Message,
+    colors: StreamDesign.Colors,
+    linkStyle: TextStyle,
+    mentionColor: Color = Color.Unspecified,
+): AnnotatedString {
+    val styled = this
+    return buildAnnotatedString {
+        append(styled)
+        annotateEntities(
+            text = styled.text,
+            linkStyle = linkStyle,
+            mentions = message.collectTextMentions(colors = colors, textColorOverride = mentionColor),
+            skipRanges = styled.stringAnnotations
+                .filter { it.tag == AnnotationTagUrl || it.tag == AnnotationTagLiteral }
+                .map { it.start until it.end },
+        )
+    }
+}
+
+/**
+ * Styles and annotates every URL, email and mention in [text], which the receiver must already
+ * hold as its content for the match offsets to line up.
+ */
+@SuppressLint("RestrictedApi")
+private fun AnnotatedString.Builder.annotateEntities(
+    text: String,
+    linkStyle: TextStyle,
+    mentions: List<TextMention>,
+    skipRanges: List<IntRange> = emptyList(),
+) {
+    // For each available link in the text, we add a different style, to represent the links,
+    // as well as add a String annotation to it. This gives us the ability to open the URL on click.
+    linkify(
+        text = text,
+        tag = AnnotationTagUrl,
+        pattern = PatternsCompat.AUTOLINK_WEB_URL,
+        matchFilter = Linkify.sUrlMatchFilter,
+        schemes = URL_SCHEMES,
+        textStyle = linkStyle,
+        skipRanges = skipRanges,
+    )
+    linkify(
+        text = text,
+        tag = AnnotationTagEmail,
+        pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
+        schemes = EMAIL_SCHEMES,
+        textStyle = linkStyle,
+        skipRanges = skipRanges,
+    )
+    mentions.forEach { mention ->
+        tagMention(text = text, mention = mention, skipRanges = skipRanges)
     }
 }
 
@@ -264,6 +317,7 @@ private fun AnnotatedString.Builder.linkify(
     matchFilter: Linkify.MatchFilter? = null,
     schemes: List<String>,
     textStyle: TextStyle,
+    skipRanges: List<IntRange> = emptyList(),
 ) {
     @SuppressLint("RestrictedApi")
     val matcher = pattern.matcher(text)
@@ -271,7 +325,9 @@ private fun AnnotatedString.Builder.linkify(
         val start = matcher.start()
         val end = matcher.end()
 
-        if (matchFilter != null && !matchFilter.acceptMatch(text, start, end)) {
+        val rejected = (matchFilter != null && !matchFilter.acceptMatch(text, start, end)) ||
+            skipRanges.any { start <= it.last && it.first < end }
+        if (rejected) {
             continue
         }
 
@@ -301,10 +357,14 @@ private fun AnnotatedString.Builder.linkify(
 private fun AnnotatedString.Builder.tagMention(
     text: String,
     mention: TextMention,
+    skipRanges: List<IntRange> = emptyList(),
 ) {
     if (mention.token.isEmpty()) return
     val pattern = mentionRegex(mention.token)
     pattern.findAll(text).forEach { match ->
+        if (skipRanges.any { match.range.first <= it.last && it.first <= match.range.last }) {
+            return@forEach
+        }
         addStyle(
             style = SpanStyle(color = mention.color, background = mention.background),
             start = match.range.first,

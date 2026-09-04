@@ -20,13 +20,17 @@ package io.getstream.chat.android.compose.sample.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ChatUiConfig
+import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 
 /**
  * Sample app wrapper around [ChatTheme] that enables test tags as resource IDs for UIAutomator E2E tests.
@@ -37,10 +41,21 @@ internal fun SampleChatTheme(
     componentFactory: ChatComponentFactory = object : ChatComponentFactory {},
     content: @Composable () -> Unit,
 ) {
+    val context = LocalContext.current
+    val settings = remember(context) { context.customSettings() }
     Box(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
         ChatTheme(
             config = config,
             componentFactory = componentFactory,
+            messageTextFormatter = when {
+                settings.isMarkdownEnabled -> MessageTextFormatter.markdownFormatter(
+                    autoTranslationEnabled = config.translation.enabled,
+                )
+
+                else -> MessageTextFormatter.defaultFormatter(
+                    autoTranslationEnabled = config.translation.enabled,
+                )
+            },
             content = content,
         )
     }

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -143,7 +144,12 @@ public fun MessageText(
                 onMentionClick = onMentionClick,
                 onUserMentionClick = onUserMentionClick,
                 fallback = { url ->
-                    context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                    try {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+                    } catch (_: ActivityNotFoundException) {
+                        // Nothing guarantees an app exists for the link's scheme, and a tap on one
+                        // must not bring the message list down.
+                    }
                 },
             )
         }
