@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.network.models.ReactionRequest
+import io.getstream.chat.android.network.models.ReactionResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -76,6 +77,32 @@ internal object ReactionDtoTestData {
         updated_at = null,
         emoji_code = null,
         extraData = emptyMap(),
+    )
+
+    /**
+     * The wire always sends both timestamps and a full user for a reaction, so the generated model
+     * declares them non-null.
+     */
+    @Language("JSON")
+    val reactionResponseJson =
+        """{
+          "message_id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "score": 0,
+          "type": "like",
+          "user": ${UserDtoTestData.userResponseJson},
+          "user_id": "",
+          "created_at": "2020-06-10T11:04:31.000Z",
+          "updated_at": "2020-06-10T11:04:31.588Z"
+        }""".withoutWhitespace()
+
+    val reactionResponse = ReactionResponse(
+        messageId = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+        type = "like",
+        score = 0,
+        user = UserDtoTestData.userResponse,
+        userId = "",
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
     )
 
     @Language("JSON")
