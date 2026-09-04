@@ -381,15 +381,6 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
-    fun `startLoadingFirstPageIfNeverLoaded does not hide an already populated list behind a loader`() = runTest {
-        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf("messaging:ch1" to randomChannel(id = "ch1"))
-
-        logic.startLoadingFirstPageIfNeverLoaded()
-
-        verify(queryChannelsStateLogic, never()).setLoadingFirstPage(any())
-    }
-
-    @Test
     fun `cached channels are not hidden behind a loader before the first query finishes`() = runTest {
         // Given — the offline read populated the list; no query has completed yet.
         whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf("messaging:ch1" to randomChannel(id = "ch1"))
