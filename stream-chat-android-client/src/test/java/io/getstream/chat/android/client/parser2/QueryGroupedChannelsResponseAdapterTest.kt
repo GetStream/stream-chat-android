@@ -48,12 +48,19 @@ internal class QueryGroupedChannelsResponseAdapterTest {
                     "disabled": false,
                     "config": {
                       "typing_events": true,
+                      "delivery_events": true,
+                      "name": "messaging",
+                      "shared_locations": false,
+                      "skip_last_msg_update_for_system_msgs": false,
+                      "user_message_reminders": false,
                       "read_events": true,
                       "connect_events": true,
                       "search": true,
                       "reactions": true,
                       "replies": true,
                       "quotes": true,
+                      "reminders": false,
+                      "count_messages": true,
                       "uploads": true,
                       "url_enrichment": true,
                       "custom_events": false,
@@ -104,12 +111,19 @@ internal class QueryGroupedChannelsResponseAdapterTest {
                     "disabled": false,
                     "config": {
                       "typing_events": true,
+                      "delivery_events": true,
+                      "name": "messaging",
+                      "shared_locations": false,
+                      "skip_last_msg_update_for_system_msgs": false,
+                      "user_message_reminders": false,
                       "read_events": true,
                       "connect_events": true,
                       "search": true,
                       "reactions": true,
                       "replies": true,
                       "quotes": true,
+                      "reminders": false,
+                      "count_messages": true,
                       "uploads": true,
                       "url_enrichment": true,
                       "custom_events": false,
@@ -161,17 +175,25 @@ internal class QueryGroupedChannelsResponseAdapterTest {
         assertEquals("https://getstream.imgix.net/images/random_svg/stream_logo.svg", channelResponse.channel.image)
         assertFalse(channelResponse.channel.frozen)
         assertEquals(0, channelResponse.channel.member_count)
-        assertTrue(channelResponse.channel.config.typing_events)
-        assertTrue(channelResponse.channel.config.read_events)
-        assertTrue(channelResponse.channel.config.connect_events)
+        assertTrue(channelResponse.channel.config.typingEvents)
+        assertTrue(channelResponse.channel.config.readEvents)
+        assertTrue(channelResponse.channel.config.connectEvents)
         assertTrue(channelResponse.channel.config.search)
         assertTrue(channelResponse.channel.config.reactions)
         assertTrue(channelResponse.channel.config.replies)
         assertTrue(channelResponse.channel.config.uploads)
-        assertTrue(channelResponse.channel.config.url_enrichment)
+        assertTrue(channelResponse.channel.config.urlEnrichment)
         assertTrue(channelResponse.channel.config.mutes)
-        assertEquals("infinite", channelResponse.channel.config.message_retention)
-        assertEquals(5000, channelResponse.channel.config.max_message_length)
+        assertTrue(channelResponse.channel.config.deliveryEvents)
+        assertTrue(channelResponse.channel.config.quotes)
+        assertTrue(channelResponse.channel.config.countMessages)
+        assertFalse(channelResponse.channel.config.reminders)
+        assertFalse(channelResponse.channel.config.userMessageReminders)
+        assertFalse(channelResponse.channel.config.sharedLocations)
+        assertFalse(channelResponse.channel.config.skipLastMsgUpdateForSystemMsgs)
+        assertEquals("messaging", channelResponse.channel.config.name)
+        assertEquals("infinite", channelResponse.channel.config.messageRetention)
+        assertEquals(5000, channelResponse.channel.config.maxMessageLength)
         assertEquals(emptyList<Any>(), channelResponse.members)
         assertEquals(emptyList<Any>(), channelResponse.messages)
         assertEquals(emptyList<Any>(), channelResponse.pinned_messages)

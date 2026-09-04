@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
@@ -35,7 +34,7 @@ internal object ChannelDtoTestData {
         """{
           "created_at": "2020-06-10T11:04:31.000Z",
           "updated_at": "2020-06-10T11:04:31.588Z",
-          "name" : "config1",
+          "name": "config1",
           "typing_events": true,
           "read_events": true,
           "delivery_events": true,
@@ -43,18 +42,21 @@ internal object ChannelDtoTestData {
           "search": false,
           "reactions": true,
           "replies": true,
+          "quotes": true,
           "mutes": true,
           "uploads": true,
           "url_enrichment": false,
           "custom_events": false,
           "push_notifications": true,
+          "reminders": false,
+          "count_messages": true,
           "skip_last_msg_update_for_system_msgs": false,
           "polls": true,
           "message_retention": "retention",
           "max_message_length": 500,
-          "automod": "none",
-          "automod_behavior": "none",
-          "blocklist_behavior": "empty",
+          "automod": "disabled",
+          "automod_behavior": "flag",
+          "blocklist_behavior": "block",
           "commands": [
            {
             "name": "giphy",
@@ -69,29 +71,31 @@ internal object ChannelDtoTestData {
         }
         """.withoutWhitespace()
 
-    private val configDto: ConfigDto = ConfigDto(
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
+    private val expectedConfig = ChannelConfigWithInfo(
+        createdAt = Date(1591787071000),
+        updatedAt = Date(1591787071588),
         name = "config1",
-        typing_events = true,
-        read_events = true,
-        delivery_events = true,
-        connect_events = true,
+        typingEvents = true,
+        readEvents = true,
+        deliveryEvents = true,
+        connectEvents = true,
         search = false,
         reactions = true,
         replies = true,
+        quotes = true,
         mutes = true,
         uploads = true,
-        url_enrichment = false,
-        custom_events = false,
-        push_notifications = true,
-        skip_last_msg_update_for_system_msgs = false,
+        urlEnrichment = false,
+        customEvents = false,
+        pushNotifications = true,
+        reminders = false,
+        countMessages = true,
+        skipLastMsgUpdateForSystemMsgs = false,
         polls = true,
-        message_retention = "retention",
-        max_message_length = 500,
-        automod = "none",
-        automod_behavior = "none",
-        blocklist_behavior = "empty",
+        maxMessageLength = 500,
+        automod = ChannelConfigWithInfo.Automod.Disabled,
+        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
+        blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
         commands = listOf(
             CommandDto(
                 name = "giphy",
@@ -100,12 +104,12 @@ internal object ChannelDtoTestData {
                 set = "none",
             ),
         ),
-        user_message_reminders = false,
-        shared_locations = true,
-        mark_messages_pending = false,
+        userMessageReminders = false,
+        sharedLocations = true,
+        markMessagesPending = false,
+        messageRetention = "retention",
     )
 
-    @Language("JSON")
     val downstreamJson =
         """{
           "cid": "channelType:channelId",
@@ -218,7 +222,7 @@ internal object ChannelDtoTestData {
                 last_read_message_id = "messageId",
             ),
         ),
-        config = configDto,
+        config = expectedConfig,
         created_by = UserDtoTestData.downstreamUser,
         team = "team1",
         cooldown = 1,
@@ -281,97 +285,13 @@ internal object ChannelDtoTestData {
         members = emptyList(),
         watchers = emptyList(),
         read = emptyList(),
-        config = configDto,
+        config = expectedConfig,
         created_by = null,
         team = "",
         cooldown = 0,
         pinned_messages = emptyList(),
         membership = null,
         extraData = emptyMap(),
-    )
-
-    /**
-     * The config as sent for a generated [io.getstream.chat.android.network.models.ChannelResponse].
-     */
-    @Language("JSON")
-    private val channelResponseConfigJson =
-        """{
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "name": "config1",
-          "typing_events": true,
-          "read_events": true,
-          "delivery_events": true,
-          "connect_events": true,
-          "search": false,
-          "reactions": true,
-          "replies": true,
-          "quotes": true,
-          "mutes": true,
-          "uploads": true,
-          "url_enrichment": false,
-          "custom_events": false,
-          "push_notifications": true,
-          "reminders": false,
-          "count_messages": true,
-          "skip_last_msg_update_for_system_msgs": false,
-          "polls": true,
-          "message_retention": "retention",
-          "max_message_length": 500,
-          "automod": "disabled",
-          "automod_behavior": "flag",
-          "blocklist_behavior": "block",
-          "commands": [
-           {
-            "name": "giphy",
-            "description": "gif",
-            "args": "empty",
-            "set": "none"
-           }
-          ],
-          "user_message_reminders": false,
-          "shared_locations": true,
-          "mark_messages_pending": false
-        }
-        """.withoutWhitespace()
-
-    private val channelResponseConfig = ChannelConfigWithInfo(
-        createdAt = Date(1591787071000),
-        updatedAt = Date(1591787071588),
-        name = "config1",
-        typingEvents = true,
-        readEvents = true,
-        deliveryEvents = true,
-        connectEvents = true,
-        search = false,
-        reactions = true,
-        replies = true,
-        quotes = true,
-        mutes = true,
-        uploads = true,
-        urlEnrichment = false,
-        customEvents = false,
-        pushNotifications = true,
-        reminders = false,
-        countMessages = true,
-        skipLastMsgUpdateForSystemMsgs = false,
-        polls = true,
-        maxMessageLength = 500,
-        automod = ChannelConfigWithInfo.Automod.Disabled,
-        automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
-        blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
-        commands = listOf(
-            CommandDto(
-                name = "giphy",
-                description = "gif",
-                args = "empty",
-                set = "none",
-            ),
-        ),
-        userMessageReminders = false,
-        sharedLocations = true,
-        markMessagesPending = false,
-        messageRetention = "retention",
     )
 
     /**
@@ -396,7 +316,7 @@ internal object ChannelDtoTestData {
           "hidden": true,
           "hide_messages_before": "2020-06-10T11:04:31.588Z",
           "own_capabilities": ["connect-events", "pin-message"],
-          "config": $channelResponseConfigJson,
+          "config": $configJson,
           "customKey1": "customVal1"
         }
         """.withoutWhitespace()
@@ -418,7 +338,7 @@ internal object ChannelDtoTestData {
             ChannelOwnCapability.ConnectEvents,
             ChannelOwnCapability.PinMessage,
         ),
-        config = channelResponseConfig,
+        config = expectedConfig,
         custom = mapOf(
             "name" to "channelName",
             "image" to "channelImage",
@@ -464,7 +384,7 @@ internal object ChannelDtoTestData {
         members = emptyList(),
         watchers = emptyList(),
         read = emptyList(),
-        config = configDto,
+        config = expectedConfig,
         created_by = null,
         team = "",
         cooldown = 0,

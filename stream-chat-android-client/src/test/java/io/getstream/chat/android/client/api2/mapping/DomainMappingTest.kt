@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.Mother.randomChannelInfoDto
 import io.getstream.chat.android.client.Mother.randomChannelMemberResponse
 import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
-import io.getstream.chat.android.client.Mother.randomConfigDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelMuteDto
@@ -138,6 +137,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
@@ -404,16 +404,84 @@ internal class DomainMappingTest {
 
     @Test
     fun `ChannelConfigWithInfo is correctly mapped to Config`() {
+        val response = alternatingConfigResponse()
         val sut = Fixture().get()
 
-        val config = with(sut) { ChannelDtoTestData.channelResponse.config!!.toDomain() }
+        val config = with(sut) { response.toDomain() }
 
-        assertEquals("retention", config.messageRetention)
-        assertEquals("disabled", config.automod)
-        assertEquals("flag", config.automodBehavior)
-        assertEquals("block", config.blocklistBehavior)
-        assertEquals(500, config.maxMessageLength)
+        val commands = with(sut) { response.commands.map { it.toDomain() } }
+        assertEquals(expectedAlternatingConfig(commands), config)
     }
+
+    /**
+     * Every value differs from the [Config] default it maps onto, so a field the mapper fails to map
+     * lands on its default and the comparison notices. Alternating values is not enough: a value that
+     * happens to equal the default hides a dropped mapping.
+     */
+    private fun alternatingConfigResponse(): ChannelConfigWithInfo =
+        ChannelConfigWithInfo(
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            name = "messaging",
+            typingEvents = false,
+            readEvents = false,
+            deliveryEvents = false,
+            connectEvents = false,
+            search = false,
+            reactions = false,
+            replies = false,
+            quotes = false,
+            mutes = false,
+            uploads = false,
+            urlEnrichment = false,
+            customEvents = true,
+            pushNotifications = false,
+            reminders = true,
+            countMessages = true,
+            skipLastMsgUpdateForSystemMsgs = true,
+            polls = true,
+            messageRetention = "retention",
+            maxMessageLength = 500,
+            automod = ChannelConfigWithInfo.Automod.AI,
+            automodBehavior = ChannelConfigWithInfo.AutomodBehavior.Flag,
+            blocklistBehavior = ChannelConfigWithInfo.BlocklistBehavior.Block,
+            pushLevel = ChannelConfigWithInfo.PushLevel.Mentions,
+            commands = listOf(randomCommandDto(name = "giphy")),
+            userMessageReminders = true,
+            sharedLocations = true,
+            markMessagesPending = true,
+        )
+
+    private fun expectedAlternatingConfig(commands: List<Command>): Config =
+        Config(
+            createdAt = Date(1000),
+            updatedAt = Date(2000),
+            name = "messaging",
+            typingEventsEnabled = false,
+            readEventsEnabled = false,
+            deliveryEventsEnabled = false,
+            connectEventsEnabled = false,
+            searchEnabled = false,
+            isReactionsEnabled = false,
+            isThreadEnabled = false,
+            muteEnabled = false,
+            uploadsEnabled = false,
+            urlEnrichmentEnabled = false,
+            customEventsEnabled = true,
+            pushNotificationsEnabled = false,
+            skipLastMsgUpdateForSystemMsgs = true,
+            pollsEnabled = true,
+            messageRetention = "retention",
+            maxMessageLength = 500,
+            automod = "AI",
+            automodBehavior = "flag",
+            blocklistBehavior = "block",
+            pushLevel = "mentions",
+            commands = commands,
+            messageRemindersEnabled = true,
+            sharedLocationsEnabled = true,
+            markMessagesPending = true,
+        )
 
     @Test
     fun `DownstreamChannelDto is correctly mapped to Channel`() {
@@ -1177,43 +1245,6 @@ internal class DomainMappingTest {
             set = commandDto.set,
         )
         assertEquals(expected, command)
-    }
-
-    @Test
-    fun `ConfigDto is correctly mapped to Config`() {
-        val configDto = randomConfigDto()
-        val sut = Fixture().get()
-        val config = with(sut) { configDto.toDomain() }
-        val expected = Config(
-            createdAt = configDto.created_at,
-            updatedAt = configDto.updated_at,
-            name = configDto.name ?: "",
-            typingEventsEnabled = configDto.typing_events,
-            readEventsEnabled = configDto.read_events,
-            deliveryEventsEnabled = configDto.delivery_events,
-            connectEventsEnabled = configDto.connect_events,
-            searchEnabled = configDto.search,
-            isReactionsEnabled = configDto.reactions,
-            isThreadEnabled = configDto.replies,
-            muteEnabled = configDto.mutes,
-            uploadsEnabled = configDto.uploads,
-            urlEnrichmentEnabled = configDto.url_enrichment,
-            customEventsEnabled = configDto.custom_events,
-            pushNotificationsEnabled = configDto.push_notifications,
-            skipLastMsgUpdateForSystemMsgs = configDto.skip_last_msg_update_for_system_msgs ?: false,
-            pollsEnabled = configDto.polls,
-            messageRetention = configDto.message_retention,
-            maxMessageLength = configDto.max_message_length,
-            automod = configDto.automod,
-            automodBehavior = configDto.automod_behavior,
-            blocklistBehavior = configDto.blocklist_behavior ?: "",
-            commands = configDto.commands.map { with(sut) { it.toDomain() } },
-            messageRemindersEnabled = configDto.user_message_reminders ?: false,
-            sharedLocationsEnabled = configDto.shared_locations ?: false,
-            markMessagesPending = configDto.mark_messages_pending,
-            pushLevel = configDto.push_level,
-        )
-        assertEquals(expected, config)
     }
 
     @Test

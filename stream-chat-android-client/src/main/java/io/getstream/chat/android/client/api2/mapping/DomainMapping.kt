@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -1047,39 +1046,6 @@ internal class DomainMapping(
         description = description,
         args = args,
         set = set,
-    )
-
-    /**
-     * Transforms [ConfigDto] to [Config].
-     */
-    internal fun ConfigDto.toDomain(): Config = Config(
-        createdAt = created_at,
-        updatedAt = updated_at,
-        name = name ?: "",
-        typingEventsEnabled = typing_events,
-        readEventsEnabled = read_events,
-        deliveryEventsEnabled = delivery_events,
-        connectEventsEnabled = connect_events,
-        searchEnabled = search,
-        isReactionsEnabled = reactions,
-        isThreadEnabled = replies,
-        muteEnabled = mutes,
-        uploadsEnabled = uploads,
-        urlEnrichmentEnabled = url_enrichment,
-        customEventsEnabled = custom_events,
-        pushNotificationsEnabled = push_notifications,
-        skipLastMsgUpdateForSystemMsgs = skip_last_msg_update_for_system_msgs ?: false,
-        pollsEnabled = polls,
-        messageRetention = message_retention,
-        maxMessageLength = max_message_length,
-        automod = automod,
-        automodBehavior = automod_behavior,
-        blocklistBehavior = blocklist_behavior ?: "",
-        commands = commands.map { it.toDomain() },
-        messageRemindersEnabled = user_message_reminders ?: false,
-        sharedLocationsEnabled = shared_locations ?: false,
-        markMessagesPending = mark_messages_pending,
-        pushLevel = push_level,
     )
 
     /**
