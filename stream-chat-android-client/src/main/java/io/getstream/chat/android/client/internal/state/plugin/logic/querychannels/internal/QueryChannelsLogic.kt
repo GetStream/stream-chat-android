@@ -171,6 +171,11 @@ internal class QueryChannelsLogic(
      * [ChannelsStateData] reports `Loading` whenever the flag is set, regardless of content.
      *
      * Shares [groupedResultMutex] so the check cannot read a half-applied update.
+     *
+     * The raise is undone by the matching result, so an explicit `Call.cancel()` between the two
+     * leaves the group on the loader until a later grouped query finishes. Cancelling the calling
+     * coroutine or its scope is fine, the result listener still runs, and nothing in the SDK
+     * cancels this call.
      */
     internal suspend fun startLoadingFirstPageIfNeverLoaded() {
         groupedResultMutex.withLock {
@@ -181,8 +186,8 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Ends a grouped first-page load that produced no channels of its own: a failed request, or a
-     * requested group the response left out.
+     * Ends a grouped first-page load that produced no channels of its own: a failed request, or the
+     * defensive case of a requested group the response left out.
      *
      * Both steps are needed to leave `Loading`, which [ChannelsStateData] reports while the flag is
      * set *or* while channels are still null.
@@ -193,8 +198,9 @@ internal class QueryChannelsLogic(
      * standard list after a failed empty first page.
      */
     internal suspend fun finishFirstPageLoad(completed: Boolean) {
-        if (completed) hasCompletedAQuery = true
         groupedResultMutex.withLock {
+            // Set with the clear, matching applyGroupedResult, so both writers hold the lock.
+            if (completed) hasCompletedAQuery = true
             queryChannelsStateLogic.initializeChannelsIfNeeded()
             queryChannelsStateLogic.setLoadingFirstPage(false)
         }

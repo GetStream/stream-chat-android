@@ -99,12 +99,15 @@ internal class QueryGroupedChannelsListenerState(
             globalState.setGroupedUnreadChannels(next)
         }
 
+        // Defensive: today the server answers every requested group, with an empty channel list
+        // when the group has nothing, so this is expected to be a no-op. It stays because a group
+        // the response left out would never reach applyGroupedResult, and the loader it raised
+        // would never come down.
+        finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups, completed = true)
+
         // Route each returned group's channels into the per-group state. The captured config lets
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
         // reuse the caller's original parameters on paginated and recovery calls respectively.
-        // A requested group the response omits never reaches applyGroupedResult, so end it here.
-        finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups, completed = true)
-
         result.value.groups.forEach { (key, group) ->
             // A request without `next`/`prev` cursors for this key (or no per-group query at all)
             // is a first-page request → replace channels. With a cursor → paginated → append.
