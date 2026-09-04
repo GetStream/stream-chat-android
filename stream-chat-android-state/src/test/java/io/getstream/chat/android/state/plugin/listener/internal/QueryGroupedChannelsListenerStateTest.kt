@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -43,9 +44,14 @@ import org.mockito.kotlin.whenever
 
 internal class QueryGroupedChannelsListenerStateTest {
 
-    private val queryChannelsLogic: QueryChannelsLogic = mock()
+    // One mock per group key: a single shared mock cannot tell "routed to the right group" from
+    // "routed anywhere", which is exactly the class of bug the omitted-group handling guards against.
+    private val groupLogics = mutableMapOf<String, QueryChannelsLogic>()
+    private fun logicFor(key: String): QueryChannelsLogic = groupLogics.getOrPut(key) { mock() }
     private val logic: LogicRegistry = mock {
-        on(it.queryChannels(any<QueryChannelsIdentifier>())) doReturn queryChannelsLogic
+        on(it.queryChannels(any<QueryChannelsIdentifier>())) doAnswer { invocation ->
+            logicFor((invocation.arguments[0] as QueryChannelsIdentifier.Grouped).groupKey)
+        }
     }
     private val globalState: MutableGlobalState = mock()
     private val stateRegistry: StateRegistry = mock()
@@ -54,6 +60,100 @@ internal class QueryGroupedChannelsListenerStateTest {
         currentUserId = "test-user",
     )
     private val listener = QueryGroupedChannelsListenerState(logic, globalState, groupedUnreadChannelsUpdater)
+
+    @Test
+    fun `first-page request raises the loading flag for each named group`() = runTest {
+        // when
+        listener.onQueryGroupedChannelsRequest(
+            limit = 10,
+            groups = mapOf(
+                "support" to GroupedChannelsGroupQuery(limit = 5),
+                "direct" to GroupedChannelsGroupQuery(limit = 5),
+            ),
+            watch = true,
+            presence = false,
+        )
+
+        // then — the offline read cannot tell an in-flight first page from one that never comes,
+        // so the loader has to be raised here, where we know a fetch is starting.
+        verify(logicFor("support")).startLoadingFirstPageIfNeverLoaded()
+        verify(logicFor("direct")).startLoadingFirstPageIfNeverLoaded()
+    }
+
+    @Test
+    fun `paginated request does not raise the loading flag`() = runTest {
+        // when — a cursor means the list already has content and is appending to it.
+        listener.onQueryGroupedChannelsRequest(
+            limit = 10,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(limit = 5, next = "cursor")),
+            watch = true,
+            presence = false,
+        )
+
+        // then
+        verify(logicFor("support"), never()).startLoadingFirstPageIfNeverLoaded()
+    }
+
+    @Test
+    fun `failed first-page result clears the loading flag`() = runTest {
+        // when
+        listener.onQueryGroupedChannelsResult(
+            result = Result.Failure(Error.GenericError("boom")),
+            limit = 10,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(limit = 5)),
+            watch = true,
+            presence = false,
+        )
+
+        // then — the success path ends it while applying the result, so a failure that skipped
+        // that path would otherwise leave a permanent spinner.
+        verify(logicFor("support")).finishFirstPageLoad(completed = false)
+    }
+
+    @Test
+    fun `successful result ends the load for a requested group the response left out`() = runTest {
+        // given — two groups requested, only one echoed back.
+        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val result = Result.Success(
+            GroupedChannels(
+                groups = mapOf(
+                    "support" to GroupedChannelsGroup(groupKey = "support", channels = emptyList(), next = null, prev = null),
+                ),
+            ),
+        )
+
+        // when
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = 10,
+            groups = mapOf(
+                "support" to GroupedChannelsGroupQuery(limit = 5),
+                "direct" to GroupedChannelsGroupQuery(limit = 5),
+            ),
+            watch = true,
+            presence = false,
+        )
+
+        // then — the omitted group never reaches applyGroupedResult, so its loader is ended here.
+        verify(logicFor("direct")).finishFirstPageLoad(completed = true)
+        verify(logicFor("support"), never()).finishFirstPageLoad(any())
+    }
+
+    @Test
+    fun `failed paginated result leaves the first-page flag alone`() = runTest {
+        // when
+        listener.onQueryGroupedChannelsResult(
+            result = Result.Failure(Error.GenericError("boom")),
+            limit = 10,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(limit = 5, next = "cursor")),
+            watch = true,
+            presence = false,
+        )
+
+        // then
+        verify(logicFor("support"), never()).finishFirstPageLoad(any())
+    }
 
     @Test
     fun `successful first-page result merges returned unread counts into existing global state`() = runTest {
@@ -244,8 +344,8 @@ internal class QueryGroupedChannelsListenerStateTest {
             // then
             verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("direct")))
             verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("support")))
-            verify(queryChannelsLogic).applyGroupedResult(groupDirect, isFirstPage = true)
-            verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = true)
+            verify(logicFor("direct")).applyGroupedResult(groupDirect, isFirstPage = true)
+            verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = true)
         }
 
     @Test
@@ -261,10 +361,10 @@ internal class QueryGroupedChannelsListenerStateTest {
             presence = false,
         )
         // then - per-group override captured for "a", request-level only for "b"
-        verify(queryChannelsLogic).setGroupedQueryConfig(
+        verify(logicFor("a")).setGroupedQueryConfig(
             GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false),
         )
-        verify(queryChannelsLogic).setGroupedQueryConfig(
+        verify(logicFor("b")).setGroupedQueryConfig(
             GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false),
         )
         verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("a")))
@@ -280,8 +380,10 @@ internal class QueryGroupedChannelsListenerStateTest {
             watch = true,
             presence = false,
         )
-        // then - no per-group keys to write to; defer to result-side capture
-        verify(queryChannelsLogic, never()).setGroupedQueryConfig(any())
+        // then - no per-group keys to write to; defer to result-side capture. Asserted on the
+        // registry rather than on a group's logic: with groups = null nothing resolves a logic, so
+        // logicFor() would mint a fresh mock and never() would pass for free.
+        verify(logic, never()).queryChannels(any<QueryChannelsIdentifier>())
     }
 
     @Test
@@ -304,10 +406,10 @@ internal class QueryGroupedChannelsListenerStateTest {
                 presence = false,
             )
             // then - per-group override captured for "a", request-level only for "b"
-            verify(queryChannelsLogic).setGroupedQueryConfig(
+            verify(logicFor("a")).setGroupedQueryConfig(
                 GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false),
             )
-            verify(queryChannelsLogic).setGroupedQueryConfig(
+            verify(logicFor("b")).setGroupedQueryConfig(
                 GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false),
             )
         }
@@ -328,7 +430,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             presence = true,
         )
         // then - config still written so subsequent pagination knows the watch/presence flags
-        verify(queryChannelsLogic).setGroupedQueryConfig(
+        verify(logicFor("direct")).setGroupedQueryConfig(
             GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = true),
         )
     }
@@ -357,7 +459,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             presence = false,
         )
         // then
-        verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = false)
+        verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = false)
     }
 
     @Test
@@ -384,6 +486,6 @@ internal class QueryGroupedChannelsListenerStateTest {
             presence = false,
         )
         // then
-        verify(queryChannelsLogic).applyGroupedResult(groupSupport, isFirstPage = false)
+        verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = false)
     }
 }

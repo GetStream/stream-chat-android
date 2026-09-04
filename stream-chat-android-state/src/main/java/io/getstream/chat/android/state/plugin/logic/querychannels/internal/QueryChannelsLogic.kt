@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
+import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
@@ -56,6 +57,14 @@ internal class QueryChannelsLogic(
      * with pagination) cannot interleave their multi-step writes to [queryChannelsStateLogic].
      */
     private val groupedResultMutex = Mutex()
+
+    /**
+     * Whether a grouped query has ever finished for this group, successfully or not. Distinguishes
+     * a group that has never loaded from one that loaded and is genuinely empty, which state alone
+     * cannot express: both hold an empty channel map.
+     */
+    @Volatile
+    private var hasCompletedAQuery = false
 
     /**
      * Sets the current request and optimistically loads any cached channels for the given
@@ -102,12 +111,17 @@ internal class QueryChannelsLogic(
         val cachedChannels = fetchChannelsFromCache(pagination)
         groupedResultMutex.withLock {
             val existing = queryChannelsStateLogic.getChannels()
-            if (existing.isNullOrEmpty() && !cachedChannels.isNullOrEmpty()) {
+            val hasCachedChannels = !cachedChannels.isNullOrEmpty()
+            if (existing.isNullOrEmpty() && hasCachedChannels) {
                 logger.d { "[loadOfflineGroupedChannels] showing ${cachedChannels.size} cached channels" }
                 queryChannelsStateLogic.addChannelsState(cachedChannels)
             }
             queryChannelsStateLogic.initializeChannelsIfNeeded()
-            queryChannelsStateLogic.setLoadingFirstPage(false)
+            // Only stop loading once there is something to show. On a miss the flag is left as it
+            // is: raised if a request is in flight, false if none is coming.
+            if (hasCachedChannels || !existing.isNullOrEmpty()) {
+                queryChannelsStateLogic.setLoadingFirstPage(false)
+            }
         }
     }
 
@@ -144,6 +158,51 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setLoadingMore(isLoading)
         } else {
             queryChannelsStateLogic.setLoadingFirstPage(isLoading)
+        }
+    }
+
+    /**
+     * Marks a grouped first page as loading, for a group that has nothing to show and has never had
+     * a query finish.
+     *
+     * Both halves are needed. Without [hasCompletedAQuery] a settled empty group would go back to a
+     * spinner on every reconnect, since `SyncManager` recovers grouped lists through this listener.
+     * Without the emptiness check a request would hide cached channels behind a spinner, because
+     * [ChannelsStateData] reports `Loading` whenever the flag is set, regardless of content.
+     *
+     * Shares [groupedResultMutex] so the check cannot read a half-applied update.
+     *
+     * The raise is undone by the matching result, so an explicit `Call.cancel()` between the two
+     * leaves the group on the loader until a later grouped query finishes. Cancelling the calling
+     * coroutine or its scope is fine, the result listener still runs, and nothing in the SDK
+     * cancels this call.
+     */
+    internal suspend fun startLoadingFirstPageIfNeverLoaded() {
+        groupedResultMutex.withLock {
+            if (!hasCompletedAQuery && queryChannelsStateLogic.getChannels().isNullOrEmpty()) {
+                queryChannelsStateLogic.setLoadingFirstPage(true)
+            }
+        }
+    }
+
+    /**
+     * Ends a grouped first-page load that produced no channels of its own: a failed request, or the
+     * defensive case of a requested group the response left out.
+     *
+     * Both steps are needed to leave `Loading`, which [ChannelsStateData] reports while the flag is
+     * set *or* while channels are still null.
+     *
+     * [completed] tells the two apart. A group the response omits has been answered, so it settles
+     * and a later request leaves it on the empty state. A failure has not, so the group stays
+     * never-loaded and a retry raises the loader again, which is what `queryOffline` does for a
+     * standard list after a failed empty first page.
+     */
+    internal suspend fun finishFirstPageLoad(completed: Boolean) {
+        groupedResultMutex.withLock {
+            // Set with the clear, matching applyGroupedResult, so both writers hold the lock.
+            if (completed) hasCompletedAQuery = true
+            queryChannelsStateLogic.initializeChannelsIfNeeded()
+            queryChannelsStateLogic.setLoadingFirstPage(false)
         }
     }
 
@@ -264,6 +323,7 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
             queryChannelsStateLogic.setRecoveryNeeded(false)
+            hasCompletedAQuery = true
 
             // Persist
             queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
