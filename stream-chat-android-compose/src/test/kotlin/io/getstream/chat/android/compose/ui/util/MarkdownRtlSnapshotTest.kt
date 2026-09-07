@@ -41,8 +41,10 @@ import org.junit.Test
  * its text is set in from. Lists need nothing: their indent and their marker are both laid out
  * from the start edge already.
  *
- * The layout direction is provided rather than left to the device's locale, because the frame
- * Paparazzi captures comes out left to right regardless of the configured locale.
+ * Only right-to-left content, and the layout direction is provided rather than left to the
+ * device's locale. Paparazzi resolves an unspecified text direction from the layout alone, where a
+ * device resolves it from the content of each paragraph, so a message mixing the two directions
+ * renders here in a way no device would show and cannot be covered by a snapshot.
  */
 internal class MarkdownRtlSnapshotTest : PaparazziComposeTest {
 
@@ -63,8 +65,6 @@ internal class MarkdownRtlSnapshotTest : PaparazziComposeTest {
 
                 - عنصر قائمة طويل بما يكفي لكي يلتف على سطر ثانٍ ونرى مكانه
                     - عنصر متداخل طويل أيضاً لكي يلتف على سطر ثانٍ
-
-                > a quote in Latin, long enough that it wraps onto a second line of its own
                 """.trimIndent(),
             )
         }
