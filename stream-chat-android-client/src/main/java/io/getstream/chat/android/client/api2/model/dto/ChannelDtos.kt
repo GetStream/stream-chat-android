@@ -42,7 +42,8 @@ internal data class DownstreamChannelDto(
     val members: List<DownstreamMemberDto> = emptyList(),
     val watchers: List<DownstreamUserDto> = emptyList(),
     val read: List<DownstreamChannelUserRead> = emptyList(),
-    val config: ChannelConfigWithInfo,
+    // Absent for a channel whose type is no longer in the app config.
+    val config: ChannelConfigWithInfo? = null,
     val created_by: DownstreamUserDto?,
     val team: String = "",
     val cooldown: Int = 0,

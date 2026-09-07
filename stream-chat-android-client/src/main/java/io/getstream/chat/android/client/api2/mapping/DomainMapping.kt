@@ -218,7 +218,7 @@ internal class DomainMapping(
                     lastReceivedEventDate = last_message_at ?: it.last_read,
                 )
             },
-            config = config.toDomain(),
+            config = config?.toDomain() ?: Config(),
             createdBy = created_by?.toDomain() ?: User(),
             team = team,
             cooldown = cooldown,
