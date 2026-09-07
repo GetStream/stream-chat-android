@@ -168,15 +168,13 @@ private class Walker(
 
     private fun blockQuote(node: ASTNode) {
         val start = emitter.length
-        emitter.withHangingIndent(styles.blockQuoteHangingIndent) {
-            emitter.append(styles.blockQuotePrefix)
-            // Marking every line, not just the first, is what makes a multi-line quote read as one.
-            // Nesting stacks the markers, so a quote inside a quote reads as two levels.
-            emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
-                visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
-                // Trim under the quote's prefix, or its marked blank lines are not seen as trailing.
-                emitter.trimTrailingNewlines()
-            }
+        emitter.append(styles.blockQuotePrefix)
+        // Marking every line, not just the first, is what makes a multi-line quote read as one.
+        // Nesting stacks the markers, so a quote inside a quote reads as two levels.
+        emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
+            visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
+            // Trim under the quote's prefix, or its marked blank lines are not seen as trailing.
+            emitter.trimTrailingNewlines()
         }
         emitter.addSpan(styles.blockQuote, start)
     }
@@ -186,8 +184,11 @@ private class Walker(
         val ordered = node.type == MarkdownElementTypes.ORDERED_LIST
         // Numbered from the first marker on, so a list written entirely as "1." reads 1, 2, 3.
         val firstNumber = items.firstNotNullOfOrNull(::orderedMarkerNumber) ?: 1
-        emitter.withHangingIndent(styles.listHangingIndent) {
+        emitter.withIndent(styles.listIndent * (level - 1)) {
             items.forEachIndexed { index, item ->
+                // Every item is a paragraph of its own, which is what lets each one keep the
+                // indent of its own level once the layout wraps it.
+                emitter.startParagraph()
                 val marker = when {
                     ordered -> "${firstNumber + index}. "
                     else -> "$UnorderedListMarker "
@@ -206,7 +207,6 @@ private class Walker(
         ?.toIntOrNull()
 
     private fun listItem(node: ASTNode, level: Int, marker: String) {
-        emitter.append(styles.listIndent.repeat(level - 1))
         emitter.append(marker)
 
         // Whatever comes first shares the marker's line, so no marker is left alone on one.
@@ -225,24 +225,22 @@ private class Walker(
                 -> Unit
 
                 MarkdownElementTypes.PARAGRAPH -> {
-                    if (markerLineTaken) continueItemLine(level)
+                    if (markerLineTaken) continueItemLine()
                     markerLineTaken = true
                     // Items hold content in paragraphs; as blocks they would gain blank lines.
                     visitInlineChildren(child)
                 }
 
-                // A nested list emits its own indent, so it only needs the line closing.
+                // A nested list opens paragraphs of its own, which are the breaks as well.
                 MarkdownElementTypes.UNORDERED_LIST, MarkdownElementTypes.ORDERED_LIST -> {
-                    if (markerLineTaken) endItemLine()
                     markerLineTaken = true
                     list(child, level + 1)
                 }
 
                 else -> {
-                    if (markerLineTaken) continueItemLine(level)
+                    if (markerLineTaken) continueItemLine()
                     markerLineTaken = true
-                    // continueItemLine indents the first line, the prefix carries the rest.
-                    emitter.withLinePrefix(emitter.currentLinePrefix + styles.listIndent.repeat(level)) {
+                    emitter.withLinePrefix(emitter.currentLinePrefix + BlockInItemIndent) {
                         visitBlock(child)
                         // Trim under the item's prefix, or its last marked line is left dangling.
                         emitter.trimTrailingNewlines()
@@ -250,7 +248,9 @@ private class Walker(
                 }
             }
         }
-        endItemLine()
+        // No break of its own: the next item opens a paragraph, and the block separator after the
+        // last one supplies the blank line.
+        emitter.trimTrailingNewlines()
     }
 
     private fun endItemLine() {
@@ -258,9 +258,9 @@ private class Walker(
         emitter.endBlock(newlines = 1)
     }
 
-    private fun continueItemLine(level: Int) {
+    private fun continueItemLine() {
         endItemLine()
-        emitter.append(styles.listIndent.repeat(level))
+        emitter.append(BlockInItemIndent)
     }
 
     private fun codeBlock(node: ASTNode, contentType: IElementType, stripIndent: Boolean = false) {
@@ -564,6 +564,9 @@ private fun ASTNode.isWhitespace(): Boolean = type == MarkdownTokenTypes.WHITE_S
 private val ItalicSpan = SpanStyle(fontStyle = FontStyle.Italic)
 private val BoldSpan = SpanStyle(fontWeight = FontWeight.Bold)
 private val StrikethroughSpan = SpanStyle(textDecoration = TextDecoration.LineThrough)
+
+/** A block sitting inside a list item is set in from the item's text. */
+private const val BlockInItemIndent = "    "
 
 private const val UnorderedListMarker = "•"
 

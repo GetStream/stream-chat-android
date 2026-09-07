@@ -40,7 +40,9 @@ internal class MarkdownRendererTest {
     @ParameterizedTest
     @MethodSource("renderedTextArguments")
     fun `renders the text markdown produces`(source: String, expected: String) {
-        renderer.render(source).text shouldBeEqualTo expected
+        // Read back with the paragraph breaks materialised, since a list expresses its line
+        // breaks as paragraphs rather than as line feeds.
+        renderer.render(source).textWithParagraphBreaks() shouldBeEqualTo expected
     }
 
     @Test
@@ -106,15 +108,18 @@ internal class MarkdownRendererTest {
     fun `indents nested list items`() {
         val result = renderer.render("- one\n    - two\n        - three")
 
-        result.text shouldBeEqualTo "• one\n>• two\n>>• three"
-        result.paragraphStyles.single().item.textIndent shouldBeEqualTo TextIndent(restLine = 3.em)
+        result.textWithParagraphBreaks() shouldBeEqualTo "• one\n• two\n• three"
+        // One paragraph per item, indented by its level, so a wrapped line stays under its marker.
+        result.paragraphStyles.map { it.item.textIndent } shouldBeEqualTo listOf(
+            TextIndent(firstLine = 0.em, restLine = 0.em),
+            TextIndent(firstLine = 3.em, restLine = 3.em),
+            TextIndent(firstLine = 6.em, restLine = 6.em),
+        )
     }
 
     @Test
-    fun `hangs the wrapped lines of a quote`() {
-        val result = renderer.render("> quoted")
-
-        result.paragraphStyles.single().item.textIndent shouldBeEqualTo TextIndent(restLine = 5.em)
+    fun `leaves a quote unindented, so a wrapped line stays under its marker`() {
+        renderer.render("> quoted").paragraphStyles.single().item.textIndent shouldBeEqualTo null
     }
 
     @Test
@@ -133,7 +138,8 @@ internal class MarkdownRendererTest {
 
     @Test
     fun `keeps the ordinals of an ordered list`() {
-        renderer.render("1. one\n1. two\n1. three").text shouldBeEqualTo "1. one\n2. two\n3. three"
+        renderer.render("1. one\n1. two\n1. three")
+            .textWithParagraphBreaks() shouldBeEqualTo "1. one\n2. two\n3. three"
     }
 
     @Test
@@ -325,13 +331,13 @@ internal class MarkdownRendererTest {
             Arguments.of("- # H", "• H"),
             Arguments.of("- > quoted", "• |quoted"),
             Arguments.of("- ```\n  x\n  ```", "• x"),
-            Arguments.of("- - a", "• >• a"),
+            Arguments.of("- - a", "• \n• a"),
             Arguments.of("1. # H\n1. next", "1. H\n2. next"),
             // A second block starts its own line, indented under the item's text.
-            Arguments.of("- item\n\n  # H\n- next", "• item\n>H\n• next"),
-            Arguments.of("- item\n\n  > q\n- next", "• item\n>|q\n• next"),
+            Arguments.of("- item\n\n  # H\n- next", "• item\n    H\n• next"),
+            Arguments.of("- item\n\n  > q\n- next", "• item\n    |q\n• next"),
             // Content following a nested list stays indented, and the next item still gets a line.
-            Arguments.of("- a\n    - b\n\n  more\n- c", "• a\n>• b\n>more\n• c"),
+            Arguments.of("- a\n    - b\n\n  more\n- c", "• a\n• b\n    more\n• c"),
             // A code block inside a quote keeps the marker on every line.
             Arguments.of("> ```\n> one\n> two\n> ```", "|one\n|two"),
             // An indented code block loses the indentation that declared it.
@@ -356,7 +362,7 @@ internal class MarkdownRendererTest {
             // Tab indentation declares an indented code block just as four spaces do.
             Arguments.of("\tone\n\ttwo", "one\ntwo"),
             // Every line of a block inside a list item is indented, not only the first.
-            Arguments.of("- item\n\n      one\n      two", "• item\n>one\n>two"),
+            Arguments.of("- item\n\n      one\n      two", "• item\n    one\n    two"),
             // The specification turns a line ending inside a code span into a space.
             Arguments.of("> `a\n> b`", "|a b"),
             // A reference to an invalid code point becomes the replacement character.
@@ -383,10 +389,8 @@ private val TestStyles = MarkdownStyles(
     codeSpan = SpanStyle(fontFamily = FontFamily.Monospace),
     codeBlock = SpanStyle(fontFamily = FontFamily.Monospace),
     blockQuote = SpanStyle(color = Color.Gray),
-    listIndent = ">",
-    listHangingIndent = 3.em,
+    listIndent = 3.em,
     blockQuotePrefix = "|",
-    blockQuoteHangingIndent = 5.em,
     thematicBreak = "***",
 )
 

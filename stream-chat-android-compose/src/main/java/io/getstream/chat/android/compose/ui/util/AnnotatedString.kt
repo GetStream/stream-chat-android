@@ -76,3 +76,20 @@ internal fun AnnotatedString.Builder.merge(annotated: AnnotatedString) {
     addTtsAnnotations(annotated.ttsAnnotations)
     addUrlAnnotations(annotated.urlAnnotations)
 }
+
+/**
+ * The text with a line feed wherever a paragraph starts one, since a paragraph break is a line the
+ * layout draws rather than a character, and an announcement can only read characters.
+ */
+internal fun AnnotatedString.textWithParagraphBreaks(): String {
+    val starts = paragraphStyles
+        .map { it.start }
+        .filterTo(mutableSetOf()) { it > 0 && text[it - 1] != '\n' }
+    if (starts.isEmpty()) return text
+    return buildString(text.length + starts.size) {
+        text.forEachIndexed { index, character ->
+            if (index in starts) append('\n')
+            append(character)
+        }
+    }
+}

@@ -54,7 +54,9 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
             """
             - a list item long enough that it wraps onto a second line and shows where that lands
             - short
-                - a nested item long enough to wrap, to see whether its continuation is indented
+                - a nested item long enough to wrap, to see where its continuation lands
+                    - a deeper item, again long enough that it has to wrap onto a second line
+            - back at the top level, and long enough to wrap so its continuation shows too
 
             > a quoted line long enough that it wraps, to see whether the marker survives the wrap
             """.trimIndent(),

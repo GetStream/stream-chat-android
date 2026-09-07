@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
+import io.getstream.chat.android.compose.ui.util.textWithParagraphBreaks
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
@@ -122,7 +123,7 @@ public fun MessageText(
     val senderAwareText = senderAwareContentDescription(
         isMine = message.isMine(currentUser),
         senderName = message.user.name,
-        content = styledText.text,
+        content = styledText.textWithParagraphBreaks(),
         isReply = message.replyTo != null,
     )
     if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {

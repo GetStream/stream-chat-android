@@ -36,8 +36,8 @@ internal class MarkdownEmitter {
     private var linePrefix = ""
     private val spanStyles = mutableListOf<AnnotatedString.Range<SpanStyle>>()
     private val annotations = mutableListOf<AnnotatedString.Range<String>>()
-    private val paragraphBreaks = mutableListOf<Int>()
-    private val indentMarks = mutableListOf(0 to TextUnit.Unspecified)
+    private var indent = TextUnit.Unspecified
+    private val paragraphStarts = mutableMapOf<Int, TextUnit>()
 
     val length: Int get() = text.length
 
@@ -63,17 +63,26 @@ internal class MarkdownEmitter {
     private val linesArePrefixed: Boolean get() = linePrefix.isNotEmpty()
 
     /**
-     * Hangs every wrapped line [block] emits by [indent], so a line too long for the width keeps
-     * clear of the marker its first line carries.
+     * Indents every line [block] emits by [indent], including the ones the layout wraps, so a
+     * wrapped line keeps the horizontal position its own item started at.
      */
-    fun withHangingIndent(indent: TextUnit, block: () -> Unit) {
-        val previous = indentMarks.last().second
-        indentMarks += length to indent
+    fun withIndent(indent: TextUnit, block: () -> Unit) {
+        val previous = this.indent
+        this.indent = indent
         try {
             block()
         } finally {
-            indentMarks += length to previous
+            this.indent = previous
         }
+    }
+
+    /**
+     * Breaks the line by starting a new paragraph, which is also what carries the indent. Adds no
+     * line feed of its own, since a paragraph break already renders as one line break; one here
+     * as well would leave a blank line between the two paragraphs.
+     */
+    fun startParagraph() {
+        paragraphStarts[text.length] = indent
     }
 
     /** Marks every line [block] emits with [prefix], as a block quote marks its whole span. */
@@ -103,12 +112,12 @@ internal class MarkdownEmitter {
      * Separates the block just emitted from the next with [newlines] breaks, counting those already
      * present. Does nothing while the output is empty, so it never starts with a blank line.
      *
-     * A paragraph break ends its paragraph on a line feed, which renders as a blank line, so it
-     * stands in for one of the breaks rather than being added on top of them.
+     * A paragraph break renders as one line break by itself, so it stands in for the first of the
+     * breaks rather than being added on top of them.
      */
     fun endBlock(newlines: Int) {
         if (text.isEmpty()) return
-        val breaksParagraph = newlines >= ParagraphSeparation && !linesArePrefixed
+        val breaksParagraph = !linesArePrefixed
         val literal = if (breaksParagraph) newlines - 1 else newlines
         var present = 0
         var end = text.length
@@ -119,7 +128,7 @@ internal class MarkdownEmitter {
         }
         repeat((literal - present).coerceAtLeast(0)) { openLine() }
         // Before the prefix, so the prefix opens the next paragraph instead of closing the last.
-        if (breaksParagraph) paragraphBreaks += text.length - linePrefix.length
+        if (breaksParagraph) paragraphStarts[text.length - linePrefix.length] = indent
     }
 
     /** Drops trailing blank lines, so a trailing block separator does not pad the bubble. */
@@ -132,9 +141,13 @@ internal class MarkdownEmitter {
                 else -> break
             }
         }
+        clampAll()
+    }
+
+    private fun clampAll() {
         clamp(spanStyles)
         clamp(annotations)
-        paragraphBreaks.retainAll { it in 1 until text.length }
+        paragraphStarts.keys.retainAll { it in 0 until text.length }
     }
 
     private fun <T> clamp(ranges: MutableList<AnnotatedString.Range<T>>) {
@@ -157,24 +170,19 @@ internal class MarkdownEmitter {
     }
 
     /**
-     * One style per paragraph, covering the whole output, carrying the indent in force where the
+     * One style per paragraph, covering the whole output, carrying the indent recorded where the
      * paragraph starts. The ranges have to be contiguous and complete, because their edges are the
      * paragraph breaks that [endBlock] counted on for separation.
      */
     private fun paragraphStyles(): List<AnnotatedString.Range<ParagraphStyle>> {
         if (text.isEmpty()) return emptyList()
-        val bounds = (listOf(0) + paragraphBreaks.sorted().distinct() + text.length)
+        val bounds = (paragraphStarts.keys + 0).sorted() + text.length
         return bounds.zipWithNext { start, end ->
-            AnnotatedString.Range(ParagraphStyle(textIndent = indentAt(start)), start, end)
+            AnnotatedString.Range(ParagraphStyle(textIndent = indentFor(start)), start, end)
         }
     }
 
-    private fun indentAt(offset: Int): TextIndent? = indentMarks
-        .lastOrNull { it.first <= offset }
-        ?.second
+    private fun indentFor(start: Int): TextIndent? = paragraphStarts[start]
         ?.takeIf { it != TextUnit.Unspecified }
-        ?.let { TextIndent(restLine = it) }
+        ?.let { TextIndent(firstLine = it, restLine = it) }
 }
-
-/** Two breaks in the source is the author starting a new paragraph. */
-private const val ParagraphSeparation = 2
