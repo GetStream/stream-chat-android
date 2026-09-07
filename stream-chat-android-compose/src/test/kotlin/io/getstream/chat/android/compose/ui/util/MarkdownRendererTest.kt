@@ -23,9 +23,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.util.internal.MarkdownRenderer
-import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -87,7 +88,7 @@ internal class MarkdownRendererTest {
     fun `styles a fenced code block and keeps its line breaks`() {
         val result = renderer.render("before\n\n```kotlin\nval a = 1\n\nval b = 2\n```")
 
-        result.text shouldBeEqualTo "before\n\nval a = 1\n\nval b = 2"
+        result.text shouldBeEqualTo "before\nval a = 1\n\nval b = 2"
         result.spanAt("val a = 1")?.fontFamily shouldBeEqualTo FontFamily.Monospace
     }
 
@@ -105,9 +106,29 @@ internal class MarkdownRendererTest {
     fun `indents nested list items`() {
         val result = renderer.render("- one\n    - two\n        - three")
 
-        // A paragraph range ending in a line break would render an empty line after it.
         result.text shouldBeEqualTo "• one\n>• two\n>>• three"
-        result.paragraphStyles.shouldBeEmpty()
+        result.paragraphStyles.single().item.textIndent shouldBeEqualTo TextIndent(restLine = 3.em)
+    }
+
+    @Test
+    fun `hangs the wrapped lines of a quote`() {
+        val result = renderer.render("> quoted")
+
+        result.paragraphStyles.single().item.textIndent shouldBeEqualTo TextIndent(restLine = 5.em)
+    }
+
+    @Test
+    fun `separates two blocks with a paragraph break rather than a second line feed`() {
+        val result = renderer.render("- one\n\nafter")
+
+        result.text shouldBeEqualTo "• one\nafter"
+        result.paragraphStyles.map { it.start to it.end } shouldBeEqualTo listOf(0 to 6, 6 to 11)
+    }
+
+    @Test
+    fun `keeps a line feed between the paragraphs of a quote, so its marker reaches the blank line`() {
+        // A paragraph break renders a bare line, which would cut the marker running down the quote.
+        renderer.render("> one\n>\n> two").text shouldBeEqualTo "|one\n|\n|two"
     }
 
     @Test
@@ -257,13 +278,13 @@ internal class MarkdownRendererTest {
             // Blocks are separated by the breaks the author wrote, no more and no fewer.
             Arguments.of("Shopping list:\n- milk\n- eggs", "Shopping list:\n• milk\n• eggs"),
             Arguments.of("intro\n# Heading", "intro\nHeading"),
-            Arguments.of("# Heading\n\nbody", "Heading\n\nbody"),
+            Arguments.of("# Heading\n\nbody", "Heading\nbody"),
             // A block inside a list item or quote keeps its own indentation; only the quote
             // markers of a continuation line go.
             Arguments.of("> <div>\n>   x\n> </div>", "|<div>\n|  x\n|</div>"),
             // A soft break stays a line break, or enabling markdown would join lines.
             Arguments.of("first\nsecond", "first\nsecond"),
-            Arguments.of("first\n\nsecond", "first\n\nsecond"),
+            Arguments.of("first\n\nsecond", "first\nsecond"),
             // Hard breaks, in their three spellings.
             Arguments.of("first  \nsecond", "first\nsecond"),
             Arguments.of("first\\\nsecond", "first\nsecond"),
@@ -275,7 +296,7 @@ internal class MarkdownRendererTest {
             // A soft break inside a quote is one block, and every line of it is marked.
             Arguments.of("> quoted\n> continued", "|quoted\n|continued"),
             // A blank line ends a quote, so this is two of them, kept apart.
-            Arguments.of("> first\n\n> second", "|first\n\n|second"),
+            Arguments.of("> first\n\n> second", "|first\n|second"),
             // A quote holding two paragraphs marks the blank line between them too.
             Arguments.of("> one\n>\n> two", "|one\n|\n|two"),
             // A hard break inside a quote opens exactly one new marked line.
@@ -316,9 +337,9 @@ internal class MarkdownRendererTest {
             // An indented code block loses the indentation that declared it.
             Arguments.of("    one\n    two", "one\ntwo"),
             // A table is still a block, so what follows it starts on a new line.
-            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\n\nafter"),
+            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\nafter"),
             // Carriage returns never survive into the output.
-            Arguments.of("a\r\n\r\nb", "a\n\nb"),
+            Arguments.of("a\r\n\r\nb", "a\nb"),
             Arguments.of("a\r\nb", "a\nb"),
             // A heading keeps neither the space before its text nor the one after it.
             Arguments.of("# H \nnext", "H\nnext"),
@@ -326,7 +347,7 @@ internal class MarkdownRendererTest {
             // Two breaks in the source stay two breaks.
             Arguments.of("a<br/><br/>b", "a\n\nb"),
             // An HTML block is a block, so what follows it starts on a new line.
-            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\n\nafter"),
+            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\nafter"),
             // A document that renders to nothing falls back to what was typed.
             Arguments.of("[d]: https://getstream.io", "[d]: https://getstream.io"),
             // A checkbox belongs beside the marker rather than pushing the item onto a new line.
@@ -363,7 +384,9 @@ private val TestStyles = MarkdownStyles(
     codeBlock = SpanStyle(fontFamily = FontFamily.Monospace),
     blockQuote = SpanStyle(color = Color.Gray),
     listIndent = ">",
+    listHangingIndent = 3.em,
     blockQuotePrefix = "|",
+    blockQuoteHangingIndent = 5.em,
     thematicBreak = "***",
 )
 

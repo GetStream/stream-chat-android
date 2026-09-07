@@ -168,13 +168,15 @@ private class Walker(
 
     private fun blockQuote(node: ASTNode) {
         val start = emitter.length
-        emitter.append(styles.blockQuotePrefix)
-        // Marking every line, not just the first, is what makes a multi-line quote read as one.
-        // Nesting stacks the markers, so a quote inside a quote reads as two levels.
-        emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
-            visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
-            // Trim under the quote's prefix, or its marked blank lines are not seen as trailing.
-            emitter.trimTrailingNewlines()
+        emitter.withHangingIndent(styles.blockQuoteHangingIndent) {
+            emitter.append(styles.blockQuotePrefix)
+            // Marking every line, not just the first, is what makes a multi-line quote read as one.
+            // Nesting stacks the markers, so a quote inside a quote reads as two levels.
+            emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
+                visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
+                // Trim under the quote's prefix, or its marked blank lines are not seen as trailing.
+                emitter.trimTrailingNewlines()
+            }
         }
         emitter.addSpan(styles.blockQuote, start)
     }
@@ -184,12 +186,14 @@ private class Walker(
         val ordered = node.type == MarkdownElementTypes.ORDERED_LIST
         // Numbered from the first marker on, so a list written entirely as "1." reads 1, 2, 3.
         val firstNumber = items.firstNotNullOfOrNull(::orderedMarkerNumber) ?: 1
-        items.forEachIndexed { index, item ->
-            val marker = when {
-                ordered -> "${firstNumber + index}. "
-                else -> "$UnorderedListMarker "
+        emitter.withHangingIndent(styles.listHangingIndent) {
+            items.forEachIndexed { index, item ->
+                val marker = when {
+                    ordered -> "${firstNumber + index}. "
+                    else -> "$UnorderedListMarker "
+                }
+                listItem(item, level, marker)
             }
-            listItem(item, level, marker)
         }
     }
 
