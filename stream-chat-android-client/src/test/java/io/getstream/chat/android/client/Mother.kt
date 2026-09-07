@@ -549,6 +549,9 @@ internal object Mother {
         markMessagesPending = randomBoolean(),
     )
 
+    /**
+     * Provides a [QueryChannelsRequest] with random parameters (that can also be customized).
+     */
     fun randomQueryChannelRequest(
         state: Boolean = randomBoolean(),
         watch: Boolean = randomBoolean(),

@@ -16,7 +16,11 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -29,6 +33,13 @@ import org.junit.jupiter.api.Test
 internal class ChannelConfigEnumParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
+
+    private val domainMapping = DomainMapping(
+        currentUserIdProvider = { null },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+    )
 
     // Derived from the shared fixture so the required fields stay in one place.
     private val configJsonWithUnknownEnums = ChannelDtoTestData.configJson
@@ -53,10 +64,12 @@ internal class ChannelConfigEnumParsingTest {
 
     @Test
     fun `Unrecognised config modes reach the domain as the raw wire value`() {
-        val config = parser.fromJson(configJsonWithUnknownEnums, ChannelConfigWithInfo::class.java)
+        val parsed = parser.fromJson(configJsonWithUnknownEnums, ChannelConfigWithInfo::class.java)
 
-        assertEquals("future_mode", config.automod.value)
-        assertEquals("future_behavior", config.automodBehavior.value)
-        assertEquals("future_blocklist", config.blocklistBehavior?.value)
+        val config = with(domainMapping) { parsed.toDomain() }
+
+        assertEquals("future_mode", config.automod)
+        assertEquals("future_behavior", config.automodBehavior)
+        assertEquals("future_blocklist", config.blocklistBehavior)
     }
 }

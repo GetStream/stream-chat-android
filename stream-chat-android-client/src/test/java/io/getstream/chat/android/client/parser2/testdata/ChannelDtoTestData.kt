@@ -110,6 +110,7 @@ internal object ChannelDtoTestData {
         messageRetention = "retention",
     )
 
+    @Language("JSON")
     val downstreamJson =
         """{
           "cid": "channelType:channelId",
