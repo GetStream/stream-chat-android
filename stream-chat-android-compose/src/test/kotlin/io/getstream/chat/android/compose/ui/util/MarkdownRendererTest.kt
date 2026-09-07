@@ -118,8 +118,22 @@ internal class MarkdownRendererTest {
     }
 
     @Test
-    fun `leaves a quote unindented, so a wrapped line stays under its marker`() {
-        renderer.render("> quoted").paragraphStyles.single().item.textIndent shouldBeEqualTo null
+    fun `indents a quote and marks its depth, leaving its rail to be drawn`() {
+        val result = renderer.render("> quoted")
+
+        result.paragraphStyles.single().item.textIndent shouldBeEqualTo TextIndent(5.em, 5.em)
+        result.quoteDepths() shouldBeEqualTo listOf("1")
+    }
+
+    @Test
+    fun `stacks the indent and the depth of a nested quote`() {
+        val result = renderer.render("> outer\n> > inner")
+
+        result.paragraphStyles.map { it.item.textIndent } shouldBeEqualTo listOf(
+            TextIndent(5.em, 5.em),
+            TextIndent(10.em, 10.em),
+        )
+        result.quoteDepths() shouldBeEqualTo listOf("1", "2")
     }
 
     @Test
@@ -131,9 +145,11 @@ internal class MarkdownRendererTest {
     }
 
     @Test
-    fun `keeps a line feed between the paragraphs of a quote, so its marker reaches the blank line`() {
-        // A paragraph break renders a bare line, which would cut the marker running down the quote.
-        renderer.render("> one\n>\n> two").text shouldBeEqualTo "|one\n|\n|two"
+    fun `marks a quote's whole span, so its rail runs through the gap between its paragraphs`() {
+        val result = renderer.render("> one\n>\n> two")
+
+        val quote = result.getStringAnnotations(AnnotationTagBlockQuote, 0, result.length).single()
+        quote.start to quote.end shouldBeEqualTo (0 to result.length)
     }
 
     @Test
@@ -284,13 +300,13 @@ internal class MarkdownRendererTest {
             // Blocks are separated by the breaks the author wrote, no more and no fewer.
             Arguments.of("Shopping list:\n- milk\n- eggs", "Shopping list:\n• milk\n• eggs"),
             Arguments.of("intro\n# Heading", "intro\nHeading"),
-            Arguments.of("# Heading\n\nbody", "Heading\nbody"),
+            Arguments.of("# Heading\n\nbody", "Heading\n\nbody"),
             // A block inside a list item or quote keeps its own indentation; only the quote
             // markers of a continuation line go.
-            Arguments.of("> <div>\n>   x\n> </div>", "|<div>\n|  x\n|</div>"),
+            Arguments.of("> <div>\n>   x\n> </div>", "<div>\n  x\n</div>"),
             // A soft break stays a line break, or enabling markdown would join lines.
             Arguments.of("first\nsecond", "first\nsecond"),
-            Arguments.of("first\n\nsecond", "first\nsecond"),
+            Arguments.of("first\n\nsecond", "first\n\nsecond"),
             // Hard breaks, in their three spellings.
             Arguments.of("first  \nsecond", "first\nsecond"),
             Arguments.of("first\\\nsecond", "first\nsecond"),
@@ -298,17 +314,17 @@ internal class MarkdownRendererTest {
             // A tag ending a line absorbs that line's feed, exactly as trailing spaces do.
             Arguments.of("first<br/>\nsecond", "first\nsecond"),
             Arguments.of("# Title\nbody", "Title\nbody"),
-            Arguments.of("> quoted", "|quoted"),
+            Arguments.of("> quoted", "quoted"),
             // A soft break inside a quote is one block, and every line of it is marked.
-            Arguments.of("> quoted\n> continued", "|quoted\n|continued"),
+            Arguments.of("> quoted\n> continued", "quoted\ncontinued"),
             // A blank line ends a quote, so this is two of them, kept apart.
-            Arguments.of("> first\n\n> second", "|first\n|second"),
+            Arguments.of("> first\n\n> second", "first\n\nsecond"),
             // A quote holding two paragraphs marks the blank line between them too.
-            Arguments.of("> one\n>\n> two", "|one\n|\n|two"),
+            Arguments.of("> one\n>\n> two", "one\n\ntwo"),
             // A hard break inside a quote opens exactly one new marked line.
-            Arguments.of("> one  \n> two", "|one\n|two"),
+            Arguments.of("> one  \n> two", "one\ntwo"),
             // Nesting stacks the markers.
-            Arguments.of("> outer\n> > inner", "|outer\n||inner"),
+            Arguments.of("> outer\n> > inner", "outer\ninner"),
             Arguments.of("- one\n- two", "• one\n• two"),
             Arguments.of("---\nafter", "***\nafter"),
             // Escapes are resolved, and a backslash that escapes nothing is left alone.
@@ -329,23 +345,23 @@ internal class MarkdownRendererTest {
         private fun blockArguments(): List<Arguments> = listOf(
             // An item whose only content is a block keeps it on the marker's line.
             Arguments.of("- # H", "• H"),
-            Arguments.of("- > quoted", "• |quoted"),
+            Arguments.of("- > quoted", "• \nquoted"),
             Arguments.of("- ```\n  x\n  ```", "• x"),
             Arguments.of("- - a", "• \n• a"),
             Arguments.of("1. # H\n1. next", "1. H\n2. next"),
             // A second block starts its own line, indented under the item's text.
             Arguments.of("- item\n\n  # H\n- next", "• item\n    H\n• next"),
-            Arguments.of("- item\n\n  > q\n- next", "• item\n    |q\n• next"),
+            Arguments.of("- item\n\n  > q\n- next", "• item\nq\n• next"),
             // Content following a nested list stays indented, and the next item still gets a line.
             Arguments.of("- a\n    - b\n\n  more\n- c", "• a\n• b\n    more\n• c"),
             // A code block inside a quote keeps the marker on every line.
-            Arguments.of("> ```\n> one\n> two\n> ```", "|one\n|two"),
+            Arguments.of("> ```\n> one\n> two\n> ```", "one\ntwo"),
             // An indented code block loses the indentation that declared it.
             Arguments.of("    one\n    two", "one\ntwo"),
             // A table is still a block, so what follows it starts on a new line.
-            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\nafter"),
+            Arguments.of("| a | b |\n| - | - |\n\nafter", "| a | b |\n| - | - |\n\nafter"),
             // Carriage returns never survive into the output.
-            Arguments.of("a\r\n\r\nb", "a\nb"),
+            Arguments.of("a\r\n\r\nb", "a\n\nb"),
             Arguments.of("a\r\nb", "a\nb"),
             // A heading keeps neither the space before its text nor the one after it.
             Arguments.of("# H \nnext", "H\nnext"),
@@ -353,7 +369,7 @@ internal class MarkdownRendererTest {
             // Two breaks in the source stay two breaks.
             Arguments.of("a<br/><br/>b", "a\n\nb"),
             // An HTML block is a block, so what follows it starts on a new line.
-            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\nafter"),
+            Arguments.of("<div>x</div>\n\nafter", "<div>x</div>\n\nafter"),
             // A document that renders to nothing falls back to what was typed.
             Arguments.of("[d]: https://getstream.io", "[d]: https://getstream.io"),
             // A checkbox belongs beside the marker rather than pushing the item onto a new line.
@@ -364,7 +380,7 @@ internal class MarkdownRendererTest {
             // Every line of a block inside a list item is indented, not only the first.
             Arguments.of("- item\n\n      one\n      two", "• item\n    one\n    two"),
             // The specification turns a line ending inside a code span into a space.
-            Arguments.of("> `a\n> b`", "|a b"),
+            Arguments.of("> `a\n> b`", "a b"),
             // A reference to an invalid code point becomes the replacement character.
             Arguments.of("a &#xD800; b", "a \uFFFD b"),
             Arguments.of("a &#0; b", "a \uFFFD b"),
@@ -374,8 +390,8 @@ internal class MarkdownRendererTest {
             // Only the delimiter runs are syntax, so a backtick between them is content.
             Arguments.of("``a `b` c``", "a `b` c"),
             // Verbatim source drops the quote markers of the lines it continues on.
-            Arguments.of("> <div>\n> x\n> </div>", "|<div>\n|x\n|</div>"),
-            Arguments.of("> | a |\n> | - |", "|| a |\n|| - |"),
+            Arguments.of("> <div>\n> x\n> </div>", "<div>\nx\n</div>"),
+            Arguments.of("> | a |\n> | - |", "| a |\n| - |"),
             // A message of only whitespace is still text the sender typed.
             Arguments.of("   ", "   "),
             // Unsupported constructs keep their source text so nothing is lost.
@@ -384,13 +400,17 @@ internal class MarkdownRendererTest {
     }
 }
 
+/** Sorted, because a quote is marked once its content is walked, so the innermost lands first. */
+private fun AnnotatedString.quoteDepths(): List<String> =
+    getStringAnnotations(AnnotationTagBlockQuote, 0, length).map { it.item }.sorted()
+
 private val TestStyles = MarkdownStyles(
     headings = listOf(30, 26, 22, 18, 16, 14).map { SpanStyle(fontSize = it.sp) },
     codeSpan = SpanStyle(fontFamily = FontFamily.Monospace),
     codeBlock = SpanStyle(fontFamily = FontFamily.Monospace),
     blockQuote = SpanStyle(color = Color.Gray),
     listIndent = 3.em,
-    blockQuotePrefix = "|",
+    blockQuoteIndent = 5.em,
     thematicBreak = "***",
 )
 

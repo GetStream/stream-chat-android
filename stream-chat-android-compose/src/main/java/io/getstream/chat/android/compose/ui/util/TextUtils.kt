@@ -52,6 +52,9 @@ internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
  */
 internal const val AnnotationTagLiteral: AnnotationTag = "LITERAL"
 
+/** Marks a block quote's span, carrying its depth of nesting, so its rail can be drawn. */
+internal const val AnnotationTagBlockQuote: AnnotationTag = "BLOCK_QUOTE"
+
 /**
  * The tag used to annotate user mentions (`@<user>`) in the message text.
  */

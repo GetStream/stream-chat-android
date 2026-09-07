@@ -20,7 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
@@ -64,6 +67,18 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `quote inside a list item`() = snapshotWithDarkMode {
+        MarkdownText(
+            """
+            - > a quote as the whole item, long enough that it wraps onto a second line
+            - an ordinary item
+
+              > a quote after a paragraph, also long enough to wrap onto two lines
+            """.trimIndent(),
+        )
+    }
+
+    @Test
     fun `every supported construct`() = snapshotWithDarkMode {
         MarkdownText(
             """
@@ -94,6 +109,9 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
 
             > a separate quote
 
+            > outer, long enough that it wraps onto a second line of its own
+            > > inner, also long enough that it has to wrap onto a second line
+
             ```kotlin
             fun main() {
                 println("hi")
@@ -114,12 +132,22 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
             colors = ChatTheme.colors,
         )
         val message = Message(id = "id", cid = "messaging:cid", text = text, user = User(id = "other"))
+        val styled = formatter.format(message, currentUser = User(id = "me"))
+        // The rails are drawn from the layout, as MessageText draws them, so they show up here too.
+        val layout = remember(styled) { mutableStateOf<TextLayoutResult?>(null) }
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            text = formatter.format(message, currentUser = User(id = "me")),
+                .padding(12.dp)
+                .blockQuoteRails(
+                    annotations = styled.getStringAnnotations(0, styled.length),
+                    layout = layout::value,
+                    color = ChatTheme.colors.borderCoreStrong,
+                    indentPerDepth = MarkdownStyles.BlockQuoteIndent,
+                ),
+            text = styled,
             style = ChatTheme.typography.bodyDefault,
+            onTextLayout = { layout.value = it },
         )
     }
 }

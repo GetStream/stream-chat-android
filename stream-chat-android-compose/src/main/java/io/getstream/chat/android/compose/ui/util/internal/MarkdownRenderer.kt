@@ -21,6 +21,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import io.getstream.chat.android.compose.ui.util.AnnotationTagBlockQuote
 import io.getstream.chat.android.compose.ui.util.AnnotationTagLiteral
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.MarkdownStyles
@@ -81,6 +82,8 @@ private class Walker(
     private val emitter: MarkdownEmitter,
     private val links: LinkMap,
 ) {
+
+    private var quoteDepth = 0
 
     fun visitBlocks(nodes: List<ASTNode>) {
         // The breaks between two blocks are how the author spaced them, so carry that across
@@ -166,17 +169,23 @@ private class Walker(
         emitter.addSpan(styles.heading(level), start)
     }
 
+    /**
+     * Sets the quote in from the margin and marks its span with the depth, leaving the rail to be
+     * drawn. A marker character could only land on a line this walker broke itself, so it would be
+     * missing from every line the layout wrapped.
+     */
     private fun blockQuote(node: ASTNode) {
         val start = emitter.length
-        emitter.append(styles.blockQuotePrefix)
-        // Marking every line, not just the first, is what makes a multi-line quote read as one.
-        // Nesting stacks the markers, so a quote inside a quote reads as two levels.
-        emitter.withLinePrefix(emitter.currentLinePrefix + styles.blockQuotePrefix) {
+        val depth = quoteDepth + 1
+        quoteDepth = depth
+        emitter.withIndent(styles.blockQuoteIndent * depth) {
+            emitter.startParagraph()
             visitBlocks(node.children.filter { it.type != MarkdownTokenTypes.BLOCK_QUOTE })
-            // Trim under the quote's prefix, or its marked blank lines are not seen as trailing.
             emitter.trimTrailingNewlines()
         }
+        quoteDepth = depth - 1
         emitter.addSpan(styles.blockQuote, start)
+        emitter.addAnnotation(AnnotationTagBlockQuote, depth.toString(), start)
     }
 
     private fun list(node: ASTNode, level: Int) {
@@ -235,6 +244,13 @@ private class Walker(
                 MarkdownElementTypes.UNORDERED_LIST, MarkdownElementTypes.ORDERED_LIST -> {
                     markerLineTaken = true
                     list(child, level + 1)
+                }
+
+                // Same for a quote, which also brings its own indent, so opening a line for it
+                // would leave an indented blank one behind.
+                MarkdownElementTypes.BLOCK_QUOTE -> {
+                    markerLineTaken = true
+                    blockQuote(child)
                 }
 
                 else -> {

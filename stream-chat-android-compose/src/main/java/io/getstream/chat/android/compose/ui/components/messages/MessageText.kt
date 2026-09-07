@@ -57,6 +57,8 @@ import io.getstream.chat.android.compose.ui.util.AnnotationTagHereMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagRoleMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUserMention
+import io.getstream.chat.android.compose.ui.util.MarkdownStyles
+import io.getstream.chat.android.compose.ui.util.blockQuoteRails
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
@@ -126,16 +128,25 @@ public fun MessageText(
         content = styledText.textWithParagraphBreaks(),
         isReply = message.replyTo != null,
     )
+    // Read inside the draw pass, which runs after the layout that sets it.
+    val layout = remember(styledText) { mutableStateOf<TextLayoutResult?>(null) }
+    val textModifier = modifier
+        .padding(MessageStyling.textPadding)
+        .semantics { contentDescription = senderAwareText }
+        .blockQuoteRails(
+            annotations = annotations,
+            layout = layout::value,
+            color = ChatTheme.colors.borderCoreStrong,
+            indentPerDepth = MarkdownStyles.BlockQuoteIndent,
+        )
     if (annotations.fastAny(AnnotatedString.Range<String>::isInteractiveTag)) {
         ClickableText(
-            modifier = modifier
-                .padding(MessageStyling.textPadding)
-                .testTag("Stream_MessageClickableText")
-                .semantics { contentDescription = senderAwareText },
+            modifier = textModifier.testTag("Stream_MessageClickableText"),
             text = styledText,
             style = style,
             onLongPress = { onLongItemClick(message) },
             isInteractiveAt = annotations::hasInteractiveAt,
+            onTextLayout = { layout.value = it },
         ) { position ->
             handleAnnotationClick(
                 annotations = annotations,
@@ -156,13 +167,12 @@ public fun MessageText(
         }
     } else {
         Text(
-            modifier = modifier
-                .padding(MessageStyling.textPadding)
+            modifier = textModifier
                 .clipToBounds()
-                .testTag("Stream_MessageText")
-                .semantics { contentDescription = senderAwareText },
+                .testTag("Stream_MessageText"),
             text = styledText,
             style = style,
+            onTextLayout = { layout.value = it },
         )
     }
 }

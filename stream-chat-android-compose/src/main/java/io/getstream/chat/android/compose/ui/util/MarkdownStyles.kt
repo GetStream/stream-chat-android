@@ -29,7 +29,8 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
  * Styling for the markdown constructs rendered inside a message bubble.
  *
  * @param listIndent Indents a list once per level of nesting, wrapped lines included.
- * @param blockQuotePrefix Prepended to every line of a quote.
+ * @param blockQuoteIndent Sets a quote in from the margin once per level, leaving room for
+ * the rail drawn beside it.
  * @param thematicBreak Stands in for a thematic break (`---`).
  */
 @Immutable
@@ -39,7 +40,7 @@ internal data class MarkdownStyles(
     val codeBlock: SpanStyle,
     val blockQuote: SpanStyle,
     val listIndent: TextUnit = 1.em,
-    val blockQuotePrefix: String = "┃ ",
+    val blockQuoteIndent: TextUnit = BlockQuoteIndent,
     val thematicBreak: String = "⸻",
 ) {
 
@@ -47,6 +48,9 @@ internal data class MarkdownStyles(
     fun heading(level: Int): SpanStyle = headings.getOrElse(level - 1) { headings.last() }
 
     companion object {
+
+        /** Shared with whatever draws the rail, so the two agree on where it goes. */
+        val BlockQuoteIndent: TextUnit = 1.em
 
         /** Builds the default styling from the design system. */
         @Composable
