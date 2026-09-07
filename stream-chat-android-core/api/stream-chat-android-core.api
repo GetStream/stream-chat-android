@@ -2443,14 +2443,31 @@ public final class io/getstream/chat/android/models/TimeDuration$Companion {
 }
 
 public final class io/getstream/chat/android/models/TypingEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/TypingEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/TypingEvent;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/TypingEvent;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/models/TypingEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/TypingEvent;Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/TypingEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelId ()Ljava/lang/String;
+	public final fun getTypingUsers ()Ljava/util/List;
 	public final fun getUsers ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/TypingUser {
+	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/MemberInfo;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/MemberInfo;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/User;
+	public final fun component2 ()Lio/getstream/chat/android/models/MemberInfo;
+	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/MemberInfo;)Lio/getstream/chat/android/models/TypingUser;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/TypingUser;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/MemberInfo;ILjava/lang/Object;)Lio/getstream/chat/android/models/TypingUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lio/getstream/chat/android/models/MemberInfo;
+	public final fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

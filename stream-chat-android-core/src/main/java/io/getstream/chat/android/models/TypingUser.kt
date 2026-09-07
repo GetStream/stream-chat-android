@@ -19,20 +19,22 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 
 /**
- * Model representing a typing event.
+ * A user currently typing in a channel, together with their membership of that channel.
  *
- * @param channelId The ID of the channel where the typing event occurred.
- * @param users The users who are currently typing in the channel.
- * @param typingUsers The users who are currently typing in the channel, with their channel membership.
+ * The membership is kept beside [user] rather than on it, because [User] is shared across every channel while
+ * [MemberInfo] describes this one channel only.
  */
 @Immutable
-public data class TypingEvent(
-    val channelId: String,
-    @Deprecated(
-        message = "Use typingUsers instead, which also carries each user's channel membership.",
-        replaceWith = ReplaceWith("typingUsers"),
-        level = DeprecationLevel.WARNING,
-    )
-    val users: List<User>,
-    val typingUsers: List<TypingUser> = emptyList(),
+public data class TypingUser(
+    /**
+     * The user who is typing.
+     */
+    val user: User,
+
+    /**
+     * Data about the channel membership of the user who is typing.
+     *
+     * Only populated when the app has member custom data on messages enabled.
+     */
+    val member: MemberInfo? = null,
 )

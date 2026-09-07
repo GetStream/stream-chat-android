@@ -445,6 +445,7 @@ internal data class TypingStartEventDto(
     val channel_type: String,
     val channel_id: String,
     val parent_id: String?,
+    val member: DownstreamMemberInfoDto? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -456,6 +457,7 @@ internal data class TypingStopEventDto(
     val channel_type: String,
     val channel_id: String,
     val parent_id: String?,
+    val member: DownstreamMemberInfoDto? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

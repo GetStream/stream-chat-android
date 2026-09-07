@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Poll
@@ -662,6 +663,7 @@ public data class TypingStartEvent(
     override val channelType: String,
     override val channelId: String,
     val parentId: String?,
+    val member: MemberInfo? = null,
 ) : CidEvent(), UserEvent
 
 /**
@@ -676,6 +678,7 @@ public data class TypingStopEvent(
     override val channelType: String,
     override val channelId: String,
     val parentId: String?,
+    val member: MemberInfo? = null,
 ) : CidEvent(), UserEvent
 
 /**
