@@ -117,6 +117,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .padding(it)
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     verticalArrangement = Arrangement.Center,
@@ -272,21 +273,13 @@ class CustomLoginActivity : AppCompatActivity() {
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                    Column(
-                        // The flags outgrew the screen, so they take the space the rest leaves
-                        // over and scroll within it, keeping the login button reachable.
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState()),
-                    ) {
-                        featureFlags.forEach { flag ->
-                            FeatureFlagField(
-                                value = flag.value,
-                                label = flag.label,
-                                description = flag.description,
-                                onValueChange = flag.onValueChange,
-                            )
-                        }
+                    featureFlags.forEach { flag ->
+                        FeatureFlagField(
+                            value = flag.value,
+                            label = flag.label,
+                            description = flag.description,
+                            onValueChange = flag.onValueChange,
+                        )
                     }
 
                     CustomLoginButton(

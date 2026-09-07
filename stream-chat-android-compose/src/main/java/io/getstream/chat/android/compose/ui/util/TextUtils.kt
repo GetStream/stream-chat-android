@@ -193,7 +193,11 @@ internal fun AnnotatedString.annotateStreamEntities(
 ): AnnotatedString {
     val styled = this
     return buildAnnotatedString {
-        append(styled)
+        append(styled.text)
+        addSpanStyles(styled.spanStyles)
+        addParagraphStyles(styled.paragraphStyles)
+        // Everything but the literal markers, which exist only for the pass below.
+        addStringAnnotations(styled.stringAnnotations.filter { it.tag != AnnotationTagLiteral })
         annotateEntities(
             text = styled.text,
             linkStyle = linkStyle,

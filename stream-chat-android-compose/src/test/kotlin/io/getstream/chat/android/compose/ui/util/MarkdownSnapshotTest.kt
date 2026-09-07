@@ -49,6 +49,19 @@ internal class MarkdownSnapshotTest : PaparazziComposeTest {
     )
 
     @Test
+    fun `wrapping content`() = snapshotWithDarkMode {
+        MarkdownText(
+            """
+            - a list item long enough that it wraps onto a second line and shows where that lands
+            - short
+                - a nested item long enough to wrap, to see whether its continuation is indented
+
+            > a quoted line long enough that it wraps, to see whether the marker survives the wrap
+            """.trimIndent(),
+        )
+    }
+
+    @Test
     fun `every supported construct`() = snapshotWithDarkMode {
         MarkdownText(
             """

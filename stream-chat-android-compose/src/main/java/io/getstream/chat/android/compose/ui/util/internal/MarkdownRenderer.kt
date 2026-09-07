@@ -140,10 +140,13 @@ private class Walker(
      * which the line prefix already stands for.
      */
     private fun verbatimBlock(node: ASTNode) {
+        val start = emitter.length
         node.text().toString().split('\n').forEachIndexed { index, line ->
             if (index > 0) emitter.appendLineBreak()
-            emitter.appendText(if (index > 0) QuoteMarkers.replace(line, "") else line)
+            // Appended rather than resolved, so an escape or a reference stays as it was written.
+            emitter.append(if (index > 0) QuoteMarkers.replace(line, "") else line)
         }
+        emitter.addAnnotation(AnnotationTagLiteral, "", start)
     }
 
     private fun heading(node: ASTNode, level: Int) {
@@ -529,14 +532,16 @@ private fun String.toOpenableUrl(): String? {
  * annotated. Otherwise text reading as ordinary prose could open a `javascript:` or `intent://`
  * target, or deep link into the host app.
  */
+private fun String.hasOpenableScheme(): Boolean = OpenableSchemes.any { scheme ->
+    // A destination that is only a scheme has nothing to open, so it is not a link.
+    startsWith(scheme, ignoreCase = true) && length > scheme.length
+}
+
 /** Android matches an intent filter's scheme case-sensitively, so it has to be lowercase. */
 private fun String.lowercaseScheme(): String {
     val separator = indexOf(':')
     return substring(0, separator).lowercase() + substring(separator)
 }
-
-private fun String.hasOpenableScheme(): Boolean =
-    OpenableSchemes.any { startsWith(it, ignoreCase = true) }
 
 /**
  * Both spellings of a hard break: the marker left by trailing spaces or a backslash, and the tag.
