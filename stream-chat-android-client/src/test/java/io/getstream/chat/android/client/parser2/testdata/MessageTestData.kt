@@ -123,7 +123,7 @@ internal object MessageTestData {
             "name": "Favorite color",
             "description": "Choose your favorite color",
             "options": [
-                {"id": "option-1", "text": "Red"},
+                {"id": "option-1", "text": "Red", "option_custom_key": "option-custom-value"},
                 {"id": "option-2", "text": "Blue"}
             ],
             "voting_visibility": "public",
@@ -185,7 +185,9 @@ internal object MessageTestData {
                 }
             ],
             "created_by": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
-            "created_by_id": "user-1"
+            "created_by_id": "user-1",
+            "poll_custom_key": "poll-custom-value",
+            "poll_null_key": null
         },
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T03:00:00.000Z",
