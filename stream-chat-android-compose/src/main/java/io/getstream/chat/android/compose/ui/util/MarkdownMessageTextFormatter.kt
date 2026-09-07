@@ -60,6 +60,7 @@ internal class MarkdownMessageTextFormatter(
             append(markdown.text)
             // The base style goes on first so the markdown spans layered over it win.
             addStyle(baseStyle, start = 0, end = markdown.text.length)
+            addParagraphStyles(markdown.paragraphStyles)
             markdown.spanStyles.forEach { addStyle(it.item, it.start, it.end) }
             markdown.getStringAnnotations(0, markdown.length).forEach {
                 addStringAnnotation(it.tag, it.item, it.start, it.end)

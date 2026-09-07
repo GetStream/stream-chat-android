@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.em
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 
@@ -27,7 +29,9 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
  * Styling for the markdown constructs rendered inside a message bubble.
  *
  * @param listIndent Prepended once per level of list nesting.
+ * @param listHangingIndent How far a wrapped line of a list item clears the marker.
  * @param blockQuotePrefix Prepended to every line of a quote.
+ * @param blockQuoteHangingIndent How far a wrapped line of a quote clears the marker.
  * @param thematicBreak Stands in for a thematic break (`---`).
  */
 @Immutable
@@ -37,7 +41,9 @@ internal data class MarkdownStyles(
     val codeBlock: SpanStyle,
     val blockQuote: SpanStyle,
     val listIndent: String = "    ",
+    val listHangingIndent: TextUnit = 1.em,
     val blockQuotePrefix: String = "┃ ",
+    val blockQuoteHangingIndent: TextUnit = 1.em,
     val thematicBreak: String = "⸻",
 ) {
 
