@@ -19,8 +19,10 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextLayoutResult
@@ -70,7 +72,7 @@ internal class MarkdownRtlSnapshotTest : PaparazziComposeTest {
         }
     }
 
-    @androidx.compose.runtime.Composable
+    @Composable
     private fun MarkdownText(text: String) {
         val formatter = MessageTextFormatter.markdownFormatter(
             autoTranslationEnabled = false,
@@ -79,7 +81,7 @@ internal class MarkdownRtlSnapshotTest : PaparazziComposeTest {
         )
         val message = Message(id = "id", cid = "messaging:cid", text = text, user = User(id = "other"))
         val styled = formatter.format(message, currentUser = User(id = "me"))
-        val layout = mutableStateOf<TextLayoutResult?>(null)
+        val layout = remember(styled) { mutableStateOf<TextLayoutResult?>(null) }
         Text(
             modifier = Modifier
                 .fillMaxWidth()
