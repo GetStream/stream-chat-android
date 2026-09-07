@@ -25,12 +25,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -271,16 +272,22 @@ class CustomLoginActivity : AppCompatActivity() {
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                    featureFlags.forEach { flag ->
-                        FeatureFlagField(
-                            value = flag.value,
-                            label = flag.label,
-                            description = flag.description,
-                            onValueChange = flag.onValueChange,
-                        )
+                    Column(
+                        // The flags outgrew the screen, so they take the space the rest leaves
+                        // over and scroll within it, keeping the login button reachable.
+                        modifier = Modifier
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
+                    ) {
+                        featureFlags.forEach { flag ->
+                            FeatureFlagField(
+                                value = flag.value,
+                                label = flag.label,
+                                description = flag.description,
+                                onValueChange = flag.onValueChange,
+                            )
+                        }
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
 
                     CustomLoginButton(
                         enabled = isLoginButtonEnabled,
