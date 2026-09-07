@@ -46,6 +46,17 @@ public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolea
 }
 
 /**
+ * The text to display for this message, honouring auto-translation and the per-message "show
+ * original text" toggle. [currentUser]'s language selects the translation.
+ */
+internal fun Message.resolveDisplayedText(currentUser: User?, autoTranslationEnabled: Boolean): String {
+    if (!autoTranslationEnabled) return text
+    if (MessageOriginalTranslationsStore.forChannel(cid).shouldShowOriginalText(id)) return text
+    val userLanguage = currentUser?.language ?: return text
+    return getTranslation(userLanguage).ifEmpty { text }
+}
+
+/**
  * Takes the current message and returns the sender display name.
  *
  * @return Sender display name.

@@ -25,12 +25,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -116,6 +117,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
                         .padding(it)
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     verticalArrangement = Arrangement.Center,
@@ -146,6 +148,9 @@ class CustomLoginActivity : AppCompatActivity() {
                     }
                     var isChannelSearchEnabled by remember {
                         mutableStateOf(settings.isChannelSearchEnabled)
+                    }
+                    var isMarkdownEnabled by remember {
+                        mutableStateOf(settings.isMarkdownEnabled)
                     }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
@@ -231,6 +236,15 @@ class CustomLoginActivity : AppCompatActivity() {
                                 settings.isChannelSearchEnabled = it
                             },
                         ),
+                        FeatureFlag(
+                            label = stringResource(R.string.custom_login_flag_markdown_label),
+                            description = stringResource(R.string.custom_login_flag_markdown_description),
+                            value = isMarkdownEnabled,
+                            onValueChange = {
+                                isMarkdownEnabled = it
+                                settings.isMarkdownEnabled = it
+                            },
+                        ),
                     )
 
                     CustomLoginInputField(
@@ -267,8 +281,6 @@ class CustomLoginActivity : AppCompatActivity() {
                             onValueChange = flag.onValueChange,
                         )
                     }
-
-                    Spacer(modifier = Modifier.weight(1f))
 
                     CustomLoginButton(
                         enabled = isLoginButtonEnabled,

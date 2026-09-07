@@ -27,7 +27,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
@@ -88,6 +87,49 @@ public fun interface MessageTextFormatter {
         }
 
         /**
+         * Builds a formatter that renders the message text as markdown, in place of
+         * [defaultFormatter]:
+         * ```
+         * ChatTheme(
+         *     messageTextFormatter = MessageTextFormatter.markdownFormatter(autoTranslationEnabled = true),
+         * )
+         * ```
+         *
+         * Mentions, links and emails are highlighted on top of the rendered markdown. Rendering
+         * changes the text's length, so offsets no longer line up with [Message.text] and this
+         * cannot be combined through [composite], which styles by those offsets. Styling follows
+         * [typography] and [colors].
+         *
+         * A single line break renders as a line break, where the specification collapses it to a
+         * space. Complying would leave two trailing spaces as the only way to write one, and would
+         * reflow every multi-line message that reads correctly as plain text today. The View-based
+         * kit deviates the same way.
+         *
+         * Emphasis, strikethrough, code, headings, lists, quotes and links are rendered. An image
+         * falls back to its alt text, and a table or task list to its source, since none of the
+         * three can be drawn in a styled string.
+         */
+        @Composable
+        public fun markdownFormatter(
+            autoTranslationEnabled: Boolean,
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
+            colors: StreamDesign.Colors = when (isInDarkMode) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
+            },
+        ): MessageTextFormatter = MarkdownMessageTextFormatter(
+            autoTranslationEnabled = autoTranslationEnabled,
+            colors = colors,
+            typography = typography,
+            styles = MarkdownStyles.defaults(typography = typography, colors = colors),
+            textStyle = { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
+            linkStyle = { MessageStyling.linkStyle(typography, colors) },
+            mentionColor = { Color.Unspecified },
+            builder = null,
+        )
+
+        /**
          * Builds a composite message text formatter.
          *
          * @param formatters The list of formatters to use.
@@ -136,23 +178,7 @@ private class DefaultMessageTextFormatter(
 ) : MessageTextFormatter {
 
     override fun format(message: Message, currentUser: User?): AnnotatedString {
-        val displayedText = when (autoTranslationEnabled) {
-            true -> {
-                // If auto-translation is enabled, we check if the message is showing original text.
-                // If it is, we return the original text, otherwise we return the translated text.
-                if (MessageOriginalTranslationsStore.forChannel(message.cid).shouldShowOriginalText(message.id)) {
-                    message.text
-                } else {
-                    // If the message is not showing original text, we check if the current user has a language set.
-                    // If they do, we return the translated text, otherwise we return the original text.
-                    currentUser?.language?.let { userLanguage ->
-                        message.getTranslation(userLanguage).ifEmpty { message.text }
-                    } ?: message.text
-                }
-            }
-
-            else -> message.text
-        }
+        val displayedText = message.resolveDisplayedText(currentUser, autoTranslationEnabled)
         val isMine = message.isMine(currentUser)
         val textColor = textStyle(isMine, message).color
         val linkStyle = linkStyle(isMine)
