@@ -17,21 +17,9 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.PollOptionResponseData
+import io.getstream.chat.android.network.models.PollVoteResponseData
 import java.util.Date
-
-/**
- * Represents the DTO for the option of a poll.
- *
- * @property id The id of the option.
- * @property text The text of the option.
- * @property extraData Any extra data associated with the option.
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamPollOptionDto(
-    val id: String,
-    val text: String,
-    val extraData: Map<String, Any>?,
-) : ExtraDataDto
 
 /**
  * Represents the DTO for a vote in a poll.
@@ -94,12 +82,12 @@ internal data class DownstreamPollDto(
     val enforce_unique_vote: Boolean,
     val id: String,
     val is_closed: Boolean?,
-    val latest_answers: List<DownstreamVoteDto>?,
-    val latest_votes_by_option: Map<String, List<DownstreamVoteDto>>?,
+    val latest_answers: List<PollVoteResponseData>?,
+    val latest_votes_by_option: Map<String, List<PollVoteResponseData>>?,
     val max_votes_allowed: Int?,
     val name: String,
-    val options: List<DownstreamPollOptionDto>,
-    val own_votes: List<DownstreamVoteDto>,
+    val options: List<PollOptionResponseData>,
+    val own_votes: List<PollVoteResponseData>,
     val updated_at: Date,
     val vote_count: Int,
     val vote_counts_by_option: Map<String, Int>?,

@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -1224,14 +1223,16 @@ internal object Mother {
         maxVotesAllowed: Int? = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),
         allowAnswers: Boolean = randomBoolean(),
-        options: List<DownstreamPollOptionDto> = listOf(randomDownstreamOptionDto()),
+        options: List<PollOptionResponseData> = listOf(randomPollOptionResponseData()),
         voteCountsByOption: Map<String, Int> = emptyMap(),
-        latestVotesByOption: Map<String, List<DownstreamVoteDto>> = emptyMap(),
-        latestAnswers: List<DownstreamVoteDto> = listOf(randomAnswerDownstreamVoteDto()),
+        latestVotesByOption: Map<String, List<PollVoteResponseData>> = emptyMap(),
+        latestAnswers: List<PollVoteResponseData> = listOf(
+            randomPollVoteResponseData(isAnswer = true, answerText = randomString()),
+        ),
         createdAt: Date = randomDate(),
         createdBy: DownstreamUserDto = randomDownstreamUserDto(),
         createdById: String = randomString(),
-        ownVotes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
+        ownVotes: List<PollVoteResponseData> = listOf(randomPollVoteResponseData()),
         updatedAt: Date = randomDate(),
         voteCount: Int = randomInt(),
         answersCount: Int = randomInt(),
@@ -1269,16 +1270,6 @@ internal object Mother {
         id = id,
         text = text,
         custom = custom,
-    )
-
-    fun randomDownstreamOptionDto(
-        id: String = randomString(),
-        text: String = randomString(),
-        extraData: Map<String, Any> = randomExtraData(1),
-    ): DownstreamPollOptionDto = DownstreamPollOptionDto(
-        id = id,
-        text = text,
-        extraData = extraData,
     )
 
     fun randomDownstreamVoteDto(
@@ -1415,12 +1406,18 @@ internal object Mother {
         id: String = randomString(),
         pollId: String = randomString(),
         optionId: String = randomString(),
+        isAnswer: Boolean? = null,
+        answerText: String? = null,
+        user: UserResponse? = null,
     ): PollVoteResponseData = PollVoteResponseData(
         id = id,
         pollId = pollId,
         optionId = optionId,
         createdAt = randomDate(),
         updatedAt = randomDate(),
+        isAnswer = isAnswer,
+        answerText = answerText,
+        user = user,
     )
 
     fun randomQueryPollsResponse(

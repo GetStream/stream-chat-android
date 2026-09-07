@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.testdata.OptionTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.PollOptionResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -41,19 +41,19 @@ internal class OptionParsingTest {
 
     private val adapter = OptionAdapter()
 
-    // region DTO path (JSON → DownstreamPollOptionDto → Option)
+    // region Response-model path (JSON → PollOptionResponseData → Option)
 
     @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(OptionTestData.jsonAllFields, DownstreamPollOptionDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
+    fun `Response path - deserializes all fields`() {
+        val dto = parser.fromJson(OptionTestData.jsonAllFields, PollOptionResponseData::class.java)
+        val domain = with(domainMapping) { dto.toOption() }
         assertEquals(OptionTestData.expectedAllFields, domain)
     }
 
     @Test
-    fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(OptionTestData.jsonOptionalFieldsMissing, DownstreamPollOptionDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
+    fun `Response path - deserializes with optional fields missing`() {
+        val dto = parser.fromJson(OptionTestData.jsonOptionalFieldsMissing, PollOptionResponseData::class.java)
+        val domain = with(domainMapping) { dto.toOption() }
         assertEquals(OptionTestData.expectedOptionalFieldsMissing, domain)
     }
 
@@ -78,9 +78,9 @@ internal class OptionParsingTest {
     // region Error message parity
 
     @Test
-    fun `DTO path - throws on missing id`() {
+    fun `Response path - throws on missing id`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(OptionTestData.jsonMissingId, DownstreamPollOptionDto::class.java)
+            parser.fromJson(OptionTestData.jsonMissingId, PollOptionResponseData::class.java)
         }
     }
 
@@ -92,9 +92,9 @@ internal class OptionParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing text`() {
+    fun `Response path - throws on missing text`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(OptionTestData.jsonMissingText, DownstreamPollOptionDto::class.java)
+            parser.fromJson(OptionTestData.jsonMissingText, PollOptionResponseData::class.java)
         }
     }
 

@@ -17,56 +17,17 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
+import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
 internal object PollDtoTestData {
-
-    // DownstreamPollOptionDto Test Data
-
-    @Language("JSON")
-    val downstreamPollOptionJson =
-        """{
-          "id": "option1",
-          "text": "Option 1",
-          "extraData": {
-            "key1": "value1",
-            "key2": true
-          },
-          "customKey": "customValue"
-        }"""
-
-    val downstreamPollOption = DownstreamPollOptionDto(
-        id = "option1",
-        text = "Option 1",
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "key1" to "value1",
-                "key2" to true,
-            ),
-            "customKey" to "customValue",
-        ),
-    )
-
-    @Language("JSON")
-    val downstreamPollOptionJsonWithoutExtraData =
-        """{
-          "id": "option2",
-          "text": "Option 2"
-        }"""
-
-    val downstreamPollOptionWithoutExtraData = DownstreamPollOptionDto(
-        id = "option2",
-        text = "Option 2",
-        extraData = emptyMap(),
-    )
 
     // DownstreamPollDto Test Data
 
@@ -122,10 +83,9 @@ internal object PollDtoTestData {
         max_votes_allowed = 1,
         name = "Poll Name",
         options = listOf(
-            DownstreamPollOptionDto(
+            PollOptionResponseData(
                 id = "option1",
                 text = "Option 1",
-                extraData = emptyMap(),
             ),
         ),
         own_votes = emptyList(),
