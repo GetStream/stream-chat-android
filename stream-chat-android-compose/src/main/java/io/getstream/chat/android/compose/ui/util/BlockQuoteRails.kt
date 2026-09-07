@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.ResolvedTextDirection
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -51,8 +52,15 @@ internal fun Modifier.blockQuoteRails(
         quotes.forEach { quote ->
             val depth = quote.item.toIntOrNull() ?: return@forEach
             // Centred in the space the last level of indent opened up.
-            val left = step * (depth - 1) + (step - width) / 2
+            val offset = step * (depth - 1) + (step - width) / 2
             val lines = laidOut.lineRange(quote) ?: return@forEach
+            // Mirrored for a quote running right to left, since the indent it sits in is
+            // start-relative. Taken from the paragraph rather than the layout direction, because
+            // one message can carry a quote of each direction.
+            val left = when (laidOut.getParagraphDirection(quote.start)) {
+                ResolvedTextDirection.Rtl -> size.width - offset - width
+                else -> offset
+            }
             for (line in lines) {
                 val top = laidOut.getLineTop(line)
                 drawRect(
