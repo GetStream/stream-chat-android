@@ -16,8 +16,13 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
@@ -26,6 +31,13 @@ import java.util.Date
 
 internal class DownstreamChannelDtoAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
+
+    private val domainMapping = DomainMapping(
+        currentUserIdProvider = { null },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+    )
 
     @Test
     fun `Deserialize JSON channel with custom fields`() {
@@ -67,6 +79,16 @@ internal class DownstreamChannelDtoAdapterTest {
         channel.extraData["truncated_at"] shouldBeEqualTo "2020-06-10T11:04:31.588Z"
         channel.extraData["disabled"] shouldBeEqualTo true
         channel.extraData["blocked"] shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Deserialize JSON channel with an explicitly null config`() {
+        val json = ChannelDtoTestData.downstreamJson.replace(ChannelDtoTestData.configJson, "null")
+
+        val channel = parser.fromJson(json, DownstreamChannelDto::class.java)
+
+        channel.config shouldBeEqualTo null
+        with(domainMapping) { channel.toDomain() }.config shouldBeEqualTo Config()
     }
 
     @Test
