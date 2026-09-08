@@ -113,10 +113,7 @@ public fun MessageText(
             ChatTheme.otherMessageTheme.textStyle
         }
     }
-    if (annotations.fastAny {
-            it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
-        }
-    ) {
+    if (annotations.fastAny(AnnotatedString.Range<String>::isClickableTag)) {
         ClickableText(
             modifier = modifier
                 .padding(
@@ -132,7 +129,9 @@ public fun MessageText(
             onLongPress = { onLongItemClick(message) },
             onTextLayout = { layout.value = it },
         ) { position ->
-            val annotation = annotations.firstOrNull { position in it.start..it.end }
+            val annotation = annotations.firstOrNull {
+                it.isClickableTag() && position in it.start until it.end
+            }
             if (annotation?.tag == AnnotationTagMention) {
                 message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onUserMentionClick.invoke(it) }
             } else {
@@ -168,6 +167,19 @@ public fun MessageText(
             onTextLayout = { layout.value = it },
         )
     }
+}
+
+/**
+ * Whether a tap on this annotation should be acted on. A block quote's annotation covers every
+ * character of the quote and carries its depth, so leaving it in would answer a tap inside a quote
+ * with the depth in place of the link, mention or email underneath.
+ */
+internal fun AnnotatedString.Range<String>.isClickableTag(): Boolean = when (tag) {
+    AnnotationTagUrl,
+    AnnotationTagEmail,
+    AnnotationTagMention,
+    -> true
+    else -> false
 }
 
 /**
