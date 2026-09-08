@@ -28,11 +28,14 @@ import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesAroundHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryBanedUsersHash
+import io.getstream.chat.android.client.api2.optimisation.hash.QueryGroupedChannelsHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryMembersHash
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
@@ -150,6 +153,22 @@ internal class DistinctChatApi(
         StreamLog.d(TAG) { "[queryChannels] query: $query, uniqueKey: $uniqueKey" }
         return getOrCreate(uniqueKey) {
             delegate.queryChannels(query)
+        }
+    }
+
+    override fun queryGroupedChannels(
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+    ): Call<GroupedChannels> {
+        val uniqueKey = QueryGroupedChannelsHash(limit, groups, watch, presence).hashCode()
+        StreamLog.d(TAG) {
+            "[queryGroupedChannels] limit: $limit, groups: $groups, watch: $watch, " +
+                "presence: $presence, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.queryGroupedChannels(limit, groups, watch, presence)
         }
     }
 
