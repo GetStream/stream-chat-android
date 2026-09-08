@@ -25,6 +25,8 @@ import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
@@ -80,6 +82,15 @@ internal class DistinctChatApiEnabler(
 
     override fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResult> {
         return getApi().queryChannels(query)
+    }
+
+    override fun queryGroupedChannels(
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+    ): Call<GroupedChannels> {
+        return getApi().queryGroupedChannels(limit, groups, watch, presence)
     }
 
     override fun queryBannedUsers(

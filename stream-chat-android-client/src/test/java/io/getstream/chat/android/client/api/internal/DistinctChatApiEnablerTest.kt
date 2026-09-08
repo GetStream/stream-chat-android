@@ -32,6 +32,7 @@ import io.getstream.chat.android.randomString
 import kotlinx.coroutines.test.TestScope
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
@@ -98,6 +99,7 @@ internal class DistinctChatApiEnablerTest {
             members = members,
         )
         enabler.queryChannel(channelType, channelId, channelRequest)
+        enabler.queryGroupedChannels(limit, null, watch = true, presence = false)
         // then
         verify(distinctApi, times(1)).getRepliesMore(messageId, firstId, limit)
         verify(distinctApi, times(1)).getReplies(messageId, limit)
@@ -133,6 +135,7 @@ internal class DistinctChatApiEnablerTest {
             members = members,
         )
         verify(distinctApi, times(1)).queryChannel(channelType, channelId, channelRequest)
+        verify(distinctApi, times(1)).queryGroupedChannels(limit, null, watch = true, presence = false)
         verifyNoInteractions(api)
     }
 
@@ -173,6 +176,7 @@ internal class DistinctChatApiEnablerTest {
             members = members,
         )
         enabler.queryChannel(channelType, channelId, channelRequest)
+        enabler.queryGroupedChannels(limit, null, watch = true, presence = false)
 
         // then
         verify(api, times(1)).getRepliesMore(messageId, firstId, limit)
@@ -203,6 +207,7 @@ internal class DistinctChatApiEnablerTest {
             members = members,
         )
         verify(api, times(1)).queryChannel(channelType, channelId, channelRequest)
+        verify(api, times(1)).queryGroupedChannels(limit, null, watch = true, presence = false)
         verify(distinctApi, times(0)).getRepliesMore(any(), any(), any())
         verify(distinctApi, times(0)).getReplies(any(), any())
         verify(distinctApi, times(0)).getNewerReplies(any(), any(), any())
@@ -214,5 +219,6 @@ internal class DistinctChatApiEnablerTest {
         verify(distinctApi, times(0)).queryBannedUsers(any(), any(), any(), any(), any(), any(), any(), any())
         verify(distinctApi, times(0)).queryMembers(any(), any(), any(), any(), any(), any(), any())
         verify(distinctApi, times(0)).queryChannel(any(), any(), any())
+        verify(distinctApi, times(0)).queryGroupedChannels(anyOrNull(), anyOrNull(), any(), any())
     }
 }
