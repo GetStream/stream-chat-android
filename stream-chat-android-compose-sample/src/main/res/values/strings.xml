@@ -35,6 +35,8 @@
     <string name="custom_login_hint_user_name">Username (optional)</string>
     <string name="custom_login_enable_adaptive_layout">Enable adaptive layout (Experimental)</string>
     <string name="custom_login_enable_adaptive_layout_description">Adjust layout based on screen sizes</string>
+    <string name="custom_login_enable_markdown">Enable markdown</string>
+    <string name="custom_login_enable_markdown_description">Render message text as markdown</string>
 
     <!-- Pinned Messages -->
     <string name="pinned_messages_title">Pinned Messages</string>

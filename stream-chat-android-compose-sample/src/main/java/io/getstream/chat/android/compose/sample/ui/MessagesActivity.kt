@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
@@ -89,6 +90,7 @@ import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -157,11 +159,27 @@ class MessagesActivity : ComponentActivity() {
         val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
         val attachmentsPickerTabFactories = AttachmentsPickerTabFactories.defaultFactories() +
             LocationPickerTabFactory(viewModelFactory = SharedLocationViewModelFactory(cid))
+        val messageTextFormatter = when {
+            customSettings().isMarkdownEnabled -> MessageTextFormatter.markdownFormatter(
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+            )
+            else -> MessageTextFormatter.defaultFormatter(
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                shapes = shapes,
+                colors = colors,
+            )
+        }
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
             shapes = shapes,
             typography = typography,
+            messageTextFormatter = messageTextFormatter,
             attachmentsPickerTabFactories = attachmentsPickerTabFactories,
             componentFactory = CustomChatComponentFactory(),
             dateFormatter = ChatApp.dateFormatter,

@@ -32,8 +32,13 @@ class CustomSettings(private val context: Context) {
         get() = prefs.getBoolean(SETTINGS_KEY_ADAPTIVE_LAYOUT, false)
         set(value) = prefs.edit().putBoolean(SETTINGS_KEY_ADAPTIVE_LAYOUT, value).apply()
 
+    var isMarkdownEnabled: Boolean
+        get() = prefs.getBoolean(SETTINGS_KEY_MARKDOWN, false)
+        set(value) = prefs.edit().putBoolean(SETTINGS_KEY_MARKDOWN, value).apply()
+
     companion object {
         private const val SETTINGS_KEY_ADAPTIVE_LAYOUT = "adaptive_layout"
+        private const val SETTINGS_KEY_MARKDOWN = "markdown"
     }
 }
 

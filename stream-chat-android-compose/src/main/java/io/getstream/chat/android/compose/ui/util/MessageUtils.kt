@@ -93,3 +93,14 @@ internal fun Message.isEmojiOnlyWithoutBubble(): Boolean = isFewEmoji() &&
  * Max number of emoji without showing it inside a bubble.
  */
 internal const val MaxFullSizeEmoji: Int = 3
+
+/**
+ * The text to display for this message, honouring auto-translation and the per-message "show
+ * original text" toggle. [currentUser]'s language selects the translation.
+ */
+internal fun Message.resolveDisplayedText(currentUser: User?, autoTranslationEnabled: Boolean): String {
+    if (!autoTranslationEnabled) return text
+    if (MessageOriginalTranslationsStore.forChannel(cid).shouldShowOriginalText(id)) return text
+    val userLanguage = currentUser?.language ?: return text
+    return getTranslation(userLanguage).ifEmpty { text }
+}
