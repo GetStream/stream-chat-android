@@ -57,6 +57,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
+import io.getstream.chat.android.client.Mother.randomPollResponseData
 import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
@@ -188,6 +189,21 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `PollResponseData carries its custom data into the domain poll`() {
+        // The helper defaults `custom` to empty, so nothing else in the suite notices if the mapper
+        // stops carrying it. Every other field of Poll is required, so the compiler guards those.
+        val response = randomPollResponseData(
+            custom = mapOf("pollKey" to "pollValue", "absent" to null),
+        )
+        val sut = Fixture().get()
+
+        val poll = with(sut) { response.toDomain() }
+
+        // `absent` is dropped: the domain map does not hold null values.
+        assertEquals(mapOf("pollKey" to "pollValue"), poll.extraData)
+    }
+
+    @Test
     fun `Message should be transformed with optionals properties after it is mapped`() {
         val transformedMessage = randomMessage()
         val messageTransformer = MessageTransformer { transformedMessage }
@@ -202,7 +218,7 @@ internal class DomainMappingTest {
                 quoted_message = randomDownstreamMessageDto(),
                 moderation_details = randomDownstreamModerationDetailsDto(),
                 moderation = randomDownstreamModerationDto(),
-                poll = randomDownstreamPollDto(),
+                poll = randomPollResponseData(),
                 deleted_for_me = randomBoolean(),
             ).toDomain()
         }

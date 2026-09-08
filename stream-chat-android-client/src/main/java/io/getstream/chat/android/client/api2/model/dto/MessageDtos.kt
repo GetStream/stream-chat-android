@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.Attachment
+import io.getstream.chat.android.network.models.PollResponseData
 import java.util.Date
 
 /**
@@ -70,7 +71,7 @@ internal data class DownstreamMessageDto(
     val user: DownstreamUserDto,
     val moderation_details: DownstreamModerationDetailsDto? = null, // Used for Moderation V1
     val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
-    val poll: DownstreamPollDto? = null,
+    val poll: PollResponseData? = null,
     val reminder: DownstreamReminderInfoDto? = null,
     val shared_location: DownstreamLocationDto? = null,
     val member: DownstreamMemberInfoDto? = null,

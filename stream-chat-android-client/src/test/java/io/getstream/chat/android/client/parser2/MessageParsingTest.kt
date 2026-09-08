@@ -416,6 +416,18 @@ internal class MessageParsingTest {
     }
 
     @Test
+    fun `Both paths - poll and option custom inlined by the API land on the domain fields`() {
+        val result = assertBothPaths(MessageTestData.jsonAllFields)
+
+        assertEquals(mapOf("poll_custom_key" to "poll-custom-value"), result.poll?.extraData)
+        assertEquals(
+            mapOf("option_custom_key" to "option-custom-value"),
+            result.poll?.options?.first { it.id == "option-1" }?.extraData,
+        )
+        assertEquals(emptyMap<String, Any>(), result.poll?.options?.first { it.id == "option-2" }?.extraData)
+    }
+
+    @Test
     fun `Both paths - member absent yields a null member`() {
         val result = assertBothPaths(MessageTestData.jsonOptionalFieldsMissing)
         assertEquals(null, result.member)

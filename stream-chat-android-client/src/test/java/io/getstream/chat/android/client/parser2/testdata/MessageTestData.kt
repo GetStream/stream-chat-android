@@ -123,7 +123,7 @@ internal object MessageTestData {
             "name": "Favorite color",
             "description": "Choose your favorite color",
             "options": [
-                {"id": "option-1", "text": "Red"},
+                {"id": "option-1", "text": "Red", "option_custom_key": "option-custom-value"},
                 {"id": "option-2", "text": "Blue"}
             ],
             "voting_visibility": "public",
@@ -141,7 +141,7 @@ internal object MessageTestData {
                         "option_id": "option-1",
                         "created_at": "2020-01-01T02:00:00.000Z",
                         "updated_at": "2020-01-01T02:00:00.000Z",
-                        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+                        "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                         "is_answer": false
                     }
                 ],
@@ -152,7 +152,7 @@ internal object MessageTestData {
                         "option_id": "option-2",
                         "created_at": "2020-01-01T02:00:00.000Z",
                         "updated_at": "2020-01-01T02:00:00.000Z",
-                        "user": {"id": "user-2", "role": "user", "banned": false, "online": true},
+                        "user": {"id": "user-2", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                         "is_answer": false
                     }
                 ]
@@ -164,7 +164,7 @@ internal object MessageTestData {
                     "option_id": "option-1",
                     "created_at": "2020-01-01T02:00:00.000Z",
                     "updated_at": "2020-01-01T02:00:00.000Z",
-                    "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
+                    "user": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                     "is_answer": false
                 }
             ],
@@ -180,12 +180,14 @@ internal object MessageTestData {
                     "answer_text": "Purple",
                     "created_at": "2020-01-01T02:30:00.000Z",
                     "updated_at": "2020-01-01T02:30:00.000Z",
-                    "user": {"id": "user-3", "role": "user", "banned": false, "online": true},
+                    "user": {"id": "user-3", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
                     "is_answer": true
                 }
             ],
-            "created_by": {"id": "user-1", "role": "user", "banned": false, "online": true},
-            "created_by_id": "user-1"
+            "created_by": {"id": "user-1", "role": "user", "banned": false, "online": true, "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z", "language": "en"},
+            "created_by_id": "user-1",
+            "poll_custom_key": "poll-custom-value",
+            "poll_null_key": null
         },
         "created_at": "2020-01-01T00:00:00.000Z",
         "updated_at": "2020-01-01T03:00:00.000Z",

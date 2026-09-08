@@ -403,7 +403,7 @@ internal class DomainMapping(
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
         updated_at,
-        poll?.updated_at,
+        poll?.updatedAt,
     ).maxBy { it.time }
 
     /**

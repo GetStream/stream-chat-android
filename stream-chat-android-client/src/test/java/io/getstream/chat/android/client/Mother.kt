@@ -333,7 +333,7 @@ internal object Mother {
         user: DownstreamUserDto = randomDownstreamUserDto(),
         moderation_details: DownstreamModerationDetailsDto? = null,
         moderation: DownstreamModerationDto? = null,
-        poll: DownstreamPollDto? = null,
+        poll: PollResponseData? = null,
         member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
         deleted_for_me: Boolean? = null,
         extraData: Map<String, Any> = emptyMap(),
