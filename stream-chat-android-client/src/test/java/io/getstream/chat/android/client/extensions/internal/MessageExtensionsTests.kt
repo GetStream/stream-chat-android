@@ -701,4 +701,72 @@ internal class MessageExtensionsTests {
         @Suppress("DEPRECATION")
         result.channelRole shouldBeEqualTo null
     }
+
+    @Test
+    fun `hasOutdatedMemberInfo should report a mentioned user whose snapshot changed`() {
+        val message = randomMessage(
+            mentionedChannelMembers = mapOf("leandro" to MemberInfo(extraData = mapOf("nickname" to "old"))),
+        )
+
+        message.hasOutdatedMemberInfo("leandro", MemberInfo(extraData = mapOf("nickname" to "new"))) shouldBeEqualTo
+            true
+    }
+
+    @Test
+    fun `hasOutdatedMemberInfo should ignore a user the backend never projected`() {
+        val message = randomMessage(mentionedChannelMembers = emptyMap(), member = null, replyTo = null)
+
+        message.hasOutdatedMemberInfo("leandro", MemberInfo(extraData = mapOf("nickname" to "new"))) shouldBeEqualTo
+            false
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should replace the entry of a mentioned user`() {
+        val refreshed = MemberInfo(extraData = mapOf("nickname" to "new"))
+        val message = randomMessage(
+            mentionedChannelMembers = mapOf(
+                "leandro" to MemberInfo(extraData = mapOf("nickname" to "old")),
+                "thierry" to MemberInfo(extraData = mapOf("nickname" to "untouched")),
+            ),
+        )
+
+        val result = message.withRefreshedMemberInfo("leandro", refreshed)
+
+        result.mentionedChannelMembers shouldBeEqualTo mapOf(
+            "leandro" to refreshed,
+            "thierry" to MemberInfo(extraData = mapOf("nickname" to "untouched")),
+        )
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should drop the entry when the member info is gone`() {
+        val message = randomMessage(
+            mentionedChannelMembers = mapOf("leandro" to MemberInfo(extraData = mapOf("nickname" to "old"))),
+        )
+
+        message.withRefreshedMemberInfo("leandro", null).mentionedChannelMembers shouldBeEqualTo emptyMap()
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should not add a user the backend never projected`() {
+        val message = randomMessage(mentionedChannelMembers = emptyMap(), member = null)
+
+        val result = message.withRefreshedMemberInfo("leandro", MemberInfo(extraData = mapOf("nickname" to "new")))
+
+        result.mentionedChannelMembers shouldBeEqualTo emptyMap()
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should refresh the mentions of the quoted message too`() {
+        val refreshed = MemberInfo(extraData = mapOf("nickname" to "new"))
+        val quoted = randomMessage(
+            mentionedChannelMembers = mapOf("leandro" to MemberInfo(extraData = mapOf("nickname" to "old"))),
+            replyTo = null,
+        )
+        val message = randomMessage(replyTo = quoted, mentionedChannelMembers = emptyMap())
+
+        val result = message.withRefreshedMemberInfo("leandro", refreshed)
+
+        result.replyTo?.mentionedChannelMembers shouldBeEqualTo mapOf("leandro" to refreshed)
+    }
 }
