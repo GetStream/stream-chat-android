@@ -22,7 +22,6 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.PollOptionInput
@@ -45,24 +44,6 @@ internal object DownstreamPollDtoAdapter : CustomObjectDtoAdapter<DownstreamPoll
 
     @ToJson
     fun toJson(jsonWriter: JsonWriter, value: DownstreamPollDto): Unit = error("Can't convert this to Json")
-}
-
-/**
- * Deserializer for [DownstreamPollOptionDto] that handles the
- * [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto] implementation.
- */
-internal object DownstreamPollOptionDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamPollOptionDto>(DownstreamPollOptionDto::class) {
-
-    @FromJson
-    fun fromJson(
-        jsonReader: JsonReader,
-        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        optionAdapter: JsonAdapter<DownstreamPollOptionDto>,
-    ): DownstreamPollOptionDto? = parseWithExtraData(jsonReader, mapAdapter, optionAdapter)
-
-    @ToJson
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamPollOptionDto): Unit = error("Can't convert this to Json")
 }
 
 // The generated poll write-request models carry custom data in a `custom` field that must be

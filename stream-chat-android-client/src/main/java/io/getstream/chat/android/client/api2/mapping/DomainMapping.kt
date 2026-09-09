@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -654,11 +653,11 @@ internal class DomainMapping(
         val votes = latest_votes_by_option
             ?.values
             ?.flatten()
-            ?.filter { it.is_answer != true }
+            ?.filter { it.isAnswer != true }
             ?.map { it.toDomain() } ?: emptyList()
         val ownVotes = (
             own_votes
-                .filter { it.is_answer != true }
+                .filter { it.isAnswer != true }
                 .map { it.toDomain() } +
                 votes.filter { it.user?.id == ownUserId }
             )
@@ -672,7 +671,7 @@ internal class DomainMapping(
             id = id,
             name = name,
             description = description,
-            options = options.map { it.toDomain() },
+            options = options.map { it.toOption() },
             votingVisibility = voting_visibility.toVotingVisibility(),
             enforceUniqueVote = enforce_unique_vote,
             maxVotesAllowed = max_votes_allowed,
@@ -778,8 +777,7 @@ internal class DomainMapping(
     /**
      * Transforms [PollOptionResponseData] to [Option].
      *
-     * Not named `toDomain` because that maps to [PollOption], mirroring the hand-written
-     * [DownstreamPollOptionDto.toDomain] / [DownstreamPollOptionDto.toPollOption] pair.
+     * Not named `toDomain` because that name maps to [PollOption] instead.
      */
     internal fun PollOptionResponseData.toOption(): Option = Option(
         id = id,
@@ -794,27 +792,6 @@ internal class DomainMapping(
         id = id,
         text = text,
         extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
-    )
-
-    /**
-     * Transforms [DownstreamPollOptionDto] to [Option]
-     *
-     * @return Option
-     */
-    internal fun DownstreamPollOptionDto.toDomain(): Option = Option(
-        id = id,
-        text = text,
-        extraData = extraData ?: emptyMap(),
-    )
-
-    /**
-     * Transforms [DownstreamPollOptionDto] to [PollOption].
-     * Note: Not following the naming convention because of clash with the existing [DownstreamPollOptionDto.toDomain].
-     */
-    internal fun DownstreamPollOptionDto.toPollOption(): PollOption = PollOption(
-        id = id,
-        text = text,
-        extraData = extraData ?: emptyMap(),
     )
 
     /**

@@ -20,7 +20,6 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.Mother.randomAnswerDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomAppResponseFields
 import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomAttachmentDto
@@ -43,7 +42,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
-import io.getstream.chat.android.client.Mother.randomDownstreamOptionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
@@ -53,10 +51,11 @@ import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
-import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
+import io.getstream.chat.android.client.Mother.randomPollOptionResponseData
 import io.getstream.chat.android.client.Mother.randomPollResponseData
+import io.getstream.chat.android.client.Mother.randomPollVoteResponseData
 import io.getstream.chat.android.client.Mother.randomPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
@@ -1035,12 +1034,12 @@ internal class DomainMappingTest {
     @Suppress("LongMethod")
     fun `DownstreamPollDto is correctly mapped to Poll`() {
         val options = listOf(
-            randomDownstreamOptionDto(),
-            randomDownstreamOptionDto(),
+            randomPollOptionResponseData(custom = mapOf("optionKey" to "optionValue")),
+            randomPollOptionResponseData(),
         )
-        val ownVote = randomDownstreamVoteDto()
-        val otherVote = randomDownstreamVoteDto()
-        val answer = randomAnswerDownstreamVoteDto()
+        val ownVote = randomPollVoteResponseData(user = randomUserResponse())
+        val otherVote = randomPollVoteResponseData(user = randomUserResponse())
+        val answer = randomPollVoteResponseData(isAnswer = true, answerText = randomString())
         val pollDto = randomDownstreamPollDto(
             options = options,
             ownVotes = listOf(ownVote),
@@ -1056,9 +1055,10 @@ internal class DomainMappingTest {
             id = pollDto.id,
             name = pollDto.name,
             description = pollDto.description,
-            options = options.map {
-                Option(it.id, it.text, it.extraData ?: emptyMap())
-            },
+            options = listOf(
+                Option(options[0].id, options[0].text, mapOf("optionKey" to "optionValue")),
+                Option(options[1].id, options[1].text, emptyMap()),
+            ),
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = pollDto.enforce_unique_vote,
             maxVotesAllowed = pollDto.max_votes_allowed ?: 1,
@@ -1069,28 +1069,28 @@ internal class DomainMappingTest {
             votes = listOf(
                 Vote(
                     id = ownVote.id,
-                    pollId = ownVote.poll_id,
-                    optionId = ownVote.option_id,
-                    createdAt = ownVote.created_at,
-                    updatedAt = ownVote.updated_at,
+                    pollId = ownVote.pollId,
+                    optionId = ownVote.optionId,
+                    createdAt = ownVote.createdAt,
+                    updatedAt = ownVote.updatedAt,
                     user = with(sut) { ownVote.user?.toDomain() },
                 ),
                 Vote(
                     id = otherVote.id,
-                    pollId = otherVote.poll_id,
-                    optionId = otherVote.option_id,
-                    createdAt = otherVote.created_at,
-                    updatedAt = otherVote.updated_at,
+                    pollId = otherVote.pollId,
+                    optionId = otherVote.optionId,
+                    createdAt = otherVote.createdAt,
+                    updatedAt = otherVote.updatedAt,
                     user = with(sut) { otherVote.user?.toDomain() },
                 ),
             ),
             ownVotes = listOf(
                 Vote(
                     id = ownVote.id,
-                    pollId = ownVote.poll_id,
-                    optionId = ownVote.option_id,
-                    createdAt = ownVote.created_at,
-                    updatedAt = ownVote.updated_at,
+                    pollId = ownVote.pollId,
+                    optionId = ownVote.optionId,
+                    createdAt = ownVote.createdAt,
+                    updatedAt = ownVote.updatedAt,
                     user = with(sut) { ownVote.user?.toDomain() },
                 ),
             ),
@@ -1101,10 +1101,10 @@ internal class DomainMappingTest {
             answers = listOf(
                 Answer(
                     id = answer.id,
-                    pollId = answer.poll_id,
-                    text = answer.answer_text ?: "",
-                    createdAt = answer.created_at,
-                    updatedAt = answer.updated_at,
+                    pollId = answer.pollId,
+                    text = answer.answerText ?: "",
+                    createdAt = answer.createdAt,
+                    updatedAt = answer.updatedAt,
                     user = with(sut) { answer.user?.toDomain() },
                 ),
             ),
