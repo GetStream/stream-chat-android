@@ -814,7 +814,6 @@ private fun createUserJsonString() =
         {
             "id": "bender",
             "role": "user",
-            "language": "en",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
             "last_active": "2020-06-29T06:14:28.000Z",

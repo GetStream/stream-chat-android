@@ -382,7 +382,7 @@ internal class DomainMapping(
         )
 
     /**
-     * Maps the reactions of one message, dropping any the response attributes to another message.
+     * Maps the reactions of one message, dropping any that the response attributes to another message.
      */
     @StreamHandsOff(
         reason = "Backend response is including wrong reactions for the message, so we need to filter them manually.",

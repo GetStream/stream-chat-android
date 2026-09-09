@@ -5536,6 +5536,7 @@ internal constructor(
             DownstreamReactionDto::class.members
             AttachmentDto::class.members
             io.getstream.chat.android.network.models.Attachment::class.members
+            io.getstream.chat.android.network.models.ReactionResponse::class.members
         }
     }
 

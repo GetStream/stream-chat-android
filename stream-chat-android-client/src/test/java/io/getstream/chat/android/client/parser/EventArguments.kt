@@ -187,7 +187,6 @@ internal object EventArguments {
     private val user = User(
         id = "bender",
         role = "user",
-        language = "en",
         invisible = false,
         banned = false,
         online = true,
