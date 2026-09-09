@@ -43,7 +43,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetails
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
@@ -1032,7 +1031,7 @@ internal class DomainMappingTest {
 
     @Test
     @Suppress("LongMethod")
-    fun `DownstreamPollDto is correctly mapped to Poll`() {
+    fun `PollResponseData is correctly mapped to Poll`() {
         val options = listOf(
             randomPollOptionResponseData(custom = mapOf("optionKey" to "optionValue")),
             randomPollOptionResponseData(),
@@ -1040,7 +1039,8 @@ internal class DomainMappingTest {
         val ownVote = randomPollVoteResponseData(user = randomUserResponse())
         val otherVote = randomPollVoteResponseData(user = randomUserResponse())
         val answer = randomPollVoteResponseData(isAnswer = true, answerText = randomString())
-        val pollDto = randomDownstreamPollDto(
+        val pollDto = randomPollResponseData(
+            custom = mapOf("pollKey" to "pollValue"),
             options = options,
             ownVotes = listOf(ownVote),
             latestAnswers = listOf(answer),
@@ -1060,12 +1060,12 @@ internal class DomainMappingTest {
                 Option(options[1].id, options[1].text, emptyMap()),
             ),
             votingVisibility = VotingVisibility.PUBLIC,
-            enforceUniqueVote = pollDto.enforce_unique_vote,
-            maxVotesAllowed = pollDto.max_votes_allowed ?: 1,
-            allowUserSuggestedOptions = pollDto.allow_user_suggested_options,
-            allowAnswers = pollDto.allow_answers,
-            voteCount = pollDto.vote_count,
-            voteCountsByOption = pollDto.vote_counts_by_option ?: emptyMap(),
+            enforceUniqueVote = pollDto.enforceUniqueVote,
+            maxVotesAllowed = pollDto.maxVotesAllowed,
+            allowUserSuggestedOptions = pollDto.allowUserSuggestedOptions,
+            allowAnswers = pollDto.allowAnswers,
+            voteCount = pollDto.voteCount,
+            voteCountsByOption = pollDto.voteCountsByOption,
             votes = listOf(
                 Vote(
                     id = ownVote.id,
@@ -1094,10 +1094,10 @@ internal class DomainMappingTest {
                     user = with(sut) { ownVote.user?.toDomain() },
                 ),
             ),
-            createdAt = pollDto.created_at,
-            updatedAt = pollDto.updated_at,
-            closed = pollDto.is_closed ?: false,
-            answersCount = pollDto.answers_count,
+            createdAt = pollDto.createdAt,
+            updatedAt = pollDto.updatedAt,
+            closed = pollDto.isClosed ?: false,
+            answersCount = pollDto.answersCount,
             answers = listOf(
                 Answer(
                     id = answer.id,
@@ -1108,8 +1108,8 @@ internal class DomainMappingTest {
                     user = with(sut) { answer.user?.toDomain() },
                 ),
             ),
-            createdBy = with(sut) { pollDto.created_by?.toDomain() },
-            extraData = pollDto.extraData ?: emptyMap(),
+            createdBy = with(sut) { pollDto.createdBy?.toDomain() },
+            extraData = mapOf("pollKey" to "pollValue"),
         )
         assertEquals(expected, poll)
     }
