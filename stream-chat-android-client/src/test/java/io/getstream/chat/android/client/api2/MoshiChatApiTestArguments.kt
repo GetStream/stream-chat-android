@@ -789,7 +789,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 MuteUserResponse(
-                    Mother.randomDownstreamMuteDto(),
+                    Mother.randomUserMuteResponse(),
                     Mother.randomDownstreamUserDto(),
                 ),
             ).toRetrofitCall(),

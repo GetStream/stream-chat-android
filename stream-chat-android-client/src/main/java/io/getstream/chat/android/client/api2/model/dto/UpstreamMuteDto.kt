@@ -20,9 +20,9 @@ import com.squareup.moshi.JsonClass
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
-internal data class DownstreamChannelMuteDto(
-    val user: DownstreamUserDto?,
-    val channel: DownstreamChannelDto?,
+internal data class UpstreamMuteDto(
+    val user: UpstreamUserDto?,
+    val target: UpstreamUserDto?,
     val created_at: Date,
     val updated_at: Date,
     val expires: Date?,

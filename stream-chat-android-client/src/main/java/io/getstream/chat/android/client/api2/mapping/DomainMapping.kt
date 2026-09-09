@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
@@ -34,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
@@ -529,30 +527,6 @@ internal class DomainMapping(
             sumScore = sumScores,
             firstReactionAt = firstReactionAt,
             lastReactionAt = lastReactionAt,
-        )
-
-    /**
-     * Transforms [DownstreamMuteDto] to [Mute].
-     */
-    internal fun DownstreamMuteDto.toDomain(): Mute =
-        Mute(
-            user = user?.toDomain(),
-            target = target?.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            expires = expires,
-        )
-
-    /**
-     * Transforms [DownstreamChannelMuteDto] into [ChannelMute]
-     */
-    internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
-        ChannelMute(
-            user = user?.toDomain(),
-            channel = channel?.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            expires = expires,
         )
 
     /**

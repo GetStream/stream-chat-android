@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
-import io.getstream.chat.android.client.Mother.randomDownstreamChannelMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelUserRead
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftMessageDto
@@ -40,7 +39,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMemberDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
-import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
@@ -618,40 +616,6 @@ internal class DomainMappingTest {
             emojiCode = downstreamReactionDto.emoji_code,
         )
         assertEquals(expected, reaction)
-    }
-
-    @Test
-    fun `DownstreamMuteDto is correctly mapped to Mute`() {
-        val downstreamMuteDto = randomDownstreamMuteDto()
-        val sut = Fixture().get()
-        val mute = with(sut) {
-            downstreamMuteDto.toDomain()
-        }
-        val expected = Mute(
-            user = with(sut) { downstreamMuteDto.user?.toDomain() },
-            target = with(sut) { downstreamMuteDto.target?.toDomain() },
-            createdAt = downstreamMuteDto.created_at,
-            updatedAt = downstreamMuteDto.updated_at,
-            expires = downstreamMuteDto.expires,
-        )
-        assertEquals(expected, mute)
-    }
-
-    @Test
-    fun `DownstreamChannelMuteDto is correctly mapped to ChannelMute`() {
-        val downstreamMuteDto = randomDownstreamChannelMuteDto()
-        val sut = Fixture().get()
-        val mute = with(sut) {
-            downstreamMuteDto.toDomain()
-        }
-        val expected = ChannelMute(
-            user = with(sut) { downstreamMuteDto.user?.toDomain() },
-            channel = with(sut) { downstreamMuteDto.channel?.toDomain() },
-            createdAt = downstreamMuteDto.created_at,
-            updatedAt = downstreamMuteDto.updated_at,
-            expires = downstreamMuteDto.expires,
-        )
-        assertEquals(expected, mute)
     }
 
     @Test
