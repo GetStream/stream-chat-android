@@ -307,29 +307,39 @@ private fun AnnotatedString.Builder.tagUser(
     skipRanges: List<IntRange> = emptyList(),
 ) {
     mentionedUserNames.forEach { userName ->
-        val start = text.indexOf(userName)
-        val end = start + userName.length
+        if (userName.isEmpty()) return@forEach
+        // Every occurrence, so skipping one inside a code span still leaves the others tappable.
+        mentionTokenRegex(userName).findAll(text).forEach { match ->
+            val start = match.range.first
+            val end = match.range.last + 1
+            if (skipRanges.any { start <= it.last && it.first < end }) return@forEach
 
-        if (start < 0) return@forEach
-        if (skipRanges.any { start <= it.last && it.first < end }) return@forEach
+            addStyle(
+                style = SpanStyle(
+                    color = mentionsColor,
+                    fontWeight = FontWeight.Bold,
+                ),
+                start = start,
+                end = end,
+            )
 
-        addStyle(
-            style = SpanStyle(
-                color = mentionsColor,
-                fontWeight = FontWeight.Bold,
-            ),
-            start = start - 1, // -1 to include the @ symbol
-            end = end,
-        )
-
-        addStringAnnotation(
-            tag = AnnotationTagMention,
-            annotation = userName,
-            start = start - 1, // -1 to include the @ symbol
-            end = end,
-        )
+            addStringAnnotation(
+                tag = AnnotationTagMention,
+                annotation = userName,
+                start = start,
+                end = end,
+            )
+        }
     }
 }
+
+/**
+ * Matches the `@<display>` token, the `@` included, so the range never has to be walked back past
+ * the start of the text. The boundaries use Unicode-aware lookaround, because Java's word-boundary
+ * classes only recognise ASCII.
+ */
+private fun mentionTokenRegex(display: String): Regex =
+    Regex("(?<![\\p{L}\\p{N}_])@${Regex.escape(display)}(?![\\p{L}\\p{N}_])")
 
 private fun AnnotatedString.Builder.tagMentions(
     text: String,

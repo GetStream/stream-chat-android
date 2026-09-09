@@ -401,6 +401,23 @@ internal class MarkdownRendererTest {
 }
 
 /** Sorted, because a quote is marked once its content is walked, so the innermost lands first. */
+/**
+ * The rendered text with a line feed wherever a paragraph starts one, so an expectation can show
+ * the lines a list renders as, which it expresses as paragraph breaks rather than characters.
+ */
+private fun AnnotatedString.textWithParagraphBreaks(): String {
+    val starts = paragraphStyles
+        .map { it.start }
+        .filterTo(mutableSetOf()) { it > 0 }
+    if (starts.isEmpty()) return text
+    return buildString(text.length + starts.size) {
+        text.forEachIndexed { index, character ->
+            if (index in starts) append('\n')
+            append(character)
+        }
+    }
+}
+
 private fun AnnotatedString.quoteDepths(): List<String> =
     getStringAnnotations(AnnotationTagBlockQuote, 0, length).map { it.item }.sorted()
 

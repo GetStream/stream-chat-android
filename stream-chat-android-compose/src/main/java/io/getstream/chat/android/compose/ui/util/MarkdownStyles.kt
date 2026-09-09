@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -53,30 +55,43 @@ internal data class MarkdownStyles(
         /** Shared with whatever draws the rail, so the two agree on where it goes. */
         val BlockQuoteIndent: TextUnit = 1.em
 
+        /**
+         * Tints whatever the code sits on rather than naming a colour, because a message renders
+         * on one of two bubble colours per theme and no single surface token is visible on both.
+         */
+        private fun StreamColors.codeBackground(): Color =
+            textLowEmphasis.copy(alpha = CodeBackgroundAlpha)
+
+        private const val CodeBackgroundAlpha = 0.25f
+
         /** Builds the default styling from the design system. */
         @Composable
         fun defaults(
             typography: StreamTypography = ChatTheme.typography,
             colors: StreamColors = ChatTheme.colors,
         ): MarkdownStyles = MarkdownStyles(
-            // Four sizes for six levels, so two pairs collide. The fourth stays at body size,
-            // as it does on the web, and the sixth is set apart by colour. Every level is
-            // weighted above body text, which is what carries a heading where sizes run out.
+            // Three sizes for six levels, so two pairs collide. Bubble text is already
+            // `bodyBold`, so any level at or below its size has to be heavier than it to read as
+            // a heading at all: the fourth sits at body size as it does on the web, and the last
+            // two below it, the sixth set apart by colour as well.
             headings = listOf(
                 typography.title1.toSpanStyle(),
                 typography.title3Bold.toSpanStyle(),
-                typography.bodyBold.toSpanStyle(),
-                typography.bodyBold.toSpanStyle(),
-                typography.footnoteBold.toSpanStyle(),
-                typography.footnoteBold.toSpanStyle().copy(color = colors.textLowEmphasis),
+                typography.title3Bold.toSpanStyle(),
+                typography.bodyBold.toSpanStyle().copy(fontWeight = FontWeight.Bold),
+                typography.footnoteBold.toSpanStyle().copy(fontWeight = FontWeight.Bold),
+                typography.footnoteBold.toSpanStyle().copy(
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textLowEmphasis,
+                ),
             ),
             codeSpan = SpanStyle(
                 fontFamily = FontFamily.Monospace,
-                background = colors.inputBackground,
+                background = colors.codeBackground(),
             ),
             codeBlock = SpanStyle(
                 fontFamily = FontFamily.Monospace,
-                background = colors.inputBackground,
+                background = colors.codeBackground(),
             ),
             blockQuote = SpanStyle(color = colors.textLowEmphasis),
         )

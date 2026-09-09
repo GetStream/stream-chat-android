@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -82,9 +83,12 @@ internal class MarkdownRtlSnapshotTest : PaparazziComposeTest {
         val message = Message(id = "id", cid = "messaging:cid", text = text, user = User(id = "other"))
         val styled = formatter.format(message, currentUser = User(id = "me"))
         val layout = remember(styled) { mutableStateOf<TextLayoutResult?>(null) }
+        // The style and background a message actually renders on, so the snapshot shows the
+        // heading levels against the same base weight the bubble gives paragraph text.
         Text(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(ChatTheme.otherMessageTheme.backgroundColor)
                 .padding(12.dp)
                 .blockQuoteRails(
                     annotations = styled.getStringAnnotations(0, styled.length),
@@ -93,7 +97,7 @@ internal class MarkdownRtlSnapshotTest : PaparazziComposeTest {
                     indentPerDepth = MarkdownStyles.BlockQuoteIndent,
                 ),
             text = styled,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.otherMessageTheme.textStyle,
             onTextLayout = { layout.value = it },
         )
     }

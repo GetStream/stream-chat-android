@@ -73,6 +73,43 @@ internal class MarkdownMessageTextFormatterTest {
     }
 
     @Test
+    fun `highlights a mention outside a code span when the same name is inside one`() {
+        val mentioned = User(id = "u1", name = "Martin")
+        val message = message(text = "`@Martin` ping @Martin", mentionedUsers = listOf(mentioned))
+
+        val result = formatter.format(message, currentUser)
+
+        result.text shouldBeEqualTo "@Martin ping @Martin"
+        // The code span is skipped, the mention after it is not.
+        result.getStringAnnotations(UserMentionTag, 0, result.length)
+            .map { it.start to it.end } shouldBeEqualTo listOf(13 to 20)
+    }
+
+    @Test
+    fun `highlights every occurrence of a mention`() {
+        val mentioned = User(id = "u1", name = "Martin")
+        val message = message(text = "@Martin and @Martin", mentionedUsers = listOf(mentioned))
+
+        val result = formatter.format(message, currentUser)
+
+        result.getStringAnnotations(UserMentionTag, 0, result.length)
+            .map { it.start to it.end } shouldBeEqualTo listOf(0 to 7, 12 to 19)
+    }
+
+    @Test
+    fun `does not highlight a name that markdown moved to the start of the text`() {
+        val mentioned = User(id = "u1", name = "Martin")
+        val message = message(text = "*Martin* said hi @Martin", mentionedUsers = listOf(mentioned))
+
+        val result = formatter.format(message, currentUser)
+
+        result.text shouldBeEqualTo "Martin said hi @Martin"
+        // Only the token carrying the @, so the range never runs back past the start of the text.
+        result.getStringAnnotations(UserMentionTag, 0, result.length)
+            .map { it.start to it.end } shouldBeEqualTo listOf(15 to 22)
+    }
+
+    @Test
     fun `linkifies a bare url after markdown has been rendered`() {
         val result = formatter.format(message(text = "see *this*: https://getstream.io"), currentUser)
 
