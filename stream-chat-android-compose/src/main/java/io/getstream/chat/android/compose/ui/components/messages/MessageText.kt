@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -42,6 +43,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
 import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
+import io.getstream.chat.android.compose.ui.util.MarkdownStyles
+import io.getstream.chat.android.compose.ui.util.blockQuoteRails
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
@@ -89,7 +92,16 @@ public fun MessageText(
         }
     }
 
-    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
+    val annotations = styledText.getStringAnnotations(0, styledText.length)
+
+    // Read inside the draw pass, which runs after the layout that sets it.
+    val layout = remember(styledText) { mutableStateOf<TextLayoutResult?>(null) }
+    val quoteRails = Modifier.blockQuoteRails(
+        annotations = annotations,
+        layout = layout::value,
+        color = ChatTheme.colors.textLowEmphasis,
+        indentPerDepth = MarkdownStyles.BlockQuoteIndent,
+    )
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
@@ -101,10 +113,7 @@ public fun MessageText(
             ChatTheme.otherMessageTheme.textStyle
         }
     }
-    if (annotations.fastAny {
-            it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
-        }
-    ) {
+    if (annotations.fastAny(AnnotatedString.Range<String>::isClickableTag)) {
         ClickableText(
             modifier = modifier
                 .padding(
@@ -113,21 +122,30 @@ public fun MessageText(
                     top = 8.dp,
                     bottom = 8.dp,
                 )
-                .testTag("Stream_MessageClickableText"),
+                .testTag("Stream_MessageClickableText")
+                .then(quoteRails),
             text = styledText,
             style = style,
             onLongPress = { onLongItemClick(message) },
+            onTextLayout = { layout.value = it },
         ) { position ->
-            val annotation = annotations.firstOrNull { position in it.start..it.end }
+            val annotation = annotations.firstOrNull {
+                it.isClickableTag() && position in it.start until it.end
+            }
             if (annotation?.tag == AnnotationTagMention) {
                 message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onUserMentionClick.invoke(it) }
             } else {
                 val targetUrl = annotation?.item
                 if (!targetUrl.isNullOrEmpty()) {
                     onLinkClick?.invoke(message, targetUrl) ?: run {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)),
-                        )
+                        try {
+                            context.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)),
+                            )
+                        } catch (_: ActivityNotFoundException) {
+                            // Nothing guarantees an app exists for the link's scheme, and a tap on
+                            // one must not bring the message list down.
+                        }
                     }
                 }
             }
@@ -142,11 +160,26 @@ public fun MessageText(
                     vertical = verticalPadding,
                 )
                 .clipToBounds()
-                .testTag("Stream_MessageText"),
+                .testTag("Stream_MessageText")
+                .then(quoteRails),
             text = styledText,
             style = style,
+            onTextLayout = { layout.value = it },
         )
     }
+}
+
+/**
+ * Whether a tap on this annotation should be acted on. A block quote's annotation covers every
+ * character of the quote and carries its depth, so leaving it in would answer a tap inside a quote
+ * with the depth in place of the link, mention or email underneath.
+ */
+internal fun AnnotatedString.Range<String>.isClickableTag(): Boolean = when (tag) {
+    AnnotationTagUrl,
+    AnnotationTagEmail,
+    AnnotationTagMention,
+    -> true
+    else -> false
 }
 
 /**

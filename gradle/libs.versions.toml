@@ -62,6 +62,7 @@ ksp = "2.0.21-1.0.28"
 landscapist = "2.4.7"
 leakCanary = "2.4"
 macroBenchmark = "1.2.3"
+markdown = "0.7.3"
 markwon = "4.6.2"
 materialComponents = "1.12.0"
 mockitoKotlin = "5.4.0"
@@ -182,6 +183,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines"}
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary"}
+markdown = { module = "org.jetbrains:markdown", version.ref = "markdown"}
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon"}
 markwon-ext-strikethrough = { module = "io.noties.markwon:ext-strikethrough", version.ref = "markwon"}
 markwon-linkify = { module = "io.noties.markwon:linkify", version.ref = "markwon"}

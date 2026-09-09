@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -125,6 +126,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     var userTokenText by remember { mutableStateOf("") }
                     var userNameText by remember { mutableStateOf("") }
                     var isAdaptiveLayoutEnabled by remember { mutableStateOf(settings.isAdaptiveLayoutEnabled) }
+                    var isMarkdownEnabled by remember { mutableStateOf(settings.isMarkdownEnabled) }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
@@ -132,6 +134,10 @@ class CustomLoginActivity : AppCompatActivity() {
 
                     LaunchedEffect(isAdaptiveLayoutEnabled) {
                         settings.isAdaptiveLayoutEnabled = isAdaptiveLayoutEnabled
+                    }
+
+                    LaunchedEffect(isMarkdownEnabled) {
+                        settings.isMarkdownEnabled = isMarkdownEnabled
                     }
 
                     CustomLoginInputField(
@@ -160,9 +166,18 @@ class CustomLoginActivity : AppCompatActivity() {
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
-                    EnableAdaptiveScreenField(
+                    FeatureFlagField(
+                        title = R.string.custom_login_enable_adaptive_layout,
+                        description = R.string.custom_login_enable_adaptive_layout_description,
                         value = isAdaptiveLayoutEnabled,
                         onValueChange = { isChecked -> isAdaptiveLayoutEnabled = isChecked },
+                    )
+
+                    FeatureFlagField(
+                        title = R.string.custom_login_enable_markdown,
+                        description = R.string.custom_login_enable_markdown_description,
+                        value = isMarkdownEnabled,
+                        onValueChange = { isChecked -> isMarkdownEnabled = isChecked },
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -272,7 +287,9 @@ class CustomLoginActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun EnableAdaptiveScreenField(
+    private fun FeatureFlagField(
+        @StringRes title: Int,
+        @StringRes description: Int,
         value: Boolean,
         onValueChange: (Boolean) -> Unit,
     ) {
@@ -293,11 +310,11 @@ class CustomLoginActivity : AppCompatActivity() {
             )
             Column {
                 Text(
-                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout),
+                    text = stringResource(id = title),
                     style = ChatTheme.typography.title3,
                 )
                 Text(
-                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout_description),
+                    text = stringResource(id = description),
                     style = ChatTheme.typography.footnote,
                 )
             }

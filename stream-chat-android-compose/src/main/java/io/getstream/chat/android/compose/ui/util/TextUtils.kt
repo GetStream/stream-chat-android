@@ -49,6 +49,15 @@ internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 internal const val AnnotationTagMention: AnnotationTag = "MENTION"
 
 /**
+ * The tag marking text to take literally, such as markdown code, so that nothing inside it is
+ * detected as a URL, an email or a mention.
+ */
+internal const val AnnotationTagLiteral: AnnotationTag = "LITERAL"
+
+/** Marks a block quote's span, carrying its depth of nesting, so its rail can be drawn. */
+internal const val AnnotationTagBlockQuote: AnnotationTag = "BLOCK_QUOTE"
+
+/**
  * Builds an [AnnotatedString] from a given text, applying styles and annotations for links and mentions.
  * Used in message bubbles.
  *
@@ -82,25 +91,9 @@ internal fun buildAnnotatedMessageText(
             end = text.length,
         )
 
-        // Then for each available link in the text, we add a different style, to represent the links,
-        // as well as add a String annotation to it. This gives us the ability to open the URL on click.
-        linkify(
+        annotateEntities(
             text = text,
-            tag = AnnotationTagUrl,
-            pattern = PatternsCompat.AUTOLINK_WEB_URL,
-            matchFilter = Linkify.sUrlMatchFilter,
-            schemes = URL_SCHEMES,
-            textStyle = linkStyle,
-        )
-        linkify(
-            text = text,
-            tag = AnnotationTagEmail,
-            pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
-            schemes = EMAIL_SCHEMES,
-            textStyle = linkStyle,
-        )
-        tagUser(
-            text = text,
+            linkStyle = linkStyle,
             mentionsColor = mentionsColor,
             mentionedUserNames = mentionedUserNames,
         )
@@ -108,6 +101,80 @@ internal fun buildAnnotatedMessageText(
         // Finally, we apply any additional styling that was passed in.
         builder(this)
     }
+}
+
+/**
+ * Adds the annotations Stream recognises in message text, URLs, emails and the mentions named by
+ * [mentionedUserNames], on top of an already styled string.
+ *
+ * Ranges already tagged [AnnotationTagUrl] keep the destination they were built with, and ranges
+ * tagged [AnnotationTagLiteral] are left as written.
+ *
+ * @param mentionedUserNames The names to highlight, each without its leading `@`.
+ * @param linkStyle The style applied to URLs and emails.
+ * @param mentionsColor Applied to every mention.
+ */
+internal fun AnnotatedString.annotateStreamEntities(
+    mentionedUserNames: List<String>,
+    linkStyle: TextStyle,
+    mentionsColor: Color,
+): AnnotatedString {
+    val styled = this
+    return buildAnnotatedString {
+        append(styled.text)
+        addSpanStyles(styled.spanStyles)
+        addParagraphStyles(styled.paragraphStyles)
+        // Everything but the literal markers, which exist only for the pass below.
+        addStringAnnotations(styled.stringAnnotations.filter { it.tag != AnnotationTagLiteral })
+        annotateEntities(
+            text = styled.text,
+            linkStyle = linkStyle,
+            mentionsColor = mentionsColor,
+            mentionedUserNames = mentionedUserNames,
+            skipRanges = styled.stringAnnotations
+                .filter { it.tag == AnnotationTagUrl || it.tag == AnnotationTagLiteral }
+                .map { it.start until it.end },
+        )
+    }
+}
+
+/**
+ * Styles and annotates every URL, email and mention in [text], which the receiver must already
+ * hold as its content for the match offsets to line up.
+ */
+@SuppressLint("RestrictedApi")
+private fun AnnotatedString.Builder.annotateEntities(
+    text: String,
+    linkStyle: TextStyle,
+    mentionsColor: Color,
+    mentionedUserNames: List<String>,
+    skipRanges: List<IntRange> = emptyList(),
+) {
+    // For each available link in the text, we add a different style, to represent the links,
+    // as well as add a String annotation to it. This gives us the ability to open the URL on click.
+    linkify(
+        text = text,
+        tag = AnnotationTagUrl,
+        pattern = PatternsCompat.AUTOLINK_WEB_URL,
+        matchFilter = Linkify.sUrlMatchFilter,
+        schemes = URL_SCHEMES,
+        textStyle = linkStyle,
+        skipRanges = skipRanges,
+    )
+    linkify(
+        text = text,
+        tag = AnnotationTagEmail,
+        pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
+        schemes = EMAIL_SCHEMES,
+        textStyle = linkStyle,
+        skipRanges = skipRanges,
+    )
+    tagUser(
+        text = text,
+        mentionsColor = mentionsColor,
+        mentionedUserNames = mentionedUserNames,
+        skipRanges = skipRanges,
+    )
 }
 
 /**
@@ -200,6 +267,7 @@ private fun AnnotatedString.Builder.linkify(
     matchFilter: Linkify.MatchFilter? = null,
     schemes: List<String>,
     textStyle: TextStyle,
+    skipRanges: List<IntRange> = emptyList(),
 ) {
     @SuppressLint("RestrictedApi")
     val matcher = pattern.matcher(text)
@@ -207,7 +275,9 @@ private fun AnnotatedString.Builder.linkify(
         val start = matcher.start()
         val end = matcher.end()
 
-        if (matchFilter != null && !matchFilter.acceptMatch(text, start, end)) {
+        val rejected = (matchFilter != null && !matchFilter.acceptMatch(text, start, end)) ||
+            skipRanges.any { start <= it.last && it.first < end }
+        if (rejected) {
             continue
         }
 
@@ -234,30 +304,42 @@ private fun AnnotatedString.Builder.tagUser(
     text: String,
     mentionsColor: Color,
     mentionedUserNames: List<String>,
+    skipRanges: List<IntRange> = emptyList(),
 ) {
     mentionedUserNames.forEach { userName ->
-        val start = text.indexOf(userName)
-        val end = start + userName.length
+        if (userName.isEmpty()) return@forEach
+        // Every occurrence, so skipping one inside a code span still leaves the others tappable.
+        mentionTokenRegex(userName).findAll(text).forEach { match ->
+            val start = match.range.first
+            val end = match.range.last + 1
+            if (skipRanges.any { start <= it.last && it.first < end }) return@forEach
 
-        if (start < 0) return@forEach
+            addStyle(
+                style = SpanStyle(
+                    color = mentionsColor,
+                    fontWeight = FontWeight.Bold,
+                ),
+                start = start,
+                end = end,
+            )
 
-        addStyle(
-            style = SpanStyle(
-                color = mentionsColor,
-                fontWeight = FontWeight.Bold,
-            ),
-            start = start - 1, // -1 to include the @ symbol
-            end = end,
-        )
-
-        addStringAnnotation(
-            tag = AnnotationTagMention,
-            annotation = userName,
-            start = start - 1, // -1 to include the @ symbol
-            end = end,
-        )
+            addStringAnnotation(
+                tag = AnnotationTagMention,
+                annotation = userName,
+                start = start,
+                end = end,
+            )
+        }
     }
 }
+
+/**
+ * Matches the `@<display>` token, the `@` included, so the range never has to be walked back past
+ * the start of the text. The boundaries use Unicode-aware lookaround, because Java's word-boundary
+ * classes only recognise ASCII.
+ */
+private fun mentionTokenRegex(display: String): Regex =
+    Regex("(?<![\\p{L}\\p{N}_])@${Regex.escape(display)}(?![\\p{L}\\p{N}_])")
 
 private fun AnnotatedString.Builder.tagMentions(
     text: String,
