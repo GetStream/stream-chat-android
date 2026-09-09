@@ -1055,9 +1055,10 @@ internal class DomainMappingTest {
             id = pollDto.id,
             name = pollDto.name,
             description = pollDto.description,
-            options = options.map {
-                Option(it.id, it.text, it.custom.mapNotNull { (k, v) -> v?.let { k to it } }.toMap())
-            },
+            options = listOf(
+                Option(options[0].id, options[0].text, mapOf("optionKey" to "optionValue")),
+                Option(options[1].id, options[1].text, emptyMap()),
+            ),
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = pollDto.enforce_unique_vote,
             maxVotesAllowed = pollDto.max_votes_allowed ?: 1,

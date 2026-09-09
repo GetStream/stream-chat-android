@@ -1292,27 +1292,6 @@ internal object Mother {
         answer_text = null,
     )
 
-    fun randomAnswerDownstreamVoteDto(
-        id: String = randomString(),
-        pollId: String = randomString(),
-        optionId: String = randomString(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-        userId: String = randomString(),
-        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
-        answerText: String = randomString(),
-    ): DownstreamVoteDto = DownstreamVoteDto(
-        id = id,
-        poll_id = pollId,
-        option_id = optionId,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        user = user,
-        user_id = userId,
-        is_answer = true,
-        answer_text = answerText,
-    )
-
     fun randomUpdatePollRequest(
         id: String = randomString(),
         name: String = randomString(),
