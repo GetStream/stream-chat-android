@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import java.util.Date
 
 @JsonClass(generateAdapter = true)
-internal data class VideoCallTokenRequest(
-    val callId: String,
+internal data class DownstreamChannelUserRead(
+    val user: DownstreamUserDto,
+    val last_read: Date,
+    val unread_messages: Int,
+    val last_read_message_id: String?,
+    val last_delivered_at: Date? = null,
+    val last_delivered_message_id: String? = null,
 )
