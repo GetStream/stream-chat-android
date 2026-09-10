@@ -26,6 +26,19 @@ internal object ReactionGroupTestData {
     val jsonAllFields =
         """{"count":5,"sum_scores":10,"first_reaction_at":"2020-01-01T00:00:00.000Z","last_reaction_at":"2020-01-02T00:00:00.000Z"}"""
 
+    /** `latest_reactions_by` is a key the generated model declares and the direct adapter skips. */
+    @Language("JSON")
+    val jsonWithLatestReactionsBy =
+        """{"count":5,"sum_scores":10,"first_reaction_at":"2020-01-01T00:00:00.000Z",""" +
+            """"last_reaction_at":"2020-01-02T00:00:00.000Z","latest_reactions_by":[""" +
+            """{"user_id":"user-1","created_at":"2020-01-02T00:00:00.000Z"}]}"""
+
+    /** The wire sends an explicit null for a message that predates the backfill. */
+    @Language("JSON")
+    val jsonWithNullLatestReactionsBy =
+        """{"count":5,"sum_scores":10,"first_reaction_at":"2020-01-01T00:00:00.000Z",""" +
+            """"last_reaction_at":"2020-01-02T00:00:00.000Z","latest_reactions_by":null}"""
+
     @Language("JSON")
     val jsonMissingCount =
         """{"sum_scores":10,"first_reaction_at":"2020-01-01T00:00:00.000Z","last_reaction_at":"2020-01-02T00:00:00.000Z"}"""

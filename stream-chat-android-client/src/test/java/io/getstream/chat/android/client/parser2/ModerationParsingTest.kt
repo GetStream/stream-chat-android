@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.parser2.direct.ModerationAdapter
 import io.getstream.chat.android.client.parser2.testdata.ModerationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.ModerationV2Response
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -41,18 +41,18 @@ internal class ModerationParsingTest {
 
     private val adapter = ModerationAdapter()
 
-    // region DTO path (JSON → DownstreamModerationDto → Moderation)
+    // region Generated path (JSON → ModerationV2Response → Moderation)
 
     @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(ModerationTestData.jsonAllFields, DownstreamModerationDto::class.java)
+    fun `Generated path - deserializes all fields`() {
+        val dto = parser.fromJson(ModerationTestData.jsonAllFields, ModerationV2Response::class.java)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(ModerationTestData.expectedAllFields, domain)
     }
 
     @Test
-    fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(ModerationTestData.jsonOptionalFieldsMissing, DownstreamModerationDto::class.java)
+    fun `Generated path - deserializes with optional fields missing`() {
+        val dto = parser.fromJson(ModerationTestData.jsonOptionalFieldsMissing, ModerationV2Response::class.java)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(ModerationTestData.expectedOptionalFieldsMissing, domain)
     }
@@ -78,8 +78,8 @@ internal class ModerationParsingTest {
     // region Explicit null values
 
     @Test
-    fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(ModerationTestData.jsonWithExplicitNulls, DownstreamModerationDto::class.java)
+    fun `Generated path - deserializes with explicit null values`() {
+        val dto = parser.fromJson(ModerationTestData.jsonWithExplicitNulls, ModerationV2Response::class.java)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(ModerationTestData.expectedWithExplicitNulls, domain)
     }
@@ -95,9 +95,9 @@ internal class ModerationParsingTest {
     // region Error message parity
 
     @Test
-    fun `DTO path - throws on missing action`() {
+    fun `Generated path - throws on missing action`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ModerationTestData.jsonMissingAction, DownstreamModerationDto::class.java)
+            parser.fromJson(ModerationTestData.jsonMissingAction, ModerationV2Response::class.java)
         }
     }
 
@@ -109,9 +109,9 @@ internal class ModerationParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing original_text`() {
+    fun `Generated path - throws on missing original_text`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(ModerationTestData.jsonMissingOriginalText, DownstreamModerationDto::class.java)
+            parser.fromJson(ModerationTestData.jsonMissingOriginalText, ModerationV2Response::class.java)
         }
     }
 
