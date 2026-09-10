@@ -30,6 +30,7 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
 import io.getstream.result.Result
+import io.getstream.result.call.DistinctCall
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
@@ -491,7 +492,8 @@ internal class DistinctChatApiTest {
         val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
         val call2 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
         // then
-        // verify same instance of call is reused
+        // verify the override wraps the call and reuses the same instance
+        Assert.assertTrue(call1 is DistinctCall)
         Assert.assertTrue(call1 === call2)
     }
 
