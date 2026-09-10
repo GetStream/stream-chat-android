@@ -53,6 +53,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -278,13 +279,13 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Channel deleted event
     @Test
-    fun `when channel is deleted, messages are deleted too`() = runTest {
+    fun `when channel is deleted, the deletion date is set and the messages are kept`() = runTest {
         val deleteChannelEvent = randomChannelDeletedEvent()
 
         channelLogic.handleEvent(deleteChannelEvent)
 
-        verify(channelStateLogic).removeMessagesBefore(deleteChannelEvent.createdAt)
         verify(channelStateLogic).deleteChannel(deleteChannelEvent.createdAt)
+        verify(channelStateLogic, never()).removeMessagesBefore(any(), any())
     }
 
     // Poll deleted event

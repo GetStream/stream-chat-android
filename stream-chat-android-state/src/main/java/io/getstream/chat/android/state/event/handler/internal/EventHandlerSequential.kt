@@ -487,16 +487,11 @@ internal class EventHandlerSequential(
         }
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
 
-        stateRegistry.handleBatchEvent(batchEvent)
-
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
             .forEach { (cid, events) ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                if (events.any { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }) {
-                    logicRegistry.removeChannel(channelType, channelId)
-                }
                 if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
                     val channelLogic: ChannelLogic = logicRegistry.channel(
                         channelType = channelType,
@@ -504,7 +499,14 @@ internal class EventHandlerSequential(
                     )
                     channelLogic.handleEvents(events)
                 }
+                // Discard the channel only after its events are handled, otherwise the deletion
+                // never reaches the channel state and ChannelData.deletedAt stays null.
+                if (events.any { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }) {
+                    logicRegistry.removeChannel(channelType, channelId)
+                }
             }
+
+        stateRegistry.handleBatchEvent(batchEvent)
 
         // mark all read applies to all channels
         sortedEvents.filterIsInstance<MarkAllReadEvent>().lastOrNull()?.let { markAllRead ->

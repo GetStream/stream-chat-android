@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.test.randomMessageReadEvent
 import io.getstream.chat.android.client.test.randomMessageUpdateEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
+import io.getstream.chat.android.client.test.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
@@ -575,13 +576,23 @@ internal class ChannelEventHandlerTest {
     }
 
     @Test
-    fun `When ChannelDeletedEvent is handled, Then messages are removed and channel is deleted`() {
+    fun `When ChannelDeletedEvent is handled, Then the deletion date is set and the messages are kept`() {
         val event = randomChannelDeletedEvent(cid = cid)
 
         handler.handle(event)
 
-        verify(stateLogic).removeMessagesBefore(event.createdAt)
         verify(stateLogic).deleteChannel(event.createdAt)
+        verify(stateLogic, never()).removeMessagesBefore(any(), any())
+    }
+
+    @Test
+    fun `When NotificationChannelDeletedEvent is handled, Then the deletion date is set and the messages are kept`() {
+        val event = randomNotificationChannelDeletedEvent(cid = cid)
+
+        handler.handle(event)
+
+        verify(stateLogic).deleteChannel(event.createdAt)
+        verify(stateLogic, never()).removeMessagesBefore(any(), any())
     }
 
     @Test
