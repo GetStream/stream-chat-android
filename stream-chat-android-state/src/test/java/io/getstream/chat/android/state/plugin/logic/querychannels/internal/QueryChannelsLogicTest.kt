@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
+import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -34,6 +35,7 @@ import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryCo
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -411,6 +413,57 @@ internal class QueryChannelsLogicTest {
 
     // endregion
 
+    // region addAndWatchChannel
+
+    @Test
+    fun `addAndWatchChannel should add the channel from the event payload when watch fails`() = runTest {
+        // Given
+        val channel = randomChannel(type = "messaging", id = "ch1")
+        val channelClient = mock<ChannelClient>()
+        whenever(client.channel(channel.cid)) doReturn channelClient
+        whenever(channelClient.watch()) doReturn Error.GenericError("boom").asCall<Channel>()
+
+        // When
+        logic.addAndWatchChannel(cid = channel.cid, channel = channel)
+
+        // Then – membership does not depend on the watch round-trip
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel))
+    }
+
+    @Test
+    fun `addAndWatchChannel should not add anything when watch fails and the event had no channel`() = runTest {
+        // Given
+        val cid = "messaging:ch1"
+        val channelClient = mock<ChannelClient>()
+        whenever(client.channel(cid)) doReturn channelClient
+        whenever(channelClient.watch()) doReturn Error.GenericError("boom").asCall<Channel>()
+
+        // When
+        logic.addAndWatchChannel(cid = cid, channel = null)
+
+        // Then
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+    }
+
+    @Test
+    fun `addAndWatchChannel should add both the event payload and the watched channel on success`() = runTest {
+        // Given
+        val eventChannel = randomChannel(type = "messaging", id = "ch1")
+        val watchedChannel = eventChannel.copy(name = "refreshed")
+        val channelClient = mock<ChannelClient>()
+        whenever(client.channel(eventChannel.cid)) doReturn channelClient
+        whenever(channelClient.watch()) doReturn watchedChannel.asCall()
+
+        // When
+        logic.addAndWatchChannel(cid = eventChannel.cid, channel = eventChannel)
+
+        // Then – the payload seeds the list, the watch response refreshes it
+        verify(queryChannelsStateLogic).addChannelsState(listOf(eventChannel))
+        verify(queryChannelsStateLogic).addChannelsState(listOf(watchedChannel))
+    }
+
+    // endregion
+
     // region parseChatEventResults
 
     @Test
@@ -428,7 +481,7 @@ internal class QueryChannelsLogicTest {
 
         // Then
         verify(queryChannelsDatabaseLogic, never()).selectChannels(any())
-        assertEquals(listOf(expectedResult), results)
+        assertEquals(listOf(event to expectedResult), results)
     }
 
     @Test
@@ -447,7 +500,7 @@ internal class QueryChannelsLogicTest {
 
         // Then
         verify(queryChannelsDatabaseLogic).selectChannels(listOf(channel.cid))
-        assertEquals(listOf(expectedResult), results)
+        assertEquals(listOf(event to expectedResult), results)
     }
 
     @Test

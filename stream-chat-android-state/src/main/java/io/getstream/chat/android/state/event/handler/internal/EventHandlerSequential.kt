@@ -308,7 +308,7 @@ internal class EventHandlerSequential(
 
     private suspend fun handleChatEvents(batchEvent: BatchEvent, queryChannelsLogic: QueryChannelsLogic) {
         logger.v { "[handleChatEvents] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
-        queryChannelsLogic.parseChatEventResults(batchEvent.sortedEvents).forEach { result ->
+        queryChannelsLogic.parseChatEventResults(batchEvent.sortedEvents).forEach { (event, result) ->
             when (result) {
                 is EventHandlingResult.Add -> {
                     // Use trackChannel instead of addChannel to avoid overwriting the shared
@@ -318,7 +318,11 @@ internal class EventHandlerSequential(
                     // the query map with the live per-channel data.
                     queryChannelsLogic.trackChannel(result.channel)
                 }
-                is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(result.cid)
+                is EventHandlingResult.WatchAndAdd -> {
+                    // Pass the event's own channel so the query is populated from the payload rather
+                    // than from the watch response. See QueryChannelsLogic.addAndWatchChannel.
+                    queryChannelsLogic.addAndWatchChannel(cid = result.cid, channel = (event as? HasChannel)?.channel)
+                }
                 is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(result.cid)
                 is EventHandlingResult.Skip -> Unit
             }
