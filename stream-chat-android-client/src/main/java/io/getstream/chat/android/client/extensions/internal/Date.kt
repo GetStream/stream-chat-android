@@ -21,6 +21,6 @@ import java.util.Date
 /**
  * Checks if the Date is older than [daysInMillis], measured against [now].
  */
-internal fun Date.isLaterThanDays(daysInMillis: Long, now: Date = Date()): Boolean {
+internal fun Date.isOlderThanDays(daysInMillis: Long, now: Date = Date()): Boolean {
     return now.time - time > daysInMillis
 }

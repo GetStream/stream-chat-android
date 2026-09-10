@@ -27,74 +27,74 @@ internal class DateExtensionsTests {
     private val fiveDaysInMillis = TimeUnit.DAYS.toMillis(5)
 
     @Test
-    fun `isLaterThanDays should return true when date is older than specified days`() {
+    fun `isOlderThanDays should return true when date is older than specified days`() {
         // given
         val sixDaysAgo = Date(now.time - TimeUnit.DAYS.toMillis(6))
 
         // when
-        val result = sixDaysAgo.isLaterThanDays(fiveDaysInMillis, now)
+        val result = sixDaysAgo.isOlderThanDays(fiveDaysInMillis, now)
 
         // then
         result shouldBeEqualTo true
     }
 
     @Test
-    fun `isLaterThanDays should return false when date is exactly as old as specified days`() {
+    fun `isOlderThanDays should return false when date is exactly as old as specified days`() {
         // given
         val fiveDaysAgo = Date(now.time - fiveDaysInMillis)
 
         // when
-        val result = fiveDaysAgo.isLaterThanDays(fiveDaysInMillis, now)
+        val result = fiveDaysAgo.isOlderThanDays(fiveDaysInMillis, now)
 
         // then
         result shouldBeEqualTo false
     }
 
     @Test
-    fun `isLaterThanDays should return false when date is newer than specified days`() {
+    fun `isOlderThanDays should return false when date is newer than specified days`() {
         // given
         val threeDaysAgo = Date(now.time - TimeUnit.DAYS.toMillis(3))
 
         // when
-        val result = threeDaysAgo.isLaterThanDays(fiveDaysInMillis, now)
+        val result = threeDaysAgo.isOlderThanDays(fiveDaysInMillis, now)
 
         // then
         result shouldBeEqualTo false
     }
 
     @Test
-    fun `isLaterThanDays should return false when date is in the future`() {
+    fun `isOlderThanDays should return false when date is in the future`() {
         // given
         val twoDaysInFuture = Date(now.time + TimeUnit.DAYS.toMillis(2))
 
         // when
-        val result = twoDaysInFuture.isLaterThanDays(fiveDaysInMillis, now)
+        val result = twoDaysInFuture.isOlderThanDays(fiveDaysInMillis, now)
 
         // then
         result shouldBeEqualTo false
     }
 
     @Test
-    fun `isLaterThanDays should handle zero day threshold correctly`() {
+    fun `isOlderThanDays should handle zero day threshold correctly`() {
         // given
         val zeroDaysInMillis = TimeUnit.DAYS.toMillis(0)
         val oneMillisAgo = Date(now.time - 1)
 
         // when
-        val result = oneMillisAgo.isLaterThanDays(zeroDaysInMillis, now)
+        val result = oneMillisAgo.isOlderThanDays(zeroDaysInMillis, now)
 
         // then
         result shouldBeEqualTo true
     }
 
     @Test
-    fun `isLaterThanDays should handle large time differences correctly`() {
+    fun `isOlderThanDays should handle large time differences correctly`() {
         // given
         val oneYearInMillis = TimeUnit.DAYS.toMillis(365)
         val twoYearsAgo = Date(now.time - TimeUnit.DAYS.toMillis(365 * 2))
 
         // when
-        val result = twoYearsAgo.isLaterThanDays(oneYearInMillis, now)
+        val result = twoYearsAgo.isOlderThanDays(oneYearInMillis, now)
 
         // then
         result shouldBeEqualTo true

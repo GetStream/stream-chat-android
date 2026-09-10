@@ -108,7 +108,7 @@ import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.extractBaseUrl
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
-import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
+import io.getstream.chat.android.client.extensions.internal.isOlderThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
@@ -4548,7 +4548,7 @@ internal constructor(
                 Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
             }
 
-            lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
+            lastSyncAt.isOlderThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
                 Result.Failure(Error.GenericError("lastSyncAt cannot by later than 30 days."))
             }
 
