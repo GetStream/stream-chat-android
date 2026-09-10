@@ -19,9 +19,8 @@ package io.getstream.chat.android.client.extensions.internal
 import java.util.Date
 
 /**
- * Checks if the Date is later than [daysInMillis].
+ * Checks if the Date is older than [daysInMillis], measured against [now].
  */
-internal fun Date.isLaterThanDays(daysInMillis: Long): Boolean {
-    val now = Date()
+internal fun Date.isOlderThanDays(daysInMillis: Long, now: Date = Date()): Boolean {
     return now.time - time > daysInMillis
 }
