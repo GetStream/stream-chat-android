@@ -21,26 +21,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
-
-/**
- * JSON adapter for [DownstreamMemberDto].
- * Handles the proper deserialization of the [extraData] field.
- */
-internal object DownstreamMemberDtoAdapter : CustomObjectDtoAdapter<DownstreamMemberDto>(DownstreamMemberDto::class) {
-
-    @FromJson
-    fun fromJson(
-        jsonReader: JsonReader,
-        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        memberAdapter: JsonAdapter<DownstreamMemberDto>,
-    ): DownstreamMemberDto? = parseWithExtraData(jsonReader, mapAdapter, memberAdapter)
-
-    @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamMemberDto): Unit = error("Can't convert this to Json")
-}
 
 /**
  * JSON adapter for [DownstreamMemberInfoDto].

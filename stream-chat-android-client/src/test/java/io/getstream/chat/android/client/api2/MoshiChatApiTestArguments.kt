@@ -477,7 +477,7 @@ internal object MoshiChatApiTestArguments {
                         ChannelResponse(
                             channel = Mother.randomDownstreamChannelDto(),
                             hidden = randomBoolean(),
-                            membership = Mother.randomDownstreamMemberDto(),
+                            membership = Mother.randomChannelMemberResponse(),
                             hide_messages_before = randomDateOrNull(),
                             draft = randomDownstreamDraftDto(),
                         ),
@@ -500,7 +500,7 @@ internal object MoshiChatApiTestArguments {
                                 ChannelResponse(
                                     channel = Mother.randomDownstreamChannelDto(),
                                     hidden = randomBoolean(),
-                                    membership = Mother.randomDownstreamMemberDto(),
+                                    membership = Mother.randomChannelMemberResponse(),
                                     hide_messages_before = randomDateOrNull(),
                                     draft = randomDownstreamDraftDto(),
                                 ),
@@ -530,7 +530,7 @@ internal object MoshiChatApiTestArguments {
                         ChannelResponse(
                             channel = Mother.randomDownstreamChannelDto(),
                             hidden = randomBoolean(),
-                            membership = Mother.randomDownstreamMemberDto(),
+                            membership = Mother.randomChannelMemberResponse(),
                             hide_messages_before = randomDateOrNull(),
                             draft = randomDownstreamDraftDto(),
                         ),
@@ -827,7 +827,7 @@ internal object MoshiChatApiTestArguments {
                 ChannelResponse(
                     channel = Mother.randomDownstreamChannelDto(),
                     hidden = randomBoolean(),
-                    membership = Mother.randomDownstreamMemberDto(),
+                    membership = Mother.randomChannelMemberResponse(),
                     hide_messages_before = randomDateOrNull(),
                     draft = randomDownstreamDraftDto(),
                 ),

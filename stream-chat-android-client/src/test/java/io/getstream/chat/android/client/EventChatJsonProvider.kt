@@ -926,10 +926,13 @@ private fun createChannelInfoJsonString() =
 private fun createMemberJsonString() =
     """
         {
-            "user": ${createUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "channel_role": "channel_member",
             "created_at": "2020-06-29T06:14:28.000Z",
-            "updated_at": "2020-06-29T06:14:28.000Z"
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "banned": true,
+            "shadow_banned": true,
+            "notifications_muted": true
         }
     """.trimIndent()
 

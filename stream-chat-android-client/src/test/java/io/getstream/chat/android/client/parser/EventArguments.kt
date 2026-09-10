@@ -200,11 +200,32 @@ internal object EventArguments {
         extraData = mutableMapOf(),
     )
 
+    /**
+     * Reactions, polls and members embedded in an event are parsed by the generated models, so their
+     * users are the shape the wire sends for anyone but the connected user: no unread counts, devices,
+     * mutes or `invisible`.
+     */
+    private val nestedUser = User(
+        id = "bender",
+        role = "user",
+        language = "en",
+        banned = false,
+        online = true,
+        createdAt = date,
+        updatedAt = date,
+        lastActive = date,
+        name = "Bender",
+        image = "https://api.adorable.io/avatars/285/bender.png",
+    )
+
     private val member = Member(
-        user,
+        nestedUser,
         channelRole = "channel_member",
         createdAt = date,
         updatedAt = date,
+        banned = true,
+        shadowBanned = true,
+        notificationsMuted = true,
     )
 
     private val giphyCommand = Command(
@@ -265,24 +286,6 @@ internal object EventArguments {
         thumbUrl = "https://example.com/thumb.png",
         fileSize = 1234,
         mimeType = "image/png",
-    )
-
-    /**
-     * Reactions and polls embedded in an event are parsed by the generated models, so their users are the
-     * shape the wire sends for anyone but the connected user: no unread counts, devices, mutes or
-     * `invisible`.
-     */
-    private val nestedUser = User(
-        id = "bender",
-        role = "user",
-        language = "en",
-        banned = false,
-        online = true,
-        createdAt = date,
-        updatedAt = date,
-        lastActive = date,
-        name = "Bender",
-        image = "https://api.adorable.io/avatars/285/bender.png",
     )
 
     private val messageReaction = Reaction(
