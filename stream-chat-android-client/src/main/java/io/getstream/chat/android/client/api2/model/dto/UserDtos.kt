@@ -18,7 +18,9 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.network.models.UserMuteResponse
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter] for
@@ -73,10 +75,10 @@ internal data class DownstreamUserDto(
     val unread_channels: Int = 0,
     val unread_count: Int = 0,
     val unread_threads: Int = 0,
-    val mutes: List<DownstreamMuteDto>?,
+    val mutes: List<UserMuteResponse>?,
     val teams: List<String> = emptyList(),
     val teams_role: Map<String, String>?,
-    val channel_mutes: List<DownstreamChannelMuteDto>?,
+    val channel_mutes: List<ChannelMuteResponse>?,
     val blocked_user_ids: List<String>?,
     val avg_response_time: Long?,
     val push_preferences: DownstreamPushPreferenceDto?,

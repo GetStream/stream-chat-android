@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
@@ -26,6 +25,7 @@ import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -175,8 +175,8 @@ internal object UserDtoTestData {
             "unread_count": 3,
             "mutes": [
             {
-             "user": $downstreamJsonWithoutExtraData,
-             "target": $downstreamJsonWithoutExtraData,
+             "user": $userResponseJson,
+             "target": $userResponseJson,
              "created_at": "2020-06-10T11:04:31.000Z",
              "updated_at": "2020-06-10T11:04:31.588Z"
             }
@@ -266,12 +266,12 @@ internal object UserDtoTestData {
             unread_channels = 2,
             unread_count = 3,
             mutes = listOf(
-                DownstreamMuteDto(
-                    user = downstreamUserWithoutExtraData,
-                    target = downstreamUserWithoutExtraData,
-                    created_at = Date(1591787071000),
-                    updated_at = Date(1591787071588),
-                    null,
+                UserMuteResponse(
+                    user = userResponse,
+                    target = userResponse,
+                    createdAt = Date(1591787071000),
+                    updatedAt = Date(1591787071588),
+                    expires = null,
                 ),
             ),
             teams = listOf("team1", "team2"),

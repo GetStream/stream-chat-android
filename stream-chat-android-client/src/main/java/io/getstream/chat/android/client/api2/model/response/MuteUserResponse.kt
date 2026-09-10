@@ -17,11 +17,11 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.network.models.UserMuteResponse
 
 @JsonClass(generateAdapter = true)
 internal data class MuteUserResponse(
-    val mute: DownstreamMuteDto,
+    val mute: UserMuteResponse,
     val own_user: DownstreamUserDto,
 )

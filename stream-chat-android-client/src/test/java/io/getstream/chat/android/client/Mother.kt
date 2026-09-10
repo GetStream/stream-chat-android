@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
@@ -36,7 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
@@ -111,6 +109,7 @@ import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import io.getstream.chat.android.positiveRandomInt
@@ -131,6 +130,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
@@ -403,10 +403,10 @@ internal object Mother {
         unread_channels: Int = randomInt(),
         unread_count: Int = randomInt(),
         unread_threads: Int = randomInt(),
-        mutes: List<DownstreamMuteDto>? = emptyList(),
+        mutes: List<UserMuteResponse>? = emptyList(),
         teams: List<String> = emptyList(),
         teamsRole: Map<String, String> = emptyMap(),
-        channel_mutes: List<DownstreamChannelMuteDto>? = emptyList(),
+        channel_mutes: List<ChannelMuteResponse>? = emptyList(),
         blocked_user_ids: List<String>? = emptyList(),
         avg_response_time: Long? = null,
         push_preferences: DownstreamPushPreferenceDto? = randomDownstreamPushPreferenceDto(),
@@ -667,34 +667,6 @@ internal object Mother {
         user_id = userId,
         emoji_code = emojiCode,
         extraData = extraData,
-    )
-
-    fun randomDownstreamMuteDto(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
-        target: DownstreamUserDto = randomDownstreamUserDto(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-        expires: Date? = randomDateOrNull(),
-    ): DownstreamMuteDto = DownstreamMuteDto(
-        user = user,
-        target = target,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        expires = expires,
-    )
-
-    fun randomDownstreamChannelMuteDto(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-        expires: Date? = randomDateOrNull(),
-    ): DownstreamChannelMuteDto = DownstreamChannelMuteDto(
-        user = user,
-        channel = channel,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        expires = expires,
     )
 
     fun randomReactionGroupResponse(
@@ -1110,6 +1082,20 @@ internal object Mother {
         createdAt = randomDate(),
         updatedAt = randomDate(),
         custom = custom,
+    )
+
+    fun randomUserMuteResponse(
+        user: UserResponse = randomUserResponse(),
+        target: UserResponse = randomUserResponse(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        expires: Date? = randomDateOrNull(),
+    ): UserMuteResponse = UserMuteResponse(
+        user = user,
+        target = target,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        expires = expires,
     )
 
     fun randomUserResponse(
