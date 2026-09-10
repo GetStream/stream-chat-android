@@ -87,7 +87,6 @@ import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
-import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
@@ -110,6 +109,7 @@ import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
+import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import io.getstream.chat.android.positiveRandomInt
@@ -130,6 +130,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
+import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
@@ -1081,6 +1082,20 @@ internal object Mother {
         createdAt = randomDate(),
         updatedAt = randomDate(),
         custom = custom,
+    )
+
+    fun randomUserMuteResponse(
+        user: UserResponse = randomUserResponse(),
+        target: UserResponse = randomUserResponse(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        expires: Date? = randomDateOrNull(),
+    ): UserMuteResponse = UserMuteResponse(
+        user = user,
+        target = target,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        expires = expires,
     )
 
     fun randomUserResponse(

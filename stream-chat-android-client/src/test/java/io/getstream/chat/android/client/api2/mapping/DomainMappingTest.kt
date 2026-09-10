@@ -83,7 +83,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
-import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ChatPreferenceToggle
@@ -101,7 +100,6 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
-import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
