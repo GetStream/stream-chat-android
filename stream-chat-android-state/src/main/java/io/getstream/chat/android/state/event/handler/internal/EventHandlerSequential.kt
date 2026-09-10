@@ -488,6 +488,7 @@ internal class EventHandlerSequential(
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
 
         // step 3 - forward the events to the active channels
+        val deletedChannels = mutableListOf<Pair<String, String>>()
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
             .forEach { (cid, events) ->
@@ -499,13 +500,17 @@ internal class EventHandlerSequential(
                     )
                     channelLogic.handleEvents(events)
                 }
-                // Discard the channel only after its events are handled, otherwise the deletion
-                // never reaches the channel state and ChannelData.deletedAt stays null.
                 if (events.any { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }) {
-                    logicRegistry.removeChannel(channelType, channelId)
+                    deletedChannels += channelType to channelId
                 }
             }
 
+        // Discard deleted channels only after their events are handled, otherwise the deletion never
+        // reaches the channel state and ChannelData.deletedAt stays null. Both registries are evicted
+        // back to back to keep the window where they disagree as short as possible.
+        deletedChannels.forEach { (channelType, channelId) ->
+            logicRegistry.removeChannel(channelType, channelId)
+        }
         stateRegistry.handleBatchEvent(batchEvent)
 
         // mark all read applies to all channels

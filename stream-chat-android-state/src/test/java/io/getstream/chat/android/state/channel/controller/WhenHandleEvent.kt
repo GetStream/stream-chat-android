@@ -50,6 +50,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -285,7 +286,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic.handleEvent(deleteChannelEvent)
 
         verify(channelStateLogic).deleteChannel(deleteChannelEvent.createdAt)
-        verify(channelStateLogic, never()).removeMessagesBefore(any(), any())
+        verify(channelStateLogic, never()).removeMessagesBefore(any(), anyOrNull())
     }
 
     // Poll deleted event

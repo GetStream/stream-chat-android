@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.event.handler.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -32,7 +33,6 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -55,7 +55,7 @@ internal class EventHandlerSequentialChannelDeletedTest {
     ) = runTest {
         val fixture = Fixture()
         val channelState = fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID)
-        val eventHandler = fixture.get(testCoroutines.scope)
+        val eventHandler = fixture.get()
 
         eventHandler.handleEvents(event)
 
@@ -91,14 +91,15 @@ internal class EventHandlerSequentialChannelDeletedTest {
         )
 
         /** Watches the channel the way an open chat screen does, and returns the state it observes. */
-        fun withActiveChannel(channelType: String, channelId: String) = logicRegistry
-            .channel(channelType, channelId)
-            .let { stateRegistry.channel(channelType, channelId) }
+        fun withActiveChannel(channelType: String, channelId: String): ChannelState {
+            logicRegistry.channel(channelType, channelId)
+            return stateRegistry.channel(channelType, channelId)
+        }
 
         fun isActiveChannel(channelType: String, channelId: String) =
             logicRegistry.isActiveChannel(channelType, channelId)
 
-        fun get(scope: CoroutineScope) = EventHandlerSequential(
+        fun get() = EventHandlerSequential(
             currentUserId = currentUser.id,
             subscribeForEvents = { EventHandlerSequential.EMPTY_DISPOSABLE },
             logicRegistry = logicRegistry,
@@ -109,7 +110,7 @@ internal class EventHandlerSequentialChannelDeletedTest {
             sideEffect = {},
             syncedEvents = emptyFlow(),
             bufferConfig = MessageBufferConfig(),
-            scope = scope,
+            scope = testCoroutines.scope,
         )
     }
 

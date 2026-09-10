@@ -582,7 +582,7 @@ internal class ChannelEventHandlerTest {
         handler.handle(event)
 
         verify(stateLogic).deleteChannel(event.createdAt)
-        verify(stateLogic, never()).removeMessagesBefore(any(), any())
+        verify(stateLogic, never()).removeMessagesBefore(any(), anyOrNull())
     }
 
     @Test
@@ -592,7 +592,7 @@ internal class ChannelEventHandlerTest {
         handler.handle(event)
 
         verify(stateLogic).deleteChannel(event.createdAt)
-        verify(stateLogic, never()).removeMessagesBefore(any(), any())
+        verify(stateLogic, never()).removeMessagesBefore(any(), anyOrNull())
     }
 
     @Test
