@@ -83,10 +83,10 @@ internal class MemberExtensionsTests {
                 "channel_type": "channelType",
                 "channel_id": "channelId",
                 "cid": "channelType:channelId",
-                "user": { "id": "leandro", "role": "user", "banned": false, "online": true },
+                "user": { "id": "leandro", "role": "user", "banned": false, "online": true, "language": "en", "created_at": "2020-06-29T06:14:28.000Z", "updated_at": "2020-06-29T06:14:28.000Z" },
                 "member": {
                     "user_id": "leandro",
-                    "user": { "id": "leandro", "role": "user", "banned": false, "online": true },
+                    "user": { "id": "leandro", "role": "user", "banned": false, "online": true, "language": "en", "created_at": "2020-06-29T06:14:28.000Z", "updated_at": "2020-06-29T06:14:28.000Z" },
                     "role": "member",
                     "channel_role": "channel_member",
                     "notifications_muted": false,

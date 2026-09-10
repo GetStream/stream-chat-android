@@ -879,7 +879,7 @@ private fun createMessageAttachmentJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createReactionUserJsonString() =
+private fun createNestedUserJsonString() =
     """
         {
             "id": "bender",
@@ -902,7 +902,7 @@ private fun createMessageReactionJsonString() =
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "type": "like",
             "score": 1,
-            "user": ${createReactionUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "user_id": "bender",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z"
@@ -926,10 +926,13 @@ private fun createChannelInfoJsonString() =
 private fun createMemberJsonString() =
     """
         {
-            "user": ${createUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "channel_role": "channel_member",
             "created_at": "2020-06-29T06:14:28.000Z",
-            "updated_at": "2020-06-29T06:14:28.000Z"
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "banned": true,
+            "shadow_banned": true,
+            "notifications_muted": true
         }
     """.trimIndent()
 

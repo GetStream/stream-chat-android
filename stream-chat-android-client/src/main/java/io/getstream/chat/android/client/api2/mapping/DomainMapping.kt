@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
@@ -553,28 +552,6 @@ internal class DomainMapping(
             createdAt = created_at,
             updatedAt = updated_at,
             expires = expires,
-        )
-
-    /**
-     * Transforms [DownstreamMemberDto] to [Member].
-     */
-    internal fun DownstreamMemberDto.toDomain(): Member =
-        Member(
-            user = user.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            isInvited = invited,
-            inviteAcceptedAt = invite_accepted_at,
-            inviteRejectedAt = invite_rejected_at,
-            shadowBanned = shadow_banned ?: false,
-            banned = banned ?: false,
-            channelRole = channel_role,
-            notificationsMuted = notifications_muted,
-            status = status,
-            banExpires = ban_expires,
-            pinnedAt = pinned_at,
-            archivedAt = archived_at,
-            extraData = extraData,
         )
 
     internal fun ChannelMemberResponse.toDomain(): Member =

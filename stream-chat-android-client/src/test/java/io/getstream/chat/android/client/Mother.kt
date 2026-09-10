@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
@@ -458,7 +457,7 @@ internal object Mother {
         blocked: Boolean? = randomBoolean(),
         member_count: Int = randomInt(),
         messages: List<DownstreamMessageDto> = emptyList(),
-        members: List<DownstreamMemberDto> = emptyList(),
+        members: List<ChannelMemberResponse> = emptyList(),
         watchers: List<DownstreamUserDto> = emptyList(),
         read: List<DownstreamChannelUserRead> = emptyList(),
         config: ChannelConfigWithInfo = randomChannelConfigWithInfo(),
@@ -467,7 +466,7 @@ internal object Mother {
         cooldown: Int = randomInt(),
         pinned_messages: List<DownstreamMessageDto> = emptyList(),
         own_capabilities: List<String> = emptyList(),
-        membership: DownstreamMemberDto? = null,
+        membership: ChannelMemberResponse? = null,
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamChannelDto = DownstreamChannelDto(
         cid = cid,
@@ -721,40 +720,14 @@ internal object Mother {
         banned = randomBoolean(),
         shadowBanned = randomBoolean(),
         notificationsMuted = randomBoolean(),
-    )
-
-    fun randomDownstreamMemberDto(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-        invited: Boolean = randomBoolean(),
-        inviteAcceptedAt: Date = randomDate(),
-        inviteRejectedAt: Date = randomDate(),
-        shadowBanned: Boolean = randomBoolean(),
-        banned: Boolean = randomBoolean(),
-        channelRole: String = randomString(),
-        notificationsMuted: Boolean = randomBoolean(),
-        status: String = randomString(),
-        banExpires: Date = randomDate(),
-        pinnedAt: Date? = randomDateOrNull(),
-        archivedAt: Date? = randomDateOrNull(),
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamMemberDto = DownstreamMemberDto(
-        user = user,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        invited = invited,
-        invite_accepted_at = inviteAcceptedAt,
-        invite_rejected_at = inviteRejectedAt,
-        shadow_banned = shadowBanned,
-        banned = banned,
-        channel_role = channelRole,
-        notifications_muted = notificationsMuted,
-        status = status,
-        ban_expires = banExpires,
-        pinned_at = pinnedAt,
-        archived_at = archivedAt,
-        extraData = extraData,
+        // Every value below differs from the domain default, so a dropped mapping fails a test.
+        invited = true,
+        inviteAcceptedAt = randomDate(),
+        inviteRejectedAt = randomDate(),
+        status = randomString(),
+        banExpires = randomDate(),
+        pinnedAt = randomDate(),
+        archivedAt = randomDate(),
     )
 
     fun randomDownstreamMemberInfoDto(

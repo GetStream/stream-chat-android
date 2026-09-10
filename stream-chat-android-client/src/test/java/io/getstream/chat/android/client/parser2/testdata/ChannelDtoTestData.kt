@@ -18,9 +18,9 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelResponse
 import org.intellij.lang.annotations.Language
@@ -132,7 +132,7 @@ internal object ChannelDtoTestData {
           "messages": [${MessageDtoTestData.downstreamJson}],
           "members": [
            {
-            "user": ${UserDtoTestData.downstreamJson},
+            "user": ${UserDtoTestData.userResponseJson},
             "created_at": "2020-06-10T11:04:31.0Z",
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
@@ -164,7 +164,7 @@ internal object ChannelDtoTestData {
           "draft": true,
           "own_capabilities": ["connect-events", "pin-message"],
           "membership": {
-            "user": ${UserDtoTestData.downstreamJson},
+            "user": ${UserDtoTestData.userResponseJson},
             "created_at": "2020-06-10T11:04:31.0Z",
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
@@ -196,22 +196,22 @@ internal object ChannelDtoTestData {
         member_count = 2,
         messages = listOf(MessageDtoTestData.downstreamMessage),
         members = listOf(
-            DownstreamMemberDto(
-                user = UserDtoTestData.downstreamUser,
-                created_at = Date(1591787071000),
-                updated_at = Date(1591787071588),
+            ChannelMemberResponse(
+                user = UserDtoTestData.userResponse,
+                createdAt = Date(1591787071000),
+                updatedAt = Date(1591787071588),
                 invited = true,
-                invite_accepted_at = Date(1591787071588),
-                invite_rejected_at = null,
-                shadow_banned = false,
+                inviteAcceptedAt = Date(1591787071588),
+                inviteRejectedAt = null,
+                shadowBanned = false,
                 banned = false,
-                channel_role = "member",
-                notifications_muted = false,
+                channelRole = "member",
+                notificationsMuted = false,
                 status = "member",
-                ban_expires = Date(1615218151355),
-                pinned_at = Date(1591787071588),
-                archived_at = Date(1591787071588),
-                extraData = emptyMap(),
+                banExpires = Date(1615218151355),
+                pinnedAt = Date(1591787071588),
+                archivedAt = Date(1591787071588),
+                custom = emptyMap(),
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -229,22 +229,22 @@ internal object ChannelDtoTestData {
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),
         own_capabilities = listOf(ChannelCapabilities.CONNECT_EVENTS, ChannelCapabilities.PIN_MESSAGE),
-        membership = DownstreamMemberDto(
-            user = UserDtoTestData.downstreamUser,
-            created_at = Date(1591787071000),
-            updated_at = Date(1591787071588),
+        membership = ChannelMemberResponse(
+            user = UserDtoTestData.userResponse,
+            createdAt = Date(1591787071000),
+            updatedAt = Date(1591787071588),
             invited = true,
-            invite_accepted_at = Date(1591787071588),
-            invite_rejected_at = null,
-            shadow_banned = false,
+            inviteAcceptedAt = Date(1591787071588),
+            inviteRejectedAt = null,
+            shadowBanned = false,
             banned = false,
-            channel_role = "member",
-            notifications_muted = false,
+            channelRole = "member",
+            notificationsMuted = false,
             status = "member",
-            ban_expires = null,
-            pinned_at = null,
-            archived_at = null,
-            extraData = emptyMap(),
+            banExpires = null,
+            pinnedAt = null,
+            archivedAt = null,
+            custom = emptyMap(),
         ),
         extraData = mapOf(
             "truncated_at" to "2020-06-10T11:04:31.588Z",

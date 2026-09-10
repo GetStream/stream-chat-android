@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamChannelUserRead
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
-import io.getstream.chat.android.client.Mother.randomDownstreamMemberDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
@@ -953,33 +952,6 @@ internal class DomainMappingTest {
         val result = with(sut) { randomUserResponse().toDomain() }
 
         assertEquals(transformedUser, result)
-    }
-
-    @Test
-    fun `DownstreamMemberDto is correctly mapped to Member`() {
-        val downstreamMemberDto = randomDownstreamMemberDto()
-        val sut = Fixture().get()
-        val member = with(sut) {
-            downstreamMemberDto.toDomain()
-        }
-        val expected = Member(
-            user = with(sut) { downstreamMemberDto.user.toDomain() },
-            createdAt = downstreamMemberDto.created_at,
-            updatedAt = downstreamMemberDto.updated_at,
-            isInvited = downstreamMemberDto.invited,
-            inviteAcceptedAt = downstreamMemberDto.invite_accepted_at,
-            inviteRejectedAt = downstreamMemberDto.invite_rejected_at,
-            shadowBanned = downstreamMemberDto.shadow_banned ?: false,
-            banned = downstreamMemberDto.banned ?: false,
-            channelRole = downstreamMemberDto.channel_role,
-            notificationsMuted = downstreamMemberDto.notifications_muted,
-            status = downstreamMemberDto.status,
-            banExpires = downstreamMemberDto.ban_expires,
-            pinnedAt = downstreamMemberDto.pinned_at,
-            archivedAt = downstreamMemberDto.archived_at,
-            extraData = downstreamMemberDto.extraData,
-        )
-        assertEquals(expected, member)
     }
 
     @Test

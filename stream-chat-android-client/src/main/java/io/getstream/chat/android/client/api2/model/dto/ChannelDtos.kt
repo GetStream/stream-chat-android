@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberResponse
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
@@ -39,7 +40,7 @@ internal data class DownstreamChannelDto(
     val blocked: Boolean?,
     val member_count: Int = 0,
     val messages: List<DownstreamMessageDto> = emptyList(),
-    val members: List<DownstreamMemberDto> = emptyList(),
+    val members: List<ChannelMemberResponse> = emptyList(),
     val watchers: List<DownstreamUserDto> = emptyList(),
     val read: List<DownstreamChannelUserRead> = emptyList(),
     // Absent for a channel whose type is no longer in the app config.
@@ -49,7 +50,7 @@ internal data class DownstreamChannelDto(
     val cooldown: Int = 0,
     val pinned_messages: List<DownstreamMessageDto> = emptyList(),
     val own_capabilities: List<String> = emptyList(),
-    val membership: DownstreamMemberDto?,
+    val membership: ChannelMemberResponse?,
     val active_live_locations: List<DownstreamLocationDto> = emptyList(),
     val message_count: Int? = null,
     val extraData: Map<String, Any>,

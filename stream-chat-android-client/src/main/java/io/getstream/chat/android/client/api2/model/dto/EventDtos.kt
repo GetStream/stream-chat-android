@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.result.Error
 import java.util.Date
 
@@ -107,7 +108,7 @@ internal data class MemberAddedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -118,7 +119,7 @@ internal data class MemberRemovedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -129,7 +130,7 @@ internal data class MemberUpdatedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -222,7 +223,7 @@ internal data class NotificationAddedToChannelEventDto(
     val channel_type: String,
     val channel_id: String,
     val channel: DownstreamChannelDto,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
 ) : ChatEventDto()
@@ -268,7 +269,7 @@ internal data class NotificationInviteAcceptedEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
     val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
@@ -280,7 +281,7 @@ internal data class NotificationInviteRejectedEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
     val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
@@ -292,7 +293,7 @@ internal data class NotificationInvitedEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -395,7 +396,7 @@ internal data class NotificationRemovedFromChannelEventDto(
     val channel_type: String,
     val channel_id: String,
     val channel: DownstreamChannelDto,
-    val member: DownstreamMemberDto,
+    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
