@@ -16,8 +16,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="stream_compose_member_count">
-    <item quantity="one">"%1d Membre"</item>
-    <item quantity="other">"%1d Membres"</item>
+    <item quantity="one">"%1$d Membre"</item>
+    <item quantity="other">"%1$d Membres"</item>
   </plurals>
   <plurals name="stream_compose_message_list_header_typing_users">
     <item quantity="one">"%s est en train d\'écrire"</item>

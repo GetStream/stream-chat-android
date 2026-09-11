@@ -24,8 +24,8 @@
   <string name="stream_ui_channel_list_header_disconnected">"En attente de réseau"</string>
   <string name="stream_ui_channel_list_header_offline">"Déconnecté"</string>
   <plurals name="stream_ui_channel_list_member_info">
-    <item quantity="one">"%1d Membre, %2d En ligne"</item>
-    <item quantity="other">"%1d Membres, %2d En ligne"</item>
+    <item quantity="one">"%1$d Membre, %2$d En ligne"</item>
+    <item quantity="other">"%1$d Membres, %2$d En ligne"</item>
   </plurals>
   <string name="stream_ui_channel_list_delete_channel">"Supprimer la conversation"</string>
   <string name="stream_ui_channel_list_delete_confirmation_message">"Êtes-vous sûr de vouloir supprimer définitivement cette conversation?"</string>
@@ -61,8 +61,8 @@
     <string name="stream_ui_message_composer_error_attachment_count">Limite de pièces jointes dépassée : il n\'est pas possible d\'ajouter plus de %d pièces jointes</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
   <plurals name="stream_ui_message_list_header_member_count">
-    <item quantity="one">"%1d Membre"</item>
-    <item quantity="other">"%1d Membres"</item>
+    <item quantity="one">"%1$d Membre"</item>
+    <item quantity="other">"%1$d Membres"</item>
   </plurals>
   <plurals name="stream_ui_message_list_header_typing_users">
     <item quantity="one">"%s est en train d\'écrire"</item>

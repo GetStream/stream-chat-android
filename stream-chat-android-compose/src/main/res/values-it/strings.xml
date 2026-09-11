@@ -16,8 +16,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <plurals name="stream_compose_member_count">
-    <item quantity="one">"%1d Membro"</item>
-    <item quantity="other">"%1d Membri"</item>
+    <item quantity="one">"%1$d Membro"</item>
+    <item quantity="other">"%1$d Membri"</item>
   </plurals>
   <plurals name="stream_compose_message_list_header_typing_users">
     <item quantity="one">"%s sta scrivendo"</item>
@@ -62,7 +62,7 @@
   <string name="stream_compose_search_input_cancel">"Annulla"</string>
   <string name="stream_compose_search_input_hint">"Cerca i canali per nome"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation">"Elimina canale"</string>
-  <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"Vuoi eliminare il canale% 1$s?"</string>
+  <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"Vuoi eliminare il canale %1$s?"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"Elimina canale"</string>
   <string name="stream_compose_selected_channel_menu_dismiss">"Annulla"</string>
   <string name="stream_compose_selected_channel_menu_leave_group">"Esci dal gruppo"</string>
