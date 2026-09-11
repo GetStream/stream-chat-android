@@ -26,7 +26,7 @@
   <string name="stream_ui_channel_list_header_disconnected">"네트워크를 검색하는 중입니다"</string>
   <string name="stream_ui_channel_list_header_offline">"연결이 끊어졌습니다"</string>
   <plurals name="stream_ui_channel_list_member_info">
-    <item quantity="other">"%1d명, %2d명이 온라인"</item>
+    <item quantity="other">"%1$d명, %2$d명이 온라인"</item>
   </plurals>
   <string name="stream_ui_channel_list_delete_channel">"대화 삭제하기"</string>
   <string name="stream_ui_channel_list_delete_confirmation_message">"대화를 삭제하시겠습니까?"</string>
@@ -62,7 +62,7 @@
     <string name="stream_ui_message_composer_error_attachment_count">첨부파일 개수가 (%d) 개를 초과하였습니다.</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
   <plurals name="stream_ui_message_list_header_member_count">
-    <item quantity="other">"%1d명"</item>
+    <item quantity="other">"%1$d명"</item>
   </plurals>
   <plurals name="stream_ui_message_list_header_typing_users">
     <item quantity="one">"%s 입력 중"</item>
