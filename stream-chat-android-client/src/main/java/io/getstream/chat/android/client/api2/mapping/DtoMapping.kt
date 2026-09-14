@@ -16,16 +16,9 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.ReadReceipts
-import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
@@ -237,33 +230,13 @@ internal class DtoMapping(
     )
 
     /**
-     * Maps the domain [PrivacySettings] model to a network [PrivacySettingsDto] model.
+     * Maps the domain [PrivacySettings] model to the network model, which the spec shares between the
+     * request and the response.
      */
-    internal fun PrivacySettings.toDto(): PrivacySettingsDto = PrivacySettingsDto(
-        typing_indicators = typingIndicators?.toDto(),
-        read_receipts = readReceipts?.toDto(),
-        delivery_receipts = deliveryReceipts?.toDto(),
-    )
-
-    /**
-     * Maps the domain [TypingIndicators] model to a network [TypingIndicatorsDto] model.
-     */
-    internal fun TypingIndicators.toDto(): TypingIndicatorsDto = TypingIndicatorsDto(
-        enabled = enabled,
-    )
-
-    /**
-     * Maps the domain [ReadReceipts] model to a network [ReadReceiptsDto] model.
-     */
-    internal fun ReadReceipts.toDto(): ReadReceiptsDto = ReadReceiptsDto(
-        enabled = enabled,
-    )
-
-    /**
-     * Maps the domain [DeliveryReceipts] model to a network [DeliveryReceiptsDto] model.
-     */
-    internal fun DeliveryReceipts.toDto(): DeliveryReceiptsDto = DeliveryReceiptsDto(
-        enabled = enabled,
+    internal fun PrivacySettings.toDto(): PrivacySettingsResponse = PrivacySettingsResponse(
+        typingIndicators = typingIndicators?.let { TypingIndicatorsResponse(enabled = it.enabled) },
+        readReceipts = readReceipts?.let { ReadReceiptsResponse(enabled = it.enabled) },
+        deliveryReceipts = deliveryReceipts?.let { DeliveryReceiptsResponse(enabled = it.enabled) },
     )
 
     /**

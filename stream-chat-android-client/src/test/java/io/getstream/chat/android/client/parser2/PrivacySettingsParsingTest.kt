@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.testdata.PrivacySettingsTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -41,18 +41,18 @@ internal class PrivacySettingsParsingTest {
 
     private val privacySettingsAdapter = PrivacySettingsAdapter()
 
-    // region DTO path (JSON → PrivacySettingsDto → PrivacySettings)
+    // region Response path (JSON → PrivacySettingsResponse → PrivacySettings)
 
     @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(PrivacySettingsTestData.jsonAllFields, PrivacySettingsDto::class.java)
+    fun `Response path - deserializes all fields`() {
+        val dto = parser.fromJson(PrivacySettingsTestData.jsonAllFields, PrivacySettingsResponse::class.java)
         val privacySettings = with(domainMapping) { dto.toDomain() }
         assertEquals(PrivacySettingsTestData.expectedAllFields, privacySettings)
     }
 
     @Test
-    fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(PrivacySettingsTestData.jsonOptionalFieldsMissing, PrivacySettingsDto::class.java)
+    fun `Response path - deserializes with optional fields missing`() {
+        val dto = parser.fromJson(PrivacySettingsTestData.jsonOptionalFieldsMissing, PrivacySettingsResponse::class.java)
         val privacySettings = with(domainMapping) { dto.toDomain() }
         assertEquals(PrivacySettingsTestData.expectedOptionalFieldsMissing, privacySettings)
     }
@@ -80,7 +80,7 @@ internal class PrivacySettingsParsingTest {
     @Test
     fun `Both paths - same error on typing_indicators missing enabled`() {
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled, PrivacySettingsDto::class.java)
+            parser.fromJson(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled, PrivacySettingsResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled)
@@ -91,7 +91,7 @@ internal class PrivacySettingsParsingTest {
     @Test
     fun `Both paths - same error on delivery_receipts missing enabled`() {
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled, PrivacySettingsDto::class.java)
+            parser.fromJson(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled, PrivacySettingsResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled)
@@ -102,7 +102,7 @@ internal class PrivacySettingsParsingTest {
     @Test
     fun `Both paths - same error on read_receipts missing enabled`() {
         val dtoException = assertThrows<JsonDataException> {
-            parser.fromJson(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled, PrivacySettingsDto::class.java)
+            parser.fromJson(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled, PrivacySettingsResponse::class.java)
         }
         val directException = assertThrows<JsonDataException> {
             privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled)

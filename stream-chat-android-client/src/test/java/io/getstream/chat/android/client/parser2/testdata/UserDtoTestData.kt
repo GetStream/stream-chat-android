@@ -16,15 +16,15 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import org.intellij.lang.annotations.Language
@@ -237,14 +237,14 @@ internal object UserDtoTestData {
             name = "username",
             image = "image",
             invisible = false,
-            privacy_settings = PrivacySettingsDto(
-                typing_indicators = TypingIndicatorsDto(
+            privacy_settings = PrivacySettingsResponse(
+                typingIndicators = TypingIndicatorsResponse(
                     enabled = false,
                 ),
-                read_receipts = ReadReceiptsDto(
+                readReceipts = ReadReceiptsResponse(
                     enabled = false,
                 ),
-                delivery_receipts = DeliveryReceiptsDto(
+                deliveryReceipts = DeliveryReceiptsResponse(
                     enabled = false,
                 ),
             ),
@@ -367,14 +367,14 @@ internal object UserDtoTestData {
         id = "userId",
         role = "owner",
         invisible = false,
-        privacy_settings = PrivacySettingsDto(
-            typing_indicators = TypingIndicatorsDto(
+        privacy_settings = PrivacySettingsResponse(
+            typingIndicators = TypingIndicatorsResponse(
                 enabled = false,
             ),
-            read_receipts = ReadReceiptsDto(
+            readReceipts = ReadReceiptsResponse(
                 enabled = false,
             ),
-            delivery_receipts = DeliveryReceiptsDto(
+            deliveryReceipts = DeliveryReceiptsResponse(
                 enabled = false,
             ),
         ),

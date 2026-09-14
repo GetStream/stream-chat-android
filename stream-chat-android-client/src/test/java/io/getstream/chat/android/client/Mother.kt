@@ -46,10 +46,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
@@ -98,6 +95,7 @@ import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
@@ -388,7 +386,7 @@ internal object Mother {
         image: String? = randomString(),
         role: String = randomString(),
         invisible: Boolean? = null,
-        privacy_settings: PrivacySettingsDto? = null,
+        privacy_settings: PrivacySettingsResponse? = null,
         language: String? = randomString(),
         banned: Boolean = randomBoolean(),
         devices: List<DeviceDto>? = emptyList(),
@@ -928,20 +926,6 @@ internal object Mother {
         semanticFilterMatched = semanticFilterMatched,
         platformCircumvented = platformCircumvented,
     )
-
-    fun randomPrivacySettingsDto(
-        typingIndicators: TypingIndicatorsDto = randomTypingIndicatorsDto(),
-        readReceipts: ReadReceiptsDto = randomReadReceiptsDto(),
-    ): PrivacySettingsDto = PrivacySettingsDto(
-        typing_indicators = typingIndicators,
-        read_receipts = readReceipts,
-    )
-
-    fun randomTypingIndicatorsDto(enabled: Boolean = randomBoolean()): TypingIndicatorsDto =
-        TypingIndicatorsDto(enabled)
-
-    fun randomReadReceiptsDto(enabled: Boolean = randomBoolean()): ReadReceiptsDto =
-        ReadReceiptsDto(enabled)
 
     fun randomQueryUsersRequest(
         filter: FilterObject = Filters.neutral(),

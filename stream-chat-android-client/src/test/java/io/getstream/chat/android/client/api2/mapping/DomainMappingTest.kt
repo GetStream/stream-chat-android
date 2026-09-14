@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomAppResponseFields
@@ -53,7 +52,6 @@ import io.getstream.chat.android.client.Mother.randomPollOptionResponseData
 import io.getstream.chat.android.client.Mother.randomPollResponseData
 import io.getstream.chat.android.client.Mother.randomPollVoteResponseData
 import io.getstream.chat.android.client.Mother.randomPollVotesResponse
-import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomReactionGroupResponse
@@ -1286,18 +1284,6 @@ internal class DomainMappingTest {
             platformCircumvented = moderationResponse.platformCircumvented ?: false,
         )
         assertEquals(expected, moderation)
-    }
-
-    @Test
-    fun `PrivacySettingsDto is correctly mapped to PrivacySettings`() {
-        val privacySettingsDto = randomPrivacySettingsDto()
-        val sut = Fixture().get()
-        val privacySettings = with(sut) { privacySettingsDto.toDomain() }
-        val expected = PrivacySettings(
-            typingIndicators = TypingIndicators(enabled = privacySettingsDto.typing_indicators?.enabled == true),
-            readReceipts = ReadReceipts(enabled = privacySettingsDto.read_receipts?.enabled == true),
-        )
-        assertEquals(expected, privacySettings)
     }
 
     @Test

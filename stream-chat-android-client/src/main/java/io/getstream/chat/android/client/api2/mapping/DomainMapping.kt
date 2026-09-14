@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
-import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
@@ -43,10 +42,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
-import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
-import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
-import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -998,34 +994,6 @@ internal class DomainMapping(
         blocklistMatched = blocklistMatched,
         semanticFilterMatched = semanticFilterMatched,
         platformCircumvented = platformCircumvented ?: false,
-    )
-
-    /**
-     * Transforms [PrivacySettingsDto] to [PrivacySettings].
-     */
-    internal fun PrivacySettingsDto.toDomain(): PrivacySettings = PrivacySettings(
-        typingIndicators = typing_indicators?.toDomain(),
-        deliveryReceipts = delivery_receipts?.toDomain(),
-        readReceipts = read_receipts?.toDomain(),
-    )
-
-    /**
-     * Transforms [TypingIndicatorsDto] to [TypingIndicators].
-     */
-    internal fun TypingIndicatorsDto.toDomain(): TypingIndicators = TypingIndicators(
-        enabled = enabled,
-    )
-
-    /**
-     * Transforms [DeliveryReceiptsDto] to [DeliveryReceipts].
-     */
-    internal fun DeliveryReceiptsDto.toDomain() = DeliveryReceipts(enabled = enabled)
-
-    /**
-     * Transforms [ReadReceiptsDto] to [ReadReceipts].
-     */
-    internal fun ReadReceiptsDto.toDomain(): ReadReceipts = ReadReceipts(
-        enabled = enabled,
     )
 
     /**
