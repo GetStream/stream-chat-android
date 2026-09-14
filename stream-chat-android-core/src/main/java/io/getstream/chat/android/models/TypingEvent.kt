@@ -34,5 +34,5 @@ public data class TypingEvent(
         level = DeprecationLevel.WARNING,
     )
     val users: List<User>,
-    val typingUsers: List<TypingUser> = emptyList(),
+    val typingUsers: List<TypingUser> = users.map(::TypingUser),
 )

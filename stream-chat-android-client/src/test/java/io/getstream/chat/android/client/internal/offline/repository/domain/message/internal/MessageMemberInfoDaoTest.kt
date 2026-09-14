@@ -82,23 +82,23 @@ internal class MessageMemberInfoDaoTest {
         messageDao.insert(message.toEntity())
 
         messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo
-            MentionedMembersEntity(mentioned.mapValues { (_, info) -> info.toEntity() })
+            mentioned.mapValues { (_, info) -> info.toEntity() }
     }
 
     @Test
-    fun `no mentioned channel members round trips as an empty map`(): Unit = runTest {
+    fun `no mentioned channel members is stored as nothing at all`(): Unit = runTest {
         val message = randomMessage(mentionedChannelMembers = emptyMap(), replyTo = null, poll = null)
 
         messageDao.insert(message.toEntity())
 
-        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo
-            MentionedMembersEntity()
+        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo null
     }
 
     @Test
     fun `generic extra data still round trips once the mentions column exists`(): Unit = runTest {
-        // Room matches type converters after erasure: a converter declared over Map<String, MemberInfoEntity> is
-        // also picked for the Map<String, Any> extra-data columns, which then fail on any non-object value.
+        // Kotlin maps are covariant in their value type, so a non-null converter over Map<String, MemberInfoEntity>
+        // also satisfies the Map<String, Any> extra-data columns and outranks the nullable ExtraDataConverter there,
+        // which then fails on any non-object value.
         val message = randomMessage(
             extraData = mapOf("birthland" to "Polis Massa", "count" to 3.0),
             replyTo = null,

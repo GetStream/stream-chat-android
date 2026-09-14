@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.internal.offline.repository.database.co
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MemberInfoEntity
-import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MentionedMembersEntity
 
 /**
  * Converter class defining how the [MemberInfoEntity] is stored in the database.
@@ -30,7 +29,7 @@ internal class MemberInfoConverter {
     private val adapter = moshi.adapter<MemberInfoEntity>()
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val mentionedAdapter = moshi.adapter<MentionedMembersEntity>()
+    private val mapAdapter = moshi.adapter<Map<String, MemberInfoEntity>>()
 
     /**
      * Converts a [String] to a [MemberInfoEntity].
@@ -52,21 +51,25 @@ internal class MemberInfoConverter {
     }
 
     /**
-     * Converts a [String] to a [MentionedMembersEntity].
+     * Converts a [String] to a map of user id to [MemberInfoEntity].
+     *
+     * Nullable on purpose, like every other map converter here. Kotlin's `Map<K, out V>` is covariant, so a converter
+     * over `Map<String, MemberInfoEntity>` also satisfies the `Map<String, Any>` extra-data columns of unrelated
+     * tables, and a non-null one outranks [ExtraDataConverter] there, which returns a nullable map.
      */
     @TypeConverter
-    fun stringToMentionedMembers(data: String?): MentionedMembersEntity {
+    fun stringToMemberInfoMap(data: String?): Map<String, MemberInfoEntity>? {
         if (data.isNullOrEmpty() || data == "null") {
-            return MentionedMembersEntity()
+            return null
         }
-        return mentionedAdapter.fromJson(data) ?: MentionedMembersEntity()
+        return mapAdapter.fromJson(data)
     }
 
     /**
-     * Converts a [MentionedMembersEntity] to a [String].
+     * Converts a map of user id to [MemberInfoEntity] to a [String].
      */
     @TypeConverter
-    fun mentionedMembersToString(mentionedMembers: MentionedMembersEntity?): String? {
-        return mentionedAdapter.toJson(mentionedMembers ?: MentionedMembersEntity())
+    fun memberInfoMapToString(memberInfo: Map<String, MemberInfoEntity>?): String? {
+        return memberInfo?.let(mapAdapter::toJson)
     }
 }

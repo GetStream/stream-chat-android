@@ -336,7 +336,8 @@ internal class DomainMapping(
                 channelRole = member?.channel_role,
                 member = member?.toDomain(),
                 mentionedChannelMembers = mentioned_channel_members
-                    ?.mapValues { (_, memberInfo) -> memberInfo.toDomain() }
+                    ?.mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
+                    ?.toMap()
                     .orEmpty(),
                 deletedForMe = deleted_for_me ?: false,
                 extraData = extraData.toMutableMap(),

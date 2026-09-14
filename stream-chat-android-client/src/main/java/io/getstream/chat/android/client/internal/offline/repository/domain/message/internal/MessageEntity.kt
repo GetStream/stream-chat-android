@@ -150,7 +150,7 @@ internal data class MessageInnerEntity(
     val member: MemberInfoEntity? = null,
 
     /** Limited data about the channel membership of the mentioned users, keyed by user id */
-    val mentionedChannelMembers: MentionedMembersEntity = MentionedMembersEntity(),
+    val mentionedChannelMembers: Map<String, MemberInfoEntity>? = null,
     /** Whether the message was deleted for the current user */
     val deletedForMe: Boolean = false,
 )

@@ -119,7 +119,7 @@ internal data class ReplyMessageInnerEntity(
     val member: MemberInfoEntity? = null,
 
     /** Limited data about the channel membership of the mentioned users, keyed by user id */
-    val mentionedChannelMembers: MentionedMembersEntity = MentionedMembersEntity(),
+    val mentionedChannelMembers: Map<String, MemberInfoEntity>? = null,
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"

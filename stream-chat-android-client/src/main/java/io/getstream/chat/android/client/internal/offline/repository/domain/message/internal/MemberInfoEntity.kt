@@ -31,16 +31,3 @@ internal data class MemberInfoEntity(
     val notificationsMuted: Boolean = false,
     val extraData: Map<String, Any> = emptyMap(),
 )
-
-/**
- * DB entity holding the channel membership of the users mentioned in a message, keyed by user id.
- *
- * A wrapper rather than a bare map: Room matches type converters after erasure, so a converter declared over
- * `Map<String, MemberInfoEntity>` is also selected for the `Map<String, Any>` extra-data columns of unrelated tables.
- *
- * @property members The membership of each projected mentioned user, keyed by user id.
- */
-@JsonClass(generateAdapter = true)
-internal data class MentionedMembersEntity(
-    val members: Map<String, MemberInfoEntity> = emptyMap(),
-)
