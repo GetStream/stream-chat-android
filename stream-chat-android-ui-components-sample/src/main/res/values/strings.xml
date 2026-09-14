@@ -79,8 +79,8 @@
     <string name="add_group_channel_select_name_choose_title">NAME</string>
     <string name="add_group_channel_select_name_choose_hint">Choose a group chat name</string>
     <plurals name="members_count_title">
-        <item quantity="one">%1d Member</item>
-        <item quantity="other">%1d Members</item>
+        <item quantity="one">%1$d Member</item>
+        <item quantity="other">%1$d Members</item>
     </plurals>
     <string name="add_group_channel_select_name_create_button_title">Create</string>
 

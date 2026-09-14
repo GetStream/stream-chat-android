@@ -89,6 +89,9 @@ subprojects {
                 lint.targetSdk = libs.versions.targetSdk.get().toInt()
                 testOptions.targetSdk = libs.versions.targetSdk.get().toInt()
             }
+            // A translation whose placeholders drift from the default locale crashes at format time,
+            // so the report this check writes by default is too easy to miss.
+            lint.error += "StringFormatCount"
         }
     }
     pluginManager.withPlugin("com.android.application") {
@@ -98,6 +101,7 @@ subprojects {
                 minSdk = libs.versions.minSdk.get().toInt()
                 targetSdk = libs.versions.targetSdk.get().toInt()
             }
+            lint.error += "StringFormatCount"
         }
     }
 
