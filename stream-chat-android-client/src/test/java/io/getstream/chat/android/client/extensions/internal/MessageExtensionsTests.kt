@@ -748,6 +748,44 @@ internal class MessageExtensionsTests {
     }
 
     @Test
+    fun `withRefreshedMemberInfo should keep the entry when the custom data is cleared`() {
+        // Removing the key would put the entry out of reach of later member events, so a member who cleared and then
+        // set their custom data again would keep showing the stale value until the next channel query.
+        val cleared = MemberInfo(channelRole = "channel_member")
+        val message = randomMessage(
+            mentionedChannelMembers = mapOf("leandro" to MemberInfo(extraData = mapOf("nickname" to "old"))),
+        )
+
+        val result = message.withRefreshedMemberInfo("leandro", cleared)
+
+        result.mentionedChannelMembers shouldBeEqualTo mapOf("leandro" to cleared)
+    }
+
+    @Test
+    fun `withRefreshedMemberInfo should restore custom data that was cleared and set again`() {
+        val cleared = MemberInfo(channelRole = "channel_member")
+        val restored = MemberInfo(channelRole = "channel_member", extraData = mapOf("nickname" to "new"))
+        val message = randomMessage(
+            mentionedChannelMembers = mapOf("leandro" to MemberInfo(extraData = mapOf("nickname" to "old"))),
+        )
+
+        val result = message
+            .withRefreshedMemberInfo("leandro", cleared)
+            .withRefreshedMemberInfo("leandro", restored)
+
+        result.mentionedChannelMembers shouldBeEqualTo mapOf("leandro" to restored)
+    }
+
+    @Test
+    fun `hasOutdatedMemberInfo should report an entry whose custom data is gone`() {
+        val message = randomMessage(
+            mentionedChannelMembers = mapOf("leandro" to MemberInfo(extraData = mapOf("nickname" to "old"))),
+        )
+
+        message.hasOutdatedMemberInfo("leandro", MemberInfo(channelRole = "channel_member")) shouldBeEqualTo true
+    }
+
+    @Test
     fun `withRefreshedMemberInfo should not add a user the backend never projected`() {
         val message = randomMessage(mentionedChannelMembers = emptyMap(), member = null)
 

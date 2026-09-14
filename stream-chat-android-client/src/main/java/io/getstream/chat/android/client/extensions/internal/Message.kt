@@ -66,11 +66,17 @@ private fun Message.refreshMemberInfo(userId: String, memberInfo: MemberInfo?): 
         .withRefreshedMentionedMemberInfo(userId, memberInfo)
 
 /**
- * Replaces the entry [userId] already holds in [Message.mentionedChannelMembers], dropping it when [memberInfo] is
- * null.
+ * Replaces the entry [userId] already holds in [Message.mentionedChannelMembers], dropping it only when the member is
+ * gone entirely.
  *
  * A user the backend never projected is left out rather than added: the projection is capped per message and gated on
  * the reader's permission, so an absent entry means the backend chose not to send one, not that we are missing it.
+ *
+ * Clearing the custom data keeps the entry, with an empty [MemberInfo.extraData], rather than removing the key. The
+ * backend omits such a user from the map, so this differs from a refetch, but only for a value every reader resolves
+ * to the same absent custom field. Removing the key instead would make the entry unreachable by later member events,
+ * since those can no longer find it, and a member who cleared and then set their custom data again would keep showing
+ * the stale value until the next channel query.
  */
 private fun Message.withRefreshedMentionedMemberInfo(userId: String, memberInfo: MemberInfo?): Message = when {
     !mentionedChannelMembers.containsKey(userId) -> this
