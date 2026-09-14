@@ -25,12 +25,15 @@ import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomMemberUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -56,6 +59,35 @@ import org.mockito.kotlin.mock
  * channel to a grouped query.
  */
 internal class EventHandlerSequentialHiddenChannelTest {
+
+    @Test
+    fun `a hidden channel is not re-added to a standard query by a later member update`() = runTest {
+        val fixture = Fixture()
+        val membership = randomMember(user = fixture.currentUser)
+        fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
+        val standardState = fixture.withStandardQueryHolding(CHANNEL_TYPE, CHANNEL_ID, membership)
+        val eventHandler = fixture.get()
+
+        eventHandler.handleEvents(
+            randomChannelHiddenEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                user = fixture.currentUser,
+                clearHistory = false,
+            ),
+        )
+        eventHandler.handleEvents(
+            randomMemberUpdatedEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                member = membership,
+            ),
+        )
+
+        standardState.rawChannels.orEmpty().keys `should not contain` CID
+    }
 
     @Test
     fun `a hidden channel is not re-added to a grouped query by later events in the same batch`() = runTest {
@@ -157,6 +189,22 @@ internal class EventHandlerSequentialHiddenChannelTest {
             logicRegistry.channelState(channelType, channelId).updateChannelData(
                 randomChannel(id = channelId, type = channelType, membership = membership),
             )
+        }
+
+        /** Registers a plain query already holding the channel, the way a loaded channel list does. */
+        suspend fun withStandardQueryHolding(
+            channelType: String,
+            channelId: String,
+            membership: Member,
+        ): QueryChannelsMutableState {
+            val identifier = QueryChannelsIdentifier.Standard(Filters.neutral(), QuerySortByField())
+            val state = stateRegistry.queryChannels(identifier).toMutableState()
+            // The default factory reads clientState off the ChatClient singleton, absent here.
+            state.chatEventHandlerFactory = ChatEventHandlerFactory(clientState)
+            logicRegistry.queryChannels(identifier).addChannel(
+                randomChannel(id = channelId, type = channelType, membership = membership, hidden = false),
+            )
+            return state
         }
 
         /** Registers a grouped query, installing its GroupAwareChatEventHandler, and returns its state. */
