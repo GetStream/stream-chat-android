@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.database.co
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MemberInfoEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.MentionedMembersEntity
 
 /**
  * Converter class defining how the [MemberInfoEntity] is stored in the database.
@@ -29,7 +30,7 @@ internal class MemberInfoConverter {
     private val adapter = moshi.adapter<MemberInfoEntity>()
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val mapAdapter = moshi.adapter<Map<String, MemberInfoEntity>>()
+    private val mentionedAdapter = moshi.adapter<MentionedMembersEntity>()
 
     /**
      * Converts a [String] to a [MemberInfoEntity].
@@ -51,21 +52,21 @@ internal class MemberInfoConverter {
     }
 
     /**
-     * Converts a [String] to a map of user id to [MemberInfoEntity].
+     * Converts a [String] to a [MentionedMembersEntity].
      */
     @TypeConverter
-    fun stringToMemberInfoMap(data: String?): Map<String, MemberInfoEntity> {
+    fun stringToMentionedMembers(data: String?): MentionedMembersEntity {
         if (data.isNullOrEmpty() || data == "null") {
-            return emptyMap()
+            return MentionedMembersEntity()
         }
-        return mapAdapter.fromJson(data).orEmpty()
+        return mentionedAdapter.fromJson(data) ?: MentionedMembersEntity()
     }
 
     /**
-     * Converts a map of user id to [MemberInfoEntity] to a [String].
+     * Converts a [MentionedMembersEntity] to a [String].
      */
     @TypeConverter
-    fun memberInfoMapToString(memberInfo: Map<String, MemberInfoEntity>?): String? {
-        return mapAdapter.toJson(memberInfo.orEmpty())
+    fun mentionedMembersToString(mentionedMembers: MentionedMembersEntity?): String? {
+        return mentionedAdapter.toJson(mentionedMembers ?: MentionedMembersEntity())
     }
 }

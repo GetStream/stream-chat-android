@@ -82,7 +82,7 @@ internal class MessageMemberInfoDaoTest {
         messageDao.insert(message.toEntity())
 
         messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo
-            mentioned.mapValues { (_, info) -> info.toEntity() }
+            MentionedMembersEntity(mentioned.mapValues { (_, info) -> info.toEntity() })
     }
 
     @Test
@@ -91,7 +91,24 @@ internal class MessageMemberInfoDaoTest {
 
         messageDao.insert(message.toEntity())
 
-        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo emptyMap()
+        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo
+            MentionedMembersEntity()
+    }
+
+    @Test
+    fun `generic extra data still round trips once the mentions column exists`(): Unit = runTest {
+        // Room matches type converters after erasure: a converter declared over Map<String, MemberInfoEntity> is
+        // also picked for the Map<String, Any> extra-data columns, which then fail on any non-object value.
+        val message = randomMessage(
+            extraData = mapOf("birthland" to "Polis Massa", "count" to 3.0),
+            replyTo = null,
+            poll = null,
+        )
+
+        messageDao.insert(message.toEntity())
+
+        messageDao.select(message.id)?.messageInnerEntity?.extraData shouldBeEqualTo
+            mapOf("birthland" to "Polis Massa", "count" to 3.0)
     }
 
     @Test
