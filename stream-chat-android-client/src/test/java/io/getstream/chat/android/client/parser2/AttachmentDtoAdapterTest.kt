@@ -16,43 +16,31 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.parser2.testdata.AttachmentDtoTestData
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.kotest.assertions.json.shouldEqualJson
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import io.getstream.chat.android.models.Attachment as DomainAttachment
 
 internal class AttachmentDtoAdapterTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
 
+    private val dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)
+
     @Test
-    fun `Deserialize JSON attachment with custom fields`() {
-        val attachment = parser.fromJson(AttachmentDtoTestData.json, AttachmentDto::class.java)
-        attachment shouldBeEqualTo AttachmentDtoTestData.attachment
+    fun `Serialize a domain attachment to the same wire format as before`() {
+        val json = parser.toJson(with(dtoMapping) { AttachmentDtoTestData.domainAttachment.toDto() })
+
+        json.shouldEqualJson(AttachmentDtoTestData.json)
     }
 
     @Test
-    fun `Deserialize JSON attachment without custom fields`() {
-        val attachment = parser.fromJson(AttachmentDtoTestData.jsonWithoutExtraData, AttachmentDto::class.java)
-        attachment shouldBeEqualTo AttachmentDtoTestData.attachmentWithoutExtraData
-    }
+    fun `Serialize an empty domain attachment`() {
+        val json = parser.toJson(with(dtoMapping) { DomainAttachment().toDto() })
 
-    @Test
-    fun `Serialize JSON attachment with custom fields`() {
-        val jsonString = parser.toJson(AttachmentDtoTestData.attachment)
-        jsonString.shouldEqualJson(AttachmentDtoTestData.json)
-    }
-
-    @Test
-    fun `Serialize JSON attachment without custom fields`() {
-        val jsonString = parser.toJson(AttachmentDtoTestData.attachmentWithoutExtraData)
-        jsonString.shouldEqualJson(AttachmentDtoTestData.jsonWithoutExtraData)
-    }
-
-    @Test
-    fun `Deserialize JSON attachment with null file_size`() {
-        val attachment = parser.fromJson(AttachmentDtoTestData.jsonWithNullFileSize, AttachmentDto::class.java)
-        attachment shouldBeEqualTo AttachmentDtoTestData.attachmentWithNullFileSize
+        json.shouldEqualJson(AttachmentDtoTestData.jsonWithoutExtraData)
     }
 }

@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -750,46 +749,6 @@ internal object Mother {
         imageUrl = imageUrl,
         type = type,
         custom = custom,
-    )
-
-    fun randomAttachmentDto(
-        assetUrl: String? = randomString(),
-        authorName: String? = randomString(),
-        authorLink: String? = randomString(),
-        fallback: String? = randomString(),
-        fileSize: Int? = positiveRandomInt(),
-        image: String? = randomString(),
-        imageUrl: String? = randomString(),
-        mimeType: String? = randomString(),
-        name: String? = randomString(),
-        ogScrapeUrl: String? = randomString(),
-        text: String? = randomString(),
-        thumbUrl: String? = randomString(),
-        title: String? = randomString(),
-        titleLink: String? = randomString(),
-        type: String? = randomString(),
-        originalHeight: Int? = positiveRandomInt(),
-        originalWidth: Int? = positiveRandomInt(),
-        extraData: Map<String, Any> = emptyMap(),
-    ): AttachmentDto = AttachmentDto(
-        asset_url = assetUrl,
-        author_name = authorName,
-        author_link = authorLink,
-        fallback = fallback,
-        file_size = fileSize,
-        image = image,
-        image_url = imageUrl,
-        mime_type = mimeType,
-        name = name,
-        og_scrape_url = ogScrapeUrl,
-        text = text,
-        thumb_url = thumbUrl,
-        title = title,
-        title_link = titleLink,
-        type = type,
-        original_height = originalHeight,
-        original_width = originalWidth,
-        extraData = extraData,
     )
 
     fun randomBanResponse(
