@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
@@ -783,31 +782,6 @@ internal class DomainMapping(
                 .toMap().toMutableMap(),
         )
     }
-
-    /**
-     * Transforms [AttachmentDto] to [Attachment].
-     */
-    internal fun AttachmentDto.toDomain(): Attachment =
-        Attachment(
-            assetUrl = asset_url,
-            authorName = author_name,
-            authorLink = author_link,
-            fallback = fallback,
-            fileSize = file_size ?: 0,
-            image = image,
-            imageUrl = image_url,
-            mimeType = mime_type,
-            name = name,
-            ogUrl = og_scrape_url,
-            text = text,
-            thumbUrl = thumb_url,
-            title = title,
-            titleLink = title_link,
-            type = type,
-            originalHeight = original_height,
-            originalWidth = original_width,
-            extraData = extraData.toMutableMap(),
-        )
 
     /**
      * The four fields the spec declares on no attachment shape. The wire sends them at the root, so they

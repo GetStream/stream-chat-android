@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
@@ -56,6 +55,7 @@ import io.getstream.chat.android.network.models.SharedLocation
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.Attachment as AttachmentRequest
+import io.getstream.chat.android.network.models.Attachment as NetworkAttachment
 
 @Suppress("TooManyFunctions")
 internal class DtoMapping(
@@ -66,27 +66,37 @@ internal class DtoMapping(
     private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
 
     /**
-     * Converts [Attachment] to [AttachmentDto].
+     * Converts [Attachment] to the network model.
+     *
+     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, but the wire carries them at
+     * the root, so they go through `custom`, which the adapter flattens back out. `file_size` stays an Int
+     * here: parsing yields a Double for an undeclared number, and writing that would change `1` to `1.0`.
      */
-    internal fun Attachment.toDto(): AttachmentDto = AttachmentDto(
-        asset_url = assetUrl,
-        author_name = authorName,
+    internal fun Attachment.toDto(): NetworkAttachment = NetworkAttachment(
+        assetUrl = assetUrl,
+        authorName = authorName,
+        authorLink = authorLink,
         fallback = fallback,
-        file_size = fileSize,
-        image = image,
-        image_url = imageUrl,
-        mime_type = mimeType,
-        name = name,
-        og_scrape_url = ogUrl,
+        imageUrl = imageUrl,
+        ogScrapeUrl = ogUrl,
         text = text,
-        thumb_url = thumbUrl,
+        thumbUrl = thumbUrl,
         title = title,
-        title_link = titleLink,
-        author_link = authorLink,
+        titleLink = titleLink,
         type = type,
-        original_height = originalHeight,
-        original_width = originalWidth,
-        extraData = extraData,
+        originalHeight = originalHeight,
+        originalWidth = originalWidth,
+        // The domain holds actions and fields in extraData, so they reach the root through custom. Both
+        // default to an empty list here, which would be emitted alongside. giphy needs no such guard: it
+        // already defaults to null.
+        actions = null,
+        fields = null,
+        custom = extraData + buildMap<String, Any> {
+            put("file_size", fileSize)
+            image?.let { put("image", it) }
+            mimeType?.let { put("mime_type", it) }
+            name?.let { put("name", it) }
+        },
     )
 
     /**

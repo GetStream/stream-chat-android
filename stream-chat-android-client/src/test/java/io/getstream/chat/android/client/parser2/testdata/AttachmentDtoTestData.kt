@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.network.models.Attachment
 import org.intellij.lang.annotations.Language
+import io.getstream.chat.android.models.Attachment as DomainAttachment
 
 internal object AttachmentDtoTestData {
 
@@ -70,25 +70,26 @@ internal object AttachmentDtoTestData {
         ),
     )
 
-    val attachment = AttachmentDto(
-        asset_url = "assetUrl",
-        author_name = "authorName",
-        author_link = "authorLink",
+    /** The domain attachment that the wire fixture above represents. */
+    val domainAttachment = DomainAttachment(
+        assetUrl = "assetUrl",
+        authorName = "authorName",
+        authorLink = "authorLink",
         fallback = "fallback",
-        file_size = 1,
+        fileSize = 1,
         image = "image",
-        image_url = "imageUrl",
-        mime_type = "mimeType",
+        imageUrl = "imageUrl",
+        mimeType = "mimeType",
         name = "name",
-        og_scrape_url = "ogScrapeUrl",
+        ogUrl = "ogScrapeUrl",
         text = "text",
-        thumb_url = "thumbUrl",
+        thumbUrl = "thumbUrl",
         title = "title",
-        title_link = "titleLink",
+        titleLink = "titleLink",
         type = "type",
-        original_height = 100,
-        original_width = 100,
-        extraData = mapOf("draft" to true),
+        originalHeight = 100,
+        originalWidth = 100,
+        extraData = mutableMapOf("draft" to true),
     )
 
     @Language("JSON")
@@ -97,26 +98,6 @@ internal object AttachmentDtoTestData {
           "file_size": null
         }
         """.withoutWhitespace()
-    val attachmentWithNullFileSize = AttachmentDto(
-        asset_url = null,
-        author_name = null,
-        author_link = null,
-        fallback = null,
-        file_size = null,
-        image = null,
-        image_url = null,
-        mime_type = null,
-        name = null,
-        og_scrape_url = null,
-        text = null,
-        thumb_url = null,
-        title = null,
-        title_link = null,
-        type = null,
-        original_width = null,
-        original_height = null,
-        extraData = emptyMap(),
-    )
 
     @Language("JSON")
     val jsonWithoutExtraData =
@@ -124,24 +105,4 @@ internal object AttachmentDtoTestData {
           "file_size": 0
         }
         """.withoutWhitespace()
-    val attachmentWithoutExtraData = AttachmentDto(
-        asset_url = null,
-        author_name = null,
-        author_link = null,
-        fallback = null,
-        file_size = 0,
-        image = null,
-        image_url = null,
-        mime_type = null,
-        name = null,
-        og_scrape_url = null,
-        text = null,
-        thumb_url = null,
-        title = null,
-        title_link = null,
-        type = null,
-        original_width = null,
-        original_height = null,
-        extraData = emptyMap(),
-    )
 }
