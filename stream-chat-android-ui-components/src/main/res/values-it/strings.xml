@@ -25,8 +25,8 @@
   <string name="stream_ui_channel_list_header_disconnected">"Attendo la rete"</string>
   <string name="stream_ui_channel_list_header_offline">"Disconnesso"</string>
   <plurals name="stream_ui_channel_list_member_info">
-    <item quantity="one">"%1d Membro, %2d Online"</item>
-    <item quantity="other">"%1d Membri, %2d Online"</item>
+    <item quantity="one">"%1$d Membro, %2$d Online"</item>
+    <item quantity="other">"%1$d Membri, %2$d Online"</item>
   </plurals>
   <string name="stream_ui_channel_list_delete_channel">"Elimina canale"</string>
   <string name="stream_ui_channel_list_delete_confirmation_message">"Sei sicuro di voler eliminare questo canale?"</string>
@@ -60,8 +60,8 @@
     <string name="stream_ui_message_composer_error_attachment_count">Attenzione: il limite massimo di %d file è stato superato.</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
   <plurals name="stream_ui_message_list_header_member_count">
-    <item quantity="one">"%1d Membro"</item>
-    <item quantity="other">"%1d Membri"</item>
+    <item quantity="one">"%1$d Membro"</item>
+    <item quantity="other">"%1$d Membri"</item>
   </plurals>
   <plurals name="stream_ui_message_list_header_typing_users">
     <item quantity="one">"%s sta scrivendo"</item>

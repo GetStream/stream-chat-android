@@ -25,7 +25,7 @@
   <string name="stream_ui_channel_list_header_disconnected">"Menunggu jaringan"</string>
   <string name="stream_ui_channel_list_header_offline">"Koneksi Terputus"</string>
   <plurals name="stream_ui_channel_list_member_info">
-    <item quantity="other">"%1d Anggota, %2d Online"</item>
+    <item quantity="other">"%1$d Anggota, %2$d Online"</item>
   </plurals>
   <string name="stream_ui_channel_list_delete_channel">"Hapus percakapan"</string>
   <string name="stream_ui_channel_list_delete_confirmation_message">"Anda yakin ingin menghapus percakapan ini?"</string>
@@ -60,7 +60,7 @@
     <string name="stream_ui_message_composer_error_attachment_count">添付ファイルの制限を超えました：%d個のファイル以上を添付することはできません</string>
     <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
   <plurals name="stream_ui_message_list_header_member_count">
-    <item quantity="other">"%1d Anggota"</item>
+    <item quantity="other">"%1$d Anggota"</item>
   </plurals>
   <plurals name="stream_ui_message_list_header_typing_users">
     <item quantity="one">"%s sedang mengetik"</item>

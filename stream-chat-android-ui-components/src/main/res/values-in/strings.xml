@@ -33,7 +33,7 @@
     <string name="stream_ui_channel_list_dismiss_dialog">Batalkan</string>
     <string name="stream_ui_channel_list_delete_channel">Hapus percakapan</string>
     <plurals name="stream_ui_channel_list_member_info">
-        <item quantity="other">%1d Anggota, %2d Online</item>
+        <item quantity="other">%1$d Anggota, %2$d Online</item>
     </plurals>
     <string name="stream_ui_channel_list_delete_confirmation_title">Hapus Grup</string>
     <string name="stream_ui_channel_list_delete_confirmation_message">Anda yakin ingin menghapus percakapan ini?</string>
@@ -71,7 +71,7 @@
     <string name="stream_ui_message_list_header_retry">Coba Lagi</string>
     <string name="stream_ui_message_list_header_member_count_online">%1$s, %2$d Online</string>
     <plurals name="stream_ui_message_list_header_member_count">
-        <item quantity="other">%1d Anggota</item>
+        <item quantity="other">%1$d Anggota</item>
     </plurals>
     <plurals name="stream_ui_message_list_header_typing_users" tools:ignore="UnusedQuantity">
         <item quantity="one">%s sedang mengetik</item>
