@@ -879,7 +879,7 @@ private fun createMessageAttachmentJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createReactionUserJsonString() =
+private fun createNestedUserJsonString() =
     """
         {
             "id": "bender",
@@ -902,7 +902,7 @@ private fun createMessageReactionJsonString() =
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "type": "like",
             "score": 1,
-            "user": ${createReactionUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "user_id": "bender",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z"
@@ -1033,7 +1033,7 @@ private fun createPollJsonString() =
             "is_closed": false,
             "answers_count": 0,
             "latest_answers": [],
-            "created_by": ${createUserJsonString()},
+            "created_by": ${createNestedUserJsonString()},
             "created_by_id": "bender"
         }
     """.trimIndent()
@@ -1047,7 +1047,7 @@ private fun createPollVoteJsonString() =
             "option_id": "option-1",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
-            "user": ${createUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "user_id": "bender"
         }
     """.trimIndent()
@@ -1061,7 +1061,7 @@ private fun createPollAnswerVoteJsonString() =
             "option_id": "",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
-            "user": ${createUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "user_id": "bender",
             "is_answer": true,
             "answer_text": "My answer"

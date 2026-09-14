@@ -16,139 +16,15 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
-import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
 import org.intellij.lang.annotations.Language
-import java.util.Date
 
 internal object PollDtoTestData {
-
-    // DownstreamPollDto Test Data
-
-    @Language("JSON")
-    val downstreamPollJson =
-        """{
-          "allow_answers": true,
-          "allow_user_suggested_options": false,
-          "answers_count": 5,
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "created_by": ${UserDtoTestData.downstreamJson},
-          "created_by_id": "userId",
-          "description": "Poll description",
-          "enforce_unique_vote": true,
-          "id": "poll1",
-          "is_closed": false,
-          "latest_answers": [],
-          "latest_votes_by_option": {},
-          "max_votes_allowed": 1,
-          "name": "Poll Name",
-          "options": [
-            {
-              "id": "option1",
-              "text": "Option 1"
-            }
-          ],
-          "own_votes": [],
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "vote_count": 10,
-          "vote_counts_by_option": {
-            "option1": 10
-          },
-          "voting_visibility": "public",
-          "extraData": {
-            "poll_key": "poll_value"
-          },
-          "customPollKey": "customPollValue"
-        }"""
-
-    val downstreamPoll = DownstreamPollDto(
-        allow_answers = true,
-        allow_user_suggested_options = false,
-        answers_count = 5,
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_id = "userId",
-        description = "Poll description",
-        enforce_unique_vote = true,
-        id = "poll1",
-        is_closed = false,
-        latest_answers = emptyList(),
-        latest_votes_by_option = emptyMap(),
-        max_votes_allowed = 1,
-        name = "Poll Name",
-        options = listOf(
-            PollOptionResponseData(
-                id = "option1",
-                text = "Option 1",
-            ),
-        ),
-        own_votes = emptyList(),
-        updated_at = Date(1591787071588),
-        vote_count = 10,
-        vote_counts_by_option = mapOf("option1" to 10),
-        voting_visibility = "public",
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "poll_key" to "poll_value",
-            ),
-            "customPollKey" to "customPollValue",
-        ),
-    )
-
-    @Language("JSON")
-    val downstreamPollJsonWithoutExtraData =
-        """{
-          "allow_answers": false,
-          "allow_user_suggested_options": true,
-          "answers_count": 0,
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "created_by": ${UserDtoTestData.downstreamJson},
-          "created_by_id": "userId",
-          "description": "Simple poll",
-          "enforce_unique_vote": false,
-          "id": "poll2",
-          "is_closed": null,
-          "latest_answers": null,
-          "latest_votes_by_option": null,
-          "max_votes_allowed": null,
-          "name": "Simple Poll",
-          "options": [],
-          "own_votes": [],
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "vote_count": 0,
-          "vote_counts_by_option": null,
-          "voting_visibility": null
-        }"""
-
-    val downstreamPollWithoutExtraData = DownstreamPollDto(
-        allow_answers = false,
-        allow_user_suggested_options = true,
-        answers_count = 0,
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_id = "userId",
-        description = "Simple poll",
-        enforce_unique_vote = false,
-        id = "poll2",
-        is_closed = null,
-        latest_answers = null,
-        latest_votes_by_option = null,
-        max_votes_allowed = null,
-        name = "Simple Poll",
-        options = emptyList(),
-        own_votes = emptyList(),
-        updated_at = Date(1591787071588),
-        vote_count = 0,
-        vote_counts_by_option = null,
-        voting_visibility = null,
-        extraData = emptyMap(),
-    )
 
     // PollOptionInput Test Data
 

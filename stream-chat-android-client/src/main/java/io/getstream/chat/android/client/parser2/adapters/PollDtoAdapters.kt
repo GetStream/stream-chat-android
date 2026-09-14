@@ -21,30 +21,12 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
-
-/**
- * Deserializer for [DownstreamPollDto] that handles the [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto]
- * implementation.
- */
-internal object DownstreamPollDtoAdapter : CustomObjectDtoAdapter<DownstreamPollDto>(DownstreamPollDto::class) {
-
-    @FromJson
-    fun fromJson(
-        jsonReader: JsonReader,
-        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        pollAdapter: JsonAdapter<DownstreamPollDto>,
-    ): DownstreamPollDto? = parseWithExtraData(jsonReader, mapAdapter, pollAdapter)
-
-    @ToJson
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamPollDto): Unit = error("Can't convert this to Json")
-}
 
 // The generated poll write-request models carry custom data in a `custom` field that must be
 // flattened to the JSON root on the wire; extraDataPropertyName matches their @Json(name = "custom").

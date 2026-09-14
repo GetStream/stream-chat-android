@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -45,7 +44,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
@@ -1200,54 +1198,6 @@ internal object Mother {
         user = user,
     )
 
-    fun randomDownstreamPollDto(
-        id: String = randomString(),
-        name: String = randomString(),
-        description: String = randomString(),
-        votingVisibility: String = "public",
-        enforceUniqueVote: Boolean = randomBoolean(),
-        maxVotesAllowed: Int? = randomInt(),
-        allowUserSuggestedOptions: Boolean = randomBoolean(),
-        allowAnswers: Boolean = randomBoolean(),
-        options: List<PollOptionResponseData> = listOf(randomPollOptionResponseData()),
-        voteCountsByOption: Map<String, Int> = emptyMap(),
-        latestVotesByOption: Map<String, List<PollVoteResponseData>> = emptyMap(),
-        latestAnswers: List<PollVoteResponseData> = listOf(
-            randomPollVoteResponseData(isAnswer = true, answerText = randomString()),
-        ),
-        createdAt: Date = randomDate(),
-        createdBy: DownstreamUserDto = randomDownstreamUserDto(),
-        createdById: String = randomString(),
-        ownVotes: List<PollVoteResponseData> = listOf(randomPollVoteResponseData()),
-        updatedAt: Date = randomDate(),
-        voteCount: Int = randomInt(),
-        answersCount: Int = randomInt(),
-        isClosed: Boolean = randomBoolean(),
-        extraData: Map<String, Any> = randomExtraData(1),
-    ): DownstreamPollDto = DownstreamPollDto(
-        id = id,
-        name = name,
-        description = description,
-        voting_visibility = votingVisibility,
-        enforce_unique_vote = enforceUniqueVote,
-        max_votes_allowed = maxVotesAllowed,
-        allow_user_suggested_options = allowUserSuggestedOptions,
-        allow_answers = allowAnswers,
-        options = options,
-        vote_counts_by_option = voteCountsByOption,
-        latest_votes_by_option = latestVotesByOption,
-        latest_answers = latestAnswers,
-        created_at = createdAt,
-        created_by = createdBy,
-        created_by_id = createdById,
-        own_votes = ownVotes,
-        updated_at = updatedAt,
-        vote_count = voteCount,
-        answers_count = answersCount,
-        is_closed = isClosed,
-        extraData = extraData,
-    )
-
     fun randomPollOptionResponseData(
         id: String = randomString(),
         text: String = randomString(),
@@ -1256,26 +1206,6 @@ internal object Mother {
         id = id,
         text = text,
         custom = custom,
-    )
-
-    fun randomDownstreamVoteDto(
-        id: String = randomString(),
-        pollId: String = randomString(),
-        optionId: String = randomString(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-        userId: String = randomString(),
-        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
-    ): DownstreamVoteDto = DownstreamVoteDto(
-        id = id,
-        poll_id = pollId,
-        option_id = optionId,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        user = user,
-        user_id = userId,
-        is_answer = false,
-        answer_text = null,
     )
 
     fun randomUpdatePollRequest(
@@ -1347,23 +1277,52 @@ internal object Mother {
         custom = custom,
     )
 
+    @Suppress("LongParameterList")
     fun randomPollResponseData(
         id: String = randomString(),
         name: String = randomString(),
+        description: String = randomString(),
+        votingVisibility: String = "public",
+        enforceUniqueVote: Boolean = randomBoolean(),
+        maxVotesAllowed: Int? = randomInt(),
+        allowUserSuggestedOptions: Boolean = randomBoolean(),
+        allowAnswers: Boolean = randomBoolean(),
+        options: List<PollOptionResponseData> = listOf(randomPollOptionResponseData()),
+        voteCountsByOption: Map<String, Int> = emptyMap(),
+        latestVotesByOption: Map<String, List<PollVoteResponseData>> = emptyMap(),
+        latestAnswers: List<PollVoteResponseData> = listOf(
+            randomPollVoteResponseData(isAnswer = true, answerText = randomString()),
+        ),
+        createdAt: Date = randomDate(),
+        createdBy: UserResponse? = randomUserResponse(),
+        createdById: String = randomString(),
+        ownVotes: List<PollVoteResponseData> = listOf(randomPollVoteResponseData()),
+        updatedAt: Date = randomDate(),
+        voteCount: Int = randomInt(),
+        answersCount: Int = randomInt(),
+        isClosed: Boolean = randomBoolean(),
         custom: Map<String, Any?> = emptyMap(),
     ): PollResponseData = PollResponseData(
         id = id,
         name = name,
-        description = randomString(),
-        allowAnswers = randomBoolean(),
-        allowUserSuggestedOptions = randomBoolean(),
-        answersCount = randomInt(),
-        createdAt = randomDate(),
-        createdById = randomString(),
-        enforceUniqueVote = randomBoolean(),
-        updatedAt = randomDate(),
-        voteCount = randomInt(),
-        votingVisibility = "public",
+        description = description,
+        votingVisibility = votingVisibility,
+        enforceUniqueVote = enforceUniqueVote,
+        maxVotesAllowed = maxVotesAllowed,
+        allowUserSuggestedOptions = allowUserSuggestedOptions,
+        allowAnswers = allowAnswers,
+        options = options,
+        voteCountsByOption = voteCountsByOption,
+        latestVotesByOption = latestVotesByOption,
+        latestAnswers = latestAnswers,
+        createdAt = createdAt,
+        createdBy = createdBy,
+        createdById = createdById,
+        ownVotes = ownVotes,
+        updatedAt = updatedAt,
+        voteCount = voteCount,
+        answersCount = answersCount,
+        isClosed = isClosed,
         custom = custom,
     )
 

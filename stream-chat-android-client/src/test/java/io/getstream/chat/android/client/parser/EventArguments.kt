@@ -268,10 +268,11 @@ internal object EventArguments {
     )
 
     /**
-     * A reaction embedded in a message is parsed by the generated model, so its user is the shape the
-     * wire sends for anyone but the connected user: no unread counts, devices, mutes or `invisible`.
+     * Reactions and polls embedded in an event are parsed by the generated models, so their users are the
+     * shape the wire sends for anyone but the connected user: no unread counts, devices, mutes or
+     * `invisible`.
      */
-    private val reactionUser = User(
+    private val nestedUser = User(
         id = "bender",
         role = "user",
         language = "en",
@@ -288,7 +289,7 @@ internal object EventArguments {
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "like",
         score = 1,
-        user = reactionUser,
+        user = nestedUser,
         userId = "bender",
         createdAt = date,
         updatedAt = date,
@@ -342,7 +343,7 @@ internal object EventArguments {
         closed = false,
         answersCount = 0,
         answers = emptyList(),
-        createdBy = user,
+        createdBy = nestedUser,
     )
 
     private val vote = Vote(
@@ -351,7 +352,7 @@ internal object EventArguments {
         optionId = "option-1",
         createdAt = date,
         updatedAt = date,
-        user = user,
+        user = nestedUser,
     )
 
     private val answer = Answer(
@@ -360,7 +361,7 @@ internal object EventArguments {
         text = "My answer",
         createdAt = date,
         updatedAt = date,
-        user = user,
+        user = nestedUser,
     )
 
     private val draftMessage = DraftMessage(
