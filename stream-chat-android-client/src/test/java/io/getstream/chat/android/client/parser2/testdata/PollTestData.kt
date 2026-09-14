@@ -47,6 +47,11 @@ internal object PollTestData {
     val jsonMissingDescription =
         """{"voting_visibility":"public","id":"poll1","name":"Favorite color","options":[],"enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":0,"own_votes":[],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin"}"""
 
+    /** Complete apart from `own_votes`, which the two paths disagree about. */
+    @Language("JSON")
+    val jsonMissingOwnVotes =
+        """{"voting_visibility":"public","id":"poll1","name":"Favorite color","description":"Choose your favorite color","options":[{"id":"option1","text":"Red"}],"enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":0,"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin"}"""
+
     @Language("JSON")
     val jsonMissingOptions =
         """{"voting_visibility":"public","id":"poll1","name":"Favorite color","description":"Choose your favorite color","enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":0,"own_votes":[],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin"}"""

@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.network.models.PollResponseData
@@ -171,6 +172,18 @@ internal class PollParsingTest {
 
         assertEquals(emptyList<Option>(), with(domainMapping) { dto.toDomain() }.options)
         assertThrows<JsonDataException> { adapter.fromJson(PollTestData.jsonMissingOptions) }
+    }
+
+    /**
+     * `own_votes` splits the same way as `options`, and this one is new: the hand-written DTO required it,
+     * matching `PollAdapter`.
+     */
+    @Test
+    fun `Missing own_votes is empty on the response path and throws on the direct path`() {
+        val dto = parser.fromJson(PollTestData.jsonMissingOwnVotes, PollResponseData::class.java)
+
+        assertEquals(emptyList<Vote>(), with(domainMapping) { dto.toDomain() }.ownVotes)
+        assertThrows<JsonDataException> { adapter.fromJson(PollTestData.jsonMissingOwnVotes) }
     }
 
     /**
