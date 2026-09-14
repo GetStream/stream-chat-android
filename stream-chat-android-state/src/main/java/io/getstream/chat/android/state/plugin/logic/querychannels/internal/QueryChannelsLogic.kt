@@ -270,15 +270,28 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Calls watch channel and adds result to the query.
+     * Adds the channel to this query and starts watching it.
+     *
+     * When the event that produced this call carried a [channel] payload, the channel is added
+     * from that payload *before* the watch request.
+     * The `watch` request is then best-effort, attempting to register the channel for live updates.
      *
      * @param cid cid of the channel.
+     * @param channel Channel data carried by the originating event, when it had any.
      */
-    internal suspend fun watchAndAddChannel(cid: String) {
-        val result = client.channel(cid = cid).watch().await()
-
-        if (result is Result.Success) {
-            addChannel(result.value)
+    internal suspend fun addAndWatchChannel(cid: String, channel: Channel? = null) {
+        if (channel != null) {
+            // Add the channel to the list, regardless of the `watch` outcome
+            addChannel(channel)
+        }
+        when (val result = client.channel(cid = cid).watch().await()) {
+            // Re-adding the same channel is idempotent, and the watch response is the
+            // authoritative one, so it always wins over the event payload seeded above.
+            is Result.Success -> addChannel(result.value)
+            is Result.Failure -> logger.e {
+                "[addAndWatchChannel] failed to watch $cid: ${result.value}; " +
+                    "addedFromEvent: ${channel != null}"
+            }
         }
     }
 
@@ -560,7 +573,13 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic.getQuerySpecs().cids.let(::refreshChannelsState)
     }
 
-    internal suspend fun parseChatEventResults(chatEvents: List<ChatEvent>): List<EventHandlingResult> {
+    /**
+     * Computes the handling result for each event, paired with the event it came from so callers
+     * can reach the event's own payload (see [addAndWatchChannel]). Order matches [chatEvents].
+     */
+    internal suspend fun parseChatEventResults(
+        chatEvents: List<ChatEvent>,
+    ): List<Pair<ChatEvent, EventHandlingResult>> {
         val cids = chatEvents.filterIsInstance<CidEvent>().map { it.cid }.distinct()
         // Prefer in-memory per-channel state which has already been updated by the channel
         // event handlers. Fall back to DB for channels that are not currently active in memory.
@@ -577,7 +596,7 @@ internal class QueryChannelsLogic(
 
         return chatEvents.map { event ->
             val channel = (event as? CidEvent)?.let { resolvedChannels[it.cid] }
-            queryChannelsStateLogic.handleChatEvent(event, channel)
+            event to queryChannelsStateLogic.handleChatEvent(event, channel)
         }
     }
 
