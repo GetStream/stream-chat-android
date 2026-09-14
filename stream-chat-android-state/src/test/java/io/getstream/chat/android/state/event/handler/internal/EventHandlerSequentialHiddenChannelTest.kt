@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelHiddenEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomMemberUpdatedEvent
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
@@ -32,6 +33,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
@@ -87,6 +89,35 @@ internal class EventHandlerSequentialHiddenChannelTest {
         )
 
         standardState.rawChannels.orEmpty().keys `should not contain` CID
+    }
+
+    @Test
+    fun `a new message brings a hidden channel back to the standard query`() = runTest {
+        val fixture = Fixture()
+        val membership = randomMember(user = fixture.currentUser)
+        fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
+        val standardState = fixture.withStandardQueryHolding(CHANNEL_TYPE, CHANNEL_ID, membership)
+        val eventHandler = fixture.get()
+
+        eventHandler.handleEvents(
+            randomChannelHiddenEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                user = fixture.currentUser,
+                clearHistory = false,
+            ),
+        )
+        eventHandler.handleEvents(
+            randomNewMessageEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                message = randomMessage(type = "regular", shadowed = false),
+            ),
+        )
+
+        standardState.rawChannels.orEmpty().keys `should contain` CID
     }
 
     @Test
