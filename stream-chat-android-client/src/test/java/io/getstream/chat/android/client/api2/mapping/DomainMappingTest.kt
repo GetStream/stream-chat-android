@@ -22,7 +22,6 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomAppResponseFields
 import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
-import io.getstream.chat.android.client.Mother.randomAttachmentDto
 import io.getstream.chat.android.client.Mother.randomBanResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
@@ -79,7 +78,6 @@ import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
@@ -1120,46 +1118,6 @@ internal class DomainMappingTest {
         )
 
         assertEquals(expected, channelUserRead)
-    }
-
-    @Test
-    fun `AttachmentDto is correctly mapped to Attachment`() {
-        val attachmentDto = randomAttachmentDto()
-        val sut = Fixture().get()
-        val attachment = with(sut) {
-            attachmentDto.toDomain()
-        }
-        val expected = Attachment(
-            assetUrl = attachmentDto.asset_url,
-            authorName = attachmentDto.author_name,
-            authorLink = attachmentDto.author_link,
-            fallback = attachmentDto.fallback,
-            fileSize = attachmentDto.file_size ?: 0,
-            image = attachmentDto.image,
-            imageUrl = attachmentDto.image_url,
-            mimeType = attachmentDto.mime_type,
-            name = attachmentDto.name,
-            ogUrl = attachmentDto.og_scrape_url,
-            text = attachmentDto.text,
-            thumbUrl = attachmentDto.thumb_url,
-            title = attachmentDto.title,
-            titleLink = attachmentDto.title_link,
-            type = attachmentDto.type,
-            originalHeight = attachmentDto.original_height,
-            originalWidth = attachmentDto.original_width,
-            extraData = attachmentDto.extraData.toMutableMap(),
-        )
-        assertEquals(expected, attachment)
-    }
-
-    @Test
-    fun `AttachmentDto with null file_size falls back to 0`() {
-        val attachmentDto = randomAttachmentDto(fileSize = null)
-        val sut = Fixture().get()
-        val attachment = with(sut) {
-            attachmentDto.toDomain()
-        }
-        assertEquals(0, attachment.fileSize)
     }
 
     @Test

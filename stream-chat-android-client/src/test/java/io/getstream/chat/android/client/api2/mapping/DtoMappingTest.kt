@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
@@ -61,33 +60,40 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import io.getstream.chat.android.network.models.Attachment as NetworkAttachment
 
 internal class DtoMappingTest {
 
     @Test
-    fun `Attachment is correctly mapped to Dto`() {
+    fun `Attachment is correctly mapped to the network model`() {
         val attachment = randomAttachment()
         val mapping = Fixture().get()
+
         val dto = with(mapping) { attachment.toDto() }
-        val expected = AttachmentDto(
-            asset_url = attachment.assetUrl,
-            author_name = attachment.authorName,
+
+        val expected = NetworkAttachment(
+            assetUrl = attachment.assetUrl,
+            authorName = attachment.authorName,
+            authorLink = attachment.authorLink,
             fallback = attachment.fallback,
-            file_size = attachment.fileSize,
-            image = attachment.image,
-            image_url = attachment.imageUrl,
-            mime_type = attachment.mimeType,
-            name = attachment.name,
-            og_scrape_url = attachment.ogUrl,
+            imageUrl = attachment.imageUrl,
+            ogScrapeUrl = attachment.ogUrl,
             text = attachment.text,
-            thumb_url = attachment.thumbUrl,
+            thumbUrl = attachment.thumbUrl,
             title = attachment.title,
-            title_link = attachment.titleLink,
-            author_link = attachment.authorLink,
+            titleLink = attachment.titleLink,
             type = attachment.type,
-            original_height = attachment.originalHeight,
-            original_width = attachment.originalWidth,
-            extraData = attachment.extraData,
+            originalHeight = attachment.originalHeight,
+            originalWidth = attachment.originalWidth,
+            actions = null,
+            fields = null,
+            // The spec declares none of these four, so they ride in custom and the adapter flattens them.
+            custom = attachment.extraData + buildMap<String, Any> {
+                put("file_size", attachment.fileSize)
+                attachment.image?.let { put("image", it) }
+                attachment.mimeType?.let { put("mime_type", it) }
+                attachment.name?.let { put("name", it) }
+            },
         )
         dto shouldBeEqualTo expected
     }
