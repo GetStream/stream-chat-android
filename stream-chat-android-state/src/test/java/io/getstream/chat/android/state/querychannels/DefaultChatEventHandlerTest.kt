@@ -223,6 +223,41 @@ internal class DefaultChatEventHandlerTest {
     }
 
     @Test
+    fun `Given no cached channel When received MemberUpdatedEvent Should skip the update`() {
+        val currentUser = randomUser()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(member = randomMember(user = currentUser))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given membership updated for another user When received MemberUpdatedEvent Should skip the update`() {
+        val channel = randomChannel(membership = randomMember(user = randomUser()), hidden = false)
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(cid = channel.cid, member = randomMember(user = randomUser()))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given membership updated and hidden is unknown When received MemberUpdatedEvent Should add the channel`() {
+        val currentUser = randomUser()
+        val member = randomMember(user = currentUser)
+        val channel = randomChannel(membership = member, hidden = null)
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(cid = channel.cid, member = member)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Add(channel)
+    }
+
+    @Test
     fun `Given the channel is not present When received NewMessageEvent with not system message Should add the channel`() {
         val channel = randomChannel()
         val clientState = mock<ClientState>()

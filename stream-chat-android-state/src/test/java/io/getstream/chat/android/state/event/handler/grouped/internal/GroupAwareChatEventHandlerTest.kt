@@ -273,6 +273,22 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given no connected user When ChannelUpdatedEvent arrives Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(membership = randomMember(), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = emptyMap(),
+            currentUser = null,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
     fun `Given current user has a connection but no cachedChannel When ChannelUpdatedEvent arrives Should skip`() {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("group" to "old"))
