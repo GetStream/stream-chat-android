@@ -70,6 +70,7 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NeutralFilterObject
@@ -410,6 +411,7 @@ public fun randomTypingStartEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     parentId: String? = randomString(),
+    member: MemberInfo? = null,
 ): TypingStartEvent {
     return TypingStartEvent(
         type = EventType.TYPING_START,
@@ -420,6 +422,7 @@ public fun randomTypingStartEvent(
         channelType = channelType,
         channelId = channelId,
         parentId = parentId,
+        member = member,
     )
 }
 

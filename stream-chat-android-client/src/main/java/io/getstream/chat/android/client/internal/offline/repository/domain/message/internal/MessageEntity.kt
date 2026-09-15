@@ -148,6 +148,9 @@ internal data class MessageInnerEntity(
     val sharedLocation: LocationEntity? = null,
     /** Limited data about the channel membership of the user who sent the message */
     val member: MemberInfoEntity? = null,
+
+    /** Limited data about the channel membership of the mentioned users, keyed by user id */
+    val mentionedChannelMembers: Map<String, MemberInfoEntity>? = null,
     /** Whether the message was deleted for the current user */
     val deletedForMe: Boolean = false,
 )

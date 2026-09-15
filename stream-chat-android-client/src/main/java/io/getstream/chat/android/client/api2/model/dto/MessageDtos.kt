@@ -78,6 +78,7 @@ internal data class DownstreamMessageDto(
     val reminder: DownstreamReminderInfoDto? = null,
     val shared_location: DownstreamLocationDto? = null,
     val member: DownstreamMemberInfoDto? = null,
+    val mentioned_channel_members: Map<String, DownstreamMemberInfoDto?>? = null,
     val deleted_for_me: Boolean?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

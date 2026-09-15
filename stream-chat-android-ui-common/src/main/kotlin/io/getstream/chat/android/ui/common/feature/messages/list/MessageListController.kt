@@ -320,6 +320,7 @@ public class MessageListController(
     /**
      * The list of typing users.
      */
+    @Suppress("DEPRECATION")
     public val typingUsers: StateFlow<List<User>> = channelState.filterNotNull()
         .flatMapLatest { it.typing }
         .map { it.users }

@@ -821,6 +821,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             parentId = parent_id,
+            member = member?.toDomain(),
         )
     }
 
@@ -837,6 +838,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             parentId = parent_id,
+            member = member?.toDomain(),
         )
     }
 
