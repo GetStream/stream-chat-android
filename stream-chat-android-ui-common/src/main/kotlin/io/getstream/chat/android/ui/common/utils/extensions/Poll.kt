@@ -39,6 +39,9 @@ public fun Poll.getSubtitle(context: Context): String {
     if (closed) {
         return context.getString(R.string.stream_ui_poll_description_closed)
     }
+    if (enforceUniqueVote) {
+        return context.getString(R.string.stream_ui_poll_description_single_answer)
+    }
     val maxVotes = maxVotesAllowed?.let { min(it, options.size) }
     return when (maxVotes) {
         1 -> context.getString(R.string.stream_ui_poll_description_single_answer)
