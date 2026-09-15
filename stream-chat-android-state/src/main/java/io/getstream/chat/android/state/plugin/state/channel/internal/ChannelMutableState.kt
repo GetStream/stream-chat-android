@@ -285,7 +285,7 @@ internal class ChannelMutableState(
                 hidden = hidden.value,
                 pinnedMessages = sortedPinnedMessages.value,
                 activeLiveLocations = activeLiveLocations.value,
-            ).syncUnreadCountWithReads()
+            ).syncUnreadCountWithReads(userFlow.value?.id)
     }
 
     /**
