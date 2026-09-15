@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
@@ -37,7 +38,7 @@ internal data class UpstreamUserDto(
     val name: String,
     val image: String,
     val invisible: Boolean,
-    val privacy_settings: PrivacySettingsDto?,
+    val privacy_settings: PrivacySettingsResponse?,
     val language: String,
     val role: String,
     val devices: List<DeviceDto>,
@@ -62,7 +63,7 @@ internal data class DownstreamUserDto(
     val image: String?,
     val role: String,
     val invisible: Boolean? = null,
-    val privacy_settings: PrivacySettingsDto?,
+    val privacy_settings: PrivacySettingsResponse?,
     val language: String?,
     val banned: Boolean,
     val devices: List<DeviceDto>?,
