@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberInfo
@@ -35,10 +36,9 @@ public fun Collection<Member>.updateUsers(userMap: Map<String, User>): Collectio
 /**
  * Narrows a full [Member] down to the slim [MemberInfo] carried by [Message.member].
  *
- * [Member.extraData] holds every key the member DTO does not declare, which includes stored member fields such as
- * `role` and `deleted_messages`. The projection the backend puts on `message.member` carries none of them, so they
- * are dropped here to keep [MemberInfo.extraData] identical no matter whether it came from a message payload or from
- * a member event.
+ * [Member.extraData] carries stored member fields alongside the member's own custom data. The projection the
+ * backend puts on `message.member` carries none of the former, so they are dropped here to keep
+ * [MemberInfo.extraData] identical no matter whether it came from a message payload or from a member event.
  */
 @InternalStreamChatApi
 public fun Member.toMemberInfo(): MemberInfo = MemberInfo(
@@ -48,15 +48,11 @@ public fun Member.toMemberInfo(): MemberInfo = MemberInfo(
 )
 
 /**
- * Keys that reach [Member.extraData] only because the member DTO does not declare them: every `ChannelMemberResponse`
- * field the DTO leaves out, apart from `custom`, which is where member custom data itself arrives.
+ * Keys that reach [Member.extraData] without being member custom data: the ones
+ * [GENERATED_MEMBER_EXTRA_DATA_KEYS] keeps there even though `ChannelMemberResponse` declares them, plus the
+ * fields it does not declare, which land there through the undeclared-key sweep.
  */
-private val NON_CUSTOM_MEMBER_KEYS = setOf(
-    "user_id",
-    "role",
-    "is_moderator",
-    "deleted_messages",
-    "deleted_at",
+private val NON_CUSTOM_MEMBER_KEYS = GENERATED_MEMBER_EXTRA_DATA_KEYS + setOf(
     "ban_from_future_channels",
     "future_channel_ban_expires",
 )

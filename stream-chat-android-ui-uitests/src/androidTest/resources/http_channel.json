@@ -122,6 +122,7 @@
         "last_active": "2022-03-28T18:11:22.920214284Z",
         "banned": false,
         "online": true,
+        "language": "en",
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
         "name": "Count Dooku",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
@@ -132,6 +133,7 @@
       "updated_at": "2022-03-28T18:09:34.877085Z",
       "banned": false,
       "shadow_banned": false,
+      "notifications_muted": false,
       "role": "owner",
       "channel_role": "channel_member"
     },
@@ -145,6 +147,7 @@
         "last_active": "2022-03-28T17:49:21.522571744Z",
         "banned": false,
         "online": false,
+        "language": "en",
         "name": "Han Solo",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "birthland": "Corellia",
@@ -155,6 +158,7 @@
       "updated_at": "2022-03-28T18:09:34.877085Z",
       "banned": false,
       "shadow_banned": false,
+      "notifications_muted": false,
       "role": "member",
       "channel_role": "channel_member"
     },
@@ -168,6 +172,7 @@
         "last_active": "2022-03-28T18:08:01.824736Z",
         "banned": false,
         "online": true,
+        "language": "en",
         "yetAnotherField": "40",
         "name": "Luke Skywalker",
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
@@ -182,6 +187,7 @@
       "updated_at": "2022-03-28T18:09:34.877085Z",
       "banned": false,
       "shadow_banned": false,
+      "notifications_muted": false,
       "role": "member",
       "channel_role": "channel_member"
     }
@@ -195,6 +201,7 @@
       "last_active": "2022-03-28T18:11:22.920214284Z",
       "banned": false,
       "online": true,
+      "language": "en",
       "birthland": "Serenno",
       "extraData": {},
       "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
@@ -205,6 +212,7 @@
     "updated_at": "2022-03-28T18:09:34.877085Z",
     "banned": false,
     "shadow_banned": false,
+    "notifications_muted": false,
     "role": "channel_member",
     "channel_role": "channel_member"
   }
