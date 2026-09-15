@@ -107,8 +107,11 @@ public open class DefaultChatEventHandler(
     }
 
     private fun addIfMembershipUpdated(channel: Channel?, member: Member): EventHandlingResult {
-        // A membership update must not resurface a hidden channel
-        return if (channel?.membership?.getUserId() == member.getUserId() && channel.hidden != true) {
+        // A membership update must not resurface a channel the user hid or that was deleted
+        return if (channel?.membership?.getUserId() == member.getUserId() &&
+            channel.hidden != true &&
+            channel.deletedAt == null
+        ) {
             EventHandlingResult.Add(
                 channel.updateMembership(member)
                     .updateMember(member),

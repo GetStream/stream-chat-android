@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelHiddenEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomMemberUpdatedEvent
@@ -32,6 +33,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
@@ -52,15 +54,17 @@ import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not contain`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.stub
 
 /**
- * Reproduces the "unmatch" event batch: `channel.hidden` arrives together with `channel.updated`
- * and `member.updated` for the same channel. The later events must not re-add the just-hidden
- * channel to a grouped query.
+ * Reproduces the "unmatch" event batch: the event that takes a channel out of the list arrives
+ * together with `channel.updated` and `member.updated` for the same channel. Those later events
+ * must not re-add the channel, whether it left because it was hidden or because it was deleted.
  */
-internal class EventHandlerSequentialHiddenChannelTest {
+internal class EventHandlerSequentialChannelRemovalTest {
 
     @Test
     fun `a hidden channel is not re-added to a standard query by a later member update`() = runTest {
@@ -155,6 +159,58 @@ internal class EventHandlerSequentialHiddenChannelTest {
     }
 
     @Test
+    fun `a deleted channel is not re-added to a standard query by a later member update`() = runTest {
+        val fixture = Fixture()
+        val membership = randomMember(user = fixture.currentUser)
+        fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
+        val standardState = fixture.withStandardQueryHolding(CHANNEL_TYPE, CHANNEL_ID, membership)
+        fixture.withStoredChannel(deletedChannel(membership))
+        val eventHandler = fixture.get()
+
+        eventHandler.handleEvents(
+            randomChannelDeletedEvent(cid = CID, channelType = CHANNEL_TYPE, channelId = CHANNEL_ID),
+        )
+        eventHandler.handleEvents(
+            randomMemberUpdatedEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                member = membership,
+            ),
+        )
+
+        standardState.rawChannels.orEmpty().keys `should not contain` CID
+    }
+
+    @Test
+    fun `a deleted channel is not re-added to a grouped query by later events in the same batch`() = runTest {
+        val fixture = Fixture()
+        val membership = randomMember(user = fixture.currentUser)
+        fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
+        val groupedState = fixture.withGroupedQuery(groupKey = "all")
+        fixture.withStoredChannel(deletedChannel(membership))
+        val eventHandler = fixture.get()
+
+        eventHandler.handleEvents(
+            randomChannelDeletedEvent(cid = CID, channelType = CHANNEL_TYPE, channelId = CHANNEL_ID),
+            randomChannelUpdatedEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                channel = updatedChannel(),
+            ),
+            randomMemberUpdatedEvent(
+                cid = CID,
+                channelType = CHANNEL_TYPE,
+                channelId = CHANNEL_ID,
+                member = membership,
+            ),
+        )
+
+        groupedState.rawChannels.orEmpty().keys `should not contain` CID
+    }
+
+    @Test
     fun `the same batch without the hidden event adds the channel to the grouped query`() = runTest {
         val fixture = Fixture()
         val membership = randomMember(user = fixture.currentUser)
@@ -181,17 +237,29 @@ internal class EventHandlerSequentialHiddenChannelTest {
         groupedState.rawChannels.orEmpty().keys `should contain` CID
     }
 
+    private fun deletedChannel(membership: Member): Channel = randomChannel(
+        id = CHANNEL_ID,
+        type = CHANNEL_TYPE,
+        membership = membership,
+        hidden = false,
+        deletedAt = randomDate(),
+    )
+
     private fun updatedChannel(): Channel = randomChannel(
         id = CHANNEL_ID,
         type = CHANNEL_TYPE,
         extraData = mapOf("group" to "ended"),
+        hidden = false,
+        deletedAt = null,
     )
 
     private class Fixture {
         val currentUser = randomUser()
         private val userFlow = MutableStateFlow<User?>(currentUser)
         private val clientState: ClientState = mock { on { user } doReturn userFlow }
-        private val repos: RepositoryFacade = mock()
+        private val repos: RepositoryFacade = mock {
+            onBlocking { selectChannels(any()) } doReturn emptyList()
+        }
         private val client: ChatClient = mock()
         private val mutableGlobalState = MutableGlobalState(currentUser.id)
         private val stateRegistry = StateRegistry(
@@ -218,7 +286,13 @@ internal class EventHandlerSequentialHiddenChannelTest {
         fun withActiveChannel(channelType: String, channelId: String, membership: Member) {
             logicRegistry.channel(channelType, channelId)
             logicRegistry.channelState(channelType, channelId).updateChannelData(
-                randomChannel(id = channelId, type = channelType, membership = membership),
+                randomChannel(
+                    id = channelId,
+                    type = channelType,
+                    membership = membership,
+                    hidden = false,
+                    deletedAt = null,
+                ),
             )
         }
 
@@ -233,9 +307,20 @@ internal class EventHandlerSequentialHiddenChannelTest {
             // The default factory reads clientState off the ChatClient singleton, absent here.
             state.chatEventHandlerFactory = ChatEventHandlerFactory(clientState)
             logicRegistry.queryChannels(identifier).addChannel(
-                randomChannel(id = channelId, type = channelType, membership = membership, hidden = false),
+                randomChannel(
+                    id = channelId,
+                    type = channelType,
+                    membership = membership,
+                    hidden = false,
+                    deletedAt = null,
+                ),
             )
             return state
+        }
+
+        /** Seeds the DB the query layer falls back to once a channel is no longer active, as a deleted one is. */
+        fun withStoredChannel(channel: Channel) {
+            repos.stub { onBlocking { selectChannels(any()) } doReturn listOf(channel) }
         }
 
         /** Registers a grouped query, installing its GroupAwareChatEventHandler, and returns its state. */

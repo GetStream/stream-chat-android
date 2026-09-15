@@ -91,11 +91,15 @@ internal class GroupAwareChatEventHandler(
      * absent from `channel.updated` payloads, so it is read from [cachedChannel], which has already
      * absorbed a preceding `channel.hidden` in the same batch. A hidden channel stays out of the
      * list until a new message or `channel.visible` clears the flag.
+     *
+     * The deleted guard is the same story for `channel.deleted`, which only a fresh channel from
+     * the server can undo.
      */
     private fun routeByGroup(channel: Channel, cachedChannel: Channel?): EventHandlingResult {
         val belongsHere = channelBelongsHere(channel) &&
             isCurrentUserMember(cachedChannel) &&
-            cachedChannel?.hidden != true
+            cachedChannel?.hidden != true &&
+            cachedChannel?.deletedAt == null
         val isInList = channels.value?.containsKey(channel.cid) == true
         return when {
             belongsHere && !isInList -> EventHandlingResult.Add(channel)

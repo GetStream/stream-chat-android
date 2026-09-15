@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -45,7 +46,7 @@ internal class GroupAwareChatEventHandlerTest {
     fun `Given channel belongs to this group and is not cached When ChannelUpdatedEvent arrives Should add`() {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
-        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false, deletedAt = null)
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = emptyMap(),
@@ -62,7 +63,7 @@ internal class GroupAwareChatEventHandlerTest {
     fun `Given channel belongs to this group and is already cached When ChannelUpdatedEvent arrives Should skip`() {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
-        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false, deletedAt = null)
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = mapOf(channel.cid to channel),
@@ -101,7 +102,7 @@ internal class GroupAwareChatEventHandlerTest {
     fun `Given handler is for the all group When ChannelUpdatedEvent arrives Should always add`() {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
-        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false, deletedAt = null)
         val handler = handlerFor(
             groupKey = "all",
             cachedChannels = emptyMap(),
@@ -273,9 +274,51 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given cached channel is deleted When ChannelUpdatedEvent moves channel into this group Should skip`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(
+            membership = randomMember(user = currentUser),
+            hidden = false,
+            deletedAt = randomDate(),
+        )
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = emptyMap(),
+            currentUser = currentUser,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given cached channel is deleted and is in the list When ChannelUpdatedEvent arrives Should remove`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(
+            membership = randomMember(user = currentUser),
+            hidden = false,
+            deletedAt = randomDate(),
+        )
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = mapOf(channel.cid to channel),
+            currentUser = currentUser,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Remove(channel.cid), result)
+    }
+
+    @Test
     fun `Given no connected user When ChannelUpdatedEvent arrives Should skip`() {
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
-        val cachedChannel = channel.copy(membership = randomMember(), hidden = false)
+        val cachedChannel = channel.copy(membership = randomMember(), hidden = false, deletedAt = null)
         val handler = handlerFor(
             groupKey = "vip",
             cachedChannels = emptyMap(),
@@ -322,7 +365,7 @@ internal class GroupAwareChatEventHandlerTest {
     fun `Given a custom resolver that reads a different field When ChannelUpdatedEvent arrives Should use custom field`() {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("tier" to "vip"))
-        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false, deletedAt = null)
         val customResolver = ChannelGroupResolver { ch ->
             setOfNotNull(ch.extraData["tier"] as? String)
         }
