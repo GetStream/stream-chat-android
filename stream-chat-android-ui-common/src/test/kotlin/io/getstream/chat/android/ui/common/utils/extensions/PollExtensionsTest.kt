@@ -34,7 +34,29 @@ internal class PollExtensionsTest {
 
     @Test
     fun `getSubtitle should return single answer subtitle when maxVotesAllowed is 1`() {
-        val poll = randomPoll(maxVotesAllowed = 1, closed = false)
+        val poll = randomPoll(enforceUniqueVote = false, maxVotesAllowed = 1, closed = false)
+        whenever(context.getString(R.string.stream_ui_poll_description_single_answer))
+            .thenReturn("You can select only one answer.")
+
+        val result = poll.getSubtitle(context)
+
+        assertEquals("You can select only one answer.", result)
+    }
+
+    @Test
+    fun `getSubtitle should return single answer subtitle when enforceUniqueVote is true and maxVotesAllowed is null`() {
+        val poll = randomPoll(enforceUniqueVote = true, maxVotesAllowed = null, closed = false)
+        whenever(context.getString(R.string.stream_ui_poll_description_single_answer))
+            .thenReturn("You can select only one answer.")
+
+        val result = poll.getSubtitle(context)
+
+        assertEquals("You can select only one answer.", result)
+    }
+
+    @Test
+    fun `getSubtitle should return single answer subtitle when enforceUniqueVote is true and maxVotesAllowed is 1`() {
+        val poll = randomPoll(enforceUniqueVote = true, maxVotesAllowed = 1, closed = false)
         whenever(context.getString(R.string.stream_ui_poll_description_single_answer))
             .thenReturn("You can select only one answer.")
 
@@ -47,6 +69,7 @@ internal class PollExtensionsTest {
     fun `getSubtitle should return multiple answers subtitle when maxVotesAllowed is greater than 1`() {
         val poll = randomPoll(
             options = listOf(randomOption(), randomOption()),
+            enforceUniqueVote = false,
             maxVotesAllowed = 2,
             closed = false,
         )
@@ -59,8 +82,24 @@ internal class PollExtensionsTest {
     }
 
     @Test
+    fun `getSubtitle should return unlimited answers subtitle when the poll has no vote limit`() {
+        val poll = randomPoll(
+            options = listOf(randomOption(), randomOption()),
+            enforceUniqueVote = false,
+            maxVotesAllowed = null,
+            closed = false,
+        )
+        whenever(context.getString(R.string.stream_ui_poll_description_unlimited_answers))
+            .thenReturn("Select one or more.")
+
+        val result = poll.getSubtitle(context)
+
+        assertEquals("Select one or more.", result)
+    }
+
+    @Test
     fun `getSubtitle should respect the minimum of maxVotesAllowed and options size`() {
-        val poll = randomPoll(maxVotesAllowed = 3, closed = false)
+        val poll = randomPoll(enforceUniqueVote = false, maxVotesAllowed = 3, closed = false)
         whenever(context.getString(R.string.stream_ui_poll_description_single_answer))
             .thenReturn("You can select only one answer.")
 
