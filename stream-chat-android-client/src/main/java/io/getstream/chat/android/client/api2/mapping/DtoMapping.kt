@@ -279,16 +279,10 @@ internal class DtoMapping(
                     image = image,
                     invisible = isInvisible,
                     language = language,
-                    privacySettings = privacySettings?.toResponse(),
+                    privacySettings = privacySettings?.toDto(),
                     custom = extraData,
                 )
             }
-
-    private fun PrivacySettings.toResponse(): PrivacySettingsResponse = PrivacySettingsResponse(
-        typingIndicators = typingIndicators?.let { TypingIndicatorsResponse(enabled = it.enabled) },
-        readReceipts = readReceipts?.let { ReadReceiptsResponse(enabled = it.enabled) },
-        deliveryReceipts = deliveryReceipts?.let { DeliveryReceiptsResponse(enabled = it.enabled) },
-    )
 
     /**
      * Maps the domain [ConnectedEvent] model to a network [UpstreamConnectedEventDto] model.
