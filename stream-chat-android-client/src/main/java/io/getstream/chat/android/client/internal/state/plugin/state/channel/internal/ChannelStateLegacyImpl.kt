@@ -296,7 +296,10 @@ internal class ChannelStateLegacyImpl(
                 hidden = hidden.value,
                 pinnedMessages = sortedPinnedMessages.value,
                 activeLiveLocations = activeLiveLocations.value,
-            ).syncUnreadCountWithReads()
+            )
+            // Resolve the user from userFlow (the same clientState.user) instead of the default's
+            // ChatClient singleton lookup, which requires an initialized ChatClient.
+            .syncUnreadCountWithReads(userFlow.value?.id)
     }
 
     /**

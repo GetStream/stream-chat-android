@@ -86,9 +86,16 @@ internal class GroupAwareChatEventHandler(
      * The membership guard prevents a `ChannelUpdatedEvent` from (re-)adding a channel the user
      * has already left — relies on [cachedChannel] (in-memory state after `member.removed` is
      * applied) rather than `event.channel.membership`, which is not guaranteed on `channel.updated`.
+     *
+     * The hidden guard does the same for a channel the user has hidden: `hidden` is per-user and
+     * absent from `channel.updated` payloads, so it is read from [cachedChannel], which has already
+     * absorbed a preceding `channel.hidden` in the same batch. A hidden channel stays out of the
+     * list until a new message or `channel.visible` clears the flag.
      */
     private fun routeByGroup(channel: Channel, cachedChannel: Channel?): EventHandlingResult {
-        val belongsHere = channelBelongsHere(channel) && isCurrentUserMember(cachedChannel)
+        val belongsHere = channelBelongsHere(channel) &&
+            isCurrentUserMember(cachedChannel) &&
+            cachedChannel?.hidden != true
         val isInList = channels.value?.containsKey(channel.cid) == true
         return when {
             belongsHere && !isInList -> EventHandlingResult.Add(channel)
