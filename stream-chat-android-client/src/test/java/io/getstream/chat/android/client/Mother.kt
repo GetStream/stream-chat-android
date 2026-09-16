@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
@@ -98,6 +97,7 @@ import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -455,7 +455,7 @@ internal object Mother {
         messages: List<DownstreamMessageDto> = emptyList(),
         members: List<ChannelMemberResponse> = emptyList(),
         watchers: List<DownstreamUserDto> = emptyList(),
-        read: List<DownstreamChannelUserRead> = emptyList(),
+        read: List<ReadStateResponse> = emptyList(),
         config: ChannelConfigWithInfo = randomChannelConfigWithInfo(),
         created_by: DownstreamUserDto? = randomDownstreamUserDto(),
         team: String = randomString(),
@@ -710,20 +710,20 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamChannelUserRead(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
+    fun randomReadStateResponse(
+        user: UserResponse = randomUserResponse(),
         lastRead: Date = randomDate(),
         unreadMessages: Int = randomInt(),
         lastReadMessageId: String? = randomStringOrNull(),
         lastDeliveredAt: Date? = randomDateOrNull(),
         lastDeliveredMessageId: String? = randomStringOrNull(),
-    ) = DownstreamChannelUserRead(
+    ) = ReadStateResponse(
         user = user,
-        last_read = lastRead,
-        unread_messages = unreadMessages,
-        last_read_message_id = lastReadMessageId,
-        last_delivered_at = lastDeliveredAt,
-        last_delivered_message_id = lastDeliveredMessageId,
+        lastRead = lastRead,
+        unreadMessages = unreadMessages,
+        lastReadMessageId = lastReadMessageId,
+        lastDeliveredAt = lastDeliveredAt,
+        lastDeliveredMessageId = lastDeliveredMessageId,
     )
 
     fun randomGetOGResponse(
@@ -974,7 +974,7 @@ internal object Mother {
         deletedAt: Date? = randomDateOrNull(),
         title: String = randomString(),
         latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
-        read: List<DownstreamChannelUserRead> = listOf(randomDownstreamChannelUserRead()),
+        read: List<ReadStateResponse> = listOf(randomReadStateResponse()),
         replyCount: Int = randomInt(),
         draft: DownstreamDraftDto? = randomDownstreamDraftDto(),
         extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
