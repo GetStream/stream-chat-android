@@ -19,8 +19,7 @@ package io.getstream.chat.android.client.errors
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.result.Error
 import io.getstream.result.Error.NetworkError.Companion.UNKNOWN_STATUS_CODE
-import java.net.ConnectException
-import java.net.UnknownHostException
+import java.io.IOException
 
 /**
  * Represents the error in the SDK.
@@ -72,7 +71,9 @@ public fun Error.isPermanent(): Boolean {
 
         when {
             statusCode in temporaryErrors -> false
-            cause is UnknownHostException || cause is ConnectException -> false
+            // Transport failures leave the outcome unknown; a send that did land is caught by
+            // isMessageAlreadyExists when it is retried
+            cause is IOException -> false
             else -> true
         }
     } else {
