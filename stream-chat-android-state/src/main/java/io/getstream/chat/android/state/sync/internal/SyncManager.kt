@@ -780,15 +780,11 @@ internal class SyncManager(
             logger.w { "[retrySendingOfMessageWithSyncedAttachments] outdated sending($id)" }
             removeMessage(message).await()
         } else {
+            // Do not persist the local message here. The SendMessageListener plugins already store the
+            // server's reply, which for a rejected send is a type "error" echo, not the message that was sent.
             channelClient.sendMessage(message).await().also { result ->
-                when (result) {
-                    is Result.Success -> repos.insertMessage(
-                        message.copy(syncStatus = SyncStatus.COMPLETED),
-                    )
-
-                    is Result.Failure -> if (result.value.isPermanent()) {
-                        repos.markMessageAsFailed(message)
-                    }
+                if (result is Result.Failure && result.value.isPermanent()) {
+                    repos.markMessageAsFailed(message)
                 }
             }
         }

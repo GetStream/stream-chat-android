@@ -20,6 +20,7 @@ import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
+import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
@@ -40,6 +41,7 @@ import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.models.User
@@ -80,6 +82,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -473,6 +476,42 @@ internal class SyncManagerTest {
         sut.retryMessages()
 
         verify(chatClient).deleteMessageForMe(message.id)
+    }
+
+    @Test
+    fun `retryMessages should not write the local message when the send succeeds`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.SYNC_NEEDED)
+        val rejectedEcho = message.copy(type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelClient: ChannelClient = mock {
+            on(it.sendMessage(message)) doReturn rejectedEcho.asCall()
+        }
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+        val sut = buildSyncManager()
+        sut.retryMessages()
+
+        verify(channelClient).sendMessage(message)
+        verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `retryMessages should mark a permanently failed send as failed`() = runTest(testDispatcher) {
+        val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        val channelClient: ChannelClient = mock {
+            on(it.sendMessage(message)) doReturn TestCall(
+                Result.Failure(Error.NetworkError(message = "forbidden", serverErrorCode = 17, statusCode = 403)),
+            )
+        }
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+
+        val sut = buildSyncManager()
+        sut.retryMessages()
+
+        verify(repositoryFacade).insertMessage(argThat { syncStatus == SyncStatus.FAILED_PERMANENTLY })
     }
 
     @Test

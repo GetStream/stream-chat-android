@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -63,6 +64,30 @@ internal class SendMessageListenerDatabaseTest {
             },
         )
     }
+
+    @Test
+    fun `when the server rejects the message, the error echo should be upserted instead of the sent message`() =
+        runTest {
+            whenever(messageRepository.selectMessage(any())) doReturn null
+
+            val sentMessage = randomMessage(type = MessageType.REGULAR, syncStatus = SyncStatus.IN_PROGRESS)
+            val errorEcho = sentMessage.copy(type = MessageType.ERROR, text = "rejected")
+
+            sendMessageListenerDatabase.onMessageSendResult(
+                result = Result.Success(errorEcho),
+                channelType = randomString(),
+                channelId = randomString(),
+                message = sentMessage,
+            )
+
+            verify(messageRepository).insertMessage(
+                argThat { message ->
+                    message.id == sentMessage.id &&
+                        message.type == MessageType.ERROR &&
+                        message.syncStatus == SyncStatus.COMPLETED
+                },
+            )
+        }
 
     @Test
     fun `when request to send messages fails, the message should be upserted with correct status`() = runTest {
