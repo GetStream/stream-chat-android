@@ -56,43 +56,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import io.getstream.chat.android.network.models.Attachment as NetworkAttachment
 
 internal class DtoMappingTest {
-
-    @Test
-    fun `Attachment is correctly mapped to the network model`() {
-        val attachment = randomAttachment()
-        val mapping = Fixture().get()
-
-        val dto = with(mapping) { attachment.toDto() }
-
-        val expected = NetworkAttachment(
-            assetUrl = attachment.assetUrl,
-            authorName = attachment.authorName,
-            authorLink = attachment.authorLink,
-            fallback = attachment.fallback,
-            imageUrl = attachment.imageUrl,
-            ogScrapeUrl = attachment.ogUrl,
-            text = attachment.text,
-            thumbUrl = attachment.thumbUrl,
-            title = attachment.title,
-            titleLink = attachment.titleLink,
-            type = attachment.type,
-            originalHeight = attachment.originalHeight,
-            originalWidth = attachment.originalWidth,
-            actions = null,
-            fields = null,
-            // The spec declares none of these four, so they ride in custom and the adapter flattens them.
-            custom = attachment.extraData + buildMap<String, Any> {
-                put("file_size", attachment.fileSize)
-                attachment.image?.let { put("image", it) }
-                attachment.mimeType?.let { put("mime_type", it) }
-                attachment.name?.let { put("name", it) }
-            },
-        )
-        dto shouldBeEqualTo expected
-    }
 
     @Test
     fun `Device is correctly mapped to Dto`() {

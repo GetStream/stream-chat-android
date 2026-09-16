@@ -24,7 +24,7 @@ import io.kotest.assertions.json.shouldEqualJson
 import org.junit.jupiter.api.Test
 import io.getstream.chat.android.models.Attachment as DomainAttachment
 
-internal class AttachmentDtoAdapterTest {
+internal class AttachmentSerializationTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
 
@@ -32,14 +32,14 @@ internal class AttachmentDtoAdapterTest {
 
     @Test
     fun `Serialize a domain attachment to the same wire format as before`() {
-        val json = parser.toJson(with(dtoMapping) { AttachmentDtoTestData.domainAttachment.toDto() })
+        val json = parser.toJson(with(dtoMapping) { AttachmentDtoTestData.domainAttachment.toAttachmentRequest() })
 
         json.shouldEqualJson(AttachmentDtoTestData.json)
     }
 
     @Test
     fun `Serialize an empty domain attachment`() {
-        val json = parser.toJson(with(dtoMapping) { DomainAttachment().toDto() })
+        val json = parser.toJson(with(dtoMapping) { DomainAttachment().toAttachmentRequest() })
 
         json.shouldEqualJson(AttachmentDtoTestData.jsonWithoutExtraData)
     }

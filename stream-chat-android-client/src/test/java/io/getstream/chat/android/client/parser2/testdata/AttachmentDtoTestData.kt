@@ -93,13 +93,6 @@ internal object AttachmentDtoTestData {
     )
 
     @Language("JSON")
-    val jsonWithNullFileSize =
-        """{
-          "file_size": null
-        }
-        """.withoutWhitespace()
-
-    @Language("JSON")
     val jsonWithoutExtraData =
         """{
           "file_size": 0

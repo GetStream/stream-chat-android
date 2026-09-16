@@ -48,7 +48,6 @@ import io.getstream.chat.android.network.models.SharedLocation
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.network.models.Attachment as AttachmentRequest
-import io.getstream.chat.android.network.models.Attachment as NetworkAttachment
 
 @Suppress("TooManyFunctions")
 internal class DtoMapping(
@@ -57,40 +56,6 @@ internal class DtoMapping(
 ) {
 
     private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
-
-    /**
-     * Converts [Attachment] to the network model.
-     *
-     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, but the wire carries them at
-     * the root, so they go through `custom`, which the adapter flattens back out. `file_size` stays an Int
-     * here: parsing yields a Double for an undeclared number, and writing that would change `1` to `1.0`.
-     */
-    internal fun Attachment.toDto(): NetworkAttachment = NetworkAttachment(
-        assetUrl = assetUrl,
-        authorName = authorName,
-        authorLink = authorLink,
-        fallback = fallback,
-        imageUrl = imageUrl,
-        ogScrapeUrl = ogUrl,
-        text = text,
-        thumbUrl = thumbUrl,
-        title = title,
-        titleLink = titleLink,
-        type = type,
-        originalHeight = originalHeight,
-        originalWidth = originalWidth,
-        // The domain holds actions and fields in extraData, so they reach the root through custom. Both
-        // default to an empty list here, which would be emitted alongside. giphy needs no such guard: it
-        // already defaults to null.
-        actions = null,
-        fields = null,
-        custom = extraData + buildMap<String, Any> {
-            put("file_size", fileSize)
-            image?.let { put("image", it) }
-            mimeType?.let { put("mime_type", it) }
-            name?.let { put("name", it) }
-        },
-    )
 
     /**
      * Converts [Device] to [DeviceDto].
@@ -118,10 +83,12 @@ internal class DtoMapping(
 
     /**
      * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
+     *
+     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, but the wire carries them at
+     * the root, so they go through `custom`, which the adapter flattens back out. `file_size` stays an Int
+     * here: parsing yields a Double for an undeclared number, and writing that would change `1` to `1.0`.
      */
     internal fun Attachment.toAttachmentRequest(): AttachmentRequest {
-        // OpenAPI Attachment doesn't declare file_size/image/mime_type/name; fold them into `custom`
-        // so the custom-flattening adapter writes them at the JSON root.
         val custom = extraData.toMutableMap()
         image?.let { custom["image"] = it }
         name?.let { custom["name"] = it }
@@ -142,6 +109,8 @@ internal class DtoMapping(
             originalHeight = originalHeight,
             originalWidth = originalWidth,
             custom = custom,
+            // The domain holds actions and fields in extraData, so they reach the root through custom.
+            // Both default to an empty list here, which would be emitted alongside.
             actions = null,
             fields = null,
         )
