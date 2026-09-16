@@ -88,14 +88,6 @@ internal object MessageTestData {
                 "name": "engineering",
                 "description": "Engineering team",
                 "team_id": "team-1",
-                "members": [
-                    {
-                        "group_id": "group-1",
-                        "user_id": "user-1",
-                        "is_admin": true,
-                        "created_at": "2020-01-01T00:00:00.000Z"
-                    }
-                ],
                 "created_by": "user-1",
                 "created_at": "2020-01-01T00:00:00.000Z",
                 "updated_at": "2020-01-01T00:00:00.000Z"

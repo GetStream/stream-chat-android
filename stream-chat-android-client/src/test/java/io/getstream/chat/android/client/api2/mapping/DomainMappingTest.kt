@@ -43,7 +43,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
-import io.getstream.chat.android.client.Mother.randomDownstreamUserGroupDto
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
 import io.getstream.chat.android.client.Mother.randomModerationV2Response
@@ -67,8 +66,6 @@ import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
@@ -224,8 +221,8 @@ internal class DomainMappingTest {
             mentioned_here = true,
             mentioned_channel = true,
             mentioned_groups = listOf(
-                DownstreamUserGroupDto(id = "g1", name = "platform"),
-                DownstreamUserGroupDto(id = "g2", name = "support"),
+                randomUserGroupResponse(id = "g1", name = "platform"),
+                randomUserGroupResponse(id = "g2", name = "support"),
             ),
             mentioned_roles = listOf("admin", "moderator"),
         )
@@ -1383,45 +1380,6 @@ internal class DomainMappingTest {
             blockedAt = blockUsersResponse.createdAt,
         )
         assertEquals(expected, userBlock)
-    }
-
-    @Test
-    fun `DownstreamUserGroupDto is correctly mapped to UserGroup`() {
-        val memberDto = DownstreamUserGroupMemberDto(
-            group_id = randomString(),
-            user_id = randomString(),
-            is_admin = randomBoolean(),
-            created_at = randomDate(),
-        )
-        val dto = randomDownstreamUserGroupDto(members = listOf(memberDto))
-        val sut = Fixture().get()
-        val userGroup = with(sut) { dto.toDomain() }
-        val expected = UserGroup(
-            id = dto.id,
-            name = dto.name,
-            description = dto.description,
-            team = dto.team_id.orEmpty(),
-            members = listOf(
-                UserGroupMember(
-                    groupId = memberDto.group_id,
-                    userId = memberDto.user_id,
-                    isAdmin = memberDto.is_admin,
-                    createdAt = memberDto.created_at,
-                ),
-            ),
-            createdBy = dto.created_by,
-            createdAt = dto.created_at,
-            updatedAt = dto.updated_at,
-        )
-        assertEquals(expected, userGroup)
-    }
-
-    @Test
-    fun `DownstreamUserGroupDto with null team_id maps team to empty string`() {
-        val dto = randomDownstreamUserGroupDto(teamId = null)
-        val sut = Fixture().get()
-        val userGroup = with(sut) { dto.toDomain() }
-        assertEquals("", userGroup.team)
     }
 
     @Test

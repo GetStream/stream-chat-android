@@ -41,8 +41,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
@@ -301,7 +299,7 @@ internal object Mother {
         mentioned_users: List<DownstreamUserDto> = emptyList(),
         mentioned_here: Boolean? = null,
         mentioned_channel: Boolean? = null,
-        mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
+        mentioned_groups: List<UserGroupResponse> = emptyList(),
         mentioned_roles: List<String> = emptyList(),
         own_reactions: List<ReactionResponse> = emptyList(),
         parent_id: String? = randomString(),
@@ -1457,26 +1455,6 @@ internal object Mother {
     ): DownstreamPushPreferenceDto = DownstreamPushPreferenceDto(
         chat_level = chatLevel,
         disabled_until = disabledUntil,
-    )
-
-    fun randomDownstreamUserGroupDto(
-        id: String = randomString(),
-        name: String = randomString(),
-        description: String? = randomString(),
-        teamId: String? = randomString(),
-        members: List<DownstreamUserGroupMemberDto> = emptyList(),
-        createdBy: String? = randomString(),
-        createdAt: Date? = randomDate(),
-        updatedAt: Date? = randomDate(),
-    ): DownstreamUserGroupDto = DownstreamUserGroupDto(
-        id = id,
-        name = name,
-        description = description,
-        team_id = teamId,
-        members = members,
-        created_by = createdBy,
-        created_at = createdAt,
-        updated_at = updatedAt,
     )
 
     fun randomUserGroupMemberDto(
