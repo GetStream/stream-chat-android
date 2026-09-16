@@ -64,6 +64,15 @@ internal class ChatErrorTest {
     }
 
     @ParameterizedTest
+    @MethodSource("isMessageAlreadyExistsArguments")
+    fun testIsMessageAlreadyExists(
+        error: Error,
+        isAlreadyExists: Boolean,
+    ) {
+        error.isMessageAlreadyExists() `should be equal to` isAlreadyExists
+    }
+
+    @ParameterizedTest
     @MethodSource("copyWithMessageArguments")
     fun testCopyWithMessage(
         error: Error,
@@ -143,6 +152,23 @@ internal class ChatErrorTest {
                 Arguments.of(networkError(ChatErrorCode.NETWORK_FAILED, statusCode = 400, cause = cause), cause),
             )
         }
+
+        @JvmStatic
+        fun isMessageAlreadyExistsArguments() = listOf(
+            Arguments.of(alreadyExistsError(), true),
+            Arguments.of(alreadyExistsError(message = "a message with ID abc already exists"), true),
+            Arguments.of(alreadyExistsError(message = "channel members are limited to 100"), false),
+            Arguments.of(
+                alreadyExistsError(code = ChatErrorCode.AUTHENTICATION_ERROR.code),
+                false,
+            ),
+            Arguments.of(Error.GenericError("a message with ID abc already exists"), false),
+        )
+
+        private fun alreadyExistsError(
+            code: Int = ChatErrorCode.VALIDATION_ERROR.code,
+            message: String = "a message with ID abc already exists",
+        ): Error.NetworkError = Error.NetworkError(message, code, 400)
 
         private fun networkError(
             code: ChatErrorCode,

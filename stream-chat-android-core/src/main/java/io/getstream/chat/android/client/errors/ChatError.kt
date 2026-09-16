@@ -28,6 +28,7 @@ import java.net.UnknownHostException
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
 private const val HTTP_API_ERROR = 500
+private const val MESSAGE_ALREADY_EXISTS = "already exists"
 
 /**
  * Creates [Error.NetworkError] from [ChatErrorCode] with custom status code and optional cause.
@@ -78,6 +79,17 @@ public fun Error.isPermanent(): Boolean {
         false
     }
 }
+
+/**
+ * @return If the error reports that the message being sent is already stored on the server, which happens
+ * when a send that did reach the backend is retried. The backend answers with the generic validation code,
+ * so the message has to be matched as well.
+ */
+@InternalStreamChatApi
+public fun Error.isMessageAlreadyExists(): Boolean =
+    this is Error.NetworkError &&
+        serverErrorCode == ChatErrorCode.VALIDATION_ERROR.code &&
+        message.contains(MESSAGE_ALREADY_EXISTS)
 
 /**
  * Copies the original [Error] objects with custom message.

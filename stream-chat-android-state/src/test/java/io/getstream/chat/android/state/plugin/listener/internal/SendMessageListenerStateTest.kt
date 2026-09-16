@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
@@ -149,6 +150,29 @@ internal class SendMessageListenerStateTest {
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.SYNC_NEEDED &&
                     message.createdLocallyAt == originalCreatedLocallyAt
+            },
+        )
+    }
+
+    @Test
+    fun `when the send is rejected as a duplicate, the message should be marked completed`() = runTest {
+        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
+        val alreadyExists = Error.NetworkError(
+            message = "a message with ID ${testMessage.id} already exists",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Failure(alreadyExists),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
         )
     }
