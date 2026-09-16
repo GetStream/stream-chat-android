@@ -676,9 +676,10 @@ internal class MessageUtilsTest {
     fun `isLocalOnly returns whether the message exists only locally`(
         syncStatus: SyncStatus,
         type: String,
+        createdAt: Date?,
         expected: Boolean,
     ) {
-        val message = randomMessage(syncStatus = syncStatus, type = type)
+        val message = randomMessage(syncStatus = syncStatus, type = type, createdAt = createdAt)
         message.isLocalOnly() shouldBeEqualTo expected
     }
 
@@ -686,14 +687,15 @@ internal class MessageUtilsTest {
 
         @JvmStatic
         fun isLocalOnlyArguments() = listOf(
-            Arguments.of(SyncStatus.SYNC_NEEDED, MessageType.REGULAR, true),
-            Arguments.of(SyncStatus.IN_PROGRESS, MessageType.REGULAR, true),
-            Arguments.of(SyncStatus.AWAITING_ATTACHMENTS, MessageType.REGULAR, true),
-            Arguments.of(SyncStatus.FAILED_PERMANENTLY, MessageType.REGULAR, true),
-            Arguments.of(SyncStatus.COMPLETED, MessageType.EPHEMERAL, true),
-            Arguments.of(SyncStatus.COMPLETED, MessageType.ERROR, true),
-            Arguments.of(SyncStatus.COMPLETED, MessageType.REGULAR, false),
-            Arguments.of(SyncStatus.COMPLETED, MessageType.SYSTEM, false),
+            Arguments.of(SyncStatus.SYNC_NEEDED, MessageType.REGULAR, Date(), true),
+            Arguments.of(SyncStatus.IN_PROGRESS, MessageType.REGULAR, Date(), true),
+            Arguments.of(SyncStatus.AWAITING_ATTACHMENTS, MessageType.REGULAR, Date(), true),
+            Arguments.of(SyncStatus.FAILED_PERMANENTLY, MessageType.REGULAR, Date(), true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.EPHEMERAL, Date(), true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.ERROR, Date(), true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.REGULAR, null, true),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.REGULAR, Date(), false),
+            Arguments.of(SyncStatus.COMPLETED, MessageType.SYSTEM, Date(), false),
         )
     }
 }

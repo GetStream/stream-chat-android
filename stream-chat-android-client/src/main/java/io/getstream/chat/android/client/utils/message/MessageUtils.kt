@@ -209,13 +209,13 @@ public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(c
     (isError() && isModerationBounce())
 
 /**
- * @return If the message is not part of the server's message list: it is unsynced, or has a type
- * the server leaves out of message queries and read state (ephemeral previews, error messages such
- * as rejected or moderation-bounced sends).
+ * @return If the message is not part of the server's message list: it is unsynced, was never
+ * stamped with a server creation date, or has a type the server leaves out of message queries and
+ * read state (ephemeral previews, error messages such as rejected or moderation-bounced sends).
  */
 @InternalStreamChatApi
 public fun Message.isLocalOnly(): Boolean =
-    syncStatus != SyncStatus.COMPLETED || isEphemeral() || isError()
+    syncStatus != SyncStatus.COMPLETED || createdAt == null || isEphemeral() || isError()
 
 /**
  * Checks whether we should attempt to delete the message remotely.
