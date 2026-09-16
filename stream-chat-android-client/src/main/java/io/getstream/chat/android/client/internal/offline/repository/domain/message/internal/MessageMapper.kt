@@ -314,12 +314,12 @@ internal fun MemberInfoEntity.toModel(): MemberInfo = MemberInfo(
  * Without the fallback a message built with the deprecated field would silently lose its role on the way to the store.
  */
 @Suppress("DEPRECATION")
+private fun Message.memberInfoToEntity(): MemberInfoEntity? =
+    member?.toEntity() ?: channelRole?.let { MemberInfoEntity(channelRole = it) }
+
 private fun Map<String, MemberInfoEntity>?.toMemberInfoModels(): Map<String, MemberInfo> =
     orEmpty().mapValues { (_, entity) -> entity.toModel() }
 
 /** Null rather than an empty map, so a message without projected mentions stores nothing at all. */
 private fun Map<String, MemberInfo>.toMemberInfoEntities(): Map<String, MemberInfoEntity>? =
     takeIf { it.isNotEmpty() }?.mapValues { (_, memberInfo) -> memberInfo.toEntity() }
-
-private fun Message.memberInfoToEntity(): MemberInfoEntity? =
-    member?.toEntity() ?: channelRole?.let { MemberInfoEntity(channelRole = it) }
