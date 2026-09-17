@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
+import io.getstream.chat.android.client.test.randomMemberUpdatedEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
@@ -193,6 +194,67 @@ internal class DefaultChatEventHandlerTest {
         val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
 
         result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given membership updated for current user When received MemberUpdatedEvent Should add the channel`() {
+        val currentUser = randomUser()
+        val member = randomMember(user = currentUser)
+        val channel = randomChannel(membership = member, hidden = false)
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(cid = channel.cid, member = member)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Add(channel)
+    }
+
+    @Test
+    fun `Given membership updated for current user and the channel is hidden When received MemberUpdatedEvent Should skip`() {
+        val currentUser = randomUser()
+        val member = randomMember(user = currentUser)
+        val channel = randomChannel(membership = member, hidden = true)
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(cid = channel.cid, member = member)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given no cached channel When received MemberUpdatedEvent Should skip the update`() {
+        val currentUser = randomUser()
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(member = randomMember(user = currentUser))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given membership updated for another user When received MemberUpdatedEvent Should skip the update`() {
+        val channel = randomChannel(membership = randomMember(user = randomUser()), hidden = false)
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(cid = channel.cid, member = randomMember(user = randomUser()))
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Skip
+    }
+
+    @Test
+    fun `Given membership updated and hidden is unknown When received MemberUpdatedEvent Should add the channel`() {
+        val currentUser = randomUser()
+        val member = randomMember(user = currentUser)
+        val channel = randomChannel(membership = member, hidden = null)
+        val eventHandler = DefaultChatEventHandler(MutableStateFlow(emptyMap()), mock())
+        val event = randomMemberUpdatedEvent(cid = channel.cid, member = member)
+
+        val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = channel)
+
+        result `should be equal to` EventHandlingResult.Add(channel)
     }
 
     @Test
