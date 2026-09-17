@@ -44,6 +44,7 @@ import okhttp3.OkHttpClient
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be greater than`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -76,6 +77,8 @@ internal class ChatSocketTokenTest {
 
         /** Longer than the health monitor's longest retry interval, so one attempt is guaranteed to run. */
         private const val RECONNECT_ATTEMPT_MS = 30_000L
+
+        private const val SOCKET_FAILURES = 5
     }
 
     private val streamDateFormatter = StreamDateFormatter()
@@ -83,6 +86,7 @@ internal class ChatSocketTokenTest {
     private lateinit var tokenManager: TokenManager
     private lateinit var fakeChatSocket: FakeChatSocket
     private var socketListener: WebSocketListener? = null
+    private var socketsCreated = 0
 
     @BeforeEach
     fun setUp() {
@@ -145,14 +149,18 @@ internal class ChatSocketTokenTest {
         val chatSocket = realSocket(tokenManager)
 
         userScope.launch { chatSocket.connectUser(randomUser(), false) }
-        val callsAfterConnect = loadTokenCalls
+        testCoroutines.dispatcher.scheduler.runCurrent()
+        // The initial connection must have happened, otherwise the failures below land on nothing.
+        loadTokenCalls `should be equal to` 1
+        socketsCreated `should be equal to` 1
 
-        repeat(5) {
-            socketListener?.onFailure(mock(), Throwable(randomString()), null)
+        repeat(SOCKET_FAILURES) {
+            checkNotNull(socketListener).onFailure(mock(), Throwable(randomString()), null)
             testCoroutines.dispatcher.scheduler.advanceTimeBy(RECONNECT_ATTEMPT_MS)
         }
 
-        loadTokenCalls `should be equal to` callsAfterConnect
+        socketsCreated `should be greater than` 1
+        loadTokenCalls `should be equal to` 1
     }
 
     private fun realSocket(tokenManager: TokenManager): ChatSocket {
@@ -161,6 +169,7 @@ internal class ChatSocketTokenTest {
         whenever(headersUtil.buildSdkTrackingHeaders()) doReturn randomString()
         val httpClient: OkHttpClient = mock()
         whenever(httpClient.newWebSocket(any(), any())) doAnswer { invocation ->
+            socketsCreated++
             socketListener = invocation.getArgument(1)
             mock<WebSocket>()
         }
