@@ -39,8 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
@@ -1187,24 +1185,6 @@ internal class DomainMapping(
         val field = if (FIELD_LAST_MESSAGE_AT in filterFields) FIELD_LAST_MESSAGE_AT else FIELD_LAST_UPDATED
         return QuerySortByField<Channel>().desc(field)
     }
-
-    internal fun DownstreamUserGroupDto.toDomain(): UserGroup = UserGroup(
-        id = id,
-        name = name,
-        description = description,
-        team = team_id.orEmpty(),
-        members = members.map { it.toDomain() },
-        createdBy = created_by,
-        createdAt = created_at,
-        updatedAt = updated_at,
-    )
-
-    internal fun DownstreamUserGroupMemberDto.toDomain(): UserGroupMember = UserGroupMember(
-        groupId = group_id,
-        userId = user_id,
-        isAdmin = is_admin,
-        createdAt = created_at,
-    )
 
     internal fun UserGroupResponse.toDomain(): UserGroup = UserGroup(
         id = id,

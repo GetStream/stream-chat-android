@@ -59,6 +59,8 @@ internal class UserGroupAdapter(
 
         JsonParsingUtils.requireField(id, "id", reader)
         JsonParsingUtils.requireField(name, "name", reader)
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
 
         return UserGroup(
             id = id,
