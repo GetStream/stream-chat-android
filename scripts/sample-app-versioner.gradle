@@ -1,27 +1,12 @@
-static Boolean gitIsAvailable() {
-    try {
-        "git --version".execute()
-        return true
-    } catch (Throwable ignored) {
-        return false
-    }
-}
-def isCI = System.getenv('CI')
-def sdkVersion = version
-ext["sampleAppVersionCode"] = 1
-ext["sampleAppVersionName"] = version
-if (isCI && gitIsAvailable()) {
-    gitVersioner {
-        def branches = ['develop', 'main', 'release']
-        baseBranch branchName in branches ? branchName : branches[0]
-        yearFactor 100
-        // Firebase App Distribution already shows the version code next to the name, so the
-        // name carries the two things it cannot derive: the SDK version and the commit.
-        formatter = { gitVersioner ->
-            "${sdkVersion}-${gitVersioner.currentSha1Short}"
-        }
-    }
+// CI passes these so that every published sample build is a distinct, newer release.
+//
+// The version code is minutes since a fixed epoch rather than a commit count. The same
+// package is published from both develop and main, their commit counts diverge, and Android
+// rejects an install whose version code went backwards.
+//
+// Without the properties the samples keep the fixed values they had before.
+def sdkVersion = version.toString()
+def buildSha = findProperty("sampleAppBuildSha")
 
-    ext["sampleAppVersionCode"] = gitVersioner.versionCode
-    ext["sampleAppVersionName"] = gitVersioner.versionName
-}
+ext["sampleAppVersionCode"] = (findProperty("sampleAppVersionCode") ?: "1") as Integer
+ext["sampleAppVersionName"] = buildSha ? "$sdkVersion-$buildSha".toString() : sdkVersion
