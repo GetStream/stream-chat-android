@@ -41,10 +41,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be greater than`
+import org.amshove.kluent.`should contain`
+import org.amshove.kluent.`should not contain`
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -79,6 +82,9 @@ internal class ChatSocketTokenTest {
         private const val RECONNECT_ATTEMPT_MS = 30_000L
 
         private const val SOCKET_FAILURES = 5
+
+        private const val TOKEN_EXPIRED_JSON =
+            """{"error":{"code":40,"message":"token expired","StatusCode":401,"duration":"","more_info":""}}"""
     }
 
     private val streamDateFormatter = StreamDateFormatter()
@@ -87,6 +93,7 @@ internal class ChatSocketTokenTest {
     private lateinit var fakeChatSocket: FakeChatSocket
     private var socketListener: WebSocketListener? = null
     private var socketsCreated = 0
+    private val connectUrls = mutableListOf<String>()
 
     @BeforeEach
     fun setUp() {
@@ -163,6 +170,39 @@ internal class ChatSocketTokenTest {
         loadTokenCalls `should be equal to` 1
     }
 
+    /**
+     * The token is reused across a transport-level reconnect, so a token that expires during the drop is only
+     * discovered when the backend rejects it. The reconnect flow has to recover from that on its own.
+     */
+    @Test
+    fun `a reconnect rejected for an expired token fetches a new one`() {
+        var issued = 0
+        val tokenManager = TokenManagerImpl().apply {
+            setTokenProvider(
+                CacheableTokenProvider(object : TokenProvider {
+                    override fun loadToken(): String = "token" + (++issued)
+                }),
+            )
+        }
+        val chatSocket = realSocket(tokenManager)
+
+        userScope.launch { chatSocket.connectUser(randomUser(), false) }
+        testCoroutines.dispatcher.scheduler.runCurrent()
+        connectUrls.single() `should contain` "authorization=token1"
+
+        // Transport failure: the reconnect reuses the token it already has.
+        checkNotNull(socketListener).onFailure(mock(), Throwable(randomString()), null)
+        testCoroutines.dispatcher.scheduler.advanceTimeBy(RECONNECT_ATTEMPT_MS)
+        connectUrls.last() `should contain` "authorization=token1"
+
+        // The backend rejects that token as expired, so the next attempt has to carry a fresh one.
+        checkNotNull(socketListener).onMessage(mock(), TOKEN_EXPIRED_JSON)
+        testCoroutines.dispatcher.scheduler.advanceTimeBy(RECONNECT_ATTEMPT_MS)
+
+        connectUrls.last() `should contain` "authorization=token2"
+        connectUrls.last() `should not contain` "authorization=token1"
+    }
+
     private fun realSocket(tokenManager: TokenManager): ChatSocket {
         val parser: ChatParser = ParserFactory.createMoshiChatParser()
         val headersUtil: HeadersUtil = mock()
@@ -170,6 +210,7 @@ internal class ChatSocketTokenTest {
         val httpClient: OkHttpClient = mock()
         whenever(httpClient.newWebSocket(any(), any())) doAnswer { invocation ->
             socketsCreated++
+            connectUrls += invocation.getArgument<Request>(0).url.toString()
             socketListener = invocation.getArgument(1)
             mock<WebSocket>()
         }
