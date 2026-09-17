@@ -380,7 +380,7 @@ constructor(
             when {
                 it.value is Collection<*> -> (it.value as Collection<*>).map {
                     when (it) {
-                        is Attachment -> it.toDto()
+                        is Attachment -> it.toAttachmentRequest()
                         else -> it
                     }
                 }
