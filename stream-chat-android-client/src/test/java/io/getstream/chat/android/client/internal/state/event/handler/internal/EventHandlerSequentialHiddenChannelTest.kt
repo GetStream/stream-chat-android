@@ -51,8 +51,9 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not contain`
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
@@ -60,12 +61,16 @@ import org.mockito.kotlin.mock
  * Reproduces the "unmatch" event batch: `channel.hidden` arrives together with `channel.updated`
  * and `member.updated` for the same channel. The later events must not re-add the just-hidden
  * channel to a grouped query.
+ *
+ * Each case runs against both channel state implementations, since `ChatClientConfig` selects
+ * between them and both registries follow that same flag.
  */
 internal class EventHandlerSequentialHiddenChannelTest {
 
-    @Test
-    fun `a hidden channel is not re-added to a standard query by a later member update`() = runTest {
-        val fixture = Fixture()
+    @ParameterizedTest(name = "legacy channel state: {0}")
+    @ValueSource(booleans = [false, true])
+    fun `a hidden channel is not re-added to a standard query by a later member update`(legacy: Boolean) = runTest {
+        val fixture = Fixture(legacy)
         val membership = randomMember(user = fixture.currentUser)
         fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
         val standardState = fixture.withStandardQueryHolding(CHANNEL_TYPE, CHANNEL_ID, membership)
@@ -92,9 +97,10 @@ internal class EventHandlerSequentialHiddenChannelTest {
         standardState.rawChannels.orEmpty().keys `should not contain` CID
     }
 
-    @Test
-    fun `a new message brings a hidden channel back to the standard query`() = runTest {
-        val fixture = Fixture()
+    @ParameterizedTest(name = "legacy channel state: {0}")
+    @ValueSource(booleans = [false, true])
+    fun `a new message brings a hidden channel back to the standard query`(legacy: Boolean) = runTest {
+        val fixture = Fixture(legacy)
         val membership = randomMember(user = fixture.currentUser)
         fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
         val standardState = fixture.withStandardQueryHolding(CHANNEL_TYPE, CHANNEL_ID, membership)
@@ -121,9 +127,12 @@ internal class EventHandlerSequentialHiddenChannelTest {
         standardState.rawChannels.orEmpty().keys `should contain` CID
     }
 
-    @Test
-    fun `a hidden channel is not re-added to a grouped query by later events in the same batch`() = runTest {
-        val fixture = Fixture()
+    @ParameterizedTest(name = "legacy channel state: {0}")
+    @ValueSource(booleans = [false, true])
+    fun `a hidden channel is not re-added to a grouped query by later events in the same batch`(
+        legacy: Boolean,
+    ) = runTest {
+        val fixture = Fixture(legacy)
         val membership = randomMember(user = fixture.currentUser)
         fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
         val groupedState = fixture.withGroupedQuery(groupKey = "all")
@@ -155,9 +164,10 @@ internal class EventHandlerSequentialHiddenChannelTest {
         groupedState.rawChannels.orEmpty().keys `should not contain` CID
     }
 
-    @Test
-    fun `the same batch without the hidden event adds the channel to the grouped query`() = runTest {
-        val fixture = Fixture()
+    @ParameterizedTest(name = "legacy channel state: {0}")
+    @ValueSource(booleans = [false, true])
+    fun `the same batch without the hidden event adds the channel to the grouped query`(legacy: Boolean) = runTest {
+        val fixture = Fixture(legacy)
         val membership = randomMember(user = fixture.currentUser)
         fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, membership)
         val groupedState = fixture.withGroupedQuery(groupKey = "all")
@@ -188,7 +198,7 @@ internal class EventHandlerSequentialHiddenChannelTest {
         extraData = mapOf("group" to "ended"),
     )
 
-    private class Fixture {
+    private class Fixture(private val legacyChannelState: Boolean) {
         val currentUser = randomUser()
         private val userFlow = MutableStateFlow<User?>(currentUser)
         private val clientState: ClientState = mock { on { user } doReturn userFlow }
@@ -203,6 +213,7 @@ internal class EventHandlerSequentialHiddenChannelTest {
             now = { 0L },
             scope = testCoroutines.scope,
             messageLimitConfig = MessageLimitConfig(),
+            useLegacyChannelState = legacyChannelState,
         )
         private val logicRegistry = LogicRegistry(
             stateRegistry = stateRegistry,
@@ -213,16 +224,20 @@ internal class EventHandlerSequentialHiddenChannelTest {
             client = client,
             coroutineScope = testCoroutines.scope,
             now = { 0L },
-            useLegacyChannelLogic = true,
+            useLegacyChannelLogic = legacyChannelState,
             isLocalUnreadCountEnabled = false,
         )
 
         /** Watches the channel the way an open chat screen does, seeding the current user's membership. */
         fun withActiveChannel(channelType: String, channelId: String, membership: Member) {
             logicRegistry.channel(channelType, channelId)
-            stateRegistry.legacyChannelState(channelType, channelId).setChannelData(
-                randomChannel(id = channelId, type = channelType, membership = membership).toChannelData(),
-            )
+            val channelData = randomChannel(id = channelId, type = channelType, membership = membership)
+                .toChannelData()
+            if (legacyChannelState) {
+                stateRegistry.legacyChannelState(channelType, channelId).setChannelData(channelData)
+            } else {
+                stateRegistry.channelState(channelType, channelId).updateChannelData { channelData }
+            }
         }
 
         /** Registers a plain query already holding the channel, the way a loaded channel list does. */
