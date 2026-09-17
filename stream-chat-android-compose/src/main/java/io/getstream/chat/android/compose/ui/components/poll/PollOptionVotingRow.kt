@@ -106,7 +106,11 @@ internal fun PollOptionVotingRow(
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null,
 ) {
-    val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
+    val toggleRole = if (poll.enforceUniqueVote || poll.maxVotesAllowed == 1) {
+        Role.RadioButton
+    } else {
+        Role.Checkbox
+    }
     val onToggle: (Boolean) -> Unit = { enabled ->
         if (enabled && poll.canCastVote() && !checked) {
             onCastVote()
