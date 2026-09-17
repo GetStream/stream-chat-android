@@ -171,7 +171,8 @@ internal open class ChatSocket(
                                 healthMonitor.onDisconnected()
                             }
                             is State.Disconnected.WebSocketEventLost -> {
-                                tokenManager.expireToken()
+                                // A missed health event is a transport failure, not an auth failure: keeping the
+                                // token avoids hitting the integrator's token endpoint on every reconnect attempt.
                                 streamWebSocket?.close()
                                 connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
                             }
