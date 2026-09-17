@@ -16,6 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+      - name: Write release notes
+        run: |
+          {
+            git log -1 --pretty=%s
+            echo
+            echo "Commit: ${{ github.sha }}"
+            echo "Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > release-notes.txt
       - name: Prepare environment
         env:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
@@ -41,6 +49,7 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk
+          releaseNotesFile: release-notes.txt
   build_compose_sample_app:
     permissions:
       actions: write
@@ -50,6 +59,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+      - name: Write release notes
+        run: |
+          {
+            git log -1 --pretty=%s
+            echo
+            echo "Commit: ${{ github.sha }}"
+            echo "Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > release-notes.txt
       - name: Prepare environment
         env:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
@@ -75,3 +92,4 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-compose-sample/build/outputs/apk/demo/release/stream-chat-android-compose-sample-demo-release.apk
+          releaseNotesFile: release-notes.txt
