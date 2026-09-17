@@ -16,17 +16,24 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.client.test.randomUserMessagesDeletedEvent
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
@@ -38,6 +45,7 @@ import org.mockito.kotlin.whenever
 internal class ChannelLogicTest {
 
     private val currentUserId = randomString()
+    private val sortedMessages = MutableStateFlow<List<Message>>(emptyList())
     private lateinit var channelStateLogic: ChannelStateLogic
     private lateinit var sut: ChannelLogic
 
@@ -47,6 +55,7 @@ internal class ChannelLogicTest {
         val cid = randomCID()
         val mutableState = mock<ChannelMutableState>()
         whenever(mutableState.cid).doReturn(cid)
+        whenever(mutableState.sortedMessages).doReturn(sortedMessages)
         // Channel state logic
         channelStateLogic = mock()
         whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
@@ -58,6 +67,43 @@ internal class ChannelLogicTest {
             coroutineScope = TestScope(),
             getCurrentUserId = { currentUserId },
         )
+    }
+
+    @Test
+    fun `When paginating back, Then local only messages are not used as the anchor`() {
+        val localOnly = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            type = MessageType.REGULAR,
+            createdAt = null,
+            createdLocallyAt = null,
+        )
+        val oldestServerMessage = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        val newestServerMessage = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        sortedMessages.value = listOf(localOnly, oldestServerMessage, newestServerMessage)
+
+        val base = (sut as ChannelLogicImpl).getLoadMoreBaseMessage(Pagination.LESS_THAN)
+
+        base?.id `should be equal to` oldestServerMessage.id
+    }
+
+    @Test
+    fun `When paginating forward, Then local only messages are not used as the anchor`() {
+        val newestServerMessage = randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        val pending = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR)
+        sortedMessages.value = listOf(newestServerMessage, pending)
+
+        val base = (sut as ChannelLogicImpl).getLoadMoreBaseMessage(Pagination.GREATER_THAN)
+
+        base?.id `should be equal to` newestServerMessage.id
+    }
+
+    @Test
+    fun `When every message is local only, Then there is no anchor`() {
+        sortedMessages.value = listOf(randomMessage(syncStatus = SyncStatus.SYNC_NEEDED, type = MessageType.REGULAR))
+
+        val base = (sut as ChannelLogicImpl).getLoadMoreBaseMessage(Pagination.LESS_THAN)
+
+        base `should be equal to` null
     }
 
     @Test
