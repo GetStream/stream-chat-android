@@ -82,7 +82,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -497,7 +496,7 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `retryMessages should mark a permanently failed send as failed`() = runTest(testDispatcher) {
+    fun `retryMessages should not write the local message when the send fails`() = runTest(testDispatcher) {
         val message = localRandomMessage().copy(type = MessageType.REGULAR, syncStatus = SyncStatus.SYNC_NEEDED)
         whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
         whenever(repositoryFacade.selectMessage(message.id)) doReturn message
@@ -511,7 +510,8 @@ internal class SyncManagerTest {
         val sut = buildSyncManager()
         sut.retryMessages()
 
-        verify(repositoryFacade).insertMessage(argThat { syncStatus == SyncStatus.FAILED_PERMANENTLY })
+        verify(channelClient).sendMessage(message)
+        verify(repositoryFacade, never()).insertMessage(any())
     }
 
     @Test

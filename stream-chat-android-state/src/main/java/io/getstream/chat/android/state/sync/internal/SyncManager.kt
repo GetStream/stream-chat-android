@@ -20,7 +20,6 @@ import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.ChannelClient
-import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.errors.isStatusBadRequest
 import io.getstream.chat.android.client.errors.isValidationError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -781,12 +780,9 @@ internal class SyncManager(
             removeMessage(message).await()
         } else {
             // Do not persist the local message here. The SendMessageListener plugins already store the
-            // server's reply, which for a rejected send is a type "error" echo, not the message that was sent.
-            channelClient.sendMessage(message).await().also { result ->
-                if (result is Result.Failure && result.value.isPermanent()) {
-                    repos.markMessageAsFailed(message)
-                }
-            }
+            // outcome: the server's reply, which for a rejected send is a type "error" echo rather than
+            // the message that was sent, or the failed status.
+            channelClient.sendMessage(message).await()
         }
     }
 
