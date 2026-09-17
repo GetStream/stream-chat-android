@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toEntity
@@ -57,7 +58,13 @@ internal suspend fun MessageEntity.toModel(
         reactionCounts = reactionCounts,
         reactionScores = reactionScores.toMutableMap(),
         reactionGroups = reactionGroups.mapValues { it.value.toModel() },
-        syncStatus = syncStatus,
+        // A message the server confirmed always carries its creation date, so a completed row without one
+        // was written from a local copy and never actually delivered.
+        syncStatus = if (syncStatus == SyncStatus.COMPLETED && createdAt == null) {
+            SyncStatus.FAILED_PERMANENTLY
+        } else {
+            syncStatus
+        },
         shadowed = shadowed,
         i18n = i18n,
         latestReactions = (latestReactions.map { it.toModel(getUser) }),
