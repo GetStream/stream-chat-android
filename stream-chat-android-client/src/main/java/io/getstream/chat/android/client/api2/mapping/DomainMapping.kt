@@ -330,6 +330,10 @@ internal class DomainMapping(
                 sharedLocation = shared_location?.toDomain(),
                 channelRole = member?.channel_role,
                 member = member?.toDomain(),
+                mentionedChannelMembers = mentioned_channel_members
+                    ?.mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
+                    ?.toMap()
+                    .orEmpty(),
                 deletedForMe = deleted_for_me ?: false,
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)

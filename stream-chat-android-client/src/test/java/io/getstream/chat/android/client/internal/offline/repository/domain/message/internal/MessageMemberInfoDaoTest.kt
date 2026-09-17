@@ -68,6 +68,50 @@ internal class MessageMemberInfoDaoTest {
     }
 
     @Test
+    fun `mentioned channel members survive the round trip`(): Unit = runTest {
+        val mentioned = mapOf(
+            "user-42" to MemberInfo(
+                channelRole = "channel_moderator",
+                notificationsMuted = true,
+                extraData = mapOf("nickname" to "Padme"),
+            ),
+            "user-7" to MemberInfo(channelRole = "channel_member", notificationsMuted = false),
+        )
+        val message = randomMessage(mentionedChannelMembers = mentioned, replyTo = null, poll = null)
+
+        messageDao.insert(message.toEntity())
+
+        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo
+            mentioned.mapValues { (_, info) -> info.toEntity() }
+    }
+
+    @Test
+    fun `no mentioned channel members is stored as nothing at all`(): Unit = runTest {
+        val message = randomMessage(mentionedChannelMembers = emptyMap(), replyTo = null, poll = null)
+
+        messageDao.insert(message.toEntity())
+
+        messageDao.select(message.id)?.messageInnerEntity?.mentionedChannelMembers shouldBeEqualTo null
+    }
+
+    @Test
+    fun `generic extra data still round trips once the mentions column exists`(): Unit = runTest {
+        // Kotlin maps are covariant in their value type, so a non-null converter over Map<String, MemberInfoEntity>
+        // also satisfies the Map<String, Any> extra-data columns and outranks the nullable ExtraDataConverter there,
+        // which then fails on any non-object value.
+        val message = randomMessage(
+            extraData = mapOf("birthland" to "Polis Massa", "count" to 3.0),
+            replyTo = null,
+            poll = null,
+        )
+
+        messageDao.insert(message.toEntity())
+
+        messageDao.select(message.id)?.messageInnerEntity?.extraData shouldBeEqualTo
+            mapOf("birthland" to "Polis Massa", "count" to 3.0)
+    }
+
+    @Test
     fun `a member without custom data survives the round trip`(): Unit = runTest {
         val member = MemberInfo(channelRole = "channel_member", notificationsMuted = false, extraData = emptyMap())
         val message = randomMessage(member = member, replyTo = null, poll = null)

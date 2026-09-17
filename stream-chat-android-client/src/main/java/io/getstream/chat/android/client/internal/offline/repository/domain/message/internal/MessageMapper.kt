@@ -91,6 +91,7 @@ internal suspend fun MessageEntity.toModel(
         sharedLocation = sharedLocation?.toModel(),
         channelRole = member?.channelRole,
         member = member?.toModel(),
+        mentionedChannelMembers = mentionedChannelMembers.toMemberInfoModels(),
         deletedForMe = deletedForMe,
     )
 }
@@ -145,6 +146,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         restrictedVisibility = restrictedVisibility,
         sharedLocation = sharedLocation?.toEntity(),
         member = memberInfoToEntity(),
+        mentionedChannelMembers = mentionedChannelMembers.toMemberInfoEntities(),
         deletedForMe = deletedForMe,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
@@ -204,6 +206,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             reminder = reminder?.toModel(),
             channelRole = member?.channelRole,
             member = member?.toModel(),
+            mentionedChannelMembers = mentionedChannelMembers.toMemberInfoModels(),
         )
     }
 }
@@ -247,6 +250,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             pollId = poll?.id,
             reminder = reminder?.toEntity(),
             member = memberInfoToEntity(),
+            mentionedChannelMembers = mentionedChannelMembers.toMemberInfoEntities(),
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
@@ -312,3 +316,10 @@ internal fun MemberInfoEntity.toModel(): MemberInfo = MemberInfo(
 @Suppress("DEPRECATION")
 private fun Message.memberInfoToEntity(): MemberInfoEntity? =
     member?.toEntity() ?: channelRole?.let { MemberInfoEntity(channelRole = it) }
+
+private fun Map<String, MemberInfoEntity>?.toMemberInfoModels(): Map<String, MemberInfo> =
+    orEmpty().mapValues { (_, entity) -> entity.toModel() }
+
+/** Null rather than an empty map, so a message without projected mentions stores nothing at all. */
+private fun Map<String, MemberInfo>.toMemberInfoEntities(): Map<String, MemberInfoEntity>? =
+    takeIf { it.isNotEmpty() }?.mapValues { (_, memberInfo) -> memberInfo.toEntity() }

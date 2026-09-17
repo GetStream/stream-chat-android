@@ -83,6 +83,7 @@ public class ChannelHeaderViewModel(
     /**
      * A list of users who are currently typing.
      */
+    @Suppress("DEPRECATION")
     public val typingUsers: LiveData<List<User>> =
         channelState.flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users

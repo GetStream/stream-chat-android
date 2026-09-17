@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.test.randomVoteRemovedEvent
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.TypingUser
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -941,7 +942,11 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        val expected = TypingEvent(cid.cidToTypeAndId().second, listOf(user))
+        val expected = TypingEvent(
+            cid.cidToTypeAndId().second,
+            listOf(user),
+            listOf(TypingUser(user, event.member)),
+        )
         verify(state).setTyping(expected)
     }
 

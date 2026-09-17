@@ -38,29 +38,55 @@ public fun Message.withMemberInfo(memberInfo: MemberInfo?): Message =
     copy(member = memberInfo, channelRole = memberInfo?.channelRole)
 
 /**
- * Whether this message, or the quoted message it carries, holds an out of date [Message.member] snapshot for [userId].
+ * Whether this message, or the quoted message it carries, holds an out of date snapshot for [userId], either as the
+ * author in [Message.member] or as one of the [Message.mentionedChannelMembers].
  */
 @InternalStreamChatApi
 public fun Message.hasOutdatedMemberInfo(userId: String, memberInfo: MemberInfo?): Boolean =
     hasOutdatedMemberInfoFor(userId, memberInfo) || replyTo?.hasOutdatedMemberInfoFor(userId, memberInfo) == true
 
 /**
- * Applies [memberInfo] to this message and to the quoted message it carries, whichever of the two [userId] authored.
+ * Applies [memberInfo] to this message and to the quoted message it carries, wherever [userId] appears on either of
+ * them: as the author, and as a mentioned user.
  *
- * The quoted copy is a snapshot of its own, so leaving it behind would show two different snapshots for one author.
+ * The quoted copy is a snapshot of its own, so leaving it behind would show two different snapshots for one user.
  */
 @InternalStreamChatApi
 public fun Message.withRefreshedMemberInfo(userId: String, memberInfo: MemberInfo?): Message {
-    val refreshed = if (user.id == userId) withMemberInfo(memberInfo) else this
-    val quoted = refreshed.replyTo
-    return when {
-        quoted == null || quoted.user.id != userId -> refreshed
-        else -> refreshed.copy(replyTo = quoted.withMemberInfo(memberInfo))
+    val refreshed = refreshMemberInfo(userId, memberInfo)
+    val quoted = refreshed.replyTo?.refreshMemberInfo(userId, memberInfo)
+    return when (quoted) {
+        null, refreshed.replyTo -> refreshed
+        else -> refreshed.copy(replyTo = quoted)
     }
 }
 
+private fun Message.refreshMemberInfo(userId: String, memberInfo: MemberInfo?): Message =
+    (if (user.id == userId) withMemberInfo(memberInfo) else this)
+        .withRefreshedMentionedMemberInfo(userId, memberInfo)
+
+/**
+ * Replaces the entry [userId] already holds in [Message.mentionedChannelMembers], dropping it only when the member is
+ * gone entirely.
+ *
+ * A user the backend never projected is left out rather than added: the projection is capped per message and gated on
+ * the reader's permission, so an absent entry means the backend chose not to send one, not that we are missing it.
+ *
+ * Clearing the custom data keeps the entry, with an empty [MemberInfo.extraData], rather than removing the key. The
+ * backend omits such a user from the map, so this differs from a refetch, but only for a value every reader resolves
+ * to the same absent custom field. Removing the key instead would make the entry unreachable by later member events,
+ * since those can no longer find it, and a member who cleared and then set their custom data again would keep showing
+ * the stale value until the next channel query.
+ */
+private fun Message.withRefreshedMentionedMemberInfo(userId: String, memberInfo: MemberInfo?): Message = when {
+    !mentionedChannelMembers.containsKey(userId) -> this
+    memberInfo == null -> copy(mentionedChannelMembers = mentionedChannelMembers - userId)
+    else -> copy(mentionedChannelMembers = mentionedChannelMembers + (userId to memberInfo))
+}
+
 private fun Message.hasOutdatedMemberInfoFor(userId: String, memberInfo: MemberInfo?): Boolean =
-    user.id == userId && member != memberInfo
+    (user.id == userId && member != memberInfo) ||
+        (mentionedChannelMembers.containsKey(userId) && mentionedChannelMembers[userId] != memberInfo)
 
 /** Updates collection of messages with more recent data of [users]. */
 @InternalStreamChatApi
