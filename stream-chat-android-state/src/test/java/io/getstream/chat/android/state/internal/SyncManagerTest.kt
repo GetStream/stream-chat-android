@@ -520,7 +520,7 @@ internal class SyncManagerTest {
         val message = localRandomMessage()
         val channelClient: ChannelClient = mock()
         val alreadyExists = Error.NetworkError(
-            message = "a message with ID ${'$'}{message.id} already exists",
+            message = "a message with ID ${message.id} already exists",
             serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
             statusCode = 400,
         )
