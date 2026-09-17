@@ -7,6 +7,7 @@ static Boolean gitIsAvailable() {
     }
 }
 def isCI = System.getenv('CI')
+def sdkVersion = version
 ext["sampleAppVersionCode"] = 1
 ext["sampleAppVersionName"] = version
 if (isCI && gitIsAvailable()) {
@@ -14,8 +15,10 @@ if (isCI && gitIsAvailable()) {
         def branches = ['develop', 'main', 'release']
         baseBranch branchName in branches ? branchName : branches[0]
         yearFactor 100
+        // Firebase App Distribution already shows the version code next to the name, so the
+        // name carries the two things it cannot derive: the SDK version and the commit.
         formatter = { gitVersioner ->
-            "1.${gitVersioner.versionCode}.${gitVersioner.featureBranchCommitCount}.${gitVersioner.currentSha1Short}"
+            "${sdkVersion}-${gitVersioner.currentSha1Short}"
         }
     }
 
