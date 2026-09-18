@@ -30,7 +30,9 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import java.util.Date
 
 @Suppress("DEPRECATION")
 internal suspend fun MessageEntity.toModel(
@@ -59,7 +61,7 @@ internal suspend fun MessageEntity.toModel(
         reactionCounts = reactionCounts,
         reactionScores = reactionScores.toMutableMap(),
         reactionGroups = reactionGroups.mapValues { it.value.toModel() },
-        syncStatus = syncStatus,
+        syncStatus = syncStatus.correctedForMissingCreationDate(createdAt),
         shadowed = shadowed,
         i18n = i18n,
         latestReactions = (latestReactions.map { it.toModel(getUser) }),
@@ -178,7 +180,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             deletedAt = deletedAt,
             parentId = parentId,
             command = command,
-            syncStatus = syncStatus,
+            syncStatus = syncStatus.correctedForMissingCreationDate(createdAt),
             shadowed = shadowed,
             i18n = i18n,
             latestReactions = mutableListOf(),
@@ -323,3 +325,10 @@ private fun Map<String, MemberInfoEntity>?.toMemberInfoModels(): Map<String, Mem
 /** Null rather than an empty map, so a message without projected mentions stores nothing at all. */
 private fun Map<String, MemberInfo>.toMemberInfoEntities(): Map<String, MemberInfoEntity>? =
     takeIf { it.isNotEmpty() }?.mapValues { (_, memberInfo) -> memberInfo.toEntity() }
+
+/**
+ * A message the server confirmed always carries its creation date, so a completed row without one was
+ * written from a local copy and never actually delivered.
+ */
+private fun SyncStatus.correctedForMissingCreationDate(createdAt: Date?): SyncStatus =
+    if (this == SyncStatus.COMPLETED && createdAt == null) SyncStatus.FAILED_PERMANENTLY else this
