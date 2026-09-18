@@ -67,7 +67,7 @@ internal class ChatErrorTest {
 
     @ParameterizedTest
     @MethodSource("isMessageAlreadyExistsArguments")
-    fun testIsMessageAlreadyExists(
+    fun `Verify isMessageAlreadyExists() extension function returns proper value`(
         error: Error,
         isAlreadyExists: Boolean,
     ) {
@@ -168,6 +168,14 @@ internal class ChatErrorTest {
             Arguments.of(alreadyExistsError(), true),
             Arguments.of(alreadyExistsError(message = "a message with ID abc already exists"), true),
             Arguments.of(alreadyExistsError(message = "channel members are limited to 100"), false),
+            Arguments.of(alreadyExistsError(message = "poll with ID `p1` already exists"), false),
+            Arguments.of(alreadyExistsError(message = "vote already exists for user `u1` on poll `p1`"), false),
+            Arguments.of(
+                alreadyExistsError(
+                    message = "SendMessage failed with error: \"a message with ID abc already exists\"",
+                ),
+                true,
+            ),
             Arguments.of(
                 alreadyExistsError(code = ChatErrorCode.AUTHENTICATION_ERROR.code),
                 false,
