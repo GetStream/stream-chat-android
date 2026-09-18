@@ -104,8 +104,11 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
      */
     private fun updateState(message: Message) {
         val oldMessage = logic.getMessageById(message.id)
-        // Don't override the createdLocallyAt timestamp for own messages, to ensure they are sorted properly
-        val updatedMessage = message.copy(createdLocallyAt = oldMessage?.createdLocallyAt)
+        // Keep the original createdLocallyAt for own messages so they stay sorted in place. The state may no
+        // longer hold the message, and dropping the date there would sort it ahead of everything else.
+        val updatedMessage = message.copy(
+            createdLocallyAt = oldMessage?.createdLocallyAt ?: message.createdLocallyAt,
+        )
         logic.channelFromMessage(updatedMessage)?.upsertMessage(updatedMessage)
         logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(updatedMessage) }
         logic.threadFromMessage(updatedMessage)?.upsertMessage(updatedMessage)

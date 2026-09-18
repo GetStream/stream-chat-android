@@ -154,10 +154,11 @@ internal class SendMessageListenerStateTest {
     }
 
     @Test
-    fun `when no old message exists, createdLocallyAt should be null on success`() = runTest {
+    fun `when no old message exists, the sent message keeps its own createdLocallyAt`() = runTest {
+        val createdLocallyAt = Date()
         val testMessage = randomMessage(
             syncStatus = SyncStatus.SYNC_NEEDED,
-            createdLocallyAt = Date(),
+            createdLocallyAt = createdLocallyAt,
         )
 
         sendMessageListener.onMessageSendResult(
@@ -171,30 +172,31 @@ internal class SendMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.COMPLETED &&
-                    message.createdLocallyAt == null
+                    message.createdLocallyAt == createdLocallyAt
             },
         )
         verify(threadsLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.COMPLETED &&
-                    message.createdLocallyAt == null
+                    message.createdLocallyAt == createdLocallyAt
             },
         )
         verify(threadLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.COMPLETED &&
-                    message.createdLocallyAt == null
+                    message.createdLocallyAt == createdLocallyAt
             },
         )
     }
 
     @Test
-    fun `when no old message exists, createdLocallyAt should be null on failure`() = runTest {
+    fun `when no old message exists, the failed message keeps its own createdLocallyAt`() = runTest {
+        val createdLocallyAt = Date()
         val testMessage = randomMessage(
             syncStatus = SyncStatus.SYNC_NEEDED,
-            createdLocallyAt = Date(),
+            createdLocallyAt = createdLocallyAt,
         )
 
         sendMessageListener.onMessageSendResult(
@@ -208,21 +210,21 @@ internal class SendMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.SYNC_NEEDED &&
-                    message.createdLocallyAt == null
+                    message.createdLocallyAt == createdLocallyAt
             },
         )
         verify(threadsLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.SYNC_NEEDED &&
-                    message.createdLocallyAt == null
+                    message.createdLocallyAt == createdLocallyAt
             },
         )
         verify(threadLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id &&
                     message.syncStatus == SyncStatus.SYNC_NEEDED &&
-                    message.createdLocallyAt == null
+                    message.createdLocallyAt == createdLocallyAt
             },
         )
     }
