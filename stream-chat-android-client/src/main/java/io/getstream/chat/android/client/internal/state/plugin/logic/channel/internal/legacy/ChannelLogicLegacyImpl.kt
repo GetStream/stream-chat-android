@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -33,6 +34,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -443,17 +445,19 @@ internal class ChannelLogicLegacyImpl(
      *
      * @param direction [Pagination] instance which shows direction of pagination.
      */
-    private fun getLoadMoreBaseMessage(direction: Pagination): Message? {
-        val messages = mutableState.sortedMessages.value.takeUnless(Collection<Message>::isEmpty) ?: return null
+    @VisibleForTesting
+    internal fun getLoadMoreBaseMessage(direction: Pagination): Message? {
+        // The server resolves the anchor by id, so a message it does not know about cannot be one
+        val messages = mutableState.sortedMessages.value
         return when (direction) {
             Pagination.GREATER_THAN_OR_EQUAL,
             Pagination.GREATER_THAN,
-            -> messages.last()
+            -> messages.lastOrNull { !it.isLocalOnly() }
 
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
             Pagination.AROUND_ID,
-            -> messages.first()
+            -> messages.firstOrNull { !it.isLocalOnly() }
         }
     }
 }
