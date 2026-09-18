@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
@@ -35,6 +36,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageListenerDatabaseTest {
@@ -106,6 +108,38 @@ internal class SendMessageListenerDatabaseTest {
         verify(messageRepository).insertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            },
+        )
+    }
+
+    @Test
+    fun `when the send is rejected as a duplicate, the message should be stored as completed`() = runTest {
+        whenever(messageRepository.selectMessage(any())) doReturn null
+
+        val createdLocallyAt = Date()
+        val testMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdAt = null,
+            createdLocallyAt = createdLocallyAt,
+        )
+        val alreadyExists = Error.NetworkError(
+            message = "a message with ID ${testMessage.id} already exists",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+
+        sendMessageListenerDatabase.onMessageSendResult(
+            result = Result.Failure(alreadyExists),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(messageRepository).insertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdAt == createdLocallyAt
             },
         )
     }

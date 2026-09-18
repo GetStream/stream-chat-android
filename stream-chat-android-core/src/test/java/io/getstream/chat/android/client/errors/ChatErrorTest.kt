@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.net.SocketException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 internal class ChatErrorTest {
@@ -64,6 +66,15 @@ internal class ChatErrorTest {
     }
 
     @ParameterizedTest
+    @MethodSource("isMessageAlreadyExistsArguments")
+    fun `Verify isMessageAlreadyExists() extension function returns proper value`(
+        error: Error,
+        isAlreadyExists: Boolean,
+    ) {
+        error.isMessageAlreadyExists() `should be equal to` isAlreadyExists
+    }
+
+    @ParameterizedTest
     @MethodSource("copyWithMessageArguments")
     fun testCopyWithMessage(
         error: Error,
@@ -93,6 +104,14 @@ internal class ChatErrorTest {
             Arguments.of(networkError(ChatErrorCode.NETWORK_FAILED, 500), false),
             Arguments.of(
                 networkError(ChatErrorCode.NETWORK_FAILED, statusCode = 400, cause = UnknownHostException()),
+                false,
+            ),
+            Arguments.of(
+                networkError(ChatErrorCode.NETWORK_FAILED, statusCode = 400, cause = SocketTimeoutException()),
+                false,
+            ),
+            Arguments.of(
+                networkError(ChatErrorCode.NETWORK_FAILED, statusCode = 400, cause = SocketException()),
                 false,
             ),
             Arguments.of(networkError(ChatErrorCode.NETWORK_FAILED, 400), true),
@@ -143,6 +162,31 @@ internal class ChatErrorTest {
                 Arguments.of(networkError(ChatErrorCode.NETWORK_FAILED, statusCode = 400, cause = cause), cause),
             )
         }
+
+        @JvmStatic
+        fun isMessageAlreadyExistsArguments() = listOf(
+            Arguments.of(alreadyExistsError(), true),
+            Arguments.of(alreadyExistsError(message = "a message with ID abc already exists"), true),
+            Arguments.of(alreadyExistsError(message = "channel members are limited to 100"), false),
+            Arguments.of(alreadyExistsError(message = "poll with ID `p1` already exists"), false),
+            Arguments.of(alreadyExistsError(message = "vote already exists for user `u1` on poll `p1`"), false),
+            Arguments.of(
+                alreadyExistsError(
+                    message = "SendMessage failed with error: \"a message with ID abc already exists\"",
+                ),
+                true,
+            ),
+            Arguments.of(
+                alreadyExistsError(code = ChatErrorCode.AUTHENTICATION_ERROR.code),
+                false,
+            ),
+            Arguments.of(Error.GenericError("a message with ID abc already exists"), false),
+        )
+
+        private fun alreadyExistsError(
+            code: Int = ChatErrorCode.VALIDATION_ERROR.code,
+            message: String = "a message with ID abc already exists",
+        ): Error.NetworkError = Error.NetworkError(message, code, 400)
 
         private fun networkError(
             code: ChatErrorCode,

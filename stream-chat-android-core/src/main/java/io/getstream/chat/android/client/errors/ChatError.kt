@@ -19,8 +19,7 @@ package io.getstream.chat.android.client.errors
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.result.Error
 import io.getstream.result.Error.NetworkError.Companion.UNKNOWN_STATUS_CODE
-import java.net.ConnectException
-import java.net.UnknownHostException
+import java.io.IOException
 
 /**
  * Represents the error in the SDK.
@@ -28,6 +27,8 @@ import java.net.UnknownHostException
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
 private const val HTTP_API_ERROR = 500
+private const val MESSAGE_DUPLICATE_PREFIX = "a message with ID"
+private const val MESSAGE_DUPLICATE_SUFFIX = "already exists"
 
 /**
  * Creates [Error.NetworkError] from [ChatErrorCode] with custom status code and optional cause.
@@ -71,13 +72,27 @@ public fun Error.isPermanent(): Boolean {
 
         when {
             statusCode in temporaryErrors -> false
-            cause is UnknownHostException || cause is ConnectException -> false
+            // Transport failures leave the outcome unknown; a send that did land is caught by
+            // isMessageAlreadyExists when it is retried
+            cause is IOException -> false
             else -> true
         }
     } else {
         false
     }
 }
+
+/**
+ * @return If the error reports that the message being sent is already stored on the server, which happens
+ * when a send that did reach the backend is retried. The backend answers with the generic validation code
+ * shared by every input error, so the message shape has to be matched as well.
+ */
+@InternalStreamChatApi
+public fun Error.isMessageAlreadyExists(): Boolean =
+    this is Error.NetworkError &&
+        serverErrorCode == ChatErrorCode.VALIDATION_ERROR.code &&
+        message.contains(MESSAGE_DUPLICATE_PREFIX) &&
+        message.contains(MESSAGE_DUPLICATE_SUFFIX)
 
 /**
  * Copies the original [Error] objects with custom message.

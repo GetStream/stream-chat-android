@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.isMessageAlreadyExists
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
@@ -79,6 +80,18 @@ internal class SendMessageListenerDatabase(
         message: Message,
         error: Error,
     ) {
+        if (error.isMessageAlreadyExists()) {
+            StreamLog.w(TAG) { "[handleSendMessageFailure] message already stored server side" }
+            messageRepository.insertMessage(
+                message.copy(
+                    syncStatus = SyncStatus.COMPLETED,
+                    // The server stored the message but its reply never arrived, so the local date
+                    // stands in until the next channel query replaces the row with the server copy.
+                    createdAt = message.createdAt ?: message.createdLocallyAt,
+                ),
+            )
+            return
+        }
         val isPermanentError = error.isPermanent()
         StreamLog.w(TAG) { "[handleSendMessageFailure] isPermanentError: $isPermanentError" }
 

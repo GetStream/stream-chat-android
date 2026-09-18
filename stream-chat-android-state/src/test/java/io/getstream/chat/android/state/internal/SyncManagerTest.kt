@@ -82,6 +82,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -512,6 +513,28 @@ internal class SyncManagerTest {
 
         verify(channelClient).sendMessage(message)
         verify(repositoryFacade, never()).insertMessage(any())
+    }
+
+    @Test
+    fun `retryMessages should not fail a message the server already stored`() = runTest(testDispatcher) {
+        val message = localRandomMessage()
+        val channelClient: ChannelClient = mock()
+        val alreadyExists = Error.NetworkError(
+            message = "a message with ID ${message.id} already exists",
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            statusCode = 400,
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(chatClient.channel(message.cid)) doReturn channelClient
+        whenever(channelClient.sendMessage(message)) doReturn TestCall(Result.Failure(alreadyExists))
+
+        val sut = buildSyncManager()
+        sut.retryMessages()
+
+        verify(repositoryFacade, never()).insertMessage(
+            argThat { message -> message.syncStatus == SyncStatus.FAILED_PERMANENTLY },
+        )
     }
 
     @Test
