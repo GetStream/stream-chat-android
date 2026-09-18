@@ -31,6 +31,7 @@ import io.getstream.chat.android.offline.repository.domain.message.channelinfo.i
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.toModel
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toModel
+import java.util.Date
 
 internal suspend fun MessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
@@ -58,13 +59,7 @@ internal suspend fun MessageEntity.toModel(
         reactionCounts = reactionCounts,
         reactionScores = reactionScores.toMutableMap(),
         reactionGroups = reactionGroups.mapValues { it.value.toModel() },
-        // A message the server confirmed always carries its creation date, so a completed row without one
-        // was written from a local copy and never actually delivered.
-        syncStatus = if (syncStatus == SyncStatus.COMPLETED && createdAt == null) {
-            SyncStatus.FAILED_PERMANENTLY
-        } else {
-            syncStatus
-        },
+        syncStatus = syncStatus.correctedForMissingCreationDate(createdAt),
         shadowed = shadowed,
         i18n = i18n,
         latestReactions = (latestReactions.map { it.toModel(getUser) }),
@@ -170,7 +165,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             deletedAt = deletedAt,
             parentId = parentId,
             command = command,
-            syncStatus = syncStatus,
+            syncStatus = syncStatus.correctedForMissingCreationDate(createdAt),
             shadowed = shadowed,
             i18n = i18n,
             latestReactions = mutableListOf(),
@@ -272,3 +267,10 @@ internal fun ReminderInfoEntity.toModel(): MessageReminderInfo = MessageReminder
     createdAt = createdAt,
     updatedAt = updatedAt,
 )
+
+/**
+ * A message the server confirmed always carries its creation date, so a completed row without one was
+ * written from a local copy and never actually delivered.
+ */
+private fun SyncStatus.correctedForMissingCreationDate(createdAt: Date?): SyncStatus =
+    if (this == SyncStatus.COMPLETED && createdAt == null) SyncStatus.FAILED_PERMANENTLY else this

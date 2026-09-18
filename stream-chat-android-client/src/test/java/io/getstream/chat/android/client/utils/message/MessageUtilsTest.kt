@@ -642,6 +642,17 @@ internal class MessageUtilsTest {
     }
 
     @Test
+    fun `shouldDeleteRemote should return Failure for a completed message without a creation date`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.COMPLETED,
+            createdAt = null,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
     fun `shouldDeleteRemote should return Success for COMPLETED regular message`() {
         val message = randomMessage(
             type = MessageType.REGULAR,

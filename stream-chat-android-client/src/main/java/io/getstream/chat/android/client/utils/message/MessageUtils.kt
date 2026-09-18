@@ -240,14 +240,16 @@ public fun Message.shouldDeleteRemote(currentUserId: String?): Result<Unit> {
     }
     // 2. type = 'error'/'ephemeral' - not persisted on server, delete only locally
     // 3. syncStatus = 'IN_PROGRESS'/`FAILED_PERMANENTLY` - not persisted on server, delete only locally
+    // 4. no server creation date - written from a local copy, never delivered, delete only locally
     if (isError() || isEphemeral() ||
         syncStatus == SyncStatus.IN_PROGRESS ||
-        syncStatus == SyncStatus.FAILED_PERMANENTLY
+        syncStatus == SyncStatus.FAILED_PERMANENTLY ||
+        createdAt == null
     ) {
         val error = Error.GenericError("Message is local-only, don't call DeleteMessage API")
         return Result.Failure(error)
     }
-    // 4. Any other case, attempt to delete the message remotely
+    // 5. Any other case, attempt to delete the message remotely
     return Result.Success(Unit)
 }
 
