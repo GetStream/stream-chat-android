@@ -171,7 +171,6 @@ internal open class ChatSocket(
                                 healthMonitor.onDisconnected()
                             }
                             is State.Disconnected.WebSocketEventLost -> {
-                                tokenManager.expireToken()
                                 streamWebSocket?.close()
                                 connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
                             }
