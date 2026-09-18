@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
-import io.getstream.chat.android.client.Mother.randomDownstreamChannelUserRead
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
@@ -53,6 +52,7 @@ import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomReactionGroupResponse
 import io.getstream.chat.android.client.Mother.randomReactionResponse
+import io.getstream.chat.android.client.Mother.randomReadStateResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
@@ -1067,21 +1067,21 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamChannelUserRead is correctly mapped to ChannelUserRead`() {
-        val downstreamChannelUserRead = randomDownstreamChannelUserRead()
+    fun `ReadStateResponse is correctly mapped to ChannelUserRead`() {
+        val readStateResponse = randomReadStateResponse()
         val lastReceivedEventDate = randomDate()
         val sut = Fixture().get()
         val channelUserRead = with(sut) {
-            downstreamChannelUserRead.toDomain(lastReceivedEventDate)
+            readStateResponse.toDomain(lastReceivedEventDate)
         }
         val expected = ChannelUserRead(
-            user = with(sut) { downstreamChannelUserRead.user.toDomain() },
-            lastRead = downstreamChannelUserRead.last_read,
-            unreadMessages = downstreamChannelUserRead.unread_messages,
-            lastReadMessageId = downstreamChannelUserRead.last_read_message_id,
+            user = with(sut) { readStateResponse.user.toDomain() },
+            lastRead = readStateResponse.lastRead,
+            unreadMessages = readStateResponse.unreadMessages,
+            lastReadMessageId = readStateResponse.lastReadMessageId,
             lastReceivedEventDate = lastReceivedEventDate,
-            lastDeliveredAt = downstreamChannelUserRead.last_delivered_at,
-            lastDeliveredMessageId = downstreamChannelUserRead.last_delivered_message_id,
+            lastDeliveredAt = readStateResponse.lastDeliveredAt,
+            lastDeliveredMessageId = readStateResponse.lastDeliveredMessageId,
         )
 
         assertEquals(expected, channelUserRead)

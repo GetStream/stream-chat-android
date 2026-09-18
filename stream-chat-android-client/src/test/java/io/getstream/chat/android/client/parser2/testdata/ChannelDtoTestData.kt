@@ -17,12 +17,12 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.ReadStateResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 import io.getstream.chat.android.network.models.Command as CommandDto
@@ -150,7 +150,7 @@ internal object ChannelDtoTestData {
           "watchers": [${UserDtoTestData.downstreamJson}],
           "read": [
            {
-            "user": ${UserDtoTestData.downstreamJson},
+            "user": ${UserDtoTestData.userResponseJson},
             "last_read": "2020-06-10T11:04:31.0Z",
             "unread_messages": 1,
             "last_read_message_id": "messageId"
@@ -216,11 +216,11 @@ internal object ChannelDtoTestData {
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
         read = listOf(
-            DownstreamChannelUserRead(
-                user = UserDtoTestData.downstreamUser,
-                last_read = Date(1591787071000),
-                unread_messages = 1,
-                last_read_message_id = "messageId",
+            ReadStateResponse(
+                user = UserDtoTestData.userResponse,
+                lastRead = Date(1591787071000),
+                unreadMessages = 1,
+                lastReadMessageId = "messageId",
             ),
         ),
         config = expectedConfig,

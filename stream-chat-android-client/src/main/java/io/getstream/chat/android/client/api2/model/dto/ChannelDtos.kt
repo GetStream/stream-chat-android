@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ReadStateResponse
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
@@ -42,7 +43,7 @@ internal data class DownstreamChannelDto(
     val messages: List<DownstreamMessageDto> = emptyList(),
     val members: List<ChannelMemberResponse> = emptyList(),
     val watchers: List<DownstreamUserDto> = emptyList(),
-    val read: List<DownstreamChannelUserRead> = emptyList(),
+    val read: List<ReadStateResponse> = emptyList(),
     // Absent for a channel whose type is no longer in the app config.
     val config: ChannelConfigWithInfo? = null,
     val created_by: DownstreamUserDto?,
