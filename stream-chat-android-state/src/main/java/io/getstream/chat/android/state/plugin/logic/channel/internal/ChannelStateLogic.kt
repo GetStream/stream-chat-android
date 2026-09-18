@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.client.utils.message.isPinExpired
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isReply
@@ -361,7 +362,7 @@ internal class ChannelStateLogic(
         }
         messages.filter { it.isReply() }.forEach(::addQuotedMessage)
         when (shouldRefreshMessages) {
-            true -> mutableState.setMessages(messages)
+            true -> mutableState.setMessages(messages + localOnlyMessagesMissingFrom(messages))
             else -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
 
@@ -373,6 +374,16 @@ internal class ChannelStateLogic(
             }
         }
         messages.forEach { it.storePoll() }
+    }
+
+    /**
+     * Local only messages are never part of a server response, so a refresh would drop them from the
+     * list until the channel is reloaded from the database.
+     */
+    private fun localOnlyMessagesMissingFrom(messages: List<Message>): List<Message> {
+        val serverMessageIds = messages.mapTo(mutableSetOf(), Message::id)
+        return mutableState.messageList.value
+            .filter { it.id !in serverMessageIds && it.isLocalOnly() }
     }
 
     /**
