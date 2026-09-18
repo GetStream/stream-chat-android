@@ -16,19 +16,40 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+      - name: Resolve build identity
+        id: build_identity
+        run: |
+          # Minutes since 2020-09-13. The same package is published from more than one branch,
+          # so the version code has to grow with build time. A per-branch commit count can go
+          # backwards and Android rejects that as a downgrade.
+          {
+            echo "version_code=$(( ($(date -u +%s) - 1600000000) / 60 ))"
+            echo "sha=$(git rev-parse --short=7 HEAD)"
+          } >> "$GITHUB_OUTPUT"
+      - name: Write release notes
+        run: |
+          {
+            git log -1 --pretty=%s
+            echo
+            echo "Commit: ${{ github.sha }}"
+            echo "Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > release-notes.txt
       - name: Prepare environment
         env:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
           RELEASE_KEYSTORE_PROPERTIES: ${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}
         run: |
-          git fetch --unshallow
           echo "${{ env.RELEASE_KEYSTORE }}" > .sign/release.keystore.asc
           gpg -d --passphrase "${{ env.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
           echo "${{ env.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
           gpg -d --passphrase "${{ env.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
       - name: Assemble
-        run: bash ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
+        run: |
+          bash ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease \
+            -PsampleAppVersionCode=${{ steps.build_identity.outputs.version_code }} \
+            -PsampleAppBuildSha=${{ steps.build_identity.outputs.sha }} \
+            --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v7.0.1
         with:
@@ -37,10 +58,12 @@ jobs:
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
-          appId: ${{secrets.FIREBASE_UI_SAMPLE_APP_ID}}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          # io.getstream.chat.ui.sample in the stream-android-32afb project
+          appId: "1:17048947178:android:1357755d7b622cbc40ca93"
+          serviceCredentialsFileContent: ${{ secrets.STREAM_ANDROID_FIREBASE_CREDENTIALS_APP_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk
+          releaseNotesFile: release-notes.txt
   build_compose_sample_app:
     permissions:
       actions: write
@@ -50,19 +73,40 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+      - name: Resolve build identity
+        id: build_identity
+        run: |
+          # Minutes since 2020-09-13. The same package is published from more than one branch,
+          # so the version code has to grow with build time. A per-branch commit count can go
+          # backwards and Android rejects that as a downgrade.
+          {
+            echo "version_code=$(( ($(date -u +%s) - 1600000000) / 60 ))"
+            echo "sha=$(git rev-parse --short=7 HEAD)"
+          } >> "$GITHUB_OUTPUT"
+      - name: Write release notes
+        run: |
+          {
+            git log -1 --pretty=%s
+            echo
+            echo "Commit: ${{ github.sha }}"
+            echo "Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          } > release-notes.txt
       - name: Prepare environment
         env:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
           RELEASE_KEYSTORE_PROPERTIES: ${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}
         run: |
-          git fetch --unshallow
           echo "${{ env.RELEASE_KEYSTORE }}" > .sign/release.keystore.asc
           gpg -d --passphrase "${{ env.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
           echo "${{ env.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
           gpg -d --passphrase "${{ env.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
       - name: Assemble
-        run: bash ./gradlew :stream-chat-android-compose-sample:assembleRelease --stacktrace
+        run: |
+          bash ./gradlew :stream-chat-android-compose-sample:assembleRelease \
+            -PsampleAppVersionCode=${{ steps.build_identity.outputs.version_code }} \
+            -PsampleAppBuildSha=${{ steps.build_identity.outputs.sha }} \
+            --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v7.0.1
         with:
@@ -71,7 +115,9 @@ jobs:
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
-          appId: ${{secrets.FIREBASE_COMPOSE_SAMPLE_APP_ID}}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          # io.getstream.chat.android.compose.sample in the stream-android-32afb project
+          appId: "1:17048947178:android:07dc1e8e56b65c1f40ca93"
+          serviceCredentialsFileContent: ${{ secrets.STREAM_ANDROID_FIREBASE_CREDENTIALS_APP_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-compose-sample/build/outputs/apk/demo/release/stream-chat-android-compose-sample-demo-release.apk
+          releaseNotesFile: release-notes.txt
