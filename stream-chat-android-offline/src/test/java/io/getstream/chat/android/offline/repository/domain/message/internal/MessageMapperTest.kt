@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.randomMessageEntity
 import io.getstream.chat.android.offline.randomReactionGroupEntity
@@ -116,6 +117,31 @@ internal class MessageMapperTest {
         )
 
         assertEquals(expectedMessage, result)
+    }
+
+    @Test
+    fun `Should map a completed entity without a creation date to a permanently failed message`() = runTest {
+        val messageEntity = randomMessageEntity(syncStatus = SyncStatus.COMPLETED, createdAt = null)
+
+        val result = messageEntity.toModel(
+            getUser = { randomUser() },
+            getReply = { null },
+            getPoll = { null },
+        )
+
+        assertEquals(SyncStatus.FAILED_PERMANENTLY, result.syncStatus)
+    }
+
+    @Test
+    fun `Should map a completed reply without a creation date to a permanently failed message`() = runTest {
+        val reply = randomMessage(syncStatus = SyncStatus.COMPLETED, createdAt = null)
+
+        val result = reply.toReplyEntity().toModel(
+            getUser = { randomUser() },
+            getPoll = { null },
+        )
+
+        assertEquals(SyncStatus.FAILED_PERMANENTLY, result.syncStatus)
     }
 
     @Test
