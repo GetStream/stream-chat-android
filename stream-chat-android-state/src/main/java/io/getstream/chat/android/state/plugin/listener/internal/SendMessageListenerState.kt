@@ -88,7 +88,12 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
     ) {
         if (error.isMessageAlreadyExists()) {
             StreamLog.w(TAG) { "[handleSendMessageFailure] message already stored server side" }
-            message.copy(syncStatus = SyncStatus.COMPLETED).also(::updateState)
+            message.copy(
+                syncStatus = SyncStatus.COMPLETED,
+                // The server stored the message but its reply never arrived, so the local date stands
+                // in until the next channel query replaces the row with the server copy.
+                createdAt = message.createdAt ?: message.createdLocallyAt,
+            ).also(::updateState)
             return
         }
         val isPermanentError = error.isPermanent()

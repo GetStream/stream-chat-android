@@ -36,6 +36,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageListenerDatabaseTest {
@@ -115,7 +116,12 @@ internal class SendMessageListenerDatabaseTest {
     fun `when the send is rejected as a duplicate, the message should be stored as completed`() = runTest {
         whenever(messageRepository.selectMessage(any())) doReturn null
 
-        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
+        val createdLocallyAt = Date()
+        val testMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdAt = null,
+            createdLocallyAt = createdLocallyAt,
+        )
         val alreadyExists = Error.NetworkError(
             message = "a message with ID ${testMessage.id} already exists",
             serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
@@ -131,7 +137,9 @@ internal class SendMessageListenerDatabaseTest {
 
         verify(messageRepository).insertMessage(
             argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdAt == createdLocallyAt
             },
         )
     }
