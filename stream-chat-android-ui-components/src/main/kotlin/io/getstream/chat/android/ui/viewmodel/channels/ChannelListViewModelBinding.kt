@@ -36,7 +36,7 @@ import io.getstream.chat.android.ui.viewmodel.channels.internal.ChannelListBindi
  * before setting any additional listeners on these objects yourself.
  */
 @JvmName("bind")
-@Suppress("LongMethod")
+@Suppress("LongMethod", "DEPRECATION")
 public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycleOwner: LifecycleOwner,

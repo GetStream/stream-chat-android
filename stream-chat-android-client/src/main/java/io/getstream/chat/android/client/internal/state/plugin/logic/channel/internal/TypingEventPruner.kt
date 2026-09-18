@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.int
 
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.TypingUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -136,11 +137,17 @@ internal class TypingEventPruner(
      * Used to set a value to
      * [io.getstream.chat.android.offline.plugin.state.channel.internal.ChannelMutableState.typing].
      */
+    @Suppress("DEPRECATION")
     private fun getTypingEvent(): TypingEvent = typingEvents.values
-        .map { it.typingStartEvent }
-        .sortedBy { typingStartEvent -> typingStartEvent.createdAt }
-        .map { typingStartEvent -> typingStartEvent.user }
-        .let { sortedUsers -> TypingEvent(channelId = channelId, users = sortedUsers) }
+        .sortedBy { timedEvent -> timedEvent.typingStartEvent.createdAt }
+        .map { timedEvent -> TypingUser(timedEvent.typingStartEvent.user, timedEvent.typingStartEvent.member) }
+        .let { typingUsers ->
+            TypingEvent(
+                channelId = channelId,
+                users = typingUsers.map(TypingUser::user),
+                typingUsers = typingUsers,
+            )
+        }
 
     /**
      * Clears all existing typing updates and posts

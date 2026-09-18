@@ -23,6 +23,7 @@ import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.UserGroupResponse
 import java.util.Date
 
 /**
@@ -48,7 +49,7 @@ internal data class DownstreamMessageDto(
     val mentioned_users: List<DownstreamUserDto>,
     val mentioned_here: Boolean? = null,
     val mentioned_channel: Boolean? = null,
-    val mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
+    val mentioned_groups: List<UserGroupResponse> = emptyList(),
     val mentioned_roles: List<String> = emptyList(),
     val own_reactions: List<ReactionResponse>,
     val parent_id: String?,
@@ -78,6 +79,7 @@ internal data class DownstreamMessageDto(
     val reminder: DownstreamReminderInfoDto? = null,
     val shared_location: DownstreamLocationDto? = null,
     val member: DownstreamMemberInfoDto? = null,
+    val mentioned_channel_members: Map<String, DownstreamMemberInfoDto?>? = null,
     val deleted_for_me: Boolean?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

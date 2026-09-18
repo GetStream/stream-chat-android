@@ -56,6 +56,7 @@ public class TypingIndicatorViewModel(
     /**
      * A list of users who are currently typing.
      */
+    @Suppress("DEPRECATION")
     public val typingUsers: LiveData<List<User>> =
         channelState.filterNotNull().flatMapLatest { it.typing }.map { typingEvent ->
             typingEvent.users

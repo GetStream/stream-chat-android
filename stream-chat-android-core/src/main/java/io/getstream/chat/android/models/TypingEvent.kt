@@ -23,6 +23,18 @@ import androidx.compose.runtime.Immutable
  *
  * @param channelId The ID of the channel where the typing event occurred.
  * @param users The users who are currently typing in the channel.
+ * @param typingUsers The users who are currently typing in the channel, with their channel membership. Defaults to
+ * [users] without membership, so both lists describe the same people however the event is constructed. The default is
+ * evaluated at construction, so `copy(users = ...)` keeps the receiver's [typingUsers] and the two can then disagree.
  */
 @Immutable
-public data class TypingEvent(val channelId: String, val users: List<User>)
+public data class TypingEvent(
+    val channelId: String,
+    @Deprecated(
+        message = "Use typingUsers instead, which also carries each user's channel membership.",
+        replaceWith = ReplaceWith("typingUsers"),
+        level = DeprecationLevel.WARNING,
+    )
+    val users: List<User>,
+    val typingUsers: List<TypingUser> = users.map(::TypingUser),
+)

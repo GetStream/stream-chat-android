@@ -105,6 +105,7 @@ internal class MessageAdapter(
         var reminder: MessageReminderInfo? = null
         var sharedLocation: Location? = null
         var member: MemberInfo? = null
+        var mentionedChannelMembers: Map<String, MemberInfo>? = null
         var deletedForMe: Boolean? = null
         var extraData: MutableMap<String, Any>? = null
 
@@ -175,6 +176,7 @@ internal class MessageAdapter(
                 "reminder" -> reminder = reminderAdapter.fromJson(reader)
                 "shared_location" -> sharedLocation = locationAdapter.fromJson(reader)
                 "member" -> member = parseMemberInfo(reader)
+                "mentioned_channel_members" -> mentionedChannelMembers = parseMentionedChannelMembers(reader)
                 "deleted_for_me" -> deletedForMe = JsonParsingUtils.readNullableBoolean(reader)
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
@@ -273,9 +275,27 @@ internal class MessageAdapter(
             sharedLocation = sharedLocation,
             channelRole = member?.channelRole,
             member = member,
+            mentionedChannelMembers = mentionedChannelMembers.orEmpty(),
             deletedForMe = deletedForMe ?: false,
             extraData = extraData ?: emptyMap(),
         ).let(messageTransformer::transform)
+    }
+
+    private fun parseMentionedChannelMembers(reader: JsonReader): Map<String, MemberInfo>? {
+        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
+            reader.skipValue()
+            return null
+        }
+
+        reader.beginObject()
+        val members = mutableMapOf<String, MemberInfo>()
+        while (reader.hasNext()) {
+            val userId = reader.nextName()
+            parseMemberInfo(reader)?.let { members[userId] = it }
+        }
+        reader.endObject()
+
+        return members
     }
 
     private fun parseMemberInfo(reader: JsonReader): MemberInfo? {

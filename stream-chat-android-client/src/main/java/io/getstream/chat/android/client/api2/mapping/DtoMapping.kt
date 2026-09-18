@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
@@ -59,30 +58,6 @@ internal class DtoMapping(
     private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
 
     /**
-     * Converts [Attachment] to [AttachmentDto].
-     */
-    internal fun Attachment.toDto(): AttachmentDto = AttachmentDto(
-        asset_url = assetUrl,
-        author_name = authorName,
-        fallback = fallback,
-        file_size = fileSize,
-        image = image,
-        image_url = imageUrl,
-        mime_type = mimeType,
-        name = name,
-        og_scrape_url = ogUrl,
-        text = text,
-        thumb_url = thumbUrl,
-        title = title,
-        title_link = titleLink,
-        author_link = authorLink,
-        type = type,
-        original_height = originalHeight,
-        original_width = originalWidth,
-        extraData = extraData,
-    )
-
-    /**
      * Converts [Device] to [DeviceDto].
      */
     internal fun Device.toDto(): DeviceDto = DeviceDto(
@@ -108,10 +83,12 @@ internal class DtoMapping(
 
     /**
      * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
+     *
+     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, but the wire carries them at
+     * the root, so they go through `custom`, which the adapter flattens back out. `file_size` stays an Int
+     * here: parsing yields a Double for an undeclared number, and writing that would change `1` to `1.0`.
      */
     internal fun Attachment.toAttachmentRequest(): AttachmentRequest {
-        // OpenAPI Attachment doesn't declare file_size/image/mime_type/name; fold them into `custom`
-        // so the custom-flattening adapter writes them at the JSON root.
         val custom = extraData.toMutableMap()
         image?.let { custom["image"] = it }
         name?.let { custom["name"] = it }
@@ -132,6 +109,8 @@ internal class DtoMapping(
             originalHeight = originalHeight,
             originalWidth = originalWidth,
             custom = custom,
+            // The domain holds actions and fields in extraData, so they reach the root through custom.
+            // Both default to an empty list here, which would be emitted alongside.
             actions = null,
             fields = null,
         )

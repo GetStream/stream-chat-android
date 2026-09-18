@@ -149,7 +149,7 @@ internal class MutableGlobalState(
         _typingChannels?.let {
             it.tryEmit(
                 it.value.toMutableMap().apply {
-                    if (typingEvent.users.isEmpty()) {
+                    if (typingEvent.typingUsers.isEmpty()) {
                         remove(cid)
                     } else {
                         this[cid] = typingEvent

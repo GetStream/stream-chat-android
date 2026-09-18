@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
@@ -38,8 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
@@ -330,6 +327,10 @@ internal class DomainMapping(
                 sharedLocation = shared_location?.toDomain(),
                 channelRole = member?.channel_role,
                 member = member?.toDomain(),
+                mentionedChannelMembers = mentioned_channel_members
+                    ?.mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
+                    ?.toMap()
+                    .orEmpty(),
                 deletedForMe = deleted_for_me ?: false,
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
@@ -758,31 +759,6 @@ internal class DomainMapping(
     }
 
     /**
-     * Transforms [AttachmentDto] to [Attachment].
-     */
-    internal fun AttachmentDto.toDomain(): Attachment =
-        Attachment(
-            assetUrl = asset_url,
-            authorName = author_name,
-            authorLink = author_link,
-            fallback = fallback,
-            fileSize = file_size ?: 0,
-            image = image,
-            imageUrl = image_url,
-            mimeType = mime_type,
-            name = name,
-            ogUrl = og_scrape_url,
-            text = text,
-            thumbUrl = thumb_url,
-            title = title,
-            titleLink = title_link,
-            type = type,
-            originalHeight = original_height,
-            originalWidth = original_width,
-            extraData = extraData.toMutableMap(),
-        )
-
-    /**
      * The four fields the spec declares on no attachment shape. The wire sends them at the root, so they
      * arrive in the collected custom data: they have to be read back out and removed, or an attachment
      * loses its size, name and mime type and carries them under their wire names in `extraData` instead.
@@ -1183,24 +1159,6 @@ internal class DomainMapping(
         val field = if (FIELD_LAST_MESSAGE_AT in filterFields) FIELD_LAST_MESSAGE_AT else FIELD_LAST_UPDATED
         return QuerySortByField<Channel>().desc(field)
     }
-
-    internal fun DownstreamUserGroupDto.toDomain(): UserGroup = UserGroup(
-        id = id,
-        name = name,
-        description = description,
-        team = team_id.orEmpty(),
-        members = members.map { it.toDomain() },
-        createdBy = created_by,
-        createdAt = created_at,
-        updatedAt = updated_at,
-    )
-
-    internal fun DownstreamUserGroupMemberDto.toDomain(): UserGroupMember = UserGroupMember(
-        groupId = group_id,
-        userId = user_id,
-        isAdmin = is_admin,
-        createdAt = created_at,
-    )
 
     internal fun UserGroupResponse.toDomain(): UserGroup = UserGroup(
         id = id,

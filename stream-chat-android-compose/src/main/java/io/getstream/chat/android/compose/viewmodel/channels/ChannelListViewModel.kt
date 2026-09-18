@@ -1174,6 +1174,7 @@ public class ChannelListViewModel internal constructor(
      * @param channelMutes The list of channels muted for the current user.
      * @param userMutes The list of users muted by the current user.
      */
+    @Suppress("DEPRECATION")
     private fun createChannelItems(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,

@@ -69,15 +69,16 @@ import io.getstream.chat.android.ui.common.utils.extensions.canCastVote
  * preview of voter avatars, the vote count, and a progress bar.
  *
  * The whole row is a single TalkBack focus exposing the [Role.RadioButton] or [Role.Checkbox]
- * role (depending on [Poll.maxVotesAllowed]) with the option text and vote count. Toggling fires
+ * role (depending on [Poll.enforceUniqueVote] and [Poll.maxVotesAllowed]) with the option text and
+ * vote count. Toggling fires
  * [onCastVote] or [onRemoveVote] following the same rules as the inline poll on the message
  * screen.
  *
  * Shared by the inline poll on the message screen and the more-options bottom sheet — both
  * delegate here so the a11y wiring is implemented once.
  *
- * @param poll The poll the option belongs to (drives role + cast/remove gating via
- * [Poll.maxVotesAllowed] and [Poll.closed]).
+ * @param poll The poll the option belongs to (drives the role via [Poll.enforceUniqueVote] and
+ * [Poll.maxVotesAllowed], and cast/remove gating via [Poll.maxVotesAllowed] and [Poll.closed]).
  * @param option The option rendered by this row.
  * @param voteCount Number of votes the option has received.
  * @param totalVoteCount Total votes across all options, used to compute the progress fill.
@@ -106,7 +107,11 @@ internal fun PollOptionVotingRow(
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null,
 ) {
-    val toggleRole = if (poll.maxVotesAllowed == 1) Role.RadioButton else Role.Checkbox
+    val toggleRole = if (poll.enforceUniqueVote || poll.maxVotesAllowed == 1) {
+        Role.RadioButton
+    } else {
+        Role.Checkbox
+    }
     val onToggle: (Boolean) -> Unit = { enabled ->
         if (enabled && poll.canCastVote() && !checked) {
             onCastVote()

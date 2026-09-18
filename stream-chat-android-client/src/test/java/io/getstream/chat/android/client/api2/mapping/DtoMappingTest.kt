@@ -20,7 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
@@ -59,34 +58,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 internal class DtoMappingTest {
-
-    @Test
-    fun `Attachment is correctly mapped to Dto`() {
-        val attachment = randomAttachment()
-        val mapping = Fixture().get()
-        val dto = with(mapping) { attachment.toDto() }
-        val expected = AttachmentDto(
-            asset_url = attachment.assetUrl,
-            author_name = attachment.authorName,
-            fallback = attachment.fallback,
-            file_size = attachment.fileSize,
-            image = attachment.image,
-            image_url = attachment.imageUrl,
-            mime_type = attachment.mimeType,
-            name = attachment.name,
-            og_scrape_url = attachment.ogUrl,
-            text = attachment.text,
-            thumb_url = attachment.thumbUrl,
-            title = attachment.title,
-            title_link = attachment.titleLink,
-            author_link = attachment.authorLink,
-            type = attachment.type,
-            original_height = attachment.originalHeight,
-            original_width = attachment.originalWidth,
-            extraData = attachment.extraData,
-        )
-        dto shouldBeEqualTo expected
-    }
 
     @Test
     fun `Device is correctly mapped to Dto`() {
