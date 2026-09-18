@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageTestData
+import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -431,6 +432,39 @@ internal class MessageParsingTest {
     fun `Both paths - member absent yields a null member`() {
         val result = assertBothPaths(MessageTestData.jsonOptionalFieldsMissing)
         assertEquals(null, result.member)
+    }
+
+    // endregion
+    // region Mentioned channel members (message.mentioned_channel_members)
+
+    @Test
+    fun `Both paths - mentioned member custom inlined by API v1 lands on the domain field`() {
+        val result = assertBothPaths(MessageTestData.jsonWithMentionedChannelMembersInlined)
+        assertEquals(MessageTestData.expectedMentionedChannelMembers, result.mentionedChannelMembers)
+    }
+
+    @Test
+    fun `Both paths - mentioned member custom nested by API v2 lands on the same domain field`() {
+        val result = assertBothPaths(MessageTestData.jsonWithMentionedChannelMembersNested)
+        assertEquals(MessageTestData.expectedMentionedChannelMembers, result.mentionedChannelMembers)
+    }
+
+    @Test
+    fun `Both paths - mentioned channel members absent yields an empty map`() {
+        val result = assertBothPaths(MessageTestData.jsonOptionalFieldsMissing)
+        assertEquals(emptyMap<String, MemberInfo>(), result.mentionedChannelMembers)
+    }
+
+    @Test
+    fun `Both paths - an empty mentioned channel members object yields an empty map`() {
+        val result = assertBothPaths(MessageTestData.jsonWithEmptyMentionedChannelMembers)
+        assertEquals(emptyMap<String, MemberInfo>(), result.mentionedChannelMembers)
+    }
+
+    @Test
+    fun `Both paths - mentioned channel members do not leak into extraData`() {
+        val result = assertBothPaths(MessageTestData.jsonWithMentionedChannelMembersInlined)
+        assertEquals(false, result.extraData.containsKey("mentioned_channel_members"))
     }
 
     // endregion

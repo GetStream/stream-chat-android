@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.TypingUser
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceTimeBy
@@ -32,6 +33,7 @@ import org.mockito.kotlin.verify
 import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("DEPRECATION")
 internal class TypingEventPrunerTest {
 
     private val channelId = "channelId"
@@ -112,6 +114,7 @@ internal class TypingEventPrunerTest {
                 TypingEvent(
                     channelId,
                     listOf(secondTypingStartEvent.user),
+                    listOf(TypingUser(secondTypingStartEvent.user, secondTypingStartEvent.member)),
                 ),
             )
         }
@@ -182,6 +185,7 @@ internal class TypingEventPrunerTest {
                 TypingEvent(
                     channelId,
                     listOf(secondTypingStartEvent.user),
+                    listOf(TypingUser(secondTypingStartEvent.user, secondTypingStartEvent.member)),
                 ),
             )
 

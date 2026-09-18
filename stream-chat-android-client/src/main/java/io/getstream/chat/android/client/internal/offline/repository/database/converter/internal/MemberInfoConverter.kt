@@ -28,6 +28,9 @@ internal class MemberInfoConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val adapter = moshi.adapter<MemberInfoEntity>()
 
+    @OptIn(ExperimentalStdlibApi::class)
+    private val mapAdapter = moshi.adapter<Map<String, MemberInfoEntity>>()
+
     /**
      * Converts a [String] to a [MemberInfoEntity].
      */
@@ -45,5 +48,28 @@ internal class MemberInfoConverter {
     @TypeConverter
     fun memberInfoToString(memberInfo: MemberInfoEntity?): String? {
         return memberInfo?.let(adapter::toJson)
+    }
+
+    /**
+     * Converts a [String] to a map of user id to [MemberInfoEntity].
+     *
+     * Nullable on purpose, like every other map converter here. Kotlin's `Map<K, out V>` is covariant, so a converter
+     * over `Map<String, MemberInfoEntity>` also satisfies the `Map<String, Any>` extra-data columns of unrelated
+     * tables, and a non-null one outranks [ExtraDataConverter] there, which returns a nullable map.
+     */
+    @TypeConverter
+    fun stringToMemberInfoMap(data: String?): Map<String, MemberInfoEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return null
+        }
+        return mapAdapter.fromJson(data)
+    }
+
+    /**
+     * Converts a map of user id to [MemberInfoEntity] to a [String].
+     */
+    @TypeConverter
+    fun memberInfoMapToString(memberInfo: Map<String, MemberInfoEntity>?): String? {
+        return memberInfo?.let(mapAdapter::toJson)
     }
 }

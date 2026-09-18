@@ -18,9 +18,9 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.ReactionGroupResponse
+import io.getstream.chat.android.network.models.UserGroupResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -45,7 +45,8 @@ internal object MessageDtoTestData {
             {
               "id": "g1",
               "name": "platform",
-              "members": []
+              "created_at": "2020-06-10T11:04:31.0Z",
+              "updated_at": "2020-06-10T11:04:31.588Z"
             }
           ],
           "mentioned_roles": ["admin", "moderator"],
@@ -164,7 +165,14 @@ internal object MessageDtoTestData {
         mentioned_users = listOf(UserDtoTestData.downstreamUserWithoutExtraData),
         mentioned_here = true,
         mentioned_channel = true,
-        mentioned_groups = listOf(DownstreamUserGroupDto(id = "g1", name = "platform")),
+        mentioned_groups = listOf(
+            UserGroupResponse(
+                id = "g1",
+                name = "platform",
+                createdAt = Date(1591787071000),
+                updatedAt = Date(1591787071588),
+            ),
+        ),
         mentioned_roles = listOf("admin", "moderator"),
         i18n = emptyMap(),
         thread_participants = emptyList(),

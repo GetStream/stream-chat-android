@@ -88,14 +88,6 @@ internal object MessageTestData {
                 "name": "engineering",
                 "description": "Engineering team",
                 "team_id": "team-1",
-                "members": [
-                    {
-                        "group_id": "group-1",
-                        "user_id": "user-1",
-                        "is_admin": true,
-                        "created_at": "2020-01-01T00:00:00.000Z"
-                    }
-                ],
                 "created_by": "user-1",
                 "created_at": "2020-01-01T00:00:00.000Z",
                 "updated_at": "2020-01-01T00:00:00.000Z"
@@ -1202,6 +1194,49 @@ internal object MessageTestData {
         channelRole = "channel_moderator",
         notificationsMuted = true,
         extraData = mapOf("flair" to mapOf("tier" to "gold")),
+    )
+
+    // endregion
+    // region Mentioned channel members (message.mentioned_channel_members)
+
+    /** API v1 inlines the projected keys, the same way it does on `member`. */
+    @Language("JSON")
+    val jsonWithMentionedChannelMembersInlined = """{
+        $BASE_FIELDS,
+        "mentioned_channel_members": {
+            "user-42": {
+                "channel_role": "channel_moderator",
+                "notifications_muted": true,
+                "flair": {"tier": "gold"}
+            },
+            "user-7": {"channel_role": "channel_member", "notifications_muted": false}
+        }
+    }"""
+
+    /** API v2 nests them under `custom`. */
+    @Language("JSON")
+    val jsonWithMentionedChannelMembersNested = """{
+        $BASE_FIELDS,
+        "mentioned_channel_members": {
+            "user-42": {
+                "channel_role": "channel_moderator",
+                "notifications_muted": true,
+                "custom": {"flair": {"tier": "gold"}}
+            },
+            "user-7": {"channel_role": "channel_member", "notifications_muted": false}
+        }
+    }"""
+
+    /** The backend omits the field entirely when nothing is projected. */
+    @Language("JSON")
+    val jsonWithEmptyMentionedChannelMembers = """{
+        $BASE_FIELDS,
+        "mentioned_channel_members": {}
+    }"""
+
+    val expectedMentionedChannelMembers = mapOf(
+        "user-42" to expectedMemberWithCustom,
+        "user-7" to expectedMemberWithoutCustom,
     )
 
     // endregion

@@ -280,6 +280,14 @@ public data class Message(
     val member: MemberInfo? = null,
 
     /**
+     * Data about the channel membership of the users mentioned in the message, keyed by user id.
+     *
+     * Only carries the users the backend projected: it is capped per message, and a mentioned user whose membership
+     * has no custom data is left out, so a user present in [mentionedUsers] can be absent here.
+     */
+    val mentionedChannelMembers: Map<String, MemberInfo> = emptyMap(),
+
+    /**
      * Whether the message was deleted for the current user.
      */
     val deletedForMe: Boolean = false,
@@ -423,6 +431,9 @@ public data class Message(
         if (moderation != null) append(", moderation=").append(moderation)
         if (poll != null) append(", poll=").append(poll)
         if (member != null) append(", member=").append(member)
+        if (mentionedChannelMembers.isNotEmpty()) {
+            append(", mentionedChannelMembers=").append(mentionedChannelMembers)
+        }
         append(", deletedForMe=").append(deletedForMe)
         if (mentionedHere) append(", mentionedHere=true")
         if (mentionedChannel) append(", mentionedChannel=true")
@@ -486,6 +497,7 @@ public data class Message(
         private var sharedLocation: Location? = null
         private var channelRole: String? = null
         private var member: MemberInfo? = null
+        private var mentionedChannelMembers: Map<String, MemberInfo> = emptyMap()
         private var deletedForMe: Boolean = false
         private var mentionedHere: Boolean = false
         private var mentionedChannel: Boolean = false
@@ -542,6 +554,7 @@ public data class Message(
             sharedLocation = message.sharedLocation
             channelRole = message.channelRole
             member = message.member
+            mentionedChannelMembers = message.mentionedChannelMembers
             deletedForMe = message.deletedForMe
             mentionedHere = message.mentionedHere
             mentionedChannel = message.mentionedChannel
@@ -635,6 +648,9 @@ public data class Message(
         )
         public fun withChannelRole(channelRole: String?): Builder = apply { this.channelRole = channelRole }
         public fun withMember(member: MemberInfo?): Builder = apply { this.member = member }
+        public fun withMentionedChannelMembers(mentionedChannelMembers: Map<String, MemberInfo>): Builder = apply {
+            this.mentionedChannelMembers = mentionedChannelMembers
+        }
         public fun withDeletedForMe(deletedForMe: Boolean): Builder = apply { this.deletedForMe = deletedForMe }
         public fun withMentionedHere(mentionedHere: Boolean): Builder = apply { this.mentionedHere = mentionedHere }
         public fun withMentionedChannel(mentionedChannel: Boolean): Builder = apply {
@@ -699,6 +715,7 @@ public data class Message(
                 sharedLocation = sharedLocation,
                 channelRole = resolvedMember?.channelRole,
                 member = resolvedMember,
+                mentionedChannelMembers = mentionedChannelMembers,
                 deletedForMe = deletedForMe,
                 mentionedHere = mentionedHere,
                 mentionedChannel = mentionedChannel,

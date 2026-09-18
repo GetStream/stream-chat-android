@@ -28,6 +28,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -43,7 +44,7 @@ import kotlin.time.Duration.Companion.seconds
 @ExperimentalCoroutinesApi
 internal class ChannelStateLegacyImplTest {
 
-    private val userFlow = MutableStateFlow(currentUser)
+    private val userFlow = MutableStateFlow<User?>(currentUser)
 
     private lateinit var channelState: ChannelStateLegacyImpl
 
@@ -62,6 +63,15 @@ internal class ChannelStateLegacyImplTest {
             baseMessageLimit = null,
             now = ChannelStateLegacyImplTest::currentTime,
         )
+    }
+
+    @Test
+    fun `Given no connected user When building the channel Then the unread count is zero`() = runTest {
+        userFlow.value = null
+
+        val channel = channelState.toChannel()
+
+        channel.unreadCount `should be equal to` 0
     }
 
     @Test
