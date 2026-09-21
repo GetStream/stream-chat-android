@@ -55,10 +55,7 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
@@ -156,9 +153,11 @@ import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
+import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
+import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest
@@ -166,6 +165,7 @@ import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
@@ -278,8 +278,8 @@ constructor(
         channelId = channelId,
         message = SendMessageRequest(
             message = with(dtoMapping) { message.toMessageRequest() },
-            skip_push = message.skipPushNotification,
-            skip_enrich_url = message.skipEnrichUrl,
+            skipPush = message.skipPushNotification,
+            skipEnrichUrl = message.skipEnrichUrl,
         ),
     ).mapDomain { response ->
         response.message.toDomain()
@@ -349,8 +349,8 @@ constructor(
             messageId = message.id,
             message = UpdateMessageRequest(
                 message = with(dtoMapping) { message.toMessageRequest() },
-                skip_enrich_url = message.skipEnrichUrl,
-                skip_push = message.skipPushNotification,
+                skipEnrichUrl = message.skipEnrichUrl,
+                skipPush = message.skipPushNotification,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
