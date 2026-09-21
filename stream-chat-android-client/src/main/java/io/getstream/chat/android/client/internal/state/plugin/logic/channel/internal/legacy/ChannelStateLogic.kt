@@ -400,8 +400,9 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Local only messages are never part of a server response, so a refresh would drop them from the
-     * list until the channel is reloaded from the database.
+     * Local only messages are never part of a server response, so a refresh would drop them from the list
+     * even though nothing has replaced them. Unsent and failed messages would come back on the next load
+     * from the database, ephemeral ones are never persisted and would be lost outright.
      */
     private fun localOnlyMessagesMissingFrom(messages: List<Message>): List<Message> {
         val serverMessageIds = messages.mapTo(mutableSetOf(), Message::id)
