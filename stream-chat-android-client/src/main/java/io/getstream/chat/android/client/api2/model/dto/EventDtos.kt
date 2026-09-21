@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
+import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.result.Error
 import java.util.Date
 
@@ -410,7 +411,7 @@ internal data class ReactionDeletedEventDto(
     val channel_type: String,
     val channel_id: String,
     val message: DownstreamMessageDto,
-    val reaction: DownstreamReactionDto,
+    val reaction: ReactionResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -422,7 +423,7 @@ internal data class ReactionNewEventDto(
     val channel_type: String,
     val channel_id: String,
     val message: DownstreamMessageDto,
-    val reaction: DownstreamReactionDto,
+    val reaction: ReactionResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -434,7 +435,7 @@ internal data class ReactionUpdateEventDto(
     val channel_type: String,
     val channel_id: String,
     val message: DownstreamMessageDto,
-    val reaction: DownstreamReactionDto,
+    val reaction: ReactionResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

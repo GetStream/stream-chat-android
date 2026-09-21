@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.network.models.ReactionRequest
 import io.getstream.chat.android.network.models.ReactionResponse
 import org.intellij.lang.annotations.Language
@@ -41,22 +40,6 @@ internal object ReactionDtoTestData {
           "customKey1": "customVal1"
         }
         """.withoutWhitespace()
-    val downstreamReaction = DownstreamReactionDto(
-        message_id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "like",
-        score = 5,
-        user = UserDtoTestData.downstreamUser,
-        user_id = "userId",
-        created_at = Date(1591787071000),
-        updated_at = Date(1591787071588),
-        emoji_code = "👍",
-        extraData = mapOf(
-            "extraData" to mapOf(
-                "key1" to true,
-            ),
-            "customKey1" to "customVal1",
-        ),
-    )
 
     @Language("JSON")
     val downstreamJsonWithoutExtraData =
@@ -67,17 +50,6 @@ internal object ReactionDtoTestData {
           "user": ${UserDtoTestData.downstreamJson},
           "user_id": ""
         }""".withoutWhitespace()
-    val downstreamReactionWithoutExtraData = DownstreamReactionDto(
-        message_id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
-        type = "like",
-        score = 0,
-        user = UserDtoTestData.downstreamUser,
-        user_id = "",
-        created_at = null,
-        updated_at = null,
-        emoji_code = null,
-        extraData = emptyMap(),
-    )
 
     /**
      * The wire always sends both timestamps and a full user for a reaction, so the generated model

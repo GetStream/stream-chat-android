@@ -64,6 +64,9 @@ internal class ReactionAdapter(
         JsonParsingUtils.requireField(type, "type", reader)
         JsonParsingUtils.requireField(score, "score", reader)
         JsonParsingUtils.requireField(userId, "user_id", reader)
+        JsonParsingUtils.requireField(createdAt, "created_at", reader)
+        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
+        JsonParsingUtils.requireField(user, "user", reader)
 
         return Reaction(
             messageId = messageId,
