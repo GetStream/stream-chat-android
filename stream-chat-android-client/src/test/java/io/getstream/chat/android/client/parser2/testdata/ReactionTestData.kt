@@ -112,6 +112,36 @@ internal object ReactionTestData {
     }"""
 
     @Language("JSON")
+    val jsonMissingCreatedAt = """{
+        "message_id": "msg1",
+        "type": "like",
+        "score": 1,
+        "user_id": "user1",
+        "updated_at": "2020-01-02T00:00:00.000Z",
+        "user": $USER_JSON
+    }"""
+
+    @Language("JSON")
+    val jsonMissingUpdatedAt = """{
+        "message_id": "msg1",
+        "type": "like",
+        "score": 1,
+        "user_id": "user1",
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "user": $USER_JSON
+    }"""
+
+    @Language("JSON")
+    val jsonMissingUser = """{
+        "message_id": "msg1",
+        "type": "like",
+        "score": 1,
+        "user_id": "user1",
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "updated_at": "2020-01-02T00:00:00.000Z"
+    }"""
+
+    @Language("JSON")
     val jsonWithExplicitNulls = """{
         "message_id": "msg1",
         "type": "like",

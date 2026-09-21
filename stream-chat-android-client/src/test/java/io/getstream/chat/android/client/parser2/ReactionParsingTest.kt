@@ -169,5 +169,47 @@ internal class ReactionParsingTest {
         }
     }
 
+    @Test
+    fun `DTO path - throws on missing created_at`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(ReactionTestData.jsonMissingCreatedAt, ReactionResponse::class.java)
+        }
+    }
+
+    @Test
+    fun `Direct path - throws on missing created_at`() {
+        assertThrows<JsonDataException> {
+            reactionAdapter.fromJson(ReactionTestData.jsonMissingCreatedAt)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing updated_at`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(ReactionTestData.jsonMissingUpdatedAt, ReactionResponse::class.java)
+        }
+    }
+
+    @Test
+    fun `Direct path - throws on missing updated_at`() {
+        assertThrows<JsonDataException> {
+            reactionAdapter.fromJson(ReactionTestData.jsonMissingUpdatedAt)
+        }
+    }
+
+    @Test
+    fun `DTO path - throws on missing user`() {
+        assertThrows<JsonDataException> {
+            parser.fromJson(ReactionTestData.jsonMissingUser, ReactionResponse::class.java)
+        }
+    }
+
+    @Test
+    fun `Direct path - throws on missing user`() {
+        assertThrows<JsonDataException> {
+            reactionAdapter.fromJson(ReactionTestData.jsonMissingUser)
+        }
+    }
+
     // endregion
 }
