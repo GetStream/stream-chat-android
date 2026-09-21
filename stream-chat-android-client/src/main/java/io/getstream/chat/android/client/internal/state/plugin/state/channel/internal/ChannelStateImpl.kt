@@ -1367,7 +1367,8 @@ internal class ChannelStateImpl(
      */
     fun deleteChannel(deletedAt: Date) {
         updateChannelData { current ->
-            current?.copy(deletedAt = deletedAt)
+            // The deletion can arrive before the channel data is loaded, and it has to be recorded anyway.
+            (current ?: ChannelData(type = channelType, id = channelId)).copy(deletedAt = deletedAt)
         }
     }
 
