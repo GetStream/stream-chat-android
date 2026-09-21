@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
+import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -40,7 +41,14 @@ internal object ThreadDtoTestData {
           "parent_message": ${MessageDtoTestData.downstreamJsonWithoutExtraData},
           "parent_message_id": "parent_msg_id",
           "participant_count": 5,
-          "read": [],
+          "read": [
+            {
+              "user": ${UserDtoTestData.userResponseJson},
+              "last_read": "2020-06-10T11:04:31.0Z",
+              "unread_messages": 1,
+              "last_read_message_id": "messageId"
+            }
+          ],
           "reply_count": 10,
           "thread_participants": [
             {
@@ -86,7 +94,14 @@ internal object ThreadDtoTestData {
         parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
         parent_message_id = "parent_msg_id",
         participant_count = 5,
-        read = emptyList(),
+        read = listOf(
+            ReadStateResponse(
+                user = UserDtoTestData.userResponse,
+                lastRead = Date(1591787071000),
+                unreadMessages = 1,
+                lastReadMessageId = "messageId",
+            ),
+        ),
         reply_count = 10,
         thread_participants = listOf(
             ThreadParticipant(

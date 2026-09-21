@@ -23,7 +23,6 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
@@ -131,6 +130,7 @@ import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
@@ -201,7 +201,7 @@ internal class DomainMapping(
             watchers = watchers.map { it.toDomain() },
             read = read.map {
                 it.toDomain(
-                    lastReceivedEventDate = last_message_at ?: it.last_read,
+                    lastReceivedEventDate = last_message_at ?: it.lastRead,
                 )
             },
             config = config?.toDomain() ?: Config(),
@@ -707,21 +707,21 @@ internal class DomainMapping(
     }
 
     /**
-     * Transform [DownstreamChannelUserRead] to [ChannelUserRead].
+     * Transform [ReadStateResponse] to [ChannelUserRead].
      *
      * @param lastReceivedEventDate the last received event date.
      */
-    internal fun DownstreamChannelUserRead.toDomain(
+    internal fun ReadStateResponse.toDomain(
         lastReceivedEventDate: Date,
     ): ChannelUserRead =
         ChannelUserRead(
             user = user.toDomain(),
             lastReceivedEventDate = lastReceivedEventDate,
-            lastRead = last_read,
-            unreadMessages = unread_messages,
-            lastReadMessageId = last_read_message_id,
-            lastDeliveredAt = last_delivered_at,
-            lastDeliveredMessageId = last_delivered_message_id,
+            lastRead = lastRead,
+            unreadMessages = unreadMessages,
+            lastReadMessageId = lastReadMessageId,
+            lastDeliveredAt = lastDeliveredAt,
+            lastDeliveredMessageId = lastDeliveredMessageId,
         )
 
     /**
