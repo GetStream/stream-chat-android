@@ -386,7 +386,7 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [MessageResponse] to [PendingMessage].
+     * Transforms [MessageEnvelope] to [PendingMessage].
      */
     internal fun MessageEnvelope.toDomain(): PendingMessage =
         PendingMessage(
@@ -451,8 +451,11 @@ internal class DomainMapping(
             sharedLocation = sharedLocation?.toDomain(),
             channelRole = member?.channelRole,
             member = member?.toDomain(),
+            // Moshi writes a JSON null into the map despite the non-null value type, so a null
+            // entry would throw rather than be skipped.
             mentionedChannelMembers = mentionedChannelMembers.orEmpty()
-                .mapValues { (_, memberInfo) -> memberInfo.toDomain() },
+                .mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
+                .toMap(),
             deletedForMe = deletedForMe ?: false,
             extraData = messageExtraData(),
         ).let(messageTransformer::transform)

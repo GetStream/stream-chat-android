@@ -52,8 +52,11 @@ internal object MessageResponseAdapter :
         valueAdapter: JsonAdapter<MessageResponse>,
     ): MessageResponse? = parseWithExtraData(jsonReader, mapAdapter, valueAdapter)
 
+    // A nullable holder must serialize as an omitted field rather than tripping the non-null check.
+    // An actual value is still not serializable.
     @ToJson
     fun toJson(jsonWriter: JsonWriter, value: MessageResponse?) {
-        error("Can't convert this to Json")
+        if (value != null) error("Can't convert this to Json")
+        jsonWriter.nullValue()
     }
 }

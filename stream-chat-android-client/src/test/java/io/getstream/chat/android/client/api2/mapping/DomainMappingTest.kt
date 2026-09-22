@@ -561,6 +561,41 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `MessageResponse drops reactions the backend attached from another message`() {
+        // The mapper filters latest/own reactions by message id (see the StreamHandsOff note).
+        // Without a foreign reaction in the fixture the filter is a no-op and deleting it passes.
+        val messageId = randomString()
+        val response = Mother.randomMessageResponse(
+            id = messageId,
+            latestReactions = listOf(
+                Mother.randomReactionResponse(messageId = messageId, type = "like"),
+                Mother.randomReactionResponse(messageId = "some-other-message", type = "wave"),
+            ),
+            ownReactions = listOf(Mother.randomReactionResponse(messageId = "some-other-message")),
+        )
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        result.latestReactions.map { it.type } shouldBeEqualTo listOf("like")
+        result.ownReactions shouldBeEqualTo emptyList()
+    }
+
+    @Test
+    fun `MessageResponse maps the quoted message`() {
+        // expectedMessage() builds replyTo with the mapper under test, so it verifies nothing.
+        val quoted = Mother.randomMessageResponse(quotedMessage = null, member = null, text = "quoted text")
+        val response = Mother.randomMessageResponse(quotedMessage = quoted, quotedMessageId = quoted.id)
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        result.replyMessageId shouldBeEqualTo quoted.id
+        result.replyTo?.id shouldBeEqualTo quoted.id
+        result.replyTo?.text shouldBeEqualTo "quoted text"
+    }
+
+    @Test
     fun `MessageResponse promotes V1 moderation out of custom and off extraData`() {
         val response = Mother.randomMessageResponse(
             custom = mapOf(
