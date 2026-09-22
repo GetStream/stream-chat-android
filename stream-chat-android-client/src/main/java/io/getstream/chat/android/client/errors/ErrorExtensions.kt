@@ -29,4 +29,5 @@ import io.getstream.result.Error
 internal fun Error.isDuplicateMessageError(): Boolean =
     this is Error.NetworkError &&
         serverErrorCode == ChatErrorCode.VALIDATION_ERROR.code &&
+        message.contains("a message with ID") &&
         message.contains("already exists")

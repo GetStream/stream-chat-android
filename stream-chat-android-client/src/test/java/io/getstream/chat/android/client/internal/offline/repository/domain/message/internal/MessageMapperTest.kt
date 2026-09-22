@@ -138,6 +138,31 @@ internal class MessageMapperTest {
     }
 
     @Test
+    fun `Should map a completed entity without a creation date to a permanently failed message`() = runTest {
+        val messageEntity = randomMessageEntity(syncStatus = SyncStatus.COMPLETED, createdAt = null)
+
+        val result = messageEntity.toModel(
+            getUser = { randomUser() },
+            getReply = { null },
+            getPoll = { null },
+        )
+
+        assertEquals(SyncStatus.FAILED_PERMANENTLY, result.syncStatus)
+    }
+
+    @Test
+    fun `Should map a completed reply without a creation date to a permanently failed message`() = runTest {
+        val reply = randomMessage(syncStatus = SyncStatus.COMPLETED, createdAt = null)
+
+        val result = reply.toReplyEntity().toModel(
+            getUser = { randomUser() },
+            getPoll = { null },
+        )
+
+        assertEquals(SyncStatus.FAILED_PERMANENTLY, result.syncStatus)
+    }
+
+    @Test
     fun `Should map Message to MessageEntity correctly`() = runTest {
         val message = randomMessage(
             replyTo = randomMessage(),

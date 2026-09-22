@@ -221,14 +221,16 @@ public fun Message.shouldDeleteRemote(currentUserId: String?): Result<Unit> {
     }
     // 2. type = 'error'/'ephemeral' - not persisted on server, delete only locally
     // 3. syncStatus = 'IN_PROGRESS'/`FAILED_PERMANENTLY` - not persisted on server, delete only locally
+    // 4. no server creation date - written from a local copy, never delivered, delete only locally
     if (isError() || isEphemeral() ||
         syncStatus == SyncStatus.IN_PROGRESS ||
-        syncStatus == SyncStatus.FAILED_PERMANENTLY
+        syncStatus == SyncStatus.FAILED_PERMANENTLY ||
+        createdAt == null
     ) {
         val error = Error.GenericError("Message is local-only, don't call DeleteMessage API")
         return Result.Failure(error)
     }
-    // 4. Any other case, attempt to delete the message remotely
+    // 5. Any other case, attempt to delete the message remotely
     return Result.Success(Unit)
 }
 
@@ -254,13 +256,13 @@ internal fun DraftMessage.ensureId(): DraftMessage =
 internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercase()
 
 /**
- * @return If the message is not part of the server's message list: it is unsynced, or has a type
- * the server leaves out of message queries and read state (ephemeral previews, error messages such
- * as rejected or moderation-bounced sends).
+ * @return If the message is not part of the server's message list: it is unsynced, was never stamped
+ * with a server creation date, or has a type the server leaves out of message queries and read state
+ * (ephemeral previews, error messages such as rejected or moderation-bounced sends).
  */
 @InternalStreamChatApi
 public fun Message.isLocalOnly(): Boolean =
-    syncStatus in LocalOnlySyncStatuses || type in LocalOnlyMessageTypes
+    syncStatus in LocalOnlySyncStatuses || createdAt == null || type in LocalOnlyMessageTypes
 
 internal val LocalOnlySyncStatuses = setOf(
     SyncStatus.SYNC_NEEDED, // new message or pending edit/delete

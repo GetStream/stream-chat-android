@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomCID
@@ -57,6 +58,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -316,6 +318,49 @@ internal class ChannelStateLogicTest {
         channelStateLogic.propagateChannelQuery(channel, request)
 
         verify(mutableState).setMessages(any())
+    }
+
+    @Test
+    fun `given refresh messages is true, local only messages should be kept`() {
+        val pendingMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            type = MessageType.REGULAR,
+            createdAt = null,
+            createdLocallyAt = randomDate(),
+        )
+        whenever(mutableState.messageList) doReturn MutableStateFlow(listOf(pendingMessage))
+        val serverMessages = listOf(randomMessage(syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR))
+        val channel: Channel = randomChannel(messages = serverMessages)
+        val request = QueryChannelRequest().apply { shouldRefresh = true }.withMessages(1)
+
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        val captor = argumentCaptor<List<Message>>()
+        verify(mutableState).setMessages(captor.capture())
+        captor.firstValue.map(Message::id) `should contain` pendingMessage.id
+    }
+
+    @Test
+    fun `given refresh messages is true, the server copy wins over a stale local only one`() {
+        val id = randomString()
+        val staleLocalCopy = randomMessage(
+            id = id,
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            type = MessageType.REGULAR,
+            createdAt = null,
+            createdLocallyAt = randomDate(),
+        )
+        whenever(mutableState.messageList) doReturn MutableStateFlow(listOf(staleLocalCopy))
+        val serverCopy = randomMessage(id = id, syncStatus = SyncStatus.COMPLETED, type = MessageType.REGULAR)
+        val channel: Channel = randomChannel(messages = listOf(serverCopy))
+        val request = QueryChannelRequest().apply { shouldRefresh = true }.withMessages(1)
+
+        channelStateLogic.propagateChannelQuery(channel, request)
+
+        val captor = argumentCaptor<List<Message>>()
+        verify(mutableState).setMessages(captor.capture())
+        val captured = captor.firstValue.filter { it.id == id }
+        captured `should be equal to` listOf(serverCopy)
     }
 
     @Test
