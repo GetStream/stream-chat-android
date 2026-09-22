@@ -194,7 +194,11 @@ internal class DtoMapping(
         quotedMessageId = replyMessage?.id,
         showInChannel = showInChannel,
         silent = silent,
-        custom = extraData,
+        custom = extraData +
+            listOfNotNull(
+                command?.let { DRAFT_COMMAND_KEY to it },
+                args?.let { DRAFT_ARGS_KEY to it },
+            ),
     )
 
     /**

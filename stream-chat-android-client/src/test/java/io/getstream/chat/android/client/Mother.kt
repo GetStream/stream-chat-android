@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -80,6 +79,7 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.DraftPayloadResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
@@ -245,7 +245,7 @@ internal object Mother {
     )
 
     fun randomDownstreamDraftDto(
-        message: DownstreamDraftMessageDto = randomDownstreamDraftMessageDto(),
+        message: DraftPayloadResponse = randomDraftPayloadResponse(),
         channelCid: String = randomCID(),
         quotedMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
         parentMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
@@ -264,24 +264,22 @@ internal object Mother {
         metadata = metadata,
     )
 
-    fun randomDownstreamDraftMessageDto(
+    fun randomDraftPayloadResponse(
         id: String = randomString(),
         text: String = randomString(),
-        command: String? = null,
-        args: String? = null,
+        custom: Map<String, Any?> = emptyMap(),
         attachments: List<Attachment>? = emptyList(),
-        mentionedUsers: List<DownstreamUserDto>? = emptyList(),
-        silent: Boolean = randomBoolean(),
-        showInChannel: Boolean = randomBoolean(),
-    ): DownstreamDraftMessageDto = DownstreamDraftMessageDto(
+        mentionedUsers: List<UserResponse>? = emptyList(),
+        silent: Boolean? = randomBoolean(),
+        showInChannel: Boolean? = randomBoolean(),
+    ): DraftPayloadResponse = DraftPayloadResponse(
         id = id,
         text = text,
-        command = command,
-        args = args,
+        custom = custom,
         attachments = attachments,
-        mentioned_users = mentionedUsers,
+        mentionedUsers = mentionedUsers,
         silent = silent,
-        show_in_channel = showInChannel,
+        showInChannel = showInChannel,
     )
 
     fun randomDownstreamMessageDto(

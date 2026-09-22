@@ -1077,7 +1077,10 @@ private fun createDraftJsonString() =
         {
             "message": {
                 "id": "draft-message-id",
-                "text": "Draft text"
+                "text": "Draft text",
+                "command": "giphy",
+                "args": "cat",
+                "flair": "gold"
             },
             "channel_cid": "channelType:channelId"
         }
