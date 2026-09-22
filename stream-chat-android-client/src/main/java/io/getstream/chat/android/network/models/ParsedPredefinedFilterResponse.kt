@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class QueryChannelsResponse(
-    val channels: List<ChannelResponse>,
-    val predefined_filter: ParsedPredefinedFilterResponse? = null,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class ParsedPredefinedFilterResponse(
+    @Json(name = "name")
+    internal val name: String,
+
+    @Json(name = "filter")
+    internal val filter: Map<String, Any?> = emptyMap(),
+
+    @Json(name = "sort")
+    internal val sort: List<io.getstream.chat.android.network.models.SortParamRequest>? = emptyList(),
 )

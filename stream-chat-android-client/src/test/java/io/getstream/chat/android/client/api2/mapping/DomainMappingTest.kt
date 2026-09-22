@@ -131,6 +131,7 @@ import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
@@ -1505,8 +1506,8 @@ internal class DomainMappingTest {
      */
     @ParameterizedTest
     @MethodSource("toSortDomainArguments")
-    fun `List of sort maps is correctly mapped to QuerySorter`(
-        input: List<Map<String, Any>>?,
+    fun `List of sort params is correctly mapped to QuerySorter`(
+        input: List<SortParamRequest>?,
         expected: QuerySorter<Channel>?,
     ) {
         val sut = Fixture().get()
@@ -1540,29 +1541,24 @@ internal class DomainMappingTest {
         fun toSortDomainArguments() = listOf(
             // null/error → null
             Arguments.of(null, null),
-            Arguments.of(emptyList<Map<String, Any>>(), null),
-            Arguments.of(listOf(mapOf("direction" to -1)), null),
-            Arguments.of(listOf(mapOf("field" to "created_at")), null),
-            Arguments.of(listOf(mapOf("field" to "created_at", "direction" to 0)), null),
+            Arguments.of(emptyList<SortParamRequest>(), null),
+            Arguments.of(listOf(SortParamRequest(direction = -1)), null),
+            Arguments.of(listOf(SortParamRequest(field = "created_at")), null),
+            Arguments.of(listOf(SortParamRequest(field = "created_at", direction = 0)), null),
             // valid parsing
             Arguments.of(
-                listOf(mapOf("field" to "created_at", "direction" to 1)),
+                listOf(SortParamRequest(field = "created_at", direction = 1)),
                 ascByName<Channel>("created_at"),
             ),
             Arguments.of(
-                listOf(mapOf("field" to "last_message_at", "direction" to -1)),
+                listOf(SortParamRequest(field = "last_message_at", direction = -1)),
                 descByName<Channel>("last_message_at"),
-            ),
-            // Double direction (Moshi edge case)
-            Arguments.of(
-                listOf(mapOf("field" to "created_at", "direction" to -1.0)),
-                descByName<Channel>("created_at"),
             ),
             // multiple fields
             Arguments.of(
                 listOf(
-                    mapOf("field" to "created_at", "direction" to -1),
-                    mapOf("field" to "name", "direction" to 1),
+                    SortParamRequest(field = "created_at", direction = -1),
+                    SortParamRequest(field = "name", direction = 1),
                 ),
                 descByName<Channel>("created_at").ascByName("name"),
             ),
