@@ -887,7 +887,7 @@ internal object MoshiChatApiTestArguments {
                     results = listOf(MessageResponse(randomDownstreamMessageDto())),
                     next = randomString(),
                     previous = randomString(),
-                    resultsWarning = Mother.randomSearchWarningDto(),
+                    resultsWarning = Mother.randomSearchWarningResponse(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,

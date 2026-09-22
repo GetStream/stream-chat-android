@@ -54,7 +54,7 @@ import io.getstream.chat.android.client.Mother.randomReactionGroupResponse
 import io.getstream.chat.android.client.Mother.randomReactionResponse
 import io.getstream.chat.android.client.Mother.randomReadStateResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
-import io.getstream.chat.android.client.Mother.randomSearchWarningDto
+import io.getstream.chat.android.client.Mother.randomSearchWarningResponse
 import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
@@ -1214,17 +1214,27 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `SearchWarningDto is correctly mapped to SearchWarning`() {
-        val searchWarningDto = randomSearchWarningDto()
+    fun `SearchWarning is correctly mapped to the domain model`() {
+        val response = randomSearchWarningResponse()
         val sut = Fixture().get()
-        val searchWarning = with(sut) { searchWarningDto.toDomain() }
+        val searchWarning = with(sut) { response.toDomain() }
         val expected = SearchWarning(
-            channelSearchCids = searchWarningDto.channel_search_cids,
-            channelSearchCount = searchWarningDto.channel_search_count,
-            warningCode = searchWarningDto.warning_code,
-            warningDescription = searchWarningDto.warning_description,
+            channelSearchCids = response.channelSearchCids.orEmpty(),
+            channelSearchCount = response.channelSearchCount ?: 0,
+            warningCode = response.warningCode,
+            warningDescription = response.warningDescription,
         )
         assertEquals(expected, searchWarning)
+    }
+
+    /** The wire omits both when the search was not scoped to channels. */
+    @Test
+    fun `SearchWarning without channel scoping maps to empty cids and a zero count`() {
+        val response = randomSearchWarningResponse(channelSearchCids = null, channelSearchCount = null)
+        val sut = Fixture().get()
+        val searchWarning = with(sut) { response.toDomain() }
+        assertEquals(emptyList<String>(), searchWarning.channelSearchCids)
+        assertEquals(0, searchWarning.channelSearchCount)
     }
 
     @Test
