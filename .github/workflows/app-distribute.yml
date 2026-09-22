@@ -111,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@v7.0.1
         with:
           name: stream-chat-android-compose-sample-release
-          path: stream-chat-android-compose-sample/build/outputs/apk/release/
+          path: stream-chat-android-compose-sample/build/outputs/apk/demo/release/
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1.7.1
         with:
