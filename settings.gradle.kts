@@ -21,12 +21,6 @@ pluginManagement {
 			}
 		}
 
-		maven(url = "https://jitpack.io/") {
-			content {
-				includeModule("com.github.passsy", "gradle-gitVersioner-plugin")
-			}
-		}
-
 		// fetch plugins from gradle plugin portal (https://plugins.gradle.org)
 		gradlePluginPortal()
 
@@ -37,7 +31,6 @@ pluginManagement {
 		eachPlugin {
 			when(requested.id.id) {
 				"shot" -> { useModule("com.karumi:shot:${requested.version}") }
-				"com.pascalwelsch.gitversioner" -> { useModule("com.github.passsy:gradle-gitVersioner-plugin:${requested.version}") }
 			}
 		}
 	}

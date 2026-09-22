@@ -21,23 +21,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.network.models.ReactionRequest
-
-internal object DownstreamReactionDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamReactionDto>(DownstreamReactionDto::class) {
-
-    @FromJson
-    fun fromJson(
-        jsonReader: JsonReader,
-        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        messageAdapter: JsonAdapter<DownstreamReactionDto>,
-    ): DownstreamReactionDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
-
-    @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamReactionDto): Unit = error("Can't convert this to Json")
-}
 
 // extraDataPropertyName must match the @Json(name = ...) of ReactionRequest's overflow field.
 internal object UpstreamReactionDtoAdapter :

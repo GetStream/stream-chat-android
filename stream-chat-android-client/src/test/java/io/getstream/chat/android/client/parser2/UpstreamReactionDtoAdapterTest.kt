@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.parser2.testdata.ReactionDtoTestData
+import io.getstream.chat.android.network.models.ReactionRequest
 import io.kotest.assertions.json.shouldEqualJson
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldThrow
@@ -42,7 +42,7 @@ internal class UpstreamReactionDtoAdapterTest {
     @Test
     fun `Can't parse upstream reaction`() {
         invoking {
-            parser.fromJson(ReactionDtoTestData.upstreamJson, DownstreamReactionDto::class.java)
+            parser.fromJson(ReactionDtoTestData.upstreamJson, ReactionRequest::class.java)
         }.shouldThrow(RuntimeException::class)
     }
 }

@@ -22,7 +22,6 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
-    alias(libs.plugins.gitversioner)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.binary.compatibility.validator)
 }

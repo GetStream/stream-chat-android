@@ -67,7 +67,6 @@ import io.getstream.chat.android.client.api.models.identifier.getRepliesAroundId
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.attachment.MessagePreparer
@@ -5532,7 +5531,6 @@ internal constructor(
             DownstreamUserDto::class.members
             DownstreamChannelDto::class.members
             DownstreamMessageDto::class.members
-            DownstreamReactionDto::class.members
             io.getstream.chat.android.network.models.Attachment::class.members
             io.getstream.chat.android.network.models.ReactionResponse::class.members
         }

@@ -265,7 +265,7 @@ internal interface MessageDao {
     @Query(
         "SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (syncStatus IN (:syncStatuses) OR type IN (:types)) " +
+            "AND (syncStatus IN (:syncStatuses) OR type IN (:types) OR createdAt IS NULL) " +
             "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC",
     )
     @Transaction

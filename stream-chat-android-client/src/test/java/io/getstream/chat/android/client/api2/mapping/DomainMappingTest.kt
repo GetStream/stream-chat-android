@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
@@ -600,28 +599,6 @@ internal class DomainMappingTest {
             AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
             appSettings.app.imageUploadConfig.sizeLimitInBytes,
         )
-    }
-
-    @Test
-    fun `DownstreamReactionDto is correctly mapped to Reaction`() {
-        val downstreamReactionDto = randomDownstreamReactionDto()
-        val sut = Fixture().get()
-        val reaction = with(sut) {
-            downstreamReactionDto.toDomain()
-        }
-        val expected = Reaction(
-            messageId = downstreamReactionDto.message_id,
-            type = downstreamReactionDto.type,
-            score = downstreamReactionDto.score,
-            user = with(sut) { downstreamReactionDto.user?.toDomain() },
-            userId = downstreamReactionDto.user?.id.orEmpty(),
-            createdAt = downstreamReactionDto.created_at,
-            updatedAt = downstreamReactionDto.updated_at,
-            extraData = downstreamReactionDto.extraData,
-            deletedAt = null,
-            emojiCode = downstreamReactionDto.emoji_code,
-        )
-        assertEquals(expected, reaction)
     }
 
     @Test

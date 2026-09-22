@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
@@ -635,28 +634,6 @@ internal object Mother {
         allowedMimeTypes = allowedMimeTypes,
         blockedFileExtensions = blockedFileExtensions,
         blockedMimeTypes = blockedMimeTypes,
-    )
-
-    fun randomDownstreamReactionDto(
-        createdAt: Date = randomDate(),
-        messageId: String = randomString(),
-        score: Int = randomInt(),
-        type: String = randomString(),
-        updatedAt: Date = randomDate(),
-        userId: String = randomString(),
-        emojiCode: String? = randomString(),
-        user: DownstreamUserDto = randomDownstreamUserDto(id = userId),
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamReactionDto = DownstreamReactionDto(
-        created_at = createdAt,
-        message_id = messageId,
-        score = score,
-        type = type,
-        updated_at = updatedAt,
-        user = user,
-        user_id = userId,
-        emoji_code = emojiCode,
-        extraData = extraData,
     )
 
     fun randomReactionGroupResponse(
