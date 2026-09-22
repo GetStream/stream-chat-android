@@ -83,7 +83,9 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageReminder
@@ -130,6 +132,8 @@ import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
+import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
@@ -137,6 +141,7 @@ import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
@@ -392,6 +397,189 @@ internal class DomainMappingTest {
         )
         // Promoted to the typed field, so it must not also surface as custom data.
         result.extraData shouldBeEqualTo mapOf("probe_flair" to "gold")
+    }
+
+    @Test
+    fun `MessageResponse is correctly mapped to Message`() {
+        val messageId = randomString()
+        val fallbackChannelInfo = ChannelInfo(cid = randomCID(), id = randomString(), type = randomString())
+        val response = fullyPopulatedMessageResponse(messageId)
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain(fallbackChannelInfo) }
+
+        result shouldBeEqualTo expectedMessage(sut, response, fallbackChannelInfo)
+    }
+
+    /** Every field carries a non-default value: a default would let a mapper that drops it pass. */
+    private fun fullyPopulatedMessageResponse(
+        messageId: String,
+    ): io.getstream.chat.android.network.models.MessageResponse =
+        Mother.randomMessageResponse(
+            id = messageId,
+            attachments = listOf(Mother.randomAttachment()),
+            latestReactions = listOf(Mother.randomReactionResponse(messageId = messageId)),
+            ownReactions = listOf(Mother.randomReactionResponse(messageId = messageId)),
+            reactionCounts = mapOf("like" to 2),
+            reactionScores = mapOf("like" to 3),
+            reactionGroups = mapOf("like" to Mother.randomReactionGroupResponse()),
+            mentionedUsers = listOf(Mother.randomUserResponse()),
+            mentionedGroups = listOf(Mother.randomUserGroupResponse()),
+            mentionedRoles = listOf("admin"),
+            mentionedHere = true,
+            mentionedChannel = true,
+            threadParticipants = listOf(Mother.randomUserResponse()),
+            restrictedVisibility = listOf("jaewoong"),
+            quotedMessage = Mother.randomMessageResponse(quotedMessage = null, member = null),
+            pinned = true,
+            pinnedBy = Mother.randomUserResponse(),
+            shadowed = true,
+            silent = true,
+            showInChannel = true,
+            deletedForMe = true,
+            i18n = mapOf("en" to "hello"),
+            moderation = Mother.randomModerationV2Response(),
+            poll = Mother.randomPollResponseData(),
+            member = Mother.randomChannelMemberPartialResponse(),
+            mentionedChannelMembers = mapOf("jaewoong" to Mother.randomChannelMemberPartialResponse()),
+            // Nullable dates are pinned non-null: a null would let a dropped assignment pass.
+            pinnedAt = randomDate(),
+            pinExpires = randomDate(),
+            deletedAt = randomDate(),
+            messageTextUpdatedAt = randomDate(),
+            reminder = ReminderResponseData(
+                channelCid = randomCID(),
+                createdAt = randomDate(),
+                messageId = messageId,
+                updatedAt = randomDate(),
+                userId = randomString(),
+                remindAt = randomDate(),
+            ),
+            sharedLocation = SharedLocationResponseData(
+                channelCid = randomCID(),
+                createdAt = randomDate(),
+                createdByDeviceId = randomString(),
+                latitude = 1.5,
+                longitude = 2.5,
+                messageId = messageId,
+                updatedAt = randomDate(),
+                userId = randomString(),
+                endAt = randomDate(),
+            ),
+            custom = mapOf("flair" to "gold"),
+        )
+
+    private fun expectedMessage(
+        sut: DomainMapping,
+        response: io.getstream.chat.android.network.models.MessageResponse,
+        fallbackChannelInfo: ChannelInfo,
+    ): Message =
+        with(sut) {
+            Message(
+                id = response.id,
+                cid = response.cid,
+                text = response.text,
+                html = response.html,
+                type = response.type,
+                createdAt = response.createdAt,
+                // The mapper takes the later of the message and its poll.
+                updatedAt = listOfNotNull(response.updatedAt, response.poll?.updatedAt).maxBy { it.time },
+                deletedAt = response.deletedAt,
+                command = response.command,
+                parentId = response.parentId,
+                channelInfo = fallbackChannelInfo,
+                attachments = response.attachments.map { it.toDomain() },
+                latestReactions = response.latestReactions.map { it.toDomain() },
+                ownReactions = response.ownReactions.map { it.toDomain() },
+                reactionCounts = response.reactionCounts.toMutableMap(),
+                reactionScores = response.reactionScores.toMutableMap(),
+                reactionGroups = response.reactionGroups.orEmpty().mapValues { it.value.toDomain(it.key) },
+                mentionedUsers = response.mentionedUsers.map { it.toDomain() },
+                mentionedGroups = response.mentionedGroups.orEmpty().map { it.toDomain() },
+                mentionedRoles = response.mentionedRoles.orEmpty(),
+                mentionedHere = true,
+                mentionedChannel = true,
+                threadParticipants = response.threadParticipants.orEmpty().map { it.toDomain() },
+                restrictedVisibility = listOf("jaewoong"),
+                replyCount = response.replyCount,
+                deletedReplyCount = response.deletedReplyCount,
+                replyMessageId = response.quotedMessageId,
+                replyTo = response.quotedMessage?.toDomain(fallbackChannelInfo),
+                pinned = true,
+                pinnedAt = response.pinnedAt,
+                pinExpires = response.pinExpires,
+                pinnedBy = response.pinnedBy?.toDomain(),
+                messageTextUpdatedAt = response.messageTextUpdatedAt,
+                shadowed = true,
+                silent = true,
+                showInChannel = true,
+                deletedForMe = true,
+                i18n = mapOf("en" to "hello"),
+                user = response.user.toDomain(),
+                moderation = response.moderation?.toDomain(),
+                moderationDetails = null,
+                poll = response.poll?.toDomain(),
+                reminder = response.reminder?.toReminderInfoDomain(),
+                sharedLocation = response.sharedLocation?.toDomain(),
+                channelRole = response.member?.channelRole,
+                member = response.member?.toDomain(),
+                mentionedChannelMembers = response.mentionedChannelMembers.orEmpty()
+                    .mapValues { (_, member) -> member.toDomain() },
+                extraData = mutableMapOf("flair" to "gold"),
+            )
+        }
+
+    @Test
+    fun `SharedLocationResponseData is correctly mapped to Location`() {
+        // Literal values rather than references: asserting against the same mapper would pass
+        // even if a field were dropped, since both sides would change together.
+        val endAt = randomDate()
+        val response = SharedLocationResponseData(
+            channelCid = "messaging:general",
+            createdAt = randomDate(),
+            createdByDeviceId = "device-1",
+            latitude = 1.5,
+            longitude = 2.5,
+            messageId = "message-1",
+            updatedAt = randomDate(),
+            userId = "jaewoong",
+            endAt = endAt,
+        )
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        result shouldBeEqualTo Location(
+            cid = "messaging:general",
+            messageId = "message-1",
+            userId = "jaewoong",
+            latitude = 1.5,
+            longitude = 2.5,
+            deviceId = "device-1",
+            endAt = endAt,
+        )
+    }
+
+    @Test
+    fun `MessageResponse promotes V1 moderation out of custom and off extraData`() {
+        val response = Mother.randomMessageResponse(
+            custom = mapOf(
+                "moderation_details" to mapOf(
+                    "original_text" to "bad text",
+                    "action" to "MESSAGE_RESPONSE_ACTION_BOUNCE",
+                    "error_msg" to "blocked",
+                ),
+                "flair" to "gold",
+            ),
+        )
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        result.moderationDetails?.originalText shouldBeEqualTo "bad text"
+        result.moderationDetails?.errorMsg shouldBeEqualTo "blocked"
+        // Promoted to the typed field, so it must not also surface as custom data.
+        result.extraData shouldBeEqualTo mapOf("flair" to "gold")
     }
 
     @Test
