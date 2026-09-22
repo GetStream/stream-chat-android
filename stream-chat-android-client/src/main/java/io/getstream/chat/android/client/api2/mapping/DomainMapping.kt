@@ -20,11 +20,9 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
@@ -39,8 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
@@ -134,6 +130,7 @@ import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
@@ -204,7 +201,7 @@ internal class DomainMapping(
             watchers = watchers.map { it.toDomain() },
             read = read.map {
                 it.toDomain(
-                    lastReceivedEventDate = last_message_at ?: it.last_read,
+                    lastReceivedEventDate = last_message_at ?: it.lastRead,
                 )
             },
             config = config?.toDomain() ?: Config(),
@@ -710,21 +707,21 @@ internal class DomainMapping(
     }
 
     /**
-     * Transform [DownstreamChannelUserRead] to [ChannelUserRead].
+     * Transform [ReadStateResponse] to [ChannelUserRead].
      *
      * @param lastReceivedEventDate the last received event date.
      */
-    internal fun DownstreamChannelUserRead.toDomain(
+    internal fun ReadStateResponse.toDomain(
         lastReceivedEventDate: Date,
     ): ChannelUserRead =
         ChannelUserRead(
             user = user.toDomain(),
             lastReceivedEventDate = lastReceivedEventDate,
-            lastRead = last_read,
-            unreadMessages = unread_messages,
-            lastReadMessageId = last_read_message_id,
-            lastDeliveredAt = last_delivered_at,
-            lastDeliveredMessageId = last_delivered_message_id,
+            lastRead = lastRead,
+            unreadMessages = unreadMessages,
+            lastReadMessageId = lastReadMessageId,
+            lastDeliveredAt = lastDeliveredAt,
+            lastDeliveredMessageId = lastDeliveredMessageId,
         )
 
     /**
@@ -760,31 +757,6 @@ internal class DomainMapping(
                 .toMap().toMutableMap(),
         )
     }
-
-    /**
-     * Transforms [AttachmentDto] to [Attachment].
-     */
-    internal fun AttachmentDto.toDomain(): Attachment =
-        Attachment(
-            assetUrl = asset_url,
-            authorName = author_name,
-            authorLink = author_link,
-            fallback = fallback,
-            fileSize = file_size ?: 0,
-            image = image,
-            imageUrl = image_url,
-            mimeType = mime_type,
-            name = name,
-            ogUrl = og_scrape_url,
-            text = text,
-            thumbUrl = thumb_url,
-            title = title,
-            titleLink = title_link,
-            type = type,
-            originalHeight = original_height,
-            originalWidth = original_width,
-            extraData = extraData.toMutableMap(),
-        )
 
     /**
      * The four fields the spec declares on no attachment shape. The wire sends them at the root, so they
@@ -1187,24 +1159,6 @@ internal class DomainMapping(
         val field = if (FIELD_LAST_MESSAGE_AT in filterFields) FIELD_LAST_MESSAGE_AT else FIELD_LAST_UPDATED
         return QuerySortByField<Channel>().desc(field)
     }
-
-    internal fun DownstreamUserGroupDto.toDomain(): UserGroup = UserGroup(
-        id = id,
-        name = name,
-        description = description,
-        team = team_id.orEmpty(),
-        members = members.map { it.toDomain() },
-        createdBy = created_by,
-        createdAt = created_at,
-        updatedAt = updated_at,
-    )
-
-    internal fun DownstreamUserGroupMemberDto.toDomain(): UserGroupMember = UserGroupMember(
-        groupId = group_id,
-        userId = user_id,
-        isAdmin = is_admin,
-        createdAt = created_at,
-    )
 
     internal fun UserGroupResponse.toDomain(): UserGroup = UserGroup(
         id = id,

@@ -23,11 +23,9 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
-import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
@@ -41,8 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserGroupMemberDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
@@ -98,6 +94,7 @@ import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -301,7 +298,7 @@ internal object Mother {
         mentioned_users: List<DownstreamUserDto> = emptyList(),
         mentioned_here: Boolean? = null,
         mentioned_channel: Boolean? = null,
-        mentioned_groups: List<DownstreamUserGroupDto> = emptyList(),
+        mentioned_groups: List<UserGroupResponse> = emptyList(),
         mentioned_roles: List<String> = emptyList(),
         own_reactions: List<ReactionResponse> = emptyList(),
         parent_id: String? = randomString(),
@@ -455,7 +452,7 @@ internal object Mother {
         messages: List<DownstreamMessageDto> = emptyList(),
         members: List<ChannelMemberResponse> = emptyList(),
         watchers: List<DownstreamUserDto> = emptyList(),
-        read: List<DownstreamChannelUserRead> = emptyList(),
+        read: List<ReadStateResponse> = emptyList(),
         config: ChannelConfigWithInfo = randomChannelConfigWithInfo(),
         created_by: DownstreamUserDto? = randomDownstreamUserDto(),
         team: String = randomString(),
@@ -710,20 +707,20 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamChannelUserRead(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
+    fun randomReadStateResponse(
+        user: UserResponse = randomUserResponse(),
         lastRead: Date = randomDate(),
         unreadMessages: Int = randomInt(),
         lastReadMessageId: String? = randomStringOrNull(),
         lastDeliveredAt: Date? = randomDateOrNull(),
         lastDeliveredMessageId: String? = randomStringOrNull(),
-    ) = DownstreamChannelUserRead(
+    ) = ReadStateResponse(
         user = user,
-        last_read = lastRead,
-        unread_messages = unreadMessages,
-        last_read_message_id = lastReadMessageId,
-        last_delivered_at = lastDeliveredAt,
-        last_delivered_message_id = lastDeliveredMessageId,
+        lastRead = lastRead,
+        unreadMessages = unreadMessages,
+        lastReadMessageId = lastReadMessageId,
+        lastDeliveredAt = lastDeliveredAt,
+        lastDeliveredMessageId = lastDeliveredMessageId,
     )
 
     fun randomGetOGResponse(
@@ -750,46 +747,6 @@ internal object Mother {
         imageUrl = imageUrl,
         type = type,
         custom = custom,
-    )
-
-    fun randomAttachmentDto(
-        assetUrl: String? = randomString(),
-        authorName: String? = randomString(),
-        authorLink: String? = randomString(),
-        fallback: String? = randomString(),
-        fileSize: Int? = positiveRandomInt(),
-        image: String? = randomString(),
-        imageUrl: String? = randomString(),
-        mimeType: String? = randomString(),
-        name: String? = randomString(),
-        ogScrapeUrl: String? = randomString(),
-        text: String? = randomString(),
-        thumbUrl: String? = randomString(),
-        title: String? = randomString(),
-        titleLink: String? = randomString(),
-        type: String? = randomString(),
-        originalHeight: Int? = positiveRandomInt(),
-        originalWidth: Int? = positiveRandomInt(),
-        extraData: Map<String, Any> = emptyMap(),
-    ): AttachmentDto = AttachmentDto(
-        asset_url = assetUrl,
-        author_name = authorName,
-        author_link = authorLink,
-        fallback = fallback,
-        file_size = fileSize,
-        image = image,
-        image_url = imageUrl,
-        mime_type = mimeType,
-        name = name,
-        og_scrape_url = ogScrapeUrl,
-        text = text,
-        thumb_url = thumbUrl,
-        title = title,
-        title_link = titleLink,
-        type = type,
-        original_height = originalHeight,
-        original_width = originalWidth,
-        extraData = extraData,
     )
 
     fun randomBanResponse(
@@ -974,7 +931,7 @@ internal object Mother {
         deletedAt: Date? = randomDateOrNull(),
         title: String = randomString(),
         latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
-        read: List<DownstreamChannelUserRead> = listOf(randomDownstreamChannelUserRead()),
+        read: List<ReadStateResponse> = listOf(randomReadStateResponse()),
         replyCount: Int = randomInt(),
         draft: DownstreamDraftDto? = randomDownstreamDraftDto(),
         extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
@@ -1457,26 +1414,6 @@ internal object Mother {
     ): DownstreamPushPreferenceDto = DownstreamPushPreferenceDto(
         chat_level = chatLevel,
         disabled_until = disabledUntil,
-    )
-
-    fun randomDownstreamUserGroupDto(
-        id: String = randomString(),
-        name: String = randomString(),
-        description: String? = randomString(),
-        teamId: String? = randomString(),
-        members: List<DownstreamUserGroupMemberDto> = emptyList(),
-        createdBy: String? = randomString(),
-        createdAt: Date? = randomDate(),
-        updatedAt: Date? = randomDate(),
-    ): DownstreamUserGroupDto = DownstreamUserGroupDto(
-        id = id,
-        name = name,
-        description = description,
-        team_id = teamId,
-        members = members,
-        created_by = createdBy,
-        created_at = createdAt,
-        updated_at = updatedAt,
     )
 
     fun randomUserGroupMemberDto(

@@ -380,7 +380,7 @@ constructor(
             when {
                 it.value is Collection<*> -> (it.value as Collection<*>).map {
                     when (it) {
-                        is Attachment -> it.toDto()
+                        is Attachment -> it.toAttachmentRequest()
                         else -> it
                     }
                 }
@@ -1296,7 +1296,7 @@ constructor(
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
-                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.last_read)
+                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.lastRead)
                 },
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
