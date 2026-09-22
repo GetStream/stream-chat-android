@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
@@ -494,22 +493,6 @@ internal class DomainMapping(
             .mapNotNull { (key, value) -> value?.let { key to it } }
             .toMap(),
     )
-
-    /**
-     * Transforms [DownstreamReactionDto] to [Reaction].
-     */
-    internal fun DownstreamReactionDto.toDomain(): Reaction =
-        Reaction(
-            createdAt = created_at,
-            messageId = message_id,
-            score = score,
-            type = type,
-            updatedAt = updated_at,
-            user = user?.toDomain(),
-            userId = user_id,
-            emojiCode = emoji_code,
-            extraData = extraData.toMutableMap(),
-        )
 
     /**
      * Transforms [ReactionGroupResponse] to [ReactionGroup].
