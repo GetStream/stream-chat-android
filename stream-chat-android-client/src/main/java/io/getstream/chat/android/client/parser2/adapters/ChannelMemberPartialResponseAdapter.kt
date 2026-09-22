@@ -21,24 +21,26 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 
-/**
- * JSON adapter for [DownstreamMemberInfoDto].
- * Handles the proper deserialization of the [extraData] field, which holds the member custom data that API v1 inlines
- * next to the declared fields.
- */
-internal object DownstreamMemberInfoDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamMemberInfoDto>(DownstreamMemberInfoDto::class) {
+// Downstream (read-only) adapter for the generated partial member: the member custom fields arrive at the
+// object root, so they are collected into `custom`, which is that model's @Json name for them.
+internal object ChannelMemberPartialResponseAdapter :
+    CustomObjectDtoAdapter<ChannelMemberPartialResponse>(
+        ChannelMemberPartialResponse::class,
+        extraDataPropertyName = "custom",
+        mergesNestedExtraData = true,
+    ) {
 
     @FromJson
     fun fromJson(
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        memberInfoAdapter: JsonAdapter<DownstreamMemberInfoDto>,
-    ): DownstreamMemberInfoDto? = parseWithExtraData(jsonReader, mapAdapter, memberInfoAdapter)
+        memberInfoAdapter: JsonAdapter<ChannelMemberPartialResponse>,
+    ): ChannelMemberPartialResponse? = parseWithExtraData(jsonReader, mapAdapter, memberInfoAdapter)
 
     @ToJson
     @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamMemberInfoDto): Unit = error("Can't convert this to Json")
+    fun toJson(jsonWriter: JsonWriter, value: ChannelMemberPartialResponse): Unit =
+        error("Can't convert this to Json")
 }
