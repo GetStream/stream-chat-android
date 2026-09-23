@@ -28,7 +28,10 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -763,6 +766,23 @@ internal class ChannelMutableStateTests {
         channelState.loading.value `should be equal to` false
         channelState.messagesState.value `should be equal to` MessagesState.OfflineNoResults
     }
+
+    @Test
+    fun `messagesState should not report no results while the loaded messages are still propagating`() =
+        runTest(StandardTestDispatcher(testCoroutines.dispatcher.scheduler)) {
+            val emissions = mutableListOf<MessagesState>()
+            backgroundScope.launch { channelState.messagesState.collect { emissions += it } }
+            channelState.setLoadingIfEmpty()
+            runCurrent()
+
+            channelState.setMessages(createMessages(3))
+            channelState.setLoading(false)
+            runCurrent()
+
+            val afterLoading = emissions.dropWhile { it != MessagesState.Loading }
+            afterLoading.contains(MessagesState.OfflineNoResults) `should be equal to` false
+            (afterLoading.last() is MessagesState.Result) `should be equal to` true
+        }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
         require(pinnedMessages.value.size == size) {

@@ -152,7 +152,9 @@ internal class ChannelMutableState(
         messagesTransformation(pinnedMessagesList) { it.isPinned(now) }
 
     override val messagesState: StateFlow<MessagesState> =
-        combineStates(loading, sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
+        combineStates(loading, sortedVisibleMessages) { loading: Boolean, collected: List<Message> ->
+            // A collected copy of the messages can lag behind loading, so re-read before reporting no results.
+            val messages = if (!loading && collected.isEmpty()) sortedVisibleMessages.value else collected
             when {
                 loading -> MessagesState.Loading
                 messages.isEmpty() -> MessagesState.OfflineNoResults
