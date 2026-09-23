@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.Attachment
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.DraftPayloadResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollResponseData
@@ -79,8 +80,8 @@ internal data class DownstreamMessageDto(
     val poll: PollResponseData? = null,
     val reminder: DownstreamReminderInfoDto? = null,
     val shared_location: DownstreamLocationDto? = null,
-    val member: DownstreamMemberInfoDto? = null,
-    val mentioned_channel_members: Map<String, DownstreamMemberInfoDto?>? = null,
+    val member: ChannelMemberPartialResponse? = null,
+    val mentioned_channel_members: Map<String, ChannelMemberPartialResponse?>? = null,
     val deleted_for_me: Boolean?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

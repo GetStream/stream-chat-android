@@ -31,13 +31,13 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.ChannelMemberPartialResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberInfoDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamModerationDetailsDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadDtoAdapter
@@ -106,7 +106,7 @@ internal class MoshiChatParser(
             .add(ChannelInputRequestAdapter)
             .add(ChannelResponseAdapter)
             .add(ChannelMemberResponseAdapter)
-            .add(DownstreamMemberInfoDtoAdapter)
+            .add(ChannelMemberPartialResponseAdapter)
             .add(UpstreamMemberDataDtoAdapter)
             .add(FlagRequestAdapterFactory)
             .add(DownstreamThreadDtoAdapter)

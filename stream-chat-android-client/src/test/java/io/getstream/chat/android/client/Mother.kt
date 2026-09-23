@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
@@ -74,6 +73,7 @@ import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
@@ -322,7 +322,7 @@ internal object Mother {
         moderation_details: DownstreamModerationDetailsDto? = null,
         moderation: ModerationV2Response? = null,
         poll: PollResponseData? = null,
-        member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
+        member: ChannelMemberPartialResponse? = randomChannelMemberPartialResponse(),
         deleted_for_me: Boolean? = null,
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamMessageDto {
@@ -670,16 +670,14 @@ internal object Mother {
         archivedAt = randomDate(),
     )
 
-    fun randomDownstreamMemberInfoDto(
-        channelRole: String? = randomString(),
-        notificationsMuted: Boolean? = randomBoolean(),
-        custom: Map<String, Any>? = null,
-        extraData: Map<String, Any> = mapOf(randomString() to randomString()),
-    ): DownstreamMemberInfoDto = DownstreamMemberInfoDto(
-        channel_role = channelRole,
-        notifications_muted = notificationsMuted,
+    fun randomChannelMemberPartialResponse(
+        channelRole: String = randomString(),
+        notificationsMuted: Boolean = randomBoolean(),
+        custom: Map<String, Any>? = mapOf(randomString() to randomString()),
+    ): ChannelMemberPartialResponse = ChannelMemberPartialResponse(
+        channelRole = channelRole,
+        notificationsMuted = notificationsMuted,
         custom = custom,
-        extraData = extraData,
     )
 
     fun randomReadStateResponse(

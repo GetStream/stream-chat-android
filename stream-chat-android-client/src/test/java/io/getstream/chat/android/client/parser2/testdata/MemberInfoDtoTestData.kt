@@ -16,19 +16,24 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import org.intellij.lang.annotations.Language
 
 internal object MemberInfoDtoTestData {
 
+    // notifications_muted is a plain non-omitempty tag on the payload struct, so the wire always sends it.
     @Language("JSON")
     val downstreamJson: String = """
         {
-          "channel_role": "channel_member"
+          "channel_role": "channel_member",
+          "notifications_muted": false
         }
     """.trimIndent()
 
-    val downstreamMemberInfo = DownstreamMemberInfoDto(channel_role = "channel_member")
+    val downstreamMemberInfo = ChannelMemberPartialResponse(
+        channelRole = "channel_member",
+        notificationsMuted = false,
+    )
 
     /** API v1 inlines the projected member custom keys next to the declared fields. */
     @Language("JSON")
@@ -40,10 +45,10 @@ internal object MemberInfoDtoTestData {
         }
     """.trimIndent()
 
-    val downstreamMemberInfoWithInlineCustom = DownstreamMemberInfoDto(
-        channel_role = "channel_member",
-        notifications_muted = true,
-        extraData = mapOf("flair" to mapOf("tier" to "gold")),
+    val downstreamMemberInfoWithInlineCustom = ChannelMemberPartialResponse(
+        channelRole = "channel_member",
+        notificationsMuted = true,
+        custom = mapOf("flair" to mapOf("tier" to "gold")),
     )
 
     /** API v2 nests the same keys under `custom`. */
@@ -56,9 +61,9 @@ internal object MemberInfoDtoTestData {
         }
     """.trimIndent()
 
-    val downstreamMemberInfoWithNestedCustom = DownstreamMemberInfoDto(
-        channel_role = "channel_member",
-        notifications_muted = true,
+    val downstreamMemberInfoWithNestedCustom = ChannelMemberPartialResponse(
+        channelRole = "channel_member",
+        notificationsMuted = true,
         custom = mapOf("flair" to mapOf("tier" to "gold")),
     )
 }

@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.parser2.testdata.MemberInfoDtoTestData
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
-internal class DownstreamMemberInfoDtoAdapterTest {
+internal class ChannelMemberPartialResponseAdapterTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Deserialize JSON member info`() {
-        val member = parser.fromJson(MemberInfoDtoTestData.downstreamJson, DownstreamMemberInfoDto::class.java)
+        val member = parser.fromJson(MemberInfoDtoTestData.downstreamJson, ChannelMemberPartialResponse::class.java)
         member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfo
     }
 
@@ -35,7 +35,7 @@ internal class DownstreamMemberInfoDtoAdapterTest {
     fun `Deserialize JSON member info with member custom inlined by API v1`() {
         val member = parser.fromJson(
             MemberInfoDtoTestData.downstreamJsonWithInlineCustom,
-            DownstreamMemberInfoDto::class.java,
+            ChannelMemberPartialResponse::class.java,
         )
         member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfoWithInlineCustom
     }
@@ -44,7 +44,7 @@ internal class DownstreamMemberInfoDtoAdapterTest {
     fun `Deserialize JSON member info with member custom nested by API v2`() {
         val member = parser.fromJson(
             MemberInfoDtoTestData.downstreamJsonWithNestedCustom,
-            DownstreamMemberInfoDto::class.java,
+            ChannelMemberPartialResponse::class.java,
         )
         member shouldBeEqualTo MemberInfoDtoTestData.downstreamMemberInfoWithNestedCustom
     }

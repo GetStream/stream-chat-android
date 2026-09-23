@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
@@ -110,6 +109,7 @@ import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
@@ -328,7 +328,7 @@ internal class DomainMapping(
                 restrictedVisibility = emptyList(),
                 reminder = reminder?.toDomain(),
                 sharedLocation = shared_location?.toDomain(),
-                channelRole = member?.channel_role,
+                channelRole = member?.channelRole,
                 member = member?.toDomain(),
                 mentionedChannelMembers = mentioned_channel_members
                     ?.mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
@@ -553,20 +553,16 @@ internal class DomainMapping(
         ).let(userTransformer::transform)
 
     /**
-     * Transforms [DownstreamMemberInfoDto] to [MemberInfo].
+     * Transforms [ChannelMemberPartialResponse] to [MemberInfo].
+     *
+     * The member custom fields ride at the object root, so the adapter collects them into `custom`.
      */
-    internal fun DownstreamMemberInfoDto.toDomain(): MemberInfo =
+    internal fun ChannelMemberPartialResponse.toDomain(): MemberInfo =
         MemberInfo(
-            channelRole = channel_role,
-            notificationsMuted = notifications_muted ?: false,
-            extraData = memberCustom(),
+            channelRole = channelRole,
+            notificationsMuted = notificationsMuted,
+            extraData = custom.orEmpty().mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
-
-    /**
-     * The member custom data, regardless of whether API v1 inlined it next to the declared fields or API v2 nested it
-     * under `custom`. The two shapes never coexist, so the merge only ever picks up one of them.
-     */
-    private fun DownstreamMemberInfoDto.memberCustom(): Map<String, Any> = extraData + custom.orEmpty()
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(

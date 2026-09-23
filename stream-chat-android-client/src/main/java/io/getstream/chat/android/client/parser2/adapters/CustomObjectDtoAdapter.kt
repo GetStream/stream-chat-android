@@ -37,6 +37,7 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
     private val kClass: KClass<Value>,
     private val extraDataPropertyName: String = "extraData",
     private val alsoKeepInExtraData: Set<String> = emptySet(),
+    private val mergesNestedExtraData: Boolean = false,
 ) {
 
     /**
@@ -71,14 +72,17 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
 
         val extraData = mutableMapOf<String, Any>()
 
-        // Save the value of the literal extraData field at the root of the object, if present
-        map[extraDataPropertyName]?.let { explicitExtraData ->
-            extraData[extraDataPropertyName] = explicitExtraData
-        }
+        // Save the value of the literal extraData field at the root of the object, if present. When the
+        // overflow property is also a real wire field, as the generated `custom` is, its contents are
+        // merged instead, so a payload that nests the keys and one that inlines them at the root produce
+        // the same map rather than one of them landing a level deeper.
+        val mergedNested = collectExplicitExtraData(map[extraDataPropertyName], extraData)
 
-        // Save the values of non-member fields as extra data
+        // Save the values of non-member fields as extra data. The overflow property is not a member name,
+        // so it would otherwise be copied back in whole and undo the merge above.
         map.forEach { entry ->
-            if (entry.key !in memberNames || entry.key in alsoKeepInExtraData) {
+            val alreadyMerged = mergedNested && entry.key == extraDataPropertyName
+            if (!alreadyMerged && (entry.key !in memberNames || entry.key in alsoKeepInExtraData)) {
                 extraData[entry.key] = entry.value
             }
         }
@@ -88,6 +92,23 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
 
         // Parse output value object from the transformed Map
         return valueAdapter.fromJsonValue(map)!!
+    }
+
+    /**
+     * Collects the value already sitting under the overflow property name, returning whether it was
+     * merged. A model whose overflow property is also a real wire field, as the generated `custom` is,
+     * has its contents merged so that nesting and root-inlining produce the same map; anything else is
+     * kept whole under its own name.
+     */
+    private fun collectExplicitExtraData(explicit: Any?, into: MutableMap<String, Any>): Boolean {
+        if (!mergesNestedExtraData || explicit !is Map<*, *>) {
+            if (explicit != null) into[extraDataPropertyName] = explicit
+            return false
+        }
+        explicit.forEach { (key, value) ->
+            if (key is String && value != null) into[key] = value
+        }
+        return true
     }
 
     /**
