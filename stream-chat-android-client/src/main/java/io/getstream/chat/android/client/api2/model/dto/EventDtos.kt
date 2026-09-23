@@ -24,6 +24,8 @@ import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.UserResponseCommonFields
+import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.result.Error
 import java.util.Date
 
@@ -471,7 +473,7 @@ internal data class ChannelUserBannedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val expiration: Date?,
     val shadow: Boolean?,
 ) : ChatEventDto()
@@ -479,7 +481,7 @@ internal data class ChannelUserBannedEventDto(
 @JsonClass(generateAdapter = true)
 internal data class GlobalUserBannedEventDto(
     val type: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val created_at: ExactDate,
 ) : ChatEventDto()
 
@@ -487,14 +489,14 @@ internal data class GlobalUserBannedEventDto(
 internal data class UserDeletedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class UserPresenceChangedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -505,7 +507,7 @@ internal data class UserStartWatchingEventDto(
     val watcher_count: Int = 0,
     val channel_type: String,
     val channel_id: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -516,14 +518,14 @@ internal data class UserStopWatchingEventDto(
     val watcher_count: Int = 0,
     val channel_type: String,
     val channel_id: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class ChannelUserUnbannedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val cid: String,
     val channel_type: String,
     val channel_id: String,
@@ -533,14 +535,14 @@ internal data class ChannelUserUnbannedEventDto(
 internal data class GlobalUserUnbannedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class UserUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponsePrivacyFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

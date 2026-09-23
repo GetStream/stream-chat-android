@@ -187,6 +187,7 @@ internal object EventArguments {
     private val user = User(
         id = "bender",
         role = "user",
+        language = "en",
         invisible = false,
         banned = false,
         online = true,
@@ -717,6 +718,11 @@ internal object EventArguments {
         channelId = channelId,
         parentId = parentMessageId,
     )
+
+    // User events carry only the common user fields, so none of the own-user state is set.
+    private val commonFieldsUser = user.copy(invisible = null, unreadChannels = 0, totalUnreadCount = 0)
+    private val privacyFieldsUser = commonFieldsUser.copy(invisible = false)
+
     private val channelUserBannedEvent = ChannelUserBannedEvent(
         type = EventType.USER_BANNED,
         createdAt = date,
@@ -724,13 +730,13 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         expiration = date,
         shadow = false,
     )
     private val globalUserBannedEvent = GlobalUserBannedEvent(
         type = EventType.USER_BANNED,
-        user = user,
+        user = commonFieldsUser,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
     )
@@ -738,13 +744,13 @@ internal object EventArguments {
         type = EventType.USER_DELETED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
     )
     private val userPresenceChangedEvent = UserPresenceChangedEvent(
         type = EventType.USER_PRESENCE_CHANGED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
     )
     private val userStartWatchingEvent = UserStartWatchingEvent(
         type = EventType.USER_WATCHING_START,
@@ -754,7 +760,7 @@ internal object EventArguments {
         watcherCount = watcherCount,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
     )
     private val userStopWatchingEvent = UserStopWatchingEvent(
         type = EventType.USER_WATCHING_STOP,
@@ -764,13 +770,13 @@ internal object EventArguments {
         watcherCount = watcherCount,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
     )
     private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -779,13 +785,13 @@ internal object EventArguments {
         type = EventType.USER_UNBANNED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
     )
     private val userUpdatedEvent = UserUpdatedEvent(
         type = EventType.USER_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = privacyFieldsUser,
     )
     private val healthEvent = HealthEvent(
         type = EventType.HEALTH_CHECK,

@@ -183,6 +183,8 @@ internal object EventMappingTestArguments {
     private val EXACT_DATE = ExactDate(DATE, DATE_STRING)
     private val USER = Mother.randomDownstreamUserDto()
     private val OWN_USER = Mother.randomOwnUserResponse()
+    private val COMMON_USER = Mother.randomUserResponseCommonFields()
+    private val PRIVACY_USER = Mother.randomUserResponsePrivacyFields()
     private val CHANNEL_TYPE = randomString()
     private val CHANNEL_ID = randomString()
     private val CID = "$CHANNEL_TYPE:$CHANNEL_ID"
@@ -309,7 +311,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
         expiration = DATE,
         shadow = SHADOW_BAN,
     )
@@ -320,7 +322,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
     )
 
     private val channelVisibleDto = ChannelVisibleEventDto(
@@ -366,13 +368,13 @@ internal object EventMappingTestArguments {
     private val globalUserBannedDto = GlobalUserBannedEventDto(
         type = EventType.USER_BANNED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
     )
 
     private val globalUserUnbannedDto = GlobalUserUnbannedEventDto(
         type = EventType.USER_UNBANNED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
     )
 
     private val healthDto = HealthEventDto(
@@ -668,13 +670,13 @@ internal object EventMappingTestArguments {
     private val userDeletedDto = UserDeletedEventDto(
         type = EventType.USER_DELETED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
     )
 
     private val userPresenceChangedDto = UserPresenceChangedEventDto(
         type = EventType.USER_PRESENCE_CHANGED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
     )
 
     private val userStartWatchingDto = UserStartWatchingEventDto(
@@ -683,7 +685,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
         watcher_count = WATCHER_COUNT,
     )
 
@@ -693,14 +695,14 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
         watcher_count = WATCHER_COUNT,
     )
 
     private val userUpdatedDto = UserUpdatedEventDto(
         type = EventType.USER_UPDATED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = PRIVACY_USER,
     )
 
     private val pollClosedDto = PollClosedEventDto(

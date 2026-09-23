@@ -133,6 +133,8 @@ import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
+import io.getstream.chat.android.network.models.UserResponseCommonFields
+import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -295,6 +297,85 @@ internal class DomainMappingTest {
         result.channelMutes.size shouldBeEqualTo 1
         result.privacySettings shouldNotBeEqualTo null
         result.pushPreference shouldNotBeEqualTo null
+        result.extraData shouldBeEqualTo mapOf("probe_flair" to "gold")
+    }
+
+    @Test
+    fun `UserResponseCommonFields is correctly mapped to User`() {
+        val response = fullyPopulatedCommonFieldsUser()
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        assertCommonUserFields(result, response.createdAt, response.updatedAt, response.deactivatedAt, response.lastActive)
+        // Not part of this shape, so it stays unset rather than defaulting to false.
+        result.invisible shouldBeEqualTo null
+    }
+
+    @Test
+    fun `UserResponsePrivacyFields is correctly mapped to User`() {
+        val common = fullyPopulatedCommonFieldsUser()
+        val response = UserResponsePrivacyFields(
+            id = common.id, role = common.role, language = common.language, banned = common.banned,
+            online = common.online, createdAt = common.createdAt, updatedAt = common.updatedAt,
+            name = common.name, image = common.image, teams = common.teams, teamsRole = common.teamsRole,
+            blockedUserIds = common.blockedUserIds, avgResponseTime = common.avgResponseTime,
+            deactivatedAt = common.deactivatedAt, lastActive = common.lastActive, custom = common.custom,
+            invisible = true,
+            privacySettings = io.getstream.chat.android.network.models.PrivacySettingsResponse(),
+        )
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        assertCommonUserFields(result, response.createdAt, response.updatedAt, response.deactivatedAt, response.lastActive)
+        result.invisible shouldBeEqualTo true
+        result.privacySettings shouldNotBeEqualTo null
+    }
+
+    /** Every field non-default: a default would let a mapper that drops it pass. */
+    private fun fullyPopulatedCommonFieldsUser() = UserResponseCommonFields(
+        id = "jaewoong",
+        role = "admin",
+        language = "en",
+        banned = true,
+        online = true,
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        deactivatedAt = randomDate(),
+        lastActive = randomDate(),
+        name = "Jaewoong",
+        image = "https://example.com/a.png",
+        teams = listOf("red"),
+        teamsRole = mapOf("red" to "admin"),
+        blockedUserIds = listOf("blocked-1"),
+        avgResponseTime = 42,
+        custom = mapOf("probe_flair" to "gold"),
+    )
+
+    @Suppress("LongParameterList")
+    private fun assertCommonUserFields(
+        result: User,
+        createdAt: Date,
+        updatedAt: Date,
+        deactivatedAt: Date?,
+        lastActive: Date?,
+    ) {
+        result.id shouldBeEqualTo "jaewoong"
+        result.role shouldBeEqualTo "admin"
+        result.language shouldBeEqualTo "en"
+        result.banned shouldBeEqualTo true
+        result.online shouldBeEqualTo true
+        result.name shouldBeEqualTo "Jaewoong"
+        result.image shouldBeEqualTo "https://example.com/a.png"
+        result.createdAt shouldBeEqualTo createdAt
+        result.updatedAt shouldBeEqualTo updatedAt
+        result.deactivatedAt shouldBeEqualTo deactivatedAt
+        result.lastActive shouldBeEqualTo lastActive
+        result.teams shouldBeEqualTo listOf("red")
+        result.teamsRole shouldBeEqualTo mapOf("red" to "admin")
+        result.blockedUserIds shouldBeEqualTo listOf("blocked-1")
+        result.avgResponseTime shouldBeEqualTo 42L
         result.extraData shouldBeEqualTo mapOf("probe_flair" to "gold")
     }
 
