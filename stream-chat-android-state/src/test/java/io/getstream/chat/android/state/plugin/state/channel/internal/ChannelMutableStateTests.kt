@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
@@ -742,6 +744,24 @@ internal class ChannelMutableStateTests {
         // Post-condition check
         val userRead = channelState.reads.value.find { it.user.id == user.id }
         assertEquals(delivered, userRead)
+    }
+
+    @Test
+    fun `setLoadingIfEmpty on a channel without data should show the loading state`() = runTest {
+        channelState.setLoadingIfEmpty()
+
+        channelState.loading.value `should be equal to` true
+        channelState.messagesState.value `should be equal to` MessagesState.Loading
+    }
+
+    @Test
+    fun `setLoadingIfEmpty on a channel with data should not show the loading state`() = runTest {
+        channelState.setChannelData(ChannelData(type = CHANNEL_TYPE, id = CHANNEL_ID))
+
+        channelState.setLoadingIfEmpty()
+
+        channelState.loading.value `should be equal to` false
+        channelState.messagesState.value `should be equal to` MessagesState.OfflineNoResults
     }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {

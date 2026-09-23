@@ -36,7 +36,6 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.log.taggedLogger
-import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -101,15 +100,6 @@ internal class ChannelLogicImpl(
 
     override suspend fun watch(limit: Int, userPresence: Boolean): Result<Channel> {
         logger.i { "[watch] messagesLimit: $limit, userPresence: $userPresence" }
-        // Otherwise it's too easy for devs to create UI bugs which DDOS our API
-        if (mutableState.loading.value) {
-            logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
-            return Result.Failure(
-                Error.GenericError(
-                    "Another request to watch this channel is in progress. Ignoring this request.",
-                ),
-            )
-        }
         channelStateLogic.loadingNewestMessages()
         return runChannelQuery(
             "watch",

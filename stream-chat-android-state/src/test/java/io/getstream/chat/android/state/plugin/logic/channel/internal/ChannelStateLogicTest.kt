@@ -66,6 +66,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
@@ -245,6 +246,26 @@ internal class ChannelStateLogicTest {
 
         verify(mutableState, times(0)).updateCachedLatestMessages(any())
         verify(mutableState, times(0)).upsertMessages(any())
+    }
+
+    @Test
+    fun `given channel data arrives, loading should end once the data is in the state`() {
+        val channel = randomChannel()
+
+        channelStateLogic.updateDataForChannel(channel, messageLimit = 30)
+
+        inOrder(mutableState) {
+            verify(mutableState).setChannelData(any())
+            verify(mutableState).upsertMembers(channel.members)
+            verify(mutableState).setLoading(false)
+        }
+    }
+
+    @Test
+    fun `given the query fails, loading should end`() {
+        channelStateLogic.propagateQueryError(Error.GenericError(randomString()))
+
+        verify(mutableState).setLoading(false)
     }
 
     @Test

@@ -339,6 +339,14 @@ internal class ChannelMutableState(
     }
 
     /**
+     * Marks the first load of the channel as in progress. Does nothing once the channel has data, so refreshing a
+     * loaded channel never replaces its content with a loading state.
+     */
+    fun setLoadingIfEmpty() {
+        if (_channelData?.value == null) setLoading(true)
+    }
+
+    /**
      * Sets hidden.
      *
      * @param isHidden Boolean
