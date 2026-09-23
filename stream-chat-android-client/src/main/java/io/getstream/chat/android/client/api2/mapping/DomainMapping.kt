@@ -388,9 +388,6 @@ internal class DomainMapping(
     ).maxBy { it.time }
 
     /**
-     * Transforms [DownstreamUserDto] to [User].
-     */
-    /**
      * Transforms the own-user payload the connection and mute-notification events carry. It is the same
      * domain [User] as any other user, with the own-user-only counters and mutes filled in.
      */
@@ -423,6 +420,9 @@ internal class DomainMapping(
             extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
 
+    /**
+     * Transforms [DownstreamUserDto] to [User].
+     */
     internal fun DownstreamUserDto.toDomain(): User =
         User(
             id = id,
