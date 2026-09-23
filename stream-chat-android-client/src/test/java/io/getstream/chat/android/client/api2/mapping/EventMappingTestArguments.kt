@@ -386,7 +386,7 @@ internal object EventMappingTestArguments {
     private val markAllReadDto = MarkAllReadEventDto(
         type = EventType.NOTIFICATION_MARK_READ,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
         grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
@@ -435,7 +435,7 @@ internal object EventMappingTestArguments {
     private val messageDeliveredDto = MessageDeliveredEventDto(
         type = EventType.MESSAGE_DELIVERED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
@@ -534,7 +534,7 @@ internal object EventMappingTestArguments {
     private val notificationMarkReadDto = NotificationMarkReadEventDto(
         type = EventType.NOTIFICATION_MARK_READ,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
@@ -545,7 +545,7 @@ internal object EventMappingTestArguments {
     private val notificationMarkUnreadDto = NotificationMarkUnreadEventDto(
         type = EventType.NOTIFICATION_MARK_UNREAD,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
@@ -804,7 +804,7 @@ internal object EventMappingTestArguments {
     private val userMessagesDeletedEventDto = UserMessagesDeletedEventDto(
         type = EventType.USER_MESSAGES_DELETED,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
@@ -1090,7 +1090,7 @@ internal object EventMappingTestArguments {
         type = EventType.MESSAGE_DELIVERED,
         createdAt = EXACT_DATE.date,
         rawCreatedAt = EXACT_DATE.rawDate,
-        user = with(domainMapping) { USER.toDomain() },
+        user = with(domainMapping) { messageDeliveredDto.user.toDomain() },
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
