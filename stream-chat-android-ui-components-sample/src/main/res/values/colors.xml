@@ -34,4 +34,5 @@
     <color name="component_browser_background_light">@color/stream_ui_white</color>
 
     <color name="message_forwarded">#808080</color>
+    <color name="splash_background">#005FFF</color>
 </resources>

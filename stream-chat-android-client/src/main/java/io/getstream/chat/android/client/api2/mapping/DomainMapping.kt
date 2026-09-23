@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
@@ -36,7 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -110,6 +108,7 @@ import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
@@ -144,11 +143,16 @@ import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteRespon
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 /** `emoji_code` is sent as custom data rather than a declared field, in both directions. */
 internal const val EMOJI_CODE_KEY = "emoji_code"
+
+/** Drafts have no declared command fields, so both travel as custom data in both directions. */
+internal const val DRAFT_COMMAND_KEY = "command"
+internal const val DRAFT_ARGS_KEY = "args"
 
 /**
  * Event users carry devices only as custom data, in the request shape clients send. The hand-written DTO
@@ -332,7 +336,7 @@ internal class DomainMapping(
                 restrictedVisibility = emptyList(),
                 reminder = reminder?.toDomain(),
                 sharedLocation = shared_location?.toDomain(),
-                channelRole = member?.channel_role,
+                channelRole = member?.channelRole,
                 member = member?.toDomain(),
                 mentionedChannelMembers = mentioned_channel_members
                     ?.mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
@@ -345,18 +349,21 @@ internal class DomainMapping(
 
     internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
-            attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
+            attachments = message.attachments?.map { it.toDomain() }.orEmpty(),
             cid = channel_cid,
             id = message.id,
             parentId = parent_message?.id ?: parent_id,
             replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
-            showInChannel = message.show_in_channel,
-            mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
-            silent = message.silent,
+            showInChannel = message.showInChannel ?: false,
+            mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
+            silent = message.silent ?: false,
             text = message.text,
-            command = message.command,
-            args = message.args,
-            extraData = message.extraData ?: emptyMap(),
+            command = message.custom[DRAFT_COMMAND_KEY] as? String,
+            args = message.custom[DRAFT_ARGS_KEY] as? String,
+            extraData = message.custom
+                .filterKeys { it != DRAFT_COMMAND_KEY && it != DRAFT_ARGS_KEY }
+                .mapNotNull { (key, value) -> value?.let { key to it } }
+                .toMap(),
         )
 
     /**
@@ -604,20 +611,16 @@ internal class DomainMapping(
         ).let(userTransformer::transform)
 
     /**
-     * Transforms [DownstreamMemberInfoDto] to [MemberInfo].
+     * Transforms [ChannelMemberPartialResponse] to [MemberInfo].
+     *
+     * The member custom fields ride at the object root, so the adapter collects them into `custom`.
      */
-    internal fun DownstreamMemberInfoDto.toDomain(): MemberInfo =
+    internal fun ChannelMemberPartialResponse.toDomain(): MemberInfo =
         MemberInfo(
-            channelRole = channel_role,
-            notificationsMuted = notifications_muted ?: false,
-            extraData = memberCustom(),
+            channelRole = channelRole,
+            notificationsMuted = notificationsMuted,
+            extraData = custom.orEmpty().mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
-
-    /**
-     * The member custom data, regardless of whether API v1 inlined it next to the declared fields or API v2 nested it
-     * under `custom`. The two shapes never coexist, so the merge only ever picks up one of them.
-     */
-    private fun DownstreamMemberInfoDto.memberCustom(): Map<String, Any> = extraData + custom.orEmpty()
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(
@@ -1011,13 +1014,15 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [SearchWarningDto] to [SearchWarning].
+     * Transforms [SearchWarningResponse] to [SearchWarning].
      */
-    internal fun SearchWarningDto.toDomain(): SearchWarning = SearchWarning(
-        channelSearchCids = channel_search_cids,
-        channelSearchCount = channel_search_count,
-        warningCode = warning_code,
-        warningDescription = warning_description,
+    internal fun SearchWarningResponse.toDomain(): SearchWarning = SearchWarning(
+        // Always sent today, since the warning only exists when the channel limit is hit, but the
+        // schema marks both optional.
+        channelSearchCids = channelSearchCids.orEmpty(),
+        channelSearchCount = channelSearchCount ?: 0,
+        warningCode = warningCode,
+        warningDescription = warningDescription,
     )
 
     /**

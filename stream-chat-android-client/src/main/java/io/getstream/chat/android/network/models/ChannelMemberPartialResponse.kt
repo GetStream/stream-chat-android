@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.dto
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class SearchWarningDto(
-    val channel_search_cids: List<String>,
-    val channel_search_count: Int,
-    val warning_code: Int,
-    val warning_description: String,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class ChannelMemberPartialResponse(
+    @Json(name = "channel_role")
+    internal val channelRole: String,
+
+    @Json(name = "notifications_muted")
+    internal val notificationsMuted: Boolean,
+
+    @Json(name = "custom")
+    internal val custom: Map<String, Any?>? = emptyMap(),
 )

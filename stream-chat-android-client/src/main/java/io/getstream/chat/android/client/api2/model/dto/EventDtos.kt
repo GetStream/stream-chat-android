@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -449,7 +450,7 @@ internal data class TypingStartEventDto(
     val channel_type: String,
     val channel_id: String,
     val parent_id: String?,
-    val member: DownstreamMemberInfoDto? = null,
+    val member: ChannelMemberPartialResponse? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -461,7 +462,7 @@ internal data class TypingStopEventDto(
     val channel_type: String,
     val channel_id: String,
     val parent_id: String?,
-    val member: DownstreamMemberInfoDto? = null,
+    val member: ChannelMemberPartialResponse? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

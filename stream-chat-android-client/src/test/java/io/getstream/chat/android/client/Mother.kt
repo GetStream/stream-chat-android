@@ -27,9 +27,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
@@ -40,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
@@ -75,10 +72,12 @@ import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.DraftPayloadResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
@@ -126,6 +125,7 @@ import java.util.Date
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
 @Suppress("LargeClass")
@@ -246,7 +246,7 @@ internal object Mother {
     )
 
     fun randomDownstreamDraftDto(
-        message: DownstreamDraftMessageDto = randomDownstreamDraftMessageDto(),
+        message: DraftPayloadResponse = randomDraftPayloadResponse(),
         channelCid: String = randomCID(),
         quotedMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
         parentMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
@@ -265,24 +265,22 @@ internal object Mother {
         metadata = metadata,
     )
 
-    fun randomDownstreamDraftMessageDto(
+    fun randomDraftPayloadResponse(
         id: String = randomString(),
         text: String = randomString(),
-        command: String? = null,
-        args: String? = null,
+        custom: Map<String, Any?> = emptyMap(),
         attachments: List<Attachment>? = emptyList(),
-        mentionedUsers: List<DownstreamUserDto>? = emptyList(),
-        silent: Boolean = randomBoolean(),
-        showInChannel: Boolean = randomBoolean(),
-    ): DownstreamDraftMessageDto = DownstreamDraftMessageDto(
+        mentionedUsers: List<UserResponse>? = emptyList(),
+        silent: Boolean? = randomBoolean(),
+        showInChannel: Boolean? = randomBoolean(),
+    ): DraftPayloadResponse = DraftPayloadResponse(
         id = id,
         text = text,
-        command = command,
-        args = args,
+        custom = custom,
         attachments = attachments,
-        mentioned_users = mentionedUsers,
+        mentionedUsers = mentionedUsers,
         silent = silent,
-        show_in_channel = showInChannel,
+        showInChannel = showInChannel,
     )
 
     fun randomDownstreamMessageDto(
@@ -326,7 +324,7 @@ internal object Mother {
         moderation_details: DownstreamModerationDetailsDto? = null,
         moderation: ModerationV2Response? = null,
         poll: PollResponseData? = null,
-        member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
+        member: ChannelMemberPartialResponse? = randomChannelMemberPartialResponse(),
         deleted_for_me: Boolean? = null,
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamMessageDto {
@@ -674,16 +672,14 @@ internal object Mother {
         archivedAt = randomDate(),
     )
 
-    fun randomDownstreamMemberInfoDto(
-        channelRole: String? = randomString(),
-        notificationsMuted: Boolean? = randomBoolean(),
-        custom: Map<String, Any>? = null,
-        extraData: Map<String, Any> = mapOf(randomString() to randomString()),
-    ): DownstreamMemberInfoDto = DownstreamMemberInfoDto(
-        channel_role = channelRole,
-        notifications_muted = notificationsMuted,
+    fun randomChannelMemberPartialResponse(
+        channelRole: String = randomString(),
+        notificationsMuted: Boolean = randomBoolean(),
+        custom: Map<String, Any>? = mapOf(randomString() to randomString()),
+    ): ChannelMemberPartialResponse = ChannelMemberPartialResponse(
+        channelRole = channelRole,
+        notificationsMuted = notificationsMuted,
         custom = custom,
-        extraData = extraData,
     )
 
     fun randomReadStateResponse(
@@ -850,16 +846,16 @@ internal object Mother {
         presence = presence,
     )
 
-    fun randomSearchWarningDto(
-        channelSearchCids: List<String> = listOf(randomString()),
-        channelSearchCount: Int = randomInt(),
+    fun randomSearchWarningResponse(
+        channelSearchCids: List<String>? = listOf(randomString()),
+        channelSearchCount: Int? = randomInt(),
         warningCode: Int = randomInt(),
         warningDescription: String = randomString(),
-    ): SearchWarningDto = SearchWarningDto(
-        channel_search_cids = channelSearchCids,
-        channel_search_count = channelSearchCount,
-        warning_code = warningCode,
-        warning_description = warningDescription,
+    ): SearchWarningResponse = SearchWarningResponse(
+        channelSearchCids = channelSearchCids,
+        channelSearchCount = channelSearchCount,
+        warningCode = warningCode,
+        warningDescription = warningDescription,
     )
 
     fun randomQueryThreadsRequest(

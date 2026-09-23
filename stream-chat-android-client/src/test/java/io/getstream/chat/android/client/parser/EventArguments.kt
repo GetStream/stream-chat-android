@@ -377,6 +377,9 @@ internal object EventArguments {
         id = "draft-message-id",
         cid = cid,
         text = "Draft text",
+        command = "giphy",
+        args = "cat",
+        extraData = mapOf("flair" to "gold"),
     )
 
     private val reminder = MessageReminder(

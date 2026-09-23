@@ -200,7 +200,7 @@ internal object MessageTestData {
             "member_count": 5,
             "name": "General"
         },
-        "member": {"channel_role": "channel_member"},
+        "member": {"channel_role": "channel_member", "notifications_muted": false},
         "moderation_details": {
             "original_text": "spam_text",
             "action": "MESSAGE_RESPONSE_ACTION_BOUNCE",
