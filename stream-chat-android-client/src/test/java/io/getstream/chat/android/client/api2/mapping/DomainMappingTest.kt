@@ -286,7 +286,17 @@ internal class DomainMappingTest {
         teamsRole = mapOf("red" to "admin"),
         blockedUserIds = listOf("blocked-1"),
         avgResponseTime = 42,
-        custom = mapOf("probe_flair" to "gold"),
+        // Devices arrive as custom data on event users, in the request shape.
+        custom = mapOf(
+            "probe_flair" to "gold",
+            "devices" to listOf(
+                mapOf(
+                    "id" to "token-1",
+                    "push_provider" to "firebase",
+                    "push_provider_name" to "chat-android-firebase",
+                ),
+            ),
+        ),
     )
 
     @Suppress("LongParameterList")
@@ -312,6 +322,10 @@ internal class DomainMappingTest {
         result.teamsRole shouldBeEqualTo mapOf("red" to "admin")
         result.blockedUserIds shouldBeEqualTo listOf("blocked-1")
         result.avgResponseTime shouldBeEqualTo 42L
+        result.devices shouldBeEqualTo listOf(
+            Device(token = "token-1", pushProvider = PushProvider.FIREBASE, providerName = "chat-android-firebase"),
+        )
+        // Promoted to the typed field, so it must not also surface as custom data.
         result.extraData shouldBeEqualTo mapOf("probe_flair" to "gold")
     }
 
