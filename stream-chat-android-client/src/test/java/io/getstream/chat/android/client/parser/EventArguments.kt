@@ -201,6 +201,10 @@ internal object EventArguments {
         extraData = mutableMapOf(),
     )
 
+    // User events carry only the common user fields, so none of the own-user state is set.
+    private val commonFieldsUser = user.copy(invisible = null, unreadChannels = 0, totalUnreadCount = 0)
+    private val privacyFieldsUser = commonFieldsUser.copy(invisible = false)
+
     /**
      * Reactions, polls and members embedded in an event are parsed by the generated models, so their
      * users are the shape the wire sends for anyone but the connected user: no unread counts, devices,
@@ -613,7 +617,7 @@ internal object EventArguments {
         type = EventType.NOTIFICATION_MARK_READ,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -626,7 +630,7 @@ internal object EventArguments {
         type = EventType.NOTIFICATION_MARK_UNREAD,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -715,10 +719,6 @@ internal object EventArguments {
         channelId = channelId,
         parentId = parentMessageId,
     )
-
-    // User events carry only the common user fields, so none of the own-user state is set.
-    private val commonFieldsUser = user.copy(invisible = null, unreadChannels = 0, totalUnreadCount = 0)
-    private val privacyFieldsUser = commonFieldsUser.copy(invisible = false)
 
     private val channelUserBannedEvent = ChannelUserBannedEvent(
         type = EventType.USER_BANNED,
@@ -860,7 +860,7 @@ internal object EventArguments {
         type = EventType.NOTIFICATION_MARK_READ,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         groupedUnreadChannels = groupedUnreadChannels,
     )
     private val connectionErrorEvent = ConnectionErrorEvent(
@@ -886,7 +886,7 @@ internal object EventArguments {
         type = EventType.MESSAGE_DELIVERED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -1056,7 +1056,7 @@ internal object EventArguments {
         type = EventType.USER_MESSAGES_DELETED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,

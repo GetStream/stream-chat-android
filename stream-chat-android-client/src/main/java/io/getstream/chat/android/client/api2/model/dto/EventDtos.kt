@@ -156,7 +156,7 @@ internal data class MessageDeletedEventDto(
 internal data class MessageDeliveredEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val cid: String,
     val channel_type: String,
     val channel_id: String,
@@ -305,7 +305,7 @@ internal data class NotificationInvitedEventDto(
 internal data class NotificationMarkReadEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val cid: String,
     val channel_type: String,
     val channel_id: String,
@@ -323,7 +323,7 @@ internal data class NotificationMarkReadEventDto(
 internal data class NotificationMarkUnreadEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val cid: String,
     val channel_type: String,
     val channel_id: String,
@@ -342,7 +342,7 @@ internal data class NotificationMarkUnreadEventDto(
 internal data class MarkAllReadEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
     val grouped_unread_channels: Map<String, Int>? = null,
@@ -680,7 +680,7 @@ internal data class AIIndicatorStopEventDto(
 internal data class UserMessagesDeletedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val cid: String?,
     val channel_type: String?,
     val channel_id: String?,
