@@ -432,7 +432,7 @@ internal fun createChannelUserBannedEventStringJson() =
     createChatEventStringJson(
         "user.banned",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -445,7 +445,7 @@ internal fun createGlobalUserBannedEventStringJson() =
     createChatEventStringJson(
         "user.banned",
         """
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 
@@ -453,7 +453,7 @@ internal fun createUserDeletedEventStringJson() =
     createChatEventStringJson(
         "user.deleted",
         """
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 
@@ -461,7 +461,7 @@ internal fun createUserPresenceChangedEventStringJson() =
     createChatEventStringJson(
         "user.presence.changed",
         """
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 
@@ -469,7 +469,7 @@ internal fun createUserStartWatchingEventStringJson() =
     createChatEventStringJson(
         "user.watching.start",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -482,7 +482,7 @@ internal fun createUserStopWatchingEventStringJson() =
     createChatEventStringJson(
         "user.watching.stop",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -495,7 +495,7 @@ internal fun createChannelUserUnbannedEventStringJson() =
     createChatEventStringJson(
         "user.unbanned",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -507,7 +507,7 @@ internal fun createGlobalUserUnbannedEventStringJson() =
     createChatEventStringJson(
         "user.unbanned",
         """
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 
@@ -515,7 +515,7 @@ internal fun createUserUpdatedEventStringJson() =
     createChatEventStringJson(
         "user.updated",
         """
-            "user": ${createUserJsonString()}
+            "user": ${createPrivacyFieldsUserJsonString()}
         """.trimIndent(),
     )
 
@@ -809,11 +809,49 @@ private fun createChatEventStringJson(type: String, payload: String?) =
     """.trimIndent()
 
 @Language("JSON")
+// The user shape user events carry (`UserResponseCommonFields`): no own-user state such as devices,
+// mutes or unread counts.
+private fun createCommonFieldsUserJsonString() =
+    """
+        {
+            "id": "bender",
+            "role": "user",
+            "language": "en",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "last_active": "2020-06-29T06:14:28.000Z",
+            "banned": false,
+            "online": true,
+            "image": "https://api.adorable.io/avatars/285/bender.png",
+            "name": "Bender"
+          }
+    """.trimIndent()
+
+// The user shape `user.updated` carries (`UserResponsePrivacyFields`): the common fields plus privacy state.
+private fun createPrivacyFieldsUserJsonString() =
+    """
+        {
+            "id": "bender",
+            "role": "user",
+            "language": "en",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "last_active": "2020-06-29T06:14:28.000Z",
+            "banned": false,
+            "online": true,
+            "invisible": false,
+            "image": "https://api.adorable.io/avatars/285/bender.png",
+            "name": "Bender"
+          }
+    """.trimIndent()
+
+@Language("JSON")
 private fun createUserJsonString() =
     """
         {
             "id": "bender",
             "role": "user",
+            "language": "en",
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
             "last_active": "2020-06-29T06:14:28.000Z",

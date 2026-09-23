@@ -102,6 +102,8 @@ import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
+import io.getstream.chat.android.network.models.UserResponseCommonFields
+import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
@@ -985,6 +987,44 @@ internal object Mother {
         createdAt = createdAt,
         updatedAt = updatedAt,
         expires = expires,
+    )
+
+    fun randomUserResponseCommonFields(
+        id: String = randomString(),
+        role: String = randomString(),
+        language: String = randomString(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): UserResponseCommonFields = UserResponseCommonFields(
+        id = id,
+        role = role,
+        language = language,
+        banned = randomBoolean(),
+        online = randomBoolean(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        name = randomString(),
+        image = randomString(),
+        custom = custom,
+    )
+
+    fun randomUserResponsePrivacyFields(
+        id: String = randomString(),
+        role: String = randomString(),
+        language: String = randomString(),
+        invisible: Boolean? = randomBoolean(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): UserResponsePrivacyFields = UserResponsePrivacyFields(
+        id = id,
+        role = role,
+        language = language,
+        banned = randomBoolean(),
+        online = randomBoolean(),
+        createdAt = randomDate(),
+        updatedAt = randomDate(),
+        name = randomString(),
+        image = randomString(),
+        invisible = invisible,
+        custom = custom,
     )
 
     fun randomUserResponse(

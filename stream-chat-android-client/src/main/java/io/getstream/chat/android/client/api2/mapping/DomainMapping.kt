@@ -136,6 +136,8 @@ import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
+import io.getstream.chat.android.network.models.UserResponseCommonFields
+import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
@@ -389,6 +391,50 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamUserDto] to [User].
      */
+    /** Transforms the user shape most user events carry: common fields only, no own-user state. */
+    internal fun UserResponseCommonFields.toDomain(): User =
+        User(
+            id = id,
+            name = name.orEmpty(),
+            image = image.orEmpty(),
+            role = role,
+            language = language,
+            banned = banned,
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+        ).let(userTransformer::transform)
+
+    /** Transforms the user shape `user.updated` carries: the common fields plus privacy state. */
+    internal fun UserResponsePrivacyFields.toDomain(): User =
+        User(
+            id = id,
+            name = name.orEmpty(),
+            image = image.orEmpty(),
+            role = role,
+            invisible = invisible,
+            privacySettings = privacySettings?.toDomain(),
+            language = language,
+            banned = banned,
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime?.toLong(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+        ).let(userTransformer::transform)
+
     internal fun DownstreamUserDto.toDomain(): User =
         User(
             id = id,
