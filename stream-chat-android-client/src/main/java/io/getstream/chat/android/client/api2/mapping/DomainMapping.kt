@@ -394,9 +394,6 @@ internal class DomainMapping(
         poll?.updatedAt,
     ).maxBy { it.time }
 
-    /**
-     * Transforms [DownstreamUserDto] to [User].
-     */
     /** Transforms the user shape most user events carry: common fields only, no own-user state. */
     internal fun UserResponseCommonFields.toDomain(): User =
         User(
@@ -447,6 +444,9 @@ internal class DomainMapping(
                 .toMutableMap(),
         ).let(userTransformer::transform)
 
+    /**
+     * Transforms [DownstreamUserDto] to [User].
+     */
     internal fun DownstreamUserDto.toDomain(): User =
         User(
             id = id,
