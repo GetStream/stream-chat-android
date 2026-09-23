@@ -155,6 +155,12 @@ internal const val EMOJI_CODE_KEY = "emoji_code"
 internal const val DRAFT_COMMAND_KEY = "command"
 internal const val DRAFT_ARGS_KEY = "args"
 
+/**
+ * Event users carry devices only as custom data, in the request shape clients send. The hand-written DTO
+ * declared the key, so it has always been read as typed devices rather than surfacing in extraData.
+ */
+internal const val EVENT_USER_DEVICES_KEY = "devices"
+
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
     val currentUserIdProvider: () -> UserId?,
@@ -446,11 +452,14 @@ internal class DomainMapping(
             deactivatedAt = deactivatedAt,
             updatedAt = updatedAt,
             lastActive = lastActive,
+            devices = custom.eventUserDevices(),
             teams = teams,
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+                .minus(EVENT_USER_DEVICES_KEY)
+                .toMutableMap(),
         ).let(userTransformer::transform)
 
     /** Transforms the user shape `user.updated` carries: the common fields plus privacy state. */
@@ -469,11 +478,14 @@ internal class DomainMapping(
             deactivatedAt = deactivatedAt,
             updatedAt = updatedAt,
             lastActive = lastActive,
+            devices = custom.eventUserDevices(),
             teams = teams,
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+                .minus(EVENT_USER_DEVICES_KEY)
+                .toMutableMap(),
         ).let(userTransformer::transform)
 
     internal fun DownstreamUserDto.toDomain(): User =
@@ -968,6 +980,17 @@ internal class DomainMapping(
         pushProvider = PushProvider.fromKey(pushProvider),
         providerName = pushProviderName,
     )
+
+    private fun Map<String, Any?>.eventUserDevices(): List<Device> =
+        (this[EVENT_USER_DEVICES_KEY] as? List<*>).orEmpty().mapNotNull { raw ->
+            val device = raw as? Map<*, *> ?: return@mapNotNull null
+            val token = device["id"] as? String ?: return@mapNotNull null
+            Device(
+                token = token,
+                pushProvider = PushProvider.fromKey(device["push_provider"] as? String ?: ""),
+                providerName = device["push_provider_name"] as? String,
+            )
+        }
 
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
