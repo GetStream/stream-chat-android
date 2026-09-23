@@ -1006,9 +1006,10 @@ private fun createReactionJsonString() =
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "type": "type",
             "score": 3,
-            "user": ${createUserJsonString()},
+            "user": ${createNestedUserJsonString()},
             "user_id": "bender",
-            "created_at": "2020-06-29T06:14:28.000Z"
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 
@@ -1077,7 +1078,10 @@ private fun createDraftJsonString() =
         {
             "message": {
                 "id": "draft-message-id",
-                "text": "Draft text"
+                "text": "Draft text",
+                "command": "giphy",
+                "args": "cat",
+                "flair": "gold"
             },
             "channel_cid": "channelType:channelId"
         }

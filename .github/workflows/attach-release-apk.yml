@@ -19,9 +19,18 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event.release.tag_name }}
-          fetch-depth: 0
           persist-credentials: false
       - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - name: Resolve build identity
+        id: build_identity
+        run: |
+          # Minutes since 2020-09-13. The same package is published from more than one branch,
+          # so the version code has to grow with build time. A per-branch commit count can go
+          # backwards and Android rejects that as a downgrade.
+          {
+            echo "version_code=$(( ($(date -u +%s) - 1600000000) / 60 ))"
+            echo "sha=$(git rev-parse --short=7 HEAD)"
+          } >> "$GITHUB_OUTPUT"
       - name: Prepare signing environment
         env:
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
@@ -33,7 +42,11 @@ jobs:
           echo "$RELEASE_KEYSTORE_PROPERTIES" > .sign/keystore.properties.asc
           gpg -d --passphrase "$PASSPHRASE" --batch .sign/keystore.properties.asc > .sign/keystore.properties
       - name: Assemble Compose sample (demo/release)
-        run: bash ./gradlew :stream-chat-android-compose-sample:assembleDemoRelease --stacktrace
+        run: |
+          bash ./gradlew :stream-chat-android-compose-sample:assembleDemoRelease \
+            -PsampleAppVersionCode=${{ steps.build_identity.outputs.version_code }} \
+            -PsampleAppBuildSha=${{ steps.build_identity.outputs.sha }} \
+            --stacktrace
       - name: Attach APK to release under a constant name
         env:
           GH_TOKEN: ${{ github.token }}

@@ -34,6 +34,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class SendMessageListenerDatabaseTest {
 
@@ -88,7 +89,12 @@ internal class SendMessageListenerDatabaseTest {
     fun `when send fails because the message id already exists, message should be stored as completed`() = runTest {
         whenever(messageRepository.selectMessage(any())) doReturn null
 
-        val testMessage = randomMessage(syncStatus = SyncStatus.IN_PROGRESS)
+        val createdLocallyAt = Date()
+        val testMessage = randomMessage(
+            syncStatus = SyncStatus.IN_PROGRESS,
+            createdAt = null,
+            createdLocallyAt = createdLocallyAt,
+        )
         val duplicateError = Error.NetworkError(
             message = "a message with ID ${testMessage.id} already exists",
             serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
@@ -104,7 +110,9 @@ internal class SendMessageListenerDatabaseTest {
 
         verify(messageRepository).insertMessage(
             argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdAt == createdLocallyAt
             },
         )
     }

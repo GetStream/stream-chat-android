@@ -61,8 +61,9 @@ internal class SendMessageListenerDatabase(
         when (result) {
             is Result.Success -> handleSendMessageSuccess(cid, result.value)
             is Result.Failure -> if (result.value.isDuplicateMessageError()) {
-                // The message was delivered by an earlier attempt whose response was lost.
-                handleSendMessageSuccess(cid, message)
+                // The message was delivered by an earlier attempt whose response was lost. Its reply never
+                // arrived, so the local date stands in until the next channel query brings the server copy.
+                handleSendMessageSuccess(cid, message.copy(createdAt = message.createdAt ?: message.createdLocallyAt))
             } else {
                 handleSendMessageFailure(message, result.value)
             }

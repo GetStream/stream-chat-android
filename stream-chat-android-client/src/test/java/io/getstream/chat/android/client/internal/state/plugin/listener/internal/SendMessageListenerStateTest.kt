@@ -193,7 +193,12 @@ internal class SendMessageListenerStateTest {
 
     @Test
     fun `when send fails because the message id already exists, message should be marked as completed`() = runTest {
-        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
+        val createdLocallyAt = Date()
+        val testMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdAt = null,
+            createdLocallyAt = createdLocallyAt,
+        )
         val duplicateError = Error.NetworkError(
             message = "a message with ID ${testMessage.id} already exists",
             serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
@@ -209,7 +214,9 @@ internal class SendMessageListenerStateTest {
 
         verify(channelLogic).upsertMessage(
             argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdAt == createdLocallyAt
             },
         )
     }

@@ -16,19 +16,32 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
+      - name: Resolve build identity
+        id: build_identity
+        run: |
+          # Minutes since 2020-09-13. The same package is published from more than one branch,
+          # so the version code has to grow with build time. A per-branch commit count can go
+          # backwards and Android rejects that as a downgrade.
+          {
+            echo "version_code=$(( ($(date -u +%s) - 1600000000) / 60 ))"
+            echo "sha=$(git rev-parse --short=7 HEAD)"
+          } >> "$GITHUB_OUTPUT"
       - name: Prepare environment
         env:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
           RELEASE_KEYSTORE_PROPERTIES: ${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}
         run: |
-          git fetch --unshallow
           echo "${{ env.RELEASE_KEYSTORE }}" > .sign/release.keystore.asc
           gpg -d --passphrase "${{ env.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
           echo "${{ env.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
           gpg -d --passphrase "${{ env.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
       - name: Assemble
-        run: ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
+        run: |
+          ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease \
+            -PsampleAppVersionCode=${{ steps.build_identity.outputs.version_code }} \
+            -PsampleAppBuildSha=${{ steps.build_identity.outputs.sha }} \
+            --stacktrace
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:

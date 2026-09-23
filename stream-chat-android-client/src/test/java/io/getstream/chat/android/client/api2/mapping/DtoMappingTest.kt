@@ -93,6 +93,8 @@ internal class DtoMappingTest {
             extraData = mapOf("draftKey" to "draftValue"),
             attachments = listOf(randomAttachment()),
             mentionedUsers = listOf(randomUser()),
+            command = "giphy",
+            args = "cat",
         )
         val mapping = Fixture().get()
 
@@ -108,9 +110,19 @@ internal class DtoMappingTest {
             quotedMessageId = message.replyMessage?.id,
             showInChannel = message.showInChannel,
             silent = message.silent,
-            custom = message.extraData,
+            custom = message.extraData + mapOf("command" to "giphy", "args" to "cat"),
         )
         request shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `DraftMessage without an active command carries no command custom data`() {
+        val message = randomDraftMessage(extraData = mapOf("draftKey" to "draftValue"))
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { message.toMessageRequest() }
+
+        request.custom shouldBeEqualTo mapOf("draftKey" to "draftValue")
     }
 
     @Test

@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
@@ -148,6 +147,10 @@ import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemb
 
 /** `emoji_code` is sent as custom data rather than a declared field, in both directions. */
 internal const val EMOJI_CODE_KEY = "emoji_code"
+
+/** Drafts have no declared command fields, so both travel as custom data in both directions. */
+internal const val DRAFT_COMMAND_KEY = "command"
+internal const val DRAFT_ARGS_KEY = "args"
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -338,18 +341,21 @@ internal class DomainMapping(
 
     internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
-            attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
+            attachments = message.attachments?.map { it.toDomain() }.orEmpty(),
             cid = channel_cid,
             id = message.id,
             parentId = parent_message?.id ?: parent_id,
             replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
-            showInChannel = message.show_in_channel,
-            mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
-            silent = message.silent,
+            showInChannel = message.showInChannel ?: false,
+            mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
+            silent = message.silent ?: false,
             text = message.text,
-            command = message.command,
-            args = message.args,
-            extraData = message.extraData ?: emptyMap(),
+            command = message.custom[DRAFT_COMMAND_KEY] as? String,
+            args = message.custom[DRAFT_ARGS_KEY] as? String,
+            extraData = message.custom
+                .filterKeys { it != DRAFT_COMMAND_KEY && it != DRAFT_ARGS_KEY }
+                .mapNotNull { (key, value) -> value?.let { key to it } }
+                .toMap(),
         )
 
     /**
@@ -494,22 +500,6 @@ internal class DomainMapping(
             .mapNotNull { (key, value) -> value?.let { key to it } }
             .toMap(),
     )
-
-    /**
-     * Transforms [DownstreamReactionDto] to [Reaction].
-     */
-    internal fun DownstreamReactionDto.toDomain(): Reaction =
-        Reaction(
-            createdAt = created_at,
-            messageId = message_id,
-            score = score,
-            type = type,
-            updatedAt = updated_at,
-            user = user?.toDomain(),
-            userId = user_id,
-            emojiCode = emoji_code,
-            extraData = extraData.toMutableMap(),
-        )
 
     /**
      * Transforms [ReactionGroupResponse] to [ReactionGroup].

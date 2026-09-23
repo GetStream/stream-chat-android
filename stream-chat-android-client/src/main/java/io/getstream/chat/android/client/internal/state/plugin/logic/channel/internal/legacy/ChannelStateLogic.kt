@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.client.utils.message.isPinExpired
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isReply
@@ -384,7 +385,7 @@ internal class ChannelStateLogic(
         }
         messages.filter { it.isReply() }.forEach(::addQuotedMessage)
         when (shouldRefreshMessages) {
-            true -> mutableState.setMessages(messages)
+            true -> mutableState.setMessages(messages + localOnlyMessagesMissingFrom(messages))
             else -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
 
@@ -396,6 +397,17 @@ internal class ChannelStateLogic(
             }
         }
         messages.forEach { it.storePoll() }
+    }
+
+    /**
+     * Local only messages are never part of a server response, so a refresh would drop them from the list
+     * even though nothing has replaced them. Unsent and failed messages would come back on the next load
+     * from the database, ephemeral ones are never persisted and would be lost outright.
+     */
+    private fun localOnlyMessagesMissingFrom(messages: List<Message>): List<Message> {
+        val serverMessageIds = messages.mapTo(mutableSetOf(), Message::id)
+        return mutableState.messageList.value
+            .filter { it.id !in serverMessageIds && it.isLocalOnly() }
     }
 
     /**

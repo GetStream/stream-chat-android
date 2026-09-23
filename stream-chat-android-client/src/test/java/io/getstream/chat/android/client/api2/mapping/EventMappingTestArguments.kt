@@ -209,7 +209,7 @@ internal object EventMappingTestArguments {
     private val GROUPED_UNREAD_CHANNELS = mapOf("direct" to positiveRandomInt(), "support" to positiveRandomInt())
     private val UNREAD_THREADS = positiveRandomInt()
     private val UNREAD_THREAD_MESSAGES = positiveRandomInt()
-    private val REACTION = Mother.randomDownstreamReactionDto()
+    private val REACTION = Mother.randomReactionResponse()
     private val WATCHER_COUNT = positiveRandomInt()
     private val POLL = Mother.randomPollResponseData()
     private val POLL_VOTE = Mother.randomPollVoteResponseData()

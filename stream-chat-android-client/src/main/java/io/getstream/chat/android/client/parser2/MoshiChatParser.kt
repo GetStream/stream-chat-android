@@ -40,10 +40,10 @@ import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapte
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamModerationDetailsDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadInfoDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DraftPayloadResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
@@ -94,7 +94,6 @@ internal class MoshiChatParser(
             .add(DownstreamMessageDtoAdapter)
             .add(DownstreamModerationDetailsDtoAdapter)
             .add(DownstreamChannelDtoAdapter)
-            .add(DownstreamReactionDtoAdapter)
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
@@ -123,6 +122,7 @@ internal class MoshiChatParser(
             .add(PollOptionResponseDataAdapter)
             .add(PollResponseDataAdapter)
             .add(ReactionResponseAdapter)
+            .add(DraftPayloadResponseAdapter)
             .add(
                 CreatePollRequest.VotingVisibility::class.java,
                 CreatePollRequest.VotingVisibility.VotingVisibilityAdapter(),

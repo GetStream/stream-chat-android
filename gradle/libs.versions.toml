@@ -43,7 +43,6 @@ firebaseAnalytics = "22.1.2"
 firebaseCrashlytics = "19.2.1"
 firebaseCrashlyticsPlugin = "3.0.2"
 firebaseMessaging = "24.1.0"
-gitversioner = "0.5.0"
 googleServices = "4.4.2"
 gradleVersionsPlugin = "0.51.0"
 huaweiPush = "6.11.0.300"
@@ -232,7 +231,6 @@ androidx-navigation = { id = "androidx.navigation.safeargs.kotlin", version.ref 
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinBinaryValidator"}
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detektPlugin"}
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin"}
-gitversioner = { id = "com.pascalwelsch.gitversioner", version.ref = "gitversioner"}
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices"}
 gradle-versions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersionsPlugin"}
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}

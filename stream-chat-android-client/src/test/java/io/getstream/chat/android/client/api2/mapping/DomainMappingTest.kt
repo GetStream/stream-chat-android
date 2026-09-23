@@ -31,16 +31,15 @@ import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
-import io.getstream.chat.android.client.Mother.randomDownstreamDraftMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
+import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
 import io.getstream.chat.android.client.Mother.randomModerationV2Response
@@ -237,9 +236,14 @@ internal class DomainMappingTest {
     @Test
     fun `DownstreamDraftDto is correctly mapped to DraftMessage`() {
         val draftMessageResponse = randomDownstreamDraftDto(
-            message = randomDownstreamDraftMessageDto(
-                command = "giphy",
-                args = "cat",
+            message = randomDraftPayloadResponse(
+                custom = mapOf("command" to "giphy", "args" to "cat", "flair" to "gold"),
+                // Pinned rather than random: an empty list or a default flag would let a mapper
+                // that drops the field pass.
+                attachments = listOf(Mother.randomAttachment()),
+                mentionedUsers = listOf(randomUserResponse()),
+                silent = true,
+                showInChannel = true,
             ),
         )
         val sut = Fixture()
@@ -251,15 +255,13 @@ internal class DomainMappingTest {
                 text = draftMessageResponse.message.text,
                 parentId = draftMessageResponse.parent_message?.id,
                 replyMessage = draftMessageResponse.quoted_message?.toDomain(),
-                attachments = with(sut) {
-                    draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList()
-                },
-                mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
-                extraData = draftMessageResponse.message.extraData ?: emptyMap(),
-                silent = draftMessageResponse.message.silent,
-                showInChannel = draftMessageResponse.message.show_in_channel,
-                command = draftMessageResponse.message.command,
-                args = draftMessageResponse.message.args,
+                attachments = draftMessageResponse.message.attachments?.map { it.toDomain() }.orEmpty(),
+                mentionedUsersIds = draftMessageResponse.message.mentionedUsers?.map { it.id }.orEmpty(),
+                extraData = mapOf("flair" to "gold"),
+                silent = true,
+                showInChannel = true,
+                command = "giphy",
+                args = "cat",
             )
         }
 
@@ -268,6 +270,20 @@ internal class DomainMappingTest {
         }
 
         assertEquals(expectedMappedDraftMessage, result)
+    }
+
+    @Test
+    fun `DownstreamDraftDto without command custom data maps to a plain DraftMessage`() {
+        val draftMessageResponse = randomDownstreamDraftDto(
+            message = randomDraftPayloadResponse(custom = mapOf("flair" to "gold")),
+        )
+        val sut = Fixture().get()
+
+        val result = with(sut) { draftMessageResponse.toDomain() }
+
+        assertNull(result.command)
+        assertNull(result.args)
+        assertEquals(mapOf("flair" to "gold"), result.extraData)
     }
 
     @Test
@@ -583,28 +599,6 @@ internal class DomainMappingTest {
             AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
             appSettings.app.imageUploadConfig.sizeLimitInBytes,
         )
-    }
-
-    @Test
-    fun `DownstreamReactionDto is correctly mapped to Reaction`() {
-        val downstreamReactionDto = randomDownstreamReactionDto()
-        val sut = Fixture().get()
-        val reaction = with(sut) {
-            downstreamReactionDto.toDomain()
-        }
-        val expected = Reaction(
-            messageId = downstreamReactionDto.message_id,
-            type = downstreamReactionDto.type,
-            score = downstreamReactionDto.score,
-            user = with(sut) { downstreamReactionDto.user?.toDomain() },
-            userId = downstreamReactionDto.user?.id.orEmpty(),
-            createdAt = downstreamReactionDto.created_at,
-            updatedAt = downstreamReactionDto.updated_at,
-            extraData = downstreamReactionDto.extraData,
-            deletedAt = null,
-            emojiCode = downstreamReactionDto.emoji_code,
-        )
-        assertEquals(expected, reaction)
     }
 
     @Test
@@ -1247,7 +1241,7 @@ internal class DomainMappingTest {
             // Intentionally unsorted to validate sortedByLastReply() in mapping.
             threadParticipants = listOf(participant2Dto, participant1Dto),
             draft = randomDownstreamDraftDto(
-                message = randomDownstreamDraftMessageDto(text = "Draft message"),
+                message = randomDraftPayloadResponse(text = "Draft message"),
                 channelCid = "messaging:123",
             ),
         )
