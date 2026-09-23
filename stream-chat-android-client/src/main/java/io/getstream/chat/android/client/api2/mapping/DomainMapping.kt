@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -142,6 +141,7 @@ import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteRespon
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
 import io.getstream.chat.android.network.models.Role as RoleDto
+import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
 import io.getstream.chat.android.network.models.ThreadParticipant as ThreadParticipantDto
 import io.getstream.chat.android.network.models.UserGroupMember as UserGroupMemberDto
 
@@ -945,13 +945,15 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [SearchWarningDto] to [SearchWarning].
+     * Transforms [SearchWarningResponse] to [SearchWarning].
      */
-    internal fun SearchWarningDto.toDomain(): SearchWarning = SearchWarning(
-        channelSearchCids = channel_search_cids,
-        channelSearchCount = channel_search_count,
-        warningCode = warning_code,
-        warningDescription = warning_description,
+    internal fun SearchWarningResponse.toDomain(): SearchWarning = SearchWarning(
+        // Always sent today, since the warning only exists when the channel limit is hit, but the
+        // schema marks both optional.
+        channelSearchCids = channelSearchCids.orEmpty(),
+        channelSearchCount = channelSearchCount ?: 0,
+        warningCode = warningCode,
+        warningDescription = warningDescription,
     )
 
     /**
