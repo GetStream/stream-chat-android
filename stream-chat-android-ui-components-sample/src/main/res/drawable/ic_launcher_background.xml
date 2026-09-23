@@ -14,6 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<resources>
-    <color name="ic_launcher_background">#000000</color>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:startColor="#0A86FF"
+        android:endColor="#005FFF"
+        android:angle="270" />
+</shape>
