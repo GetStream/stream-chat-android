@@ -959,10 +959,11 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [SearchWarningDto] to [SearchWarning].
+     * Transforms [SearchWarningResponse] to [SearchWarning].
      */
     internal fun SearchWarningResponse.toDomain(): SearchWarning = SearchWarning(
-        // The wire omits both of these when the search was not scoped to channels.
+        // Always sent today, since the warning only exists when the channel limit is hit, but the
+        // schema marks both optional.
         channelSearchCids = channelSearchCids.orEmpty(),
         channelSearchCount = channelSearchCount ?: 0,
         warningCode = warningCode,

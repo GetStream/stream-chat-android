@@ -1227,9 +1227,9 @@ internal class DomainMappingTest {
         assertEquals(expected, searchWarning)
     }
 
-    /** The wire omits both when the search was not scoped to channels. */
+    /** The schema marks both optional, although the backend currently always sends them with the warning. */
     @Test
-    fun `SearchWarning without channel scoping maps to empty cids and a zero count`() {
+    fun `SearchWarning with the optional fields absent maps to empty cids and a zero count`() {
         val response = randomSearchWarningResponse(channelSearchCids = null, channelSearchCount = null)
         val sut = Fixture().get()
         val searchWarning = with(sut) { response.toDomain() }
