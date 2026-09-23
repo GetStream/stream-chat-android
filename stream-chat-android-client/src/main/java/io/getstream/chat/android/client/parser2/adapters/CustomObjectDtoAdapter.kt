@@ -57,21 +57,6 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
      * [Value] into an extraValue field, and then parses a [Value] instance
      * from this transformed data.
      */
-    /**
-     * Collects the value already sitting under the overflow property name, returning whether it was
-     * merged. A model whose overflow property is also a real wire field, as the generated `custom` is,
-     * has its contents merged so that nesting and root-inlining produce the same map; anything else is
-     * kept whole under its own name.
-     */
-    private fun collectExplicitExtraData(explicit: Any?, into: MutableMap<String, Any>): Boolean {
-        val nested = (explicit as? Map<*, *>)?.takeIf { mergesNestedExtraData }
-            ?: return false.also { if (explicit != null) into[extraDataPropertyName] = explicit }
-        nested.forEach { (key, value) ->
-            if (key is String && value != null) into[key] = value
-        }
-        return true
-    }
-
     protected fun parseWithExtraData(
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
@@ -107,6 +92,23 @@ internal open class CustomObjectDtoAdapter<Value : Any>(
 
         // Parse output value object from the transformed Map
         return valueAdapter.fromJsonValue(map)!!
+    }
+
+    /**
+     * Collects the value already sitting under the overflow property name, returning whether it was
+     * merged. A model whose overflow property is also a real wire field, as the generated `custom` is,
+     * has its contents merged so that nesting and root-inlining produce the same map; anything else is
+     * kept whole under its own name.
+     */
+    private fun collectExplicitExtraData(explicit: Any?, into: MutableMap<String, Any>): Boolean {
+        if (!mergesNestedExtraData || explicit !is Map<*, *>) {
+            if (explicit != null) into[extraDataPropertyName] = explicit
+            return false
+        }
+        explicit.forEach { (key, value) ->
+            if (key is String && value != null) into[key] = value
+        }
+        return true
     }
 
     /**
