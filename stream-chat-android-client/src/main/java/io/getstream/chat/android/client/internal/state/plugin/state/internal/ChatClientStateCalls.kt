@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.internal.state.extensions.internal.logic
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.identifier
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.Call
@@ -100,10 +101,12 @@ internal class ChatClientStateCalls(
         request: QueryChannelRequest,
     ): ChannelState {
         logger.v { "[queryChannel] cid: $channelType:$channelId, request: $request" }
-        chatClient.queryChannel(channelType, channelId, request).launch(scope)
-        return deferredState
+        val state = deferredState
             .await()
             .channel(channelType, channelId)
+        (state as? ChannelStateLegacyImpl)?.setLoadingIfEmpty()
+        chatClient.queryChannel(channelType, channelId, request).launch(scope)
+        return state
     }
 
     /** Reference request of the watch channel query. */

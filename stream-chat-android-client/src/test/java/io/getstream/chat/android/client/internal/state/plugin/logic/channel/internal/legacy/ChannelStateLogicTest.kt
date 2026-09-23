@@ -257,6 +257,26 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `given channel data arrives, loading should end once the data is in the state`() {
+        val channel = randomChannel()
+
+        channelStateLogic.updateDataForChannel(channel, messageLimit = 30)
+
+        inOrder(mutableState) {
+            verify(mutableState).setChannelData(any())
+            verify(mutableState).upsertMembers(channel.members)
+            verify(mutableState).setLoading(false)
+        }
+    }
+
+    @Test
+    fun `given the query fails, loading should end`() {
+        channelStateLogic.propagateQueryError(Error.GenericError(randomString()))
+
+        verify(mutableState).setLoading(false)
+    }
+
+    @Test
     fun `given inside search should not upsert messages when messages are not coming from scroll update`() {
         _insideSearch.value = true
 
