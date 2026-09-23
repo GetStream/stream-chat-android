@@ -218,7 +218,7 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun sendReactionInput() = listOf(
         Arguments.of(
-            RetroSuccess(ReactionResponse(Mother.randomDownstreamReactionDto())).toRetrofitCall(),
+            RetroSuccess(ReactionResponse(Mother.randomReactionResponse())).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(RetroError<ReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),

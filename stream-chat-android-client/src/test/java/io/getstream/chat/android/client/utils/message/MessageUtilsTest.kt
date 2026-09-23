@@ -578,6 +578,16 @@ internal class MessageUtilsTest {
     }
 
     @Test
+    fun `isLocalOnly returns true for a completed message without a creation date`() {
+        val message = randomMessage(
+            syncStatus = SyncStatus.COMPLETED,
+            type = MessageType.REGULAR,
+            createdAt = null,
+        )
+        message.isLocalOnly() shouldBeEqualTo true
+    }
+
+    @Test
     fun `shouldDeleteRemote should return Failure for moderation bounce message`() {
         val currentUserId = randomString()
         val message = randomMessage(
@@ -624,6 +634,17 @@ internal class MessageUtilsTest {
         val message = randomMessage(
             type = MessageType.REGULAR,
             syncStatus = SyncStatus.FAILED_PERMANENTLY,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for a completed message without a creation date`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.COMPLETED,
+            createdAt = null,
         )
         val result = message.shouldDeleteRemote(randomString())
         assertTrue(result is Result.Failure)

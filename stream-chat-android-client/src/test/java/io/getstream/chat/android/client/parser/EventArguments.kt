@@ -322,9 +322,10 @@ internal object EventArguments {
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "type",
         score = 3,
-        user = user,
+        user = nestedUser,
         userId = "bender",
         createdAt = date,
+        updatedAt = date,
     )
 
     private val poll = Poll(
@@ -371,6 +372,9 @@ internal object EventArguments {
         id = "draft-message-id",
         cid = cid,
         text = "Draft text",
+        command = "giphy",
+        args = "cat",
+        extraData = mapOf("flair" to "gold"),
     )
 
     private val reminder = MessageReminder(

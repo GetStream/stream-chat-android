@@ -42,6 +42,33 @@ internal class MessageRequestAdapterTest {
     }
 
     @Test
+    fun `Serialize JSON message with an active command`() {
+        val request = MessageRequest(
+            id = "draft-id",
+            text = "cat",
+            custom = mapOf("command" to "giphy", "args" to "cat"),
+        )
+
+        val jsonString = parser.toJson(request)
+
+        jsonString.shouldEqualJson(
+            """
+            {
+              "id": "draft-id",
+              "text": "cat",
+              "attachments": [],
+              "mentioned_group_ids": [],
+              "mentioned_roles": [],
+              "mentioned_users": [],
+              "restricted_visibility": [],
+              "command": "giphy",
+              "args": "cat"
+            }
+            """.trimIndent(),
+        )
+    }
+
+    @Test
     fun `Can't parse message request`() {
         invoking {
             parser.fromJson(upstreamJson, MessageRequest::class.java)
