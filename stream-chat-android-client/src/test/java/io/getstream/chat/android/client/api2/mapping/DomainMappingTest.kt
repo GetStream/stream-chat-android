@@ -141,6 +141,7 @@ import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -231,6 +232,70 @@ internal class DomainMappingTest {
         assertEquals(listOf("admin", "moderator"), result.mentionedRoles)
         assertEquals(listOf("g1", "g2"), result.mentionedGroups.map(UserGroup::id))
         assertEquals(listOf("platform", "support"), result.mentionedGroups.map(UserGroup::name))
+    }
+
+    /** Every field non-default: a default would let a mapper that drops it pass. */
+    private fun fullyPopulatedOwnUserResponse() = Mother.randomOwnUserResponse(
+        id = "jaewoong",
+        role = "admin",
+        language = "en",
+        banned = true,
+        invisible = true,
+        online = true,
+        totalUnreadCount = 7,
+        unreadChannels = 3,
+        unreadThreads = 2,
+        name = "Jaewoong",
+        image = "https://example.com/a.png",
+        devices = listOf(Mother.randomDeviceResponse()),
+        mutes = listOf(Mother.randomUserMuteResponse()),
+        channelMutes = listOf(
+            io.getstream.chat.android.network.models.ChannelMute(createdAt = randomDate(), updatedAt = randomDate()),
+        ),
+        teams = listOf("red"),
+        custom = mapOf("probe_flair" to "gold"),
+    ).copy(
+        deactivatedAt = randomDate(),
+        lastActive = randomDate(),
+        teamsRole = mapOf("red" to "admin"),
+        blockedUserIds = listOf("blocked-1"),
+        avgResponseTime = 42,
+        privacySettings = io.getstream.chat.android.network.models.PrivacySettingsResponse(),
+        pushPreferences = io.getstream.chat.android.network.models.PushPreferencesResponse(chatLevel = "all"),
+    )
+
+    @Test
+    fun `OwnUserResponse is correctly mapped to User`() {
+        val response = fullyPopulatedOwnUserResponse()
+        val sut = Fixture().get()
+
+        val result = with(sut) { response.toDomain() }
+
+        result.id shouldBeEqualTo "jaewoong"
+        result.role shouldBeEqualTo "admin"
+        result.language shouldBeEqualTo "en"
+        result.name shouldBeEqualTo "Jaewoong"
+        result.image shouldBeEqualTo "https://example.com/a.png"
+        result.banned shouldBeEqualTo true
+        result.invisible shouldBeEqualTo true
+        result.online shouldBeEqualTo true
+        result.createdAt shouldBeEqualTo response.createdAt
+        result.updatedAt shouldBeEqualTo response.updatedAt
+        result.deactivatedAt shouldBeEqualTo response.deactivatedAt
+        result.lastActive shouldBeEqualTo response.lastActive
+        result.totalUnreadCount shouldBeEqualTo 7
+        result.unreadChannels shouldBeEqualTo 3
+        result.unreadThreads shouldBeEqualTo 2
+        result.teams shouldBeEqualTo listOf("red")
+        result.teamsRole shouldBeEqualTo mapOf("red" to "admin")
+        result.blockedUserIds shouldBeEqualTo listOf("blocked-1")
+        result.avgResponseTime shouldBeEqualTo 42L
+        result.devices.size shouldBeEqualTo 1
+        result.mutes.size shouldBeEqualTo 1
+        result.channelMutes.size shouldBeEqualTo 1
+        result.privacySettings shouldNotBeEqualTo null
+        result.pushPreference shouldNotBeEqualTo null
+        result.extraData shouldBeEqualTo mapOf("probe_flair" to "gold")
     }
 
     @Test

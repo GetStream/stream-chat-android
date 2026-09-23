@@ -120,6 +120,7 @@ import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
+import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -389,6 +390,39 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamUserDto] to [User].
      */
+    /**
+     * Transforms the own-user payload the connection and mute-notification events carry. It is the same
+     * domain [User] as any other user, with the own-user-only counters and mutes filled in.
+     */
+    internal fun OwnUserResponse.toDomain(): User =
+        User(
+            id = id,
+            name = name ?: "",
+            image = image ?: "",
+            role = role,
+            invisible = invisible,
+            privacySettings = privacySettings?.toDomain(),
+            language = language,
+            banned = banned,
+            devices = devices.map { it.toDomain() },
+            online = online,
+            createdAt = createdAt,
+            deactivatedAt = deactivatedAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            unreadThreads = unreadThreads,
+            mutes = mutes.map { it.toDomain() },
+            teams = teams,
+            teamsRole = teamsRole.orEmpty(),
+            channelMutes = channelMutes.map { it.toDomain() },
+            blockedUserIds = blockedUserIds.orEmpty(),
+            avgResponseTime = avgResponseTime?.toLong(),
+            pushPreference = pushPreferences?.toDomain(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+        ).let(userTransformer::transform)
+
     internal fun DownstreamUserDto.toDomain(): User =
         User(
             id = id,
