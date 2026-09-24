@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
@@ -26,7 +28,10 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -743,6 +748,41 @@ internal class ChannelMutableStateTests {
         val userRead = channelState.reads.value.find { it.user.id == user.id }
         assertEquals(delivered, userRead)
     }
+
+    @Test
+    fun `setLoadingIfEmpty on a channel without data should show the loading state`() = runTest {
+        channelState.setLoadingIfEmpty()
+
+        channelState.loading.value `should be equal to` true
+        channelState.messagesState.value `should be equal to` MessagesState.Loading
+    }
+
+    @Test
+    fun `setLoadingIfEmpty on a channel with data should not show the loading state`() = runTest {
+        channelState.setChannelData(ChannelData(type = CHANNEL_TYPE, id = CHANNEL_ID))
+
+        channelState.setLoadingIfEmpty()
+
+        channelState.loading.value `should be equal to` false
+        channelState.messagesState.value `should be equal to` MessagesState.OfflineNoResults
+    }
+
+    @Test
+    fun `messagesState should not report no results while the loaded messages are still propagating`() =
+        runTest(StandardTestDispatcher(testCoroutines.dispatcher.scheduler)) {
+            val emissions = mutableListOf<MessagesState>()
+            backgroundScope.launch { channelState.messagesState.collect { emissions += it } }
+            channelState.setLoadingIfEmpty()
+            runCurrent()
+
+            channelState.setMessages(createMessages(3))
+            channelState.setLoading(false)
+            runCurrent()
+
+            val afterLoading = emissions.dropWhile { it != MessagesState.Loading }
+            afterLoading.contains(MessagesState.OfflineNoResults) `should be equal to` false
+            (afterLoading.last() is MessagesState.Result) `should be equal to` true
+        }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
         require(pinnedMessages.value.size == size) {

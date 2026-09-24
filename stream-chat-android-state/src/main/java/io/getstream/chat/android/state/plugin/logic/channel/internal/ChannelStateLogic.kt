@@ -664,6 +664,7 @@ internal class ChannelStateLogic(
 
         mutableState.setChannelConfig(channel.config)
 
+        mutableState.setLoading(false)
         mutableState.setLoadingOlderMessages(false)
         mutableState.setLoadingNewerMessages(false)
     }
@@ -796,6 +797,7 @@ internal class ChannelStateLogic(
             }
             mutableState.recoveryNeeded = true
         }
+        mutableState.setLoading(false)
         mutableState.setLoadingOlderMessages(false)
         mutableState.setLoadingNewerMessages(false)
     }

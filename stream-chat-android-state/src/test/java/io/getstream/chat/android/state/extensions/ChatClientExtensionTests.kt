@@ -32,6 +32,7 @@ import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
@@ -79,13 +80,13 @@ internal class ChatClientExtensionTests {
         val statePluginConfig = StatePluginConfig()
         val globalState: GlobalState = mock() {
         }
-        val channelState: ChannelState = mock {
+        val channelState: ChannelMutableState = mock {
             on(it.cid) doReturn channel.cid
             on(it.channelType) doReturn channel.type
             on(it.channelId) doReturn channel.id
         }
         val stateRegistry: StateRegistry = mock { stateRegistry ->
-            on(stateRegistry.channel(channel.type, channel.id)) doReturn channelState
+            on(stateRegistry.mutableChannel(channel.type, channel.id)) doReturn channelState
         }
 
         val request = QueryChannelPaginationRequest(MESSAGE_LIMIT)

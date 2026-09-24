@@ -99,10 +99,12 @@ internal class ChatClientStateCalls(
         request: QueryChannelRequest,
     ): ChannelState {
         logger.v { "[queryChannel] cid: $channelType:$channelId, request: $request" }
-        chatClient.queryChannel(channelType, channelId, request).launch(scope)
-        return deferredState
+        val state = deferredState
             .await()
-            .channel(channelType, channelId)
+            .mutableChannel(channelType, channelId)
+            .apply { setLoadingIfEmpty() }
+        chatClient.queryChannel(channelType, channelId, request).launch(scope)
+        return state
     }
 
     /** Reference request of the watch channel query. */

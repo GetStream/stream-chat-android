@@ -96,7 +96,7 @@ public interface ChannelState {
     /** If the channel is currently muted. */
     public val muted: StateFlow<Boolean>
 
-    /** If we are currently loading. */
+    /** If the channel is loading for the first time, before any data from the local database or the API arrived. */
     public val loading: StateFlow<Boolean>
 
     /** If we are currently loading older messages. */
