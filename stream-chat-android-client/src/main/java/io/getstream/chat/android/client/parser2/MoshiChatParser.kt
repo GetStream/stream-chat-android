@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
+import io.getstream.chat.android.client.parser2.adapters.OwnUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataAdapter
@@ -101,6 +102,7 @@ internal class MoshiChatParser(
             .add(UserResponseAdapter)
             .add(UserRequestAdapter)
             .add(NetworkAttachmentAdapter)
+            .add(OwnUserResponseAdapter)
             .add(MessageRequestAdapter)
             .add(ChannelMemberRequestAdapter)
             .add(ChannelInputRequestAdapter)

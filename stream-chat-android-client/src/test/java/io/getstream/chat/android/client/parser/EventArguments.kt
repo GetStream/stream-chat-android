@@ -793,24 +793,29 @@ internal object EventArguments {
         rawCreatedAt = streamDateFormatter.format(date),
         connectionId = connectionId,
     )
+
+    // The own-user payload declares language, unread_count and unread_threads, which the per-event
+    // user shape does not carry.
+    private val ownUser = user.copy(language = "en")
+
     private val connectedEvent = ConnectedEvent(
         type = EventType.HEALTH_CHECK,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        me = user,
+        me = ownUser,
         connectionId = connectionId,
     )
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        me = user,
+        me = ownUser,
     )
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(
         type = EventType.NOTIFICATION_MUTES_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        me = user,
+        me = ownUser,
     )
     private val newMessageEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,

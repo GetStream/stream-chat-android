@@ -84,6 +84,7 @@ import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
+import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -981,6 +982,48 @@ internal object Mother {
         createdAt = createdAt,
         updatedAt = updatedAt,
         expires = expires,
+    )
+
+    fun randomOwnUserResponse(
+        id: String = randomString(),
+        role: String = randomString(),
+        language: String = randomString(),
+        banned: Boolean = randomBoolean(),
+        invisible: Boolean = randomBoolean(),
+        online: Boolean = randomBoolean(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        totalUnreadCount: Int = randomInt(),
+        unreadChannels: Int = randomInt(),
+        unreadCount: Int = randomInt(),
+        unreadThreads: Int = randomInt(),
+        name: String? = randomString(),
+        image: String? = randomString(),
+        devices: List<DeviceResponse> = emptyList(),
+        mutes: List<UserMuteResponse> = emptyList(),
+        channelMutes: List<io.getstream.chat.android.network.models.ChannelMute> = emptyList(),
+        teams: List<String> = emptyList(),
+        custom: Map<String, Any?> = emptyMap(),
+    ): OwnUserResponse = OwnUserResponse(
+        id = id,
+        role = role,
+        language = language,
+        banned = banned,
+        invisible = invisible,
+        online = online,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+        unreadCount = unreadCount,
+        unreadThreads = unreadThreads,
+        name = name,
+        image = image,
+        devices = devices,
+        mutes = mutes,
+        channelMutes = channelMutes,
+        teams = teams,
+        custom = custom,
     )
 
     fun randomUserResponse(

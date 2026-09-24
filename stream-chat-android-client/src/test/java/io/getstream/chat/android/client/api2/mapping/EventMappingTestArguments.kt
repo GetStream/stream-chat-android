@@ -182,6 +182,7 @@ internal object EventMappingTestArguments {
     private const val DATE_STRING = "2020-06-29T06:14:28.000Z"
     private val EXACT_DATE = ExactDate(DATE, DATE_STRING)
     private val USER = Mother.randomDownstreamUserDto()
+    private val OWN_USER = Mother.randomOwnUserResponse()
     private val CHANNEL_TYPE = randomString()
     private val CHANNEL_ID = randomString()
     private val CID = "$CHANNEL_TYPE:$CHANNEL_ID"
@@ -335,7 +336,7 @@ internal object EventMappingTestArguments {
     private val connectedDto = ConnectedEventDto(
         type = EventType.CONNECTION_CONNECTING,
         created_at = EXACT_DATE,
-        me = USER,
+        me = OWN_USER,
         connection_id = CONNECTION_ID,
     )
 
@@ -483,7 +484,7 @@ internal object EventMappingTestArguments {
     private val notificationChannelMutesUpdatesDto = NotificationChannelMutesUpdatedEventDto(
         type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
         created_at = EXACT_DATE,
-        me = USER,
+        me = OWN_USER,
     )
 
     private val notificationChannelTruncatedDto = NotificationChannelTruncatedEventDto(
@@ -590,7 +591,7 @@ internal object EventMappingTestArguments {
     private val notificationMutesUpdatedDto = NotificationMutesUpdatedEventDto(
         type = EventType.NOTIFICATION_MUTES_UPDATED,
         created_at = EXACT_DATE,
-        me = USER,
+        me = OWN_USER,
     )
 
     private val notificationRemovedFromChannelDto = NotificationRemovedFromChannelEventDto(

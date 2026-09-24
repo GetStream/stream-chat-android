@@ -527,7 +527,7 @@ internal fun createHealthEventStringJson() =
         """.trimIndent(),
     )
 
-internal fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
+internal fun createConnectedEventStringJson(userJsonString: String? = createOwnUserJsonString()) =
     createChatEventStringJson(
         "health.check",
         """
@@ -540,7 +540,7 @@ internal fun createNotificationChannelMutesUpdatedEventStringJson() =
     createChatEventStringJson(
         "notification.channel_mutes_updated",
         """
-            "me": ${createUserJsonString()}
+            "me": ${createOwnUserJsonString()}
         """.trimIndent(),
     )
 
@@ -548,7 +548,7 @@ internal fun createNotificationMutesUpdatedEventStringJson() =
     createChatEventStringJson(
         "notification.mutes_updated",
         """
-            "me": ${createUserJsonString()}
+            "me": ${createOwnUserJsonString()}
         """.trimIndent(),
     )
 
@@ -806,6 +806,31 @@ private fun createChatEventStringJson(type: String, payload: String?) =
          "created_at": "2020-06-29T06:14:28.000Z"
          ${payload?.let { ", $it" } ?: ""}
          }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createOwnUserJsonString() =
+    """
+        {
+            "id": "bender",
+            "role": "user",
+            "language": "en",
+            "created_at": "2020-06-29T06:14:28.000Z",
+            "updated_at": "2020-06-29T06:14:28.000Z",
+            "last_active": "2020-06-29T06:14:28.000Z",
+            "banned": false,
+            "online": true,
+            "invisible": false,
+            "devices": [ ],
+            "mutes": [ ],
+            "channel_mutes": [ ],
+            "total_unread_count": 26,
+            "unread_channels": 2,
+            "unread_count": 26,
+            "unread_threads": 0,
+            "image": "https://api.adorable.io/avatars/285/bender.png",
+            "name": "Bender"
+          }
     """.trimIndent()
 
 @Language("JSON")
