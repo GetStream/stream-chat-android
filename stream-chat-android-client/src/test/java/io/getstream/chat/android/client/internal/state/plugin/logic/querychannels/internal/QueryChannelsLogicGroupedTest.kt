@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -37,6 +38,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -128,6 +130,44 @@ internal class QueryChannelsLogicGroupedTest {
         verify(queryChannelsStateLogic).removeChannels(setOf("messaging:old1"))
         verify(queryChannelsStateLogic).setCids(emptySet())
         verify(queryChannelsStateLogic).addChannelsState(newChannels)
+    }
+
+    @Test
+    fun `applyGroupedResult on first page keeps messages only this device has in a retained channel`() = runTest {
+        // Given - real state, so the merge in addChannelsState runs
+        val mutableState = QueryChannelsMutableState(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            scope = testCoroutines.scope,
+            latestUsers = MutableStateFlow(emptyMap()),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+        )
+        val stateLogic = QueryChannelsStateLogic(
+            mutableState = mutableState,
+            stateRegistry = mock(),
+            logicRegistry = mock(defaultAnswer = Answers.RETURNS_MOCKS),
+            coroutineScope = testCoroutines.scope,
+            isLocalUnreadCountEnabled = false,
+        )
+        val realLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            client = client,
+            queryChannelsStateLogic = stateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        val kept = randomChannel(type = "messaging", id = "kept1", messages = listOf(randomMessage(id = "local")))
+        stateLogic.addChannelsState(listOf(kept))
+        val group = GroupedChannelsGroup(
+            groupKey = GROUP_KEY,
+            channels = listOf(kept.copy(messages = emptyList())),
+            next = null,
+            prev = null,
+        )
+
+        // When
+        realLogic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        assertEquals(listOf("local"), stateLogic.getChannels()!![kept.cid]!!.messages.map { it.id })
     }
 
     @Test
