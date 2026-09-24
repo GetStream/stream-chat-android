@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
@@ -105,10 +106,14 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
-    fun `applyGroupedResult on first page when state has existing channels replaces them`() = runTest {
+    fun `applyGroupedResult on first page removes only the existing channels missing from the page`() = runTest {
         // Given
-        val existing = mapOf("messaging:old1" to randomChannel(id = "old1"))
-        val newChannels = listOf(randomChannel(id = "new1"))
+        val kept = randomChannel(type = "messaging", id = "kept1")
+        val existing = mapOf(
+            "messaging:old1" to randomChannel(type = "messaging", id = "old1"),
+            kept.cid to kept,
+        )
+        val newChannels = listOf(kept.copy(name = "refreshed"), randomChannel(type = "messaging", id = "new1"))
         val group = GroupedChannelsGroup(
             groupKey = GROUP_KEY,
             channels = newChannels,
@@ -121,9 +126,68 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic).removeChannels(existing.keys)
+        verify(queryChannelsStateLogic).removeChannels(setOf("messaging:old1"))
         verify(queryChannelsStateLogic).setCids(emptySet())
         verify(queryChannelsStateLogic).addChannelsState(newChannels)
+    }
+
+    @Test
+    fun `applyGroupedResult on first page keeps messages only this device has in a retained channel`() = runTest {
+        // Given - real state, so the merge in addChannelsState runs
+        val mutableState = QueryChannelsMutableState(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            scope = testCoroutines.scope,
+            latestUsers = MutableStateFlow(emptyMap()),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+        )
+        val stateLogic = QueryChannelsStateLogic(
+            mutableState = mutableState,
+            stateRegistry = mock(),
+            logicRegistry = mock { on(it.channelState(any(), any())) doReturn mock() },
+            coroutineScope = testCoroutines.scope,
+        )
+        val realLogic = QueryChannelsLogic(
+            identifier = QueryChannelsIdentifier.Grouped(GROUP_KEY),
+            client = client,
+            queryChannelsStateLogic = stateLogic,
+            queryChannelsDatabaseLogic = queryChannelsDatabaseLogic,
+        )
+        val kept = randomChannel(type = "messaging", id = "kept1", messages = listOf(randomMessage(id = "local")))
+        stateLogic.addChannelsState(listOf(kept))
+        val group = GroupedChannelsGroup(
+            groupKey = GROUP_KEY,
+            channels = listOf(kept.copy(name = "refreshed", messages = emptyList())),
+            next = null,
+            prev = null,
+        )
+
+        // When
+        realLogic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        val refreshed = stateLogic.getChannels()!![kept.cid]!!
+        assertEquals("refreshed", refreshed.name)
+        assertEquals(listOf("local"), refreshed.messages.map { it.id })
+    }
+
+    @Test
+    fun `applyGroupedResult on first page skips removal when every existing channel is still in the page`() = runTest {
+        // Given
+        val kept = randomChannel(type = "messaging", id = "kept1")
+        val group = GroupedChannelsGroup(
+            groupKey = GROUP_KEY,
+            channels = listOf(kept, randomChannel(type = "messaging", id = "new1")),
+            next = null,
+            prev = null,
+        )
+        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf(kept.cid to kept)
+
+        // When
+        logic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        verify(queryChannelsStateLogic, never()).removeChannels(any())
+        verify(queryChannelsStateLogic).addChannelsState(group.channels)
     }
 
     @Test
