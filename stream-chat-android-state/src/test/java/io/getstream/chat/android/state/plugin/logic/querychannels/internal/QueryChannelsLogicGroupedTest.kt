@@ -156,7 +156,7 @@ internal class QueryChannelsLogicGroupedTest {
         stateLogic.addChannelsState(listOf(kept))
         val group = GroupedChannelsGroup(
             groupKey = GROUP_KEY,
-            channels = listOf(kept.copy(messages = emptyList())),
+            channels = listOf(kept.copy(name = "refreshed", messages = emptyList())),
             next = null,
             prev = null,
         )
@@ -165,7 +165,29 @@ internal class QueryChannelsLogicGroupedTest {
         realLogic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        assertEquals(listOf("local"), stateLogic.getChannels()!![kept.cid]!!.messages.map { it.id })
+        val refreshed = stateLogic.getChannels()!![kept.cid]!!
+        assertEquals("refreshed", refreshed.name)
+        assertEquals(listOf("local"), refreshed.messages.map { it.id })
+    }
+
+    @Test
+    fun `applyGroupedResult on first page skips removal when every existing channel is still in the page`() = runTest {
+        // Given
+        val kept = randomChannel(type = "messaging", id = "kept1")
+        val group = GroupedChannelsGroup(
+            groupKey = GROUP_KEY,
+            channels = listOf(kept, randomChannel(type = "messaging", id = "new1")),
+            next = null,
+            prev = null,
+        )
+        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf(kept.cid to kept)
+
+        // When
+        logic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        verify(queryChannelsStateLogic, never()).removeChannels(any())
+        verify(queryChannelsStateLogic).addChannelsState(group.channels)
     }
 
     @Test

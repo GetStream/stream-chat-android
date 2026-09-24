@@ -311,7 +311,10 @@ internal class QueryChannelsLogic(
                 if (!existing.isNullOrEmpty()) {
                     // Channels still in the page keep their copy, so messages only this device has survive the merge.
                     val returnedCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
-                    queryChannelsStateLogic.removeChannels(existing.keys - returnedCids)
+                    val droppedCids = existing.keys - returnedCids
+                    if (droppedCids.isNotEmpty()) {
+                        queryChannelsStateLogic.removeChannels(droppedCids)
+                    }
                 }
                 queryChannelsStateLogic.setCids(emptySet())
                 // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
