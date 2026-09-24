@@ -32,7 +32,7 @@ internal class FilterDomainMappingTest {
     @ParameterizedTest
     @MethodSource("toFilterDomainWithFieldsArguments")
     fun `Map is parsed to FilterObject with the set of referenced field names`(
-        input: Map<String, Any>?,
+        input: Map<String, Any?>?,
         expectedFilter: FilterObject?,
         expectedFields: Set<String>?,
     ) {
@@ -281,6 +281,48 @@ internal class FilterDomainMappingTest {
                     Filters.greaterThan("last_message_at", "2024-01-15T10:30:00Z"),
                 ),
                 setOf("type", "last_message_at"),
+            ),
+
+            // --- Null operands: equality maps to $exists, other operators are dropped ---
+            Arguments.of(
+                mapOf("team" to null),
+                Filters.notExists("team"),
+                setOf("team"),
+            ),
+            Arguments.of(
+                mapOf("team" to mapOf("\$eq" to null)),
+                Filters.notExists("team"),
+                setOf("team"),
+            ),
+            Arguments.of(
+                mapOf("team" to mapOf("\$ne" to null)),
+                Filters.exists("team"),
+                setOf("team"),
+            ),
+            Arguments.of(
+                mapOf("member_count" to mapOf("\$gt" to null)),
+                null,
+                null,
+            ),
+            Arguments.of(
+                mapOf("type" to "messaging", "team" to mapOf("\$gt" to null)),
+                Filters.eq("type", "messaging"),
+                setOf("type", "team"),
+            ),
+            Arguments.of(
+                mapOf("type" to mapOf("\$in" to listOf("messaging", null))),
+                Filters.`in`("type", listOf("messaging")),
+                setOf("type"),
+            ),
+            Arguments.of(
+                mapOf("type" to mapOf("\$in" to listOf(null))),
+                null,
+                null,
+            ),
+            Arguments.of(
+                mapOf("\$and" to listOf(mapOf("type" to "messaging"), mapOf("team" to null))),
+                Filters.and(Filters.eq("type", "messaging"), Filters.notExists("team")),
+                setOf("type", "team"),
             ),
         )
     }

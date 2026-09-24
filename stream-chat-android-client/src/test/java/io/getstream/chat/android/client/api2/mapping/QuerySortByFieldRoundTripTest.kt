@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.client.api2.toSortParams
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -35,7 +36,7 @@ internal class QuerySortByFieldRoundTripTest {
      */
     @ParameterizedTest
     @MethodSource("roundTripArguments")
-    fun `QuerySortByField survives round-trip through toDto and toSortDomain`(
+    fun `QuerySortByField survives round-trip through toSortParams and toSortDomain`(
         original: QuerySortByField<Channel>,
     ) {
         val sut = DomainMapping(
@@ -44,8 +45,8 @@ internal class QuerySortByFieldRoundTripTest {
             messageTransformer = NoOpMessageTransformer,
             userTransformer = NoOpUserTransformer,
         )
-        val dto = original.toDto()
-        val restored = with(sut) { dto.toSortDomain() }
+        val sortParams = original.toSortParams()
+        val restored = with(sut) { sortParams.toSortDomain() }
         assertEquals(original, restored)
     }
 

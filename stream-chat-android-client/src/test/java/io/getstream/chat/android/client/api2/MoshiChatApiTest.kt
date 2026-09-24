@@ -52,7 +52,6 @@ import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
-import io.getstream.chat.android.client.api2.model.response.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
@@ -140,6 +139,7 @@ import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.PollOptionResponse
@@ -2314,7 +2314,7 @@ internal class MoshiChatApiTest {
             predefinedFilter = ParsedPredefinedFilterResponse(
                 name = "my-filter",
                 filter = mapOf("type" to "messaging"),
-                sort = listOf(mapOf("field" to "created_at", "direction" to 1)),
+                sort = listOf(SortParamRequest(field = "created_at", direction = 1)),
             ),
         )
         assertEquals(

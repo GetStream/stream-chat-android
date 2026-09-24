@@ -130,6 +130,7 @@ import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
+import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
@@ -1159,12 +1160,11 @@ internal class DomainMapping(
         defaultPreference = ChatPreferenceToggle.fromValue(defaultPreference),
     )
 
-    internal fun List<Map<String, Any>>?.toSortDomain(): QuerySorter<Channel>? {
+    internal fun List<SortParamRequest>?.toSortDomain(): QuerySorter<Channel>? {
         if (isNullOrEmpty()) return null
-        return fold(QuerySortByField()) { sort, sortSpecMap ->
-            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String ?: return null
-            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt() ?: return null
-            when (direction) {
+        return fold(QuerySortByField()) { sort, sortParam ->
+            val fieldName = sortParam.field ?: return null
+            when (sortParam.direction) {
                 SortDirection.ASC.value -> sort.asc(fieldName)
                 SortDirection.DESC.value -> sort.desc(fieldName)
                 else -> return null
