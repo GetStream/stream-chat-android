@@ -1505,10 +1505,7 @@ constructor(
                     QueryChannelsResult(
                         channels = response.channels.map(this@MoshiChatApi::flattenChannel),
                         predefinedFilter = response.predefined_filter?.let {
-                            // The generated model allows null values; a filter condition without one
-                            // carries no criterion, so it is dropped rather than mapped.
-                            val conditions = it.filter.mapNotNull { (key, value) -> value?.let { key to it } }
-                            val (filter, filterFields) = conditions.toMap().toFilterDomainWithFields()
+                            val (filter, filterFields) = it.filter.toFilterDomainWithFields()
                                 ?: return@let null
                             val sort = it.sort.toSortDomain()
                                 ?: defaultPredefinedFilterSort(filterFields)

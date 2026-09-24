@@ -33,7 +33,7 @@ import io.getstream.chat.android.models.NeutralFilterObject
  *
  * Returns `null` if the map is `null` or cannot be parsed.
  */
-internal fun Map<String, Any>?.toFilterDomainWithFields(): Pair<FilterObject, Set<String>>? {
+internal fun Map<String, Any?>?.toFilterDomainWithFields(): Pair<FilterObject, Set<String>>? {
     if (this == null) return null
     val fields = mutableSetOf<String>()
     val filter = parseFilterMap(this, fields) ?: return null
@@ -41,7 +41,7 @@ internal fun Map<String, Any>?.toFilterDomainWithFields(): Pair<FilterObject, Se
 }
 
 @Suppress("ComplexMethod", "SpreadOperator")
-private fun parseFilterMap(map: Map<String, Any>, fields: MutableSet<String>): FilterObject? {
+private fun parseFilterMap(map: Map<String, Any?>, fields: MutableSet<String>): FilterObject? {
     if (map.isEmpty()) return NeutralFilterObject
 
     if (map.size == 2 && map.containsKey(KEY_DISTINCT) && map.containsKey(KEY_MEMBERS)) {
@@ -62,7 +62,7 @@ private fun parseFilterMap(map: Map<String, Any>, fields: MutableSet<String>): F
 }
 
 @Suppress("SpreadOperator")
-private fun parseSingleEntry(key: String, value: Any, fields: MutableSet<String>): FilterObject? = when (key) {
+private fun parseSingleEntry(key: String, value: Any?, fields: MutableSet<String>): FilterObject? = when (key) {
     KEY_AND -> parseLogicalOperator(value, fields) { Filters.and(*it) }
     KEY_OR -> parseLogicalOperator(value, fields) { Filters.or(*it) }
     KEY_NOR -> parseLogicalOperator(value, fields) { Filters.nor(*it) }
@@ -71,29 +71,31 @@ private fun parseSingleEntry(key: String, value: Any, fields: MutableSet<String>
 
 @Suppress("UNCHECKED_CAST")
 private fun parseLogicalOperator(
-    value: Any,
+    value: Any?,
     fields: MutableSet<String>,
     factory: (Array<FilterObject>) -> FilterObject,
 ): FilterObject? {
     val list = value as? List<*> ?: return null
     val filters = list.mapNotNull { item ->
-        (item as? Map<String, Any>)?.let { parseFilterMap(it, fields) }
+        (item as? Map<String, Any?>)?.let { parseFilterMap(it, fields) }
     }
     if (filters.isEmpty()) return null
     return factory(filters.toTypedArray())
 }
 
 @Suppress("ComplexMethod", "DEPRECATION")
-private fun parseFieldFilter(fieldName: String, value: Any, fields: MutableSet<String>): FilterObject? {
+private fun parseFieldFilter(fieldName: String, value: Any?, fields: MutableSet<String>): FilterObject? {
     fields.add(fieldName)
+    if (value == null) return parseNullOperand(fieldName, KEY_EQUALS)
     if (value !is Map<*, *>) {
         return Filters.eq(fieldName, normalizeValue(value))
     }
 
     @Suppress("UNCHECKED_CAST")
-    val operatorMap = value as Map<String, Any>
+    val operatorMap = value as Map<String, Any?>
     if (operatorMap.isEmpty()) return null
     val (opKey, opValue) = operatorMap.entries.first()
+    if (opValue == null) return parseNullOperand(fieldName, opKey)
 
     return when (opKey) {
         KEY_EQUALS -> Filters.eq(fieldName, normalizeValue(opValue))
@@ -103,7 +105,9 @@ private fun parseFieldFilter(fieldName: String, value: Any, fields: MutableSet<S
         KEY_LESS_THAN -> Filters.lessThan(fieldName, normalizeValue(opValue))
         KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(fieldName, normalizeValue(opValue))
         KEY_IN -> {
-            val values = (opValue as? Collection<*>)?.map { normalizeValue(it ?: return null) } ?: return null
+            // SQL `IN` never matches a null element, so the nulls are dropped.
+            val values = (opValue as? Collection<*>)?.mapNotNull { it?.let(::normalizeValue) } ?: return null
+            if (values.isEmpty()) return null
             Filters.`in`(fieldName, values)
         }
         KEY_NOT_IN -> {
@@ -122,6 +126,17 @@ private fun parseFieldFilter(fieldName: String, value: Any, fields: MutableSet<S
         }
         else -> null
     }
+}
+
+/**
+ * The backend matches a null operand as `IS NULL` / `IS NOT NULL`, which is what `$exists` checks for a
+ * column. For a custom field it means a key explicitly set to null, which [FilterObject] cannot express, so
+ * that case reads as the key being absent. Any other operator with a null operand is dropped.
+ */
+private fun parseNullOperand(fieldName: String, opKey: String): FilterObject? = when (opKey) {
+    KEY_EQUALS -> Filters.notExists(fieldName)
+    KEY_NOT_EQUALS -> Filters.exists(fieldName)
+    else -> null
 }
 
 private fun normalizeValue(value: Any): Any = when {

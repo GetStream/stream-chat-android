@@ -17,7 +17,9 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -66,5 +68,23 @@ internal class PredefinedFilterParsingTest {
         val parsed = parser.fromJson(json, ParsedPredefinedFilterResponse::class.java)
 
         with(mapping) { parsed.sort.toSortDomain() } shouldBeEqualTo null
+    }
+
+    @Test
+    fun `A null filter condition decodes to a missing field check`() {
+        val json = """
+            {
+              "name": "android_sample_filter",
+              "filter": { "type": "messaging", "team": null, "disabled": { "${'$'}ne": null } }
+            }
+        """.trimIndent()
+
+        val parsed = parser.fromJson(json, ParsedPredefinedFilterResponse::class.java)
+
+        parsed.filter.toFilterDomainWithFields()?.first shouldBeEqualTo Filters.and(
+            Filters.eq("type", "messaging"),
+            Filters.notExists("team"),
+            Filters.exists("disabled"),
+        )
     }
 }
