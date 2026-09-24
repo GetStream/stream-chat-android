@@ -4659,7 +4659,7 @@ internal constructor(
         params: CreateChannelParams,
     ): Call<Channel> {
         val currentUser = getCurrentUser()
-        val members = with(dtoMapping) { params.members.map { it.toDto() } }
+        val members = with(dtoMapping) { params.members.map { it.toChannelMemberRequest() } }
         val queryChannelRequest = QueryChannelRequest()
             .withData(params.extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to members))
         return queryChannelInternal(

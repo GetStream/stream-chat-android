@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.models.Attachment
@@ -63,14 +62,6 @@ internal class DtoMapping(
         id = token,
         push_provider = pushProvider.key,
         push_provider_name = providerName,
-    )
-
-    /**
-     * Maps the domain [MemberData] model to a network [UpstreamMemberDataDto] model.
-     */
-    internal fun MemberData.toDto(): UpstreamMemberDataDto = UpstreamMemberDataDto(
-        user_id = userId,
-        extraData = extraData,
     )
 
     /**

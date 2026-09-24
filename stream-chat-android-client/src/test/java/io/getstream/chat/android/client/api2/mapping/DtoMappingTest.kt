@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MessageTransformer
@@ -68,18 +67,6 @@ internal class DtoMappingTest {
             id = device.token,
             push_provider = device.pushProvider.key,
             push_provider_name = device.providerName,
-        )
-        dto shouldBeEqualTo expected
-    }
-
-    @Test
-    fun `MemberData is correctly mapped to Dto`() {
-        val memberData = randomMemberData()
-        val mapping = Fixture().get()
-        val dto = with(mapping) { memberData.toDto() }
-        val expected = UpstreamMemberDataDto(
-            user_id = memberData.userId,
-            extraData = memberData.extraData,
         )
         dto shouldBeEqualTo expected
     }
