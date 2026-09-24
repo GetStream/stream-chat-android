@@ -137,6 +137,8 @@ import io.getstream.chat.android.network.models.UnreadCountsThread
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
+import io.getstream.chat.android.network.models.UserResponseCommonFields
+import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
@@ -153,6 +155,12 @@ internal const val EMOJI_CODE_KEY = "emoji_code"
 /** Drafts have no declared command fields, so both travel as custom data in both directions. */
 internal const val DRAFT_COMMAND_KEY = "command"
 internal const val DRAFT_ARGS_KEY = "args"
+
+/**
+ * Event users carry devices only as custom data, in the request shape clients send. The hand-written DTO
+ * declared the key, so it has always been read as typed devices rather than surfacing in extraData.
+ */
+internal const val EVENT_USER_DEVICES_KEY = "devices"
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -427,6 +435,54 @@ internal class DomainMapping(
             pushPreference = pushPreferences?.toDomain(),
             extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
+
+    /** Transforms the user shape most user events carry: common fields only, no own-user state. */
+    internal fun UserResponseCommonFields.toDomain(): User = toUser().let(userTransformer::transform)
+
+    /** Transforms the user shape `user.updated` carries: the common fields plus privacy state. */
+    internal fun UserResponsePrivacyFields.toDomain(): User =
+        UserResponseCommonFields(
+            banned = banned,
+            createdAt = createdAt,
+            id = id,
+            language = language,
+            online = online,
+            role = role,
+            updatedAt = updatedAt,
+            blockedUserIds = blockedUserIds,
+            teams = teams,
+            custom = custom,
+            avgResponseTime = avgResponseTime,
+            deactivatedAt = deactivatedAt,
+            image = image,
+            lastActive = lastActive,
+            name = name,
+            teamsRole = teamsRole,
+        ).toUser()
+            .copy(invisible = invisible, privacySettings = privacySettings?.toDomain())
+            .let(userTransformer::transform)
+
+    private fun UserResponseCommonFields.toUser(): User = User(
+        id = id,
+        name = name.orEmpty(),
+        image = image.orEmpty(),
+        role = role,
+        language = language,
+        banned = banned,
+        online = online,
+        createdAt = createdAt,
+        deactivatedAt = deactivatedAt,
+        updatedAt = updatedAt,
+        lastActive = lastActive,
+        devices = custom.eventUserDevices(),
+        teams = teams,
+        teamsRole = teamsRole.orEmpty(),
+        blockedUserIds = blockedUserIds,
+        avgResponseTime = avgResponseTime?.toLong(),
+        extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+            .minus(EVENT_USER_DEVICES_KEY)
+            .toMutableMap(),
+    )
 
     /**
      * Transforms [DownstreamUserDto] to [User].
@@ -923,6 +979,17 @@ internal class DomainMapping(
         pushProvider = PushProvider.fromKey(pushProvider),
         providerName = pushProviderName,
     )
+
+    private fun Map<String, Any?>.eventUserDevices(): List<Device> =
+        (this[EVENT_USER_DEVICES_KEY] as? List<*>).orEmpty().mapNotNull { raw ->
+            val device = raw as? Map<*, *> ?: return@mapNotNull null
+            val token = device["id"] as? String ?: return@mapNotNull null
+            Device(
+                token = token,
+                pushProvider = PushProvider.fromKey(device["push_provider"] as? String ?: ""),
+                providerName = device["push_provider_name"] as? String,
+            )
+        }
 
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
