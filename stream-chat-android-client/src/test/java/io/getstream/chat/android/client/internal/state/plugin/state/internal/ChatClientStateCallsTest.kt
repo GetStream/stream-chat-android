@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.InitializationState
@@ -146,6 +147,25 @@ internal class ChatClientStateCallsTest {
 
         // Then - stateRegistry.queryChannels should be called with the identifier
         verify(stateRegistry).queryChannels(identifier)
+    }
+
+    @Test
+    fun `watchChannel marks the channel state as loading before querying it`() = runTest {
+        // Given
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        val result = chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+
+        // Then
+        assertEquals(channelState, result)
+        inOrder(channelState, chatClient) {
+            verify(channelState).setLoadingIfEmpty()
+            verify(chatClient).queryChannel(eq("messaging"), eq("123"), any(), any())
+        }
     }
 
     @Test
