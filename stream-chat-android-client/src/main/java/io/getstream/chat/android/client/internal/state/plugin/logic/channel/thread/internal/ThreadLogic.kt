@@ -115,7 +115,9 @@ internal class ThreadLogic(
                 val poll = event.message.poll ?: originalMessage?.poll
                 if (event is MessageUpdatedEvent) {
                     event.message.copy(
-                        replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId },
+                        // The thread only holds the parent and its replies, so a parent's quote is usually not here
+                        replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId }
+                            ?: event.message.replyTo,
                         ownReactions = ownReactions,
                         poll = poll,
                     )
