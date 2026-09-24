@@ -105,10 +105,14 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
-    fun `applyGroupedResult on first page when state has existing channels replaces them`() = runTest {
+    fun `applyGroupedResult on first page removes only the existing channels missing from the page`() = runTest {
         // Given
-        val existing = mapOf("messaging:old1" to randomChannel(id = "old1"))
-        val newChannels = listOf(randomChannel(id = "new1"))
+        val kept = randomChannel(type = "messaging", id = "kept1")
+        val existing = mapOf(
+            "messaging:old1" to randomChannel(type = "messaging", id = "old1"),
+            kept.cid to kept,
+        )
+        val newChannels = listOf(kept.copy(name = "refreshed"), randomChannel(type = "messaging", id = "new1"))
         val group = GroupedChannelsGroup(
             groupKey = GROUP_KEY,
             channels = newChannels,
@@ -121,7 +125,7 @@ internal class QueryChannelsLogicGroupedTest {
         logic.applyGroupedResult(group, isFirstPage = true)
 
         // Then
-        verify(queryChannelsStateLogic).removeChannels(existing.keys)
+        verify(queryChannelsStateLogic).removeChannels(setOf("messaging:old1"))
         verify(queryChannelsStateLogic).setCids(emptySet())
         verify(queryChannelsStateLogic).addChannelsState(newChannels)
     }
