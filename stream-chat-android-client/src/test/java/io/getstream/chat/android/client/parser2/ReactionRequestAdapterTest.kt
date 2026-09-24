@@ -23,7 +23,7 @@ import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
-internal class UpstreamReactionDtoAdapterTest {
+internal class ReactionRequestAdapterTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
 

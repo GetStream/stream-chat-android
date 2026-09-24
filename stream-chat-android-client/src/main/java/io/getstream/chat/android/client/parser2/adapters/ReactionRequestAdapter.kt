@@ -24,7 +24,7 @@ import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.ReactionRequest
 
 // extraDataPropertyName must match the @Json(name = ...) of ReactionRequest's overflow field.
-internal object UpstreamReactionDtoAdapter :
+internal object ReactionRequestAdapter :
     CustomObjectDtoAdapter<ReactionRequest>(ReactionRequest::class, extraDataPropertyName = "custom") {
 
     @FromJson
