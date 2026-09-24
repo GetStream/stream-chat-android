@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
@@ -1197,12 +1196,6 @@ internal class DomainMapping(
         channelType = channelType,
         channelsCount = channelCount,
         messagesCount = unreadCount,
-    )
-
-    internal fun DownstreamPushPreferenceDto.toDomain(): PushPreference = PushPreference(
-        level = PushPreferenceLevel.fromValue(chat_level),
-        disabledUntil = disabled_until,
-        chatPreferences = chat_preferences?.toDomain(),
     )
 
     internal fun PushPreferencesResponse.toDomain(): PushPreference = PushPreference(

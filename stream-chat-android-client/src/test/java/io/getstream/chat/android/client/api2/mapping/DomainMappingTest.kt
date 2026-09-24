@@ -63,7 +63,6 @@ import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
 import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
@@ -129,6 +128,7 @@ import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
@@ -1730,14 +1730,14 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamPushPreferenceDto keeps every chat preference toggle`() {
+    fun `PushPreferencesResponse keeps every chat preference toggle`() {
         val sut = Fixture().get()
 
         val result = with(sut) {
-            DownstreamPushPreferenceDto(
-                chat_level = "all",
-                disabled_until = Date(1000),
-                chat_preferences = ChatPreferencesResponse(
+            PushPreferencesResponse(
+                chatLevel = "all",
+                disabledUntil = Date(1000),
+                chatPreferences = ChatPreferencesResponse(
                     directMentions = "all",
                     roleMentions = "none",
                     groupMentions = "all",

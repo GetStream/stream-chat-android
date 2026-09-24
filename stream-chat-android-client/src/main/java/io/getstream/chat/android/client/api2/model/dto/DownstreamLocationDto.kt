@@ -17,19 +17,15 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import java.util.Date
 
-/**
- * Downstream DTO for receiving push notification preferences.
- *
- * @param chat_level The chat level preference ("all", "default", "mentions" or "none").
- * @param disabled_until Timestamp until which notifications are disabled.
- * @param chat_preferences Per-category toggles when set instead of [chat_level].
- */
 @JsonClass(generateAdapter = true)
-internal data class DownstreamPushPreferenceDto(
-    val chat_level: String?,
-    val disabled_until: Date?,
-    val chat_preferences: ChatPreferencesResponse? = null,
+internal data class DownstreamLocationDto(
+    val channel_cid: String,
+    val message_id: String,
+    val user_id: String,
+    val latitude: Double,
+    val longitude: Double,
+    val created_by_device_id: String,
+    val end_at: Date?,
 )

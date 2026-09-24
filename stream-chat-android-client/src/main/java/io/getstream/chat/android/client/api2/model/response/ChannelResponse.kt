@@ -21,9 +21,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import java.util.Date
 
@@ -33,7 +33,7 @@ internal data class ChannelResponse(
     val messages: List<DownstreamMessageDto> = emptyList(),
     val pending_messages: List<DownstreamPendingMessageDto> = emptyList(),
     val pinned_messages: List<DownstreamMessageDto> = emptyList(),
-    val push_preferences: DownstreamPushPreferenceDto? = null,
+    val push_preferences: ChannelPushPreferencesResponse? = null,
     val members: List<ChannelMemberResponse> = emptyList(),
     val membership: ChannelMemberResponse?,
     val watchers: List<DownstreamUserDto> = emptyList(),

@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -72,13 +71,6 @@ internal class DtoMapping(
     internal fun MemberData.toDto(): UpstreamMemberDataDto = UpstreamMemberDataDto(
         user_id = userId,
         extraData = extraData,
-    )
-
-    internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
-        latitude = latitude,
-        longitude = longitude,
-        created_by_device_id = deviceId,
-        end_at = endAt,
     )
 
     /**

@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
@@ -90,6 +89,7 @@ import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
@@ -401,7 +401,7 @@ internal object Mother {
         channel_mutes: List<ChannelMuteResponse>? = emptyList(),
         blocked_user_ids: List<String>? = emptyList(),
         avg_response_time: Long? = null,
-        push_preferences: DownstreamPushPreferenceDto? = randomDownstreamPushPreferenceDto(),
+        push_preferences: PushPreferencesResponse? = randomPushPreferencesResponse(),
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamUserDto = DownstreamUserDto(
         id = id,
@@ -1464,12 +1464,12 @@ internal object Mother {
         unreadCount = unreadCount,
     )
 
-    fun randomDownstreamPushPreferenceDto(
+    fun randomPushPreferencesResponse(
         chatLevel: String? = randomString(),
         disabledUntil: Date? = randomDateOrNull(),
-    ): DownstreamPushPreferenceDto = DownstreamPushPreferenceDto(
-        chat_level = chatLevel,
-        disabled_until = disabledUntil,
+    ): PushPreferencesResponse = PushPreferencesResponse(
+        chatLevel = chatLevel,
+        disabledUntil = disabledUntil,
     )
 
     fun randomUserGroupMemberDto(
