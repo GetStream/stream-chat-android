@@ -436,54 +436,52 @@ internal class DomainMapping(
         ).let(userTransformer::transform)
 
     /** Transforms the user shape most user events carry: common fields only, no own-user state. */
-    internal fun UserResponseCommonFields.toDomain(): User =
-        User(
-            id = id,
-            name = name.orEmpty(),
-            image = image.orEmpty(),
-            role = role,
-            language = language,
-            banned = banned,
-            online = online,
-            createdAt = createdAt,
-            deactivatedAt = deactivatedAt,
-            updatedAt = updatedAt,
-            lastActive = lastActive,
-            devices = custom.eventUserDevices(),
-            teams = teams,
-            teamsRole = teamsRole.orEmpty(),
-            blockedUserIds = blockedUserIds,
-            avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
-                .minus(EVENT_USER_DEVICES_KEY)
-                .toMutableMap(),
-        ).let(userTransformer::transform)
+    internal fun UserResponseCommonFields.toDomain(): User = toUser().let(userTransformer::transform)
 
     /** Transforms the user shape `user.updated` carries: the common fields plus privacy state. */
     internal fun UserResponsePrivacyFields.toDomain(): User =
-        User(
-            id = id,
-            name = name.orEmpty(),
-            image = image.orEmpty(),
-            role = role,
-            invisible = invisible,
-            privacySettings = privacySettings?.toDomain(),
-            language = language,
+        UserResponseCommonFields(
             banned = banned,
-            online = online,
             createdAt = createdAt,
-            deactivatedAt = deactivatedAt,
+            id = id,
+            language = language,
+            online = online,
+            role = role,
             updatedAt = updatedAt,
-            lastActive = lastActive,
-            devices = custom.eventUserDevices(),
-            teams = teams,
-            teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
-            avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
-                .minus(EVENT_USER_DEVICES_KEY)
-                .toMutableMap(),
-        ).let(userTransformer::transform)
+            teams = teams,
+            custom = custom,
+            avgResponseTime = avgResponseTime,
+            deactivatedAt = deactivatedAt,
+            image = image,
+            lastActive = lastActive,
+            name = name,
+            teamsRole = teamsRole,
+        ).toUser()
+            .copy(invisible = invisible, privacySettings = privacySettings?.toDomain())
+            .let(userTransformer::transform)
+
+    private fun UserResponseCommonFields.toUser(): User = User(
+        id = id,
+        name = name.orEmpty(),
+        image = image.orEmpty(),
+        role = role,
+        language = language,
+        banned = banned,
+        online = online,
+        createdAt = createdAt,
+        deactivatedAt = deactivatedAt,
+        updatedAt = updatedAt,
+        lastActive = lastActive,
+        devices = custom.eventUserDevices(),
+        teams = teams,
+        teamsRole = teamsRole.orEmpty(),
+        blockedUserIds = blockedUserIds,
+        avgResponseTime = avgResponseTime?.toLong(),
+        extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+            .minus(EVENT_USER_DEVICES_KEY)
+            .toMutableMap(),
+    )
 
     /**
      * Transforms [DownstreamUserDto] to [User].
