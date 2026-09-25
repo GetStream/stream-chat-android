@@ -107,11 +107,13 @@ internal class DeleteMessageListenerState(
         logic.channelFromMessage(message)?.upsertMessage(message)
         logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
         logic.threadFromMessage(message)?.upsertMessage(message)
+        logic.getActiveQueryChannelsLogic().forEach { it.refreshChannelState(message.cid) }
     }
 
     private fun deleteMessage(message: Message) {
         logic.channelFromMessage(message)?.deleteMessage(message)
         logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
         logic.threadFromMessage(message)?.deleteMessage(message)
+        logic.getActiveQueryChannelsLogic().forEach { it.refreshChannelState(message.cid) }
     }
 }
