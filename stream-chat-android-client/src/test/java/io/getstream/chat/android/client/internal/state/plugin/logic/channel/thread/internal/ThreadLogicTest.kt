@@ -392,6 +392,51 @@ internal class ThreadLogicTest {
     }
 
     @Test
+    fun `Given MessageUpdatedEvent quoting a message outside the thread When handleMessageEvents is called Should keep the event quoted message`() {
+        // given
+        val quotedMessage = randomMessage(parentId = null)
+        val updatedMessage = randomMessage(
+            parentId = null,
+            replyTo = quotedMessage,
+            replyMessageId = quotedMessage.id,
+            poll = null,
+        )
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(mapOf(updatedMessage.id to updatedMessage)))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(listOf(updatedMessage)))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(updatedMessage))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent quoting a message in the thread When handleMessageEvents is called Should use the thread quoted message`() {
+        // given
+        val quotedId = randomString()
+        val threadQuoted = randomMessage(id = quotedId, text = "In thread")
+        val eventQuoted = randomMessage(id = quotedId, text = "From event")
+        val updatedMessage = randomMessage(replyTo = eventQuoted, replyMessageId = quotedId, poll = null)
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(mapOf(updatedMessage.id to updatedMessage)))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(listOf(threadQuoted, updatedMessage)))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(updatedMessage.copy(replyTo = threadQuoted)))
+    }
+
+    @Test
     fun `Given MessageUpdatedEvent When handleMessageEvents is called Should update quoted message references`() {
         // given
         val updatedMessage = randomMessage(replyMessageId = null, poll = null, ownReactions = emptyList())
