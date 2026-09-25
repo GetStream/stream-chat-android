@@ -24,10 +24,13 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -41,9 +44,11 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ChatClientStateCallsTest {
@@ -141,5 +146,24 @@ internal class ChatClientStateCallsTest {
 
         // Then - stateRegistry.queryChannels should be called with the identifier
         verify(stateRegistry).queryChannels(identifier)
+    }
+
+    @Test
+    fun `watchChannel marks the legacy channel state as loading before querying it`() = runTest {
+        // Given
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateLegacyImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        val result = chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+
+        // Then
+        assertEquals(channelState, result)
+        inOrder(channelState, chatClient) {
+            verify(channelState).setLoadingIfEmpty()
+            verify(chatClient).queryChannel(eq("messaging"), eq("123"), any(), any())
+        }
     }
 }
