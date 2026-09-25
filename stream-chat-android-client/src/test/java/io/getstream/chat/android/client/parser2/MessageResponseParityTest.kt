@@ -27,8 +27,10 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.MessageResponse
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -64,6 +66,16 @@ internal class MessageResponseParityTest {
         if (differences.isNotEmpty()) fail<Unit>("$name differs:\n" + differences.joinToString("\n"))
     }
 
+    @Test
+    fun `A message by a deleted user parses with the placeholder the backend sends`() {
+        val message = with(mapping) { parser.fromJson(DELETED_AUTHOR_JSON, MessageResponse::class.java).toDomain() }
+
+        assertEquals("deleted-user", message.user.id)
+        assertEquals("", message.user.language)
+        // The exact instant depends on the calendar the date parser uses for year 1; it only has to parse.
+        assertTrue((message.user.createdAt?.time ?: 0) < 0) { "createdAt = ${message.user.createdAt}" }
+    }
+
     private fun diff(legacy: Message, generated: Message): List<String> =
         Message::class.java.declaredFields
             .filterNot { Modifier.isStatic(it.modifiers) }
@@ -75,6 +87,25 @@ internal class MessageResponseParityTest {
             }
 
     companion object {
+
+        /**
+         * A message whose author was deleted: the backend substitutes a placeholder user and sends its zero
+         * fields as-is (NewUserResponseOrDeletedUser in commonpayloads/user.go).
+         */
+        private val DELETED_AUTHOR_JSON = """
+            {
+              "id": "msg-deleted-author", "cid": "messaging:general", "text": "hi", "html": "<p>hi</p>",
+              "type": "regular", "attachments": [], "latest_reactions": [], "own_reactions": [],
+              "mentioned_users": [], "reply_count": 0, "deleted_reply_count": 0, "silent": false,
+              "shadowed": false, "mentioned_channel": false, "mentioned_here": false, "pinned": false,
+              "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z",
+              "user": {
+                "id": "deleted-user", "name": "Deleted User", "role": "", "language": "",
+                "banned": false, "online": false,
+                "created_at": "0001-01-01T00:00:00Z", "updated_at": "0001-01-01T00:00:00Z"
+              }
+            }
+        """.trimIndent()
 
         private val mapAdapter = Moshi.Builder().build().adapter<Map<String, Any?>>(
             Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java),
@@ -94,6 +125,7 @@ internal class MessageResponseParityTest {
                 "MessageDtoTestData.downstreamJson" to MessageDtoTestData.downstreamJson,
                 "MessageDtoTestData.downstreamJsonWithoutExtraData" to
                     MessageDtoTestData.downstreamJsonWithoutExtraData,
+                "deleted author" to DELETED_AUTHOR_JSON,
             )
             return (messageTestData + dtoTestData).map { (name, json) -> Arguments.of(name, wireShaped(json)) }
         }
