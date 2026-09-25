@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -143,6 +142,7 @@ import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
+import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
@@ -983,15 +983,15 @@ constructor(
         createdAtBeforeOrEqual: Date?,
     ): Call<List<BannedUser>> {
         return moderationApi.queryBannedUsers(
-            payload = QueryBannedUsersRequest(
-                filter_conditions = filter.toMap(),
-                sort = sort.toDto(),
+            payload = QueryBannedUsersPayload(
+                filterConditions = filter.toMap(),
+                sort = sort.toSortParams(),
                 offset = offset,
                 limit = limit,
-                created_at_after = createdAtAfter,
-                created_at_after_or_equal = createdAtAfterOrEqual,
-                created_at_before = createdAtBefore,
-                created_at_before_or_equal = createdAtBeforeOrEqual,
+                createdAtAfter = createdAtAfter,
+                createdAtAfterOrEqual = createdAtAfterOrEqual,
+                createdAtBefore = createdAtBefore,
+                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
             ),
         ).flatMapDomain { response ->
             val bans = response.bans.mapNotNull { it.toDomain() }
