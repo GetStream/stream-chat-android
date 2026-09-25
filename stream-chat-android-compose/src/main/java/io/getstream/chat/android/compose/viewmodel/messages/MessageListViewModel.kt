@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.api.state.ThreadState
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
@@ -90,6 +91,11 @@ public class MessageListViewModel(
      * The information for the current [Channel].
      */
     public val channel: Channel by messageListController.channel.asState(viewModelScope)
+
+    /**
+     * Holds information about the current channel and is actively updated.
+     */
+    public val channelState: StateFlow<ChannelState?> = messageListController.channelState
 
     /**
      * The list of typing users.
