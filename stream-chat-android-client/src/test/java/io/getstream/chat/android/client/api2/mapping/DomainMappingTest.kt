@@ -1809,6 +1809,32 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `ReminderResponseData is correctly mapped to MessageReminder`() {
+        val input = Mother.randomReminderResponseData()
+        val sut = Fixture().get()
+        val result = with(sut) { input.toDomain() }
+        val expected = MessageReminder(
+            remindAt = input.remindAt,
+            cid = input.channelCid,
+            channel = with(sut) { input.channel!!.toDomain() },
+            messageId = input.messageId,
+            message = with(sut) { input.message!!.toDomain() },
+            createdAt = input.createdAt,
+            updatedAt = input.updatedAt,
+        )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `ReminderResponseData without a channel or message maps them to null`() {
+        val input = Mother.randomReminderResponseData(remindAt = null, channel = null, message = null)
+        val result = with(Fixture().get()) { input.toDomain() }
+        assertEquals(null, result.channel)
+        assertEquals(null, result.message)
+        assertEquals(null, result.remindAt)
+    }
+
+    @Test
     fun `QueryRemindersResponse is correctly mapped to QueryMessageRemindersResult`() {
         val input = randomQueryRemindersResponse()
         val sut = Fixture().get()

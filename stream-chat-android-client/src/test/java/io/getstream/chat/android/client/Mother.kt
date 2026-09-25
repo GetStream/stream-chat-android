@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -92,6 +91,7 @@ import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
@@ -1320,12 +1320,37 @@ internal object Mother {
         updated_at = updatedAt,
     )
 
+    fun randomReminderResponseData(
+        channelCid: String = randomCID(),
+        messageId: String = randomString(),
+        userId: String = randomString(),
+        remindAt: Date? = randomDate(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        channel: ChannelResponse? = randomChannelResponse(),
+        message: MessageResponse? = randomMessageResponse(id = messageId, cid = channelCid),
+        user: UserResponse? = randomUserResponse(id = userId),
+    ): ReminderResponseData = ReminderResponseData(
+        channelCid = channelCid,
+        messageId = messageId,
+        userId = userId,
+        remindAt = remindAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        channel = channel,
+        message = message,
+        user = user,
+    )
+
     fun randomQueryRemindersResponse(
-        reminders: List<DownstreamReminderDto> = listOf(randomDownstreamReminderDto()),
+        reminders: List<ReminderResponseData> = listOf(randomReminderResponseData()),
         next: String? = randomString(),
+        prev: String? = randomString(),
     ): QueryRemindersResponse = QueryRemindersResponse(
+        duration = randomString(),
         reminders = reminders,
         next = next,
+        prev = prev,
     )
 
     fun randomReactionResponse(

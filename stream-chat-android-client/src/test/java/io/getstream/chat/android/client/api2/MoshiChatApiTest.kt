@@ -56,10 +56,8 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
@@ -118,6 +116,7 @@ import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
+import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -157,6 +156,7 @@ import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
@@ -177,6 +177,7 @@ import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
+import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
@@ -2987,7 +2988,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createReminderInput")
-    fun testCreateReminder(call: RetrofitCall<ReminderResponse>, expected: KClass<*>) = runTest {
+    fun testCreateReminder(call: RetrofitCall<CreateReminderResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.createReminder(any(), any())).doReturn(call)
@@ -3006,7 +3007,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateReminderInput")
-    fun testUpdateReminder(call: RetrofitCall<ReminderResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateReminder(call: RetrofitCall<UpdateReminderResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.updateReminder(any(), any())).doReturn(call)

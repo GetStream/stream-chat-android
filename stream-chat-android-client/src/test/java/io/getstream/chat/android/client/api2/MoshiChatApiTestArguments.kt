@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -41,7 +40,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannels
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
@@ -58,6 +56,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
+import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
@@ -84,6 +83,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
+import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.positiveRandomInt
@@ -686,10 +686,22 @@ internal object MoshiChatApiTestArguments {
     fun deletePollOptionInput() = completableResponseArguments()
 
     @JvmStatic
-    fun createReminderInput() = reminderResponseArguments()
+    fun createReminderInput() = listOf(
+        Arguments.of(
+            RetroSuccess(CreateReminderResponse(randomString(), Mother.randomReminderResponseData())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<CreateReminderResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     @JvmStatic
-    fun updateReminderInput() = reminderResponseArguments()
+    fun updateReminderInput() = listOf(
+        Arguments.of(
+            RetroSuccess(UpdateReminderResponse(randomString(), Mother.randomReminderResponseData())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<UpdateReminderResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     @JvmStatic
     fun deleteReminderInput() = completableResponseArguments()
@@ -959,15 +971,6 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<PollVoteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
-
-    @JvmStatic
-    private fun reminderResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(ReminderResponse(Mother.randomDownstreamReminderDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun <T : Any> userGroupArgs(success: T) = listOf(

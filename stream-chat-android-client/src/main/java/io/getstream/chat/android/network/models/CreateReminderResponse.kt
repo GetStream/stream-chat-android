@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response object for querying reminders.
- *
- * @property reminders The list of reminders.
- * @property next The token for the next page of reminders, if available.
+ * Basic response information
  */
-@JsonClass(generateAdapter = true)
-internal data class QueryRemindersResponse(
-    val reminders: List<DownstreamReminderDto>,
-    val next: String?,
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class CreateReminderResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "reminder")
+    internal val reminder: io.getstream.chat.android.network.models.ReminderResponseData,
 )

@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -127,6 +126,7 @@ import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
@@ -1253,6 +1253,19 @@ internal class DomainMapping(
         message = message?.toDomain(),
         createdAt = created_at,
         updatedAt = updated_at,
+    )
+
+    /**
+     * Transforms the generated [ReminderResponseData] into a domain [MessageReminder].
+     */
+    internal fun ReminderResponseData.toDomain(): MessageReminder = MessageReminder(
+        remindAt = remindAt,
+        cid = channelCid,
+        channel = channel?.toDomain(),
+        messageId = messageId,
+        message = message?.toDomain(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     /**
