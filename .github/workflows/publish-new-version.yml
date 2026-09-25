@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: write
     needs: pre_release_check
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@8b36d37dd137d47244206d64899c5f8f7c874c3c
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@9ea4d20d64f99a1a05dd8c8f56504e5e2aa39ed7
     with:
       bump: ${{ inputs.bump }}
       suffix: ${{ inputs.suffix }}
