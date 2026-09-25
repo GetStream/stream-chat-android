@@ -92,7 +92,12 @@ public interface ChannelState {
     /** If the channel is currently muted. */
     public val muted: StateFlow<Boolean>
 
-    /** If we are currently loading. */
+    /**
+     * If the channel is loading. True while the channel loads for the first time, before any data from the local
+     * database or the API arrived, and while older or newer messages load. With
+     * [io.getstream.chat.android.client.api.ChatClientConfig.useLegacyChannelLogic] enabled, only the first load is
+     * reported.
+     */
     public val loading: StateFlow<Boolean>
 
     /** If we are currently loading older messages. */
