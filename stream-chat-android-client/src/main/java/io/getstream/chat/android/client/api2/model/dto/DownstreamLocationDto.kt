@@ -17,23 +17,15 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.core.internal.StreamHandsOff
+import java.util.Date
 
-/**
- * Upstream Json model member data.
- * See [io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter] for special [extraData]
- * handling.
- *
- * @param user_id The user id of the member.
- * @param extraData Custom extra data for the member.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
 @JsonClass(generateAdapter = true)
-internal data class UpstreamMemberDataDto(
+internal data class DownstreamLocationDto(
+    val channel_cid: String,
+    val message_id: String,
     val user_id: String,
-
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
+    val latitude: Double,
+    val longitude: Double,
+    val created_by_device_id: String,
+    val end_at: Date?,
+)

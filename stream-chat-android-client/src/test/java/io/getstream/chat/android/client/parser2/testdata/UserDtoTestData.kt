@@ -17,12 +17,12 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
+import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
@@ -282,11 +282,11 @@ internal object UserDtoTestData {
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             avg_response_time = 1000L,
-            push_preferences = DownstreamPushPreferenceDto(
-                chat_level = "default",
-                disabled_until = Date(1591787071588),
+            push_preferences = PushPreferencesResponse(
+                chatLevel = "default",
+                disabledUntil = Date(1591787071588),
                 // Toggles alternate so a key read into the wrong property cannot look correct.
-                chat_preferences = ChatPreferencesResponse(
+                chatPreferences = ChatPreferencesResponse(
                     directMentions = "all",
                     roleMentions = "none",
                     groupMentions = "all",
