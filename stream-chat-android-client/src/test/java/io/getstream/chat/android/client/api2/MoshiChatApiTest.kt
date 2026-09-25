@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -148,6 +147,7 @@ import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
@@ -1236,15 +1236,15 @@ internal class MoshiChatApiTest {
             createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         ).await()
         // then
-        val expectedPayload = QueryBannedUsersRequest(
-            filter_conditions = filter.toMap(),
-            sort = sort.toDto(),
+        val expectedPayload = QueryBannedUsersPayload(
+            filterConditions = filter.toMap(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = 1)),
             offset = offset,
             limit = limit,
-            created_at_after = createdAtAfter,
-            created_at_after_or_equal = createdAtAfterOrEqual,
-            created_at_before = createdAtBefore,
-            created_at_before_or_equal = createdAtBeforeOrEqual,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         result `should be instance of` expected
         verify(api, times(1)).queryBannedUsers(expectedPayload)
