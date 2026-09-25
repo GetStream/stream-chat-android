@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be`
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -137,6 +138,17 @@ internal class MessageListViewModelTest {
     }
 
     @Test
+    fun `channelState exposes the channel state the message list observes`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+        val viewModel = fixture.get()
+
+        assertSame(fixture.channelState, viewModel.channelState.value)
+    }
+
+    @Test
     fun `When calling pauseAudioRecordingAttachments, audioPlayer is invoked`() = runTest {
         val audioPlayer = mock<AudioPlayer>()
         val viewModel = Fixture()
@@ -157,7 +169,7 @@ internal class MessageListViewModelTest {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
-        private val channelState: ChannelState = mock()
+        val channelState: ChannelState = mock()
 
         init {
             val statePlugin: StatePlugin = mock()
