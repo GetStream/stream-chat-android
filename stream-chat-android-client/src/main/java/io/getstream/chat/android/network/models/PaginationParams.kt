@@ -29,16 +29,22 @@ import com.squareup.moshi.Json
  *
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-internal data class ChannelMemberRequest(
-    @Json(name = "channel_role")
-    internal val channelRole: String? = null,
+internal data class PaginationParams(
+    @Json(name = "id_gt")
+    internal val idGt: Int? = null,
 
-    @Json(name = "user_id")
-    internal val userId: String? = null,
+    @Json(name = "id_gte")
+    internal val idGte: Int? = null,
 
-    @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = null,
+    @Json(name = "id_lt")
+    internal val idLt: Int? = null,
 
-    @Json(name = "user")
-    internal val user: io.getstream.chat.android.network.models.MemberUserRequest? = null,
+    @Json(name = "id_lte")
+    internal val idLte: Int? = null,
+
+    @Json(name = "limit")
+    internal val limit: Int? = null,
+
+    @Json(name = "offset")
+    internal val offset: Int? = null,
 )

@@ -17,8 +17,10 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -108,6 +110,8 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesInput
@@ -137,8 +141,10 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
@@ -2360,18 +2366,23 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val channelType = randomString()
         val channelId = ""
-        val query = Mother.randomQueryChannelRequest()
+        val query = QueryChannelRequest()
+            .withMessages(Pagination.LESS_THAN, "message-id", 30)
+            .withMembers(limit = 10, offset = 5)
+            .withWatchers(limit = 20, offset = 2)
+            .withData(mapOf("name" to "Team"))
+            .apply { watch = true }
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannel(channelType, channelId, query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            data = query.data,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
-            state = query.state,
-            watch = query.watch,
-            presence = query.presence,
+        val expectedPayload = ChannelGetOrCreateRequest(
+            state = true,
+            watch = true,
+            presence = false,
+            messages = MessagePaginationParams(limit = 30, idLt = "message-id"),
+            members = PaginationParams(limit = 10, offset = 5),
+            watchers = PaginationParams(limit = 20, offset = 2),
+            data = ChannelInput(custom = mapOf("name" to "Team")),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannel(channelType, connectionId, expectedPayload)
@@ -2391,18 +2402,23 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val channelType = randomString()
         val channelId = randomString()
-        val query = Mother.randomQueryChannelRequest()
+        val query = QueryChannelRequest()
+            .withMessages(Pagination.LESS_THAN, "message-id", 30)
+            .withMembers(limit = 10, offset = 5)
+            .withWatchers(limit = 20, offset = 2)
+            .withData(mapOf("name" to "Team"))
+            .apply { watch = true }
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannel(channelType, channelId, query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            data = query.data,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
-            state = query.state,
-            watch = query.watch,
-            presence = query.presence,
+        val expectedPayload = ChannelGetOrCreateRequest(
+            state = true,
+            watch = true,
+            presence = false,
+            messages = MessagePaginationParams(limit = 30, idLt = "message-id"),
+            members = PaginationParams(limit = 10, offset = 5),
+            watchers = PaginationParams(limit = 20, offset = 2),
+            data = ChannelInput(custom = mapOf("name" to "Team")),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannel(channelType, channelId, connectionId, expectedPayload)

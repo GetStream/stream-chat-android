@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
@@ -35,16 +37,21 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
+import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.ReactionRequest
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.SharedLocation
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserRequest
+import java.util.Date
 import io.getstream.chat.android.network.models.Attachment as AttachmentRequest
 
 @Suppress("TooManyFunctions")
@@ -113,8 +120,8 @@ internal class DtoMapping(
      * Maps the domain [Member] to the generated network [ChannelMemberRequest] model.
      *
      * The query endpoint hashes the user ids to resolve a distinct channel and reads nothing else, but the role
-     * and custom data are carried anyway since the domain member has them. `user` stays absent: the outgoing
-     * model embeds a read-only [io.getstream.chat.android.network.models.UserResponse].
+     * and custom data are carried anyway since the domain member has them. `user` stays absent: the member is
+     * identified by its user id.
      */
     internal fun Member.toChannelMemberRequest(): ChannelMemberRequest = ChannelMemberRequest(
         userId = getUserId(),
@@ -122,6 +129,50 @@ internal class DtoMapping(
         user = null,
         custom = extraData,
     )
+
+    /**
+     * Maps the public [QueryChannelRequest] to the generated network [ChannelGetOrCreateRequest] model.
+     *
+     * The whole `data` map goes into [ChannelInput.custom], which the adapter flattens back into `data`: the
+     * backend reads undeclared `data` keys as channel custom data, and matches declared ones first. Pagination
+     * keys the generated models do not declare are not sent.
+     */
+    internal fun QueryChannelRequest.toChannelGetOrCreateRequest(): ChannelGetOrCreateRequest =
+        ChannelGetOrCreateRequest(
+            state = state,
+            watch = watch,
+            presence = presence,
+            // Always present, even when empty: the backend decodes them into pointers.
+            messages = messages.toMessagePaginationParams(),
+            members = members.toPaginationParams(),
+            watchers = watchers.toPaginationParams(),
+            data = ChannelInput(custom = data),
+        )
+
+    private fun Map<String, Any>.toMessagePaginationParams() = MessagePaginationParams(
+        limit = int("limit"),
+        idGt = this[Pagination.GREATER_THAN.toString()] as? String,
+        idGte = this[Pagination.GREATER_THAN_OR_EQUAL.toString()] as? String,
+        idLt = this[Pagination.LESS_THAN.toString()] as? String,
+        idLte = this[Pagination.LESS_THAN_OR_EQUAL.toString()] as? String,
+        idAround = this[Pagination.AROUND_ID.toString()] as? String,
+        createdAtAfter = this["created_at_after"] as? Date,
+        createdAtAfterOrEqual = this["created_at_after_or_equal"] as? Date,
+        createdAtBefore = this["created_at_before"] as? Date,
+        createdAtBeforeOrEqual = this["created_at_before_or_equal"] as? Date,
+        createdAtAround = this["created_at_around"] as? Date,
+    )
+
+    private fun Map<String, Any>.toPaginationParams() = PaginationParams(
+        limit = int("limit"),
+        offset = int("offset"),
+        idGt = int("id_gt"),
+        idGte = int("id_gte"),
+        idLt = int("id_lt"),
+        idLte = int("id_lte"),
+    )
+
+    private fun Map<String, Any>.int(key: String): Int? = (this[key] as? Number)?.toInt()
 
     /**
      * Maps the domain [Location] to the generated network [SharedLocation] model.

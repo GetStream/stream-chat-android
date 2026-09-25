@@ -75,7 +75,7 @@ internal object UpdateChannelRequestTestData {
         skipPush = true,
     )
     const val addMembersJson =
-        """{"skip_push":true,"add_filter_tags":[],"add_members":[{"user_id":"u1","channel_role":"moderator",""" +
+        """{"skip_push":true,"add_filter_tags":[],"add_members":[{"channel_role":"moderator","user_id":"u1",""" +
             """"k":"v"}],"add_moderators":[],"assign_roles":[],"demote_moderators":[],"invites":[],""" +
             """"remove_filter_tags":[],"remove_members":[],"message":{"text":"added","type":"system",""" +
             """"attachments":[],"mentioned_group_ids":[],"mentioned_roles":[],"mentioned_users":[],""" +

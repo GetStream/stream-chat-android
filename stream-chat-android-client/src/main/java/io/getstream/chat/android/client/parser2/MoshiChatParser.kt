@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.adapters.ChannelInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberPartialResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
@@ -49,6 +50,7 @@ import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.MemberUserRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
@@ -70,6 +72,7 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.BlockListOptions
+import io.getstream.chat.android.network.models.ChannelConfigOverrides
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChatPreferencesInput
@@ -104,10 +107,12 @@ internal class MoshiChatParser(
             .add(UserResponseCommonFieldsAdapter)
             .add(UserResponsePrivacyFieldsAdapter)
             .add(UserRequestAdapter)
+            .add(MemberUserRequestAdapter)
             .add(NetworkAttachmentAdapter)
             .add(OwnUserResponseAdapter)
             .add(MessageRequestAdapter)
             .add(ChannelMemberRequestAdapter)
+            .add(ChannelInputAdapter)
             .add(ChannelInputRequestAdapter)
             .add(ChannelResponseAdapter)
             .add(ChannelMemberResponseAdapter)
@@ -138,6 +143,14 @@ internal class MoshiChatParser(
             .add(
                 MessageRequest.Type::class.java,
                 MessageRequest.Type.TypeAdapter(),
+            )
+            .add(
+                ChannelConfigOverrides.BlocklistBehavior::class.java,
+                ChannelConfigOverrides.BlocklistBehavior.BlocklistBehaviorAdapter(),
+            )
+            .add(
+                ChannelConfigOverrides.PushLevel::class.java,
+                ChannelConfigOverrides.PushLevel.PushLevelAdapter(),
             )
             .add(
                 ConfigOverridesRequest.BlocklistBehavior::class.java,

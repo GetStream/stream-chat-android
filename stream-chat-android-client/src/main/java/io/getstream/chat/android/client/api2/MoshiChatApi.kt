@@ -1571,15 +1571,7 @@ constructor(
     }
 
     override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            state = query.state,
-            watch = query.watch,
-            presence = query.presence,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
-            data = query.data,
-        )
+        val request = with(dtoMapping) { query.toChannelGetOrCreateRequest() }
 
         val lazyQueryChannelCall = {
             if (channelId.isEmpty()) {

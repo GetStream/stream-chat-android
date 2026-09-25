@@ -29,16 +29,25 @@ import com.squareup.moshi.Json
  *
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
-internal data class ChannelMemberRequest(
-    @Json(name = "channel_role")
-    internal val channelRole: String? = null,
+internal data class MemberUserRequest(
+    @Json(name = "id")
+    internal val id: String,
 
-    @Json(name = "user_id")
-    internal val userId: String? = null,
+    @Json(name = "image")
+    internal val image: String? = null,
+
+    @Json(name = "invisible")
+    internal val invisible: Boolean? = null,
+
+    @Json(name = "language")
+    internal val language: String? = null,
+
+    @Json(name = "name")
+    internal val name: String? = null,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?>? = null,
 
-    @Json(name = "user")
-    internal val user: io.getstream.chat.android.network.models.MemberUserRequest? = null,
+    @Json(name = "privacy_settings")
+    internal val privacySettings: io.getstream.chat.android.network.models.PrivacySettingsResponse? = null,
 )
