@@ -26,7 +26,11 @@ import io.getstream.chat.android.network.models.UserResponse
 // Downstream (read-only) adapter for the generated UserResponse: collects root-level custom fields
 // into `custom`, matching the wire's flattened extra data. extraDataPropertyName is its @Json name.
 internal object UserResponseAdapter :
-    CustomObjectDtoAdapter<UserResponse>(UserResponse::class, extraDataPropertyName = "custom") {
+    CustomObjectDtoAdapter<UserResponse>(
+        UserResponse::class,
+        extraDataPropertyName = "custom",
+        alsoKeepInExtraData = GENERATED_USER_EXTRA_DATA_KEYS,
+    ) {
 
     @FromJson
     fun fromJson(
