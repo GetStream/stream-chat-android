@@ -147,7 +147,7 @@ internal object ChannelDtoTestData {
             "archived_at": "2020-06-10T11:04:31.588Z"
            }
           ],
-          "watchers": [${UserDtoTestData.downstreamJson}],
+          "watchers": [${UserDtoTestData.userResponseJson}],
           "read": [
            {
             "user": ${UserDtoTestData.userResponseJson},
@@ -157,7 +157,7 @@ internal object ChannelDtoTestData {
            }
           ],
           "config": $configJson,
-          "created_by": ${UserDtoTestData.downstreamJson},
+          "created_by": ${UserDtoTestData.userResponseJson},
           "team": "team1",
           "cooldown": 1,
           "pinned_messages": [${MessageDtoTestData.downstreamJson}],
@@ -214,7 +214,7 @@ internal object ChannelDtoTestData {
                 custom = emptyMap(),
             ),
         ),
-        watchers = listOf(UserDtoTestData.downstreamUser),
+        watchers = listOf(UserDtoTestData.userResponse),
         read = listOf(
             ReadStateResponse(
                 user = UserDtoTestData.userResponse,
@@ -224,7 +224,7 @@ internal object ChannelDtoTestData {
             ),
         ),
         config = expectedConfig,
-        created_by = UserDtoTestData.downstreamUser,
+        created_by = UserDtoTestData.userResponse,
         team = "team1",
         cooldown = 1,
         pinned_messages = listOf(MessageDtoTestData.downstreamMessage),

@@ -1394,8 +1394,8 @@ internal class DomainMappingTest {
 
     @Test
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
-        val user1 = randomDownstreamUserDto(id = "user1")
-        val user2 = randomDownstreamUserDto(id = "user2")
+        val user1 = randomUserResponse(id = "user1")
+        val user2 = randomUserResponse(id = "user2")
         val participant1Dto = randomThreadParticipantDto(
             userId = user1.id,
             user = randomUserResponse(id = user1.id),
