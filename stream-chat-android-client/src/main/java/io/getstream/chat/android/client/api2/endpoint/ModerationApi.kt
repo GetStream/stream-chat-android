@@ -21,11 +21,11 @@ import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
@@ -68,6 +68,6 @@ internal interface ModerationApi {
 
     @GET("/query_banned_users")
     fun queryBannedUsers(
-        @UrlQueryPayload @Query("payload") payload: QueryBannedUsersRequest,
+        @UrlQueryPayload @Query("payload") payload: QueryBannedUsersPayload,
     ): RetrofitCall<QueryBannedUsersResponse>
 }
