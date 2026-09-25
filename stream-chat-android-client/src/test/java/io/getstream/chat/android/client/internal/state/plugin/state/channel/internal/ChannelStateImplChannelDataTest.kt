@@ -492,12 +492,13 @@ internal class ChannelStateImplChannelDataTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `deleteChannel should do nothing when no channel data exists`() = runTest {
+        fun `deleteChannel should set deletedAt when no channel data exists yet`() = runTest {
             // given - no channel data set
+            val deletedAt = Date(5000)
             // when
-            channelState.deleteChannel(Date(5000))
-            // then - should not throw, channelData falls back to default with null deletedAt
-            assertNull(channelState.channelData.value.deletedAt)
+            channelState.deleteChannel(deletedAt)
+            // then
+            assertEquals(deletedAt, channelState.channelData.value.deletedAt)
         }
     }
 

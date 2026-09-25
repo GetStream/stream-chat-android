@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
@@ -304,10 +305,8 @@ internal class ChannelEventHandlerImpl(
             }
 
             is ChannelVisibleEvent -> state.setHidden(false)
-            is ChannelDeletedEvent -> {
-                state.removeMessagesBefore(event.createdAt)
-                state.deleteChannel(event.createdAt)
-            }
+            is ChannelDeletedEvent -> state.deleteChannel(event.createdAt)
+            is NotificationChannelDeletedEvent -> state.deleteChannel(event.createdAt)
 
             is ChannelTruncatedEvent -> {
                 state.removeMessagesBefore(event.createdAt, event.message)
