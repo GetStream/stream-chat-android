@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -308,19 +307,6 @@ constructor(
         channelId = channelId,
         parentId = message.parentId,
     ).toUnitCall()
-
-    override fun queryDraftMessages(
-        offset: Int?,
-        limit: Int?,
-    ): Call<List<DraftMessage>> =
-        messageApi.queryDraftMessages(
-            QueryDraftMessagesRequest(
-                offset = offset,
-                limit = limit,
-            ),
-        ).mapDomain { response ->
-            response.drafts.map { it.toDomain() }
-        }
 
     override fun queryDrafts(
         filter: FilterObject,
