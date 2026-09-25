@@ -152,6 +152,20 @@ internal class ChannelLogicImplTest {
     inner class OnQueryChannelResultSuccess {
 
         @Test
+        fun `should end the first page load after the channel data is written`() {
+            // Given
+            val channel = randomChannel(id = "123", type = "messaging", messages = emptyList())
+            val query = QueryChannelRequest().withMessages(30)
+            // When
+            sut.onQueryChannelResult(query, Result.Success(channel))
+            // Then
+            inOrder(stateImpl) {
+                verify(stateImpl).upsertMembers(channel.members)
+                verify(stateImpl).endFirstPageLoad()
+            }
+        }
+
+        @Test
         fun `should reset recovery state on success with message limit`() {
             // Given
             val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
@@ -578,6 +592,16 @@ internal class ChannelLogicImplTest {
 
     @Nested
     inner class OnQueryChannelResultFailure {
+
+        @Test
+        fun `should end the first page load`() {
+            // Given
+            val query = QueryChannelRequest().withMessages(30)
+            // When
+            sut.onQueryChannelResult(query, Result.Failure(Error.GenericError("Temporary error")))
+            // Then
+            verify(stateImpl).endFirstPageLoad()
+        }
 
         @Test
         fun `should set recovery needed for non-permanent error`() {
@@ -1051,6 +1075,19 @@ internal class ChannelLogicImplTest {
 
     @Nested
     inner class UpdateDataForChannel {
+
+        @Test
+        fun `should end the first page load after the channel data is written`() = runTest {
+            // Given
+            val channel = randomChannel(id = "123", type = "messaging", messages = emptyList())
+            // When
+            sut.updateDataForChannel(channel = channel, messageLimit = 30)
+            // Then
+            inOrder(stateImpl) {
+                verify(stateImpl).upsertMembers(channel.members)
+                verify(stateImpl).endFirstPageLoad()
+            }
+        }
 
         @Test
         fun `should update channel data`() = runTest {

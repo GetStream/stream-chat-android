@@ -151,12 +151,14 @@ internal class ChannelLogicImpl(
                 if (!isNotificationUpdate && limit != 0) {
                     state.setRecoveryNeeded(false)
                 }
+                state.endFirstPageLoad()
             }
 
             is Result.Failure -> {
                 // Mark the channel as needing recovery if the error is not permanent
                 val isPermanent = result.value.isPermanent()
                 state.setRecoveryNeeded(recoveryNeeded = !isPermanent)
+                state.endFirstPageLoad()
             }
         }
     }
@@ -350,6 +352,7 @@ internal class ChannelLogicImpl(
         }
         // Add pinned messages
         state.addPinnedMessages(channel.pinnedMessages)
+        state.endFirstPageLoad()
     }
 
     override fun handleEvents(events: List<ChatEvent>) {

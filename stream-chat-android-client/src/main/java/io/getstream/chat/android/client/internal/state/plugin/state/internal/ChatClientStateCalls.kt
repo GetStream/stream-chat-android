@@ -33,9 +33,11 @@ import io.getstream.chat.android.client.internal.state.extensions.internal.logic
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.identifier
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.launch
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +45,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 /**
  * Adapter for [ChatClient] that wraps some of it's request.
@@ -104,8 +107,19 @@ internal class ChatClientStateCalls(
         val state = deferredState
             .await()
             .channel(channelType, channelId)
-        (state as? ChannelStateLegacyImpl)?.setLoadingIfEmpty()
-        chatClient.queryChannel(channelType, channelId, request).launch(scope)
+        when (state) {
+            is ChannelStateImpl -> state.setLoadingIfEmpty()
+            is ChannelStateLegacyImpl -> state.setLoadingIfEmpty()
+        }
+        scope.launch {
+            // A plugin failing the precondition skips the result listeners, so end the first load here as well.
+            if (chatClient.queryChannel(channelType, channelId, request).await() is Result.Failure) {
+                when (state) {
+                    is ChannelStateImpl -> state.endFirstPageLoad()
+                    is ChannelStateLegacyImpl -> state.setLoading(false)
+                }
+            }
+        }
         return state
     }
 
