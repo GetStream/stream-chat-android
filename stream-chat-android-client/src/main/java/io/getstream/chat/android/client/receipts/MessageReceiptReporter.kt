@@ -22,13 +22,17 @@ import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
- * Reports message delivery receipts to the server in batches of [MAX_BATCH_SIZE]
- * every [REPORT_INTERVAL_IN_MS] milliseconds.
+ * Reports message delivery receipts to the server.
+ *
+ * Idle sessions do not poll the repository. [onReceiptsEnqueued] wakes reporting after receipts
+ * are persisted, and each [start] still drains receipts that were saved before the job began.
+ * See [start] for batching, pacing, and retry behavior.
  */
 internal class MessageReceiptReporter(
     private val scope: CoroutineScope,
@@ -38,42 +42,95 @@ internal class MessageReceiptReporter(
 
     private val logger by taggedLogger("Chat:MessageReceiptReporter")
 
+    /**
+     * Conflated wake-ups. [Channel.trySend] never suspends the caller, and a burst keeps only the
+     * latest signal. The channel stays open when a reporting job ends so a later [start] can drain
+     * again. Signals carry no payload; the repository remains the source of truth.
+     */
+    private val enqueueSignals = Channel<Unit>(Channel.CONFLATED)
+
+    private var reportingJob: Job? = null
+
+    /**
+     * Starts reporting queued delivery receipts for the current user session.
+     *
+     * Receipts persisted before this call are selected immediately. While the queue is non-empty,
+     * batches of at most [MAX_BATCH_SIZE] are reported at least [REPORT_INTERVAL_IN_MS] apart,
+     * including the selection that finds the queue empty. An empty selection suspends until
+     * [onReceiptsEnqueued]. Failed deliveries stay queued and are retried on that cadence without
+     * another signal. A second call while the reporting job is still active does nothing.
+     * Cancelling the job does not close [enqueueSignals]; the next [start] drains again.
+     */
     fun start() {
+        if (reportingJob?.isActive == true) {
+            logger.d { "Reporter is already active" }
+            return
+        }
         logger.d { "Starting reporter…" }
-        scope.launch {
+        reportingJob = scope.launch {
             try {
-                while (isActive) {
-                    val messages = messageReceiptRepository
-                        .selectMessageReceipts(limit = MAX_BATCH_SIZE)
-                        .map { receipt ->
-                            Message(
-                                id = receipt.messageId,
-                                cid = receipt.cid,
-                            )
-                        }
-
-                    if (messages.isNotEmpty()) {
-                        logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
-                        api.markDelivered(messages)
-                            .execute()
-                            .onSuccessSuspend {
-                                logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
-                                val deliveredMessageIds = messages.map(Message::id)
-                                messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
-                            }
-                            .onError { error ->
-                                logger.e {
-                                    "Failed to report delivery receipts for ${messages.size} messages: " +
-                                        error.message
-                                }
-                            }
-                    }
-
-                    delay(REPORT_INTERVAL_IN_MS)
+                drainQueuedReceipts()
+                while (true) {
+                    enqueueSignals.receive()
+                    drainQueuedReceipts()
                 }
             } finally {
                 logger.d { "Reporter is no longer active" }
             }
+        }
+    }
+
+    /**
+     * Signals that new delivery receipts were persisted.
+     *
+     * Non-blocking and conflated: the caller does not wait for network I/O, and bursts collapse
+     * to a single wake-up.
+     */
+    fun onReceiptsEnqueued() {
+        enqueueSignals.trySend(Unit)
+    }
+
+    /**
+     * Selects and reports until the repository returns an empty batch.
+     *
+     * A pending signal is consumed before each selection. A signal that arrives during that
+     * selection stays buffered, so an enqueue racing an empty result remains visible to the
+     * caller. A stale signal may cause one extra selection and never a periodic idle query.
+     * Cancellation from [delay] or [ChatApi.markDelivered] propagates to the reporting job.
+     */
+    private suspend fun drainQueuedReceipts() {
+        while (true) {
+            enqueueSignals.tryReceive()
+
+            val messages = messageReceiptRepository
+                .selectMessageReceipts(limit = MAX_BATCH_SIZE)
+                .map { receipt ->
+                    Message(
+                        id = receipt.messageId,
+                        cid = receipt.cid,
+                    )
+                }
+
+            if (messages.isEmpty()) {
+                return
+            }
+
+            logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
+            api.markDelivered(messages)
+                .await()
+                .onSuccessSuspend {
+                    logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
+                    val deliveredMessageIds = messages.map(Message::id)
+                    messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
+                }
+                .onError { error ->
+                    logger.e {
+                        "Failed to report delivery receipts for ${messages.size} messages: " +
+                            error.message
+                    }
+                }
+
+            delay(REPORT_INTERVAL_IN_MS)
         }
     }
 }

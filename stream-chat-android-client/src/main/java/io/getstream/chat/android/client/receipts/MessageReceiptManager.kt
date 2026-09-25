@@ -39,12 +39,15 @@ import java.util.Date
  * @param getRepositoryFacade Function to provide the [RepositoryFacade] tied to the currently logged in user.
  * @param messageReceiptRepository The [MessageReceiptRepository] to store the created receipts.
  * @param api The [ChatApi] to fetch data if needed.
+ * @param onReceiptsEnqueued Invoked after a nonempty receipt upsert has completed successfully.
+ * Ineligible messages, empty inputs, and failed upserts do not invoke it.
  */
 internal class MessageReceiptManager(
     private val now: () -> Date,
     private val getRepositoryFacade: () -> RepositoryFacade,
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
+    private val onReceiptsEnqueued: () -> Unit,
 ) {
 
     private val repositoryFacade: RepositoryFacade
@@ -149,6 +152,7 @@ internal class MessageReceiptManager(
 
         val receipts = messages.map { message -> message.toDeliveryReceipt() }
         messageReceiptRepository.upsertMessageReceipts(receipts)
+        onReceiptsEnqueued()
 
         logger.d { "[markMessagesAsDelivered] ${messages.size} delivery receipts upserted" }
 
