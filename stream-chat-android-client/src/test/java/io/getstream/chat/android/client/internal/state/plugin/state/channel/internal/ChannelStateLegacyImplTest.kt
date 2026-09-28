@@ -449,6 +449,7 @@ internal class ChannelStateLegacyImplTest {
         // given
         val messages = createMessages(5)
         channelState.setMessages(messages)
+        channelState.updateCachedLatestMessages(messages.associateBy { it.id })
         val messagesToDelete = messages.take(2)
 
         // when
@@ -456,6 +457,7 @@ internal class ChannelStateLegacyImplTest {
 
         // then
         assertEquals(3, channelState.messages.value.size)
+        assertEquals(messages.drop(2).map { it.id }.toSet(), channelState.cachedLatestMessages.value.keys)
         val remainingMessageIds = channelState.messages.value.map { it.id }.toSet()
         messagesToDelete.forEach { messageToDelete ->
             assertEquals(false, remainingMessageIds.contains(messageToDelete.id))

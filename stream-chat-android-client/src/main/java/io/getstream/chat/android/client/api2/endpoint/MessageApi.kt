@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
@@ -70,11 +69,6 @@ internal interface MessageApi {
         @Path("id") channelId: String,
         @Query("parent_id") parentId: String?,
     ): RetrofitCall<Response>
-
-    @POST("/drafts/query")
-    fun queryDraftMessages(
-        @Body request: QueryDraftMessagesRequest,
-    ): RetrofitCall<QueryDraftMessagesResponse>
 
     /**
      * Queries draft messages for the current user.

@@ -25,11 +25,11 @@ import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 
 /**
- * Keys the event user models declare that `DownstreamUserDto` did not, so they used to reach
+ * Keys the generated user models declare that `DownstreamUserDto` did not, so they used to reach
  * `User.extraData` and would otherwise stop doing so. The domain has no property for either, so they are
  * kept in the overflow map. Drop with AND-1398.
  */
-internal val GENERATED_EVENT_USER_EXTRA_DATA_KEYS = setOf(
+internal val GENERATED_USER_EXTRA_DATA_KEYS = setOf(
     "deleted_at",
     "revoke_tokens_issued_before",
 )
@@ -40,7 +40,7 @@ internal object UserResponseCommonFieldsAdapter :
     CustomObjectDtoAdapter<UserResponseCommonFields>(
         UserResponseCommonFields::class,
         extraDataPropertyName = "custom",
-        alsoKeepInExtraData = GENERATED_EVENT_USER_EXTRA_DATA_KEYS,
+        alsoKeepInExtraData = GENERATED_USER_EXTRA_DATA_KEYS,
     ) {
 
     @FromJson
@@ -61,7 +61,7 @@ internal object UserResponsePrivacyFieldsAdapter :
     CustomObjectDtoAdapter<UserResponsePrivacyFields>(
         UserResponsePrivacyFields::class,
         extraDataPropertyName = "custom",
-        alsoKeepInExtraData = GENERATED_EVENT_USER_EXTRA_DATA_KEYS,
+        alsoKeepInExtraData = GENERATED_USER_EXTRA_DATA_KEYS,
     ) {
 
     @FromJson
