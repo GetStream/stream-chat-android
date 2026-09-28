@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.MessageResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
 import io.getstream.chat.android.client.parser2.adapters.OwnUserResponseAdapter
@@ -107,6 +108,7 @@ internal class MoshiChatParser(
             .add(NetworkAttachmentAdapter)
             .add(OwnUserResponseAdapter)
             .add(MessageRequestAdapter)
+            .add(MessageResponseAdapter)
             .add(ChannelMemberRequestAdapter)
             .add(ChannelInputRequestAdapter)
             .add(ChannelResponseAdapter)

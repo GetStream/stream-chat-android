@@ -861,7 +861,7 @@ internal object MoshiChatApiTestArguments {
 
     private fun messagesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(MessagesResponse(listOf(randomDownstreamMessageDto()))).toRetrofitCall(),
+            RetroSuccess(MessagesResponse(listOf(Mother.randomMessageResponse()))).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(RetroError<MessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
