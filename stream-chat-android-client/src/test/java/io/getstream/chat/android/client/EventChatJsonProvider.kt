@@ -1009,7 +1009,7 @@ private fun createChannelJsonString() =
     "last_message_at": "2020-06-29T06:14:28.000Z",
     "created_at": "2020-06-29T06:14:28.000Z",
     "updated_at": "2020-06-29T06:14:28.000Z",
-    "created_by": ${createUserJsonString()},
+    "created_by": ${createCommonFieldsUserJsonString()},
     "frozen": false,
     "members": [
         ${createMemberJsonString()}
