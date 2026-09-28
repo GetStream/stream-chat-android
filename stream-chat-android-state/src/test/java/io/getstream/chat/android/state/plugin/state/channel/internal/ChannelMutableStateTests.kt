@@ -420,6 +420,24 @@ internal class ChannelMutableStateTests {
     }
 
     @Test
+    fun `deleteMessages should remove messages from the cached latest messages`() = runTest {
+        // given
+        val messages = createMessages(5)
+        channelState.updateCachedLatestMessages(messages.associateBy { it.id })
+        val messagesToDelete = messages.take(2)
+
+        // when
+        channelState.deleteMessages(messagesToDelete)
+
+        // then
+        assertEquals(messages.drop(2).map { it.id }.toSet(), channelState.cachedLatestMessages.value.keys)
+        assertEquals(
+            messages.drop(2).map { it.id }.toSet(),
+            channelState.toChannel().cachedLatestMessages.map { it.id }.toSet(),
+        )
+    }
+
+    @Test
     fun `deleteMessages with empty list should not affect channel state`() = runTest {
         // given
         val messages = createMessages(3)
