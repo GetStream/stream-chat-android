@@ -299,15 +299,18 @@ internal class QueryChannelsLogic(
             logger.w { "[applyGroupedResult] rejected (non-Grouped identifier: $identifier)" }
             return
         }
-        val channels = group.channels
         logger.d {
-            "[applyGroupedResult] channels.size: ${channels.size}, isFirstPage: $isFirstPage, " +
+            "[applyGroupedResult] channels.size: ${group.channels.size}, isFirstPage: $isFirstPage, " +
                 "next: ${group.next}"
         }
 
         groupedResultMutex.withLock {
+            val existing = queryChannelsStateLogic.getChannels()
+            // The server's copy lacks messages only this device has; listed channels keep theirs through the merge.
+            val channels = group.channels.map { channel ->
+                if (existing?.containsKey(channel.cid) == true) channel else channel.withLocalOnlyMessages()
+            }
             if (isFirstPage) {
-                val existing = queryChannelsStateLogic.getChannels()
                 if (!existing.isNullOrEmpty()) {
                     // Channels still in the page keep their copy, so messages only this device has survive the merge.
                     val returnedCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
@@ -332,10 +335,16 @@ internal class QueryChannelsLogic(
 
             // Persist
             queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
-            val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
+            val channelConfigs = group.channels.map { ChannelConfig(it.type, it.config) }
             queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
-            queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())
+            queryChannelsDatabaseLogic.storeStateForChannels(group.channels.toSet())
         }
+    }
+
+    private suspend fun Channel.withLocalOnlyMessages(): Channel {
+        val serverIds = messages.mapTo(mutableSetOf()) { it.id }
+        val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid).filterNot { it.id in serverIds }
+        return if (localOnly.isEmpty()) this else copy(messages = messages + localOnly)
     }
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
