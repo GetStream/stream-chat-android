@@ -16,19 +16,19 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.parser2.testdata.ThreadDtoTestData
+import io.getstream.chat.android.network.models.ThreadStateResponse
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class DownstreamThreadDtoAdapterTest {
+internal class ThreadStateResponseAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Deserialize JSON thread with custom fields`() {
         val thread = parser.fromJson(
             ThreadDtoTestData.downstreamThreadJson,
-            DownstreamThreadDto::class.java,
+            ThreadStateResponse::class.java,
         )
         Assertions.assertEquals(ThreadDtoTestData.downstreamThread, thread)
     }
@@ -37,7 +37,7 @@ internal class DownstreamThreadDtoAdapterTest {
     fun `Deserialize JSON thread without custom fields`() {
         val thread = parser.fromJson(
             ThreadDtoTestData.downstreamThreadJsonWithoutExtraData,
-            DownstreamThreadDto::class.java,
+            ThreadStateResponse::class.java,
         )
         Assertions.assertEquals(ThreadDtoTestData.downstreamThreadWithoutExtraData, thread)
     }

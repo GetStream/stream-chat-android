@@ -31,8 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
@@ -98,6 +96,8 @@ import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
+import io.getstream.chat.android.network.models.ThreadResponse
+import io.getstream.chat.android.network.models.ThreadStateResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
@@ -993,46 +993,46 @@ internal object Mother {
         memberLimit = memberLimit,
     )
 
-    fun randomDownstreamThreadDto(
+    fun randomThreadStateResponse(
         activeParticipantCount: Int = randomInt(),
         channelCid: String = randomString(),
         channel: ChannelResponse? = randomChannelResponse(id = channelCid),
         parentMessageId: String = randomString(),
-        parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(),
+        parentMessage: MessageResponse? = randomMessageResponse(),
         createdByUserId: String = randomString(),
-        createdBy: UserResponse = randomUserResponse(id = createdByUserId),
+        createdBy: UserResponse? = randomUserResponse(id = createdByUserId),
         participantCount: Int = randomInt(),
         threadParticipants: List<ThreadParticipant> = emptyList(),
-        lastMessageAt: Date = randomDate(),
+        lastMessageAt: Date? = randomDate(),
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
         deletedAt: Date? = randomDateOrNull(),
         title: String = randomString(),
-        latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
+        latestReplies: List<MessageResponse> = listOf(randomMessageResponse()),
         read: List<ReadStateResponse> = listOf(randomReadStateResponse()),
         replyCount: Int = randomInt(),
         draft: DraftResponse? = randomDraftResponse(),
         extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
-    ): DownstreamThreadDto = DownstreamThreadDto(
-        active_participant_count = activeParticipantCount,
-        channel_cid = channelCid,
+    ): ThreadStateResponse = ThreadStateResponse(
+        activeParticipantCount = activeParticipantCount,
+        channelCid = channelCid,
         channel = channel,
-        parent_message_id = parentMessageId,
-        parent_message = parentMessage,
-        created_by_user_id = createdByUserId,
-        created_by = createdBy,
-        participant_count = participantCount,
-        thread_participants = threadParticipants,
-        last_message_at = lastMessageAt,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        deleted_at = deletedAt,
+        parentMessageId = parentMessageId,
+        parentMessage = parentMessage,
+        createdByUserId = createdByUserId,
+        createdBy = createdBy,
+        participantCount = participantCount,
+        threadParticipants = threadParticipants,
+        lastMessageAt = lastMessageAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
         title = title,
-        latest_replies = latestReplies,
+        latestReplies = latestReplies,
         read = read,
-        reply_count = replyCount,
+        replyCount = replyCount,
         draft = draft,
-        extraData = extraData,
+        custom = extraData,
     )
 
     fun randomThreadParticipantDto(
@@ -1197,40 +1197,40 @@ internal object Mother {
         custom = custom,
     )
 
-    fun randomDownstreamThreadInfoDto(
+    fun randomThreadResponse(
         channelCid: String = randomString(),
         channel: ChannelResponse? = randomChannelResponse(id = channelCid),
         parentMessageId: String = randomString(),
-        parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(id = parentMessageId),
+        parentMessage: MessageResponse? = randomMessageResponse(id = parentMessageId),
         createdByUserId: String = randomString(),
-        createdBy: UserResponse = randomUserResponse(id = createdByUserId),
+        createdBy: UserResponse? = randomUserResponse(id = createdByUserId),
         replyCount: Int = randomInt(),
         participantCount: Int = randomInt(),
         activeParticipantCount: Int = randomInt(),
         threadParticipants: List<ThreadParticipant> = emptyList(),
-        lastMessageAt: Date = randomDate(),
+        lastMessageAt: Date? = randomDate(),
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
         deletedAt: Date? = randomDateOrNull(),
         title: String = randomString(),
         extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
-    ): DownstreamThreadInfoDto = DownstreamThreadInfoDto(
-        channel_cid = channelCid,
+    ): ThreadResponse = ThreadResponse(
+        channelCid = channelCid,
         channel = channel,
-        parent_message_id = parentMessageId,
-        parent_message = parentMessage,
-        created_by_user_id = createdByUserId,
-        created_by = createdBy,
-        reply_count = replyCount,
-        participant_count = participantCount,
-        active_participant_count = activeParticipantCount,
-        thread_participants = threadParticipants,
-        last_message_at = lastMessageAt,
-        created_at = createdAt,
-        updated_at = updatedAt,
-        deleted_at = deletedAt,
+        parentMessageId = parentMessageId,
+        parentMessage = parentMessage,
+        createdByUserId = createdByUserId,
+        createdBy = createdBy,
+        replyCount = replyCount,
+        participantCount = participantCount,
+        activeParticipantCount = activeParticipantCount,
+        threadParticipants = threadParticipants,
+        lastMessageAt = lastMessageAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
         title = title,
-        extraData = extraData,
+        custom = extraData,
     )
 
     fun randomBlockedUserResponse(

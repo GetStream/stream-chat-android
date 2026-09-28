@@ -23,6 +23,7 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.ThreadResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WSEvent
@@ -174,7 +175,7 @@ internal data class MessageReadEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val thread: DownstreamThreadInfoDto? = null,
+    val thread: ThreadResponse? = null,
     val last_read_message_id: String?,
     val team: String? = null,
 ) : ChatEventDto()
@@ -314,7 +315,7 @@ internal data class NotificationMarkReadEventDto(
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
     val thread_id: String? = null,
-    val thread: DownstreamThreadInfoDto? = null,
+    val thread: ThreadResponse? = null,
     val unread_threads: Int? = null,
     val unread_thread_messages: Int? = null,
     val last_read_message_id: String?,
@@ -371,7 +372,7 @@ internal data class ThreadUpdatedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val thread: DownstreamThreadInfoDto,
+    val thread: ThreadResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

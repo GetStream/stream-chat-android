@@ -14,24 +14,31 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * Response for [ThreadsApi.queryThreads]
  *
- * @param threads: The list of threads.
- * @param duration: The duration of the request.
- * @param prev: The identifier for the previous page of threads.
- * @param next: The identifier for the next page of threads.
  */
-@JsonClass(generateAdapter = true)
+@com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class QueryThreadsResponse(
-    val threads: List<DownstreamThreadDto>,
-    val duration: String,
-    val prev: String?,
-    val next: String?,
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "threads")
+    internal val threads: List<io.getstream.chat.android.network.models.ThreadStateResponse> = emptyList(),
+
+    @Json(name = "next")
+    internal val next: String? = null,
+
+    @Json(name = "prev")
+    internal val prev: String? = null,
 )

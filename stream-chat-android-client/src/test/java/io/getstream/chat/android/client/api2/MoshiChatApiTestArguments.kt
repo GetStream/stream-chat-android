@@ -37,12 +37,9 @@ import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
-import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
@@ -61,6 +58,7 @@ import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
+import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
@@ -74,6 +72,7 @@ import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
+import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
@@ -85,6 +84,7 @@ import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateReminderResponse
+import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.positiveRandomInt
@@ -662,13 +662,22 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 QueryThreadsResponse(
-                    threads = listOf(Mother.randomDownstreamThreadDto()),
+                    threads = listOf(Mother.randomThreadStateResponse()),
                     duration = randomString(),
                     prev = randomString(),
                     next = randomString(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
+        ),
+        Arguments.of(
+            RetroSuccess(
+                QueryThreadsResponse(
+                    threads = listOf(Mother.randomThreadStateResponse(parentMessage = null)),
+                    duration = randomString(),
+                ),
+            ).toRetrofitCall(),
+            Result.Failure::class,
         ),
         Arguments.of(RetroError<QueryThreadsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
@@ -961,27 +970,36 @@ internal object MoshiChatApiTestArguments {
     private fun threadResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                ThreadResponse(
-                    thread = Mother.randomDownstreamThreadDto(),
+                GetThreadResponse(
+                    thread = Mother.randomThreadStateResponse(),
                     duration = randomString(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(
+            RetroSuccess(
+                GetThreadResponse(
+                    thread = Mother.randomThreadStateResponse(lastMessageAt = null),
+                    duration = randomString(),
+                ),
+            ).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(RetroError<GetThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun threadInfoResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                ThreadInfoResponse(
-                    thread = Mother.randomDownstreamThreadInfoDto(),
+                UpdateThreadPartialResponse(
+                    thread = Mother.randomThreadResponse(),
                     duration = randomString(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ThreadInfoResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<UpdateThreadPartialResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun pollResponseArguments() = listOf(

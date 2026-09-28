@@ -41,8 +41,6 @@ import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapte
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamModerationDetailsDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadDtoAdapter
-import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadInfoDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DraftPayloadResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
@@ -62,6 +60,8 @@ import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataA
 import io.getstream.chat.android.client.parser2.adapters.PollResponseDataAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.ThreadResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.ThreadStateResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
@@ -122,8 +122,8 @@ internal class MoshiChatParser(
             .add(ChannelMemberResponseAdapter)
             .add(ChannelMemberPartialResponseAdapter)
             .add(FlagRequestAdapterFactory)
-            .add(DownstreamThreadDtoAdapter)
-            .add(DownstreamThreadInfoDtoAdapter)
+            .add(ThreadStateResponseAdapter)
+            .add(ThreadResponseAdapter)
             .add(CreatePollRequestAdapter)
             .add(UpdatePollRequestAdapter)
             .add(CreatePollOptionRequestAdapter)

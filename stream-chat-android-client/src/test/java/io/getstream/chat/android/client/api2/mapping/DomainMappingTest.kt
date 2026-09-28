@@ -35,8 +35,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
-import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
-import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomDraftResponse
@@ -55,6 +53,8 @@ import io.getstream.chat.android.client.Mother.randomReadStateResponse
 import io.getstream.chat.android.client.Mother.randomRoleDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningResponse
 import io.getstream.chat.android.client.Mother.randomThreadParticipantDto
+import io.getstream.chat.android.client.Mother.randomThreadResponse
+import io.getstream.chat.android.client.Mother.randomThreadStateResponse
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
@@ -1617,83 +1617,91 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamThreadDto is correctly mapped to Thread`() {
-        val user1 = randomUserResponse(id = "user1")
-        val user2 = randomUserResponse(id = "user2")
+    fun `ThreadStateResponse is correctly mapped to Thread`() {
         val participant1Dto = randomThreadParticipantDto(
-            userId = user1.id,
-            user = randomUserResponse(id = user1.id),
+            userId = "user1",
+            user = randomUserResponse(id = "user1"),
             lastThreadMessageAt = Date(2000),
         )
         val participant2Dto = randomThreadParticipantDto(
-            userId = user2.id,
-            user = randomUserResponse(id = user2.id),
+            userId = "user2",
+            user = randomUserResponse(id = "user2"),
             lastThreadMessageAt = Date(1000),
         )
-        val downstreamThreadDto = randomDownstreamThreadDto(
-            createdByUserId = user1.id,
-            createdBy = user1,
+        val response = randomThreadStateResponse(
+            createdByUserId = "user1",
             // Intentionally unsorted to validate sortedByLastReply() in mapping.
             threadParticipants = listOf(participant2Dto, participant1Dto),
             draft = randomDraftResponse(
                 message = randomDraftPayloadResponse(text = "Draft message"),
                 channelCid = "messaging:123",
             ),
+            extraData = mapOf("flair" to "gold"),
         )
         val sut = Fixture().get()
-        val thread = with(sut) { downstreamThreadDto.toDomain() }
-        val fallbackChannelInfo = with(sut) { downstreamThreadDto.channel?.toChannelInfo() }
+        val thread = with(sut) { response.toDomain() }
+        val fallbackChannelInfo = with(sut) { response.channel?.toChannelInfo() }
         val expected = Thread(
-            activeParticipantCount = downstreamThreadDto.active_participant_count ?: 0,
-            cid = downstreamThreadDto.channel_cid,
-            channel = with(sut) { downstreamThreadDto.channel?.toDomain() },
-            parentMessageId = downstreamThreadDto.parent_message_id,
-            parentMessage = with(sut) { downstreamThreadDto.parent_message.toDomain(fallbackChannelInfo) },
-            createdByUserId = downstreamThreadDto.created_by_user_id,
-            createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
-            participantCount = downstreamThreadDto.participant_count,
+            activeParticipantCount = response.activeParticipantCount,
+            cid = response.channelCid,
+            channel = with(sut) { response.channel?.toDomain() },
+            parentMessageId = response.parentMessageId,
+            parentMessage = with(sut) { response.parentMessage!!.toDomain(fallbackChannelInfo) },
+            createdByUserId = response.createdByUserId,
+            createdBy = with(sut) { response.createdBy?.toDomain() },
+            participantCount = response.participantCount,
             threadParticipants = with(sut) {
                 listOf(participant1Dto, participant2Dto).map { it.toDomain() }.sortedByLastReply()
             },
-            lastMessageAt = downstreamThreadDto.last_message_at,
-            createdAt = downstreamThreadDto.created_at,
-            updatedAt = downstreamThreadDto.updated_at,
-            deletedAt = downstreamThreadDto.deleted_at,
-            title = downstreamThreadDto.title,
-            latestReplies = with(sut) {
-                downstreamThreadDto.latest_replies.map { it.toDomain(fallbackChannelInfo) }
-            },
-            read = with(sut) {
-                downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
-            },
-            draft = with(sut) { downstreamThreadDto.draft?.toDomain(fallbackChannelInfo) },
-            extraData = downstreamThreadDto.extraData,
+            lastMessageAt = response.lastMessageAt!!,
+            createdAt = response.createdAt,
+            updatedAt = response.updatedAt,
+            deletedAt = response.deletedAt,
+            title = response.title,
+            latestReplies = with(sut) { response.latestReplies.map { it.toDomain(fallbackChannelInfo) } },
+            read = with(sut) { response.read.orEmpty().map { it.toDomain(response.lastMessageAt) } },
+            draft = with(sut) { response.draft?.toDomain(fallbackChannelInfo) },
+            extraData = mapOf("flair" to "gold"),
         )
         assertEquals(expected, thread)
     }
 
     @Test
-    fun `DownstreamThreadInfoDto is correctly mapped to ThreadInfo`() {
-        val downstreamThreadInfoDto = randomDownstreamThreadInfoDto()
+    fun `ThreadStateResponse without a parent message or last message date cannot be mapped`() {
         val sut = Fixture().get()
-        val threadInfo = with(sut) { downstreamThreadInfoDto.toDomain() }
+
+        assertNull(with(sut) { randomThreadStateResponse(parentMessage = null).toDomain() })
+        assertNull(with(sut) { randomThreadStateResponse(lastMessageAt = null).toDomain() })
+    }
+
+    @Test
+    fun `ThreadResponse is correctly mapped to ThreadInfo`() {
+        val response = randomThreadResponse(
+            // Non-empty, or a mapper that drops the participants would pass.
+            threadParticipants = listOf(
+                randomThreadParticipantDto(userId = "user1", user = randomUserResponse(id = "user1")),
+            ),
+            extraData = mapOf("flair" to "gold"),
+        )
+        val sut = Fixture().get()
+        val threadInfo = with(sut) { response.toDomain() }
         val expected = ThreadInfo(
-            activeParticipantCount = downstreamThreadInfoDto.active_participant_count ?: 0,
-            cid = downstreamThreadInfoDto.channel_cid,
-            createdAt = downstreamThreadInfoDto.created_at,
-            createdBy = with(sut) { downstreamThreadInfoDto.created_by?.toDomain() },
-            createdByUserId = downstreamThreadInfoDto.created_by_user_id,
-            deletedAt = downstreamThreadInfoDto.deleted_at,
-            lastMessageAt = downstreamThreadInfoDto.last_message_at,
-            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain(downstreamThreadInfoDto.channel?.toChannelInfo()) },
-            parentMessageId = downstreamThreadInfoDto.parent_message_id,
-            participantCount = downstreamThreadInfoDto.participant_count ?: 0,
-            replyCount = downstreamThreadInfoDto.reply_count ?: 0,
-            title = downstreamThreadInfoDto.title,
-            updatedAt = downstreamThreadInfoDto.updated_at,
-            channel = with(sut) { downstreamThreadInfoDto.channel?.toDomain() },
-            threadParticipants = with(sut) { downstreamThreadInfoDto.thread_participants.orEmpty().map { it.toDomain() } },
-            extraData = downstreamThreadInfoDto.extraData,
+            activeParticipantCount = response.activeParticipantCount,
+            cid = response.channelCid,
+            createdAt = response.createdAt,
+            createdBy = with(sut) { response.createdBy?.toDomain() },
+            createdByUserId = response.createdByUserId,
+            deletedAt = response.deletedAt,
+            lastMessageAt = response.lastMessageAt,
+            parentMessage = with(sut) { response.parentMessage?.toDomain(response.channel?.toChannelInfo()) },
+            parentMessageId = response.parentMessageId,
+            participantCount = response.participantCount,
+            replyCount = response.replyCount,
+            title = response.title,
+            updatedAt = response.updatedAt,
+            channel = with(sut) { response.channel?.toDomain() },
+            threadParticipants = with(sut) { response.threadParticipants.orEmpty().map { it.toDomain() } },
+            extraData = mapOf("flair" to "gold"),
         )
         assertEquals(expected, threadInfo)
     }
