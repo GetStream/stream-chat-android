@@ -500,7 +500,8 @@ internal class DomainMappingTest {
                 mentionedHere = true,
                 mentionedChannel = true,
                 threadParticipants = response.threadParticipants.orEmpty().map { it.toDomain() },
-                restrictedVisibility = listOf("jaewoong"),
+                // Not read downstream yet, as on every other message path.
+                restrictedVisibility = emptyList(),
                 replyCount = response.replyCount,
                 deletedReplyCount = response.deletedReplyCount,
                 replyMessageId = response.quotedMessageId,

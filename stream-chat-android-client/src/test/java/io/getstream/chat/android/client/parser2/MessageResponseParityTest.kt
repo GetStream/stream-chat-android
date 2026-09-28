@@ -126,6 +126,10 @@ internal class MessageResponseParityTest {
                 "MessageDtoTestData.downstreamJsonWithoutExtraData" to
                     MessageDtoTestData.downstreamJsonWithoutExtraData,
                 "deleted author" to DELETED_AUTHOR_JSON,
+                "restricted visibility" to MessageDtoTestData.downstreamJsonWithoutExtraData.replaceFirst(
+                    "{",
+                    """{"restricted_visibility": ["user-a", "user-b"],""",
+                ),
             )
             return (messageTestData + dtoTestData).map { (name, json) -> Arguments.of(name, wireShaped(json)) }
         }
