@@ -524,6 +524,7 @@ internal class ChannelStateLegacyImpl(
         val messageIds = messages.map { it.id }.toSet()
         logger.v { "[deleteMessages] messages.ids: $messageIds" }
         _messages?.apply { value = value - messageIds }
+        cachedLatestMessages.value = cachedLatestMessages.value - messageIds
         deletePinnedMessages(messages)
     }
 
