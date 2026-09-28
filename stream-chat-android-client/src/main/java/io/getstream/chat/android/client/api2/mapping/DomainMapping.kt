@@ -23,7 +23,6 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
@@ -111,6 +110,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
@@ -353,13 +353,13 @@ internal class DomainMapping(
             ).let(messageTransformer::transform)
         }
 
-    internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
+    internal fun DraftResponse.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
             attachments = message.attachments?.map { it.toDomain() }.orEmpty(),
-            cid = channel_cid,
+            cid = channelCid,
             id = message.id,
-            parentId = parent_message?.id ?: parent_id,
-            replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
+            parentId = parentMessage?.id ?: parentId,
+            replyMessage = quotedMessage?.toDomain(fallbackChannelInfo),
             showInChannel = message.showInChannel ?: false,
             mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
             silent = message.silent ?: false,

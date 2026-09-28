@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
@@ -37,8 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -73,9 +70,11 @@ import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.DraftPayloadResponse
+import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.FileUploadConfig
 import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
@@ -90,6 +89,7 @@ import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
@@ -237,28 +237,33 @@ internal object Mother {
         return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
     }
 
-    fun randomDraftMessageResponse(
-        draft: DownstreamDraftDto = randomDownstreamDraftDto(),
-    ): DraftMessageResponse = DraftMessageResponse(draft)
+    fun randomCreateDraftResponse(
+        draft: DraftResponse = randomDraftResponse(),
+    ): CreateDraftResponse = CreateDraftResponse(duration = randomString(), draft = draft)
 
-    fun randomQueryDraftMessagesResponse(
-        drafts: List<DownstreamDraftDto> = (0 until positiveRandomInt(10)).map { randomDownstreamDraftDto() },
+    fun randomQueryDraftsResponse(
+        drafts: List<DraftResponse> = (0 until positiveRandomInt(10)).map { randomDraftResponse() },
         next: String? = randomString(),
-    ): QueryDraftMessagesResponse = QueryDraftMessagesResponse(
+    ): QueryDraftsResponse = QueryDraftsResponse(
+        duration = randomString(),
         drafts = drafts,
         next = next,
     )
 
-    fun randomDownstreamDraftDto(
+    fun randomDraftResponse(
         message: DraftPayloadResponse = randomDraftPayloadResponse(),
         channelCid: String = randomCID(),
-        quotedMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
-        parentMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
-    ): DownstreamDraftDto = DownstreamDraftDto(
+        quotedMessage: MessageResponse? = randomMessageResponse().takeIf { randomBoolean() },
+        parentMessage: MessageResponse? = randomMessageResponse().takeIf { randomBoolean() },
+        parentId: String? = parentMessage?.id,
+        createdAt: Date = randomDate(),
+    ): DraftResponse = DraftResponse(
         message = message,
-        channel_cid = channelCid,
-        quoted_message = quotedMessage,
-        parent_message = parentMessage,
+        channelCid = channelCid,
+        quotedMessage = quotedMessage,
+        parentMessage = parentMessage,
+        parentId = parentId,
+        createdAt = createdAt,
     )
 
     fun randomDownstreamPendingMessageDto(
@@ -1006,7 +1011,7 @@ internal object Mother {
         latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
         read: List<ReadStateResponse> = listOf(randomReadStateResponse()),
         replyCount: Int = randomInt(),
-        draft: DownstreamDraftDto? = randomDownstreamDraftDto(),
+        draft: DraftResponse? = randomDraftResponse(),
         extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
     ): DownstreamThreadDto = DownstreamThreadDto(
         active_participant_count = activeParticipantCount,

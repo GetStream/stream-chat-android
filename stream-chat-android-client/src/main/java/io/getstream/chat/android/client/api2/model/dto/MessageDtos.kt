@@ -20,7 +20,6 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.Attachment
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
-import io.getstream.chat.android.network.models.DraftPayloadResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.ReactionGroupResponse
@@ -86,15 +85,6 @@ internal data class DownstreamMessageDto(
     val deleted_for_me: Boolean?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamDraftDto(
-    val message: DraftPayloadResponse,
-    val channel_cid: String,
-    val quoted_message: DownstreamMessageDto? = null,
-    val parent_id: String? = null,
-    val parent_message: DownstreamMessageDto? = null,
-)
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamPendingMessageDto(

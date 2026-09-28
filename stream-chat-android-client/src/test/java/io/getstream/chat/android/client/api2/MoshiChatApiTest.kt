@@ -46,14 +46,12 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
@@ -113,6 +111,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
@@ -154,6 +153,7 @@ import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
@@ -286,7 +286,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
-    fun testCreateDraftMessage(call: RetrofitCall<DraftMessageResponse>, expected: KClass<*>) = runTest {
+    fun testCreateDraftMessage(call: RetrofitCall<CreateDraftResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)
@@ -318,7 +318,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
-    fun testQueryDrafts(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
+    fun testQueryDrafts(call: RetrofitCall<QueryDraftsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.queryDrafts(any())).doReturn(call)

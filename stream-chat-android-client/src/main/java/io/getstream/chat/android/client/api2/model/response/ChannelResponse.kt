@@ -18,11 +18,11 @@ package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.UserResponse
 import java.util.Date
@@ -42,6 +42,6 @@ internal data class ChannelResponse(
     val watcher_count: Int = 0,
     val hidden: Boolean?,
     val hide_messages_before: Date?,
-    val draft: DownstreamDraftDto?,
+    val draft: DraftResponse?,
     val active_live_locations: List<SharedLocationResponseData> = emptyList(),
 )

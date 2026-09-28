@@ -1146,7 +1146,8 @@ private fun createDraftJsonString() =
                 "args": "cat",
                 "flair": "gold"
             },
-            "channel_cid": "channelType:channelId"
+            "channel_cid": "channelType:channelId",
+            "created_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
 

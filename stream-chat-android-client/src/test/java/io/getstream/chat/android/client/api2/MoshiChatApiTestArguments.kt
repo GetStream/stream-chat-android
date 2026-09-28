@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
+import io.getstream.chat.android.client.Mother.randomDraftResponse
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
@@ -73,6 +72,7 @@ import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
@@ -123,10 +123,10 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun queryDraftMessageInput() = listOf(
         Arguments.of(
-            RetroSuccess(Mother.randomQueryDraftMessagesResponse()).toRetrofitCall(),
+            RetroSuccess(Mother.randomQueryDraftsResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<QueryDraftMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<QueryDraftsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -486,7 +486,7 @@ internal object MoshiChatApiTestArguments {
                             hidden = randomBoolean(),
                             membership = Mother.randomChannelMemberResponse(),
                             hide_messages_before = randomDateOrNull(),
-                            draft = randomDownstreamDraftDto(),
+                            draft = randomDraftResponse(),
                         ),
                     ),
                 ),
@@ -509,7 +509,7 @@ internal object MoshiChatApiTestArguments {
                                     hidden = randomBoolean(),
                                     membership = Mother.randomChannelMemberResponse(),
                                     hide_messages_before = randomDateOrNull(),
-                                    draft = randomDownstreamDraftDto(),
+                                    draft = randomDraftResponse(),
                                 ),
                             ),
                             unread_channels = positiveRandomInt(),
@@ -539,7 +539,7 @@ internal object MoshiChatApiTestArguments {
                             hidden = randomBoolean(),
                             membership = Mother.randomChannelMemberResponse(),
                             hide_messages_before = randomDateOrNull(),
-                            draft = randomDownstreamDraftDto(),
+                            draft = randomDraftResponse(),
                         ),
                     ),
                     predefined_filter = ParsedPredefinedFilterResponse(
@@ -893,7 +893,7 @@ internal object MoshiChatApiTestArguments {
                     hidden = randomBoolean(),
                     membership = Mother.randomChannelMemberResponse(),
                     hide_messages_before = randomDateOrNull(),
-                    draft = randomDownstreamDraftDto(),
+                    draft = randomDraftResponse(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
@@ -916,7 +916,7 @@ internal object MoshiChatApiTestArguments {
 
     private fun draftMessageResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(Mother.randomDraftMessageResponse()).toRetrofitCall(),
+            RetroSuccess(Mother.randomCreateDraftResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),

@@ -196,7 +196,7 @@ internal object EventMappingTestArguments {
     private val MESSAGE_ID = randomString()
     private val MESSAGE = Mother.randomDownstreamMessageDto()
     private val MESSAGE_WITHOUT_CHANNEL_INFO = MESSAGE.copy(channel = null)
-    private val DRAFT = Mother.randomDownstreamDraftDto()
+    private val DRAFT = Mother.randomDraftResponse()
     private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val CLEAR_HISTORY = randomBoolean()
     private val SHADOW_BAN = randomBoolean()
