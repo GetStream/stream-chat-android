@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
@@ -61,7 +62,9 @@ internal class QueryChannelsLogicGroupedTest {
     fun setUp() {
         client = mock()
         queryChannelsStateLogic = mock()
-        queryChannelsDatabaseLogic = mock()
+        queryChannelsDatabaseLogic = mock {
+            onBlocking { selectLocalOnlyMessages(any()) } doReturn emptyList()
+        }
         queryChannelsState = mock()
         queryChannelsSpec = QueryChannelsSpec(
             filter = Filters.neutral(),
@@ -168,6 +171,40 @@ internal class QueryChannelsLogicGroupedTest {
         val refreshed = stateLogic.getChannels()!![kept.cid]!!
         assertEquals("refreshed", refreshed.name)
         assertEquals(listOf("local"), refreshed.messages.map { it.id })
+    }
+
+    @Test
+    fun `applyGroupedResult adds the stored messages only this device has to a channel not listed yet`() = runTest {
+        // Given
+        val serverMessage = randomMessage(id = "server")
+        val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage))
+        val other = randomChannel(type = "messaging", id = "ch2")
+        val bounce = randomMessage(id = "bounce", cid = channel.cid, type = MessageType.ERROR)
+        val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(channel, other), next = null, prev = null)
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(queryChannelsDatabaseLogic.selectLocalOnlyMessages(channel.cid)) doReturn listOf(bounce, serverMessage)
+
+        // When
+        logic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(serverMessage, bounce)), other))
+        verify(queryChannelsDatabaseLogic).storeStateForChannels(setOf(channel, other))
+    }
+
+    @Test
+    fun `applyGroupedResult does not read stored messages for a channel already listed`() = runTest {
+        // Given
+        val kept = randomChannel(type = "messaging", id = "kept1")
+        val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(kept), next = null, prev = null)
+        whenever(queryChannelsStateLogic.getChannels()) doReturn mapOf(kept.cid to kept)
+
+        // When
+        logic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        verify(queryChannelsDatabaseLogic, never()).selectLocalOnlyMessages(any())
+        verify(queryChannelsStateLogic).addChannelsState(listOf(kept))
     }
 
     @Test

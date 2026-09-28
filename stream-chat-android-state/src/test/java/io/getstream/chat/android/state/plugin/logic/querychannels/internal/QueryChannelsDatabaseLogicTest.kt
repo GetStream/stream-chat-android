@@ -25,15 +25,20 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.test.randomQueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelConfig
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -66,6 +71,23 @@ internal class QueryChannelsDatabaseLogicTest {
 
         // Then
         verify(repositoryFacade).storeStateForChannels(channels)
+    }
+
+    @Test
+    fun `selectLocalOnlyMessages returns only the stored messages the server does not have`() = runTest {
+        // Given
+        val cid = "messaging:ch1"
+        val synced = randomMessage(cid = cid, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
+        val bounce = randomMessage(cid = cid, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)
+        val failed = randomMessage(cid = cid, type = MessageType.REGULAR, syncStatus = SyncStatus.FAILED_PERMANENTLY)
+        whenever(repositoryFacade.selectMessagesForChannel(eq(cid), any())) doReturn
+            listOf(synced, bounce, failed)
+
+        // When
+        val result = logic.selectLocalOnlyMessages(cid)
+
+        // Then
+        assertEquals(listOf(bounce, failed), result)
     }
 
     @Test
