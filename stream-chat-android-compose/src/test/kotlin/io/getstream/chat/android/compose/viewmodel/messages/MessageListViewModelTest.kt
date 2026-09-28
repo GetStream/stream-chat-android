@@ -144,6 +144,7 @@ internal class MessageListViewModelTest {
         val viewModel = fixture.get()
 
         assertSame(fixture.channelState, viewModel.channelState.value)
+        assertSame(viewModel.messageListController.channelState, viewModel.channelState)
     }
 
     @Test
