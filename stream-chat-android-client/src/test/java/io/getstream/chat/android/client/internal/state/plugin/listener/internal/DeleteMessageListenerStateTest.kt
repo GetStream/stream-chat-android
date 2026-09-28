@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.MessageType
@@ -38,6 +39,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -46,6 +48,7 @@ internal class DeleteMessageListenerStateTest {
     private val channelLogic: ChannelLogic = mock()
     private val threadsLogic: QueryThreadsLogic = mock()
     private val activeThreadsLogic = listOf(threadsLogic)
+    private val queryChannelsLogic: QueryChannelsLogic = mock()
 
     private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
@@ -56,6 +59,7 @@ internal class DeleteMessageListenerStateTest {
         on(it.channelFromMessageId(any())) doReturn channelLogic
         on(it.channelFromMessage(any())) doReturn channelLogic
         on(it.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
+        on(it.getActiveQueryChannelsLogic()) doReturn listOf(queryChannelsLogic)
     }
 
     private val deleteMessageListenerState: DeleteMessageListenerState =
@@ -302,5 +306,60 @@ internal class DeleteMessageListenerStateTest {
         val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
         assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `when a message is deleted only locally, the channel lists should be refreshed`() = runTest {
+        val testMessage = randomMessage(cid = randomCID(), type = MessageType.ERROR)
+        whenever(channelLogic.getMessage(any())) doReturn testMessage
+
+        deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
+
+        verify(queryChannelsLogic).refreshChannelState(testMessage.cid)
+    }
+
+    @Test
+    fun `when a message is deleted remotely, the channel lists should not be refreshed before the request`() =
+        runTest {
+            val testMessage = randomMessage(
+                cid = randomCID(),
+                type = MessageType.REGULAR,
+                syncStatus = SyncStatus.COMPLETED,
+            )
+            whenever(channelLogic.getMessage(any())) doReturn testMessage
+
+            deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
+
+            verify(queryChannelsLogic, never()).refreshChannelState(any())
+        }
+
+    @Test
+    fun `when the delete request starts, the channel lists should be refreshed`() = runTest {
+        val testMessage = randomMessage(cid = randomCID())
+        whenever(clientState.isNetworkAvailable) doReturn true
+        whenever(channelLogic.getMessage(any())) doReturn testMessage
+
+        deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
+
+        verify(queryChannelsLogic).refreshChannelState(testMessage.cid)
+    }
+
+    @Test
+    fun `when the delete request succeeds, the channel lists should be refreshed`() = runTest {
+        val testMessage = randomMessage(cid = randomCID())
+
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Success(testMessage))
+
+        verify(queryChannelsLogic).refreshChannelState(testMessage.cid)
+    }
+
+    @Test
+    fun `when the delete request fails, the channel lists should be refreshed`() = runTest {
+        val testMessage = randomMessage(cid = randomCID())
+        whenever(channelLogic.getMessage(any())) doReturn testMessage
+
+        deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(Error.GenericError("")))
+
+        verify(queryChannelsLogic).refreshChannelState(testMessage.cid)
     }
 }
