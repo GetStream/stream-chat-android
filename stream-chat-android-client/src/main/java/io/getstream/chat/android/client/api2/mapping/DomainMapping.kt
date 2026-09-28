@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
@@ -130,6 +129,7 @@ import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -755,15 +755,15 @@ internal class DomainMapping(
             extraData = custom.orEmpty().mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
 
-    internal fun DownstreamLocationDto.toDomain(): Location =
+    internal fun SharedLocationResponse.toDomain(): Location =
         Location(
-            cid = channel_cid,
-            messageId = message_id,
-            userId = user_id,
+            cid = channelCid,
+            messageId = messageId,
+            userId = userId,
             latitude = latitude,
             longitude = longitude,
-            deviceId = created_by_device_id,
-            endAt = end_at,
+            deviceId = createdByDeviceId,
+            endAt = endAt,
         )
 
     /**

@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -80,6 +80,7 @@ import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
@@ -768,14 +769,17 @@ internal object MoshiChatApiTestArguments {
                 latitude = location.latitude,
                 longitude = location.longitude,
             )
-            val response = DownstreamLocationDto(
-                message_id = location.messageId,
-                channel_cid = location.cid,
-                user_id = location.userId,
+            val response = SharedLocationResponse(
+                messageId = location.messageId,
+                channelCid = location.cid,
+                userId = location.userId,
                 latitude = location.latitude,
                 longitude = location.longitude,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
+                createdByDeviceId = location.deviceId,
+                endAt = location.endAt,
+                createdAt = randomDate(),
+                updatedAt = randomDate(),
+                duration = randomString(),
             )
             Arguments.of(location, request, response)
         },
@@ -789,14 +793,17 @@ internal object MoshiChatApiTestArguments {
                 messageId = location.messageId,
                 endAt = location.endAt,
             )
-            val response = DownstreamLocationDto(
-                message_id = location.messageId,
-                channel_cid = location.cid,
-                user_id = location.userId,
+            val response = SharedLocationResponse(
+                messageId = location.messageId,
+                channelCid = location.cid,
+                userId = location.userId,
                 latitude = location.latitude,
                 longitude = location.longitude,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
+                createdByDeviceId = location.deviceId,
+                endAt = location.endAt,
+                createdAt = randomDate(),
+                updatedAt = randomDate(),
+                duration = randomString(),
             )
             Arguments.of(location, request, response)
         },

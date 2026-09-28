@@ -24,35 +24,43 @@ internal object LocationTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =
-        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1"}"""
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingChannelCid =
-        """{"message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingMessageId =
-        """{"channel_cid":"messaging:123","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"channel_cid":"messaging:123","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingUserId =
-        """{"channel_cid":"messaging:123","message_id":"msg-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"channel_cid":"messaging:123","message_id":"msg-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingLatitude =
-        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","longitude":-122.4194,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingLongitude =
-        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"created_by_device_id":"device-1","end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
+
+    @Language("JSON")
+    val jsonMissingCreatedAt =
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","updated_at":"2025-04-01T10:05:00.000Z"}"""
+
+    @Language("JSON")
+    val jsonMissingUpdatedAt =
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"created_by_device_id":"device-1","created_at":"2025-04-01T10:00:00.000Z"}"""
 
     @Language("JSON")
     val jsonMissingCreatedByDeviceId =
-        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"end_at":"2025-04-08T12:00:00.000Z"}"""
+        """{"channel_cid":"messaging:123","message_id":"msg-1","user_id":"user-1","latitude":37.7749,"longitude":-122.4194,"end_at":"2025-04-08T12:00:00.000Z","created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:05:00.000Z"}"""
 
     val expectedAllFields = Location(
         cid = "messaging:123",

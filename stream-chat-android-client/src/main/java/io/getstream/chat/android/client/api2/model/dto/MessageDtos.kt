@@ -25,6 +25,7 @@ import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.UserGroupResponse
 import java.util.Date
 
@@ -79,7 +80,7 @@ internal data class DownstreamMessageDto(
     val moderation: ModerationV2Response? = null, // Used for Moderation V2
     val poll: PollResponseData? = null,
     val reminder: DownstreamReminderInfoDto? = null,
-    val shared_location: DownstreamLocationDto? = null,
+    val shared_location: SharedLocationResponseData? = null,
     val member: ChannelMemberPartialResponse? = null,
     val mentioned_channel_members: Map<String, ChannelMemberPartialResponse?>? = null,
     val deleted_for_me: Boolean?,

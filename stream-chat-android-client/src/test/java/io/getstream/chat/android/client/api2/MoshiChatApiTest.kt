@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -170,6 +169,7 @@ import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
+import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -3345,7 +3345,7 @@ internal class MoshiChatApiTest {
     fun testUpdateLiveLocation(
         location: Location,
         request: UpdateLiveLocationRequest,
-        response: DownstreamLocationDto,
+        response: SharedLocationResponse,
     ) = runTest {
         val api = mock<UserApi>()
         whenever(api.updateLiveLocation(request)) doReturn RetroSuccess(response).toRetrofitCall()
@@ -3364,7 +3364,7 @@ internal class MoshiChatApiTest {
     fun testStopLiveLocation(
         location: Location,
         request: UpdateLiveLocationRequest,
-        response: DownstreamLocationDto,
+        response: SharedLocationResponse,
     ) = runTest {
         val api = mock<UserApi>()
         whenever(api.updateLiveLocation(request)) doReturn RetroSuccess(response).toRetrofitCall()

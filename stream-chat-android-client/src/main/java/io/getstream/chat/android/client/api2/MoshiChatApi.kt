@@ -1959,7 +1959,7 @@ constructor(
 
     override fun queryActiveLocations(): Call<List<Location>> =
         userApi.liveLocations().mapDomain {
-            it.active_live_locations.map {
+            it.activeLiveLocations.map {
                 it.toDomain()
             }
         }
