@@ -211,6 +211,7 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -2344,6 +2345,51 @@ internal class MoshiChatApiTest {
         val result = sut.queryChannels(query).await()
         require(result is Result.Success)
         return result.value.predefinedFilter
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
+    fun `channel state maps active live locations onto the channel`(
+        @Suppress("UNUSED_PARAMETER") path: String,
+        stub: (ChannelApi, ChannelResponse) -> Unit,
+        query: (MoshiChatApi) -> Call<List<Channel>>,
+    ) = runTest {
+        val endAt = randomDate()
+        val response = ChannelResponse(
+            channel = Mother.randomDownstreamChannelDto(cid = "messaging:123", id = "123", type = "messaging"),
+            membership = null,
+            hidden = null,
+            hide_messages_before = null,
+            draft = null,
+            active_live_locations = listOf(
+                DownstreamLocationDto(
+                    channel_cid = "messaging:123",
+                    message_id = "msg-1",
+                    user_id = "other-user",
+                    latitude = 1.5,
+                    longitude = 2.5,
+                    created_by_device_id = "device-1",
+                    end_at = endAt,
+                ),
+            ),
+        )
+        val api = mock<ChannelApi>()
+        stub(api, response)
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+
+        val channels = query(sut).await().getOrNull()
+
+        val expected = Location(
+            cid = "messaging:123",
+            messageId = "msg-1",
+            userId = "other-user",
+            latitude = 1.5,
+            longitude = 2.5,
+            deviceId = "device-1",
+            endAt = endAt,
+        )
+        assertEquals(listOf(listOf(expected)), channels?.map(Channel::activeLiveLocations))
     }
 
     @ParameterizedTest
