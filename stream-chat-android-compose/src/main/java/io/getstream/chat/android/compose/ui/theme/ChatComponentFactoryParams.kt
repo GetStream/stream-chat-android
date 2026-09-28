@@ -496,6 +496,17 @@ public data class MessageListEmptyContentParams(
 )
 
 /**
+ * Parameters for [ChatComponentFactory.ChannelDeletedContent].
+ *
+ * @param modifier Modifier for styling.
+ * @param onBackClick Action for the back button, or `null` to hide it.
+ */
+public data class ChannelDeletedContentParams(
+    val modifier: Modifier = Modifier,
+    val onBackClick: (() -> Unit)? = null,
+)
+
+/**
  * Parameters for [ChatComponentFactory.MessageListHelperContent].
  *
  * @param messageListState The current state of the message list.

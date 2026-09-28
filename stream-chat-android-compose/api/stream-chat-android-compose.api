@@ -2210,10 +2210,18 @@ public final class io/getstream/chat/android/compose/ui/messages/header/Composab
 	public fun <init> ()V
 	public final fun getLambda$-1655587639$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-385627014$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-720874151$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1347335813$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$156584177$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1809952803$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$1958447708$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$ChannelDeletedContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$ChannelDeletedContentKt;
+	public fun <init> ()V
+	public final fun getLambda$1350216140$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1540795188$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt {
@@ -2623,6 +2631,22 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelAvatarParam
 	public final fun getModifier ()Landroidx/compose/ui/Modifier;
 	public final fun getShowBorder ()Z
 	public final fun getShowIndicator ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/ChannelDeletedContentParams {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Landroidx/compose/ui/Modifier;
+	public final fun component2 ()Lkotlin/jvm/functions/Function0;
+	public final fun copy (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/compose/ui/theme/ChannelDeletedContentParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChannelDeletedContentParams;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelDeletedContentParams;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getModifier ()Landroidx/compose/ui/Modifier;
+	public final fun getOnBackClick ()Lkotlin/jvm/functions/Function0;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -3500,6 +3524,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public fun AudioRecordAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/AudioRecordAttachmentContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun Avatar (Lio/getstream/chat/android/compose/ui/theme/AvatarParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelAvatar (Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;Landroidx/compose/runtime/Composer;I)V
+	public fun ChannelDeletedContent (Lio/getstream/chat/android/compose/ui/theme/ChannelDeletedContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelFilesAttachmentsEmptyContent (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsEmptyContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelFilesAttachmentsErrorContent (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsErrorContentParams;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelFilesAttachmentsHeaderItem (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsHeaderItemParams;Landroidx/compose/runtime/Composer;I)V
@@ -3700,6 +3725,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun AudioRecordAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AudioRecordAttachmentContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun Avatar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/AvatarParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelAvatar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelAvatarParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelDeletedContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelDeletedContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelFilesAttachmentsEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsEmptyContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelFilesAttachmentsErrorContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsErrorContentParams;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelFilesAttachmentsHeaderItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/ui/theme/ChannelFilesAttachmentsHeaderItemParams;Landroidx/compose/runtime/Composer;I)V

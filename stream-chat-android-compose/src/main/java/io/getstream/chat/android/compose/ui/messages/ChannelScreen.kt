@@ -71,6 +71,7 @@ import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageSn
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.SelectedMessageSnapshot
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerMenuParams
+import io.getstream.chat.android.compose.ui.theme.ChannelDeletedContentParams
 import io.getstream.chat.android.compose.ui.theme.ChannelHeaderParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageActionsParams
@@ -171,6 +172,7 @@ public fun ChannelScreen(
         viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
 
     val messageMode = listViewModel.messageMode
+    val isChannelDeleted = listViewModel.channel.deletedAt != null
 
     if (messageMode is MessageMode.MessageThread) {
         composerViewModel.setMessageMode(messageMode)
@@ -222,6 +224,19 @@ public fun ChannelScreen(
             snackbarHost = { StreamSnackbarHost(snackbarHostState) },
             containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { contentPadding ->
+            if (isChannelDeleted) {
+                ChatTheme.componentFactory.ChannelDeletedContent(
+                    params = ChannelDeletedContentParams(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(contentPadding)
+                            .traversalRegion(ListTraversalIndex),
+                        onBackClick = onBackPressed,
+                    ),
+                )
+                return@Scaffold
+            }
+
             val currentState by listViewModel.currentMessagesState
 
             MessageList(

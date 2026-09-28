@@ -72,4 +72,11 @@ internal class ChannelHeaderTest : PaparazziComposeTest {
             ChannelHeaderThreadMode()
         }
     }
+
+    @Test
+    fun deleted() {
+        snapshotWithDarkMode {
+            ChannelHeaderDeleted()
+        }
+    }
 }
