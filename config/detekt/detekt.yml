@@ -674,7 +674,8 @@ style:
     maxJumpCount: 1
   MagicNumber:
     active: true
-    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
+    # Generated code cannot be restructured to satisfy this rule: the next re-vendor would undo it.
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**', '**/io/getstream/chat/android/network/**']
     ignoreNumbers:
       - '-1'
       - '0'

@@ -1077,7 +1077,7 @@ private fun createReactionJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createPollJsonString() =
+internal fun createPollJsonString() =
     """
         {
             "id": "poll-id",
@@ -1106,7 +1106,7 @@ private fun createPollJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createPollVoteJsonString() =
+internal fun createPollVoteJsonString() =
     """
         {
             "id": "vote-id",
@@ -1120,7 +1120,7 @@ private fun createPollVoteJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createPollAnswerVoteJsonString() =
+internal fun createPollAnswerVoteJsonString() =
     """
         {
             "id": "answer-id",
