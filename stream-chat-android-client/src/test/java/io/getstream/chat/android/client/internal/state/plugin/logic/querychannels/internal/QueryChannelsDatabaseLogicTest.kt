@@ -36,7 +36,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -74,19 +73,17 @@ internal class QueryChannelsDatabaseLogicTest {
     }
 
     @Test
-    fun `selectLocalOnlyMessages returns only the stored messages the server does not have`() = runTest {
+    fun `selectLocalOnlyMessages returns the channel's stored messages the server does not have`() = runTest {
         // Given
         val cid = "messaging:ch1"
-        val synced = randomMessage(cid = cid, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
         val bounce = randomMessage(cid = cid, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)
-        val failed = randomMessage(cid = cid, type = MessageType.REGULAR, syncStatus = SyncStatus.FAILED_PERMANENTLY)
-        whenever(repositoryFacade.selectMessagesForChannel(eq(cid), any())) doReturn listOf(synced, bounce, failed)
+        whenever(repositoryFacade.selectLocalOnlyMessagesForChannel(cid)) doReturn listOf(bounce)
 
         // When
         val result = logic.selectLocalOnlyMessages(cid)
 
         // Then
-        assertEquals(listOf(bounce, failed), result)
+        assertEquals(listOf(bounce), result)
     }
 
     @Test
