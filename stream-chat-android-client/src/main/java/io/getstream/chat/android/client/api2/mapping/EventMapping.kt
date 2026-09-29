@@ -26,8 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
@@ -38,8 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventD
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
@@ -76,9 +72,6 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -162,6 +155,11 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPol
 import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
+import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
+import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
+import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
+import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
+import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
 @Suppress("LargeClass")
 internal class EventMapping(
@@ -183,16 +181,12 @@ internal class EventMapping(
             is ChannelTruncatedEventDto -> toDomain()
             is ChannelUpdatedByUserEventDto -> toDomain()
             is ChannelUpdatedEventDto -> toDomain()
-            is ChannelUserBannedEventDto -> toDomain()
-            is ChannelUserUnbannedEventDto -> toDomain()
             is ChannelVisibleEventDto -> toDomain()
             is ConnectedEventDto -> toDomain()
             is ConnectionErrorEventDto -> toDomain()
             is ConnectingEventDto -> toDomain()
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
-            is GlobalUserBannedEventDto -> toDomain()
-            is GlobalUserUnbannedEventDto -> toDomain()
             is HealthEventDto -> toDomain()
             is MarkAllReadEventDto -> toDomain()
             is MemberAddedEventDto -> toDomain()
@@ -223,9 +217,6 @@ internal class EventMapping(
             is TypingStopEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is UserDeletedEventDto -> toDomain()
-            is UserPresenceChangedEventDto -> toDomain()
-            is UserStartWatchingEventDto -> toDomain()
-            is UserStopWatchingEventDto -> toDomain()
             is UserUpdatedEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
             is DraftMessageDeletedEventDto -> toDomain()
@@ -843,110 +834,10 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ChannelUserBannedEventDto] to [ChannelUserBannedEvent].
-     */
-    private fun ChannelUserBannedEventDto.toDomain(): ChannelUserBannedEvent = with(domainMapping) {
-        ChannelUserBannedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            expiration = expiration,
-            shadow = shadow ?: false,
-        )
-    }
-
-    /**
-     * Transforms [GlobalUserBannedEventDto] to [GlobalUserBannedEvent].
-     */
-    private fun GlobalUserBannedEventDto.toDomain(): GlobalUserBannedEvent = with(domainMapping) {
-        GlobalUserBannedEvent(
-            type = type,
-            user = user.toDomain(),
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
-
-    /**
      * Transforms [UserDeletedEventDto] to [UserDeletedEvent].
      */
     private fun UserDeletedEventDto.toDomain(): UserDeletedEvent = with(domainMapping) {
         UserDeletedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [UserPresenceChangedEventDto] to [UserPresenceChangedEvent].
-     */
-    private fun UserPresenceChangedEventDto.toDomain(): UserPresenceChangedEvent = with(domainMapping) {
-        UserPresenceChangedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [UserStartWatchingEventDto] to [UserStartWatchingEvent].
-     */
-    private fun UserStartWatchingEventDto.toDomain(): UserStartWatchingEvent = with(domainMapping) {
-        UserStartWatchingEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            watcherCount = watcher_count,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [UserStopWatchingEventDto] to [UserStopWatchingEvent].
-     */
-    private fun UserStopWatchingEventDto.toDomain(): UserStopWatchingEvent = with(domainMapping) {
-        UserStopWatchingEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            watcherCount = watcher_count,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [ChannelUserUnbannedEventDto] to [ChannelUserUnbannedEvent].
-     */
-    private fun ChannelUserUnbannedEventDto.toDomain(): ChannelUserUnbannedEvent = with(domainMapping) {
-        ChannelUserUnbannedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-        )
-    }
-
-    /**
-     * Transforms [GlobalUserUnbannedEventDto] to [GlobalUserUnbannedEvent].
-     */
-    private fun GlobalUserUnbannedEventDto.toDomain(): GlobalUserUnbannedEvent = with(domainMapping) {
-        GlobalUserUnbannedEvent(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
@@ -968,9 +859,14 @@ internal class EventMapping(
 
     /**
      * Transforms an event parsed with its generated model. The event adapter only produces the types
-     * handled here, and rejects an event without a cid.
+     * handled here, and rejects an event missing a field its domain event requires.
      */
     private fun WSEvent.toDomain(): ChatEvent = when (this) {
+        is GeneratedUserWatchingStartEvent -> toDomain()
+        is GeneratedUserWatchingStopEvent -> toDomain()
+        is GeneratedUserPresenceChangedEvent -> toDomain()
+        is GeneratedUserBannedEvent -> toDomain()
+        is GeneratedUserUnbannedEvent -> toDomain()
         is GeneratedPollClosedEvent -> toDomain()
         is GeneratedPollDeletedEvent -> toDomain()
         is GeneratedPollUpdatedEvent -> toDomain()
@@ -978,6 +874,110 @@ internal class EventMapping(
         is GeneratedPollVoteChangedEvent -> toDomain()
         is GeneratedPollVoteRemovedEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
+    }
+
+    /**
+     * Transforms the generated [GeneratedUserWatchingStartEvent] to [UserStartWatchingEvent].
+     */
+    private fun GeneratedUserWatchingStartEvent.toDomain(): UserStartWatchingEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return UserStartWatchingEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            watcherCount = watcherCount,
+            channelType = channelType,
+            channelId = channelId,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedUserWatchingStopEvent] to [UserStopWatchingEvent].
+     */
+    private fun GeneratedUserWatchingStopEvent.toDomain(): UserStopWatchingEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return UserStopWatchingEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            watcherCount = watcherCount,
+            channelType = channelType,
+            channelId = channelId,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedUserPresenceChangedEvent] to [UserPresenceChangedEvent].
+     */
+    private fun GeneratedUserPresenceChangedEvent.toDomain(): UserPresenceChangedEvent = with(domainMapping) {
+        UserPresenceChangedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedUserBannedEvent] to [ChannelUserBannedEvent] when it carries a cid, or
+     * to [GlobalUserBannedEvent] otherwise.
+     */
+    private fun GeneratedUserBannedEvent.toDomain(): ChatEvent = with(domainMapping) {
+        when (val cid = cid) {
+            null -> GlobalUserBannedEvent(
+                type = type,
+                user = user.toDomain(),
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+            )
+            else -> {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                ChannelUserBannedEvent(
+                    type = type,
+                    createdAt = createdAt.date,
+                    rawCreatedAt = createdAt.raw,
+                    cid = cid,
+                    channelType = channelType,
+                    channelId = channelId,
+                    user = user.toDomain(),
+                    expiration = expiration,
+                    shadow = shadow ?: false,
+                )
+            }
+        }
+    }
+
+    /**
+     * Transforms the generated [GeneratedUserUnbannedEvent] to [ChannelUserUnbannedEvent] when it carries a cid,
+     * or to [GlobalUserUnbannedEvent] otherwise.
+     */
+    private fun GeneratedUserUnbannedEvent.toDomain(): ChatEvent = with(domainMapping) {
+        when (val cid = cid) {
+            null -> GlobalUserUnbannedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                user = user.toDomain(),
+            )
+            else -> {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                ChannelUserUnbannedEvent(
+                    type = type,
+                    createdAt = createdAt.date,
+                    rawCreatedAt = createdAt.raw,
+                    user = user.toDomain(),
+                    cid = cid,
+                    channelType = channelType,
+                    channelId = channelId,
+                )
+            }
+        }
     }
 
     /**

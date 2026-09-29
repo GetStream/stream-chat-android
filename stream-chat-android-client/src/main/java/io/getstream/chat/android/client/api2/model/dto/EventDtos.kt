@@ -466,72 +466,7 @@ internal data class TypingStopEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class ChannelUserBannedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: UserResponseCommonFields,
-    val expiration: Date?,
-    val shadow: Boolean?,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class GlobalUserBannedEventDto(
-    val type: String,
-    val user: UserResponseCommonFields,
-    val created_at: ExactDate,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class UserDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserPresenceChangedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserStartWatchingEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val watcher_count: Int = 0,
-    val channel_type: String,
-    val channel_id: String,
-    val user: UserResponseCommonFields,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserStopWatchingEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val watcher_count: Int = 0,
-    val channel_type: String,
-    val channel_id: String,
-    val user: UserResponseCommonFields,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ChannelUserUnbannedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class GlobalUserUnbannedEventDto(
     val type: String,
     val created_at: ExactDate,
     val user: UserResponseCommonFields,
