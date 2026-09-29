@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
-
-import com.squareup.moshi.JsonClass
-
-@JsonClass(generateAdapter = true)
-internal data class QueryDraftMessagesRequest(
-    val offset: Int?,
-    val limit: Int?,
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
 )
+
+package io.getstream.chat.android.network.models
+
+internal interface WSEvent {
+    fun getWSEventType(): String
+}

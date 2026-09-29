@@ -34,8 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -117,6 +115,7 @@ import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
@@ -126,9 +125,12 @@ import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
+import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
@@ -140,6 +142,7 @@ import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
+import io.getstream.chat.android.client.api2.model.response.MessageResponse as MessageEnvelope
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
@@ -160,6 +163,9 @@ internal const val DRAFT_ARGS_KEY = "args"
  * declared the key, so it has always been read as typed devices rather than surfacing in extraData.
  */
 internal const val EVENT_USER_DEVICES_KEY = "devices"
+
+/** V1 moderation is injected into the message custom data, not declared on the payload. */
+internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
 @Suppress("TooManyFunctions", "LargeClass")
 internal class DomainMapping(
@@ -223,7 +229,6 @@ internal class DomainMapping(
             pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
-            activeLiveLocations = active_live_locations.map { it.toDomain() },
             messageCount = message_count,
             lastMessageAt = last_message_at,
             extraData = extraData.toMutableMap(),
@@ -379,9 +384,9 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [MessageResponse] to [PendingMessage].
+     * Transforms [MessageEnvelope] to [PendingMessage].
      */
-    internal fun MessageResponse.toDomain(): PendingMessage =
+    internal fun MessageEnvelope.toDomain(): PendingMessage =
         PendingMessage(
             message = message.toDomain(),
             metadata = pending_message_metadata.orEmpty(),
@@ -396,6 +401,102 @@ internal class DomainMapping(
     private fun List<ReactionResponse>.toReactions(messageId: String): List<Reaction> =
         filter { it.messageId == messageId }
             .map { it.toDomain() }
+
+    internal fun MessageResponse.toDomain(fallbackChannelInfo: ChannelInfo? = null): Message =
+        Message(
+            attachments = attachments.map { it.toDomain() },
+            channelInfo = fallbackChannelInfo,
+            cid = cid,
+            command = command,
+            createdAt = createdAt,
+            deletedAt = deletedAt,
+            html = html,
+            i18n = i18n.orEmpty(),
+            id = id,
+            latestReactions = latestReactions.toReactions(messageId = id),
+            mentionedUsers = mentionedUsers.map { it.toDomain() },
+            mentionedHere = mentionedHere,
+            mentionedChannel = mentionedChannel,
+            mentionedGroups = mentionedGroups.orEmpty().map { it.toDomain() },
+            mentionedRoles = mentionedRoles.orEmpty(),
+            ownReactions = ownReactions.toReactions(messageId = id),
+            parentId = parentId,
+            pinExpires = pinExpires,
+            pinned = pinned,
+            pinnedAt = pinnedAt,
+            pinnedBy = pinnedBy?.toDomain(),
+            reactionCounts = reactionCounts.toMutableMap(),
+            reactionScores = reactionScores.toMutableMap(),
+            reactionGroups = reactionGroups.orEmpty().mapValues { it.value.toDomain(it.key) },
+            replyCount = replyCount,
+            deletedReplyCount = deletedReplyCount,
+            replyMessageId = quotedMessageId,
+            replyTo = quotedMessage?.toDomain(fallbackChannelInfo),
+            shadowed = shadowed,
+            showInChannel = showInChannel ?: false,
+            silent = silent,
+            text = text,
+            threadParticipants = threadParticipants.orEmpty().map { it.toDomain() },
+            type = type,
+            updatedAt = lastUpdateTime(),
+            user = user.toDomain(),
+            moderationDetails = moderationDetailsFromCustom(),
+            moderation = moderation?.toDomain(),
+            messageTextUpdatedAt = messageTextUpdatedAt,
+            poll = poll?.toDomain(),
+            // Not read downstream yet, as on every other message path; it stays in extraData.
+            restrictedVisibility = emptyList(),
+            reminder = reminder?.toReminderInfoDomain(),
+            sharedLocation = sharedLocation?.toDomain(),
+            channelRole = member?.channelRole,
+            member = member?.toDomain(),
+            // Moshi writes a JSON null into the map despite the non-null value type, so a null
+            // entry would throw rather than be skipped.
+            mentionedChannelMembers = mentionedChannelMembers.orEmpty()
+                .mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
+                .toMap(),
+            deletedForMe = deletedForMe ?: false,
+            extraData = messageExtraData(),
+        ).let(messageTransformer::transform)
+
+    // V1 moderation is injected into the message custom data by the auto-mod bounce path rather than
+    // declared on the payload, so it arrives flattened at the root and has to be read back out.
+    private fun MessageResponse.moderationDetailsFromCustom(): MessageModerationDetails? {
+        val raw = custom[MODERATION_DETAILS_KEY] as? Map<*, *> ?: return null
+        return MessageModerationDetails(
+            originalText = raw["original_text"] as? String ?: "",
+            action = MessageModerationAction.fromRawValue(raw["action"] as? String ?: ""),
+            errorMsg = raw["error_msg"] as? String ?: "",
+        )
+    }
+
+    private fun MessageResponse.messageExtraData(): MutableMap<String, Any> =
+        custom.mapNotNull { (key, value) -> value?.let { key to it } }
+            .toMap()
+            .minus(MODERATION_DETAILS_KEY)
+            .toMutableMap()
+
+    private fun MessageResponse.lastUpdateTime(): Date = listOfNotNull(
+        updatedAt,
+        poll?.updatedAt,
+    ).maxBy { it.time }
+
+    internal fun ReminderResponseData.toReminderInfoDomain(): MessageReminderInfo = MessageReminderInfo(
+        remindAt = remindAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+    )
+
+    internal fun SharedLocationResponseData.toDomain(): Location =
+        Location(
+            cid = channelCid,
+            messageId = messageId,
+            userId = userId,
+            latitude = latitude,
+            longitude = longitude,
+            deviceId = createdByDeviceId,
+            endAt = endAt,
+        )
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
         updated_at,
@@ -1151,6 +1252,19 @@ internal class DomainMapping(
         message = message?.toDomain(),
         createdAt = created_at,
         updatedAt = updated_at,
+    )
+
+    /**
+     * Transforms the generated [ReminderResponseData] into a domain [MessageReminder].
+     */
+    internal fun ReminderResponseData.toDomain(): MessageReminder = MessageReminder(
+        remindAt = remindAt,
+        cid = channelCid,
+        channel = channel?.toDomain(),
+        messageId = messageId,
+        message = message?.toDomain(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 
     /**

@@ -20,6 +20,7 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
+import io.getstream.chat.android.network.models.UserResponse
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
@@ -42,17 +43,16 @@ internal data class DownstreamChannelDto(
     val member_count: Int = 0,
     val messages: List<DownstreamMessageDto> = emptyList(),
     val members: List<ChannelMemberResponse> = emptyList(),
-    val watchers: List<DownstreamUserDto> = emptyList(),
+    val watchers: List<UserResponse> = emptyList(),
     val read: List<ReadStateResponse> = emptyList(),
     // Absent for a channel whose type is no longer in the app config.
     val config: ChannelConfigWithInfo? = null,
-    val created_by: DownstreamUserDto?,
+    val created_by: UserResponse?,
     val team: String = "",
     val cooldown: Int = 0,
     val pinned_messages: List<DownstreamMessageDto> = emptyList(),
     val own_capabilities: List<String> = emptyList(),
     val membership: ChannelMemberResponse?,
-    val active_live_locations: List<DownstreamLocationDto> = emptyList(),
     val message_count: Int? = null,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

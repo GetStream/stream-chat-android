@@ -268,7 +268,7 @@ internal object EventArguments {
         type = channelType,
         createdAt = date,
         updatedAt = date,
-        createdBy = user,
+        createdBy = commonFieldsUser,
         frozen = false,
         members = listOf(member),
         memberCount = 1,

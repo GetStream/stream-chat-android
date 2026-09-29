@@ -30,15 +30,15 @@ import com.squareup.moshi.Json
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ChannelMemberRequest(
-    @Json(name = "user_id")
-    internal val userId: String,
-
     @Json(name = "channel_role")
     internal val channelRole: String? = null,
 
+    @Json(name = "user_id")
+    internal val userId: String? = null,
+
     @Json(name = "custom")
-    internal val custom: Map<String, Any?>? = emptyMap(),
+    internal val custom: Map<String, Any?>? = null,
 
     @Json(name = "user")
-    internal val user: io.getstream.chat.android.network.models.UserResponse? = null,
+    internal val user: io.getstream.chat.android.network.models.MemberUserRequest? = null,
 )

@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+import io.getstream.chat.android.network.models.MessageResponse
 
 @JsonClass(generateAdapter = true)
 internal data class MessagesResponse(
-    val messages: List<DownstreamMessageDto>,
+    val messages: List<MessageResponse>,
 )

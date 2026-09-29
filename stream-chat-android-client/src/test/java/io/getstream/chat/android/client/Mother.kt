@@ -39,7 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -82,6 +81,7 @@ import io.getstream.chat.android.network.models.FileUploadResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
@@ -91,9 +91,12 @@ import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
+import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -284,6 +287,100 @@ internal object Mother {
         showInChannel = showInChannel,
     )
 
+    fun randomMessageResponse(
+        id: String = randomString(),
+        cid: String = randomString(),
+        text: String = randomString(),
+        html: String = randomString(),
+        type: String = randomString(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        deletedAt: Date? = randomDateOrNull(),
+        command: String? = randomString(),
+        parentId: String? = randomString(),
+        quotedMessageId: String? = randomString(),
+        quotedMessage: MessageResponse? = null,
+        user: UserResponse = randomUserResponse(),
+        attachments: List<Attachment> = emptyList(),
+        latestReactions: List<ReactionResponse> = emptyList(),
+        ownReactions: List<ReactionResponse> = emptyList(),
+        reactionCounts: Map<String, Int> = emptyMap(),
+        reactionScores: Map<String, Int> = emptyMap(),
+        reactionGroups: Map<String, ReactionGroupResponse>? = emptyMap(),
+        mentionedUsers: List<UserResponse> = emptyList(),
+        mentionedGroups: List<UserGroupResponse>? = emptyList(),
+        mentionedRoles: List<String>? = emptyList(),
+        mentionedHere: Boolean = randomBoolean(),
+        mentionedChannel: Boolean = randomBoolean(),
+        threadParticipants: List<UserResponse>? = emptyList(),
+        restrictedVisibility: List<String> = emptyList(),
+        replyCount: Int = randomInt(),
+        deletedReplyCount: Int = randomInt(),
+        pinned: Boolean = randomBoolean(),
+        pinnedAt: Date? = randomDateOrNull(),
+        pinExpires: Date? = randomDateOrNull(),
+        pinnedBy: UserResponse? = null,
+        messageTextUpdatedAt: Date? = randomDateOrNull(),
+        shadowed: Boolean = randomBoolean(),
+        silent: Boolean = randomBoolean(),
+        showInChannel: Boolean? = randomBoolean(),
+        deletedForMe: Boolean? = null,
+        i18n: Map<String, String>? = emptyMap(),
+        moderation: ModerationV2Response? = null,
+        poll: PollResponseData? = null,
+        member: ChannelMemberPartialResponse? = randomChannelMemberPartialResponse(),
+        mentionedChannelMembers: Map<String, ChannelMemberPartialResponse>? = emptyMap(),
+        reminder: ReminderResponseData? = null,
+        sharedLocation: SharedLocationResponseData? = null,
+        custom: Map<String, Any?> = emptyMap(),
+    ): MessageResponse = MessageResponse(
+        id = id,
+        cid = cid,
+        text = text,
+        html = html,
+        type = type,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+        command = command,
+        parentId = parentId,
+        quotedMessageId = quotedMessageId,
+        quotedMessage = quotedMessage,
+        user = user,
+        attachments = attachments,
+        latestReactions = latestReactions,
+        ownReactions = ownReactions,
+        reactionCounts = reactionCounts,
+        reactionScores = reactionScores,
+        reactionGroups = reactionGroups,
+        mentionedUsers = mentionedUsers,
+        mentionedGroups = mentionedGroups,
+        mentionedRoles = mentionedRoles,
+        mentionedHere = mentionedHere,
+        mentionedChannel = mentionedChannel,
+        threadParticipants = threadParticipants,
+        restrictedVisibility = restrictedVisibility,
+        replyCount = replyCount,
+        deletedReplyCount = deletedReplyCount,
+        pinned = pinned,
+        pinnedAt = pinnedAt,
+        pinExpires = pinExpires,
+        pinnedBy = pinnedBy,
+        messageTextUpdatedAt = messageTextUpdatedAt,
+        shadowed = shadowed,
+        silent = silent,
+        showInChannel = showInChannel,
+        deletedForMe = deletedForMe,
+        i18n = i18n,
+        moderation = moderation,
+        poll = poll,
+        member = member,
+        mentionedChannelMembers = mentionedChannelMembers,
+        reminder = reminder,
+        sharedLocation = sharedLocation,
+        custom = custom,
+    )
+
     fun randomDownstreamMessageDto(
         attachments: List<Attachment> = emptyList(),
         channel: ChannelInfoDto? = randomChannelInfoDto(),
@@ -451,10 +548,10 @@ internal object Mother {
         member_count: Int = randomInt(),
         messages: List<DownstreamMessageDto> = emptyList(),
         members: List<ChannelMemberResponse> = emptyList(),
-        watchers: List<DownstreamUserDto> = emptyList(),
+        watchers: List<UserResponse> = listOf(randomUserResponse()),
         read: List<ReadStateResponse> = emptyList(),
         config: ChannelConfigWithInfo = randomChannelConfigWithInfo(),
-        created_by: DownstreamUserDto? = randomDownstreamUserDto(),
+        created_by: UserResponse? = randomUserResponse(),
         team: String = randomString(),
         cooldown: Int = randomInt(),
         pinned_messages: List<DownstreamMessageDto> = emptyList(),
@@ -898,7 +995,7 @@ internal object Mother {
         parentMessageId: String = randomString(),
         parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(),
         createdByUserId: String = randomString(),
-        createdBy: DownstreamUserDto = randomDownstreamUserDto(id = createdByUserId),
+        createdBy: UserResponse = randomUserResponse(id = createdByUserId),
         participantCount: Int = randomInt(),
         threadParticipants: List<ThreadParticipant> = emptyList(),
         lastMessageAt: Date = randomDate(),
@@ -1101,7 +1198,7 @@ internal object Mother {
         parentMessageId: String = randomString(),
         parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(id = parentMessageId),
         createdByUserId: String = randomString(),
-        createdBy: DownstreamUserDto = randomDownstreamUserDto(id = createdByUserId),
+        createdBy: UserResponse = randomUserResponse(id = createdByUserId),
         replyCount: Int = randomInt(),
         participantCount: Int = randomInt(),
         activeParticipantCount: Int = randomInt(),
@@ -1223,12 +1320,37 @@ internal object Mother {
         updated_at = updatedAt,
     )
 
+    fun randomReminderResponseData(
+        channelCid: String = randomCID(),
+        messageId: String = randomString(),
+        userId: String = randomString(),
+        remindAt: Date? = randomDate(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        channel: ChannelResponse? = randomChannelResponse(),
+        message: MessageResponse? = randomMessageResponse(id = messageId, cid = channelCid),
+        user: UserResponse? = randomUserResponse(id = userId),
+    ): ReminderResponseData = ReminderResponseData(
+        channelCid = channelCid,
+        messageId = messageId,
+        userId = userId,
+        remindAt = remindAt,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        channel = channel,
+        message = message,
+        user = user,
+    )
+
     fun randomQueryRemindersResponse(
-        reminders: List<DownstreamReminderDto> = listOf(randomDownstreamReminderDto()),
+        reminders: List<ReminderResponseData> = listOf(randomReminderResponseData()),
         next: String? = randomString(),
+        prev: String? = randomString(),
     ): QueryRemindersResponse = QueryRemindersResponse(
+        duration = randomString(),
         reminders = reminders,
         next = next,
+        prev = prev,
     )
 
     fun randomReactionResponse(

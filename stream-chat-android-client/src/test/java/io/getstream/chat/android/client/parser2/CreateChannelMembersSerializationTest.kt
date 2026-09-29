@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -36,17 +36,11 @@ internal class CreateChannelMembersSerializationTest {
             MemberData(userId = "alice", extraData = mapOf("nickname" to "Al")),
             MemberData(userId = "bob"),
         ).map { with(dtoMapping) { it.toChannelMemberRequest() } }
-        val request = QueryChannelRequest(
-            state = true,
-            watch = false,
-            presence = false,
-            messages = emptyMap(),
-            watchers = emptyMap(),
-            members = emptyMap(),
-            data = mapOf("name" to "Team", "members" to members),
-        )
+        val query = QueryChannelRequest()
+            .withData(mapOf("name" to "Team", "members" to members))
+            .apply { state = true }
 
-        val json = parser.toJson(request)
+        val json = parser.toJson(with(dtoMapping) { query.toChannelGetOrCreateRequest() })
 
         json.shouldEqualJson(
             """

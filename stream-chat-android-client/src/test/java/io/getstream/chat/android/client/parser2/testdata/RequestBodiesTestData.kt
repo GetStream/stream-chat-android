@@ -42,7 +42,7 @@ internal object RequestBodiesTestData {
     // `custom` key is emitted at all.
     val queryMembersJson =
         """{"type":"messaging","filter_conditions":{"name":{"${'$'}autocomplete":"amit"}},"id":"channelId",""" +
-            """"limit":30,"offset":10,"members":[{"user_id":"amit","channel_role":"channel_moderator"}],""" +
+            """"limit":30,"offset":10,"members":[{"channel_role":"channel_moderator","user_id":"amit"}],""" +
             """"sort":[{"direction":-1,"field":"created_at"}]}"""
 
     val snoozeUserPushPreferences = UpsertPushPreferencesRequest(
