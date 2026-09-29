@@ -38,6 +38,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
@@ -75,13 +77,13 @@ internal class MessageReceiptReporterTest {
     }
 
     @Test
-    fun `should select once when startup finds an empty repository`() = runTest {
+    fun `should not query when startup finds an empty repository`() = runTest {
         val fixture = Fixture(newUserScope())
 
         fixture.reporter.start()
         runCurrent()
 
-        assertEquals(listOf(BATCH_LIMIT), fixture.repository.selectLimits)
+        assertEquals(emptyList<Int>(), fixture.repository.selectLimits)
         assertTrue(fixture.reportedBatches.isEmpty())
         assertStaysIdle(fixture)
     }
@@ -98,7 +100,6 @@ internal class MessageReceiptReporterTest {
         runCurrent()
         fixture.assertReportedIds(firstBatch)
 
-        repeat(NOTIFICATION_BURST) { fixture.reporter.onReceiptsEnqueued() }
         advanceTimeBy(REPORT_INTERVAL_MS - 1)
         runCurrent()
         fixture.assertReportedIds(firstBatch)
@@ -107,7 +108,6 @@ internal class MessageReceiptReporterTest {
         runCurrent()
         fixture.assertReportedIds(firstBatch, secondBatch)
 
-        repeat(NOTIFICATION_BURST) { fixture.reporter.onReceiptsEnqueued() }
         advanceTimeBy(REPORT_INTERVAL_MS - 1)
         runCurrent()
         fixture.assertReportedIds(firstBatch, secondBatch)
@@ -170,7 +170,7 @@ internal class MessageReceiptReporterTest {
 
         fixture.reporter.start()
         runCurrent()
-        assertEquals(1, fixture.repository.selectCount)
+        assertEquals(0, fixture.repository.selectCount)
 
         scope.coroutineContext.cancelChildren()
         runCurrent()
@@ -220,7 +220,6 @@ internal class MessageReceiptReporterTest {
 
         val enqueuedAfterRestart = receipt(3)
         fixture.repository.upsertMessageReceipts(listOf(enqueuedAfterRestart))
-        fixture.reporter.onReceiptsEnqueued()
         runCurrent()
         fixture.assertReportedIds(
             listOf(receipt(1).messageId),
@@ -258,7 +257,7 @@ internal class MessageReceiptReporterTest {
         fixture.reporter.start()
         runCurrent()
 
-        assertEquals(1, fixture.repository.selectCount)
+        assertEquals(0, fixture.repository.selectCount)
         assertStaysIdle(fixture)
     }
 
@@ -267,11 +266,10 @@ internal class MessageReceiptReporterTest {
         val fixture = Fixture(newUserScope())
         fixture.reporter.start()
         runCurrent()
-        assertEquals(1, fixture.repository.selectCount)
+        assertEquals(0, fixture.repository.selectCount)
 
         val queued = receipt(1)
         fixture.repository.upsertMessageReceipts(listOf(queued))
-        fixture.reporter.onReceiptsEnqueued()
         runCurrent()
 
         fixture.assertReportedIds(listOf(queued.messageId))
@@ -282,20 +280,20 @@ internal class MessageReceiptReporterTest {
 
     @Test
     fun `should not strand a receipt enqueued during an empty selection`() = runTest {
-        val fixture = Fixture(newUserScope())
+        val hidden = receipt(1)
+        val queued = receipt(2)
+        val fixture = Fixture(newUserScope()).persist(listOf(hidden))
         val gate = fixture.repository.armSelectGate(returnEmpty = true)
-        val queued = receipt(1)
 
         fixture.reporter.start()
         runCurrent()
         assertTrue(gate.entered.isCompleted)
 
         fixture.repository.upsertMessageReceipts(listOf(queued))
-        fixture.reporter.onReceiptsEnqueued()
         gate.release.complete(Unit)
         runCurrent()
 
-        fixture.assertReportedIds(listOf(queued.messageId))
+        fixture.assertReportedIds(listOf(hidden.messageId, queued.messageId))
         assertEquals(emptyList<MessageReceipt>(), fixture.repository.snapshot())
         advanceReportInterval()
         assertStaysIdle(fixture)
@@ -313,7 +311,6 @@ internal class MessageReceiptReporterTest {
         assertTrue(gate.entered.isCompleted)
 
         fixture.repository.upsertMessageReceipts(listOf(second))
-        repeat(NOTIFICATION_BURST) { fixture.reporter.onReceiptsEnqueued() }
         gate.succeed()
         runCurrent()
         fixture.assertReportedIds(listOf(first.messageId))
@@ -341,7 +338,6 @@ internal class MessageReceiptReporterTest {
         fixture.assertReportedIds(listOf(first.messageId))
 
         fixture.repository.upsertMessageReceipts(listOf(second))
-        repeat(NOTIFICATION_BURST) { fixture.reporter.onReceiptsEnqueued() }
         advanceTimeBy(REPORT_INTERVAL_MS - 1)
         runCurrent()
         fixture.assertReportedIds(listOf(first.messageId))
@@ -354,15 +350,15 @@ internal class MessageReceiptReporterTest {
     }
 
     @Test
-    fun `should collapse a burst of enqueue signals into one extra selection`() = runTest {
+    fun `should collapse a burst of count updates into one selection`() = runTest {
         val fixture = Fixture(newUserScope())
         fixture.reporter.start()
         runCurrent()
 
-        repeat(SIGNAL_BURST) { fixture.reporter.onReceiptsEnqueued() }
+        repeat(SIGNAL_BURST) { index -> fixture.repository.emitCount(index + 1) }
         runCurrent()
 
-        assertEquals(2, fixture.repository.selectCount)
+        assertEquals(1, fixture.repository.selectCount)
         assertTrue(fixture.reportedBatches.isEmpty())
         assertStaysIdle(fixture)
     }
@@ -371,11 +367,11 @@ internal class MessageReceiptReporterTest {
     fun `should report a receipt only after the manager persists it`() = runTest {
         val fixture = Fixture(newUserScope())
         val connected = fixture.connectManager()
-        // Yield before the write so a notification sent before persistence is observed immediately.
+        // Yield before the write so the count cannot change before the receipt is stored.
         fixture.repository.yieldBeforePersist = true
         fixture.reporter.start()
         runCurrent()
-        assertEquals(1, fixture.repository.selectCount)
+        assertEquals(0, fixture.repository.selectCount)
         assertTrue(fixture.reportedBatches.isEmpty())
 
         val stored = connected.manager.markMessageAsDelivered(connected.message)
@@ -506,7 +502,6 @@ private class Fixture(
             getRepositoryFacade = { facade },
             messageReceiptRepository = repository,
             api = mock(),
-            onReceiptsEnqueued = reporter::onReceiptsEnqueued,
         )
         return ConnectedReceipts(
             manager = manager,
@@ -524,6 +519,7 @@ private class ConnectedReceipts(
 
 private class InMemoryMessageReceiptRepository : MessageReceiptRepository {
     private val receipts = mutableListOf<MessageReceipt>()
+    private val receiptCount = MutableStateFlow(0)
     val selectLimits = mutableListOf<Int>()
     val selectCount: Int
         get() = selectLimits.size
@@ -533,11 +529,18 @@ private class InMemoryMessageReceiptRepository : MessageReceiptRepository {
 
     fun persist(items: List<MessageReceipt>) {
         receipts.addAll(items)
+        publishCount()
+    }
+
+    fun emitCount(count: Int) {
+        receiptCount.value = count
     }
 
     fun armSelectGate(returnEmpty: Boolean): SelectGate = SelectGate(returnEmpty).also { selectGate = it }
 
     fun snapshot(): List<MessageReceipt> = receipts.toList()
+
+    override fun observeMessageReceiptCount(): Flow<Int> = receiptCount
 
     override suspend fun upsertMessageReceipts(receipts: List<MessageReceipt>) {
         if (yieldBeforePersist) {
@@ -548,6 +551,7 @@ private class InMemoryMessageReceiptRepository : MessageReceiptRepository {
             throw IllegalStateException("upsert failed")
         }
         this.receipts.addAll(receipts)
+        publishCount()
     }
 
     override suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt> {
@@ -565,10 +569,16 @@ private class InMemoryMessageReceiptRepository : MessageReceiptRepository {
     override suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>) {
         val ids = messageIds.toSet()
         receipts.removeAll { it.messageId in ids }
+        publishCount()
     }
 
     override suspend fun clearMessageReceipts() {
         receipts.clear()
+        publishCount()
+    }
+
+    private fun publishCount() {
+        receiptCount.value = receipts.size
     }
 }
 
@@ -619,5 +629,4 @@ private const val REPORT_INTERVAL_MS = 1_000L
 private const val IDLE_PERIOD_MS = 60_000L
 private const val BATCH_LIMIT = 100
 private const val QUEUE_SIZE = 250
-private const val NOTIFICATION_BURST = 30
 private const val SIGNAL_BURST = 1_000

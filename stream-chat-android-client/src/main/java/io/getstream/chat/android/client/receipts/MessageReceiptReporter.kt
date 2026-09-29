@@ -23,15 +23,15 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
  * Reports message delivery receipts to the server.
  *
- * Idle sessions do not poll the repository. [onReceiptsEnqueued] wakes reporting after receipts
- * are persisted, and each [start] still drains receipts that were saved before the job began.
+ * Idle sessions do not poll the repository. The receipt-count flow wakes reporting after any
+ * write, and each [start] drains receipts that were saved before the job began.
  * See [start] for batching, pacing, and retry behavior.
  */
 internal class MessageReceiptReporter(
@@ -42,24 +42,18 @@ internal class MessageReceiptReporter(
 
     private val logger by taggedLogger("Chat:MessageReceiptReporter")
 
-    /**
-     * Conflated wake-ups. [Channel.trySend] never suspends the caller, and a burst keeps only the
-     * latest signal. The channel stays open when a reporting job ends so a later [start] can drain
-     * again. Signals carry no payload; the repository remains the source of truth.
-     */
-    private val enqueueSignals = Channel<Unit>(Channel.CONFLATED)
-
     private var reportingJob: Job? = null
 
     /**
      * Starts reporting queued delivery receipts for the current user session.
      *
-     * Receipts persisted before this call are selected immediately. While the queue is non-empty,
-     * batches of at most [MAX_BATCH_SIZE] are reported at least [REPORT_INTERVAL_IN_MS] apart,
-     * including the selection that finds the queue empty. An empty selection suspends until
-     * [onReceiptsEnqueued]. Failed deliveries stay queued and are retried on that cadence without
-     * another signal. A second call while the reporting job is still active does nothing.
-     * Cancelling the job does not close [enqueueSignals]; the next [start] drains again.
+     * Collects [MessageReceiptRepository.observeMessageReceiptCount] and drains while the count is
+     * positive. Receipts persisted before this call are included in the initial emission. While the
+     * queue is non-empty, batches of at most [MAX_BATCH_SIZE] are reported at least
+     * [REPORT_INTERVAL_IN_MS] apart, including the selection that finds the queue empty. A zero
+     * count suspends until a later write. Failed deliveries stay queued and are retried on that
+     * cadence without another write. A second call while the reporting job is still active does
+     * nothing.
      */
     fun start() {
         if (reportingJob?.isActive == true) {
@@ -69,11 +63,13 @@ internal class MessageReceiptReporter(
         logger.d { "Starting reporter…" }
         reportingJob = scope.launch {
             try {
-                drainQueuedReceipts()
-                while (true) {
-                    enqueueSignals.receive()
-                    drainQueuedReceipts()
-                }
+                messageReceiptRepository.observeMessageReceiptCount()
+                    .conflate()
+                    .collect { count ->
+                        if (count > 0) {
+                            drainQueuedReceipts()
+                        }
+                    }
             } finally {
                 logger.d { "Reporter is no longer active" }
             }
@@ -81,27 +77,13 @@ internal class MessageReceiptReporter(
     }
 
     /**
-     * Signals that new delivery receipts were persisted.
-     *
-     * Non-blocking and conflated: the caller does not wait for network I/O, and bursts collapse
-     * to a single wake-up.
-     */
-    fun onReceiptsEnqueued() {
-        enqueueSignals.trySend(Unit)
-    }
-
-    /**
      * Selects and reports until the repository returns an empty batch.
      *
-     * A pending signal is consumed before each selection. A signal that arrives during that
-     * selection stays buffered, so an enqueue racing an empty result remains visible to the
-     * caller. A stale signal may cause one extra selection and never a periodic idle query.
+     * Failed deliveries stay queued and are retried after [REPORT_INTERVAL_IN_MS].
      * Cancellation from [delay] or [ChatApi.markDelivered] propagates to the reporting job.
      */
     private suspend fun drainQueuedReceipts() {
         while (true) {
-            enqueueSignals.tryReceive()
-
             val messages = messageReceiptRepository
                 .selectMessageReceipts(limit = MAX_BATCH_SIZE)
                 .map { receipt ->

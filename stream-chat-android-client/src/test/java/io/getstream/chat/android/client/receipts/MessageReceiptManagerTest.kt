@@ -33,10 +33,8 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -65,8 +63,6 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
-        assertEquals(listOf("upsert", "notify"), fixture.events)
-        assertEquals(1, fixture.receiptEnqueueCount)
         assertTrue(result)
     }
 
@@ -146,7 +142,6 @@ internal class MessageReceiptManagerTest {
         val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
-        assertEquals(0, fixture.receiptEnqueueCount)
         assertFalse(result)
     }
 
@@ -184,7 +179,6 @@ internal class MessageReceiptManagerTest {
         val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
-        assertEquals(0, fixture.receiptEnqueueCount)
         assertFalse(result)
     }
 
@@ -197,7 +191,6 @@ internal class MessageReceiptManagerTest {
         val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
-        assertEquals(0, fixture.receiptEnqueueCount)
         assertFalse(result)
     }
 
@@ -283,7 +276,6 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
-        assertEquals(1, fixture.receiptEnqueueCount)
     }
 
     @Test
@@ -387,37 +379,10 @@ internal class MessageReceiptManagerTest {
         sut.markChannelsAsDelivered(channels = emptyList())
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
-        assertEquals(0, fixture.receiptEnqueueCount)
-        assertTrue(fixture.events.isEmpty())
     }
 
     @Test
-    fun `should notify only after a nonempty upsert succeeds`() = runTest {
-        val events = mutableListOf<String>()
-        val repository = object : MessageReceiptRepository {
-            override suspend fun upsertMessageReceipts(receipts: List<MessageReceipt>) {
-                events += "upsert"
-            }
-
-            override suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt> = emptyList()
-
-            override suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>) = Unit
-
-            override suspend fun clearMessageReceipts() = Unit
-        }
-        val sut = Fixture(
-            messageReceiptRepository = repository,
-            onReceiptsEnqueued = { events += "notify" },
-        ).get()
-
-        val result = sut.markMessageAsDelivered(DeliverableMessage)
-
-        assertTrue(result)
-        assertEquals(listOf("upsert", "notify"), events)
-    }
-
-    @Test
-    fun `should not notify when persisting receipts fails`() = runTest {
+    fun `should propagate failure when persisting receipts fails`() = runTest {
         val fixture = Fixture().givenUpsertFails()
         val sut = fixture.get()
 
@@ -425,17 +390,10 @@ internal class MessageReceiptManagerTest {
 
         assertTrue(failure.exceptionOrNull() is IllegalStateException)
         fixture.verifyUpsertMessageReceiptsCalled()
-        assertEquals(0, fixture.receiptEnqueueCount)
-        assertEquals(listOf("upsert"), fixture.events)
     }
 
-    private class Fixture(
-        private val messageReceiptRepository: MessageReceiptRepository = mock(),
-        private val onReceiptsEnqueued: () -> Unit = {},
-    ) {
-        val events = mutableListOf<String>()
-        var receiptEnqueueCount = 0
-            private set
+    private class Fixture {
+        private val messageReceiptRepository: MessageReceiptRepository = mock()
 
         private val mockRepositoryFacade = mock<RepositoryFacade> {
             onBlocking { selectUser("me") } doReturn CurrentUser
@@ -453,22 +411,12 @@ internal class MessageReceiptManagerTest {
             on { getMessage(messageId = DeliverableMessage.id) } doReturn DeliverableMessage.asCall()
         }
 
-        init {
-            if (Mockito.mockingDetails(messageReceiptRepository).isMock) {
-                wheneverBlocking { messageReceiptRepository.upsertMessageReceipts(any()) }.thenAnswer {
-                    events += "upsert"
-                    Unit
-                }
-            }
-        }
-
         fun givenCurrentUser(user: User?) = apply {
             wheneverBlocking { mockRepositoryFacade.selectUser("me") } doReturn user
         }
 
         fun givenUpsertFails() = apply {
             wheneverBlocking { messageReceiptRepository.upsertMessageReceipts(any()) }.thenAnswer {
-                events += "upsert"
                 throw IllegalStateException("upsert failed")
             }
         }
@@ -509,11 +457,6 @@ internal class MessageReceiptManagerTest {
             getRepositoryFacade = { mockRepositoryFacade },
             messageReceiptRepository = messageReceiptRepository,
             api = mockChatApi,
-            onReceiptsEnqueued = {
-                receiptEnqueueCount++
-                events += "notify"
-                onReceiptsEnqueued()
-            },
         )
     }
 }

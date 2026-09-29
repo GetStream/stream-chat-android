@@ -5435,11 +5435,6 @@ internal constructor(
 
             val database = ChatClientDatabase.build(appContext)
             val repository = ChatClientRepository.from(database)
-            val messageReceiptReporter = MessageReceiptReporter(
-                scope = userScope,
-                messageReceiptRepository = repository,
-                api = api,
-            )
 
             val allPluginFactories = setupPluginFactories(
                 chatClientConfig = chatClientConfig,
@@ -5469,13 +5464,16 @@ internal constructor(
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
                 repository = repository,
-                messageReceiptReporter = messageReceiptReporter,
+                messageReceiptReporter = MessageReceiptReporter(
+                    scope = userScope,
+                    messageReceiptRepository = repository,
+                    api = api,
+                ),
                 messageReceiptManager = MessageReceiptManager(
                     now = ::Date,
                     getRepositoryFacade = { instance().repositoryFacade },
                     messageReceiptRepository = repository,
                     api = api,
-                    onReceiptsEnqueued = messageReceiptReporter::onReceiptsEnqueued,
                 ),
                 cdn = cdn,
                 videoCache = videoCache,
