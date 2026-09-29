@@ -45,6 +45,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class QueryChannelsLogicGroupedTest {
 
@@ -176,10 +177,17 @@ internal class QueryChannelsLogicGroupedTest {
     @Test
     fun `applyGroupedResult adds the stored messages only this device has to a channel not listed yet`() = runTest {
         // Given
-        val serverMessage = randomMessage(id = "server")
+        val serverMessage = randomMessage(id = "server", createdLocallyAt = null, createdAt = Date(1_000))
         val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage))
         val other = randomChannel(type = "messaging", id = "ch2")
-        val bounce = randomMessage(id = "bounce", cid = channel.cid, type = MessageType.ERROR)
+        val bounce = randomMessage(
+            id = "bounce",
+            cid = channel.cid,
+            type = MessageType.ERROR,
+            createdLocallyAt = null,
+            createdAt = Date(2_000),
+            parentId = null,
+        )
         val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(channel, other), next = null, prev = null)
         whenever(queryChannelsStateLogic.getChannels()) doReturn null
         whenever(queryChannelsDatabaseLogic.selectLocalOnlyMessages(channel.cid)) doReturn listOf(bounce, serverMessage)
@@ -191,6 +199,48 @@ internal class QueryChannelsLogicGroupedTest {
         verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(serverMessage, bounce)), other))
         verify(queryChannelsDatabaseLogic).storeStateForChannels(setOf(channel, other))
     }
+
+    @Test
+    fun `applyGroupedResult skips stored messages older than the server page or hidden in a thread`() = runTest {
+        // Given
+        val serverMessage = randomMessage(id = "server", createdLocallyAt = null, createdAt = Date(2_000))
+        val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage))
+        val olderEdit = randomMessage(id = "edit", cid = channel.cid, createdLocallyAt = null, createdAt = Date(1_000), parentId = null)
+        val threadReply = randomMessage(
+            id = "reply",
+            cid = channel.cid,
+            createdLocallyAt = null,
+            createdAt = Date(3_000),
+            parentId = "parent",
+            showInChannel = false,
+        )
+        val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(channel), next = null, prev = null)
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(queryChannelsDatabaseLogic.selectLocalOnlyMessages(channel.cid)) doReturn listOf(olderEdit, threadReply)
+
+        // When
+        logic.applyGroupedResult(group, isFirstPage = true)
+
+        // Then
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel))
+    }
+
+    @Test
+    fun `applyGroupedResult adds a stored message only this device has to a channel without server messages`() =
+        runTest {
+            // Given
+            val channel = randomChannel(type = "messaging", id = "ch1", messages = emptyList())
+            val bounce = randomMessage(id = "bounce", cid = channel.cid, type = MessageType.ERROR, parentId = null)
+            val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(channel), next = null, prev = null)
+            whenever(queryChannelsStateLogic.getChannels()) doReturn null
+            whenever(queryChannelsDatabaseLogic.selectLocalOnlyMessages(channel.cid)) doReturn listOf(bounce)
+
+            // When
+            logic.applyGroupedResult(group, isFirstPage = true)
+
+            // Then
+            verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(bounce))))
+        }
 
     @Test
     fun `applyGroupedResult does not read stored messages for a channel already listed`() = runTest {

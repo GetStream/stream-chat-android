@@ -58,7 +58,7 @@ internal class QueryChannelsDatabaseLogic(
      * @param cid The channel's cid.
      */
     internal suspend fun selectLocalOnlyMessages(cid: String): List<Message> =
-        repositoryFacade.selectMessagesForChannel(cid, AnyChannelPaginationRequest()).filter { it.isLocalOnly() }
+        repositoryFacade.selectMessagesForChannel(cid, pagination = null).filter { it.isLocalOnly() }
 
     /**
      * Fetch the cached spec and channels for the given query [identifier].
