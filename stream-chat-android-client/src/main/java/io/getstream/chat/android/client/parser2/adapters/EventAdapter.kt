@@ -156,10 +156,8 @@ internal class EventDtoAdapter(
     private val userPresenceChangedEventAdapter = generatedEventAdapter<UserPresenceChangedEvent> { emptyMap() }
     private val userUpdatedEventAdapter = moshi.adapter(UserUpdatedEventDto::class.java)
     private val userDeletedEventAdapter = moshi.adapter(UserDeletedEventDto::class.java)
-    private val channelUserBannedEventAdapter = generatedEventAdapter<UserBannedEvent> { mapOf("cid" to cid) }
-    private val globalUserBannedEventAdapter = generatedEventAdapter<UserBannedEvent> { emptyMap() }
-    private val channelUserUnbannedEventAdapter = generatedEventAdapter<UserUnbannedEvent> { mapOf("cid" to cid) }
-    private val globalUserUnbannedEventAdapter = generatedEventAdapter<UserUnbannedEvent> { emptyMap() }
+    private val userBannedEventAdapter = generatedEventAdapter<UserBannedEvent> { emptyMap() }
+    private val userUnbannedEventAdapter = generatedEventAdapter<UserUnbannedEvent> { emptyMap() }
     private val pollUpdatedEventAdapter = generatedEventAdapter<PollUpdatedEvent> { mapOf("cid" to cid) }
     private val pollDeletedEventAdapter = generatedEventAdapter<PollDeletedEvent> { mapOf("cid" to cid) }
     private val pollClosedEventAdapter = generatedEventAdapter<PollClosedEvent> { mapOf("cid" to cid) }
@@ -238,14 +236,8 @@ internal class EventDtoAdapter(
             EventType.USER_PRESENCE_CHANGED -> userPresenceChangedEventAdapter
             EventType.USER_UPDATED -> userUpdatedEventAdapter
             EventType.USER_DELETED -> userDeletedEventAdapter
-            EventType.USER_BANNED -> when {
-                map.containsKey("cid") -> channelUserBannedEventAdapter
-                else -> globalUserBannedEventAdapter
-            }
-            EventType.USER_UNBANNED -> when {
-                map.containsKey("cid") -> channelUserUnbannedEventAdapter
-                else -> globalUserUnbannedEventAdapter
-            }
+            EventType.USER_BANNED -> userBannedEventAdapter
+            EventType.USER_UNBANNED -> userUnbannedEventAdapter
             EventType.USER_MESSAGES_DELETED -> userMessagesDeletedEventAdapter
             EventType.POLL_UPDATED -> pollUpdatedEventAdapter
             EventType.POLL_DELETED -> pollDeletedEventAdapter
