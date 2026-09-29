@@ -178,7 +178,7 @@ internal class QueryChannelsLogicGroupedTest {
     fun `applyGroupedResult adds the stored messages only this device has to a channel not listed yet`() = runTest {
         // Given
         val serverMessage = randomMessage(id = "server", createdLocallyAt = null, createdAt = Date(1_000))
-        val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage))
+        val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage), hiddenMessagesBefore = null)
         val other = randomChannel(type = "messaging", id = "ch2")
         val bounce = randomMessage(
             id = "bounce",
@@ -204,7 +204,7 @@ internal class QueryChannelsLogicGroupedTest {
     fun `applyGroupedResult skips stored messages older than the server page or hidden in a thread`() = runTest {
         // Given
         val serverMessage = randomMessage(id = "server", createdLocallyAt = null, createdAt = Date(2_000))
-        val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage))
+        val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage), hiddenMessagesBefore = null)
         val olderEdit = randomMessage(id = "edit", cid = channel.cid, createdLocallyAt = null, createdAt = Date(1_000), parentId = null)
         val threadReply = randomMessage(
             id = "reply",
@@ -229,7 +229,7 @@ internal class QueryChannelsLogicGroupedTest {
     fun `applyGroupedResult adds a stored message only this device has to a channel without server messages`() =
         runTest {
             // Given
-            val channel = randomChannel(type = "messaging", id = "ch1", messages = emptyList())
+            val channel = randomChannel(type = "messaging", id = "ch1", messages = emptyList(), hiddenMessagesBefore = null)
             val bounce = randomMessage(id = "bounce", cid = channel.cid, type = MessageType.ERROR, parentId = null)
             val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(channel), next = null, prev = null)
             whenever(queryChannelsStateLogic.getChannels()) doReturn null
@@ -240,6 +240,32 @@ internal class QueryChannelsLogicGroupedTest {
 
             // Then
             verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(bounce))))
+        }
+
+    @Test
+    fun `applyGroupedResult adds stored messages oldest first and skips those before the hidden history`() =
+        runTest {
+            // Given
+            val channel = randomChannel(
+                type = "messaging",
+                id = "ch1",
+                messages = emptyList(),
+                hiddenMessagesBefore = Date(2_000),
+            )
+            fun localOnly(id: String, at: Long) =
+                randomMessage(id = id, cid = channel.cid, createdLocallyAt = null, createdAt = Date(at), parentId = null)
+            val hidden = localOnly("hidden", 1_000)
+            val older = localOnly("older", 3_000)
+            val newer = localOnly("newer", 4_000)
+            val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = listOf(channel), next = null, prev = null)
+            whenever(queryChannelsStateLogic.getChannels()) doReturn null
+            whenever(queryChannelsDatabaseLogic.selectLocalOnlyMessages(channel.cid)) doReturn listOf(newer, older, hidden)
+
+            // When
+            logic.applyGroupedResult(group, isFirstPage = true)
+
+            // Then
+            verify(queryChannelsStateLogic).addChannelsState(listOf(channel.copy(messages = listOf(older, newer))))
         }
 
     @Test

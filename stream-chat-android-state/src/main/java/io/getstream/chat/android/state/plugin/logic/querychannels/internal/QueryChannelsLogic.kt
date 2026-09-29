@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -43,6 +44,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Date
 
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
@@ -354,13 +356,19 @@ internal class QueryChannelsLogic(
         val serverIds: Set<String> = messages.mapTo(mutableSetOf()) { it.id }
         val newestServerMessageAt = messages.maxOfOrNull { it.getCreatedAtOrDefault(NEVER) }
         // Only messages newer than the server's page, so older pending edits don't leave a gap in the message list.
-        val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid).filter { message ->
-            message.id !in serverIds &&
-                (message.parentId == null || message.showInChannel) &&
-                (newestServerMessageAt == null || message.getCreatedAtOrDefault(NEVER).after(newestServerMessageAt))
-        }
+        val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid)
+            .filter { message ->
+                message.id !in serverIds &&
+                    (message.parentId == null || message.showInChannel) &&
+                    message.isCreatedAfter(newestServerMessageAt) &&
+                    message.isCreatedAfter(hiddenMessagesBefore)
+            }
+            .sortedBy { it.getCreatedAtOrDefault(NEVER) }
         return if (localOnly.isEmpty()) this else copy(messages = messages + localOnly)
     }
+
+    private fun Message.isCreatedAfter(date: Date?): Boolean =
+        date == null || getCreatedAtOrDefault(NEVER).after(date)
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result is Result.Success}, request: $request" }
