@@ -21,12 +21,15 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.GroupedChannelsGroup
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
@@ -35,9 +38,13 @@ import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateD
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Date
 
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
@@ -299,15 +306,22 @@ internal class QueryChannelsLogic(
             logger.w { "[applyGroupedResult] rejected (non-Grouped identifier: $identifier)" }
             return
         }
-        val channels = group.channels
         logger.d {
-            "[applyGroupedResult] channels.size: ${channels.size}, isFirstPage: $isFirstPage, " +
+            "[applyGroupedResult] channels.size: ${group.channels.size}, isFirstPage: $isFirstPage, " +
                 "next: ${group.next}"
         }
 
         groupedResultMutex.withLock {
+            val existing = queryChannelsStateLogic.getChannels()
+            // The server's copy lacks messages only this device has; listed channels keep theirs through the merge.
+            val channels = coroutineScope {
+                group.channels.map { channel ->
+                    async {
+                        if (existing?.containsKey(channel.cid) == true) channel else channel.withLocalOnlyMessages()
+                    }
+                }.awaitAll()
+            }
             if (isFirstPage) {
-                val existing = queryChannelsStateLogic.getChannels()
                 if (!existing.isNullOrEmpty()) {
                     // Channels still in the page keep their copy, so messages only this device has survive the merge.
                     val returnedCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
@@ -332,11 +346,29 @@ internal class QueryChannelsLogic(
 
             // Persist
             queryChannelsDatabaseLogic.insertQueryChannels(queryChannelsStateLogic.getQuerySpecs())
-            val channelConfigs = channels.map { ChannelConfig(it.type, it.config) }
+            val channelConfigs = group.channels.map { ChannelConfig(it.type, it.config) }
             queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
-            queryChannelsDatabaseLogic.storeStateForChannels(channels.toSet())
+            queryChannelsDatabaseLogic.storeStateForChannels(group.channels.toSet())
         }
     }
+
+    private suspend fun Channel.withLocalOnlyMessages(): Channel {
+        val serverIds: Set<String> = messages.mapTo(mutableSetOf()) { it.id }
+        val newestServerMessageAt = messages.maxOfOrNull { it.getCreatedAtOrDefault(NEVER) }
+        // Only messages newer than the server's page, so older pending edits don't leave a gap in the message list.
+        val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid)
+            .filter { message ->
+                message.id !in serverIds &&
+                    (message.parentId == null || message.showInChannel) &&
+                    message.isCreatedAfter(newestServerMessageAt) &&
+                    message.isCreatedAfter(hiddenMessagesBefore)
+            }
+            .sortedBy { it.getCreatedAtOrDefault(NEVER) }
+        return if (localOnly.isEmpty()) this else copy(messages = messages + localOnly)
+    }
+
+    private fun Message.isCreatedAfter(date: Date?): Boolean =
+        date == null || getCreatedAtOrDefault(NEVER).after(date)
 
     suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         logger.d { "[onQueryChannelsResult] result.isSuccess: ${result is Result.Success}, request: $request" }
