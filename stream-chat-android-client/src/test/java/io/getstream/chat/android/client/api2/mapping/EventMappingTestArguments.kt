@@ -37,9 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
@@ -62,8 +59,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
@@ -148,6 +143,9 @@ import io.getstream.result.Error
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
+import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
+import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
+import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
 import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPollUpdatedEvent
@@ -158,6 +156,8 @@ import io.getstream.chat.android.network.models.ReminderCreatedEvent as Generate
 import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderNotificationEvent as GeneratedReminderNotificationEvent
 import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
+import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
+import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
@@ -213,6 +213,9 @@ internal object EventMappingTestArguments {
     private val UNREAD_THREADS = positiveRandomInt()
     private val UNREAD_THREAD_MESSAGES = positiveRandomInt()
     private val REACTION = Mother.randomReactionResponse()
+    private val GENERATED_CHANNEL = Mother.randomChannelResponse()
+    private val PARTIAL_MEMBER = Mother.randomChannelMemberPartialResponse()
+    private val PARENT_ID = randomString()
     private val WATCHER_COUNT = positiveRandomInt()
     private val POLL = Mother.randomPollResponseData()
     private val POLL_VOTE = Mother.randomPollVoteResponseData(isAnswer = false)
@@ -395,35 +398,38 @@ internal object EventMappingTestArguments {
         grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val memberAddedDto = MemberAddedEventDto(
+    private val memberAddedEvent = GeneratedMemberAddedEvent(
         type = EventType.MEMBER_ADDED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
+        channel = GENERATED_CHANNEL,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
         member = MEMBER,
     )
 
-    private val memberRemovedDto = MemberRemovedEventDto(
+    private val memberAddedDto = GeneratedEventDto(memberAddedEvent)
+
+    private val memberRemovedEvent = GeneratedMemberRemovedEvent(
         type = EventType.MEMBER_REMOVED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
+        channel = GENERATED_CHANNEL,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
         member = MEMBER,
     )
 
-    private val memberUpdatedDto = MemberUpdatedEventDto(
+    private val memberRemovedDto = GeneratedEventDto(memberRemovedEvent)
+
+    private val memberUpdatedEvent = GeneratedMemberUpdatedEvent(
         type = EventType.MEMBER_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
+        channel = GENERATED_CHANNEL,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        user = COMMON_USER,
         member = MEMBER,
     )
+
+    private val memberUpdatedDto = GeneratedEventDto(memberUpdatedEvent)
 
     private val messageDeletedDto = MessageDeletedEventDto(
         type = EventType.MESSAGE_DELETED,
@@ -645,25 +651,27 @@ internal object EventMappingTestArguments {
         message = MESSAGE,
     )
 
-    private val typingStartDto = TypingStartEventDto(
+    private val typingStartEvent = GeneratedTypingStartEvent(
         type = EventType.TYPING_START,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        parent_id = randomString(),
+        user = COMMON_USER,
+        parentId = PARENT_ID,
+        member = PARTIAL_MEMBER,
     )
 
-    private val typingStopDto = TypingStopEventDto(
+    private val typingStartDto = GeneratedEventDto(typingStartEvent)
+
+    private val typingStopEvent = GeneratedTypingStopEvent(
         type = EventType.TYPING_STOP,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        parent_id = randomString(),
+        user = COMMON_USER,
+        parentId = PARENT_ID,
+        member = PARTIAL_MEMBER,
     )
+
+    private val typingStopDto = GeneratedEventDto(typingStopEvent)
 
     private val unknownDto = UnknownEventDto(
         type = EventType.UNKNOWN,
@@ -1069,36 +1077,36 @@ internal object EventMappingTestArguments {
     )
 
     private val memberAdded = MemberAddedEvent(
-        type = memberAddedDto.type,
-        createdAt = memberAddedDto.created_at.date,
-        rawCreatedAt = memberAddedDto.created_at.rawDate,
-        cid = memberAddedDto.cid,
-        channelType = memberAddedDto.channel_type,
-        channelId = memberAddedDto.channel_id,
-        user = with(domainMapping) { memberAddedDto.user.toDomain() },
-        member = with(domainMapping) { memberAddedDto.member.toDomain() },
+        type = memberAddedEvent.type,
+        createdAt = memberAddedEvent.createdAt.date,
+        rawCreatedAt = memberAddedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
     )
 
     private val memberRemoved = MemberRemovedEvent(
-        type = memberRemovedDto.type,
-        createdAt = memberRemovedDto.created_at.date,
-        rawCreatedAt = memberRemovedDto.created_at.rawDate,
-        cid = memberRemovedDto.cid,
-        channelType = memberRemovedDto.channel_type,
-        channelId = memberRemovedDto.channel_id,
-        user = with(domainMapping) { memberRemovedDto.user.toDomain() },
-        member = with(domainMapping) { memberRemovedDto.member.toDomain() },
+        type = memberRemovedEvent.type,
+        createdAt = memberRemovedEvent.createdAt.date,
+        rawCreatedAt = memberRemovedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
     )
 
     private val memberUpdated = MemberUpdatedEvent(
-        type = memberUpdatedDto.type,
-        createdAt = memberUpdatedDto.created_at.date,
-        rawCreatedAt = memberUpdatedDto.created_at.rawDate,
-        cid = memberUpdatedDto.cid,
-        channelType = memberUpdatedDto.channel_type,
-        channelId = memberUpdatedDto.channel_id,
-        user = with(domainMapping) { memberUpdatedDto.user.toDomain() },
-        member = with(domainMapping) { memberUpdatedDto.member.toDomain() },
+        type = memberUpdatedEvent.type,
+        createdAt = memberUpdatedEvent.createdAt.date,
+        rawCreatedAt = memberUpdatedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
     )
 
     private val messageDeleted = MessageDeletedEvent(
@@ -1361,25 +1369,27 @@ internal object EventMappingTestArguments {
     )
 
     private val typingStart = TypingStartEvent(
-        type = typingStartDto.type,
-        createdAt = typingStartDto.created_at.date,
-        rawCreatedAt = typingStartDto.created_at.rawDate,
-        cid = typingStartDto.cid,
-        channelType = typingStartDto.channel_type,
-        channelId = typingStartDto.channel_id,
-        user = with(domainMapping) { typingStartDto.user.toDomain() },
-        parentId = typingStartDto.parent_id,
+        type = typingStartEvent.type,
+        createdAt = typingStartEvent.createdAt.date,
+        rawCreatedAt = typingStartEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        parentId = PARENT_ID,
+        member = with(domainMapping) { PARTIAL_MEMBER.toDomain() },
     )
 
     private val typingStop = TypingStopEvent(
-        type = typingStopDto.type,
-        createdAt = typingStopDto.created_at.date,
-        rawCreatedAt = typingStopDto.created_at.rawDate,
-        cid = typingStopDto.cid,
-        channelType = typingStopDto.channel_type,
-        channelId = typingStopDto.channel_id,
-        user = with(domainMapping) { typingStopDto.user.toDomain() },
-        parentId = typingStopDto.parent_id,
+        type = typingStopEvent.type,
+        createdAt = typingStopEvent.createdAt.date,
+        rawCreatedAt = typingStopEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        parentId = PARENT_ID,
+        member = with(domainMapping) { PARTIAL_MEMBER.toDomain() },
     )
 
     private val unknown = UnknownEvent(

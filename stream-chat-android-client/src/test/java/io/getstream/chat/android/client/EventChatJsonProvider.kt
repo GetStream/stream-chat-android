@@ -118,7 +118,8 @@ internal fun createMemberAddedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -131,7 +132,8 @@ internal fun createMemberRemovedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -144,7 +146,8 @@ internal fun createMemberUpdatedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -406,7 +409,7 @@ internal fun createTypingStartEventStringJson() =
     createChatEventStringJson(
         "typing.start",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -419,7 +422,7 @@ internal fun createTypingStopEventStringJson() =
     createChatEventStringJson(
         "typing.stop",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -998,6 +1001,9 @@ private fun createMemberJsonString() =
             "notifications_muted": true
         }
     """.trimIndent()
+
+/** The channel as the generated `ChannelResponse` reads it, with the fields the backend always sends. */
+private fun createGeneratedChannelJsonString() = createChannelJsonString().replaceFirst("{", """{ "disabled": false,""")
 
 @Language("JSON")
 private fun createChannelJsonString() =
