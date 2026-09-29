@@ -20,13 +20,13 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
@@ -77,7 +77,7 @@ internal interface ChannelApi {
     fun queryChannel(
         @Path("type") channelType: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: QueryChannelRequest,
+        @Body request: ChannelGetOrCreateRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/read")
@@ -140,7 +140,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body request: QueryChannelRequest,
+        @Body request: ChannelGetOrCreateRequest,
     ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/read")
