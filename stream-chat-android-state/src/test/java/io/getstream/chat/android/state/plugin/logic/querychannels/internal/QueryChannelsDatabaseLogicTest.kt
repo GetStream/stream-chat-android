@@ -36,6 +36,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -79,7 +80,7 @@ internal class QueryChannelsDatabaseLogicTest {
         val synced = randomMessage(cid = cid, type = MessageType.REGULAR, syncStatus = SyncStatus.COMPLETED)
         val bounce = randomMessage(cid = cid, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)
         val failed = randomMessage(cid = cid, type = MessageType.REGULAR, syncStatus = SyncStatus.FAILED_PERMANENTLY)
-        whenever(repositoryFacade.selectMessagesForChannel(cid, null)) doReturn
+        whenever(repositoryFacade.selectMessagesForChannel(eq(cid), argThat { messageLimit == 30 })) doReturn
             listOf(synced, bounce, failed)
 
         // When
