@@ -30,10 +30,8 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,9 +70,7 @@ internal class QueryChannelsLogicTest {
         identifier = QueryChannelsIdentifier.Standard(filter, sort)
         client = mock()
         queryChannelsStateLogic = mock()
-        queryChannelsDatabaseLogic = mock {
-            onBlocking { selectLocalOnlyMessages(any()) } doReturn emptyList()
-        }
+        queryChannelsDatabaseLogic = mock()
         queryChannelsState = mock()
         queryChannelsSpec = QueryChannelsSpec(filter, sort)
 
@@ -453,29 +449,6 @@ internal class QueryChannelsLogicTest {
         verify(queryChannelsDatabaseLogic).selectChannels(listOf(channel.cid))
         assertEquals(listOf(expectedResult), results)
     }
-
-    @Test
-    fun `parseChatEventResults should add the stored messages only this device has to a channel read from DB`() =
-        runTest {
-            // Given
-            val serverMessage = randomMessage(id = "server")
-            val channel = randomChannel(type = "messaging", id = "ch1", messages = listOf(serverMessage))
-            val bounce = randomMessage(id = "bounce", cid = channel.cid, type = MessageType.ERROR)
-            val merged = channel.copy(messages = listOf(serverMessage, bounce))
-            val event = randomNewMessageEvent(cid = channel.cid, channelType = "messaging", channelId = "ch1")
-            val expectedResult = EventHandlingResult.Add(merged)
-
-            whenever(queryChannelsStateLogic.getActiveChannelState(channel.cid)) doReturn null
-            whenever(queryChannelsDatabaseLogic.selectChannels(listOf(channel.cid))) doReturn listOf(channel)
-            whenever(queryChannelsDatabaseLogic.selectLocalOnlyMessages(channel.cid)) doReturn listOf(bounce)
-            whenever(queryChannelsStateLogic.handleChatEvent(eq(event), eq(merged))) doReturn expectedResult
-
-            // When
-            val results = logic.parseChatEventResults(listOf(event))
-
-            // Then
-            assertEquals(listOf(expectedResult), results)
-        }
 
     @Test
     fun `parseChatEventResults should use mixed resolution - memory for active, DB for inactive`() = runTest {

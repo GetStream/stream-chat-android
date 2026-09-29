@@ -586,10 +586,7 @@ internal class QueryChannelsLogic(
         val dbChannels = if (remainingCids.isEmpty()) {
             emptyMap()
         } else {
-            // The stored channel only carries its last server message, so add the ones only this device has.
-            queryChannelsDatabaseLogic.selectChannels(remainingCids)
-                .map { it.withLocalOnlyMessages() }
-                .associateBy { it.cid }
+            queryChannelsDatabaseLogic.selectChannels(remainingCids).associateBy { it.cid }
         }
         val resolvedChannels = inMemoryChannels + dbChannels
 
