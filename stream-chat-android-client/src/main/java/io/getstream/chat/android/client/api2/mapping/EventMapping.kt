@@ -21,7 +21,6 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
@@ -38,6 +37,7 @@ import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
+import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -64,9 +64,6 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedE
 import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
@@ -83,9 +80,6 @@ import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventD
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
 import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
@@ -156,6 +150,18 @@ import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.network.infrastructure.ExactDate
+import io.getstream.chat.android.network.models.PollResponseData
+import io.getstream.chat.android.network.models.PollVoteResponseData
+import io.getstream.chat.android.network.models.WSEvent
+import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
+import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
+import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPollUpdatedEvent
+import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
+import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
+import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
 
 @Suppress("LargeClass")
 internal class EventMapping(
@@ -221,13 +227,7 @@ internal class EventMapping(
             is UserStartWatchingEventDto -> toDomain()
             is UserStopWatchingEventDto -> toDomain()
             is UserUpdatedEventDto -> toDomain()
-            is PollClosedEventDto -> toDomain()
-            is PollDeletedEventDto -> toDomain()
-            is PollUpdatedEventDto -> toDomain()
-            is VoteCastedEventDto -> toDomain()
-            is VoteChangedEventDto -> toDomain()
-            is AnswerCastedEventDto -> toDomain()
-            is VoteRemovedEventDto -> toDomain()
+            is GeneratedEventDto -> event.toDomain()
             is DraftMessageDeletedEventDto -> toDomain()
             is DraftMessageUpdatedEventDto -> toDomain()
             is ReminderCreatedEventDto -> toDomain()
@@ -967,155 +967,168 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [PollClosedEventDto] to [PollClosedEvent].
+     * Transforms an event parsed with its generated model. The event adapter only produces the types
+     * handled here, and rejects an event without a cid.
      */
-    private fun PollClosedEventDto.toDomain(): PollClosedEvent = with(domainMapping) {
-        val newPoll = poll.toDomain()
+    private fun WSEvent.toDomain(): ChatEvent = when (this) {
+        is GeneratedPollClosedEvent -> toDomain()
+        is GeneratedPollDeletedEvent -> toDomain()
+        is GeneratedPollUpdatedEvent -> toDomain()
+        is GeneratedPollVoteCastedEvent -> toDomain()
+        is GeneratedPollVoteChangedEvent -> toDomain()
+        is GeneratedPollVoteRemovedEvent -> toDomain()
+        else -> error("No mapping for the generated ${getWSEventType()} event")
+    }
+
+    /**
+     * Transforms the generated [GeneratedPollClosedEvent] to [PollClosedEvent].
+     */
+    private fun GeneratedPollClosedEvent.toDomain(): PollClosedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return PollClosedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            poll = newPoll,
+            messageId = messageId,
+            poll = poll.toDomain(),
         )
     }
 
     /**
-     * Transforms [PollDeletedEventDto] to [PollDeletedEvent].
+     * Transforms the generated [GeneratedPollDeletedEvent] to [PollDeletedEvent].
      */
-    private fun PollDeletedEventDto.toDomain(): PollDeletedEvent = with(domainMapping) {
-        val newPoll = poll.toDomain()
+    private fun GeneratedPollDeletedEvent.toDomain(): PollDeletedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return PollDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            poll = newPoll,
+            messageId = messageId,
+            poll = poll.toDomain(),
         )
     }
 
     /**
-     * Transforms [PollUpdatedEventDto] to [PollUpdatedEvent].
+     * Transforms the generated [GeneratedPollUpdatedEvent] to [PollUpdatedEvent].
      */
-    private fun PollUpdatedEventDto.toDomain(): PollUpdatedEvent = with(domainMapping) {
-        val newPoll = poll.toDomain()
+    private fun GeneratedPollUpdatedEvent.toDomain(): PollUpdatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return PollUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            poll = newPoll,
+            messageId = messageId,
+            poll = poll.toDomain(),
         )
     }
 
     /**
-     * Transforms [VoteCastedEventDto] to [VoteCastedEvent].
+     * Transforms the generated [GeneratedPollVoteCastedEvent] to [VoteCastedEvent], or to [AnswerCastedEvent]
+     * when the vote is an answer.
      */
-    private fun VoteCastedEventDto.toDomain(): VoteCastedEvent = with(domainMapping) {
-        val pollVote = poll_vote.toDomain()
+    private fun GeneratedPollVoteCastedEvent.toDomain(): ChatEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        if (pollVote.isAnswer == true) return answerCasted(type, createdAt, cid, messageId, poll, pollVote)
+        val newVote = pollVote.toDomain()
         val (channelType, channelId) = cid.cidToTypeAndId()
-        val newPoll = poll.toDomain()
-            .let { poll ->
-                pollVote.takeIf { it.user?.id == currentUserIdProvider() }
-                    ?.let {
-                        poll.copy(
-                            votes = (poll.votes.associateBy { it.id } + (it.id to it)).values.toList(),
-                            ownVotes = (poll.ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
-                        )
-                    } ?: poll
-            }
         return VoteCastedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            poll = newPoll,
-            newVote = pollVote,
+            messageId = messageId,
+            poll = poll.toDomain().withOwnVote(newVote),
+            newVote = newVote,
         )
     }
 
     /**
-     * Transforms [AnswerCastedEventDto] to [AnswerCastedEvent].
+     * Transforms the generated [GeneratedPollVoteChangedEvent] to [VoteChangedEvent], or to
+     * [AnswerCastedEvent] when the vote is an answer.
      */
-    private fun AnswerCastedEventDto.toDomain(): AnswerCastedEvent = with(domainMapping) {
-        val newAnswer = poll_vote.toAnswerDomain()
+    private fun GeneratedPollVoteChangedEvent.toDomain(): ChatEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        if (pollVote.isAnswer == true) return answerCasted(type, createdAt, cid, messageId, poll, pollVote)
+        val newVote = pollVote.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return VoteChangedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            messageId = messageId,
+            poll = poll.toDomain().withOwnVote(newVote),
+            newVote = newVote,
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedPollVoteRemovedEvent] to [VoteRemovedEvent].
+     */
+    private fun GeneratedPollVoteRemovedEvent.toDomain(): VoteRemovedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return VoteRemovedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            messageId = messageId,
+            poll = poll.toDomain(),
+            removedVote = pollVote.toDomain(),
+        )
+    }
+
+    @Suppress("LongParameterList")
+    private fun answerCasted(
+        type: String,
+        createdAt: ExactDate,
+        cid: String,
+        messageId: String?,
+        poll: PollResponseData,
+        pollVote: PollVoteResponseData,
+    ): AnswerCastedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AnswerCastedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
+            messageId = messageId,
             poll = poll.toDomain(),
-            newAnswer = newAnswer,
+            newAnswer = pollVote.toAnswerDomain(),
         )
     }
 
-    /**
-     * Transforms [VoteChangedEventDto] to [VoteChangedEvent].
-     */
-    private fun VoteChangedEventDto.toDomain(): VoteChangedEvent = with(domainMapping) {
-        val pollVote = poll_vote.toDomain()
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        val newPoll = poll.toDomain()
-            .let { poll ->
-                pollVote.takeIf { it.user?.id == currentUserIdProvider() }
-                    ?.let {
-                        poll.copy(
-                            votes = (poll.votes.associateBy { it.id } + (it.id to it)).values.toList(),
-                            ownVotes = (poll.ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
-                        )
-                    } ?: poll
-            }
-        return VoteChangedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channelType,
-            channelId = channelId,
-            messageId = message_id,
-            poll = newPoll,
-            newVote = pollVote,
-        )
-    }
-
-    /**
-     * Transforms [VoteRemovedEventDto] to [VoteRemovedEvent].
-     */
-    private fun VoteRemovedEventDto.toDomain(): VoteRemovedEvent = with(domainMapping) {
-        val removedVote = poll_vote.toDomain()
-        val (channelType, channelId) = cid.cidToTypeAndId()
-        val newPoll = poll.toDomain()
-        return VoteRemovedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channelType,
-            channelId = channelId,
-            messageId = message_id,
-            poll = newPoll,
-            removedVote = removedVote,
-        )
-    }
+    /** A vote by the current user is added to the poll's votes and own votes, replacing one with the same id. */
+    private fun Poll.withOwnVote(vote: Vote): Poll =
+        vote.takeIf { it.user?.id == domainMapping.currentUserIdProvider() }
+            ?.let {
+                copy(
+                    votes = (votes.associateBy { it.id } + (it.id to it)).values.toList(),
+                    ownVotes = (ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
+                )
+            } ?: this
 
     /**
      * Transforms [DraftMessageUpdatedEventDto] to [DraftMessageUpdatedEvent].
