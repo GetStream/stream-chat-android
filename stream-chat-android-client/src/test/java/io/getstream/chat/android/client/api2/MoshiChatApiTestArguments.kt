@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
@@ -42,7 +41,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannels
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
@@ -59,6 +57,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
+import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
@@ -85,6 +84,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
+import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.positiveRandomInt
@@ -740,10 +740,12 @@ internal object MoshiChatApiTestArguments {
     fun deletePollOptionInput() = completableResponseArguments()
 
     @JvmStatic
-    fun createReminderInput() = reminderResponseArguments()
+    fun createReminderInput() =
+        responseArgs(CreateReminderResponse(randomString(), Mother.randomReminderResponseData()))
 
     @JvmStatic
-    fun updateReminderInput() = reminderResponseArguments()
+    fun updateReminderInput() =
+        responseArgs(UpdateReminderResponse(randomString(), Mother.randomReminderResponseData()))
 
     @JvmStatic
     fun deleteReminderInput() = completableResponseArguments()
@@ -1015,16 +1017,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<PollVoteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    @JvmStatic
-    private fun reminderResponseArguments() = listOf(
-        Arguments.of(
-            RetroSuccess(ReminderResponse(Mother.randomDownstreamReminderDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
-
-    private fun <T : Any> userGroupArgs(success: T) = listOf(
+    private fun <T : Any> responseArgs(success: T) = listOf(
         Arguments.of(RetroSuccess(success).toRetrofitCall(), Result.Success::class),
         Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
@@ -1033,31 +1026,31 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun createUserGroupResponseInput() =
-        userGroupArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun getUserGroupResponseInput() =
-        userGroupArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun updateUserGroupResponseInput() =
-        userGroupArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun addUserGroupMembersResponseInput() =
-        userGroupArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun removeUserGroupMembersResponseInput() =
-        userGroupArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun listUserGroupsResponseInput() =
-        userGroupArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+        responseArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
     fun searchUserGroupsResponseInput() =
-        userGroupArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+        responseArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
     fun deleteUserGroupInput() = completableResponseArguments()
