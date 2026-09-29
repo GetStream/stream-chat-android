@@ -162,12 +162,12 @@ internal class EventDtoAdapter(
     private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
     private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
-    private val pollUpdatedEventAdapter = generatedEventAdapter<PollUpdatedEvent> { it.cid }
-    private val pollDeletedEventAdapter = generatedEventAdapter<PollDeletedEvent> { it.cid }
-    private val pollClosedEventAdapter = generatedEventAdapter<PollClosedEvent> { it.cid }
-    private val pollVoteCastedEventAdapter = generatedEventAdapter<PollVoteCastedEvent> { it.cid }
-    private val pollVoteChangedEventAdapter = generatedEventAdapter<PollVoteChangedEvent> { it.cid }
-    private val pollVoteRemovedEventAdapter = generatedEventAdapter<PollVoteRemovedEvent> { it.cid }
+    private val pollUpdatedEventAdapter = generatedEventAdapter<PollUpdatedEvent> { mapOf("cid" to cid) }
+    private val pollDeletedEventAdapter = generatedEventAdapter<PollDeletedEvent> { mapOf("cid" to cid) }
+    private val pollClosedEventAdapter = generatedEventAdapter<PollClosedEvent> { mapOf("cid" to cid) }
+    private val pollVoteCastedEventAdapter = generatedEventAdapter<PollVoteCastedEvent> { mapOf("cid" to cid) }
+    private val pollVoteChangedEventAdapter = generatedEventAdapter<PollVoteChangedEvent> { mapOf("cid" to cid) }
+    private val pollVoteRemovedEventAdapter = generatedEventAdapter<PollVoteRemovedEvent> { mapOf("cid" to cid) }
     private val reminderCreatedEventAdapter = moshi.adapter(ReminderCreatedEventDto::class.java)
     private val reminderUpdatedEventAdapter = moshi.adapter(ReminderUpdatedEventDto::class.java)
     private val reminderDeletedEventAdapter = moshi.adapter(ReminderDeletedEventDto::class.java)
@@ -275,20 +275,21 @@ internal class EventDtoAdapter(
     }
 
     private inline fun <reified T : WSEvent> generatedEventAdapter(
-        noinline cid: (T) -> String?,
-    ): JsonAdapter<ChatEventDto> = GeneratedEventAdapter(moshi.adapter(T::class.java), cid)
+        noinline required: T.() -> Map<String, Any?>,
+    ): JsonAdapter<ChatEventDto> = GeneratedEventAdapter(moshi.adapter(T::class.java), required)
 
     /**
-     * Parses an event with its generated model. The spec shares these events with feeds, where they carry no
-     * cid, so the model makes it optional; chat always sends one, and an event without it is rejected.
+     * Parses an event with its generated model. The spec makes some fields optional that the domain event
+     * requires (e.g. the cid, since feeds shares these events without one); an event missing any of the
+     * [required] fields is rejected.
      */
     private class GeneratedEventAdapter<T : WSEvent>(
         private val delegate: JsonAdapter<T>,
-        private val cid: (T) -> String?,
+        private val required: T.() -> Map<String, Any?>,
     ) : JsonAdapter<ChatEventDto>() {
         override fun fromJson(reader: JsonReader): ChatEventDto? = delegate.fromJson(reader)?.let { event ->
-            if (cid(event) == null) {
-                throw JsonDataException("Required value 'cid' missing for ${event.getWSEventType()}")
+            event.required().entries.firstOrNull { it.value == null }?.let { (name, _) ->
+                throw JsonDataException("Required value '$name' missing for ${event.getWSEventType()}")
             }
             GeneratedEventDto(event)
         }

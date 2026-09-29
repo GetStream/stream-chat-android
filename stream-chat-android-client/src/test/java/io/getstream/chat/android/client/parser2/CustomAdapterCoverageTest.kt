@@ -29,6 +29,9 @@ import java.io.File
  *
  * Models whose `custom` is genuinely a nested object on the wire (the Go struct declares a plain map
  * rather than `jsonextra.ExtraFields`) must be listed in [NESTED_CUSTOM] with a reason instead.
+ *
+ * Events are skipped: no domain event exposes the event's own custom data, so collecting it would only cost
+ * an extra pass per event. `CustomEvent` stays checked, since its custom data is the event's payload.
  */
 internal class CustomAdapterCoverageTest {
 
@@ -50,6 +53,7 @@ internal class CustomAdapterCoverageTest {
     private fun modelsDeclaringCustom(): Set<String> =
         File(MODELS_DIR).listFiles { f -> f.extension == "kt" }.orEmpty()
             .filter { it.readText().contains(CUSTOM_PROPERTY) }
+            .filter { it.nameWithoutExtension == CUSTOM_EVENT || !WS_EVENT_SUPERTYPE.containsMatchIn(it.readText()) }
             .map { it.nameWithoutExtension }
             .toSet()
 
@@ -74,6 +78,9 @@ internal class CustomAdapterCoverageTest {
 
         /** The colon matters: without it this also matches unrelated properties like `customEvents`. */
         private const val CUSTOM_PROPERTY = "internal val custom:"
+
+        private val WS_EVENT_SUPERTYPE = Regex("""\bio\.getstream\.chat\.android\.network\.models\.WSEvent\s*\{""")
+        private const val CUSTOM_EVENT = "CustomEvent"
 
         /** Models whose `custom` is a nested object on the wire, so no collecting adapter applies. */
         private val NESTED_CUSTOM = mapOf(
