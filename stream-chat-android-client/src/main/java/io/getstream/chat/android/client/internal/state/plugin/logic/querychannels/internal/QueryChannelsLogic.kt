@@ -342,7 +342,7 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun Channel.withLocalOnlyMessages(): Channel {
-        val serverIds = messages.mapTo(mutableSetOf()) { it.id }
+        val serverIds: Set<String> = messages.mapTo(mutableSetOf()) { it.id }
         val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid).filterNot { it.id in serverIds }
         return if (localOnly.isEmpty()) this else copy(messages = messages + localOnly)
     }
@@ -586,7 +586,10 @@ internal class QueryChannelsLogic(
         val dbChannels = if (remainingCids.isEmpty()) {
             emptyMap()
         } else {
-            queryChannelsDatabaseLogic.selectChannels(remainingCids).associateBy { it.cid }
+            // The stored channel only carries its last server message, so add the ones only this device has.
+            queryChannelsDatabaseLogic.selectChannels(remainingCids)
+                .map { it.withLocalOnlyMessages() }
+                .associateBy { it.cid }
         }
         val resolvedChannels = inMemoryChannels + dbChannels
 
