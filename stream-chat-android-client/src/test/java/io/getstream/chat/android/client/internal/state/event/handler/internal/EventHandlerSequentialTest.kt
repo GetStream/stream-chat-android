@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.internal.Log
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.test.randomDraftMessageDeletedEvent
@@ -1039,22 +1038,6 @@ internal class EventHandlerSequentialTest {
                 Arguments.of(
                     listOf(randomMessageUpdateEvent(cid = randomCid, message = message)),
                     listOf(message.sharedLocation),
-                )
-            },
-            run {
-                val location = randomLocation(userId = currentUser.id)
-                val channel = randomChannel(activeLiveLocations = listOf(location))
-                Arguments.of(
-                    listOf(randomChannelUpdatedEvent(cid = randomCid, channel = channel)),
-                    listOf(location),
-                )
-            },
-            run {
-                val location = randomLocation(userId = currentUser.id)
-                val channel = randomChannel(activeLiveLocations = listOf(location))
-                Arguments.of(
-                    listOf(randomChannelDeletedEvent(cid = randomCid, channel = channel)),
-                    listOf(location),
                 )
             },
         )

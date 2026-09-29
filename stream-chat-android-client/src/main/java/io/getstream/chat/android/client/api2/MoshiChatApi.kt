@@ -1300,6 +1300,7 @@ constructor(
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,
                 draftMessage = response.draft?.toDomain(),
+                activeLiveLocations = response.active_live_locations.map { it.toDomain() },
             ).syncUnreadCountWithReads(domainMapping.currentUserIdProvider())
         }
     }

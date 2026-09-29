@@ -229,7 +229,6 @@ internal class DomainMapping(
             pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
-            activeLiveLocations = active_live_locations.map { it.toDomain() },
             messageCount = message_count,
             lastMessageAt = last_message_at,
             extraData = extraData.toMutableMap(),
