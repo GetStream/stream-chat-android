@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Message
 
 /**
  * Pair of the persisted [QueryChannelsSpec] and the channels associated with it. The spec is
@@ -49,6 +50,14 @@ internal class QueryChannelsDatabaseLogic(
     internal suspend fun storeStateForChannels(channels: Collection<Channel>) {
         repositoryFacade.storeStateForChannels(channels)
     }
+
+    /**
+     * Select the stored messages of the channel that only exist on this device.
+     *
+     * @param cid The channel's cid.
+     */
+    internal suspend fun selectLocalOnlyMessages(cid: String): List<Message> =
+        repositoryFacade.selectLocalOnlyMessagesForChannel(cid)
 
     /**
      * Fetch the cached spec and channels for the given query [identifier].

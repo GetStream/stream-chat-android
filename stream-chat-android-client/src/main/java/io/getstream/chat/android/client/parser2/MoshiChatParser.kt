@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.adapters.ChannelInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberPartialResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
@@ -49,14 +50,22 @@ import io.getstream.chat.android.client.parser2.adapters.EventRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.MemberUserRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.MessageRequestAdapter
+import io.getstream.chat.android.client.parser2.adapters.MessageResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
 import io.getstream.chat.android.client.parser2.adapters.OwnUserResponseAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollClosedEventAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollDeletedEventAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollResponseDataAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollUpdatedEventAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollVoteCastedEventAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollVoteChangedEventAdapter
+import io.getstream.chat.android.client.parser2.adapters.PollVoteRemovedEventAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
@@ -70,6 +79,7 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.BlockListOptions
+import io.getstream.chat.android.network.models.ChannelConfigOverrides
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChatPreferencesInput
@@ -82,6 +92,7 @@ import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import io.getstream.chat.android.network.infrastructure.ExactDateAdapter as GeneratedExactDateAdapter
 
 internal class MoshiChatParser(
     private val eventMapping: EventMapping,
@@ -92,6 +103,13 @@ internal class MoshiChatParser(
     private val moshi: Moshi by lazy {
         Serializer.moshi.newBuilder()
             .addAdapter(ExactDateAdapter())
+            .add(GeneratedExactDateAdapter())
+            .add(PollClosedEventAdapter)
+            .add(PollDeletedEventAdapter)
+            .add(PollUpdatedEventAdapter)
+            .add(PollVoteCastedEventAdapter)
+            .add(PollVoteChangedEventAdapter)
+            .add(PollVoteRemovedEventAdapter)
             .add(EventAdapterFactory())
             .add(DownstreamMessageDtoAdapter)
             .add(DownstreamModerationDetailsDtoAdapter)
@@ -104,10 +122,13 @@ internal class MoshiChatParser(
             .add(UserResponseCommonFieldsAdapter)
             .add(UserResponsePrivacyFieldsAdapter)
             .add(UserRequestAdapter)
+            .add(MemberUserRequestAdapter)
             .add(NetworkAttachmentAdapter)
             .add(OwnUserResponseAdapter)
             .add(MessageRequestAdapter)
+            .add(MessageResponseAdapter)
             .add(ChannelMemberRequestAdapter)
+            .add(ChannelInputAdapter)
             .add(ChannelInputRequestAdapter)
             .add(ChannelResponseAdapter)
             .add(ChannelMemberResponseAdapter)
@@ -138,6 +159,14 @@ internal class MoshiChatParser(
             .add(
                 MessageRequest.Type::class.java,
                 MessageRequest.Type.TypeAdapter(),
+            )
+            .add(
+                ChannelConfigOverrides.BlocklistBehavior::class.java,
+                ChannelConfigOverrides.BlocklistBehavior.BlocklistBehaviorAdapter(),
+            )
+            .add(
+                ChannelConfigOverrides.PushLevel::class.java,
+                ChannelConfigOverrides.PushLevel.PushLevelAdapter(),
             )
             .add(
                 ConfigOverridesRequest.BlocklistBehavior::class.java,

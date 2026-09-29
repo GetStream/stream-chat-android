@@ -322,12 +322,6 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
-    fun queryDraftMessages(
-        offset: Int?,
-        limit: Int?,
-    ): Call<List<DraftMessage>>
-
-    @CheckResult
     fun queryDrafts(
         filter: FilterObject,
         limit: Int?,

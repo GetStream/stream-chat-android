@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import java.util.Date
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class QueryBannedUsersRequest(
-    var filter_conditions: Map<*, *>,
-    val sort: List<Map<String, Any>>,
-    val offset: Int?,
-    val limit: Int?,
-    val created_at_after: Date?,
-    val created_at_after_or_equal: Date?,
-    val created_at_before: Date?,
-    val created_at_before_or_equal: Date?,
+import com.squareup.moshi.Json
+
+/**
+ * Basic response information
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class CreateReminderResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "reminder")
+    internal val reminder: io.getstream.chat.android.network.models.ReminderResponseData,
 )

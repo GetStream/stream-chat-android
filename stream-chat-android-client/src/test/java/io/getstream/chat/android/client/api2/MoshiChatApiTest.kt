@@ -17,8 +17,10 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -44,7 +46,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -56,10 +57,8 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
@@ -108,6 +107,8 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
+import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesInput
@@ -118,6 +119,7 @@ import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
 import io.getstream.chat.android.network.models.CreateReminderRequest
+import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
@@ -137,8 +139,10 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
@@ -148,6 +152,7 @@ import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.PushPreferenceInput
 import io.getstream.chat.android.network.models.PushPreferencesResponse
+import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryMembersPayload
@@ -157,6 +162,7 @@ import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.QueryRemindersRequest
+import io.getstream.chat.android.network.models.QueryRemindersResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
@@ -177,6 +183,7 @@ import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
+import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupRequest
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
@@ -211,6 +218,7 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -306,25 +314,6 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).deleteDraftMessage(any(), any(), any())
-    }
-
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
-    fun testQueryDraftMessage(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
-        // given
-        val api = mock<MessageApi>()
-        whenever(api.queryDraftMessages(any())).doReturn(call)
-        val sut = Fixture()
-            .withMessageApi(api)
-            .get()
-        // when
-        val result = sut.queryDraftMessages(
-            offset = randomInt(),
-            limit = randomInt(),
-        ).await()
-        // then
-        result `should be instance of` expected
-        verify(api, times(1)).queryDraftMessages(any())
     }
 
     @ParameterizedTest
@@ -1236,15 +1225,15 @@ internal class MoshiChatApiTest {
             createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         ).await()
         // then
-        val expectedPayload = QueryBannedUsersRequest(
-            filter_conditions = filter.toMap(),
-            sort = sort.toDto(),
+        val expectedPayload = QueryBannedUsersPayload(
+            filterConditions = filter.toMap(),
+            sort = listOf(SortParamRequest(field = "created_at", direction = 1)),
             offset = offset,
             limit = limit,
-            created_at_after = createdAtAfter,
-            created_at_after_or_equal = createdAtAfterOrEqual,
-            created_at_before = createdAtBefore,
-            created_at_before_or_equal = createdAtBeforeOrEqual,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         result `should be instance of` expected
         verify(api, times(1)).queryBannedUsers(expectedPayload)
@@ -2346,6 +2335,51 @@ internal class MoshiChatApiTest {
         return result.value.predefinedFilter
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
+    fun `channel state maps active live locations onto the channel`(
+        @Suppress("UNUSED_PARAMETER") path: String,
+        stub: (ChannelApi, ChannelResponse) -> Unit,
+        query: (MoshiChatApi) -> Call<List<Channel>>,
+    ) = runTest {
+        val endAt = randomDate()
+        val response = ChannelResponse(
+            channel = Mother.randomDownstreamChannelDto(cid = "messaging:123", id = "123", type = "messaging"),
+            membership = null,
+            hidden = null,
+            hide_messages_before = null,
+            draft = null,
+            active_live_locations = listOf(
+                DownstreamLocationDto(
+                    channel_cid = "messaging:123",
+                    message_id = "msg-1",
+                    user_id = "other-user",
+                    latitude = 1.5,
+                    longitude = 2.5,
+                    created_by_device_id = "device-1",
+                    end_at = endAt,
+                ),
+            ),
+        )
+        val api = mock<ChannelApi>()
+        stub(api, response)
+        val sut = Fixture().withChannelApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+
+        val channels = query(sut).await().getOrNull()
+
+        val expected = Location(
+            cid = "messaging:123",
+            messageId = "msg-1",
+            userId = "other-user",
+            latitude = 1.5,
+            longitude = 2.5,
+            deviceId = "device-1",
+            endAt = endAt,
+        )
+        assertEquals(listOf(listOf(expected)), channels?.map(Channel::activeLiveLocations))
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
     fun testQueryChannelWithoutChannelId(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
@@ -2360,18 +2394,23 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val channelType = randomString()
         val channelId = ""
-        val query = Mother.randomQueryChannelRequest()
+        val query = QueryChannelRequest()
+            .withMessages(Pagination.LESS_THAN, "message-id", 30)
+            .withMembers(limit = 10, offset = 5)
+            .withWatchers(limit = 20, offset = 2)
+            .withData(mapOf("name" to "Team"))
+            .apply { watch = true }
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannel(channelType, channelId, query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            data = query.data,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
-            state = query.state,
-            watch = query.watch,
-            presence = query.presence,
+        val expectedPayload = ChannelGetOrCreateRequest(
+            state = true,
+            watch = true,
+            presence = false,
+            messages = MessagePaginationParams(limit = 30, idLt = "message-id"),
+            members = PaginationParams(limit = 10, offset = 5),
+            watchers = PaginationParams(limit = 20, offset = 2),
+            data = ChannelInput(custom = mapOf("name" to "Team")),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannel(channelType, connectionId, expectedPayload)
@@ -2391,18 +2430,23 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val channelType = randomString()
         val channelId = randomString()
-        val query = Mother.randomQueryChannelRequest()
+        val query = QueryChannelRequest()
+            .withMessages(Pagination.LESS_THAN, "message-id", 30)
+            .withMembers(limit = 10, offset = 5)
+            .withWatchers(limit = 20, offset = 2)
+            .withData(mapOf("name" to "Team"))
+            .apply { watch = true }
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.queryChannel(channelType, channelId, query).await()
         // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.QueryChannelRequest(
-            data = query.data,
-            messages = query.messages,
-            watchers = query.watchers,
-            members = query.members,
-            state = query.state,
-            watch = query.watch,
-            presence = query.presence,
+        val expectedPayload = ChannelGetOrCreateRequest(
+            state = true,
+            watch = true,
+            presence = false,
+            messages = MessagePaginationParams(limit = 30, idLt = "message-id"),
+            members = PaginationParams(limit = 10, offset = 5),
+            watchers = PaginationParams(limit = 20, offset = 2),
+            data = ChannelInput(custom = mapOf("name" to "Team")),
         )
         result `should be instance of` expected
         verify(api, times(1)).queryChannel(channelType, channelId, connectionId, expectedPayload)
@@ -2987,7 +3031,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createReminderInput")
-    fun testCreateReminder(call: RetrofitCall<ReminderResponse>, expected: KClass<*>) = runTest {
+    fun testCreateReminder(call: RetrofitCall<CreateReminderResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.createReminder(any(), any())).doReturn(call)
@@ -3006,7 +3050,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateReminderInput")
-    fun testUpdateReminder(call: RetrofitCall<ReminderResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateReminder(call: RetrofitCall<UpdateReminderResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<RemindersApi>()
         whenever(api.updateReminder(any(), any())).doReturn(call)

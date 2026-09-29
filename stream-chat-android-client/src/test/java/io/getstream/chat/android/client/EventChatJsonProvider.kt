@@ -1009,7 +1009,7 @@ private fun createChannelJsonString() =
     "last_message_at": "2020-06-29T06:14:28.000Z",
     "created_at": "2020-06-29T06:14:28.000Z",
     "updated_at": "2020-06-29T06:14:28.000Z",
-    "created_by": ${createUserJsonString()},
+    "created_by": ${createCommonFieldsUserJsonString()},
     "frozen": false,
     "members": [
         ${createMemberJsonString()}
@@ -1077,7 +1077,7 @@ private fun createReactionJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createPollJsonString() =
+internal fun createPollJsonString() =
     """
         {
             "id": "poll-id",
@@ -1106,7 +1106,7 @@ private fun createPollJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createPollVoteJsonString() =
+internal fun createPollVoteJsonString() =
     """
         {
             "id": "vote-id",
@@ -1120,7 +1120,7 @@ private fun createPollVoteJsonString() =
     """.trimIndent()
 
 @Language("JSON")
-private fun createPollAnswerVoteJsonString() =
+internal fun createPollAnswerVoteJsonString() =
     """
         {
             "id": "answer-id",

@@ -147,6 +147,8 @@ internal class ChannelLogicImpl(
                 }
                 // Add pinned messages
                 state.addPinnedMessages(channel.pinnedMessages)
+                // The channel state reads its live locations from the global state
+                mutableGlobalState.addLiveLocations(channel.activeLiveLocations)
                 // Reset recovery state
                 if (!isNotificationUpdate && limit != 0) {
                     state.setRecoveryNeeded(false)
@@ -314,6 +316,8 @@ internal class ChannelLogicImpl(
         state.updateReads(channel.read)
         // Set pending messages
         state.setPendingMessages(channel.pendingMessages.map(PendingMessage::message))
+        // The channel state reads its live locations from the global state
+        mutableGlobalState.addLiveLocations(channel.activeLiveLocations)
         // Update messages based on the relationship between the incoming page and existing state.
         if (messageLimit > 0) {
             val sortedMessages = withContext(Dispatchers.Default) {

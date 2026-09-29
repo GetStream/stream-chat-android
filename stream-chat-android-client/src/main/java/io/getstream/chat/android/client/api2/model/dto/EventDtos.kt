@@ -21,11 +21,10 @@ import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
-import io.getstream.chat.android.network.models.PollResponseData
-import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
+import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
 import java.util.Date
 
@@ -545,72 +544,10 @@ internal data class UserUpdatedEventDto(
     val user: UserResponsePrivacyFields,
 ) : ChatEventDto()
 
-@JsonClass(generateAdapter = true)
-internal data class PollUpdatedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class PollDeletedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class PollClosedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class VoteCastedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-    val poll_vote: PollVoteResponseData,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class AnswerCastedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-    val poll_vote: PollVoteResponseData,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class VoteChangedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-    val poll_vote: PollVoteResponseData,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class VoteRemovedEventDto(
-    val type: String,
-    val cid: String,
-    val message_id: String?,
-    val created_at: ExactDate,
-    val poll: PollResponseData,
-    val poll_vote: PollVoteResponseData,
-) : ChatEventDto()
+/**
+ * An event parsed with its generated model, which the event mapping turns into the domain event.
+ */
+internal data class GeneratedEventDto(val event: WSEvent) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class ReminderCreatedEventDto(
