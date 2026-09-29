@@ -686,22 +686,12 @@ internal object MoshiChatApiTestArguments {
     fun deletePollOptionInput() = completableResponseArguments()
 
     @JvmStatic
-    fun createReminderInput() = listOf(
-        Arguments.of(
-            RetroSuccess(CreateReminderResponse(randomString(), Mother.randomReminderResponseData())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<CreateReminderResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun createReminderInput() =
+        responseArgs(CreateReminderResponse(randomString(), Mother.randomReminderResponseData()))
 
     @JvmStatic
-    fun updateReminderInput() = listOf(
-        Arguments.of(
-            RetroSuccess(UpdateReminderResponse(randomString(), Mother.randomReminderResponseData())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<UpdateReminderResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun updateReminderInput() =
+        responseArgs(UpdateReminderResponse(randomString(), Mother.randomReminderResponseData()))
 
     @JvmStatic
     fun deleteReminderInput() = completableResponseArguments()
@@ -973,7 +963,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<PollVoteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    private fun <T : Any> userGroupArgs(success: T) = listOf(
+    private fun <T : Any> responseArgs(success: T) = listOf(
         Arguments.of(RetroSuccess(success).toRetrofitCall(), Result.Success::class),
         Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
@@ -982,31 +972,31 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun createUserGroupResponseInput() =
-        userGroupArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(CreateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun getUserGroupResponseInput() =
-        userGroupArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(GetUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun updateUserGroupResponseInput() =
-        userGroupArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(UpdateUserGroupResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun addUserGroupMembersResponseInput() =
-        userGroupArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(AddUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun removeUserGroupMembersResponseInput() =
-        userGroupArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
+        responseArgs(RemoveUserGroupMembersResponse(duration = randomString(), userGroup = userGroup()))
 
     @JvmStatic
     fun listUserGroupsResponseInput() =
-        userGroupArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+        responseArgs(ListUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
     fun searchUserGroupsResponseInput() =
-        userGroupArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
+        responseArgs(SearchUserGroupsResponse(duration = randomString(), userGroups = listOf(userGroup())))
 
     @JvmStatic
     fun deleteUserGroupInput() = completableResponseArguments()
