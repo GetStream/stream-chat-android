@@ -25,9 +25,12 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.test.randomQueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelConfig
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -66,6 +69,20 @@ internal class QueryChannelsDatabaseLogicTest {
 
         // Then
         verify(repositoryFacade).storeStateForChannels(channels)
+    }
+
+    @Test
+    fun `selectLocalOnlyMessages returns the channel's stored messages the server does not have`() = runTest {
+        // Given
+        val cid = "messaging:ch1"
+        val bounce = randomMessage(cid = cid, type = MessageType.ERROR, syncStatus = SyncStatus.COMPLETED)
+        whenever(repositoryFacade.selectLocalOnlyMessagesForChannel(cid)) doReturn listOf(bounce)
+
+        // When
+        val result = logic.selectLocalOnlyMessages(cid)
+
+        // Then
+        assertEquals(listOf(bounce), result)
     }
 
     @Test
