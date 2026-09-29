@@ -170,6 +170,7 @@ import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SharedLocationResponse
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -2350,14 +2351,16 @@ internal class MoshiChatApiTest {
             hide_messages_before = null,
             draft = null,
             active_live_locations = listOf(
-                DownstreamLocationDto(
-                    channel_cid = "messaging:123",
-                    message_id = "msg-1",
-                    user_id = "other-user",
+                SharedLocationResponseData(
+                    channelCid = "messaging:123",
+                    createdAt = endAt,
+                    createdByDeviceId = "device-1",
                     latitude = 1.5,
                     longitude = 2.5,
-                    created_by_device_id = "device-1",
-                    end_at = endAt,
+                    messageId = "msg-1",
+                    updatedAt = endAt,
+                    userId = "other-user",
+                    endAt = endAt,
                 ),
             ),
         )

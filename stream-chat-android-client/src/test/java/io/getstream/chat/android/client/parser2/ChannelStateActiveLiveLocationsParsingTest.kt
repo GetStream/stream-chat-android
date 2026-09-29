@@ -16,14 +16,13 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.parser2.testdata.LocationTestData
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.util.Date
 
 /**
  * `active_live_locations` is sent next to `channel` in the channel state, not inside it.
@@ -37,15 +36,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
             """"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
 
     private val expected = listOf(
-        DownstreamLocationDto(
-            channel_cid = "messaging:123",
-            message_id = "msg-1",
-            user_id = "user-1",
-            latitude = 37.7749,
-            longitude = -122.4194,
-            created_by_device_id = "device-1",
-            end_at = Date(1744113600000L),
-        ),
+        parser.fromJson(LocationTestData.jsonAllFields, SharedLocationResponseData::class.java),
     )
 
     @Test
@@ -77,6 +68,6 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
         val response = parser.fromJson(json, ChannelResponse::class.java)
 
-        assertEquals(emptyList<DownstreamLocationDto>(), response.active_live_locations)
+        assertEquals(emptyList<SharedLocationResponseData>(), response.active_live_locations)
     }
 }

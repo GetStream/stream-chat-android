@@ -24,9 +24,9 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.UserResponse
 import java.util.Date
-import io.getstream.chat.android.network.models.SharedLocationResponseData
 
 @JsonClass(generateAdapter = true)
 internal data class ChannelResponse(
