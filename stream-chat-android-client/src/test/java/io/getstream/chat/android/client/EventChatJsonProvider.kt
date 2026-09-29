@@ -641,8 +641,11 @@ internal fun createNotificationThreadMessageNewEventStringJson() =
             "cid": "channelType:channelId",
             "channel_type": "channelType",
             "channel_id": "channelId",
-            "message": ${createMessageJsonString()},
-            "channel": ${createChannelJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "thread_id": "parentMessageId",
+            "watcher_count": 0,
+            "message": ${createGeneratedMessageJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "unread_threads": 1,
             "unread_thread_messages": 2
         """.trimIndent(),

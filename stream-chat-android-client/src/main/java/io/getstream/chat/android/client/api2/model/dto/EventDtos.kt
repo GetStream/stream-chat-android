@@ -203,13 +203,6 @@ internal data class NotificationAddedToChannelEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationChannelMutesUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val me: OwnUserResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationMarkReadEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -228,25 +221,6 @@ internal data class NotificationMarkReadEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationMarkUnreadEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val first_unread_message_id: String,
-    val last_read_message_id: String?,
-    val last_read_at: ExactDate,
-    val unread_messages: Int,
-    val total_unread_count: Int? = null,
-    val unread_channels: Int? = null,
-    val thread_id: String? = null,
-    val unread_threads: Int = 0,
-    val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class MarkAllReadEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -254,26 +228,6 @@ internal data class MarkAllReadEventDto(
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
     val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationThreadMessageNewEventDto(
-    val type: String,
-    val cid: String,
-    val channel_id: String,
-    val channel_type: String,
-    val message: DownstreamMessageDto,
-    val channel: DownstreamChannelDto,
-    val created_at: ExactDate,
-    val unread_threads: Int,
-    val unread_thread_messages: Int,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationMutesUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val me: OwnUserResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
