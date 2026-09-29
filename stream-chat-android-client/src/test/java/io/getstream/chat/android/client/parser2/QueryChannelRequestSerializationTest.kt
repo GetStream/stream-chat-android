@@ -172,6 +172,11 @@ internal class QueryChannelRequestSerializationTest {
             Arguments.of("messages", "created_at_before", date, DATE_JSON),
             Arguments.of("messages", "created_at_before_or_equal", date, DATE_JSON),
             Arguments.of("messages", "created_at_around", date, DATE_JSON),
+            Arguments.of("messages", "created_at_after", "2023-11-14T22:13:20.123Z", DATE_JSON),
+            Arguments.of("messages", "created_at_after_or_equal", "2023-11-14T22:13:20.123Z", DATE_JSON),
+            Arguments.of("messages", "created_at_before", "2023-11-14T22:13:20.123Z", DATE_JSON),
+            Arguments.of("messages", "created_at_before_or_equal", "2023-11-14T22:13:20.123Z", DATE_JSON),
+            Arguments.of("messages", "created_at_around", "2023-11-14T22:13:20.123Z", DATE_JSON),
         ) + listOf("members", "watchers").flatMap { field ->
             listOf("limit", "offset", "id_gt", "id_gte", "id_lt", "id_lte").map { key ->
                 Arguments.of(field, key, 7, "7")

@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChatPreferences
 import io.getstream.chat.android.models.Device
@@ -61,6 +62,8 @@ internal class DtoMapping(
 ) {
 
     private val supportedUpstreamMessageTypes = setOf(MessageType.REGULAR, MessageType.SYSTEM)
+
+    private val dateFormatter = StreamDateFormatter()
 
     /**
      * Converts [Device] to [DeviceDto].
@@ -156,11 +159,11 @@ internal class DtoMapping(
         idLt = this[Pagination.LESS_THAN.toString()] as? String,
         idLte = this[Pagination.LESS_THAN_OR_EQUAL.toString()] as? String,
         idAround = this[Pagination.AROUND_ID.toString()] as? String,
-        createdAtAfter = this["created_at_after"] as? Date,
-        createdAtAfterOrEqual = this["created_at_after_or_equal"] as? Date,
-        createdAtBefore = this["created_at_before"] as? Date,
-        createdAtBeforeOrEqual = this["created_at_before_or_equal"] as? Date,
-        createdAtAround = this["created_at_around"] as? Date,
+        createdAtAfter = date("created_at_after"),
+        createdAtAfterOrEqual = date("created_at_after_or_equal"),
+        createdAtBefore = date("created_at_before"),
+        createdAtBeforeOrEqual = date("created_at_before_or_equal"),
+        createdAtAround = date("created_at_around"),
     )
 
     private fun Map<String, Any>.toPaginationParams() = PaginationParams(
@@ -173,6 +176,13 @@ internal class DtoMapping(
     )
 
     private fun Map<String, Any>.int(key: String): Int? = (this[key] as? Number)?.toInt()
+
+    // The maps are public, so a date can arrive as the ISO string the backend also accepts.
+    private fun Map<String, Any>.date(key: String): Date? = when (val value = this[key]) {
+        is Date -> value
+        is String -> dateFormatter.parse(value)
+        else -> null
+    }
 
     /**
      * Maps the domain [Location] to the generated network [SharedLocation] model.
