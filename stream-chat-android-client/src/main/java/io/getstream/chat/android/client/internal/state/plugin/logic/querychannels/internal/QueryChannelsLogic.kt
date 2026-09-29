@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.api.state.ChannelsStateData
 import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -35,6 +37,9 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -307,8 +312,12 @@ internal class QueryChannelsLogic(
         groupedResultMutex.withLock {
             val existing = queryChannelsStateLogic.getChannels()
             // The server's copy lacks messages only this device has; listed channels keep theirs through the merge.
-            val channels = group.channels.map { channel ->
-                if (existing?.containsKey(channel.cid) == true) channel else channel.withLocalOnlyMessages()
+            val channels = coroutineScope {
+                group.channels.map { channel ->
+                    async {
+                        if (existing?.containsKey(channel.cid) == true) channel else channel.withLocalOnlyMessages()
+                    }
+                }.awaitAll()
             }
             if (isFirstPage) {
                 if (!existing.isNullOrEmpty()) {
@@ -343,7 +352,13 @@ internal class QueryChannelsLogic(
 
     private suspend fun Channel.withLocalOnlyMessages(): Channel {
         val serverIds: Set<String> = messages.mapTo(mutableSetOf()) { it.id }
-        val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid).filterNot { it.id in serverIds }
+        val newestServerMessageAt = messages.maxOfOrNull { it.getCreatedAtOrDefault(NEVER) }
+        // Only messages newer than the server's page, so older pending edits don't leave a gap in the message list.
+        val localOnly = queryChannelsDatabaseLogic.selectLocalOnlyMessages(cid).filter { message ->
+            message.id !in serverIds &&
+                (message.parentId == null || message.showInChannel) &&
+                (newestServerMessageAt == null || message.getCreatedAtOrDefault(NEVER).after(newestServerMessageAt))
+        }
         return if (localOnly.isEmpty()) this else copy(messages = messages + localOnly)
     }
 
