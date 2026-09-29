@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.parser2.testdata
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
-import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -28,7 +27,7 @@ import java.util.Date
 
 internal object ChannelTestData {
 
-    private const val MINIMAL_CONFIG = """
+    const val MINIMAL_CONFIG = """
         "typing_events":true,
         "read_events":true,
         "connect_events":true,
@@ -75,7 +74,6 @@ internal object ChannelTestData {
         "pinned_messages":[],
         "own_capabilities":["send-message","delete-channel"],
         "membership":null,
-        "active_live_locations":[],
         "message_count":42,
         "custom_field":"custom_value"
     }"""
@@ -157,17 +155,6 @@ internal object ChannelTestData {
         ],
         "own_capabilities":["send-message"],
         "membership":null,
-        "active_live_locations":[
-            {
-                "channel_cid":"messaging:123",
-                "message_id":"msg-1",
-                "user_id":"user1",
-                "latitude":37.7749,
-                "longitude":-122.4194,
-                "created_by_device_id":"device-1",
-                "end_at":"2020-06-29T07:00:00.000Z"
-            }
-        ],
         "message_count":10
     }"""
 
@@ -380,17 +367,6 @@ internal object ChannelTestData {
         ),
         ownCapabilities = setOf("send-message"),
         membership = null,
-        activeLiveLocations = listOf(
-            Location(
-                cid = "messaging:123",
-                messageId = "msg-1",
-                userId = "user1",
-                latitude = 37.7749,
-                longitude = -122.4194,
-                deviceId = "device-1",
-                endAt = Date(1593414000000),
-            ),
-        ),
         messageCount = 10,
         lastMessageAt = Date(1593411268000),
         extraData = mutableMapOf(),

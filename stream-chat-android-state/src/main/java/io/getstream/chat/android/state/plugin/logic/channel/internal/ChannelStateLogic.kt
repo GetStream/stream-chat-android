@@ -643,6 +643,8 @@ internal class ChannelStateLogic(
         // this means that if the offline sync went out of sync things go wrong
         upsertMembers(channel.members)
         upsertWatchers(channel.watchers, channel.watcherCount)
+        // The channel state reads its live locations from the global state
+        globalMutableState.addLiveLocations(channel.activeLiveLocations)
 
         if (messageLimit != 0) {
             if (shouldUpsertMessages(

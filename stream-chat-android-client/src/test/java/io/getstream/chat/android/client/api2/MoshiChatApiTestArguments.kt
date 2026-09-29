@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
+import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -85,8 +86,12 @@ import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.map
 import okhttp3.ResponseBody
 import org.junit.jupiter.params.provider.Arguments
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
 @Suppress("UNUSED", "LargeClass")
 internal object MoshiChatApiTestArguments {
@@ -502,6 +507,55 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun queryChannelInput() = channelResponseArguments()
+
+    /**
+     * Rows of (stub serving a channel state, call reading the mapped channels back) for each REST path
+     * that returns channel state.
+     */
+    @JvmStatic
+    fun channelStateInput() = listOf(
+        Arguments.of(
+            "queryChannel",
+            { api: ChannelApi, response: ChannelResponse ->
+                whenever(api.queryChannel(any(), any(), any(), any()))
+                    .doReturn(RetroSuccess(response).toRetrofitCall())
+            },
+            { sut: MoshiChatApi ->
+                sut.queryChannel(randomString(), randomString(), Mother.randomQueryChannelRequest())
+                    .map { listOf(it) }
+            },
+        ),
+        Arguments.of(
+            "queryChannels",
+            { api: ChannelApi, response: ChannelResponse ->
+                whenever(api.queryChannels(any(), any()))
+                    .doReturn(RetroSuccess(QueryChannelsResponse(listOf(response))).toRetrofitCall())
+            },
+            { sut: MoshiChatApi ->
+                sut.queryChannels(Mother.randomQueryChannelsRequest()).map { it.channels }
+            },
+        ),
+        Arguments.of(
+            "queryGroupedChannels",
+            { api: ChannelApi, response: ChannelResponse ->
+                val group = QueryGroupedChannelsGroup(
+                    channels = listOf(response),
+                    unread_channels = null,
+                    next = null,
+                    prev = null,
+                )
+                whenever(api.queryGroupedChannels(any(), any())).doReturn(
+                    RetroSuccess(
+                        QueryGroupedChannelsResponse(groups = mapOf("all" to group), duration = "1ms"),
+                    ).toRetrofitCall(),
+                )
+            },
+            { sut: MoshiChatApi ->
+                sut.queryGroupedChannels(limit = null, groups = null, watch = false, presence = false)
+                    .map { grouped -> grouped.groups.values.flatMap { it.channels } }
+            },
+        ),
+    )
 
     @JvmStatic
     fun queryUsersInput() = listOf(
