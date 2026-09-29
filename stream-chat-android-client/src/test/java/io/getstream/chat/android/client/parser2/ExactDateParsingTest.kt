@@ -24,8 +24,9 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
 /**
- * The generated [ExactDate] against the SDK's [StreamDateFormatter] on the parsing path unit tests run, the
- * one below API 26. Both agree up to millisecond fractions; beyond them only [ExactDate] is right.
+ * The generated [ExactDate] against the SDK's [StreamDateFormatter] on the path unit tests take, the
+ * `SimpleDateFormat` fallback on the desktop JVM. There `S` counts milliseconds, so the two only agree up to
+ * millisecond fractions; Android documents `S` as fractional seconds, where both read longer fractions alike.
  */
 internal class ExactDateParsingTest {
 
@@ -51,7 +52,7 @@ internal class ExactDateParsingTest {
             Arguments.of("2020-06-29T06:14:28Z", SECOND, true),
             Arguments.of("2020-06-29T06:14:28.000Z", SECOND, true),
             Arguments.of("2020-06-29T06:14:28.123Z", SECOND + 123, true),
-            // Below API 26 the SDK formatter reads every fraction digit as milliseconds.
+            // The desktop JVM reads every fraction digit as milliseconds; ExactDate normalizes to three first.
             Arguments.of("2020-06-29T06:14:28.123456Z", SECOND + 123, false),
             Arguments.of("2020-06-29T06:14:28.123456789Z", SECOND + 123, false),
         )
