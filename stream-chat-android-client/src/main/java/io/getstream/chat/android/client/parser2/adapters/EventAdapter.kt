@@ -60,15 +60,11 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
@@ -84,6 +80,10 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent
 import io.getstream.chat.android.network.models.PollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent
+import io.getstream.chat.android.network.models.ReminderCreatedEvent
+import io.getstream.chat.android.network.models.ReminderDeletedEvent
+import io.getstream.chat.android.network.models.ReminderNotificationEvent
+import io.getstream.chat.android.network.models.ReminderUpdatedEvent
 import io.getstream.chat.android.network.models.UserBannedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent
@@ -164,10 +164,10 @@ internal class EventDtoAdapter(
     private val pollVoteCastedEventAdapter = generatedEventAdapter<PollVoteCastedEvent> { mapOf("cid" to cid) }
     private val pollVoteChangedEventAdapter = generatedEventAdapter<PollVoteChangedEvent> { mapOf("cid" to cid) }
     private val pollVoteRemovedEventAdapter = generatedEventAdapter<PollVoteRemovedEvent> { mapOf("cid" to cid) }
-    private val reminderCreatedEventAdapter = moshi.adapter(ReminderCreatedEventDto::class.java)
-    private val reminderUpdatedEventAdapter = moshi.adapter(ReminderUpdatedEventDto::class.java)
-    private val reminderDeletedEventAdapter = moshi.adapter(ReminderDeletedEventDto::class.java)
-    private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
+    private val reminderCreatedEventAdapter = generatedEventAdapter<ReminderCreatedEvent> { emptyMap() }
+    private val reminderUpdatedEventAdapter = generatedEventAdapter<ReminderUpdatedEvent> { emptyMap() }
+    private val reminderDeletedEventAdapter = generatedEventAdapter<ReminderDeletedEvent> { emptyMap() }
+    private val notificationReminderDueEventAdapter = generatedEventAdapter<ReminderNotificationEvent> { emptyMap() }
     private val userMessagesDeletedEventAdapter = moshi.adapter(UserMessagesDeletedEventDto::class.java)
     private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
     private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)

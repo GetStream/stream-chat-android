@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
@@ -1306,24 +1305,6 @@ internal object Mother {
             isClosed = isClosed,
             extraData = extraData,
         )
-
-    fun randomDownstreamReminderDto(
-        channelCid: String = randomString(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
-        messageId: String = randomString(),
-        message: DownstreamMessageDto = randomDownstreamMessageDto(id = messageId),
-        remindAt: Date? = randomDateOrNull(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-    ): DownstreamReminderDto = DownstreamReminderDto(
-        channel_cid = channelCid,
-        channel = channel,
-        message_id = messageId,
-        message = message,
-        remind_at = remindAt,
-        created_at = createdAt,
-        updated_at = updatedAt,
-    )
 
     fun randomReminderResponseData(
         channelCid: String = randomCID(),

@@ -56,15 +56,11 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
@@ -158,6 +154,10 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPol
 import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
+import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
+import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
+import io.getstream.chat.android.network.models.ReminderNotificationEvent as GeneratedReminderNotificationEvent
+import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
 import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
@@ -217,7 +217,7 @@ internal object EventMappingTestArguments {
     private val POLL = Mother.randomPollResponseData()
     private val POLL_VOTE = Mother.randomPollVoteResponseData(isAnswer = false)
     private val ANSWER_VOTE = Mother.randomPollVoteResponseData(isAnswer = true, answerText = "answer")
-    private val REMINDER = Mother.randomDownstreamReminderDto()
+    private val REMINDER = Mother.randomReminderResponseData()
     private val THREAD_INFO = Mother.randomThreadResponse()
     private val AI_MESSAGE_ID = randomString()
     private val AI_STATE = randomString()
@@ -786,41 +786,49 @@ internal object EventMappingTestArguments {
 
     private val answerCastedDto = GeneratedEventDto(answerCastedEvent)
 
-    private val reminderCreatedDto = ReminderCreatedEventDto(
+    private val reminderCreatedGeneratedEvent = GeneratedReminderCreatedEvent(
         type = EventType.REMINDER_CREATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        message_id = MESSAGE.id,
-        user_id = USER.id,
+        messageId = MESSAGE.id,
+        userId = USER.id,
         reminder = REMINDER,
     )
 
-    private val reminderUpdatedDto = ReminderUpdatedEventDto(
+    private val reminderCreatedDto = GeneratedEventDto(reminderCreatedGeneratedEvent)
+
+    private val reminderUpdatedGeneratedEvent = GeneratedReminderUpdatedEvent(
         type = EventType.REMINDER_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        message_id = MESSAGE.id,
-        user_id = USER.id,
+        messageId = MESSAGE.id,
+        userId = USER.id,
         reminder = REMINDER,
     )
 
-    private val reminderDeletedDto = ReminderDeletedEventDto(
+    private val reminderUpdatedDto = GeneratedEventDto(reminderUpdatedGeneratedEvent)
+
+    private val reminderDeletedGeneratedEvent = GeneratedReminderDeletedEvent(
         type = EventType.REMINDER_DELETED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        message_id = MESSAGE.id,
-        user_id = USER.id,
+        messageId = MESSAGE.id,
+        userId = USER.id,
         reminder = REMINDER,
     )
 
-    private val notificationReminderDueDto = NotificationReminderDueEventDto(
+    private val reminderDeletedDto = GeneratedEventDto(reminderDeletedGeneratedEvent)
+
+    private val notificationReminderDueGeneratedEvent = GeneratedReminderNotificationEvent(
         type = EventType.NOTIFICATION_REMINDER_DUE,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        message_id = MESSAGE.id,
-        user_id = USER.id,
+        messageId = MESSAGE.id,
+        userId = USER.id,
         reminder = REMINDER,
     )
+
+    private val notificationReminderDueDto = GeneratedEventDto(notificationReminderDueGeneratedEvent)
 
     private val userMessagesDeletedEventDto = UserMessagesDeletedEventDto(
         type = EventType.USER_MESSAGES_DELETED,
@@ -1507,51 +1515,51 @@ internal object EventMappingTestArguments {
     )
 
     private val reminderCreatedEvent = ReminderCreatedEvent(
-        type = reminderCreatedDto.type,
-        createdAt = reminderCreatedDto.created_at.date,
-        rawCreatedAt = reminderCreatedDto.created_at.rawDate,
-        cid = reminderCreatedDto.cid,
-        channelType = reminderCreatedDto.cid.split(":").first(),
-        channelId = reminderCreatedDto.cid.split(":").last(),
-        messageId = reminderCreatedDto.message_id,
-        userId = reminderCreatedDto.user_id,
-        reminder = with(domainMapping) { reminderCreatedDto.reminder.toDomain() },
+        type = reminderCreatedGeneratedEvent.type,
+        createdAt = reminderCreatedGeneratedEvent.createdAt.date,
+        rawCreatedAt = reminderCreatedGeneratedEvent.createdAt.raw,
+        cid = reminderCreatedGeneratedEvent.cid,
+        channelType = reminderCreatedGeneratedEvent.cid.split(":").first(),
+        channelId = reminderCreatedGeneratedEvent.cid.split(":").last(),
+        messageId = reminderCreatedGeneratedEvent.messageId,
+        userId = reminderCreatedGeneratedEvent.userId,
+        reminder = with(domainMapping) { reminderCreatedGeneratedEvent.reminder.toDomain() },
     )
 
     private val reminderDeletedEvent = ReminderDeletedEvent(
-        type = reminderDeletedDto.type,
-        createdAt = reminderDeletedDto.created_at.date,
-        rawCreatedAt = reminderDeletedDto.created_at.rawDate,
-        cid = reminderCreatedDto.cid,
-        channelType = reminderCreatedDto.cid.split(":").first(),
-        channelId = reminderCreatedDto.cid.split(":").last(),
-        messageId = reminderCreatedDto.message_id,
-        userId = reminderCreatedDto.user_id,
-        reminder = with(domainMapping) { reminderDeletedDto.reminder.toDomain() },
+        type = reminderDeletedGeneratedEvent.type,
+        createdAt = reminderDeletedGeneratedEvent.createdAt.date,
+        rawCreatedAt = reminderDeletedGeneratedEvent.createdAt.raw,
+        cid = reminderDeletedGeneratedEvent.cid,
+        channelType = reminderDeletedGeneratedEvent.cid.split(":").first(),
+        channelId = reminderDeletedGeneratedEvent.cid.split(":").last(),
+        messageId = reminderDeletedGeneratedEvent.messageId,
+        userId = reminderDeletedGeneratedEvent.userId,
+        reminder = with(domainMapping) { reminderDeletedGeneratedEvent.reminder.toDomain() },
     )
 
     private val reminderUpdatedEvent = ReminderUpdatedEvent(
-        type = reminderUpdatedDto.type,
-        createdAt = reminderUpdatedDto.created_at.date,
-        rawCreatedAt = reminderUpdatedDto.created_at.rawDate,
-        cid = reminderCreatedDto.cid,
-        channelType = reminderCreatedDto.cid.split(":").first(),
-        channelId = reminderCreatedDto.cid.split(":").last(),
-        messageId = reminderCreatedDto.message_id,
-        userId = reminderCreatedDto.user_id,
-        reminder = with(domainMapping) { reminderUpdatedDto.reminder.toDomain() },
+        type = reminderUpdatedGeneratedEvent.type,
+        createdAt = reminderUpdatedGeneratedEvent.createdAt.date,
+        rawCreatedAt = reminderUpdatedGeneratedEvent.createdAt.raw,
+        cid = reminderUpdatedGeneratedEvent.cid,
+        channelType = reminderUpdatedGeneratedEvent.cid.split(":").first(),
+        channelId = reminderUpdatedGeneratedEvent.cid.split(":").last(),
+        messageId = reminderUpdatedGeneratedEvent.messageId,
+        userId = reminderUpdatedGeneratedEvent.userId,
+        reminder = with(domainMapping) { reminderUpdatedGeneratedEvent.reminder.toDomain() },
     )
 
     private val notificationReminderDueEvent = NotificationReminderDueEvent(
-        type = notificationReminderDueDto.type,
-        createdAt = notificationReminderDueDto.created_at.date,
-        rawCreatedAt = notificationReminderDueDto.created_at.rawDate,
-        cid = reminderCreatedDto.cid,
-        channelType = reminderCreatedDto.cid.split(":").first(),
-        channelId = reminderCreatedDto.cid.split(":").last(),
-        messageId = reminderCreatedDto.message_id,
-        userId = reminderCreatedDto.user_id,
-        reminder = with(domainMapping) { notificationReminderDueDto.reminder.toDomain() },
+        type = notificationReminderDueGeneratedEvent.type,
+        createdAt = notificationReminderDueGeneratedEvent.createdAt.date,
+        rawCreatedAt = notificationReminderDueGeneratedEvent.createdAt.raw,
+        cid = notificationReminderDueGeneratedEvent.cid,
+        channelType = notificationReminderDueGeneratedEvent.cid.split(":").first(),
+        channelId = notificationReminderDueGeneratedEvent.cid.split(":").last(),
+        messageId = notificationReminderDueGeneratedEvent.messageId,
+        userId = notificationReminderDueGeneratedEvent.userId,
+        reminder = with(domainMapping) { notificationReminderDueGeneratedEvent.reminder.toDomain() },
     )
 
     private val aiIndicatorUpdated = AIIndicatorUpdatedEvent(
