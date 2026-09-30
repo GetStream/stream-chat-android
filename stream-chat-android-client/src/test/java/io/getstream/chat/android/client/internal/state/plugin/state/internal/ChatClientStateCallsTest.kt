@@ -24,13 +24,16 @@ import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdent
 import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Error
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -146,6 +149,75 @@ internal class ChatClientStateCallsTest {
 
         // Then - stateRegistry.queryChannels should be called with the identifier
         verify(stateRegistry).queryChannels(identifier)
+    }
+
+    @Test
+    fun `watchChannel marks the channel state as loading before querying it`() = runTest {
+        // Given
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        val result = chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+
+        // Then
+        assertEquals(channelState, result)
+        inOrder(channelState, chatClient) {
+            verify(channelState).setLoadingIfEmpty()
+            verify(chatClient).queryChannel(eq("messaging"), eq("123"), any(), any())
+        }
+    }
+
+    @Test
+    fun `watchChannel ends the first load when the query fails`() = runTest {
+        // Given - e.g. a plugin failing the precondition, which skips the result listeners
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn
+            Error.GenericError("rejected").asCall<Channel>()
+
+        // When
+        chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+        advanceUntilIdle()
+
+        // Then
+        verify(channelState).endFirstPageLoad()
+    }
+
+    @Test
+    fun `watchChannel ends the legacy first load when the query fails`() = runTest {
+        // Given
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateLegacyImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn
+            Error.GenericError("rejected").asCall<Channel>()
+
+        // When
+        chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+        advanceUntilIdle()
+
+        // Then
+        verify(channelState).setLoading(false)
+    }
+
+    @Test
+    fun `watchChannel does not end the first load itself when the query succeeds`() = runTest {
+        // Given - on success the channel logic ends it, once the data is written
+        userFlow.value = User(id = "test-user")
+        val channelState: ChannelStateImpl = mock()
+        whenever(stateRegistry.channel("messaging", "123")) doReturn channelState
+        whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn randomChannel().asCall()
+
+        // When
+        chatClientStateCalls.watchChannel("messaging:123", messageLimit = 30, userPresence = true)
+        advanceUntilIdle()
+
+        // Then
+        verify(channelState, never()).endFirstPageLoad()
     }
 
     @Test

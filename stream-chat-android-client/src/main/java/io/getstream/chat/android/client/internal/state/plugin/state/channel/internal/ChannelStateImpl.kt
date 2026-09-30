@@ -141,7 +141,10 @@ internal class ChannelStateImpl(
     private val _channelConfig = MutableStateFlow(Config())
 
     // Non-channel states
-    private val _loading = paginationManager.state.mapState(MessagesPaginationState::isLoadingMessages)
+    private val _loadingFirstPage = MutableStateFlow(false)
+    private val _loading = combineStates(_loadingFirstPage, paginationManager.state) { firstPage, pagination ->
+        firstPage || pagination.isLoadingMessages
+    }
     private var _recoveryNeeded = false
     private val _insideSearch = MutableStateFlow(false)
     private var lastStartTypingEvent: Date? = null
@@ -1297,6 +1300,21 @@ internal class ChannelStateImpl(
                 current?.mergeFromEvent(newData) ?: newData
             }
         }
+    }
+
+    /**
+     * Marks the first load of the channel as in progress. Does nothing once the channel has data, so refreshing a
+     * loaded channel never replaces its content with a loading state.
+     */
+    fun setLoadingIfEmpty() {
+        if (_channelData.value == null) _loadingFirstPage.value = true
+    }
+
+    /**
+     * Ends the first load, once channel data arrived or the query failed.
+     */
+    fun endFirstPageLoad() {
+        _loadingFirstPage.value = false
     }
 
     /**
