@@ -56,16 +56,10 @@ import io.getstream.chat.android.client.parser2.adapters.MessageResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.NetworkAttachmentAdapter
 import io.getstream.chat.android.client.parser2.adapters.NullCollectionsAsEmptyFactory
 import io.getstream.chat.android.client.parser2.adapters.OwnUserResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollClosedEventAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollDeletedEventAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionInputAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollOptionResponseDataAdapter
 import io.getstream.chat.android.client.parser2.adapters.PollResponseDataAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollUpdatedEventAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollVoteCastedEventAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollVoteChangedEventAdapter
-import io.getstream.chat.android.client.parser2.adapters.PollVoteRemovedEventAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ReactionResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpdatePollOptionRequestAdapter
@@ -104,12 +98,6 @@ internal class MoshiChatParser(
         Serializer.moshi.newBuilder()
             .addAdapter(ExactDateAdapter())
             .add(GeneratedExactDateAdapter())
-            .add(PollClosedEventAdapter)
-            .add(PollDeletedEventAdapter)
-            .add(PollUpdatedEventAdapter)
-            .add(PollVoteCastedEventAdapter)
-            .add(PollVoteChangedEventAdapter)
-            .add(PollVoteRemovedEventAdapter)
             .add(EventAdapterFactory())
             .add(DownstreamMessageDtoAdapter)
             .add(DownstreamModerationDetailsDtoAdapter)

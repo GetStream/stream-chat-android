@@ -25,8 +25,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
@@ -37,8 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventD
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
@@ -75,9 +71,6 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -165,6 +158,11 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPol
 import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
+import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
+import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
+import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
+import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
+import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
 /**
  * Provides the arguments (ChatEventDto and corresponding ChatEvent) for the [EventMappingTest].
@@ -308,25 +306,25 @@ internal object EventMappingTestArguments {
         channel = CHANNEL,
     )
 
-    private val channelUserBannedDto = ChannelUserBannedEventDto(
+    private val channelUserBannedEvent = GeneratedUserBannedEvent(
         type = EventType.USER_BANNED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
         user = COMMON_USER,
         expiration = DATE,
         shadow = SHADOW_BAN,
     )
 
-    private val channelUserUnbannedDto = ChannelUserUnbannedEventDto(
+    private val channelUserBannedDto = GeneratedEventDto(channelUserBannedEvent)
+
+    private val channelUserUnbannedEvent = GeneratedUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
         user = COMMON_USER,
     )
+
+    private val channelUserUnbannedDto = GeneratedEventDto(channelUserUnbannedEvent)
 
     private val channelVisibleDto = ChannelVisibleEventDto(
         type = EventType.CHANNEL_VISIBLE,
@@ -368,17 +366,21 @@ internal object EventMappingTestArguments {
         error = GENERIC_ERROR,
     )
 
-    private val globalUserBannedDto = GlobalUserBannedEventDto(
+    private val globalUserBannedEvent = GeneratedUserBannedEvent(
         type = EventType.USER_BANNED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
     )
 
-    private val globalUserUnbannedDto = GlobalUserUnbannedEventDto(
+    private val globalUserBannedDto = GeneratedEventDto(globalUserBannedEvent)
+
+    private val globalUserUnbannedEvent = GeneratedUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
     )
+
+    private val globalUserUnbannedDto = GeneratedEventDto(globalUserUnbannedEvent)
 
     private val healthDto = HealthEventDto(
         type = EventType.HEALTH_CHECK,
@@ -676,31 +678,33 @@ internal object EventMappingTestArguments {
         user = COMMON_USER,
     )
 
-    private val userPresenceChangedDto = UserPresenceChangedEventDto(
+    private val userPresenceChangedEvent = GeneratedUserPresenceChangedEvent(
         type = EventType.USER_PRESENCE_CHANGED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
     )
 
-    private val userStartWatchingDto = UserStartWatchingEventDto(
+    private val userPresenceChangedDto = GeneratedEventDto(userPresenceChangedEvent)
+
+    private val userStartWatchingEvent = GeneratedUserWatchingStartEvent(
         type = EventType.USER_WATCHING_START,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
         user = COMMON_USER,
-        watcher_count = WATCHER_COUNT,
+        watcherCount = WATCHER_COUNT,
     )
 
-    private val userStopWatchingDto = UserStopWatchingEventDto(
+    private val userStartWatchingDto = GeneratedEventDto(userStartWatchingEvent)
+
+    private val userStopWatchingEvent = GeneratedUserWatchingStopEvent(
         type = EventType.USER_WATCHING_STOP,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
         user = COMMON_USER,
-        watcher_count = WATCHER_COUNT,
+        watcherCount = WATCHER_COUNT,
     )
+
+    private val userStopWatchingDto = GeneratedEventDto(userStopWatchingEvent)
 
     private val userUpdatedDto = UserUpdatedEventDto(
         type = EventType.USER_UPDATED,
@@ -960,25 +964,25 @@ internal object EventMappingTestArguments {
     )
 
     private val channelUserBanned = ChannelUserBannedEvent(
-        type = channelUserBannedDto.type,
-        createdAt = channelUserBannedDto.created_at.date,
-        rawCreatedAt = channelUserBannedDto.created_at.rawDate,
-        user = with(domainMapping) { channelUserBannedDto.user.toDomain() },
-        cid = channelUserBannedDto.cid,
-        channelType = channelUserBannedDto.channel_type,
-        channelId = channelUserBannedDto.channel_id,
-        expiration = channelUserBannedDto.expiration,
-        shadow = channelUserBannedDto.shadow ?: false,
+        type = channelUserBannedEvent.type,
+        createdAt = channelUserBannedEvent.createdAt.date,
+        rawCreatedAt = channelUserBannedEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        expiration = DATE,
+        shadow = SHADOW_BAN,
     )
 
     private val channelUserUnbanned = ChannelUserUnbannedEvent(
-        type = channelUserUnbannedDto.type,
-        createdAt = channelUserUnbannedDto.created_at.date,
-        rawCreatedAt = channelUserUnbannedDto.created_at.rawDate,
-        user = with(domainMapping) { channelUserUnbannedDto.user.toDomain() },
-        cid = channelUserUnbannedDto.cid,
-        channelType = channelUserUnbannedDto.channel_type,
-        channelId = channelUserUnbannedDto.channel_id,
+        type = channelUserUnbannedEvent.type,
+        createdAt = channelUserUnbannedEvent.createdAt.date,
+        rawCreatedAt = channelUserUnbannedEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
     )
 
     private val channelVisible = ChannelVisibleEvent(
@@ -1028,17 +1032,17 @@ internal object EventMappingTestArguments {
     )
 
     private val globalUserBanned = GlobalUserBannedEvent(
-        type = globalUserBannedDto.type,
-        createdAt = globalUserBannedDto.created_at.date,
-        rawCreatedAt = globalUserBannedDto.created_at.rawDate,
-        user = with(domainMapping) { globalUserBannedDto.user.toDomain() },
+        type = globalUserBannedEvent.type,
+        createdAt = globalUserBannedEvent.createdAt.date,
+        rawCreatedAt = globalUserBannedEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
     )
 
     private val globalUserUnbanned = GlobalUserUnbannedEvent(
-        type = globalUserUnbannedDto.type,
-        createdAt = globalUserUnbannedDto.created_at.date,
-        rawCreatedAt = globalUserUnbannedDto.created_at.rawDate,
-        user = with(domainMapping) { globalUserUnbannedDto.user.toDomain() },
+        type = globalUserUnbannedEvent.type,
+        createdAt = globalUserUnbannedEvent.createdAt.date,
+        rawCreatedAt = globalUserUnbannedEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
     )
 
     private val health = HealthEvent(
@@ -1386,32 +1390,32 @@ internal object EventMappingTestArguments {
     )
 
     private val userPresenceChanged = UserPresenceChangedEvent(
-        type = userPresenceChangedDto.type,
-        createdAt = userPresenceChangedDto.created_at.date,
-        rawCreatedAt = userPresenceChangedDto.created_at.rawDate,
-        user = with(domainMapping) { userPresenceChangedDto.user.toDomain() },
+        type = userPresenceChangedEvent.type,
+        createdAt = userPresenceChangedEvent.createdAt.date,
+        rawCreatedAt = userPresenceChangedEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
     )
 
     private val userStartWatching = UserStartWatchingEvent(
-        type = userStartWatchingDto.type,
-        createdAt = userStartWatchingDto.created_at.date,
-        rawCreatedAt = userStartWatchingDto.created_at.rawDate,
-        cid = userStartWatchingDto.cid,
-        channelType = userStartWatchingDto.channel_type,
-        channelId = userStartWatchingDto.channel_id,
-        user = with(domainMapping) { userStartWatchingDto.user.toDomain() },
-        watcherCount = userStartWatchingDto.watcher_count,
+        type = userStartWatchingEvent.type,
+        createdAt = userStartWatchingEvent.createdAt.date,
+        rawCreatedAt = userStartWatchingEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        watcherCount = WATCHER_COUNT,
     )
 
     private val userStopWatching = UserStopWatchingEvent(
-        type = userStopWatchingDto.type,
-        createdAt = userStopWatchingDto.created_at.date,
-        rawCreatedAt = userStopWatchingDto.created_at.rawDate,
-        cid = userStopWatchingDto.cid,
-        channelType = userStopWatchingDto.channel_type,
-        channelId = userStopWatchingDto.channel_id,
-        user = with(domainMapping) { userStopWatchingDto.user.toDomain() },
-        watcherCount = userStopWatchingDto.watcher_count,
+        type = userStopWatchingEvent.type,
+        createdAt = userStopWatchingEvent.createdAt.date,
+        rawCreatedAt = userStopWatchingEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        watcherCount = WATCHER_COUNT,
     )
 
     private val userUpdated = UserUpdatedEvent(
