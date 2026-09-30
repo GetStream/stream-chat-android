@@ -119,6 +119,7 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.ChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
@@ -1305,6 +1306,42 @@ constructor(
         }
     }
 
+    /**
+     * Maps each channel state, or fails the call when one carries no channel: a channel state always has one, so the
+     * response cannot be mapped without it.
+     */
+    private fun <R : Any> List<ChannelStateResponseFields>.toChannelsCall(transform: (List<Channel>) -> R): Call<R> {
+        val channels = mapNotNull(::flattenChannelState)
+        return if (channels.size == size) {
+            CoroutineCall(coroutineScope) { Result.Success(transform(channels)) }
+        } else {
+            ErrorCall(coroutineScope, Error.GenericError("A channel state in the response carried no channel"))
+        }
+    }
+
+    private fun flattenChannelState(state: ChannelStateResponseFields): Channel? = with(domainMapping) {
+        val response = state.channel ?: return null
+        val channelInfo = response.toChannelInfo()
+        val channel = response.toDomain()
+        return channel.copy(
+            watcherCount = state.watcherCount ?: 0,
+            read = state.read.orEmpty().map {
+                it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.lastRead)
+            },
+            members = state.members.map { it.toDomain() },
+            membership = state.membership?.toDomain(),
+            messages = state.messages.map { it.toDomain(channelInfo).enrichWithCid(channel.cid) },
+            pendingMessages = state.pendingMessages.orEmpty().mapNotNull { it.toDomain(channel.cid, channelInfo) },
+            pinnedMessages = state.pinnedMessages.map { it.toDomain(channelInfo).enrichWithCid(channel.cid) },
+            pushPreference = state.pushPreferences?.toDomain(),
+            watchers = state.watchers.orEmpty().map { it.toDomain() },
+            hidden = state.hidden,
+            hiddenMessagesBefore = state.hideMessagesBefore,
+            draftMessage = state.draft?.toDomain(),
+            activeLiveLocations = state.activeLiveLocations.orEmpty().map { it.toDomain() },
+        ).syncUnreadCountWithReads(currentUserIdProvider())
+    }
+
     override fun getNewerReplies(
         parentId: String,
         limit: Int,
@@ -1487,11 +1524,11 @@ constructor(
             channelApi.queryChannels(
                 connectionId = connectionId,
                 request = request,
-            ).map { response ->
-                with(domainMapping) {
+            ).flatMapDomain { response ->
+                response.channels.toChannelsCall { channels ->
                     QueryChannelsResult(
-                        channels = response.channels.map(this@MoshiChatApi::flattenChannel),
-                        predefinedFilter = response.predefined_filter?.let {
+                        channels = channels,
+                        predefinedFilter = response.predefinedFilter?.let {
                             val (filter, filterFields) = it.filter.toFilterDomainWithFields()
                                 ?: return@let null
                             val sort = it.sort.toSortDomain()
@@ -1534,18 +1571,20 @@ constructor(
             channelApi.queryGroupedChannels(
                 connectionId = connectionId,
                 body = body,
-            ).map { response ->
-                GroupedChannels(
-                    groups = response.groups.mapValues { entry ->
-                        GroupedChannelsGroup(
-                            groupKey = entry.key,
-                            channels = entry.value.channels.map(::flattenChannel),
-                            unreadChannels = entry.value.unread_channels ?: 0,
-                            next = entry.value.next,
-                            prev = entry.value.prev,
-                        )
-                    },
-                )
+            ).flatMapDomain { response ->
+                response.groups.values.flatMap { it.channels }.toChannelsCall {
+                    GroupedChannels(
+                        groups = response.groups.mapValues { entry ->
+                            GroupedChannelsGroup(
+                                groupKey = entry.key,
+                                channels = entry.value.channels.mapNotNull(::flattenChannelState),
+                                unreadChannels = entry.value.unreadChannels ?: 0,
+                                next = entry.value.next,
+                                prev = entry.value.prev,
+                            )
+                        },
+                    )
+                }
             }
         }
         val isConnectionRequired = watch || presence
@@ -1574,7 +1613,7 @@ constructor(
                     connectionId = connectionId,
                     request = request,
                 )
-            }.map(::flattenChannel)
+            }.flatMapDomain { response -> listOf(response.toStateFields()).toChannelsCall { it.single() } }
         }
 
         val isConnectionRequired = query.watch || query.presence
