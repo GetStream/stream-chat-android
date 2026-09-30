@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.parser2.testdata.LocationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
@@ -47,13 +47,11 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     private val expected = listOf(LocationTestData.expectedAllFields)
 
-    private fun String.withDuration() = replaceFirst("{", """{"duration":"1ms",""")
-
     private fun List<SharedLocationResponseData>.toDomain() = with(domainMapping) { map { it.toDomain() } }
 
     @Test
     fun `query channel response`() {
-        val response = parser.fromJson(channelState.withDuration(), ChannelStateResponse::class.java)
+        val response = parser.fromJson(channelState, ChannelStateResponseFields::class.java)
 
         assertEquals(expected, response.activeLiveLocations.orEmpty().toDomain())
     }
@@ -79,7 +77,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     @Test
     fun `missing field parses as null`() {
-        val response = parser.fromJson("""{"channel":$CHANNEL}""".withDuration(), ChannelStateResponse::class.java)
+        val response = parser.fromJson("""{"channel":$CHANNEL}""", ChannelStateResponseFields::class.java)
 
         assertEquals(null, response.activeLiveLocations)
     }

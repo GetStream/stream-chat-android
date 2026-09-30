@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
@@ -103,7 +102,6 @@ import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
-import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
@@ -2407,17 +2405,6 @@ internal class MoshiChatApiTest {
         assertEquals(state.pushPreferences!!.chatLevel, channel.pushPreference?.level?.value)
     }
 
-    @Test
-    fun `A single channel query converts to the same state fields as a channel list entry`() {
-        val state = Mother.randomFullChannelStateResponseFields()
-
-        val converted = with(DomainMapping({ "" }, NoOpChannelTransformer, NoOpMessageTransformer, NoOpUserTransformer)) {
-            state.toChannelStateResponse().toStateFields()
-        }
-
-        assertEquals(state, converted)
-    }
-
     @ParameterizedTest(name = "{0}")
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
     fun `A channel state without a channel fails the call`(
@@ -2437,7 +2424,10 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
-    fun testQueryChannelWithoutChannelId(call: RetrofitCall<ChannelStateResponse>, expected: KClass<*>) = runTest {
+    fun testQueryChannelWithoutChannelId(
+        call: RetrofitCall<ChannelStateResponseFields>,
+        expected: KClass<*>,
+    ) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.queryChannel(any(), any(), any())).doReturn(call)
@@ -2473,7 +2463,10 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelInput")
-    fun testQueryChannelWithChannelId(call: RetrofitCall<ChannelStateResponse>, expected: KClass<*>) = runTest {
+    fun testQueryChannelWithChannelId(
+        call: RetrofitCall<ChannelStateResponseFields>,
+        expected: KClass<*>,
+    ) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.queryChannel(any(), any(), any(), any())).doReturn(call)

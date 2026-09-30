@@ -1613,7 +1613,7 @@ constructor(
                     connectionId = connectionId,
                     request = request,
                 )
-            }.flatMapDomain { response -> listOf(response.toStateFields()).toChannelsCall { it.single() } }
+            }.flatMapDomain { response -> listOf(response).toChannelsCall { it.single() } }
         }
 
         val isConnectionRequired = query.watch || query.presence

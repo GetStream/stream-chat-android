@@ -106,8 +106,6 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
-import io.getstream.chat.android.network.models.ChannelStateResponse
-import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.DraftResponse
@@ -394,27 +392,6 @@ internal class DomainMapping(
         message?.let {
             PendingMessage(message = it.toDomain(fallbackChannelInfo).enrichWithCid(cid), metadata = emptyMap())
         }
-
-    /**
-     * The [ChannelStateResponseFields] of a single channel query: the same state without the request duration.
-     */
-    internal fun ChannelStateResponse.toStateFields(): ChannelStateResponseFields = ChannelStateResponseFields(
-        members = members,
-        messages = messages,
-        pinnedMessages = pinnedMessages,
-        threads = threads,
-        hidden = hidden,
-        hideMessagesBefore = hideMessagesBefore,
-        watcherCount = watcherCount,
-        activeLiveLocations = activeLiveLocations,
-        pendingMessages = pendingMessages,
-        read = read,
-        watchers = watchers,
-        channel = channel,
-        draft = draft,
-        membership = membership,
-        pushPreferences = pushPreferences,
-    )
 
     /**
      * Transforms [MessageEnvelope] to [PendingMessage].

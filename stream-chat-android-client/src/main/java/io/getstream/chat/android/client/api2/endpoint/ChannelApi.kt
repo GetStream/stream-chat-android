@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
-import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
@@ -79,7 +79,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: ChannelGetOrCreateRequest,
-    ): RetrofitCall<ChannelStateResponse>
+    ): RetrofitCall<ChannelStateResponseFields>
 
     @POST("/channels/read")
     fun markAllRead(
@@ -142,7 +142,7 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: ChannelGetOrCreateRequest,
-    ): RetrofitCall<ChannelStateResponse>
+    ): RetrofitCall<ChannelStateResponseFields>
 
     @POST("/channels/{type}/{id}/read")
     fun markRead(
