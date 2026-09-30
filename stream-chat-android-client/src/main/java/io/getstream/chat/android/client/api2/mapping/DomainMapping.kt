@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -1240,19 +1239,6 @@ internal class DomainMapping(
         blockedBy = blockedByUserId,
         userId = blockedUserId,
         blockedAt = createdAt,
-    )
-
-    /**
-     * Transforms a network [DownstreamReminderDto] model to a domain [MessageReminder].
-     */
-    internal fun DownstreamReminderDto.toDomain(): MessageReminder = MessageReminder(
-        remindAt = remind_at,
-        cid = channel_cid,
-        channel = channel?.toDomain(),
-        messageId = message_id,
-        message = message?.toDomain(),
-        createdAt = created_at,
-        updatedAt = updated_at,
     )
 
     /**

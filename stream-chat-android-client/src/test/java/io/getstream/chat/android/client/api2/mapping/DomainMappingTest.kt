@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomDraftResponse
@@ -1798,23 +1797,6 @@ internal class DomainMappingTest {
             updatedAt = dto.updatedAt,
         )
         assertEquals(expected, role)
-    }
-
-    @Test
-    fun `DownstreamReminderDto is correctly mapped to MessageReminder`() {
-        val downstreamReminderDto = randomDownstreamReminderDto()
-        val sut = Fixture().get()
-        val messageReminder = with(sut) { downstreamReminderDto.toDomain() }
-        val expected = MessageReminder(
-            remindAt = downstreamReminderDto.remind_at,
-            messageId = downstreamReminderDto.message_id,
-            message = with(sut) { downstreamReminderDto.message?.toDomain() },
-            cid = downstreamReminderDto.channel_cid,
-            channel = with(sut) { downstreamReminderDto.channel?.toDomain() },
-            createdAt = downstreamReminderDto.created_at,
-            updatedAt = downstreamReminderDto.updated_at,
-        )
-        assertEquals(expected, messageReminder)
     }
 
     @Test
