@@ -114,8 +114,19 @@ internal class ChannelLogicImpl(
     }
 
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
+        try {
+            applyQueryChannelResult(query, result)
+        } finally {
+            // Last, so the next page request can't start before this page's messages are applied and repeat its
+            // cursor. In a finally, so a failure applying the result can't leave the loading flag set.
+            if (query.tracksPagination()) {
+                state.paginationManager.end(query, result)
+            }
+        }
+    }
+
+    private fun applyQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
         val limit = query.messagesLimit()
-        val isNotificationUpdate = query.isNotificationUpdate
         when (result) {
             is Result.Success -> {
                 val channel = result.value
@@ -147,7 +158,7 @@ internal class ChannelLogicImpl(
                 // The channel state reads its live locations from the global state
                 mutableGlobalState.addLiveLocations(channel.activeLiveLocations)
                 // Reset recovery state
-                if (!isNotificationUpdate && limit != 0) {
+                if (query.tracksPagination()) {
                     state.setRecoveryNeeded(false)
                 }
                 state.endFirstPageLoad()
@@ -159,10 +170,6 @@ internal class ChannelLogicImpl(
                 state.setRecoveryNeeded(recoveryNeeded = !isPermanent)
                 state.endFirstPageLoad()
             }
-        }
-        // Last, so the next page request can't start before this page's messages are applied and repeat its cursor
-        if (query.tracksPagination()) {
-            state.paginationManager.end(query, result)
         }
     }
 

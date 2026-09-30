@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.atLeastOnce
@@ -430,6 +431,19 @@ internal class ChannelLogicImplTest {
                 verify(stateImpl).upsertMessages(messages)
                 verify(paginationManager).end(query, result)
             }
+        }
+
+        @Test
+        fun `should end pagination when applying the page fails`() {
+            // Given
+            val channel = randomChannel(id = "123", type = "messaging", messages = listOf(randomMessage()))
+            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
+            val result = Result.Success(channel)
+            whenever(stateImpl.upsertMessages(any(), any())).thenThrow(IllegalStateException())
+            // When
+            assertThrows<IllegalStateException> { sut.onQueryChannelResult(query, result) }
+            // Then
+            verify(paginationManager).end(query, result)
         }
 
         @Test
