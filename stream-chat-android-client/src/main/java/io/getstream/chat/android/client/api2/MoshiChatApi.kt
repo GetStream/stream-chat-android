@@ -1698,12 +1698,16 @@ constructor(
                     prev = query.prev,
                     replyLimit = query.replyLimit,
                 ),
-            ).mapDomain { response ->
-                QueryThreadsResult(
-                    threads = response.threads.map { it.toDomain() },
-                    prev = response.prev,
-                    next = response.next,
-                )
+            ).flatMapDomain { response ->
+                val threads = response.threads.mapNotNull { it.toDomain() }
+                if (threads.size == response.threads.size) {
+                    CoroutineCall(coroutineScope) {
+                        val result = QueryThreadsResult(threads = threads, prev = response.prev, next = response.next)
+                        Result.Success(result)
+                    }
+                } else {
+                    ErrorCall(coroutineScope, Error.GenericError(MISSING_THREAD_FIELDS))
+                }
             }
         }
         return if (connectionId.isBlank() && query.watch) {
@@ -1726,8 +1730,10 @@ constructor(
                 messageId,
                 connectionId,
                 options.toMap(),
-            ).mapDomain { response ->
+            ).flatMapDomain { response ->
                 response.thread.toDomain()
+                    ?.let { thread -> CoroutineCall(coroutineScope) { Result.Success(thread) } }
+                    ?: ErrorCall(coroutineScope, Error.GenericError(MISSING_THREAD_FIELDS))
             }
         }
         return if (connectionId.isBlank() && options.watch) {
@@ -2069,3 +2075,6 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
             type = it[QuerySorter.KEY_TYPE] as? String,
         )
     }
+
+// A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
+private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"

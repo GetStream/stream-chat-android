@@ -21,41 +21,35 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
+import io.getstream.chat.android.network.models.ThreadResponse
+import io.getstream.chat.android.network.models.ThreadStateResponse
 
-/**
- * Moshi adapter that handles deserialization of [DownstreamThreadDto] with extra data.
- */
-internal object DownstreamThreadDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamThreadDto>(DownstreamThreadDto::class) {
+// Downstream (read-only) adapters for the generated thread models: collect the root-level custom fields
+// into `custom`, matching the wire's flattened extra data. extraDataPropertyName is their @Json name.
+internal object ThreadStateResponseAdapter :
+    CustomObjectDtoAdapter<ThreadStateResponse>(ThreadStateResponse::class, extraDataPropertyName = "custom") {
 
     @FromJson
     fun fromJson(
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        messageAdapter: JsonAdapter<DownstreamThreadDto>,
-    ): DownstreamThreadDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
+        valueAdapter: JsonAdapter<ThreadStateResponse>,
+    ): ThreadStateResponse? = parseWithExtraData(jsonReader, mapAdapter, valueAdapter)
 
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamThreadDto): Unit = error("Can't convert this to Json")
+    fun toJson(jsonWriter: JsonWriter, value: ThreadStateResponse): Unit = error("Can't convert this to Json")
 }
 
-/**
- * Moshi adapter that handles deserialization of [DownstreamThreadInfoDto] with extra data.
- */
-internal object DownstreamThreadInfoDtoAdapter :
-    CustomObjectDtoAdapter<DownstreamThreadInfoDto>(DownstreamThreadInfoDto::class) {
+internal object ThreadResponseAdapter :
+    CustomObjectDtoAdapter<ThreadResponse>(ThreadResponse::class, extraDataPropertyName = "custom") {
 
     @FromJson
     fun fromJson(
         jsonReader: JsonReader,
         mapAdapter: JsonAdapter<MutableMap<String, Any>>,
-        messageAdapter: JsonAdapter<DownstreamThreadInfoDto>,
-    ): DownstreamThreadInfoDto? = parseWithExtraData(jsonReader, mapAdapter, messageAdapter)
+        valueAdapter: JsonAdapter<ThreadResponse>,
+    ): ThreadResponse? = parseWithExtraData(jsonReader, mapAdapter, valueAdapter)
 
     @ToJson
-    @Suppress("UNUSED_PARAMETER")
-    fun toJson(jsonWriter: JsonWriter, value: DownstreamThreadInfoDto): Unit = error("Can't convert this to Json")
+    fun toJson(jsonWriter: JsonWriter, value: ThreadResponse): Unit = error("Can't convert this to Json")
 }

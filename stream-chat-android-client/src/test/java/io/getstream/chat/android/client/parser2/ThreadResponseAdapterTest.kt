@@ -16,19 +16,19 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.parser2.testdata.ThreadDtoTestData
+import io.getstream.chat.android.network.models.ThreadResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
-internal class DownstreamThreadInfoDtoAdapterTest {
+internal class ThreadResponseAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Deserialize JSON thread info with custom fields`() {
         val threadInfo = parser.fromJson(
             ThreadDtoTestData.downstreamThreadInfoJson,
-            DownstreamThreadInfoDto::class.java,
+            ThreadResponse::class.java,
         )
         threadInfo shouldBeEqualTo ThreadDtoTestData.downstreamThreadInfo
     }
@@ -37,7 +37,7 @@ internal class DownstreamThreadInfoDtoAdapterTest {
     fun `Deserialize JSON thread info without custom fields`() {
         val threadInfo = parser.fromJson(
             ThreadDtoTestData.downstreamThreadInfoJsonWithoutExtraData,
-            DownstreamThreadInfoDto::class.java,
+            ThreadResponse::class.java,
         )
         threadInfo shouldBeEqualTo ThreadDtoTestData.downstreamThreadInfoWithoutExtraData
     }
