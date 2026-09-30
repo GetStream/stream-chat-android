@@ -22,13 +22,17 @@ import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
- * Reports message delivery receipts to the server in batches of [MAX_BATCH_SIZE]
- * every [REPORT_INTERVAL_IN_MS] milliseconds.
+ * Reports message delivery receipts to the server.
+ *
+ * Idle sessions do not poll the repository. The receipt-count flow wakes reporting after any
+ * write, and each [start] drains receipts that were saved before the job began.
+ * See [start] for batching, pacing, and retry behavior.
  */
 internal class MessageReceiptReporter(
     private val scope: CoroutineScope,
@@ -38,42 +42,77 @@ internal class MessageReceiptReporter(
 
     private val logger by taggedLogger("Chat:MessageReceiptReporter")
 
+    private var reportingJob: Job? = null
+
+    /**
+     * Starts reporting queued delivery receipts for the current user session.
+     *
+     * Collects [MessageReceiptRepository.observeMessageReceiptCount] and drains while the count is
+     * positive. Receipts persisted before this call are included in the initial emission. While the
+     * queue is non-empty, batches of at most [MAX_BATCH_SIZE] are reported at least
+     * [REPORT_INTERVAL_IN_MS] apart, including the selection that finds the queue empty. A zero
+     * count suspends until a later write. Failed deliveries stay queued and are retried on that
+     * cadence without another write. A second call while the reporting job is still active does
+     * nothing.
+     */
     fun start() {
+        if (reportingJob?.isActive == true) {
+            logger.d { "Reporter is already active" }
+            return
+        }
         logger.d { "Starting reporter…" }
-        scope.launch {
+        reportingJob = scope.launch {
             try {
-                while (isActive) {
-                    val messages = messageReceiptRepository
-                        .selectMessageReceipts(limit = MAX_BATCH_SIZE)
-                        .map { receipt ->
-                            Message(
-                                id = receipt.messageId,
-                                cid = receipt.cid,
-                            )
+                messageReceiptRepository.observeMessageReceiptCount()
+                    .conflate()
+                    .collect { count ->
+                        if (count > 0) {
+                            drainQueuedReceipts()
                         }
-
-                    if (messages.isNotEmpty()) {
-                        logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
-                        api.markDelivered(messages)
-                            .execute()
-                            .onSuccessSuspend {
-                                logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
-                                val deliveredMessageIds = messages.map(Message::id)
-                                messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
-                            }
-                            .onError { error ->
-                                logger.e {
-                                    "Failed to report delivery receipts for ${messages.size} messages: " +
-                                        error.message
-                                }
-                            }
                     }
-
-                    delay(REPORT_INTERVAL_IN_MS)
-                }
             } finally {
                 logger.d { "Reporter is no longer active" }
             }
+        }
+    }
+
+    /**
+     * Selects and reports until the repository returns an empty batch.
+     *
+     * Failed deliveries stay queued and are retried after [REPORT_INTERVAL_IN_MS].
+     * Cancellation from [delay] or [ChatApi.markDelivered] propagates to the reporting job.
+     */
+    private suspend fun drainQueuedReceipts() {
+        while (true) {
+            val messages = messageReceiptRepository
+                .selectMessageReceipts(limit = MAX_BATCH_SIZE)
+                .map { receipt ->
+                    Message(
+                        id = receipt.messageId,
+                        cid = receipt.cid,
+                    )
+                }
+
+            if (messages.isEmpty()) {
+                return
+            }
+
+            logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
+            api.markDelivered(messages)
+                .await()
+                .onSuccessSuspend {
+                    logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
+                    val deliveredMessageIds = messages.map(Message::id)
+                    messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
+                }
+                .onError { error ->
+                    logger.e {
+                        "Failed to report delivery receipts for ${messages.size} messages: " +
+                            error.message
+                    }
+                }
+
+            delay(REPORT_INTERVAL_IN_MS)
         }
     }
 }

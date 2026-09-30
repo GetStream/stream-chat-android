@@ -381,13 +381,25 @@ internal class MessageReceiptManagerTest {
         fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
+    @Test
+    fun `should propagate failure when persisting receipts fails`() = runTest {
+        val fixture = Fixture().givenUpsertFails()
+        val sut = fixture.get()
+
+        val failure = runCatching { sut.markMessageAsDelivered(DeliverableMessage) }
+
+        assertTrue(failure.exceptionOrNull() is IllegalStateException)
+        fixture.verifyUpsertMessageReceiptsCalled()
+    }
+
     private class Fixture {
+        private val messageReceiptRepository: MessageReceiptRepository = mock()
+
         private val mockRepositoryFacade = mock<RepositoryFacade> {
             onBlocking { selectUser("me") } doReturn CurrentUser
             onBlocking { selectChannel(DeliverableChannel.cid) } doReturn DeliverableChannel
             onBlocking { selectMessage(DeliverableMessage.id) } doReturn DeliverableMessage
         }
-        private val mockMessageReceiptRepository = mock<MessageReceiptRepository>()
         private val mockChatApi = mock<ChatApi> {
             on {
                 queryChannel(
@@ -401,6 +413,12 @@ internal class MessageReceiptManagerTest {
 
         fun givenCurrentUser(user: User?) = apply {
             wheneverBlocking { mockRepositoryFacade.selectUser("me") } doReturn user
+        }
+
+        fun givenUpsertFails() = apply {
+            wheneverBlocking { messageReceiptRepository.upsertMessageReceipts(any()) }.thenAnswer {
+                throw IllegalStateException("upsert failed")
+            }
         }
 
         fun givenChannelNotFoundFromRepository() = apply {
@@ -429,7 +447,7 @@ internal class MessageReceiptManagerTest {
             mode: VerificationMode = times(1),
             receipts: List<MessageReceipt>? = null,
         ) {
-            verifyBlocking(mockMessageReceiptRepository, mode) {
+            verifyBlocking(messageReceiptRepository, mode) {
                 upsertMessageReceipts(receipts ?: any())
             }
         }
@@ -437,7 +455,7 @@ internal class MessageReceiptManagerTest {
         fun get() = MessageReceiptManager(
             now = { Now },
             getRepositoryFacade = { mockRepositoryFacade },
-            messageReceiptRepository = mockMessageReceiptRepository,
+            messageReceiptRepository = messageReceiptRepository,
             api = mockChatApi,
         )
     }

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
 import io.getstream.chat.android.client.persistence.db.dao.MessageReceiptDao
 import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
 import io.getstream.chat.android.client.receipts.MessageReceipt
+import kotlinx.coroutines.flow.Flow
 
 internal interface MessageReceiptRepository {
 
@@ -33,6 +34,8 @@ internal interface MessageReceiptRepository {
     suspend fun upsertMessageReceipts(receipts: List<MessageReceipt>)
 
     suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt>
+
+    fun observeMessageReceiptCount(): Flow<Int>
 
     suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>)
 
@@ -49,6 +52,8 @@ internal class MessageReceiptRepositoryImpl(
 
     override suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt> =
         dao.selectAll(limit).map(MessageReceiptEntity::toModel)
+
+    override fun observeMessageReceiptCount(): Flow<Int> = dao.observeCount()
 
     override suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>) {
         dao.deleteByMessageIds(messageIds)
