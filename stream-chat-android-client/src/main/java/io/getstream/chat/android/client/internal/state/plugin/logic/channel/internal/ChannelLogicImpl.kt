@@ -116,9 +116,6 @@ internal class ChannelLogicImpl(
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
         val limit = query.messagesLimit()
         val isNotificationUpdate = query.isNotificationUpdate
-        if (query.tracksPagination()) {
-            state.paginationManager.end(query, result)
-        }
         when (result) {
             is Result.Success -> {
                 val channel = result.value
@@ -162,6 +159,10 @@ internal class ChannelLogicImpl(
                 state.setRecoveryNeeded(recoveryNeeded = !isPermanent)
                 state.endFirstPageLoad()
             }
+        }
+        // Last, so the next page request can't start before this page's messages are applied and repeat its cursor
+        if (query.tracksPagination()) {
+            state.paginationManager.end(query, result)
         }
     }
 
@@ -370,12 +371,14 @@ internal class ChannelLogicImpl(
     }
 
     private suspend fun queryChannel(request: WatchChannelRequest): Result<Channel> {
-        if (request.tracksPagination()) {
-            state.paginationManager.begin(request)
-        }
         val (type, id) = cid.cidToTypeAndId()
+        // Begin inside the shared call: a request that joins an identical one in flight gets no end() of its own
         return ChatClient.instance()
-            .queryChannel(type, id, request, skipOnRequest = true)
+            .queryChannelWithStart(type, id, request) {
+                if (request.tracksPagination()) {
+                    state.paginationManager.begin(request)
+                }
+            }
             .await()
     }
 

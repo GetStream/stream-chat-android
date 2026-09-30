@@ -53,6 +53,8 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -258,6 +260,27 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         inOrder.verify(plugin).onQueryChannelPrecondition(channelType, channelId, request)
         inOrder.verify(plugin).onQueryChannelRequest(channelType, channelId, request)
         inOrder.verify(plugin).onQueryChannelResult(result, channelType, channelId, request)
+    }
+
+    @Test
+    fun queryChannelWithStartJoiningAnIdenticalRequestInFlightSkipsOnStart() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val request = Mother.randomQueryChannelRequest()
+        val response = CompletableDeferred<Result<Channel>>()
+        val sut = Fixture()
+            .givenPendingQueryChannelResult(response)
+            .get()
+        var starts = 0
+        // when
+        val first = async { sut.queryChannelWithStart(channelType, channelId, request) { starts++ }.await() }
+        val second = async { sut.queryChannelWithStart(channelType, channelId, request) { starts++ }.await() }
+        testScheduler.advanceUntilIdle()
+        response.complete(Result.Success(randomChannel()))
+        // then
+        first.await() `should be equal to` second.await()
+        starts `should be equal to` 1
     }
 
     @Test
@@ -1615,6 +1638,12 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
                 CoroutineCall(testCoroutines.scope) {
                     resultProvider()
                 }
+            }
+        }
+
+        fun givenPendingQueryChannelResult(result: CompletableDeferred<Result<Channel>>) = apply {
+            whenever(api.queryChannel(any(), any(), any())) doAnswer {
+                CoroutineCall(testCoroutines.scope) { result.await() }
             }
         }
 

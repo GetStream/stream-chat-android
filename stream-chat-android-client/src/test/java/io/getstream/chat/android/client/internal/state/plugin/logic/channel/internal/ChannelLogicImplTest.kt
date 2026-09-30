@@ -417,6 +417,22 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
+        fun `should end pagination after the older page is applied`() {
+            // Given
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(id = "123", type = "messaging", messages = messages)
+            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
+            val result = Result.Success(channel)
+            // When
+            sut.onQueryChannelResult(query, result)
+            // Then
+            inOrder(stateImpl, paginationManager) {
+                verify(stateImpl).upsertMessages(messages)
+                verify(paginationManager).end(query, result)
+            }
+        }
+
+        @Test
         fun `should not update messages when limit is zero`() {
             // Given
             val messages = listOf(randomMessage(id = "m1"))
