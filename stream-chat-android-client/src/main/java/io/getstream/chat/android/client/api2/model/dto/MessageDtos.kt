@@ -20,11 +20,11 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.Attachment
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
-import io.getstream.chat.android.network.models.DraftPayloadResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.UserGroupResponse
 import java.util.Date
 
@@ -79,21 +79,12 @@ internal data class DownstreamMessageDto(
     val moderation: ModerationV2Response? = null, // Used for Moderation V2
     val poll: PollResponseData? = null,
     val reminder: DownstreamReminderInfoDto? = null,
-    val shared_location: DownstreamLocationDto? = null,
+    val shared_location: SharedLocationResponseData? = null,
     val member: ChannelMemberPartialResponse? = null,
     val mentioned_channel_members: Map<String, ChannelMemberPartialResponse?>? = null,
     val deleted_for_me: Boolean?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamDraftDto(
-    val message: DraftPayloadResponse,
-    val channel_cid: String,
-    val quoted_message: DownstreamMessageDto? = null,
-    val parent_id: String? = null,
-    val parent_message: DownstreamMessageDto? = null,
-)
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamPendingMessageDto(

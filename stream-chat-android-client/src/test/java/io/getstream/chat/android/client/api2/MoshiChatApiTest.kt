@@ -40,21 +40,18 @@ import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
@@ -114,6 +111,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
@@ -155,6 +153,7 @@ import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.QueryPollVotesRequest
 import io.getstream.chat.android.network.models.QueryPollsRequest
@@ -170,6 +169,8 @@ import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
+import io.getstream.chat.android.network.models.SharedLocationResponse
+import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -286,7 +287,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
-    fun testCreateDraftMessage(call: RetrofitCall<DraftMessageResponse>, expected: KClass<*>) = runTest {
+    fun testCreateDraftMessage(call: RetrofitCall<CreateDraftResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)
@@ -318,7 +319,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
-    fun testQueryDrafts(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
+    fun testQueryDrafts(call: RetrofitCall<QueryDraftsResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.queryDrafts(any())).doReturn(call)
@@ -2350,14 +2351,16 @@ internal class MoshiChatApiTest {
             hide_messages_before = null,
             draft = null,
             active_live_locations = listOf(
-                DownstreamLocationDto(
-                    channel_cid = "messaging:123",
-                    message_id = "msg-1",
-                    user_id = "other-user",
+                SharedLocationResponseData(
+                    channelCid = "messaging:123",
+                    createdAt = endAt,
+                    createdByDeviceId = "device-1",
                     latitude = 1.5,
                     longitude = 2.5,
-                    created_by_device_id = "device-1",
-                    end_at = endAt,
+                    messageId = "msg-1",
+                    updatedAt = endAt,
+                    userId = "other-user",
+                    endAt = endAt,
                 ),
             ),
         )
@@ -3345,7 +3348,7 @@ internal class MoshiChatApiTest {
     fun testUpdateLiveLocation(
         location: Location,
         request: UpdateLiveLocationRequest,
-        response: DownstreamLocationDto,
+        response: SharedLocationResponse,
     ) = runTest {
         val api = mock<UserApi>()
         whenever(api.updateLiveLocation(request)) doReturn RetroSuccess(response).toRetrofitCall()
@@ -3364,7 +3367,7 @@ internal class MoshiChatApiTest {
     fun testStopLiveLocation(
         location: Location,
         request: UpdateLiveLocationRequest,
-        response: DownstreamLocationDto,
+        response: SharedLocationResponse,
     ) = runTest {
         val api = mock<UserApi>()
         whenever(api.updateLiveLocation(request)) doReturn RetroSuccess(response).toRetrofitCall()

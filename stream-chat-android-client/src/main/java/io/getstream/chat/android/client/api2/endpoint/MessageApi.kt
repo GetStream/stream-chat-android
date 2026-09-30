@@ -17,15 +17,15 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
-import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.QueryDraftsRequest
+import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.Response
@@ -61,7 +61,7 @@ internal interface MessageApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body message: SendMessageRequest,
-    ): RetrofitCall<DraftMessageResponse>
+    ): RetrofitCall<CreateDraftResponse>
 
     @DELETE("/channels/{type}/{id}/draft")
     fun deleteDraftMessage(
@@ -74,7 +74,7 @@ internal interface MessageApi {
      * Queries draft messages for the current user.
      */
     @POST("/drafts/query")
-    fun queryDrafts(@Body body: QueryDraftsRequest): RetrofitCall<QueryDraftMessagesResponse>
+    fun queryDrafts(@Body body: QueryDraftsRequest): RetrofitCall<QueryDraftsResponse>
 
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.UserResponse
@@ -56,7 +57,7 @@ internal data class DownstreamThreadDto(
     val created_by: UserResponse?,
     val created_by_user_id: String,
     val deleted_at: Date?,
-    val draft: DownstreamDraftDto?,
+    val draft: DraftResponse?,
     val last_message_at: Date,
     val latest_replies: List<DownstreamMessageDto>,
     val parent_message: DownstreamMessageDto,

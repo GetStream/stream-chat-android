@@ -23,9 +23,7 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
@@ -112,6 +110,7 @@ import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
+import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetOGResponse
@@ -130,6 +129,7 @@ import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnreadCountsChannel
@@ -353,13 +353,13 @@ internal class DomainMapping(
             ).let(messageTransformer::transform)
         }
 
-    internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
+    internal fun DraftResponse.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
             attachments = message.attachments?.map { it.toDomain() }.orEmpty(),
-            cid = channel_cid,
+            cid = channelCid,
             id = message.id,
-            parentId = parent_message?.id ?: parent_id,
-            replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
+            parentId = parentMessage?.id ?: parentId,
+            replyMessage = quotedMessage?.toDomain(fallbackChannelInfo),
             showInChannel = message.showInChannel ?: false,
             mentionedUsersIds = message.mentionedUsers?.map { it.id }.orEmpty(),
             silent = message.silent ?: false,
@@ -755,15 +755,15 @@ internal class DomainMapping(
             extraData = custom.orEmpty().mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
 
-    internal fun DownstreamLocationDto.toDomain(): Location =
+    internal fun SharedLocationResponse.toDomain(): Location =
         Location(
-            cid = channel_cid,
-            messageId = message_id,
-            userId = user_id,
+            cid = channelCid,
+            messageId = messageId,
+            userId = userId,
             latitude = latitude,
             longitude = longitude,
-            deviceId = created_by_device_id,
-            endAt = end_at,
+            deviceId = createdByDeviceId,
+            endAt = endAt,
         )
 
     /**

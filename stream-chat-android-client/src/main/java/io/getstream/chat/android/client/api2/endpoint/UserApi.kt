@@ -19,14 +19,14 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
-import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.QueryUsersPayload
 import io.getstream.chat.android.network.models.QueryUsersResponse
+import io.getstream.chat.android.network.models.SharedLocationResponse
+import io.getstream.chat.android.network.models.SharedLocationsResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
@@ -73,10 +73,10 @@ internal interface UserApi {
     ): RetrofitCall<QueryUsersResponse>
 
     @GET("/users/live_locations")
-    fun liveLocations(): RetrofitCall<LiveLocationsResponse>
+    fun liveLocations(): RetrofitCall<SharedLocationsResponse>
 
     @PUT("/users/live_locations")
     fun updateLiveLocation(
         @Body body: UpdateLiveLocationRequest,
-    ): RetrofitCall<DownstreamLocationDto>
+    ): RetrofitCall<SharedLocationResponse>
 }

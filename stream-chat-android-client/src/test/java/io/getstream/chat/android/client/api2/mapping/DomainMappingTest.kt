@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
-import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
@@ -40,6 +39,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
+import io.getstream.chat.android.client.Mother.randomDraftResponse
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
 import io.getstream.chat.android.client.Mother.randomModerationV2Response
@@ -619,8 +619,8 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamDraftDto is correctly mapped to DraftMessage`() {
-        val draftMessageResponse = randomDownstreamDraftDto(
+    fun `DraftResponse is correctly mapped to DraftMessage`() {
+        val draftMessageResponse = randomDraftResponse(
             message = randomDraftPayloadResponse(
                 custom = mapOf("command" to "giphy", "args" to "cat", "flair" to "gold"),
                 // Pinned rather than random: an empty list or a default flag would let a mapper
@@ -636,10 +636,10 @@ internal class DomainMappingTest {
         val expectedMappedDraftMessage = with(sut) {
             DraftMessage(
                 id = draftMessageResponse.message.id,
-                cid = draftMessageResponse.channel_cid,
+                cid = draftMessageResponse.channelCid,
                 text = draftMessageResponse.message.text,
-                parentId = draftMessageResponse.parent_message?.id,
-                replyMessage = draftMessageResponse.quoted_message?.toDomain(),
+                parentId = draftMessageResponse.parentMessage?.id,
+                replyMessage = draftMessageResponse.quotedMessage?.toDomain(),
                 attachments = draftMessageResponse.message.attachments?.map { it.toDomain() }.orEmpty(),
                 mentionedUsersIds = draftMessageResponse.message.mentionedUsers?.map { it.id }.orEmpty(),
                 extraData = mapOf("flair" to "gold"),
@@ -658,8 +658,8 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamDraftDto without command custom data maps to a plain DraftMessage`() {
-        val draftMessageResponse = randomDownstreamDraftDto(
+    fun `DraftResponse without command custom data maps to a plain DraftMessage`() {
+        val draftMessageResponse = randomDraftResponse(
             message = randomDraftPayloadResponse(custom = mapOf("flair" to "gold")),
         )
         val sut = Fixture().get()
@@ -1635,7 +1635,7 @@ internal class DomainMappingTest {
             createdBy = user1,
             // Intentionally unsorted to validate sortedByLastReply() in mapping.
             threadParticipants = listOf(participant2Dto, participant1Dto),
-            draft = randomDownstreamDraftDto(
+            draft = randomDraftResponse(
                 message = randomDraftPayloadResponse(text = "Draft message"),
                 channelCid = "messaging:123",
             ),
@@ -1666,7 +1666,7 @@ internal class DomainMappingTest {
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
             },
-            draft = with(sut) { downstreamThreadDto.draft?.toDomain() },
+            draft = with(sut) { downstreamThreadDto.draft?.toDomain(fallbackChannelInfo) },
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)

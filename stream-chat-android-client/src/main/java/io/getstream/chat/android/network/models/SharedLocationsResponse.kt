@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal class LiveLocationsResponse(
-    val active_live_locations: List<DownstreamLocationDto>,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class SharedLocationsResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "active_live_locations")
+    internal val activeLiveLocations: List<io.getstream.chat.android.network.models.SharedLocationResponseData> = emptyList(),
 )
