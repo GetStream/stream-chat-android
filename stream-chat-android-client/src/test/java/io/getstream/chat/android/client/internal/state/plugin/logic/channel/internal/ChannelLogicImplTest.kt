@@ -142,6 +142,26 @@ internal class ChannelLogicImplTest {
             // Then
             verify(paginationManager).begin(query)
         }
+
+        @Test
+        fun `setPaginationDirection skips notification updates`() {
+            // Given
+            val query = QueryChannelRequest().withMessages(30).apply { isNotificationUpdate = true }
+            // When
+            sut.setPaginationDirection(query)
+            // Then
+            verify(paginationManager, never()).begin(any())
+        }
+
+        @Test
+        fun `setPaginationDirection skips queries without a message limit`() {
+            // Given
+            val query = QueryChannelRequest().withMessages(0)
+            // When
+            sut.setPaginationDirection(query)
+            // Then
+            verify(paginationManager, never()).begin(any())
+        }
     }
 
     // endregion

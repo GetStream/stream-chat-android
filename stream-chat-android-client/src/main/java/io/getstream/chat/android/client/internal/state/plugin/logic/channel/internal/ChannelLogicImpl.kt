@@ -108,15 +108,15 @@ internal class ChannelLogicImpl(
     }
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
-        state.paginationManager.begin(query)
+        if (query.tracksPagination()) {
+            state.paginationManager.begin(query)
+        }
     }
 
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
         val limit = query.messagesLimit()
         val isNotificationUpdate = query.isNotificationUpdate
-        // Update pagination state only if it's not a notification update and the call was made for fetching messages
-        // (from LoadNotificationDataWorker) and a limit is set (otherwise we are not loading messages)
-        if (!isNotificationUpdate && limit != 0) {
+        if (query.tracksPagination()) {
             state.paginationManager.end(query, result)
         }
         when (result) {
@@ -370,12 +370,18 @@ internal class ChannelLogicImpl(
     }
 
     private suspend fun queryChannel(request: WatchChannelRequest): Result<Channel> {
-        state.paginationManager.begin(request)
+        if (request.tracksPagination()) {
+            state.paginationManager.begin(request)
+        }
         val (type, id) = cid.cidToTypeAndId()
         return ChatClient.instance()
             .queryChannel(type, id, request, skipOnRequest = true)
             .await()
     }
+
+    // Notification updates (from LoadNotificationDataWorker) and zero-limit queries don't load messages,
+    // so neither begin nor end of the pagination state applies to them.
+    private fun QueryChannelRequest.tracksPagination(): Boolean = !isNotificationUpdate && messagesLimit() != 0
 
     private fun updateMessages(query: QueryChannelRequest, channel: Channel) {
         when {
