@@ -93,6 +93,7 @@ import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SearchResultMessage
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.ThreadResponse
@@ -946,6 +947,31 @@ internal object Mother {
         limit = limit,
         querySort = querySort,
         presence = presence,
+    )
+
+    fun randomSearchResultMessage(
+        id: String = randomString(),
+        cid: String = randomCID(),
+        text: String = randomString(),
+        user: UserResponse = randomUserResponse(),
+        channel: ChannelResponse? = null,
+    ): SearchResultMessage = SearchResultMessage(
+        cid = cid,
+        createdAt = randomDate(),
+        deletedReplyCount = randomInt(),
+        html = randomString(),
+        id = id,
+        mentionedChannel = randomBoolean(),
+        mentionedHere = randomBoolean(),
+        pinned = randomBoolean(),
+        replyCount = randomInt(),
+        shadowed = randomBoolean(),
+        silent = randomBoolean(),
+        text = text,
+        type = randomString(),
+        updatedAt = randomDate(),
+        user = user,
+        channel = channel,
     )
 
     fun randomSearchWarningResponse(

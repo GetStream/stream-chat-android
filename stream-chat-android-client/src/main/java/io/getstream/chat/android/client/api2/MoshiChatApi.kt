@@ -1449,14 +1449,10 @@ constructor(
         )
         return generalApi.searchMessages(newRequest)
             .mapDomain { response ->
-                val results = response.results
-
-                val messages = results.map { resp ->
-                    resp.message.toDomain().let { message ->
-                        (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
-                            ?.let(message::enrichWithCid)
-                            ?: message
-                    }
+                val messages = response.results.mapNotNull { it.message?.toDomain() }.map { message ->
+                    (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+                        ?.let(message::enrichWithCid)
+                        ?: message
                 }
                 SearchMessagesResult(
                     messages = messages,

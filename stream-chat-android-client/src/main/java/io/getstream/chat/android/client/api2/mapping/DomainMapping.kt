@@ -126,6 +126,7 @@ import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SearchResultMessage
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
@@ -457,6 +458,69 @@ internal class DomainMapping(
             deletedForMe = deletedForMe ?: false,
             extraData = messageExtraData(),
         ).let(messageTransformer::transform)
+
+    /**
+     * Transforms the generated [SearchResultMessage] into a domain [Message], with the channel info of the channel
+     * the result carries.
+     */
+    internal fun SearchResultMessage.toDomain(): Message = toMessageResponse().toDomain(channel?.toChannelInfo())
+
+    /**
+     * The [MessageResponse] this search result extends: every field but the channel, so the result maps through the
+     * same message mapper.
+     */
+    internal fun SearchResultMessage.toMessageResponse(): MessageResponse = MessageResponse(
+        cid = cid,
+        createdAt = createdAt,
+        deletedReplyCount = deletedReplyCount,
+        html = html,
+        id = id,
+        mentionedChannel = mentionedChannel,
+        mentionedHere = mentionedHere,
+        pinned = pinned,
+        replyCount = replyCount,
+        shadowed = shadowed,
+        silent = silent,
+        text = text,
+        type = type,
+        updatedAt = updatedAt,
+        attachments = attachments,
+        latestReactions = latestReactions,
+        mentionedUsers = mentionedUsers,
+        ownReactions = ownReactions,
+        restrictedVisibility = restrictedVisibility,
+        custom = custom,
+        reactionCounts = reactionCounts,
+        reactionScores = reactionScores,
+        user = user,
+        command = command,
+        deletedAt = deletedAt,
+        deletedForMe = deletedForMe,
+        messageTextUpdatedAt = messageTextUpdatedAt,
+        mml = mml,
+        parentId = parentId,
+        pinExpires = pinExpires,
+        pinnedAt = pinnedAt,
+        pollId = pollId,
+        quotedMessageId = quotedMessageId,
+        showInChannel = showInChannel,
+        mentionedGroupIds = mentionedGroupIds,
+        mentionedGroups = mentionedGroups,
+        mentionedRoles = mentionedRoles,
+        threadParticipants = threadParticipants,
+        draft = draft,
+        i18n = i18n,
+        imageLabels = imageLabels,
+        member = member,
+        mentionedChannelMembers = mentionedChannelMembers,
+        moderation = moderation,
+        pinnedBy = pinnedBy,
+        poll = poll,
+        quotedMessage = quotedMessage,
+        reactionGroups = reactionGroups,
+        reminder = reminder,
+        sharedLocation = sharedLocation,
+    )
 
     // V1 moderation is injected into the message custom data by the auto-mod bounce path rather than
     // declared on the payload, so it arrives flattened at the root and has to be read back out.

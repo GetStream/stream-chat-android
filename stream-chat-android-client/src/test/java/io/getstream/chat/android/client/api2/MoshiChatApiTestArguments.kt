@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.api2.model.response.QueryChannelsRespons
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -76,6 +75,8 @@ import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SearchResponse
+import io.getstream.chat.android.network.models.SearchResult
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
@@ -955,8 +956,9 @@ internal object MoshiChatApiTestArguments {
     private fun searchMessagesResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                SearchMessagesResponse(
-                    results = listOf(MessageResponse(randomDownstreamMessageDto())),
+                SearchResponse(
+                    duration = randomString(),
+                    results = listOf(SearchResult(Mother.randomSearchResultMessage())),
                     next = randomString(),
                     previous = randomString(),
                     resultsWarning = Mother.randomSearchWarningResponse(),
@@ -964,7 +966,7 @@ internal object MoshiChatApiTestArguments {
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<SearchMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<SearchResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun threadResponseArguments() = listOf(
