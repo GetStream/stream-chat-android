@@ -16,10 +16,14 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.parser2.testdata.LocationTestData
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -35,22 +39,29 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
         """{"channel":{"cid":"messaging:123","id":"123","type":"messaging","frozen":false},""" +
             """"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
 
-    private val expected = listOf(
-        parser.fromJson(LocationTestData.jsonAllFields, SharedLocationResponseData::class.java),
+    private val domainMapping = DomainMapping(
+        currentUserIdProvider = { "" },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
     )
+
+    private val expected = listOf(LocationTestData.expectedAllFields)
+
+    private fun List<SharedLocationResponseData>.toDomain() = with(domainMapping) { map { it.toDomain() } }
 
     @Test
     fun `query channel response`() {
         val response = parser.fromJson(channelState, ChannelResponse::class.java)
 
-        assertEquals(expected, response.active_live_locations)
+        assertEquals(expected, response.active_live_locations.toDomain())
     }
 
     @Test
     fun `query channels response`() {
         val response = parser.fromJson("""{"channels":[$channelState]}""", QueryChannelsResponse::class.java)
 
-        assertEquals(expected, response.channels.single().active_live_locations)
+        assertEquals(expected, response.channels.single().active_live_locations.toDomain())
     }
 
     @Test
@@ -59,7 +70,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
         val response = parser.fromJson(json, QueryGroupedChannelsResponse::class.java)
 
-        assertEquals(expected, response.groups.getValue("all").channels.single().active_live_locations)
+        assertEquals(expected, response.groups.getValue("all").channels.single().active_live_locations.toDomain())
     }
 
     @Test
