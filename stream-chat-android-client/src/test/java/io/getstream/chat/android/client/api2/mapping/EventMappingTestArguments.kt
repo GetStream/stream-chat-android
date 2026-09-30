@@ -218,7 +218,7 @@ internal object EventMappingTestArguments {
     private val POLL_VOTE = Mother.randomPollVoteResponseData(isAnswer = false)
     private val ANSWER_VOTE = Mother.randomPollVoteResponseData(isAnswer = true, answerText = "answer")
     private val REMINDER = Mother.randomDownstreamReminderDto()
-    private val THREAD_INFO = Mother.randomDownstreamThreadInfoDto()
+    private val THREAD_INFO = Mother.randomThreadResponse()
     private val AI_MESSAGE_ID = randomString()
     private val AI_STATE = randomString()
     private val DELETED_FOR_ME = randomBoolean()
