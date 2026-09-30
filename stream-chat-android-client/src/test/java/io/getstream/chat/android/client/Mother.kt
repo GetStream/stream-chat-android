@@ -69,6 +69,7 @@ import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
@@ -1247,6 +1248,26 @@ internal object Mother {
             pushPreferences = ChannelPushPreferencesResponse(chatLevel = "mentions", disabledUntil = randomDate()),
         )
     }
+
+    /** The single channel query response carrying the given state. */
+    fun ChannelStateResponseFields.toChannelStateResponse(): ChannelStateResponse = ChannelStateResponse(
+        duration = "1ms",
+        members = members,
+        messages = messages,
+        pinnedMessages = pinnedMessages,
+        threads = threads,
+        hidden = hidden,
+        hideMessagesBefore = hideMessagesBefore,
+        watcherCount = watcherCount,
+        activeLiveLocations = activeLiveLocations,
+        pendingMessages = pendingMessages,
+        read = read,
+        watchers = watchers,
+        channel = channel,
+        draft = draft,
+        membership = membership,
+        pushPreferences = pushPreferences,
+    )
 
     fun randomThreadResponse(
         channelCid: String = randomString(),
