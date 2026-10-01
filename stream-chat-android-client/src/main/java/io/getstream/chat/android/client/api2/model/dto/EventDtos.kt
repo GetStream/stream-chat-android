@@ -318,30 +318,6 @@ internal data class MarkAllReadEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationMessageNewEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val message: DownstreamMessageDto,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ThreadUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val thread: ThreadResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationThreadMessageNewEventDto(
     val type: String,
     val cid: String,
@@ -407,13 +383,6 @@ internal data class ReactionUpdateEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val reaction: ReactionResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
