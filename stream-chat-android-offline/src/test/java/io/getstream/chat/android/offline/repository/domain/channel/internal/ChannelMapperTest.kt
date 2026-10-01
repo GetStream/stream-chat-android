@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.offline.MockChatClientBuilder
 import io.getstream.chat.android.offline.randomChannelEntity
@@ -158,10 +159,6 @@ internal class ChannelMapperTest {
         val lastMessage = randomMessage()
         val membership = randomMember()
         val draftMessage = randomDraftMessage()
-        val activeLiveLocations = listOf(
-            randomLocationEntity(),
-            randomLocationEntity(),
-        )
 
         val channelEntity = randomChannelEntity(
             createdByUserId = createdByUser.id,
@@ -170,7 +167,6 @@ internal class ChannelMapperTest {
             reads = reads.map { it.toEntity() }.associateBy { it.userId }.toMutableMap(),
             lastMessageId = lastMessage.id,
             membership = membership.toEntity(),
-            activeLiveLocations = activeLiveLocations,
         )
 
         val expectedChannel = Channel(
@@ -200,7 +196,6 @@ internal class ChannelMapperTest {
             ownCapabilities = channelEntity.ownCapabilities,
             membership = membership,
             draftMessage = draftMessage,
-            activeLiveLocations = activeLiveLocations.map { it.toModel() },
             messageCount = channelEntity.messageCount,
         )
 
@@ -224,5 +219,19 @@ internal class ChannelMapperTest {
             },
         )
         assertEquals(expectedChannel, result)
+    }
+
+    @Test
+    fun `Should not restore the stored active live locations`() = runTest {
+        MockChatClientBuilder().build()
+        val channelEntity = randomChannelEntity(activeLiveLocations = listOf(randomLocationEntity()))
+
+        val result = channelEntity.toModel(
+            getUser = { randomUser(id = it) },
+            getMessage = { null },
+            getDraftMessage = { null },
+        )
+
+        assertEquals(emptyList<Location>(), result.activeLiveLocations)
     }
 }
