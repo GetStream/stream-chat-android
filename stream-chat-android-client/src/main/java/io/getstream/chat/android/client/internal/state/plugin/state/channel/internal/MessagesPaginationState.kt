@@ -182,26 +182,29 @@ internal class MessagesPaginationManagerImpl : MessagesPaginationManager {
             when {
                 // Loading older
                 query.filteringOlderMessages() -> {
-                    current.clearLoadingFlagOf(query).copy(
+                    current.copy(
                         oldestMessage = oldestMessage,
                         hasLoadedAllPreviousMessages = messages.size < query.messagesLimit(),
+                        isLoadingPreviousMessages = false,
                     )
                 }
                 // Loading newer
                 query.isFilteringNewerMessages() -> {
                     val hasLoadedAllNextMessages = messages.size < query.messagesLimit()
-                    current.clearLoadingFlagOf(query).copy(
+                    current.copy(
                         newestMessage = if (hasLoadedAllNextMessages) null else newestMessage,
                         hasLoadedAllNextMessages = hasLoadedAllNextMessages,
+                        isLoadingNextMessages = false,
                     )
                 }
                 // Loading around
                 query.isFilteringAroundIdMessages() -> {
-                    current.clearLoadingFlagOf(query).copy(
+                    current.copy(
                         oldestMessage = oldestMessage,
                         newestMessage = newestMessage,
                         hasLoadedAllNextMessages = false,
                         hasLoadedAllPreviousMessages = false,
+                        isLoadingMiddleMessages = false,
                     )
                 }
                 // Else - no pagination

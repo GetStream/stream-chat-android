@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.toChannelData
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -114,13 +115,16 @@ internal class ChannelLogicImpl(
     }
 
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
+        var applied = false
         try {
             applyQueryChannelResult(query, result)
+            applied = true
         } finally {
             // Last, so the next page request can't start before this page's messages are applied and repeat its
-            // cursor. In a finally, so a failure applying the result can't leave the loading flag set.
+            // cursor. In a finally, so a failure applying the result can't leave the loading flag set, and ended as
+            // a failure then, so a page that never reached the list can't mark the end of the history.
             if (query.tracksPagination()) {
-                state.paginationManager.end(query, result)
+                state.paginationManager.end(query, if (applied) result else Result.Failure(APPLY_FAILED_ERROR))
             }
         }
     }
@@ -463,3 +467,5 @@ internal class ChannelLogicImpl(
             incomingOldest.getCreatedAtOrDefault(NEVER).after(currentNewest.getCreatedAtOrDefault(NEVER))
     }
 }
+
+private val APPLY_FAILED_ERROR = Error.GenericError("Failed to apply the channel query result")

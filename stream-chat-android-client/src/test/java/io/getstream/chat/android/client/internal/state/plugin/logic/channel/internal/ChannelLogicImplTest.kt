@@ -51,7 +51,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -434,16 +436,15 @@ internal class ChannelLogicImplTest {
         }
 
         @Test
-        fun `should end pagination when applying the page fails`() {
+        fun `should end pagination as a failure when applying the page fails`() {
             // Given
             val channel = randomChannel(id = "123", type = "messaging", messages = listOf(randomMessage()))
             val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
-            val result = Result.Success(channel)
             whenever(stateImpl.upsertMessages(any(), any())).thenThrow(IllegalStateException())
             // When
-            assertThrows<IllegalStateException> { sut.onQueryChannelResult(query, result) }
+            assertThrows<IllegalStateException> { sut.onQueryChannelResult(query, Result.Success(channel)) }
             // Then
-            verify(paginationManager).end(query, result)
+            verify(paginationManager).end(eq(query), argThat { this is Result.Failure })
         }
 
         @Test

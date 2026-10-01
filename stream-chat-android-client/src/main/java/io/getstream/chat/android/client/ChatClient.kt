@@ -3421,10 +3421,6 @@ internal constructor(
         request: QueryChannelRequest,
         skipOnRequest: Boolean = false,
     ): Call<Channel> = queryChannelWithStart(channelType, channelId, request) {
-        logger.d {
-            "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
-                ", cid: $channelType:$channelId, request: $request"
-        }
         if (!skipOnRequest) {
             plugins.forEach { plugin ->
                 plugin.onQueryChannelRequest(channelType, channelId, request)
@@ -3444,7 +3440,10 @@ internal constructor(
         onStart: suspend () -> Unit,
     ): Call<Channel> {
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
-            .doOnStart(userScope, onStart)
+            .doOnStart(userScope) {
+                logger.d { "[queryChannel] #doOnStart; cid: $channelType:$channelId, request: $request" }
+                onStart()
+            }
             .doOnResult(userScope) { result ->
                 logger.v {
                     "[queryChannel] #doOnResult; " +
