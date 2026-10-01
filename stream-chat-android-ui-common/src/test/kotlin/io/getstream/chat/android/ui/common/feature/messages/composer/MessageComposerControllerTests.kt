@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.internal.No
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -300,9 +301,12 @@ internal class MessageComposerControllerTests {
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
         }
 
-        fun givenChannelDrafts(channelDrafts: StateFlow<Map<String, DraftMessage>>) = apply {
+        fun givenDrafts(
+            channelDrafts: StateFlow<Map<String, DraftMessage>> = MutableStateFlow(mapOf()),
+            threadDrafts: StateFlow<Map<String, DraftMessage>> = MutableStateFlow(mapOf()),
+        ) = apply {
             whenever(globalState.channelDraftMessages) doReturn channelDrafts
-            whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(mapOf())
+            whenever(globalState.threadDraftMessages) doReturn threadDrafts
         }
 
         fun givenDraftMessageCalls() = apply {
@@ -466,7 +470,7 @@ internal class MessageComposerControllerTests {
             .givenAppSettings(mock())
             .givenAudioPlayer(mock())
             .givenClientState(User("uid1"))
-            .givenChannelDrafts(channelDrafts)
+            .givenDrafts(channelDrafts = channelDrafts)
             .givenChannelState()
             .get(config = DRAFTS_ENABLED)
         advanceUntilIdle()
@@ -484,7 +488,7 @@ internal class MessageComposerControllerTests {
             .givenAppSettings(mock())
             .givenAudioPlayer(mock())
             .givenClientState(User("uid1"))
-            .givenChannelDrafts(channelDrafts)
+            .givenDrafts(channelDrafts = channelDrafts)
             .givenChannelState()
             .get(config = DRAFTS_ENABLED)
         advanceUntilIdle()
@@ -505,7 +509,7 @@ internal class MessageComposerControllerTests {
                 .givenAppSettings(mock())
                 .givenAudioPlayer(mock())
                 .givenClientState(User("uid1"))
-                .givenChannelDrafts(channelDrafts)
+                .givenDrafts(channelDrafts = channelDrafts)
                 .givenChannelState()
                 .givenDraftMessageCalls()
                 .get(config = DRAFTS_ENABLED)
@@ -530,7 +534,7 @@ internal class MessageComposerControllerTests {
                 .givenAppSettings(mock())
                 .givenAudioPlayer(mock())
                 .givenClientState(User("uid1"))
-                .givenChannelDrafts(MutableStateFlow(mapOf(CID to draftMessage)))
+                .givenDrafts(channelDrafts = MutableStateFlow(mapOf(CID to draftMessage)))
                 .givenChannelState()
                 .givenDraftMessageCalls()
                 .get(config = DRAFTS_ENABLED)
@@ -542,6 +546,69 @@ internal class MessageComposerControllerTests {
 
             verify(chatClient).deleteDraftMessages(CHANNEL_TYPE, CHANNEL_ID, draftMessage)
         }
+
+    @Test
+    fun `Given a shown draft When it is deleted elsewhere Then the input is cleared`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text")))
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenDrafts(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .givenDraftMessageCalls()
+            .get(config = DRAFTS_ENABLED)
+        advanceUntilIdle()
+
+        channelDrafts.value = mapOf()
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` ""
+    }
+
+    @Test
+    fun `Given a thread with an empty input When a thread draft arrives Then the draft is shown`() = runTest {
+        val parentMessage = randomMessage(cid = CID)
+        val threadDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenDrafts(threadDrafts = threadDrafts)
+            .givenChannelState()
+            .get(config = DRAFTS_ENABLED)
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        advanceUntilIdle()
+
+        threadDrafts.value = mapOf(
+            parentMessage.id to DraftMessage(id = "draft", cid = CID, text = "thread draft", parentId = parentMessage.id),
+        )
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` "thread draft"
+    }
+
+    @Test
+    fun `Given a shown thread draft When it is deleted elsewhere Then the input is cleared`() = runTest {
+        val parentMessage = randomMessage(cid = CID)
+        val threadDraft = DraftMessage(id = "draft", cid = CID, text = "thread draft", parentId = parentMessage.id)
+        val threadDrafts = MutableStateFlow(mapOf(parentMessage.id to threadDraft))
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenDrafts(threadDrafts = threadDrafts)
+            .givenChannelState()
+            .givenDraftMessageCalls()
+            .get(config = DRAFTS_ENABLED)
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+        advanceUntilIdle()
+
+        threadDrafts.value = mapOf()
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` ""
+    }
 
     // endregion
 
