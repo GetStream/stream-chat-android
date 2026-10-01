@@ -114,8 +114,15 @@ internal class GeneratedThreadUserMessageEventParsingTest {
         @JvmStatic
         fun missingRequiredFields(): List<Arguments> =
             listOf("cid", "channel_type", "channel_id", "thread").map { Arguments.of(THREAD_UPDATED_JSON, it) } +
-                listOf("user", "delete_messages", "hard_delete")
-                    .map { Arguments.of(createUserDeletedEventStringJson(), it) } +
+                listOf(
+                    "user",
+                    "delete_messages",
+                    "delete_conversation",
+                    "delete_user",
+                    "hard_delete",
+                    "mark_messages_deleted",
+                    "delete_conversation_channels",
+                ).map { Arguments.of(createUserDeletedEventStringJson(), it) } +
                 listOf("cid", "channel_type", "channel_id", "channel", "message", "message_id", "watcher_count")
                     .map { Arguments.of(createNotificationMessageNewEventStringJson(), it) }
     }
