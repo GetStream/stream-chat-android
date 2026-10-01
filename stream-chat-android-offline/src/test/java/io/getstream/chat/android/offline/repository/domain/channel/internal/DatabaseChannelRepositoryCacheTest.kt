@@ -16,12 +16,15 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.offline.MockChatClientBuilder
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -29,6 +32,8 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -38,6 +43,11 @@ import org.robolectric.annotation.Config
 internal class DatabaseChannelRepositoryCacheTest {
 
     private val testScope = TestScope()
+
+    init {
+        // Merging with a cached channel syncs unread counts against the current user.
+        MockChatClientBuilder().build()
+    }
     private val channelDao: ChannelDao = mock {
         onBlocking { select(any<List<String>>()) } doReturn emptyList()
     }
@@ -56,6 +66,23 @@ internal class DatabaseChannelRepositoryCacheTest {
         sut.insertChannel(channel)
 
         assertEquals(emptyList<Location>(), sut.selectChannel(channel.cid)?.activeLiveLocations)
+    }
+
+    @Test
+    fun `inserting an unchanged channel with live locations again does not write it again`() = testScope.runTest {
+        // Shaped like a server channel (no messages, unread count synced), so merging with the cached copy keeps it equal.
+        val channel = randomChannel(
+            messages = emptyList(),
+            read = emptyList(),
+            activeLiveLocations = listOf(randomLocation()),
+        ).syncUnreadCountWithReads()
+
+        sut.insertChannel(channel)
+        advanceUntilIdle()
+        sut.insertChannel(channel)
+        advanceUntilIdle()
+
+        verify(channelDao, times(1)).insertMany(any())
     }
 
     @Test

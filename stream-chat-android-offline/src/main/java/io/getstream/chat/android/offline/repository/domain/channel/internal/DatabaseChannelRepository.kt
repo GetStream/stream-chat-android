@@ -66,6 +66,8 @@ internal class DatabaseChannelRepository(
         if (channels.isEmpty()) return
         val updatedChannels = channels
             .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+            // Cleared before the comparison below, as the cached copies hold no live locations.
+            .map { it.copy(activeLiveLocations = emptyList()) }
         val channelToInsert = updatedChannels
             .filter { channelCache[it.cid] != it }
             .map { it.toEntity() }
