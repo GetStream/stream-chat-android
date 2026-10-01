@@ -76,6 +76,8 @@ internal class DatabaseChannelRepository(
             val updatedChannels = channels
                 .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
                 .map { if (it.isReadTrackedLocally()) it.preserveLocallyTrackedReads(storedReadsByCid[it.cid]) else it }
+                // Cleared before the comparison below, as the cached copies hold no live locations.
+                .map { it.copy(activeLiveLocations = emptyList()) }
             updatedChannels
                 .filter { channelCache[it.cid] != it }
                 .also { cacheChannel(updatedChannels) }
