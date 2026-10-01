@@ -246,26 +246,10 @@ internal class ChatClientConnectionTests {
     }
 
     @Test
-    fun `When the server rejects the connection, local data should be cleared`() = runCancellableTest {
+    fun `When the server rejects the connection, local data should be kept`() = runCancellableTest {
         val error = Error.NetworkError(
             message = randomString(),
             serverErrorCode = ChatErrorCode.API_KEY_NOT_FOUND.code,
-        )
-        val event = ErrorEvent(EventType.CONNECTION_ERROR, Date(), streamDateFormatter.format(Date()), error)
-
-        val deferred = (testCoroutines.scope + Job()).async { client.connectUser(user, jwt).await() }
-        fakeChatSocket.mockEventReceived(event)
-        val result = deferred.await()
-
-        result.shouldBeInstanceOf(Result.Failure::class)
-        verify(userCredentialStorage).clear()
-    }
-
-    @Test
-    fun `When there is a recoverable connection error, local data should be kept`() = runCancellableTest {
-        val error = Error.NetworkError(
-            message = randomString(),
-            serverErrorCode = ChatErrorCode.SOCKET_FAILURE.code,
         )
         val event = ErrorEvent(EventType.CONNECTION_ERROR, Date(), streamDateFormatter.format(Date()), error)
 

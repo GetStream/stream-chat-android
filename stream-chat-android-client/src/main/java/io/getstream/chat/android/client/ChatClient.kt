@@ -150,7 +150,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
-import io.getstream.chat.android.client.socket.isUnrecoverableConnectionError
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
@@ -656,9 +655,9 @@ internal constructor(
                     ),
                 )
             }
-        }.onErrorSuspend { error ->
-            // A failed connection is not a logout: keep the offline data unless the server rejected the client.
-            disconnectSuspend(flushPersistence = error.isUnrecoverableConnectionError())
+        }.onErrorSuspend {
+            // A failed connection is not a logout: keep the offline data and stored credentials.
+            disconnectSuspend(flushPersistence = false)
         }
     }
 
