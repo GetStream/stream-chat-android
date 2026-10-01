@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
@@ -106,39 +105,6 @@ internal data class HealthEventDto(
     val type: String,
     val created_at: ExactDate,
     val connection_id: String,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class MemberAddedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val member: ChannelMemberResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class MemberRemovedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val member: ChannelMemberResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class MemberUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -441,30 +407,6 @@ internal data class ReactionUpdateEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val reaction: ReactionResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class TypingStartEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val parent_id: String?,
-    val member: ChannelMemberPartialResponse? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class TypingStopEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val parent_id: String?,
-    val member: ChannelMemberPartialResponse? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
