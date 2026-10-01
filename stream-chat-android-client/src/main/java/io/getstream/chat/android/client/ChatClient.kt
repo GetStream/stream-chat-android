@@ -656,7 +656,8 @@ internal constructor(
                 )
             }
         }.onErrorSuspend {
-            disconnectSuspend(flushPersistence = true)
+            // A failed connection is not a logout: keep the offline data and stored credentials.
+            disconnectSuspend(flushPersistence = false)
         }
     }
 

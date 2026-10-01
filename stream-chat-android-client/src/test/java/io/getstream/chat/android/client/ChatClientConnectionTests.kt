@@ -93,6 +93,7 @@ internal class ChatClientConnectionTests {
     private val streamDateFormatter = StreamDateFormatter()
     private val config = mock<ChatApiConfig>()
     private val userCredentialStorage = mock<UserCredentialStorage>()
+    private lateinit var networkStateProvider: NetworkStateProvider
 
     @BeforeEach
     fun setup() {
@@ -106,7 +107,7 @@ internal class ChatClientConnectionTests {
         val userScope = UserTestScope(clientScope)
         val lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
-        val networkStateProvider: NetworkStateProvider = mock()
+        networkStateProvider = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
         fakeChatSocket = FakeChatSocket(
             userScope = userScope,
@@ -260,6 +261,36 @@ internal class ChatClientConnectionTests {
 
         result.shouldBeInstanceOf(Result.Failure::class)
         (result as Result.Failure).value.message `should be equal to` "Connection wasn't established in 1ms"
+    }
+
+    @Test
+    fun `When connection times out, local data should be kept`() = runTest {
+        val result = client.connectUser(user, jwt, 1).await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        verify(userCredentialStorage, never()).clear()
+    }
+
+    @Test
+    fun `When the token is blank, local data should be kept`() = runTest {
+        val result = client.connectUser(user, "").await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        verify(userCredentialStorage, never()).clear()
+    }
+
+    @Test
+    fun `When offline without a timeout, connecting should wait for the network and keep local data`() = runCancellableTest {
+        whenever(networkStateProvider.isConnected()) doReturn false
+
+        val deferred = (testCoroutines.scope + Job()).async { client.connectUser(user, jwt).await() }
+        testScheduler.advanceUntilIdle()
+
+        deferred.isCompleted `should be equal to` false
+        verify(userCredentialStorage, never()).clear()
+        mutableClientState.initializationState.value `should be equal to` InitializationState.COMPLETE
+        client.getCurrentUser() `should be equal to` user
+        deferred.cancel()
     }
 
     @Test
