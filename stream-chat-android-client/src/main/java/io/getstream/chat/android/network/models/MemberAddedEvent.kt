@@ -33,8 +33,11 @@ internal data class MemberAddedEvent(
     @Json(name = "created_at")
     internal val createdAt: io.getstream.chat.android.network.infrastructure.ExactDate,
 
+    // Patched: the spec marks `channel` required, but backends before v239.35.0 (CHA-5608, 2026-09-28) send member
+    // events from UpdateChannel without it, and a parse failure reconnects the socket. On regen, make it required
+    // again only once every region runs v239.35.0 or later.
     @Json(name = "channel")
-    internal val channel: io.getstream.chat.android.network.models.ChannelResponse,
+    internal val channel: io.getstream.chat.android.network.models.ChannelResponse? = null,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),

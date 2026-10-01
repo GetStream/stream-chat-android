@@ -58,6 +58,17 @@ internal class GeneratedMemberTypingEventParsingTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("memberEventsWithoutChannel")
+    fun `A member event without a channel still parses, as older backends send it`(
+        json: String,
+        expected: KClass<out ChatEvent>,
+    ) {
+        val event = parser.fromJson(json.without("channel"), ChatEvent::class.java)
+
+        event::class shouldBeEqualTo expected
+    }
+
     private fun String.withNanosecondCreatedAt() =
         replaceFirst(""""created_at": "2020-06-29T06:14:28.000Z"""", """"created_at": "$NANOSECOND_CREATED_AT"""")
 
@@ -84,9 +95,13 @@ internal class GeneratedMemberTypingEventParsingTest {
         fun events(): List<Arguments> = (memberEvents + typingEvents).map { (json, type) -> Arguments.of(json, type) }
 
         @JvmStatic
+        fun memberEventsWithoutChannel(): List<Arguments> =
+            memberEvents.map { (json, type) -> Arguments.of(json, type) }
+
+        @JvmStatic
         fun missingRequiredFields(): List<Arguments> =
             memberEvents.flatMap { (json, _) ->
-                listOf("cid", "user", "channel", "member").map { Arguments.of(json, it) }
+                listOf("cid", "user", "member").map { Arguments.of(json, it) }
             } + typingEvents.flatMap { (json, _) ->
                 listOf("cid", "user").map { Arguments.of(json, it) }
             }
