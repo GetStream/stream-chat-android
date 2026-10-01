@@ -338,13 +338,14 @@ internal fun createNotificationMessageNewEventStringJson() =
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
-            "channel": ${createChannelJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "cid": "channelType:channelId",
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
             "grouped_unread_channels": {"direct": 2, "support": 5},
-            "message": ${createMessageJsonString()},
+            "message": ${createGeneratedMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -456,7 +457,13 @@ internal fun createUserDeletedEventStringJson() =
     createChatEventStringJson(
         "user.deleted",
         """
-            "user": ${createCommonFieldsUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()},
+            "delete_messages": "soft",
+            "delete_conversation": "",
+            "delete_user": "soft",
+            "hard_delete": false,
+            "mark_messages_deleted": true,
+            "delete_conversation_channels": false
         """.trimIndent(),
     )
 
@@ -1004,6 +1011,18 @@ private fun createMemberJsonString() =
 
 /** The channel as the generated `ChannelResponse` reads it, with the fields the backend always sends. */
 private fun createGeneratedChannelJsonString() = createChannelJsonString().replaceFirst("{", """{ "disabled": false,""")
+
+/**
+ * The message as notification events send it: the fields the backend always sends, users with the common fields
+ * only, and no nested channel (the backend never serializes it on a message).
+ */
+private fun createGeneratedMessageJsonString() = createMessageJsonString()
+    .replace(""""channel": ${createChannelInfoJsonString()},""", "")
+    .replace(createUserJsonString(), createNestedUserJsonString())
+    .replaceFirst(
+        "{",
+        """{ "mentioned_channel": false, "mentioned_here": false, "pinned": false, "shadowed": false,""",
+    )
 
 @Language("JSON")
 private fun createChannelJsonString() =

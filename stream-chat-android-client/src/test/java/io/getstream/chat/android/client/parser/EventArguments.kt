@@ -323,6 +323,9 @@ internal object EventArguments {
         threadParticipants = listOf(user),
     )
 
+    /** The channel as the wire sends it: `disabled` always present, kept in extra data like the hand-written DTO. */
+    private val wireChannel = channel.copy(extraData = channel.extraData + ("disabled" to false))
+
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "type",
@@ -652,8 +655,13 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
-        message = message,
+        channel = wireChannel,
+        message = message.copy(
+            user = nestedUser,
+            mentionedUsers = listOf(nestedUser),
+            threadParticipants = listOf(nestedUser),
+            channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 1),
+        ),
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         groupedUnreadChannels = groupedUnreadChannels,
