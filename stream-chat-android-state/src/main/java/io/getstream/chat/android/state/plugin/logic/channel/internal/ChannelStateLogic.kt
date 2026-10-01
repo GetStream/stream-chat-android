@@ -645,8 +645,6 @@ internal class ChannelStateLogic(
         upsertWatchers(channel.watchers, channel.watcherCount)
         // The channel state reads its live locations from the global state
         globalMutableState.addLiveLocations(channel.activeLiveLocations)
-        // The channel list and the composer read drafts from the global state
-        channel.draftMessage?.let(globalMutableState::updateDraftMessage)
 
         if (messageLimit != 0) {
             if (shouldUpsertMessages(

@@ -23,12 +23,16 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDraftMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -44,6 +48,7 @@ internal class QueryChannelsListenerStateTest {
     private lateinit var queryChannelsLogic: QueryChannelsLogic
     private lateinit var logicRegistry: LogicRegistry
     private lateinit var queryingChannelsFree: MutableStateFlow<Boolean>
+    private lateinit var mutableGlobalState: MutableGlobalState
     private lateinit var listener: QueryChannelsListenerState
 
     @BeforeEach
@@ -53,7 +58,8 @@ internal class QueryChannelsListenerStateTest {
             on { queryChannels(any<QueryChannelsRequest>()) } doReturn queryChannelsLogic
         }
         queryingChannelsFree = MutableStateFlow(true)
-        listener = QueryChannelsListenerState(logicRegistry, queryingChannelsFree)
+        mutableGlobalState = MutableGlobalState(randomString())
+        listener = QueryChannelsListenerState(logicRegistry, mutableGlobalState, queryingChannelsFree)
     }
 
     @Test
@@ -99,6 +105,27 @@ internal class QueryChannelsListenerStateTest {
             // Then
             verify(queryChannelsLogic, never()).applyResolvedSpec(any(), any())
         }
+
+    @Test
+    fun `onQueryChannelsResultWithPredefinedFilter adds the returned channel drafts to the global state`() = runTest {
+        val draftMessage = randomDraftMessage(parentId = null)
+        val result = Result.Success(
+            QueryChannelsResult(
+                channels = listOf(randomChannel(draftMessage = draftMessage), randomChannel(draftMessage = null)),
+                predefinedFilter = null,
+            ),
+        )
+
+        val request = QueryChannelsRequest(
+            filter = Filters.eq("type", "messaging"),
+            querySort = QuerySortByField.descByName("last_message_at"),
+            limit = 30,
+        )
+
+        listener.onQueryChannelsResultWithPredefinedFilter(result, request)
+
+        assertEquals(mapOf(draftMessage.cid to draftMessage), mutableGlobalState.channelDraftMessages.value)
+    }
 
     @Test
     fun `onQueryChannelsResultWithPredefinedFilter does not apply resolved spec on failure`() = runTest {

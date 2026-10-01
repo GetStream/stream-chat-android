@@ -1025,6 +1025,36 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `reconnect should add the drafts of the refreshed channels to the global state`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val channel = randomChannel(type = "messaging", id = "a", draftMessage = randomDraftMessage(parentId = null))
+            val activeState: ChannelState = mock {
+                on(it.cid) doReturn channel.cid
+                on(it.recoveryNeeded) doReturn false
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(logicRegistry.channel(any(), any())) doReturn mock<ChannelLogic>()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn listOf(activeState)
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = listOf(channel), predefinedFilter = null)),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(mutableGlobalState).updateChannelDrafts(listOf(channel))
+        }
+
+    @Test
     fun `on reconnect with multiple grouped queries should pass per-group limits and shared flags`() =
         runTest(testDispatcher) {
             val createdAt = localDate()
