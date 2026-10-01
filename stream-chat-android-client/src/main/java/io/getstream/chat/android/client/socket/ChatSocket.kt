@@ -241,19 +241,13 @@ internal open class ChatSocket(
             tokenManager.expireToken()
         }
 
-        when (error.serverErrorCode) {
-            ChatErrorCode.UNDEFINED_TOKEN.code,
-            ChatErrorCode.INVALID_TOKEN.code,
-            ChatErrorCode.API_KEY_NOT_FOUND.code,
-            ChatErrorCode.VALIDATION_ERROR.code,
-            ChatErrorCode.DUPLICATE_USERNAME_ERROR.code,
-            -> {
-                logger.d {
-                    "One unrecoverable error happened. Error: $error. Error code: ${error.serverErrorCode}"
-                }
-                chatSocketStateService.onUnrecoverableError(error)
+        if (error.isUnrecoverableConnectionError()) {
+            logger.d {
+                "One unrecoverable error happened. Error: $error. Error code: ${error.serverErrorCode}"
             }
-            else -> chatSocketStateService.onNetworkError(error)
+            chatSocketStateService.onUnrecoverableError(error)
+        } else {
+            chatSocketStateService.onNetworkError(error)
         }
     }
 
@@ -375,3 +369,17 @@ internal open class ChatSocket(
         private const val DEFAULT_CONNECTION_TIMEOUT = 60_000L
     }
 }
+
+private val unrecoverableConnectionErrorCodes = setOf(
+    ChatErrorCode.UNDEFINED_TOKEN.code,
+    ChatErrorCode.INVALID_TOKEN.code,
+    ChatErrorCode.API_KEY_NOT_FOUND.code,
+    ChatErrorCode.VALIDATION_ERROR.code,
+    ChatErrorCode.DUPLICATE_USERNAME_ERROR.code,
+)
+
+/**
+ * Whether this error permanently stops the socket from connecting, so retrying cannot succeed.
+ */
+internal fun Error.isUnrecoverableConnectionError(): Boolean =
+    this is Error.NetworkError && serverErrorCode in unrecoverableConnectionErrorCodes

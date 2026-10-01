@@ -246,6 +246,38 @@ internal class ChatClientConnectionTests {
     }
 
     @Test
+    fun `When the server rejects the connection, local data should be cleared`() = runCancellableTest {
+        val error = Error.NetworkError(
+            message = randomString(),
+            serverErrorCode = ChatErrorCode.API_KEY_NOT_FOUND.code,
+        )
+        val event = ErrorEvent(EventType.CONNECTION_ERROR, Date(), streamDateFormatter.format(Date()), error)
+
+        val deferred = (testCoroutines.scope + Job()).async { client.connectUser(user, jwt).await() }
+        fakeChatSocket.mockEventReceived(event)
+        val result = deferred.await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        verify(userCredentialStorage).clear()
+    }
+
+    @Test
+    fun `When there is a recoverable connection error, local data should be kept`() = runCancellableTest {
+        val error = Error.NetworkError(
+            message = randomString(),
+            serverErrorCode = ChatErrorCode.SOCKET_FAILURE.code,
+        )
+        val event = ErrorEvent(EventType.CONNECTION_ERROR, Date(), streamDateFormatter.format(Date()), error)
+
+        val deferred = (testCoroutines.scope + Job()).async { client.connectUser(user, jwt).await() }
+        fakeChatSocket.mockEventReceived(event)
+        val result = deferred.await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        verify(userCredentialStorage, never()).clear()
+    }
+
+    @Test
     fun `When there is an ongoing connection with the same user, an error should be propagated`() = runTest {
         userStateService.onSetUser(user, false)
 
@@ -373,12 +405,30 @@ internal class ChatClientConnectionTests {
 
     @Test
     fun `Given no connected user, calling disconnect should return error`() = runCancellableTest {
-        val flushPersistence = randomBoolean()
-        val result = client.disconnect(flushPersistence).await()
+        val result = client.disconnect(flushPersistence = false).await()
 
         result.shouldBeInstanceOf(Result.Failure::class)
         (result as Result.Failure).value.message `should be equal to`
             "ChatClient can't be disconnected because user wasn't connected previously"
+    }
+
+    @Test
+    fun `Given no connected user, calling disconnect with flushPersistence should clear local data`() = runCancellableTest {
+        val result = client.disconnect(flushPersistence = true).await()
+
+        result.shouldBeInstanceOf(Result.Success::class)
+        verify(userCredentialStorage).clear()
+    }
+
+    @Test
+    fun `Given a failed connection, calling disconnect with flushPersistence should clear local data`() = runCancellableTest {
+        client.connectUser(user, jwt, 1).await()
+        verify(userCredentialStorage, never()).clear()
+
+        val result = client.disconnect(flushPersistence = true).await()
+
+        result.shouldBeInstanceOf(Result.Success::class)
+        verify(userCredentialStorage).clear()
     }
 
     @Test
