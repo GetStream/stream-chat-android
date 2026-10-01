@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -2065,6 +2066,151 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given the input is empty When a draft arrives Then the draft is shown`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .get()
+        advanceUntilIdle()
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+        advanceUntilIdle()
+
+        assertEquals("draft text", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given the user is typing When a draft arrives Then the input is kept`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .get()
+        advanceUntilIdle()
+        controller.setMessageInput("typed text")
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+        advanceUntilIdle()
+
+        assertEquals("typed text", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a draft that never reached the input When the composer closes empty Then the draft is not deleted`() =
+        runTest {
+            val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenDraftFlows(channelDrafts = channelDrafts)
+                .givenChannelState()
+                .givenDraftMessageStubs()
+                .givenStopTyping()
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("typed text")
+            channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+            advanceUntilIdle()
+            controller.setMessageInput("")
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            verify(fixture.chatClient, never()).deleteDraftMessages(any(), any(), any())
+        }
+
+    @Test
+    fun `Given a shown draft When the user empties the input and the composer closes Then the draft is deleted`() =
+        runTest {
+            val draftMessage = DraftMessage(id = "draft", cid = CID, text = "draft text")
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(randomUser())
+                .givenDraftFlows(channelDrafts = MutableStateFlow(mapOf(CID to draftMessage)))
+                .givenChannelState()
+                .givenDraftMessageStubs()
+                .givenStopTyping()
+            val controller = fixture.get()
+            advanceUntilIdle()
+            controller.setMessageInput("")
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            verify(fixture.chatClient).deleteDraftMessages(CHANNEL_TYPE, CHANNEL_ID, draftMessage)
+        }
+
+    @Test
+    fun `Given a shown draft When it is deleted elsewhere Then the input is cleared`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text")))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .givenDraftMessageStubs()
+            .get()
+        advanceUntilIdle()
+
+        channelDrafts.value = mapOf()
+        advanceUntilIdle()
+
+        assertEquals("", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a thread with an empty input When a thread draft arrives Then the draft is shown`() = runTest {
+        val parentMessage = randomMessage(cid = CID)
+        val threadDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(threadDrafts = threadDrafts)
+            .givenChannelState()
+            .get(parentMessageId = parentMessage.id)
+        advanceUntilIdle()
+
+        threadDrafts.value = mapOf(
+            parentMessage.id to DraftMessage(id = "draft", cid = CID, text = "thread draft", parentId = parentMessage.id),
+        )
+        advanceUntilIdle()
+
+        assertEquals("thread draft", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a shown thread draft When it is deleted elsewhere Then the input is cleared`() = runTest {
+        val parentMessage = randomMessage(cid = CID)
+        val threadDraft = DraftMessage(id = "draft", cid = CID, text = "thread draft", parentId = parentMessage.id)
+        val threadDrafts = MutableStateFlow(mapOf(parentMessage.id to threadDraft))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(threadDrafts = threadDrafts)
+            .givenChannelState()
+            .givenDraftMessageStubs()
+            .get(parentMessageId = parentMessage.id)
+        advanceUntilIdle()
+
+        threadDrafts.value = mapOf()
+        advanceUntilIdle()
+
+        assertEquals("", controller.state.value.inputValue)
+    }
+
+    @Test
     fun `Given a stubbed thread When the loaded parent arrives Then the full message replaces the stub`() = runTest {
         // The composer starts with an id-only parent stub; when the list provides the fully loaded
         // parent it must replace the stub so state exposes the real message, not the placeholder.
@@ -3058,6 +3204,18 @@ internal class MessageComposerControllerTest {
                 (invocation.arguments[2] as DraftMessage).asCall()
             }
             whenever(chatClient.deleteDraftMessages(any(), any(), any())) doReturn Unit.asCall()
+        }
+
+        fun givenDraftFlows(
+            channelDrafts: StateFlow<Map<String, DraftMessage>> = MutableStateFlow(mapOf()),
+            threadDrafts: StateFlow<Map<String, DraftMessage>> = MutableStateFlow(mapOf()),
+        ) = apply {
+            whenever(globalState.channelDraftMessages) doReturn channelDrafts
+            whenever(globalState.threadDraftMessages) doReturn threadDrafts
+        }
+
+        fun givenStopTyping() = apply {
+            whenever(chatClient.stopTyping(any(), any(), anyOrNull())) doReturn mock<ChatEvent>().asCall()
         }
 
         fun givenGlobalState(

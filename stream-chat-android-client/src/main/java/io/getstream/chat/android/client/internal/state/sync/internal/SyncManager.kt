@@ -709,6 +709,7 @@ internal class SyncManager(
                         ?.let(logicRegistry::channel)
                         ?.updateDataForChannel(channel, channel.messages.size)
                 }
+                mutableGlobalState.updateChannelDrafts(foundChannels)
                 repos.storeStateForChannels(foundChannels)
                 val foundCids = foundChannels.mapTo(mutableSetOf(), Channel::cid)
                 val stillMissingChannelIds = missingChannelIds.filterNot { it.cid in foundCids }
@@ -785,6 +786,7 @@ internal class SyncManager(
                             ?.let(logicRegistry::channel)
                             ?.updateDataForChannel(channel, channel.messages.size)
                     }
+                    mutableGlobalState.updateChannelDrafts(foundChannels)
                     repos.storeStateForChannels(foundChannels)
                     foundChannels.mapTo(refreshedCids, Channel::cid)
                 }

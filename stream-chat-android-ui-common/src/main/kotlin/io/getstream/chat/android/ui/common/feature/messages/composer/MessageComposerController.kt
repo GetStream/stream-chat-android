@@ -452,20 +452,22 @@ public class MessageComposerController(
 
         if (config.draftMessageEnabled) {
             channelDraftMessages.onEach {
-                if (it[channelCid] == null &&
-                    !currentDraftId.isNullOrEmpty() &&
-                    _state.value.messageMode is MessageMode.Normal
-                ) {
-                    clearData()
+                val messageMode = _state.value.messageMode
+                if (messageMode !is MessageMode.Normal) return@onEach
+                val draftMessage = it[channelCid]
+                when {
+                    draftMessage == null && !currentDraftId.isNullOrEmpty() -> clearData()
+                    draftMessage != null && canShowArrivedDraft() -> fetchDraftMessage(messageMode)
                 }
             }.launchIn(scope)
 
             threadDraftMessages.onEach {
-                if (it[parentMessageId] == null &&
-                    !currentDraftId.isNullOrEmpty() &&
-                    _state.value.messageMode is MessageMode.MessageThread
-                ) {
-                    clearData()
+                val messageMode = _state.value.messageMode
+                if (messageMode !is MessageMode.MessageThread) return@onEach
+                val draftMessage = it[parentMessageId]
+                when {
+                    draftMessage == null && !currentDraftId.isNullOrEmpty() -> clearData()
+                    draftMessage != null && canShowArrivedDraft() -> fetchDraftMessage(messageMode)
                 }
             }.launchIn(scope)
         }
@@ -540,13 +542,15 @@ public class MessageComposerController(
 
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
         if (!config.draftMessageEnabled) return
+        val isDraftShown = currentDraftId != null
         currentDraftId = null
         val inputText = _messageInput.value.text
         // In legacy mode the slash + name + args is encoded inside `text`, so command/args fields
         // would duplicate what's already there and confuse cross-SDK readers.
         val activeCommand = _state.value.activeCommand.takeIf { config.activeCommandEnabled }
         if (inputText.isEmpty() && activeCommand == null) {
-            clearDraftMessage(messageMode)
+            // Only an emptied draft is deleted: one that never reached the input is still the user's
+            if (isDraftShown) clearDraftMessage(messageMode)
             return
         }
         getDraftMessageOrEmpty(messageMode).let {
@@ -570,8 +574,9 @@ public class MessageComposerController(
         // doesn't block the new mode's reply-action restore or leak into a later cancel-restore.
         _state.update { it.copy(activeCommand = null) }
         discardCommandStash()
-        getDraftMessageOrEmpty(messageMode).let { draftMessage ->
-            currentDraftId = draftMessage.id
+        val storedDraftMessage = getDraftMessage(messageMode)
+        currentDraftId = storedDraftMessage?.id
+        (storedDraftMessage ?: messageMode.emptyDraftMessage()).let { draftMessage ->
             // Restore the reply action first so command-availability checks see the right action.
             draftMessage.replyMessage
                 ?.let { performMessageAction(Reply(it)) }
@@ -1517,6 +1522,13 @@ public class MessageComposerController(
         val draftMessageEnabled: Boolean = true,
         val activeCommandEnabled: Boolean = false,
     )
+
+    /** A draft that arrives after the composer opened is shown only while the user has not started composing. */
+    private fun canShowArrivedDraft(): Boolean =
+        currentDraftId == null &&
+            _messageInput.value.text.isEmpty() &&
+            _selectedAttachments.value.isEmpty() &&
+            _state.value.activeCommand == null
 
     private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
         getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()
