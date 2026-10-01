@@ -147,11 +147,12 @@ internal class DatabaseChannelRepository(
     }
 
     private fun cacheChannel(vararg channels: Channel) {
-        channels.forEach { channelCache.put(it.cid, it) }
+        cacheChannel(channels.asList())
     }
 
     private fun cacheChannel(channels: Collection<Channel>) {
-        channels.forEach { channelCache.put(it.cid, it) }
+        // Live locations are not cached, for the same reason they are not stored (see ChannelEntity).
+        channels.forEach { channelCache.put(it.cid, it.copy(activeLiveLocations = emptyList())) }
     }
 
     /**
