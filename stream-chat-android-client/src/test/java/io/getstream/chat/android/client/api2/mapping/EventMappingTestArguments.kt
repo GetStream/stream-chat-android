@@ -36,15 +36,11 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventD
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -138,11 +134,14 @@ import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedEx
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
 import io.getstream.chat.android.network.models.NotificationInvitedEvent as GeneratedNotificationInvitedEvent
+import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -216,6 +215,7 @@ internal object EventMappingTestArguments {
     private val GENERATED_CHANNEL = Mother.randomChannelResponse(id = CHANNEL_ID, type = CHANNEL_TYPE)
     private val PARTIAL_MEMBER = Mother.randomChannelMemberPartialResponse()
     private val PARENT_ID = randomString()
+    private val TEAM = randomString()
     private val WATCHER_COUNT = positiveRandomInt()
     private val GENERATED_MESSAGE = Mother.randomMessageResponse(cid = CID)
     private val POLL = Mother.randomPollResponseData()
@@ -392,12 +392,17 @@ internal object EventMappingTestArguments {
         connection_id = CONNECTION_ID,
     )
 
-    private val markAllReadDto = MarkAllReadEventDto(
+    private val markAllReadEvent = GeneratedNotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
-        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        unreadCount = TOTAL_UNREAD_COUNT,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
+
+    private val markAllReadDto = GeneratedEventDto(markAllReadEvent)
 
     private val memberAddedEvent = GeneratedMemberAddedEvent(
         type = EventType.MEMBER_ADDED,
@@ -444,26 +449,32 @@ internal object EventMappingTestArguments {
         deleted_for_me = DELETED_FOR_ME,
     )
 
-    private val messageDeliveredDto = MessageDeliveredEventDto(
+    private val messageDeliveredEvent = GeneratedMessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        last_delivered_at = EXACT_DATE,
-        last_delivered_message_id = LAST_DELIVERED_MESSAGE_ID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        lastDeliveredAt = DATE_STRING,
+        lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
     )
 
-    private val messageReadDto = MessageReadEventDto(
+    private val messageDeliveredDto = GeneratedEventDto(messageDeliveredEvent)
+
+    private val messageReadEvent = GeneratedMessageReadEvent(
         type = EventType.MESSAGE_READ,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        last_read_message_id = LAST_READ_MESSAGE_ID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = COMMON_USER,
+        thread = THREAD_INFO,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        team = TEAM,
     )
+
+    private val messageReadDto = GeneratedEventDto(messageReadEvent)
 
     private val messageUpdatedDto = MessageUpdatedEventDto(
         type = EventType.MESSAGE_UPDATED,
@@ -548,16 +559,25 @@ internal object EventMappingTestArguments {
 
     private val notificationInvitedDto = GeneratedEventDto(notificationInvitedEvent)
 
-    private val notificationMarkReadDto = NotificationMarkReadEventDto(
+    private val notificationMarkReadEvent = GeneratedNotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        last_read_message_id = LAST_READ_MESSAGE_ID,
-        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        unreadCount = TOTAL_UNREAD_COUNT,
+        threadId = PARENT_ID,
+        thread = THREAD_INFO,
+        unreadThreads = UNREAD_THREADS,
+        unreadThreadMessages = UNREAD_THREAD_MESSAGES,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
+
+    private val notificationMarkReadDto = GeneratedEventDto(notificationMarkReadEvent)
 
     private val notificationMarkUnreadDto = NotificationMarkUnreadEventDto(
         type = EventType.NOTIFICATION_MARK_UNREAD,
@@ -1091,11 +1111,13 @@ internal object EventMappingTestArguments {
     )
 
     private val markAllRead = MarkAllReadEvent(
-        type = markAllReadDto.type,
-        createdAt = markAllReadDto.created_at.date,
-        rawCreatedAt = markAllReadDto.created_at.rawDate,
-        user = with(domainMapping) { markAllReadDto.user.toDomain() },
-        groupedUnreadChannels = markAllReadDto.grouped_unread_channels,
+        type = EventType.NOTIFICATION_MARK_READ,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val memberAdded = MemberAddedEvent(
@@ -1147,26 +1169,27 @@ internal object EventMappingTestArguments {
 
     private val messageDelivered = MessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
-        createdAt = EXACT_DATE.date,
-        rawCreatedAt = EXACT_DATE.rawDate,
-        user = with(domainMapping) { messageDeliveredDto.user.toDomain() },
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
-        lastDeliveredAt = EXACT_DATE.date,
+        lastDeliveredAt = GENERATED_EXACT_DATE.date,
         lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
     )
 
     private val messageRead = MessageReadEvent(
-        type = messageReadDto.type,
-        createdAt = messageReadDto.created_at.date,
-        rawCreatedAt = messageReadDto.created_at.rawDate,
-        cid = messageReadDto.cid,
-        channelType = messageReadDto.channel_type,
-        channelId = messageReadDto.channel_id,
-        user = with(domainMapping) { messageReadDto.user.toDomain() },
-        lastReadMessageId = messageReadDto.last_read_message_id,
-        team = messageReadDto.team,
+        type = EventType.MESSAGE_READ,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        thread = with(domainMapping) { THREAD_INFO.toDomain() },
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        team = TEAM,
     )
 
     private val messageUpdated = MessageUpdatedEvent(
@@ -1262,15 +1285,21 @@ internal object EventMappingTestArguments {
     )
 
     private val notificationMarkRead = NotificationMarkReadEvent(
-        type = notificationMarkReadDto.type,
-        createdAt = notificationMarkReadDto.created_at.date,
-        rawCreatedAt = notificationMarkReadDto.created_at.rawDate,
-        user = with(domainMapping) { notificationMarkReadDto.user.toDomain() },
-        cid = notificationMarkReadDto.cid,
-        channelType = notificationMarkReadDto.channel_type,
-        channelId = notificationMarkReadDto.channel_id,
-        lastReadMessageId = notificationMarkReadDto.last_read_message_id,
-        groupedUnreadChannels = notificationMarkReadDto.grouped_unread_channels,
+        type = EventType.NOTIFICATION_MARK_READ,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        threadId = PARENT_ID,
+        thread = with(domainMapping) { THREAD_INFO.toDomain() },
+        unreadThreads = UNREAD_THREADS,
+        unreadThreadMessages = UNREAD_THREAD_MESSAGES,
+        lastReadMessageId = LAST_READ_MESSAGE_ID,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationMarkUnread = NotificationMarkUnreadEvent(

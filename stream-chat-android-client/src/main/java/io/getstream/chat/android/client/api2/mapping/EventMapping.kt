@@ -37,15 +37,11 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventD
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -135,11 +131,14 @@ import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
 import io.getstream.chat.android.network.models.NotificationInvitedEvent as GeneratedNotificationInvitedEvent
+import io.getstream.chat.android.network.models.NotificationMarkReadEvent as GeneratedNotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -188,14 +187,10 @@ internal class EventMapping(
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
             is HealthEventDto -> toDomain()
-            is MarkAllReadEventDto -> toDomain()
             is MessageDeletedEventDto -> toDomain()
-            is MessageDeliveredEventDto -> toDomain()
-            is MessageReadEventDto -> toDomain()
             is MessageUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
             is NotificationChannelMutesUpdatedEventDto -> toDomain()
-            is NotificationMarkReadEventDto -> toDomain()
             is NotificationMarkUnreadEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
             is NotificationMutesUpdatedEventDto -> toDomain()
@@ -343,36 +338,36 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [MessageDeliveredEventDto] to [MessageDeliveredEvent].
+     * Transforms the generated [GeneratedMessageDeliveredEvent] to [MessageDeliveredEvent].
      */
-    private fun MessageDeliveredEventDto.toDomain() = with(domainMapping) {
+    private fun GeneratedMessageDeliveredEvent.toDomain(): MessageDeliveredEvent = with(domainMapping) {
         MessageDeliveredEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            lastDeliveredAt = last_delivered_at.date,
-            lastDeliveredMessageId = last_delivered_message_id,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = requireNotNull(cid),
+            channelType = requireNotNull(channelType),
+            channelId = requireNotNull(channelId),
+            lastDeliveredAt = requireNotNull(lastDeliveredAt?.let(ExactDate::parseOrNull)).date,
+            lastDeliveredMessageId = requireNotNull(lastDeliveredMessageId),
         )
     }
 
     /**
-     * Transforms [MessageReadEventDto] to [MessageReadEvent].
+     * Transforms the generated [GeneratedMessageReadEvent] to [MessageReadEvent].
      */
-    private fun MessageReadEventDto.toDomain(): MessageReadEvent = with(domainMapping) {
+    private fun GeneratedMessageReadEvent.toDomain(): MessageReadEvent = with(domainMapping) {
         MessageReadEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = requireNotNull(cid),
+            channelType = requireNotNull(channelType),
+            channelId = requireNotNull(channelId),
             thread = thread?.toDomain(),
-            lastReadMessageId = last_read_message_id,
+            lastReadMessageId = lastReadMessageId,
             team = team,
         )
     }
@@ -455,25 +450,36 @@ internal class EventMapping(
         }
 
     /**
-     * Transforms [NotificationMarkReadEventDto] to [NotificationMarkReadEvent].
+     * Transforms the generated [GeneratedNotificationMarkReadEvent] to [NotificationMarkReadEvent], or to
+     * [MarkAllReadEvent] when it carries no channel, which is how the backend sends a mark-all-read.
      */
-    private fun NotificationMarkReadEventDto.toDomain(): NotificationMarkReadEvent = with(domainMapping) {
+    private fun GeneratedNotificationMarkReadEvent.toDomain(): ChatEvent = with(domainMapping) {
+        val user = requireNotNull(user).toDomain()
+        val cid = cid ?: return MarkAllReadEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = user,
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            groupedUnreadChannels = groupedUnreadChannels,
+        )
         NotificationMarkReadEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = user,
             cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            threadId = thread_id,
+            channelType = requireNotNull(channelType),
+            channelId = requireNotNull(channelId),
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            threadId = threadId,
             thread = thread?.toDomain(),
-            unreadThreads = unread_threads,
-            unreadThreadMessages = unread_thread_messages,
-            lastReadMessageId = last_read_message_id,
-            groupedUnreadChannels = grouped_unread_channels,
+            unreadThreads = unreadThreads,
+            unreadThreadMessages = unreadThreadMessages,
+            lastReadMessageId = lastReadMessageId,
+            groupedUnreadChannels = groupedUnreadChannels,
         )
     }
 
@@ -497,21 +503,6 @@ internal class EventMapping(
             unreadMessages = unread_messages,
             threadId = thread_id,
             unreadThreads = unread_threads,
-            groupedUnreadChannels = grouped_unread_channels,
-        )
-    }
-
-    /**
-     * Transforms [MarkAllReadEventDto] to [MarkAllReadEvent].
-     */
-    private fun MarkAllReadEventDto.toDomain(): MarkAllReadEvent = with(domainMapping) {
-        MarkAllReadEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
             groupedUnreadChannels = grouped_unread_channels,
         )
     }
@@ -707,6 +698,9 @@ internal class EventMapping(
         is GeneratedNotificationNewMessageEvent -> toDomain()
         is GeneratedThreadUpdatedEvent -> toDomain()
         is GeneratedUserDeletedEvent -> toDomain()
+        is GeneratedMessageReadEvent -> toDomain()
+        is GeneratedMessageDeliveredEvent -> toDomain()
+        is GeneratedNotificationMarkReadEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
