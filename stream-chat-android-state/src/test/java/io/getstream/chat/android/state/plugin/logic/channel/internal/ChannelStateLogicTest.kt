@@ -41,6 +41,7 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateAfter
 import io.getstream.chat.android.randomDateBefore
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
@@ -259,6 +260,16 @@ internal class ChannelStateLogicTest {
             verify(mutableState).upsertMembers(channel.members)
             verify(mutableState).setLoading(false)
         }
+    }
+
+    @Test
+    fun `given the query returns another member's live location, it should reach the global state`() {
+        val location = randomLocation(userId = randomString(), endAt = Date(System.currentTimeMillis() + 60_000))
+        val channel = randomChannel(activeLiveLocations = listOf(location))
+
+        channelStateLogic.propagateChannelQuery(channel, QueryChannelRequest().withMessages(30))
+
+        spyMutableGlobalState.activeLiveLocations.value `should be equal to` listOf(location)
     }
 
     @Test
