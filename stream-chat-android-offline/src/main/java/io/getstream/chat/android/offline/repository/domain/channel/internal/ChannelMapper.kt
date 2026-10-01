@@ -97,7 +97,7 @@ internal suspend fun ChannelEntity.toModel(
     lastMessageAt = lastMessageAt,
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
-    draftMessage = getDraftMessage(channelId),
+    draftMessage = getDraftMessage(cid),
     // Not restored: stopping a live location does not update the stored list, so it could bring back a stopped one.
     activeLiveLocations = emptyList(),
     messageCount = messageCount,

@@ -499,20 +499,20 @@ public class MessageComposerController(
 
         if (config.isDraftMessageEnabled) {
             channelDraftMessages.onEach {
-                if (it[channelCid] == null &&
-                    !currentDraftId.isNullOrEmpty() &&
-                    messageMode.value is MessageMode.Normal
-                ) {
-                    clearData()
+                if (messageMode.value !is MessageMode.Normal) return@onEach
+                val draftMessage = it[channelCid]
+                when {
+                    draftMessage == null && !currentDraftId.isNullOrEmpty() -> clearData()
+                    draftMessage != null && canShowArrivedDraft() -> fetchDraftMessage(messageMode.value)
                 }
             }.launchIn(scope)
 
             threadDraftMessages.onEach {
-                if (it[parentMessageId] == null &&
-                    !currentDraftId.isNullOrEmpty() &&
-                    messageMode.value is MessageMode.MessageThread
-                ) {
-                    clearData()
+                if (messageMode.value !is MessageMode.MessageThread) return@onEach
+                val draftMessage = it[parentMessageId]
+                when {
+                    draftMessage == null && !currentDraftId.isNullOrEmpty() -> clearData()
+                    draftMessage != null && canShowArrivedDraft() -> fetchDraftMessage(messageMode.value)
                 }
             }.launchIn(scope)
         }
@@ -539,9 +539,11 @@ public class MessageComposerController(
 
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
+        val isDraftShown = currentDraftId != null
         currentDraftId = null
         when (val messageText = messageInput.value.text) {
-            "" -> clearDraftMessage(messageMode)
+            // Only an emptied draft is deleted: one that never reached the input is still the user's
+            "" -> if (isDraftShown) clearDraftMessage(messageMode)
             else -> {
                 getDraftMessageOrEmpty(messageMode).let {
                     chatClient.createDraftMessage(
@@ -560,8 +562,9 @@ public class MessageComposerController(
 
     private fun fetchDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
-        getDraftMessageOrEmpty(messageMode).let { draftMessage ->
-            currentDraftId = draftMessage.id
+        val storedDraftMessage = getDraftMessage(messageMode)
+        currentDraftId = storedDraftMessage?.id
+        (storedDraftMessage ?: messageMode.emptyDraftMessage()).let { draftMessage ->
             setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
             setAlsoSendToChannel(draftMessage.showInChannel)
             draftMessage.replyMessage
@@ -1153,6 +1156,10 @@ public class MessageComposerController(
         val isLinkPreviewEnabled: Boolean = false,
         val isDraftMessageEnabled: Boolean = false,
     )
+
+    /** A draft that arrives after the composer opened is shown only while the user has not started composing. */
+    private fun canShowArrivedDraft(): Boolean =
+        currentDraftId == null && messageInput.value.text.isEmpty() && selectedAttachments.value.isEmpty()
 
     private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
         getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()

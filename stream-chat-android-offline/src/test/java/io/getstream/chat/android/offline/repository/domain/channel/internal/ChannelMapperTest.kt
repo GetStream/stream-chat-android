@@ -215,7 +215,7 @@ internal class ChannelMapperTest {
                 if (messageId == lastMessage.id) lastMessage else null
             },
             getDraftMessage = { cid ->
-                if (cid == channelEntity.channelId) draftMessage else null
+                if (cid == channelEntity.cid) draftMessage else null
             },
         )
         assertEquals(expectedChannel, result)

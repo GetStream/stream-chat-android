@@ -40,6 +40,7 @@ import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateAfter
 import io.getstream.chat.android.randomDateBefore
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
@@ -270,6 +271,26 @@ internal class ChannelStateLogicTest {
         channelStateLogic.propagateChannelQuery(channel, QueryChannelRequest().withMessages(30))
 
         spyMutableGlobalState.activeLiveLocations.value `should be equal to` listOf(location)
+    }
+
+    @Test
+    fun `given the channel carries a draft, it should reach the global state`() {
+        val draftMessage = randomDraftMessage(cid = randomCID(), parentId = null)
+        val channel = randomChannel(draftMessage = draftMessage)
+
+        channelStateLogic.propagateChannelQuery(channel, QueryChannelRequest().withMessages(30))
+
+        spyMutableGlobalState.channelDraftMessages.value `should be equal to` mapOf(draftMessage.cid to draftMessage)
+    }
+
+    @Test
+    fun `given the channel carries no draft, it should keep the draft in the global state`() {
+        val draftMessage = randomDraftMessage(cid = randomCID(), parentId = null)
+        spyMutableGlobalState.updateDraftMessage(draftMessage)
+
+        channelStateLogic.propagateChannelQuery(randomChannel(draftMessage = null), QueryChannelRequest().withMessages(30))
+
+        spyMutableGlobalState.channelDraftMessages.value `should be equal to` mapOf(draftMessage.cid to draftMessage)
     }
 
     @Test

@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -55,6 +56,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -297,6 +300,19 @@ internal class MessageComposerControllerTests {
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
         }
 
+        fun givenChannelDrafts(channelDrafts: StateFlow<Map<String, DraftMessage>>) = apply {
+            whenever(globalState.channelDraftMessages) doReturn channelDrafts
+            whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(mapOf())
+        }
+
+        fun givenDraftMessageCalls() = apply {
+            whenever(chatClient.createDraftMessage(any(), any(), any())) doAnswer {
+                it.getArgument<DraftMessage>(2).asCall()
+            }
+            whenever(chatClient.deleteDraftMessages(any(), any(), any())) doReturn Unit.asCall()
+            whenever(chatClient.stopTyping(any(), any(), anyOrNull())) doReturn mock<ChatEvent>().asCall()
+        }
+
         fun givenSendMessage(message: Message) = apply {
             whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
@@ -441,6 +457,94 @@ internal class MessageComposerControllerTests {
 
     // endregion
 
+    // region Draft messages
+
+    @Test
+    fun `Given the input is empty When a draft arrives Then the draft is shown`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenChannelDrafts(channelDrafts)
+            .givenChannelState()
+            .get(config = DRAFTS_ENABLED)
+        advanceUntilIdle()
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` "draft text"
+    }
+
+    @Test
+    fun `Given the user is typing When a draft arrives Then the input is kept`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenChannelDrafts(channelDrafts)
+            .givenChannelState()
+            .get(config = DRAFTS_ENABLED)
+        advanceUntilIdle()
+        controller.setMessageInput("typed text")
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` "typed text"
+    }
+
+    @Test
+    fun `Given a draft that never reached the input When the composer closes empty Then the draft is not deleted`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+            val controller = Fixture(chatClient = chatClient)
+                .givenAppSettings(mock())
+                .givenAudioPlayer(mock())
+                .givenClientState(User("uid1"))
+                .givenChannelDrafts(channelDrafts)
+                .givenChannelState()
+                .givenDraftMessageCalls()
+                .get(config = DRAFTS_ENABLED)
+            advanceUntilIdle()
+            controller.setMessageInput("typed text")
+            channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+            advanceUntilIdle()
+            controller.setMessageInput("")
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            verify(chatClient, never()).deleteDraftMessages(any(), any(), any())
+        }
+
+    @Test
+    fun `Given a shown draft When the user empties the input and the composer closes Then the draft is deleted`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val draftMessage = DraftMessage(id = "draft", cid = CID, text = "draft text")
+            val controller = Fixture(chatClient = chatClient)
+                .givenAppSettings(mock())
+                .givenAudioPlayer(mock())
+                .givenClientState(User("uid1"))
+                .givenChannelDrafts(MutableStateFlow(mapOf(CID to draftMessage)))
+                .givenChannelState()
+                .givenDraftMessageCalls()
+                .get(config = DRAFTS_ENABLED)
+            advanceUntilIdle()
+            controller.setMessageInput("")
+
+            controller.onCleared()
+            advanceUntilIdle()
+
+            verify(chatClient).deleteDraftMessages(CHANNEL_TYPE, CHANNEL_ID, draftMessage)
+        }
+
+    // endregion
+
     // region Post-send mark read
 
     @Test
@@ -532,5 +636,6 @@ internal class MessageComposerControllerTests {
         private const val CHANNEL_TYPE = "messaging"
         private const val CHANNEL_ID = "123"
         private const val CID = "messaging:123"
+        private val DRAFTS_ENABLED = MessageComposerController.Config(isDraftMessageEnabled = true)
     }
 }
