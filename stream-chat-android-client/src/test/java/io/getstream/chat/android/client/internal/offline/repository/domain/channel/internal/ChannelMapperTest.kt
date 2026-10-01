@@ -18,19 +18,16 @@ package io.getstream.chat.android.client.internal.offline.repository.domain.chan
 
 import io.getstream.chat.android.client.MockChatClientBuilder
 import io.getstream.chat.android.client.internal.offline.randomChannelEntity
-import io.getstream.chat.android.client.internal.offline.randomLocationEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.toModel
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDraftMessage
-import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -54,10 +51,6 @@ internal class ChannelMapperTest {
             createdAt = randomDate(),
         )
         val membership = randomMember()
-        val activeLiveLocations = listOf(
-            randomLocation(),
-            randomLocation(),
-        )
 
         val channel = randomChannel(
             createdBy = createdByUser,
@@ -66,7 +59,6 @@ internal class ChannelMapperTest {
             read = reads,
             messages = listOf(lastMessage),
             membership = membership,
-            activeLiveLocations = activeLiveLocations.map { it },
         )
 
         val expectedChannelEntity = ChannelEntity(
@@ -98,7 +90,6 @@ internal class ChannelMapperTest {
             team = channel.team,
             ownCapabilities = channel.ownCapabilities,
             membership = membership.toEntity(),
-            activeLiveLocations = activeLiveLocations.map { it.toEntity() },
             messageCount = channel.messageCount,
         )
 
@@ -225,19 +216,5 @@ internal class ChannelMapperTest {
             },
         )
         assertEquals(expectedChannel, result)
-    }
-
-    @Test
-    fun `Should not restore the stored active live locations`() = runTest {
-        MockChatClientBuilder().build()
-        val channelEntity = randomChannelEntity(activeLiveLocations = listOf(randomLocationEntity()))
-
-        val result = channelEntity.toModel(
-            getUser = { randomUser(id = it) },
-            getMessage = { null },
-            getDraftMessage = { null },
-        )
-
-        assertEquals(emptyList<Location>(), result.activeLiveLocations)
     }
 }

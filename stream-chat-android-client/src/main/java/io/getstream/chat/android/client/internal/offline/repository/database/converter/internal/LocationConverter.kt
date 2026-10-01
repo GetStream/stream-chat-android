@@ -25,9 +25,6 @@ internal class LocationConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val entityAdapter = moshi.adapter<LocationEntity>()
 
-    @OptIn(ExperimentalStdlibApi::class)
-    private val entityListAdapter = moshi.adapter<List<LocationEntity>>()
-
     @TypeConverter
     fun stringToLocation(json: String?): LocationEntity? =
         json?.let(entityAdapter::fromJson)
@@ -35,16 +32,4 @@ internal class LocationConverter {
     @TypeConverter
     fun locationToString(entity: LocationEntity?): String? =
         entity?.let(entityAdapter::toJson)
-
-    @TypeConverter
-    fun stringToLocationList(json: String?): List<LocationEntity>? =
-        if (json.isNullOrEmpty() || json == "null") {
-            emptyList()
-        } else {
-            entityListAdapter.fromJson(json)
-        }
-
-    @TypeConverter
-    fun locationListToString(entities: List<LocationEntity>?): String? =
-        entities?.let(entityListAdapter::toJson)
 }

@@ -65,7 +65,6 @@ internal fun Channel.toEntity(): ChannelEntity {
         team = team,
         ownCapabilities = ownCapabilities,
         membership = membership?.toEntity(),
-        activeLiveLocations = activeLiveLocations.map { it.toEntity() },
         messageCount = messageCount,
     )
 }
@@ -104,7 +103,5 @@ internal suspend fun ChannelEntity.toModel(
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
     draftMessage = getDraftMessage(channelId),
-    // Not restored: stopping a live location does not update the stored list, so it could bring back a stopped one.
-    activeLiveLocations = emptyList(),
     messageCount = messageCount,
 ).syncUnreadCountWithReads()
