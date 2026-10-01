@@ -575,7 +575,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
         groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
@@ -585,7 +585,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
@@ -594,9 +594,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
@@ -605,9 +605,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInvitedEvent = NotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
@@ -616,7 +616,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
     )
     private val notificationMarkReadEvent = NotificationMarkReadEvent(

@@ -43,12 +43,7 @@ import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
@@ -143,6 +138,11 @@ import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedEx
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
+import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
+import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
+import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
+import io.getstream.chat.android.network.models.NotificationInvitedEvent as GeneratedNotificationInvitedEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -485,15 +485,17 @@ internal object EventMappingTestArguments {
         member = MEMBER,
     )
 
-    private val notificationChannelDeletedDto = NotificationChannelDeletedEventDto(
+    private val notificationChannelDeletedEvent = GeneratedNotificationChannelDeletedEvent(
         type = EventType.NOTIFICATION_CHANNEL_DELETED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
+        channel = GENERATED_CHANNEL,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
+
+    private val notificationChannelDeletedDto = GeneratedEventDto(notificationChannelDeletedEvent)
 
     private val notificationChannelMutesUpdatesDto = NotificationChannelMutesUpdatedEventDto(
         type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
@@ -501,47 +503,50 @@ internal object EventMappingTestArguments {
         me = OWN_USER,
     )
 
-    private val notificationChannelTruncatedDto = NotificationChannelTruncatedEventDto(
+    private val notificationChannelTruncatedEvent = GeneratedNotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
+        channel = GENERATED_CHANNEL,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val notificationInviteAcceptedDto = NotificationInviteAcceptedEventDto(
+    private val notificationChannelTruncatedDto = GeneratedEventDto(notificationChannelTruncatedEvent)
+
+    private val notificationInviteAcceptedEvent = GeneratedNotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
         member = MEMBER,
-        channel = CHANNEL,
     )
 
-    private val notificationInviteRejectedDto = NotificationInviteRejectedEventDto(
+    private val notificationInviteAcceptedDto = GeneratedEventDto(notificationInviteAcceptedEvent)
+
+    private val notificationInviteRejectedEvent = GeneratedNotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
         member = MEMBER,
-        channel = CHANNEL,
     )
 
-    private val notificationInvitedDto = NotificationInvitedEventDto(
+    private val notificationInviteRejectedDto = GeneratedEventDto(notificationInviteRejectedEvent)
+
+    private val notificationInvitedEvent = GeneratedNotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
         member = MEMBER,
     )
+
+    private val notificationInvitedDto = GeneratedEventDto(notificationInvitedEvent)
 
     private val notificationMarkReadDto = NotificationMarkReadEventDto(
         type = EventType.NOTIFICATION_MARK_READ,
@@ -1189,16 +1194,16 @@ internal object EventMappingTestArguments {
     )
 
     private val notificationChannelDeleted = NotificationChannelDeletedEvent(
-        type = notificationChannelDeletedDto.type,
-        createdAt = notificationChannelDeletedDto.created_at.date,
-        rawCreatedAt = notificationChannelDeletedDto.created_at.rawDate,
-        cid = notificationChannelDeletedDto.cid,
-        channelType = notificationChannelDeletedDto.channel_type,
-        channelId = notificationChannelDeletedDto.channel_id,
-        channel = with(domainMapping) {
-            notificationChannelDeletedDto.channel.toDomain()
-        },
-        groupedUnreadChannels = notificationChannelDeletedDto.grouped_unread_channels,
+        type = notificationChannelDeletedEvent.type,
+        createdAt = notificationChannelDeletedEvent.createdAt.date,
+        rawCreatedAt = notificationChannelDeletedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationChannelMutesUpdates = NotificationChannelMutesUpdatedEvent(
@@ -1209,55 +1214,51 @@ internal object EventMappingTestArguments {
     )
 
     private val notificationChannelTruncated = NotificationChannelTruncatedEvent(
-        type = notificationChannelTruncatedDto.type,
-        createdAt = notificationChannelTruncatedDto.created_at.date,
-        rawCreatedAt = notificationChannelTruncatedDto.created_at.rawDate,
-        cid = notificationChannelTruncatedDto.cid,
-        channelType = notificationChannelTruncatedDto.channel_type,
-        channelId = notificationChannelTruncatedDto.channel_id,
-        channel = with(domainMapping) {
-            notificationChannelTruncatedDto.channel.toDomain()
-        },
-        groupedUnreadChannels = notificationChannelTruncatedDto.grouped_unread_channels,
+        type = notificationChannelTruncatedEvent.type,
+        createdAt = notificationChannelTruncatedEvent.createdAt.date,
+        rawCreatedAt = notificationChannelTruncatedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val notificationInviteAccepted = NotificationInviteAcceptedEvent(
-        type = notificationInviteAcceptedDto.type,
-        createdAt = notificationInviteAcceptedDto.created_at.date,
-        rawCreatedAt = notificationInviteAcceptedDto.created_at.rawDate,
-        cid = notificationInviteAcceptedDto.cid,
-        channelType = notificationInviteAcceptedDto.channel_type,
-        channelId = notificationInviteAcceptedDto.channel_id,
-        user = with(domainMapping) { notificationInviteAcceptedDto.user.toDomain() },
-        member = with(domainMapping) { notificationInviteAcceptedDto.member.toDomain() },
-        channel = with(domainMapping) {
-            notificationInviteAcceptedDto.channel.toDomain()
-        },
+        type = notificationInviteAcceptedEvent.type,
+        createdAt = notificationInviteAcceptedEvent.createdAt.date,
+        rawCreatedAt = notificationInviteAcceptedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
     )
 
     private val notificationInviteRejected = NotificationInviteRejectedEvent(
-        type = notificationInviteRejectedDto.type,
-        createdAt = notificationInviteRejectedDto.created_at.date,
-        rawCreatedAt = notificationInviteRejectedDto.created_at.rawDate,
-        cid = notificationInviteRejectedDto.cid,
-        channelType = notificationInviteRejectedDto.channel_type,
-        channelId = notificationInviteRejectedDto.channel_id,
-        user = with(domainMapping) { notificationInviteRejectedDto.user.toDomain() },
-        member = with(domainMapping) { notificationInviteRejectedDto.member.toDomain() },
-        channel = with(domainMapping) {
-            notificationInviteRejectedDto.channel.toDomain()
-        },
+        type = notificationInviteRejectedEvent.type,
+        createdAt = notificationInviteRejectedEvent.createdAt.date,
+        rawCreatedAt = notificationInviteRejectedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
     )
 
     private val notificationInvited = NotificationInvitedEvent(
-        type = notificationInvitedDto.type,
-        createdAt = notificationInvitedDto.created_at.date,
-        rawCreatedAt = notificationInvitedDto.created_at.rawDate,
-        cid = notificationInvitedDto.cid,
-        channelType = notificationInvitedDto.channel_type,
-        channelId = notificationInvitedDto.channel_id,
-        user = with(domainMapping) { notificationInvitedDto.user.toDomain() },
-        member = with(domainMapping) { notificationInvitedDto.member.toDomain() },
+        type = notificationInvitedEvent.type,
+        createdAt = notificationInvitedEvent.createdAt.date,
+        rawCreatedAt = notificationInvitedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
     )
 
     private val notificationMarkRead = NotificationMarkReadEvent(

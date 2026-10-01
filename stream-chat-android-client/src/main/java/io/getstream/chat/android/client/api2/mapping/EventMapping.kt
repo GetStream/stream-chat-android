@@ -44,12 +44,7 @@ import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
@@ -140,6 +135,11 @@ import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
+import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
+import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
+import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
+import io.getstream.chat.android.network.models.NotificationInvitedEvent as GeneratedNotificationInvitedEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -194,12 +194,7 @@ internal class EventMapping(
             is MessageReadEventDto -> toDomain()
             is MessageUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
-            is NotificationChannelDeletedEventDto -> toDomain()
             is NotificationChannelMutesUpdatedEventDto -> toDomain()
-            is NotificationChannelTruncatedEventDto -> toDomain()
-            is NotificationInviteAcceptedEventDto -> toDomain()
-            is NotificationInviteRejectedEventDto -> toDomain()
-            is NotificationInvitedEventDto -> toDomain()
             is NotificationMarkReadEventDto -> toDomain()
             is NotificationMarkUnreadEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
@@ -447,24 +442,6 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationChannelDeletedEventDto] to [NotificationChannelDeletedEvent].
-     */
-    private fun NotificationChannelDeletedEventDto.toDomain(): NotificationChannelDeletedEvent = with(domainMapping) {
-        NotificationChannelDeletedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            groupedUnreadChannels = grouped_unread_channels,
-        )
-    }
-
-    /**
      * Transforms [NotificationChannelMutesUpdatedEventDto] to [NotificationChannelMutesUpdatedEvent].
      */
     private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent =
@@ -476,75 +453,6 @@ internal class EventMapping(
                 me = me.toDomain(),
             )
         }
-
-    /**
-     * Transforms [NotificationChannelTruncatedEventDto] to [NotificationChannelTruncatedEvent].
-     */
-    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent =
-        with(domainMapping) {
-            NotificationChannelTruncatedEvent(
-                type = type,
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                cid = cid,
-                channelType = channel_type,
-                channelId = channel_id,
-                channel = channel.toDomain(),
-                totalUnreadCount = total_unread_count,
-                unreadChannels = unread_channels,
-                groupedUnreadChannels = grouped_unread_channels,
-            )
-        }
-
-    /**
-     * Transforms [NotificationInviteAcceptedEventDto] to [NotificationInviteAcceptedEvent].
-     */
-    private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcceptedEvent = with(domainMapping) {
-        NotificationInviteAcceptedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            member = member.toDomain(),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [NotificationInviteRejectedEventDto] to [NotificationInviteRejectedEvent].
-     */
-    private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRejectedEvent = with(domainMapping) {
-        NotificationInviteRejectedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            member = member.toDomain(),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [NotificationInvitedEventDto] to [NotificationInvitedEvent].
-     */
-    private fun NotificationInvitedEventDto.toDomain(): NotificationInvitedEvent = with(domainMapping) {
-        NotificationInvitedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            member = member.toDomain(),
-        )
-    }
 
     /**
      * Transforms [NotificationMarkReadEventDto] to [NotificationMarkReadEvent].
@@ -781,6 +689,11 @@ internal class EventMapping(
         is GeneratedMemberUpdatedEvent -> toDomain()
         is GeneratedTypingStartEvent -> toDomain()
         is GeneratedTypingStopEvent -> toDomain()
+        is GeneratedNotificationInvitedEvent -> toDomain()
+        is GeneratedNotificationInviteAcceptedEvent -> toDomain()
+        is GeneratedNotificationInviteRejectedEvent -> toDomain()
+        is GeneratedNotificationChannelDeletedEvent -> toDomain()
+        is GeneratedNotificationChannelTruncatedEvent -> toDomain()
         is GeneratedPollClosedEvent -> toDomain()
         is GeneratedPollDeletedEvent -> toDomain()
         is GeneratedPollUpdatedEvent -> toDomain()
@@ -992,6 +905,106 @@ internal class EventMapping(
             member = member?.toDomain(),
         )
     }
+
+    /**
+     * Transforms the generated [GeneratedNotificationInvitedEvent] to [NotificationInvitedEvent].
+     */
+    private fun GeneratedNotificationInvitedEvent.toDomain(): NotificationInvitedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return NotificationInvitedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            user = requireNotNull(user).toDomain(),
+            member = member.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedNotificationInviteAcceptedEvent] to [NotificationInviteAcceptedEvent].
+     */
+    private fun GeneratedNotificationInviteAcceptedEvent.toDomain(): NotificationInviteAcceptedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationInviteAcceptedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                user = requireNotNull(user).toDomain(),
+                member = member.toDomain(),
+                channel = channel.toDomain(),
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationInviteRejectedEvent] to [NotificationInviteRejectedEvent].
+     */
+    private fun GeneratedNotificationInviteRejectedEvent.toDomain(): NotificationInviteRejectedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationInviteRejectedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                user = requireNotNull(user).toDomain(),
+                member = member.toDomain(),
+                channel = channel.toDomain(),
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationChannelDeletedEvent] to [NotificationChannelDeletedEvent].
+     */
+    private fun GeneratedNotificationChannelDeletedEvent.toDomain(): NotificationChannelDeletedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationChannelDeletedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+                groupedUnreadChannels = groupedUnreadChannels,
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationChannelTruncatedEvent] to [NotificationChannelTruncatedEvent].
+     */
+    private fun GeneratedNotificationChannelTruncatedEvent.toDomain(): NotificationChannelTruncatedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationChannelTruncatedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+                groupedUnreadChannels = groupedUnreadChannels,
+            )
+        }
 
     /**
      * Transforms the generated [GeneratedPollClosedEvent] to [PollClosedEvent].
