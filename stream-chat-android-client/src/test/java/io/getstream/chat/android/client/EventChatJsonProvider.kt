@@ -233,8 +233,8 @@ internal fun createNotificationChannelDeletedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
-            "channel": ${createChannelJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "grouped_unread_channels": {"direct": 2, "support": 5},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -247,8 +247,8 @@ internal fun createNotificationChannelTruncatedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
-            "channel": ${createChannelJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -260,9 +260,9 @@ internal fun createNotificationInviteAcceptedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "member": ${createMemberJsonString()},
-            "channel": ${createChannelJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -274,9 +274,9 @@ internal fun createNotificationInviteRejectedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "member": ${createMemberJsonString()},
-            "channel": ${createChannelJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -288,8 +288,9 @@ internal fun createNotificationInvitedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "member": ${createMemberJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )

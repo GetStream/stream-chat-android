@@ -124,7 +124,9 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
@@ -764,6 +766,65 @@ internal class DomainMappingTest {
         assertEquals(channelResponse.hidden, channel.hidden)
         assertEquals(channelResponse.hideMessagesBefore, channel.hiddenMessagesBefore)
         assertEquals(with(sut) { channelResponse.config?.toDomain() }, channel.config)
+    }
+
+    @Test
+    fun `ChannelResponse maps every field onto the Channel`() {
+        val creator = Mother.randomUserResponse()
+        val member = Mother.randomChannelMemberResponse()
+        val response = ChannelResponse(
+            cid = "messaging:general",
+            id = "general",
+            type = "messaging",
+            createdAt = Date(1_000),
+            updatedAt = Date(2_000),
+            deletedAt = Date(3_000),
+            truncatedAt = Date(4_000),
+            lastMessageAt = Date(5_000),
+            hideMessagesBefore = Date(6_000),
+            disabled = true,
+            frozen = true,
+            blocked = true,
+            hidden = true,
+            memberCount = 7,
+            messageCount = 8,
+            cooldown = 9,
+            team = "team-a",
+            filterTags = listOf("tag-a", "tag-b"),
+            members = listOf(member),
+            ownCapabilities = listOf(ChannelOwnCapability.SendMessage),
+            config = ChannelDtoTestData.channelResponse.config,
+            createdBy = creator,
+            custom = mapOf("name" to "General", "image" to "https://example.com/g.png", "color" to "teal"),
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { response.toDomain() }
+
+        assertEquals("general", channel.id)
+        assertEquals("messaging", channel.type)
+        assertEquals("General", channel.name)
+        assertEquals("https://example.com/g.png", channel.image)
+        assertEquals(Date(1_000), channel.createdAt)
+        assertEquals(Date(2_000), channel.updatedAt)
+        assertEquals(Date(3_000), channel.deletedAt)
+        assertEquals(Date(4_000), channel.truncatedAt)
+        assertEquals(Date(5_000), channel.lastMessageAt)
+        assertEquals(Date(6_000), channel.hiddenMessagesBefore)
+        assertEquals(true, channel.disabled)
+        assertEquals(true, channel.frozen)
+        assertEquals(true, channel.blocked)
+        assertEquals(true, channel.hidden)
+        assertEquals(7, channel.memberCount)
+        assertEquals(8, channel.messageCount)
+        assertEquals(9, channel.cooldown)
+        assertEquals("team-a", channel.team)
+        assertEquals(listOf("tag-a", "tag-b"), channel.filterTags)
+        assertEquals(listOf(member.user!!.id), channel.members.map { it.user.id })
+        assertEquals(setOf("send-message"), channel.ownCapabilities)
+        assertEquals(with(sut) { response.config?.toDomain() }, channel.config)
+        assertEquals(creator.id, channel.createdBy.id)
+        assertEquals(mapOf<String, Any>("color" to "teal"), channel.extraData)
     }
 
     @Test

@@ -203,71 +203,10 @@ internal data class NotificationAddedToChannelEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NotificationChannelDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationChannelMutesUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
     val me: OwnUserResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationChannelTruncatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationInviteAcceptedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val member: ChannelMemberResponse,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationInviteRejectedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val member: ChannelMemberResponse,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationInvitedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
