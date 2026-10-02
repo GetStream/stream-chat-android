@@ -165,6 +165,8 @@
   <string name="stream_compose_message_reactions_show">"Afficher les réactions"</string>
   <string name="stream_compose_message_list_auto_translated">"Traduit"</string>
   <string name="stream_compose_message_list_empty_messages">"Aucun message"</string>
+  <string name="stream_compose_message_list_channel_deleted">"Ce chat a été supprimé"</string>
+  <string name="stream_compose_message_list_channel_deleted_back">"Retour aux chats"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"Aucune application pour ouvrir cette URL :\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"Modifié"</string>
   <string name="stream_compose_message_list_giphy_cancel">"Annuler"</string>

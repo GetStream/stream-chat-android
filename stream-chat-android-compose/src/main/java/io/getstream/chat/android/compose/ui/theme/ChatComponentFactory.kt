@@ -140,6 +140,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.suggestio
 import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultChannelHeaderTrailingContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultChannelDeletedContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageAuthor
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
@@ -745,6 +746,19 @@ public interface ChatComponentFactory {
     public fun MessageListEmptyContent(params: MessageListEmptyContentParams) {
         DefaultMessageListEmptyContent(
             modifier = params.modifier,
+        )
+    }
+
+    /**
+     * The default content shown in place of the message list when the channel is deleted while open.
+     *
+     * @param params Parameters for this component.
+     */
+    @Composable
+    public fun ChannelDeletedContent(params: ChannelDeletedContentParams) {
+        DefaultChannelDeletedContent(
+            modifier = params.modifier,
+            onBackClick = params.onBackClick,
         )
     }
 

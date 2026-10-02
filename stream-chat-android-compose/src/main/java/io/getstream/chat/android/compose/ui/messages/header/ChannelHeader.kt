@@ -59,6 +59,7 @@ import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import java.util.Date
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -104,31 +105,36 @@ public fun ChannelHeader(
         }
     },
     centerContent: @Composable RowScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelHeaderCenterContent(
-                params = ChannelHeaderCenterContentParams(
-                    modifier = Modifier.weight(1f),
-                    channel = channel,
-                    currentUser = currentUser,
-                    connectionState = connectionState,
-                    typingUsers = typingUsers,
-                    messageMode = messageMode,
-                    onClick = onHeaderTitleClick,
-                    onClickLabel = onHeaderTitleClickLabel,
-                ),
-            )
+        // A deleted channel keeps only the back button.
+        if (channel.deletedAt == null) {
+            with(ChatTheme.componentFactory) {
+                ChannelHeaderCenterContent(
+                    params = ChannelHeaderCenterContentParams(
+                        modifier = Modifier.weight(1f),
+                        channel = channel,
+                        currentUser = currentUser,
+                        connectionState = connectionState,
+                        typingUsers = typingUsers,
+                        messageMode = messageMode,
+                        onClick = onHeaderTitleClick,
+                        onClickLabel = onHeaderTitleClickLabel,
+                    ),
+                )
+            }
         }
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelHeaderTrailingContent(
-                params = ChannelHeaderTrailingContentParams(
-                    channel = channel,
-                    currentUser = currentUser,
-                    onClick = onChannelAvatarClick,
-                    onClickLabel = onChannelAvatarClickLabel,
-                ),
-            )
+        if (channel.deletedAt == null) {
+            with(ChatTheme.componentFactory) {
+                ChannelHeaderTrailingContent(
+                    params = ChannelHeaderTrailingContentParams(
+                        channel = channel,
+                        currentUser = currentUser,
+                        onClick = onChannelAvatarClick,
+                        onClickLabel = onChannelAvatarClickLabel,
+                    ),
+                )
+            }
         }
     },
 ) {
@@ -398,6 +404,26 @@ internal fun ChannelHeaderFewMembers() {
             .fillMaxWidth()
             .wrapContentHeight(),
         channel = PreviewChannelData.channelWithFewMembers,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Preview
+@Composable
+private fun ChannelHeaderDeletedPreview() {
+    ChatTheme {
+        ChannelHeaderDeleted()
+    }
+}
+
+@Composable
+internal fun ChannelHeaderDeleted() {
+    ChannelHeader(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        channel = PreviewChannelData.channelWithImage.copy(deletedAt = Date()),
         currentUser = PreviewUserData.user1,
         connectionState = ConnectionState.Connected,
     )

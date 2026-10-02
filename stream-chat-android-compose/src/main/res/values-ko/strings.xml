@@ -177,6 +177,8 @@
   <string name="stream_compose_message_reactions_show">"반응 보기"</string>
   <string name="stream_compose_message_list_auto_translated">"번역됨"</string>
   <string name="stream_compose_message_list_empty_messages">"메시지 없음"</string>
+  <string name="stream_compose_message_list_channel_deleted">"이 채팅은 삭제되었습니다"</string>
+  <string name="stream_compose_message_list_channel_deleted_back">"채팅으로 돌아가기"</string>
   <string name="stream_compose_message_list_error_cannot_open_link">"이 URL을 열 수 있는 앱이 없습니다:\n%s"</string>
   <string name="stream_compose_message_list_footnote_edited">"수정됨"</string>
   <string name="stream_compose_message_list_giphy_cancel">"취소"</string>
