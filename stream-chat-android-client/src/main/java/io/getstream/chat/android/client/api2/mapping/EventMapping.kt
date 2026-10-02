@@ -41,8 +41,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
 import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
@@ -155,8 +153,10 @@ import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTyp
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
+import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
+import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
@@ -190,11 +190,9 @@ internal class EventMapping(
             is ReactionNewEventDto -> toDomain()
             is ReactionUpdateEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
-            is UserUpdatedEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
             is DraftMessageDeletedEventDto -> toDomain()
             is DraftMessageUpdatedEventDto -> toDomain()
-            is UserMessagesDeletedEventDto -> toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
             is AIIndicatorStopEventDto -> toDomain()
@@ -493,13 +491,13 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [UserUpdatedEventDto] to [UserUpdatedEvent].
+     * Transforms the generated [GeneratedUserUpdatedEvent] to [UserUpdatedEvent].
      */
-    private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent = with(domainMapping) {
+    private fun GeneratedUserUpdatedEvent.toDomain(): UserUpdatedEvent = with(domainMapping) {
         UserUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             user = user.toDomain(),
         )
     }
@@ -548,6 +546,8 @@ internal class EventMapping(
         is GeneratedChannelTruncatedEvent -> toDomain()
         is GeneratedChannelDeletedEvent -> toDomain()
         is GeneratedNotificationRemovedFromChannelEvent -> toDomain()
+        is GeneratedUserUpdatedEvent -> toDomain()
+        is GeneratedUserMessagesDeletedEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -1256,16 +1256,19 @@ internal class EventMapping(
         )
     }
 
-    private fun UserMessagesDeletedEventDto.toDomain(): UserMessagesDeletedEvent = with(domainMapping) {
-        return UserMessagesDeletedEvent(
+    /**
+     * Transforms the generated [GeneratedUserMessagesDeletedEvent] to [UserMessagesDeletedEvent].
+     */
+    private fun GeneratedUserMessagesDeletedEvent.toDomain(): UserMessagesDeletedEvent = with(domainMapping) {
+        UserMessagesDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            channelType = channelType,
+            channelId = channelId,
             user = user.toDomain(),
-            hardDelete = hard_delete == true,
+            hardDelete = hardDelete == true,
         )
     }
 
