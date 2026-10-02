@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -39,6 +40,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 internal class QueryChannelsListenerState(
     private val logic: LogicRegistry,
+    private val mutableGlobalState: MutableGlobalState,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
 ) : QueryChannelsListener {
 
@@ -68,6 +70,7 @@ internal class QueryChannelsListenerState(
         }
         val channels = result.map(QueryChannelsResult::channels)
         queryChannelsLogic.onQueryChannelsResult(channels, request)
+        channels.onSuccess(mutableGlobalState::updateChannelDrafts)
         queryingChannelsFree.value = true
     }
 }

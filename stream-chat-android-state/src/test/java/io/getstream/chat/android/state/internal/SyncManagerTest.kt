@@ -84,6 +84,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -824,6 +825,33 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `reconnect should add the drafts of the recovered channel list to the global state`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val channel = randomChannel(draftMessage = randomDraftMessage(parentId = null))
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+                onBlocking { it.queryFirstPage() } doReturn Result.Success(listOf(channel))
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(standardQuery)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(mutableGlobalState, atLeastOnce()).updateChannelDrafts(listOf(channel))
+        }
+
+    @Test
     @Suppress("LongMethod")
     fun `dual-mode reconnect updateActiveChannels should query only cids not covered by grouped or standard`() =
         runTest(testDispatcher) {
@@ -1022,6 +1050,36 @@ internal class SyncManagerTest {
             val filter = captor.firstValue.filter as InFilterObject
             assertEquals("cid", filter.fieldName)
             assertEquals(setOf(cidA, cidB), filter.values)
+        }
+
+    @Test
+    fun `reconnect should add the drafts of the refreshed channels to the global state`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val channel = randomChannel(type = "messaging", id = "a", draftMessage = randomDraftMessage(parentId = null))
+            val activeState: ChannelState = mock {
+                on(it.cid) doReturn channel.cid
+                on(it.recoveryNeeded) doReturn false
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn emptyList()
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(logicRegistry.channel(any(), any())) doReturn mock<ChannelLogic>()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn listOf(activeState)
+            whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+                Result.Success(QueryChannelsResult(channels = listOf(channel), predefinedFilter = null)),
+            )
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(mutableGlobalState).updateChannelDrafts(listOf(channel))
         }
 
     @Test
