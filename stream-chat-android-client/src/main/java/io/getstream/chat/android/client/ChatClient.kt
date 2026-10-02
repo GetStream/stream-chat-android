@@ -3424,19 +3424,31 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
         skipOnRequest: Boolean = false,
+    ): Call<Channel> = queryChannelWithStart(channelType, channelId, request) {
+        if (!skipOnRequest) {
+            plugins.forEach { plugin ->
+                plugin.onQueryChannelRequest(channelType, channelId, request)
+            }
+        }
+    }
+
+    /**
+     * Same as [queryChannel], but runs [onStart] in place of the plugins' request callbacks. [onStart] runs only
+     * when this call executes the request; a call that joins an identical request already in flight skips it.
+     */
+    @CheckResult
+    internal fun queryChannelWithStart(
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+        onStart: suspend () -> Unit,
     ): Call<Channel> {
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
-                logger.d {
-                    "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
-                        ", cid: $channelType:$channelId, request: $request"
-                }
-                if (!skipOnRequest) {
-                    plugins.forEach { plugin ->
-                        plugin.onQueryChannelRequest(channelType, channelId, request)
-                    }
-                }
-            }.doOnResult(userScope) { result ->
+                logger.d { "[queryChannel] #doOnStart; cid: $channelType:$channelId, request: $request" }
+                onStart()
+            }
+            .doOnResult(userScope) { result ->
                 logger.v {
                     "[queryChannel] #doOnResult; " +
                         "completed($channelType:$channelId): ${result.errorOrNull() ?: Unit}"

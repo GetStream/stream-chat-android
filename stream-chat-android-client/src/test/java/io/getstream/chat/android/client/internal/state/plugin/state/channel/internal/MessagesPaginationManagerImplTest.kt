@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
 import io.getstream.result.Error
@@ -29,6 +30,9 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 internal class MessagesPaginationManagerImplTest {
 
@@ -171,6 +175,17 @@ internal class MessagesPaginationManagerImplTest {
             assertFalse(state.isLoadingPreviousMessages)
             assertFalse(state.isLoadingNextMessages)
             assertFalse(state.isLoadingMiddleMessages)
+        }
+
+        @Test
+        fun `end with failure of an around query should clear isLoadingMiddleMessages`() {
+            // given
+            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "msgId", 30)
+            sut.begin(query)
+            // when
+            sut.end(query, failure)
+            // then
+            assertFalse(sut.state.value.isLoadingMiddleMessages)
         }
 
         @Test
@@ -673,4 +688,92 @@ internal class MessagesPaginationManagerImplTest {
     }
 
     // endregion
+
+    // region concurrent queries
+
+    @Nested
+    inner class ConcurrentQueries {
+
+        private val olderQuery = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
+        private val newerQuery = QueryChannelRequest().withMessages(Pagination.GREATER_THAN, "msgId", 30)
+        private val watchQuery = QueryChannelRequest().withMessages(30)
+
+        @Test
+        fun `newer page success should not clear an in-flight older page flag`() {
+            // given
+            sut.begin(olderQuery)
+            sut.begin(newerQuery)
+            // when
+            sut.end(newerQuery, Result.Success(randomChannel(messages = emptyList())))
+            // then
+            assertTrue(sut.state.value.isLoadingPreviousMessages)
+            assertFalse(sut.state.value.isLoadingNextMessages)
+        }
+
+        @Test
+        fun `newer page failure should not clear an in-flight older page flag`() {
+            // given
+            sut.begin(olderQuery)
+            sut.begin(newerQuery)
+            // when
+            sut.end(newerQuery, failure)
+            // then
+            assertTrue(sut.state.value.isLoadingPreviousMessages)
+            assertFalse(sut.state.value.isLoadingNextMessages)
+        }
+
+        @Test
+        fun `watch success should not clear an in-flight older page flag`() {
+            // given
+            sut.begin(olderQuery)
+            // when
+            sut.end(watchQuery, Result.Success(randomChannel(messages = emptyList())))
+            // then
+            assertTrue(sut.state.value.isLoadingPreviousMessages)
+        }
+
+        @Test
+        fun `watch failure should not clear an in-flight older page flag`() {
+            // given
+            sut.begin(olderQuery)
+            // when
+            sut.end(watchQuery, failure)
+            // then
+            assertTrue(sut.state.value.isLoadingPreviousMessages)
+        }
+
+        @Test
+        fun `older page end landing during a watch end should not be overwritten`() {
+            // given
+            sut.begin(olderQuery)
+            val watchReading = CountDownLatch(1)
+            val olderPageEnded = CountDownLatch(1)
+            // end() reads messages.size only while computing the new state, so blocking there pauses the watch
+            // end() after it has read the current state and before it writes the new one
+            val watchMessages = object : List<Message> by emptyList() {
+                override val size: Int
+                    get() {
+                        watchReading.countDown()
+                        olderPageEnded.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                        return 0
+                    }
+            }
+            // when
+            val watchEnd = thread {
+                sut.end(watchQuery, Result.Success(randomChannel(messages = watchMessages)))
+            }
+            assertTrue(watchReading.await(TIMEOUT_SECONDS, TimeUnit.SECONDS))
+            sut.end(olderQuery, Result.Success(randomChannel(messages = emptyList())))
+            olderPageEnded.countDown()
+            watchEnd.join()
+            // then
+            assertFalse(sut.state.value.isLoadingPreviousMessages)
+        }
+    }
+
+    // endregion
+
+    private companion object {
+        const val TIMEOUT_SECONDS = 5L
+    }
 }
