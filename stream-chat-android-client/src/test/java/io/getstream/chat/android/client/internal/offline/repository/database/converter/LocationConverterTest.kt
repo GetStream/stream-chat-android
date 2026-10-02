@@ -38,18 +38,6 @@ internal class LocationConverterTest {
         assertEquals(expected, converter.locationToString(input))
     }
 
-    @ParameterizedTest
-    @MethodSource("stringToLocationList")
-    fun testStringToLocationList(input: String?, expected: List<LocationEntity>?) {
-        assertEquals(expected, converter.stringToLocationList(input))
-    }
-
-    @ParameterizedTest
-    @MethodSource("locationListToString")
-    fun testLocationListToString(input: List<LocationEntity>?, expected: String?) {
-        assertEquals(expected, converter.locationListToString(input))
-    }
-
     companion object {
         @JvmStatic
         fun stringToLocation() = listOf(
@@ -67,27 +55,6 @@ internal class LocationConverterTest {
                 LocationEntity(),
                 "{\"cid\":\"\",\"messageId\":\"\",\"userId\":\"\"," +
                     "\"latitude\":0.0,\"longitude\":0.0,\"deviceId\":\"\"}",
-            ),
-        )
-
-        @JvmStatic
-        fun stringToLocationList() = listOf(
-            arrayOf(null, emptyList<LocationEntity>()),
-            arrayOf("", emptyList<LocationEntity>()),
-            arrayOf("null", emptyList<LocationEntity>()),
-            arrayOf(
-                "[{\"latitude\":12.34,\"longitude\":56.78}]",
-                listOf(LocationEntity(latitude = 12.34, longitude = 56.78)),
-            ),
-        )
-
-        @JvmStatic
-        fun locationListToString() = listOf(
-            arrayOf<Any?>(null, null),
-            arrayOf(
-                listOf(LocationEntity()),
-                "[{\"cid\":\"\",\"messageId\":\"\",\"userId\":\"\"," +
-                    "\"latitude\":0.0,\"longitude\":0.0,\"deviceId\":\"\"}]",
             ),
         )
     }
