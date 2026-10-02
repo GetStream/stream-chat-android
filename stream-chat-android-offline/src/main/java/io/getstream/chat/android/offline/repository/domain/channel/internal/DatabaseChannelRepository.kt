@@ -66,6 +66,8 @@ internal class DatabaseChannelRepository(
         if (channels.isEmpty()) return
         val updatedChannels = channels
             .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+            // Cleared before the comparison below, as the cached copies hold no live locations.
+            .map { it.copy(activeLiveLocations = emptyList()) }
         val channelToInsert = updatedChannels
             .filter { channelCache[it.cid] != it }
             .map { it.toEntity() }
@@ -82,11 +84,12 @@ internal class DatabaseChannelRepository(
     }
 
     private fun cacheChannel(vararg channels: Channel) {
-        channels.forEach { channelCache.put(it.cid, it) }
+        cacheChannel(channels.asList())
     }
 
     private fun cacheChannel(channels: Collection<Channel>) {
-        channels.forEach { channelCache.put(it.cid, it) }
+        // Live locations are not cached, for the same reason they are not restored (see ChannelMapper).
+        channels.forEach { channelCache.put(it.cid, it.copy(activeLiveLocations = emptyList())) }
     }
 
     /**
