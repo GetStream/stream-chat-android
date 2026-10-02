@@ -47,12 +47,8 @@ import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
@@ -65,11 +61,15 @@ import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent
+import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent
 import io.getstream.chat.android.network.models.NotificationInvitedEvent
+import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent
+import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent
+import io.getstream.chat.android.network.models.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.network.models.PollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent
 import io.getstream.chat.android.network.models.PollUpdatedEvent
@@ -141,13 +141,22 @@ internal class EventDtoAdapter(
     private val userStopWatchingEventAdapter = generatedEventAdapter<UserWatchingStopEvent> { mapOf("cid" to cid) }
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMarkReadEventAdapter = moshi.adapter(NotificationMarkReadEventDto::class.java)
-    private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
+    private val notificationMarkUnreadEventAdapter = generatedEventAdapter<NotificationMarkUnreadEvent> {
+        mapOf(
+            "cid" to cid,
+            "user" to user,
+            "first_unread_message_id" to firstUnreadMessageId,
+            "last_read_at" to lastReadAt,
+            "unread_messages" to unreadMessages,
+        )
+    }
     private val markAllReadEventAdapter = moshi.adapter(MarkAllReadEventDto::class.java)
     private val notificationMessageNewEventAdapter = generatedEventAdapter<NotificationNewMessageEvent> {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId)
     }
-    private val notificationThreadMessageNewEventAdapter =
-        moshi.adapter(NotificationThreadMessageNewEventDto::class.java)
+    private val notificationThreadMessageNewEventAdapter = generatedEventAdapter<NotificationThreadMessageNewEvent> {
+        mapOf("cid" to cid, "unread_threads" to unreadThreads, "unread_thread_messages" to unreadThreadMessages)
+    }
     private val threadUpdatedEventAdapter = generatedEventAdapter<ThreadUpdatedEvent> {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "thread" to thread)
     }
@@ -162,9 +171,10 @@ internal class EventDtoAdapter(
     }
     private val notificationRemovedFromChannelEventAdapter =
         moshi.adapter(NotificationRemovedFromChannelEventDto::class.java)
-    private val notificationMutesUpdatedEventAdapter = moshi.adapter(NotificationMutesUpdatedEventDto::class.java)
+    private val notificationMutesUpdatedEventAdapter =
+        generatedEventAdapter<NotificationMutesUpdatedEvent> { emptyMap() }
     private val notificationChannelMutesUpdatedEventAdapter =
-        moshi.adapter(NotificationChannelMutesUpdatedEventDto::class.java)
+        generatedEventAdapter<NotificationChannelMutesUpdatedEvent> { emptyMap() }
     private val notificationChannelDeletedEventAdapter =
         generatedEventAdapter<NotificationChannelDeletedEvent> { mapOf("cid" to cid) }
     private val notificationChannelTruncatedEventAdapter =
