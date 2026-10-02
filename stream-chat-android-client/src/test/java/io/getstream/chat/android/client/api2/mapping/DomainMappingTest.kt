@@ -1648,8 +1648,23 @@ internal class DomainMappingTest {
             blocklistMatched = moderationResponse.blocklistMatched,
             semanticFilterMatched = moderationResponse.semanticFilterMatched,
             platformCircumvented = moderationResponse.platformCircumvented ?: false,
+            blocklistsMatched = moderationResponse.blocklistsMatched.orEmpty(),
         )
         assertEquals(expected, moderation)
+    }
+
+    @Test
+    fun `ModerationV2Response without blocklist_matched falls back to the first blocklists_matched entry`() {
+        val blocklists = listOf(randomString(), randomString())
+        val moderationResponse = randomModerationV2Response().copy(
+            blocklistMatched = null,
+            blocklistsMatched = blocklists,
+        )
+        val sut = Fixture().get()
+        val moderation = with(sut) { moderationResponse.toDomain() }
+        @Suppress("DEPRECATION")
+        assertEquals(blocklists.first(), moderation.blocklistMatched)
+        assertEquals(blocklists, moderation.blocklistsMatched)
     }
 
     @Test

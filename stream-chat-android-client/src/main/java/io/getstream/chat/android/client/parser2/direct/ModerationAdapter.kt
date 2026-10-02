@@ -32,6 +32,7 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
         var textHarms: List<String>? = null
         var imageHarms: List<String>? = null
         var blocklistMatched: String? = null
+        var blocklistsMatched: List<String>? = null
         var semanticFilterMatched: String? = null
         var platformCircumvented: Boolean? = null
 
@@ -42,6 +43,7 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
                 "text_harms" -> textHarms = JsonParsingUtils.parseStringList(reader)
                 "image_harms" -> imageHarms = JsonParsingUtils.parseStringList(reader)
                 "blocklist_matched" -> blocklistMatched = JsonParsingUtils.readNullableString(reader)
+                "blocklists_matched" -> blocklistsMatched = JsonParsingUtils.parseStringList(reader)
                 "semantic_filter_matched" -> semanticFilterMatched = JsonParsingUtils.readNullableString(reader)
                 "platform_circumvented" -> platformCircumvented = JsonParsingUtils.readNullableBoolean(reader)
                 else -> reader.skipValue()
@@ -57,9 +59,10 @@ internal class ModerationAdapter : JsonAdapter<Moderation>() {
             originalText = originalText,
             textHarms = textHarms.orEmpty(),
             imageHarms = imageHarms.orEmpty(),
-            blocklistMatched = blocklistMatched,
+            blocklistMatched = blocklistMatched ?: blocklistsMatched?.firstOrNull(),
             semanticFilterMatched = semanticFilterMatched,
             platformCircumvented = platformCircumvented ?: false,
+            blocklistsMatched = blocklistsMatched.orEmpty(),
         )
     }
 

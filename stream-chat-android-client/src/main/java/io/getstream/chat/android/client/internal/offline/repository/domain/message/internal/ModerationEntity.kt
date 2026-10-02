@@ -30,4 +30,5 @@ internal data class ModerationEntity(
     val blocklistMatched: String?,
     val semanticFilterMatched: String?,
     val platformCircumvented: Boolean,
+    val blocklistsMatched: List<String> = emptyList(),
 )
