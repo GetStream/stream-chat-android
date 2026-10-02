@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Men
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.Reply
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -498,6 +499,27 @@ internal class MessageComposerControllerTests {
         advanceUntilIdle()
 
         controller.messageInput.value.text `should be equal to` "typed text"
+    }
+
+    @Test
+    fun `Given the user picked a reply When a draft arrives Then the reply and empty input are kept`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenDrafts(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .get(config = DRAFTS_ENABLED)
+        advanceUntilIdle()
+        val reply = Reply(randomMessage(cid = CID))
+        controller.performMessageAction(reply)
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` ""
+        controller.messageActions.value `should be equal to` setOf(reply)
     }
 
     @Test

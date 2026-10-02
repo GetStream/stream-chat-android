@@ -1158,8 +1158,8 @@ public class MessageComposerController(
     )
 
     /** A draft that arrives after the composer opened is shown only while the user has not started composing. */
-    private fun canShowArrivedDraft(): Boolean =
-        currentDraftId == null && messageInput.value.text.isEmpty() && selectedAttachments.value.isEmpty()
+    private fun canShowArrivedDraft(): Boolean = currentDraftId == null && messageActions.value.isEmpty() &&
+        messageInput.value.text.isEmpty() && selectedAttachments.value.isEmpty()
 
     private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
         getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()

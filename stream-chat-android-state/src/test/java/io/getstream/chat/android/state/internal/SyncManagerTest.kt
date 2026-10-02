@@ -84,6 +84,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -821,6 +822,33 @@ internal class SyncManagerTest {
             verify(standardQuery, times(2)).queryFirstPage()
             // Grouped query should NOT have queryFirstPage called
             verify(groupedQuery, never()).queryFirstPage()
+        }
+
+    @Test
+    fun `reconnect should add the drafts of the recovered channel list to the global state`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val channel = randomChannel(draftMessage = randomDraftMessage(parentId = null))
+            val standardQuery: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn null
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(true)
+                onBlocking { it.queryFirstPage() } doReturn Result.Success(listOf(channel))
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(standardQuery)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(stateRegistry.getActiveChannelStates()) doReturn emptyList()
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(mutableGlobalState, atLeastOnce()).updateChannelDrafts(listOf(channel))
         }
 
     @Test
