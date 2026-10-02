@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
@@ -119,7 +118,6 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
-import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomStringOrNull
@@ -268,14 +266,6 @@ internal object Mother {
         parentMessage = parentMessage,
         parentId = parentId,
         createdAt = createdAt,
-    )
-
-    fun randomDownstreamPendingMessageDto(
-        message: DownstreamMessageDto = randomDownstreamMessageDto(),
-        metadata: Map<String, String> = randomPendingMessageMetadata(),
-    ): DownstreamPendingMessageDto = DownstreamPendingMessageDto(
-        message = message,
-        metadata = metadata,
     )
 
     fun randomDraftPayloadResponse(

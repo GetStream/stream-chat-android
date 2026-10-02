@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
@@ -109,6 +108,7 @@ import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.FullUserResponse
@@ -135,9 +135,12 @@ import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.ThreadResponse
 import io.getstream.chat.android.network.models.ThreadStateResponse
+import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnreadCountsChannel
 import io.getstream.chat.android.network.models.UnreadCountsChannelType
 import io.getstream.chat.android.network.models.UnreadCountsThread
+import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
+import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UserGroupResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
@@ -296,6 +299,30 @@ internal class DomainMapping(
         )
 
     /**
+     * Transforms [UpdateChannelResponse] into [Channel], or null when it carries no channel. The members come from the
+     * top level: the backend empties the ones nested in the channel.
+     */
+    internal fun UpdateChannelResponse.toDomain(): Channel? =
+        channel?.toDomain()?.copy(members = members.map { it.toDomain() })
+
+    /**
+     * Transforms [UpdateChannelPartialResponse] into [Channel], or null when it carries no channel. The members come
+     * from the top level: the backend empties the ones nested in the channel.
+     */
+    internal fun UpdateChannelPartialResponse.toDomain(): Channel? =
+        channel?.toDomain()?.copy(members = members.map { it.toDomain() })
+
+    /**
+     * Transforms [TruncateChannelResponse] into [Channel], or null when it carries no channel.
+     */
+    internal fun TruncateChannelResponse.toDomain(): Channel? = channel?.toDomain()
+
+    /**
+     * Transforms [DeleteChannelResponse] into [Channel], or null when it carries no channel.
+     */
+    internal fun DeleteChannelResponse.toDomain(): Channel? = channel?.toDomain()
+
+    /**
      * Transforms [DownstreamMessageDto] to [Message].
      */
     @Suppress("DEPRECATION")
@@ -374,17 +401,6 @@ internal class DomainMapping(
                 .mapNotNull { (key, value) -> value?.let { key to it } }
                 .toMap(),
         )
-
-    /**
-     * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
-     */
-    internal fun DownstreamPendingMessageDto.toDomain(
-        cid: String,
-        fallbackChannelInfo: ChannelInfo? = null,
-    ): PendingMessage = PendingMessage(
-        message = message.toDomain(fallbackChannelInfo).enrichWithCid(cid),
-        metadata = metadata.orEmpty(),
-    )
 
     /**
      * Transforms the generated [PendingMessageResponse] into a [PendingMessage], or null when it carries no message.

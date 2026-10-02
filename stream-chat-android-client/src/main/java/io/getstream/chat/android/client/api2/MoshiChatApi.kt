@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -1020,7 +1019,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds)),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
@@ -1069,7 +1068,7 @@ constructor(
                     message = updateMessage?.toMessageRequest(),
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun updateChannelPartial(
@@ -1082,7 +1081,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelPartialRequest(set = set, unset = unset),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun showChannel(
@@ -1117,7 +1116,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toMessageRequest()) },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
@@ -1125,7 +1124,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelRequest(rejectInvite = true),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun acceptInvite(
@@ -1140,14 +1139,14 @@ constructor(
                 acceptInvite = true,
                 message = message?.let { MessageRequest(text = it) },
             ),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return channelApi.deleteChannel(
             channelType = channelType,
             channelId = channelId,
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun getUnreadCounts(): Call<UnreadCounts> = generalApi.getUnreadCounts()
@@ -1216,7 +1215,7 @@ constructor(
                     skipPush = skipPush,
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun removeMembers(
@@ -1236,7 +1235,7 @@ constructor(
                     skipPush = skipPush,
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun inviteMembers(
@@ -1256,7 +1255,7 @@ constructor(
                     skipPush = skipPush,
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun partialUpdateMember(
@@ -1274,37 +1273,12 @@ constructor(
         ).flatMapDomain { toMemberCall(it) }
     }
 
-    private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
-        return response.channel.toDomain().let { channel ->
-            val channelInfo = response.channel.toChannelInfo()
-            val channelMessages = response.messages.map {
-                it.toDomain(channelInfo).enrichWithCid(channel.cid)
-            }
-            channel.copy(
-                watcherCount = response.watcher_count,
-                read = response.read.map {
-                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.lastRead)
-                },
-                members = response.members.map { it.toDomain() },
-                membership = response.membership?.toDomain(),
-                messages = channelMessages,
-                pendingMessages = response.pending_messages.map { pending ->
-                    pending.toDomain(channel.cid, channelInfo)
-                },
-                pinnedMessages = response.pinned_messages.map {
-                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
-                },
-                pushPreference = response.push_preferences?.toDomain(),
-                watchers = response.watchers.map {
-                    it.toDomain()
-                },
-                hidden = response.hidden,
-                hiddenMessagesBefore = response.hide_messages_before,
-                draftMessage = response.draft?.toDomain(),
-                activeLiveLocations = response.active_live_locations.map { it.toDomain() },
-            ).syncUnreadCountWithReads(domainMapping.currentUserIdProvider())
-        }
-    }
+    /**
+     * Succeeds with [this] channel, or fails the call when the response carried none.
+     */
+    private fun Channel?.toChannelCall(): Call<Channel> = this
+        ?.let { channel -> CoroutineCall(coroutineScope) { Result.Success(channel) } }
+        ?: ErrorCall(coroutineScope, Error.GenericError("The response carried no channel"))
 
     /**
      * Maps each channel state, or fails the call when one carries no channel: a channel state always has one, so the
