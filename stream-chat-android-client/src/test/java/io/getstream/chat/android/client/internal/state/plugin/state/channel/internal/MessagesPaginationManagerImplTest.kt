@@ -178,6 +178,17 @@ internal class MessagesPaginationManagerImplTest {
         }
 
         @Test
+        fun `end with failure of an around query should clear isLoadingMiddleMessages`() {
+            // given
+            val query = QueryChannelRequest().withMessages(Pagination.AROUND_ID, "msgId", 30)
+            sut.begin(query)
+            // when
+            sut.end(query, failure)
+            // then
+            assertFalse(sut.state.value.isLoadingMiddleMessages)
+        }
+
+        @Test
         fun `end with failure should preserve hasLoadedAllPreviousMessages`() {
             // given
             sut.setEndOfOlderMessages(true)
@@ -717,6 +728,16 @@ internal class MessagesPaginationManagerImplTest {
             sut.begin(olderQuery)
             // when
             sut.end(watchQuery, Result.Success(randomChannel(messages = emptyList())))
+            // then
+            assertTrue(sut.state.value.isLoadingPreviousMessages)
+        }
+
+        @Test
+        fun `watch failure should not clear an in-flight older page flag`() {
+            // given
+            sut.begin(olderQuery)
+            // when
+            sut.end(watchQuery, failure)
             // then
             assertTrue(sut.state.value.isLoadingPreviousMessages)
         }
