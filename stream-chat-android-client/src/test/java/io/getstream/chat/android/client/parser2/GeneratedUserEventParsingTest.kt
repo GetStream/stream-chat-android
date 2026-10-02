@@ -21,25 +21,32 @@ import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
 import io.getstream.chat.android.client.createChannelUserUnbannedEventStringJson
 import io.getstream.chat.android.client.createGlobalUserBannedEventStringJson
 import io.getstream.chat.android.client.createGlobalUserUnbannedEventStringJson
+import io.getstream.chat.android.client.createUserMessagesDeletedEventStringJson
 import io.getstream.chat.android.client.createUserPresenceChangedEventStringJson
 import io.getstream.chat.android.client.createUserStartWatchingEventStringJson
 import io.getstream.chat.android.client.createUserStopWatchingEventStringJson
+import io.getstream.chat.android.client.createUserUpdatedEventStringJson
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.events.UserUpdatedEvent
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
+import org.amshove.kluent.shouldBeNull
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.reflect.KClass
 
-/** Watching, presence and ban events parsed through their generated models. */
+/** Watching, presence, ban, user update and messages deletion events parsed through their generated models. */
 internal class GeneratedUserEventParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
@@ -65,6 +72,19 @@ internal class GeneratedUserEventParsingTest {
         }
     }
 
+    @Test
+    fun `A global messages deletion carries no channel`() {
+        val json = createUserMessagesDeletedEventStringJson()
+            .without("cid").without("channel_type").without("channel_id").without("hard_delete")
+
+        val event = parser.fromJson(json, ChatEvent::class.java).shouldBeInstanceOf<UserMessagesDeletedEvent>()
+
+        event.cid.shouldBeNull()
+        event.channelType.shouldBeNull()
+        event.channelId.shouldBeNull()
+        event.hardDelete shouldBeEqualTo false
+    }
+
     private fun String.withNanosecondCreatedAt() =
         replaceFirst(""""created_at": "2020-06-29T06:14:28.000Z"""", """"created_at": "$NANOSECOND_CREATED_AT"""")
 
@@ -86,6 +106,8 @@ internal class GeneratedUserEventParsingTest {
             Arguments.of(createGlobalUserBannedEventStringJson(), GlobalUserBannedEvent::class),
             Arguments.of(createChannelUserUnbannedEventStringJson(), ChannelUserUnbannedEvent::class),
             Arguments.of(createGlobalUserUnbannedEventStringJson(), GlobalUserUnbannedEvent::class),
+            Arguments.of(createUserUpdatedEventStringJson(), UserUpdatedEvent::class),
+            Arguments.of(createUserMessagesDeletedEventStringJson(), UserMessagesDeletedEvent::class),
         )
 
         @JvmStatic
@@ -98,6 +120,8 @@ internal class GeneratedUserEventParsingTest {
                 createGlobalUserBannedEventStringJson(),
                 createChannelUserUnbannedEventStringJson(),
                 createGlobalUserUnbannedEventStringJson(),
+                createUserUpdatedEventStringJson(),
+                createUserMessagesDeletedEventStringJson(),
             ).map { Arguments.of(it, "user") }
     }
 }
