@@ -692,6 +692,7 @@ public class MessageComposerController(
         logger.i { "[clearData]" }
         dismissMessageActions()
         scope.launch { clearDraftMessage(messageMode.value) }
+        currentDraftId = null
         messageInput.value = MessageInput()
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()

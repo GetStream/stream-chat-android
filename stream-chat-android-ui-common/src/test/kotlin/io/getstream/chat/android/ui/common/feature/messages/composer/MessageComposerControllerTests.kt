@@ -502,6 +502,51 @@ internal class MessageComposerControllerTests {
     }
 
     @Test
+    fun `Given a shown draft was cleared When a new draft arrives Then the new draft is shown`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf(CID to DraftMessage(id = "first", cid = CID, text = "first draft")))
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenDrafts(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .givenDraftMessageCalls()
+            .get(config = DRAFTS_ENABLED)
+        advanceUntilIdle()
+        controller.clearData()
+        channelDrafts.value = mapOf()
+        advanceUntilIdle()
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "second", cid = CID, text = "second draft"))
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` "second draft"
+    }
+
+    @Test
+    fun `Given a shown draft was cleared When another channel draft changes Then the typed input is kept`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf(CID to DraftMessage(id = "first", cid = CID, text = "first draft")))
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenDrafts(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .givenDraftMessageCalls()
+            .get(config = DRAFTS_ENABLED)
+        advanceUntilIdle()
+        controller.clearData()
+        channelDrafts.value = mapOf()
+        advanceUntilIdle()
+        controller.setMessageInput("typed text")
+
+        channelDrafts.value = mapOf("messaging:other" to DraftMessage(id = "other", cid = "messaging:other", text = "x"))
+        advanceUntilIdle()
+
+        controller.messageInput.value.text `should be equal to` "typed text"
+    }
+
+    @Test
     fun `Given the user picked a reply When a draft arrives Then the reply and empty input are kept`() = runTest {
         val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
         val controller = Fixture()
