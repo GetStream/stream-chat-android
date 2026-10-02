@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
@@ -168,6 +167,7 @@ import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersRequest
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
@@ -2007,7 +2007,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#searchMessagesInput")
-    fun testSearchMessages(call: RetrofitCall<SearchMessagesResponse>, expected: KClass<*>) = runTest {
+    fun testSearchMessages(call: RetrofitCall<SearchResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<GeneralApi>()
         whenever(api.searchMessages(any())).doReturn(call)

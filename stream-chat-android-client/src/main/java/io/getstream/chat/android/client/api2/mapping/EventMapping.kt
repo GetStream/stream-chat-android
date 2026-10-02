@@ -38,39 +38,22 @@ import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
-import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -149,13 +132,30 @@ import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.WSEvent
+import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
+import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
+import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
+import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
+import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
+import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
+import io.getstream.chat.android.network.models.NotificationInvitedEvent as GeneratedNotificationInvitedEvent
+import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
 import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPollUpdatedEvent
 import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
+import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
+import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
+import io.getstream.chat.android.network.models.ReminderNotificationEvent as GeneratedReminderNotificationEvent
+import io.getstream.chat.android.network.models.ReminderUpdatedEvent as GeneratedReminderUpdatedEvent
+import io.getstream.chat.android.network.models.ThreadUpdatedEvent as GeneratedThreadUpdatedEvent
+import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTypingStartEvent
+import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
+import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
@@ -189,42 +189,25 @@ internal class EventMapping(
             is ErrorEventDto -> toDomain()
             is HealthEventDto -> toDomain()
             is MarkAllReadEventDto -> toDomain()
-            is MemberAddedEventDto -> toDomain()
-            is MemberRemovedEventDto -> toDomain()
-            is MemberUpdatedEventDto -> toDomain()
             is MessageDeletedEventDto -> toDomain()
             is MessageDeliveredEventDto -> toDomain()
             is MessageReadEventDto -> toDomain()
             is MessageUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
-            is NotificationChannelDeletedEventDto -> toDomain()
             is NotificationChannelMutesUpdatedEventDto -> toDomain()
-            is NotificationChannelTruncatedEventDto -> toDomain()
-            is NotificationInviteAcceptedEventDto -> toDomain()
-            is NotificationInviteRejectedEventDto -> toDomain()
-            is NotificationInvitedEventDto -> toDomain()
             is NotificationMarkReadEventDto -> toDomain()
             is NotificationMarkUnreadEventDto -> toDomain()
-            is NotificationMessageNewEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
-            is ThreadUpdatedEventDto -> toDomain()
             is NotificationMutesUpdatedEventDto -> toDomain()
             is NotificationRemovedFromChannelEventDto -> toDomain()
             is ReactionDeletedEventDto -> toDomain()
             is ReactionNewEventDto -> toDomain()
             is ReactionUpdateEventDto -> toDomain()
-            is TypingStartEventDto -> toDomain()
-            is TypingStopEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
-            is UserDeletedEventDto -> toDomain()
             is UserUpdatedEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
             is DraftMessageDeletedEventDto -> toDomain()
             is DraftMessageUpdatedEventDto -> toDomain()
-            is ReminderCreatedEventDto -> toDomain()
-            is ReminderUpdatedEventDto -> toDomain()
-            is ReminderDeletedEventDto -> toDomain()
-            is NotificationReminderDueEventDto -> toDomain()
             is UserMessagesDeletedEventDto -> toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
@@ -337,51 +320,6 @@ internal class EventMapping(
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
             connectionId = connection_id,
-        )
-    }
-
-    /**
-     * Transforms [MemberAddedEventDto] to [MemberAddedEvent].
-     */
-    private fun MemberAddedEventDto.toDomain(): MemberAddedEvent = with(domainMapping) {
-        MemberAddedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            member = member.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [MemberRemovedEventDto] to [MemberRemovedEvent].
-     */
-    private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent = with(domainMapping) {
-        MemberRemovedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            member = member.toDomain(),
-        )
-    }
-
-    private fun MemberUpdatedEventDto.toDomain(): MemberUpdatedEvent = with(domainMapping) {
-        MemberUpdatedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            member = member.toDomain(),
         )
     }
 
@@ -504,24 +442,6 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationChannelDeletedEventDto] to [NotificationChannelDeletedEvent].
-     */
-    private fun NotificationChannelDeletedEventDto.toDomain(): NotificationChannelDeletedEvent = with(domainMapping) {
-        NotificationChannelDeletedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            groupedUnreadChannels = grouped_unread_channels,
-        )
-    }
-
-    /**
      * Transforms [NotificationChannelMutesUpdatedEventDto] to [NotificationChannelMutesUpdatedEvent].
      */
     private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent =
@@ -533,75 +453,6 @@ internal class EventMapping(
                 me = me.toDomain(),
             )
         }
-
-    /**
-     * Transforms [NotificationChannelTruncatedEventDto] to [NotificationChannelTruncatedEvent].
-     */
-    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent =
-        with(domainMapping) {
-            NotificationChannelTruncatedEvent(
-                type = type,
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                cid = cid,
-                channelType = channel_type,
-                channelId = channel_id,
-                channel = channel.toDomain(),
-                totalUnreadCount = total_unread_count,
-                unreadChannels = unread_channels,
-                groupedUnreadChannels = grouped_unread_channels,
-            )
-        }
-
-    /**
-     * Transforms [NotificationInviteAcceptedEventDto] to [NotificationInviteAcceptedEvent].
-     */
-    private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcceptedEvent = with(domainMapping) {
-        NotificationInviteAcceptedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            member = member.toDomain(),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [NotificationInviteRejectedEventDto] to [NotificationInviteRejectedEvent].
-     */
-    private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRejectedEvent = with(domainMapping) {
-        NotificationInviteRejectedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            member = member.toDomain(),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [NotificationInvitedEventDto] to [NotificationInvitedEvent].
-     */
-    private fun NotificationInvitedEventDto.toDomain(): NotificationInvitedEvent = with(domainMapping) {
-        NotificationInvitedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            member = member.toDomain(),
-        )
-    }
 
     /**
      * Transforms [NotificationMarkReadEventDto] to [NotificationMarkReadEvent].
@@ -666,36 +517,36 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationMessageNewEventDto] to [NotificationMessageNewEvent].
+     * Transforms the generated [GeneratedNotificationNewMessageEvent] to [NotificationMessageNewEvent].
      */
-    private fun NotificationMessageNewEventDto.toDomain(): NotificationMessageNewEvent = with(domainMapping) {
+    private fun GeneratedNotificationNewMessageEvent.toDomain(): NotificationMessageNewEvent = with(domainMapping) {
         NotificationMessageNewEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = requireNotNull(cid),
+            channelType = requireNotNull(channelType),
+            channelId = requireNotNull(channelId),
             channel = channel.toDomain(),
             message = message.toDomain(channel.toChannelInfo()),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            groupedUnreadChannels = grouped_unread_channels,
+            totalUnreadCount = totalUnreadCount ?: 0,
+            unreadChannels = unreadChannels ?: 0,
+            groupedUnreadChannels = groupedUnreadChannels,
         )
     }
 
     /**
-     * Transforms [ThreadUpdatedEventDto] to [ThreadUpdatedEvent].
+     * Transforms the generated [GeneratedThreadUpdatedEvent] to [ThreadUpdatedEvent].
      */
-    private fun ThreadUpdatedEventDto.toDomain(): ThreadUpdatedEvent = with(domainMapping) {
+    private fun GeneratedThreadUpdatedEvent.toDomain(): ThreadUpdatedEvent = with(domainMapping) {
         ThreadUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            thread = thread.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = requireNotNull(cid),
+            channelType = requireNotNull(channelType),
+            channelId = requireNotNull(channelId),
+            thread = requireNotNull(thread).toDomain(),
         )
     }
 
@@ -800,47 +651,13 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [TypingStartEventDto] to [TypingStartEvent].
+     * Transforms the generated [GeneratedUserDeletedEvent] to [UserDeletedEvent].
      */
-    private fun TypingStartEventDto.toDomain(): TypingStartEvent = with(domainMapping) {
-        TypingStartEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            parentId = parent_id,
-            member = member?.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [TypingStopEventDto] to [TypingStopEvent].
-     */
-    private fun TypingStopEventDto.toDomain(): TypingStopEvent = with(domainMapping) {
-        TypingStopEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            parentId = parent_id,
-            member = member?.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [UserDeletedEventDto] to [UserDeletedEvent].
-     */
-    private fun UserDeletedEventDto.toDomain(): UserDeletedEvent = with(domainMapping) {
+    private fun GeneratedUserDeletedEvent.toDomain(): UserDeletedEvent = with(domainMapping) {
         UserDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             user = user.toDomain(),
         )
     }
@@ -867,12 +684,29 @@ internal class EventMapping(
         is GeneratedUserPresenceChangedEvent -> toDomain()
         is GeneratedUserBannedEvent -> toDomain()
         is GeneratedUserUnbannedEvent -> toDomain()
+        is GeneratedMemberAddedEvent -> toDomain()
+        is GeneratedMemberRemovedEvent -> toDomain()
+        is GeneratedMemberUpdatedEvent -> toDomain()
+        is GeneratedTypingStartEvent -> toDomain()
+        is GeneratedTypingStopEvent -> toDomain()
+        is GeneratedNotificationInvitedEvent -> toDomain()
+        is GeneratedNotificationInviteAcceptedEvent -> toDomain()
+        is GeneratedNotificationInviteRejectedEvent -> toDomain()
+        is GeneratedNotificationChannelDeletedEvent -> toDomain()
+        is GeneratedNotificationChannelTruncatedEvent -> toDomain()
         is GeneratedPollClosedEvent -> toDomain()
         is GeneratedPollDeletedEvent -> toDomain()
         is GeneratedPollUpdatedEvent -> toDomain()
         is GeneratedPollVoteCastedEvent -> toDomain()
         is GeneratedPollVoteChangedEvent -> toDomain()
         is GeneratedPollVoteRemovedEvent -> toDomain()
+        is GeneratedReminderCreatedEvent -> toDomain()
+        is GeneratedReminderUpdatedEvent -> toDomain()
+        is GeneratedReminderDeletedEvent -> toDomain()
+        is GeneratedReminderNotificationEvent -> toDomain()
+        is GeneratedNotificationNewMessageEvent -> toDomain()
+        is GeneratedThreadUpdatedEvent -> toDomain()
+        is GeneratedUserDeletedEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -979,6 +813,198 @@ internal class EventMapping(
             }
         }
     }
+
+    /**
+     * Transforms the generated [GeneratedMemberAddedEvent] to [MemberAddedEvent].
+     */
+    private fun GeneratedMemberAddedEvent.toDomain(): MemberAddedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return MemberAddedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            member = member.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedMemberRemovedEvent] to [MemberRemovedEvent].
+     */
+    private fun GeneratedMemberRemovedEvent.toDomain(): MemberRemovedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return MemberRemovedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            member = member.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedMemberUpdatedEvent] to [MemberUpdatedEvent].
+     */
+    private fun GeneratedMemberUpdatedEvent.toDomain(): MemberUpdatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return MemberUpdatedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            member = member.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedTypingStartEvent] to [TypingStartEvent].
+     */
+    private fun GeneratedTypingStartEvent.toDomain(): TypingStartEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return TypingStartEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            parentId = parentId,
+            member = member?.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedTypingStopEvent] to [TypingStopEvent].
+     */
+    private fun GeneratedTypingStopEvent.toDomain(): TypingStopEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return TypingStopEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            parentId = parentId,
+            member = member?.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedNotificationInvitedEvent] to [NotificationInvitedEvent].
+     */
+    private fun GeneratedNotificationInvitedEvent.toDomain(): NotificationInvitedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return NotificationInvitedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            user = requireNotNull(user).toDomain(),
+            member = member.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedNotificationInviteAcceptedEvent] to [NotificationInviteAcceptedEvent].
+     */
+    private fun GeneratedNotificationInviteAcceptedEvent.toDomain(): NotificationInviteAcceptedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationInviteAcceptedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                user = requireNotNull(user).toDomain(),
+                member = member.toDomain(),
+                channel = channel.toDomain(),
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationInviteRejectedEvent] to [NotificationInviteRejectedEvent].
+     */
+    private fun GeneratedNotificationInviteRejectedEvent.toDomain(): NotificationInviteRejectedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationInviteRejectedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                user = requireNotNull(user).toDomain(),
+                member = member.toDomain(),
+                channel = channel.toDomain(),
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationChannelDeletedEvent] to [NotificationChannelDeletedEvent].
+     */
+    private fun GeneratedNotificationChannelDeletedEvent.toDomain(): NotificationChannelDeletedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationChannelDeletedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+                groupedUnreadChannels = groupedUnreadChannels,
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationChannelTruncatedEvent] to [NotificationChannelTruncatedEvent].
+     */
+    private fun GeneratedNotificationChannelTruncatedEvent.toDomain(): NotificationChannelTruncatedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationChannelTruncatedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+                groupedUnreadChannels = groupedUnreadChannels,
+            )
+        }
 
     /**
      * Transforms the generated [GeneratedPollClosedEvent] to [PollClosedEvent].
@@ -1155,73 +1181,73 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ReminderCreatedEventDto] to [ReminderCreatedEvent].
+     * Transforms the generated [GeneratedReminderCreatedEvent] to [ReminderCreatedEvent].
      */
-    private fun ReminderCreatedEventDto.toDomain(): ReminderCreatedEvent = with(domainMapping) {
+    private fun GeneratedReminderCreatedEvent.toDomain(): ReminderCreatedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderCreatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
+            messageId = messageId,
+            userId = userId,
             reminder = reminder.toDomain(),
         )
     }
 
     /**
-     * Transforms [ReminderUpdatedEventDto] to [ReminderUpdatedEvent].
+     * Transforms the generated [GeneratedReminderUpdatedEvent] to [ReminderUpdatedEvent].
      */
-    private fun ReminderUpdatedEventDto.toDomain(): ReminderUpdatedEvent = with(domainMapping) {
+    private fun GeneratedReminderUpdatedEvent.toDomain(): ReminderUpdatedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
+            messageId = messageId,
+            userId = userId,
             reminder = reminder.toDomain(),
         )
     }
 
     /**
-     * Transforms [ReminderDeletedEventDto] to [ReminderDeletedEvent].
+     * Transforms the generated [GeneratedReminderDeletedEvent] to [ReminderDeletedEvent].
      */
-    private fun ReminderDeletedEventDto.toDomain(): ReminderDeletedEvent = with(domainMapping) {
+    private fun GeneratedReminderDeletedEvent.toDomain(): ReminderDeletedEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
+            messageId = messageId,
+            userId = userId,
             reminder = reminder.toDomain(),
         )
     }
 
     /**
-     * Transforms [NotificationReminderDueEventDto] to [NotificationReminderDueEvent].
+     * Transforms the generated [GeneratedReminderNotificationEvent] to [NotificationReminderDueEvent].
      */
-    private fun NotificationReminderDueEventDto.toDomain(): NotificationReminderDueEvent = with(domainMapping) {
+    private fun GeneratedReminderNotificationEvent.toDomain(): NotificationReminderDueEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
         NotificationReminderDueEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            messageId = message_id,
-            userId = user_id,
+            messageId = messageId,
+            userId = userId,
             reminder = reminder.toDomain(),
         )
     }

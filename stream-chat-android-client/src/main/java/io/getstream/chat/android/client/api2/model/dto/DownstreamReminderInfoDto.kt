@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.network.models.SearchWarning
+import java.util.Date
 
+/**
+ * Model holding limited data about a message reminder.
+ *
+ * @property remind_at The date when the reminder should be sent.
+ * @property created_at The date when the reminder was created.
+ * @property updated_at The date when the reminder was last updated.
+ */
 @JsonClass(generateAdapter = true)
-internal data class SearchMessagesResponse(
-    val results: List<MessageResponse>,
-    val next: String?,
-    val previous: String?,
-    val resultsWarning: SearchWarning?,
+internal data class DownstreamReminderInfoDto(
+    val remind_at: Date?,
+    val created_at: Date,
+    val updated_at: Date,
 )

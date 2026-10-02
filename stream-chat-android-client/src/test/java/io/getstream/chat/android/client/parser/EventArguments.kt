@@ -323,6 +323,9 @@ internal object EventArguments {
         threadParticipants = listOf(user),
     )
 
+    /** The channel as the wire sends it: `disabled` always present, kept in extra data like the hand-written DTO. */
+    private val wireChannel = channel.copy(extraData = channel.extraData + ("disabled" to false))
+
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "type",
@@ -480,7 +483,7 @@ internal object EventArguments {
         type = EventType.MEMBER_ADDED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -490,7 +493,7 @@ internal object EventArguments {
         type = EventType.MEMBER_REMOVED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -500,7 +503,7 @@ internal object EventArguments {
         type = EventType.MEMBER_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -572,7 +575,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
         groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
@@ -582,7 +585,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
@@ -591,9 +594,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
@@ -602,9 +605,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInvitedEvent = NotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
@@ -613,7 +616,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
     )
     private val notificationMarkReadEvent = NotificationMarkReadEvent(
@@ -652,8 +655,13 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
-        message = message,
+        channel = wireChannel,
+        message = message.copy(
+            user = nestedUser,
+            mentionedUsers = listOf(nestedUser),
+            threadParticipants = listOf(nestedUser),
+            channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 1),
+        ),
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         groupedUnreadChannels = groupedUnreadChannels,
@@ -706,7 +714,7 @@ internal object EventArguments {
         type = EventType.TYPING_START,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -716,7 +724,7 @@ internal object EventArguments {
         type = EventType.TYPING_STOP,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
