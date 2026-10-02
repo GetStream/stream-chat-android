@@ -24,7 +24,7 @@ internal object ModerationTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"action":"bounce","original_text":"This is offensive","text_harms":["profanity","harassment"],"image_harms":["nudity"],"blocklist_matched":"custom_blocklist","semantic_filter_matched":"hate_speech","platform_circumvented":true}"""
+        """{"action":"bounce","original_text":"This is offensive","text_harms":["profanity","harassment"],"image_harms":["nudity"],"blocklist_matched":"custom_blocklist","blocklists_matched":["custom_blocklist","other_blocklist"],"semantic_filter_matched":"hate_speech","platform_circumvented":true}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =
@@ -46,6 +46,22 @@ internal object ModerationTestData {
         blocklistMatched = "custom_blocklist",
         semanticFilterMatched = "hate_speech",
         platformCircumvented = true,
+        blocklistsMatched = listOf("custom_blocklist", "other_blocklist"),
+    )
+
+    @Language("JSON")
+    val jsonOnlyBlocklistsMatched =
+        """{"action":"bounce","original_text":"Some text","blocklists_matched":["custom_blocklist","other_blocklist"]}"""
+
+    val expectedOnlyBlocklistsMatched = Moderation(
+        action = ModerationAction.bounce,
+        originalText = "Some text",
+        textHarms = emptyList(),
+        imageHarms = emptyList(),
+        blocklistMatched = "custom_blocklist",
+        semanticFilterMatched = null,
+        platformCircumvented = false,
+        blocklistsMatched = listOf("custom_blocklist", "other_blocklist"),
     )
 
     val expectedOptionalFieldsMissing = Moderation(
@@ -60,7 +76,7 @@ internal object ModerationTestData {
 
     @Language("JSON")
     val jsonWithExplicitNulls =
-        """{"action":"flag","original_text":"Some text","text_harms":null,"image_harms":null,"blocklist_matched":null,"semantic_filter_matched":null,"platform_circumvented":null}"""
+        """{"action":"flag","original_text":"Some text","text_harms":null,"image_harms":null,"blocklist_matched":null,"blocklists_matched":null,"semantic_filter_matched":null,"platform_circumvented":null}"""
 
     val expectedWithExplicitNulls = Moderation(
         action = ModerationAction.flag,
