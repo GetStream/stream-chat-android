@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.network.models.ChannelMemberResponse
-import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.WSEvent
@@ -101,20 +100,6 @@ internal data class NewMessageEventDto(
     val unread_channels: Int = 0,
     val channel_message_count: Int? = null,
     val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class DraftMessageUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val draft: DraftResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class DraftMessageDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val draft: DraftResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

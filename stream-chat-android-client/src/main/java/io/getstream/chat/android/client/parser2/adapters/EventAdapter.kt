@@ -32,8 +32,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
@@ -49,6 +47,8 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.models.ChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent
+import io.getstream.chat.android.network.models.DraftDeletedEvent
+import io.getstream.chat.android.network.models.DraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
@@ -110,8 +110,8 @@ internal class EventDtoAdapter(
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
-    private val draftMessageUpdatedEventAdapter = moshi.adapter(DraftMessageUpdatedEventDto::class.java)
-    private val draftMessageDeletedEventAdapter = moshi.adapter(DraftMessageDeletedEventDto::class.java)
+    private val draftMessageUpdatedEventAdapter = generatedEventAdapter<DraftUpdatedEvent> { mapOf("draft" to draft) }
+    private val draftMessageDeletedEventAdapter = generatedEventAdapter<DraftDeletedEvent> { mapOf("draft" to draft) }
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
     private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
     private val messageUpdatedEventAdapter = moshi.adapter(MessageUpdatedEventDto::class.java)
