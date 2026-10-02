@@ -44,6 +44,9 @@ class PushNotificationTests : StreamTestCase() {
         step("AND user goes to background") {
             device.goToBackground()
         }
+        step("AND user's WebSocket connection is closed") {
+            backendRobot.waitForWebSocketDisconnection()
+        }
         step("WHEN participant sends a message and its push notification") {
             participantRobot
                 .sendMessage(pushMessage)
@@ -68,6 +71,9 @@ class PushNotificationTests : StreamTestCase() {
         }
         step("AND user goes to background") {
             device.goToBackground()
+        }
+        step("AND user's WebSocket connection is closed") {
+            backendRobot.waitForWebSocketDisconnection()
         }
         step("WHEN participant sends a message and its push notification") {
             participantRobot
@@ -118,6 +124,9 @@ class PushNotificationTests : StreamTestCase() {
         step("AND user goes to background") {
             device.goToBackground()
         }
+        step("AND user's WebSocket connection is closed") {
+            backendRobot.waitForWebSocketDisconnection()
+        }
         listOf("invalid_version", "invalid_sender", "invalid_type").forEach { rest ->
             step("WHEN participant sends a push notification with $rest in the payload") {
                 participantRobot
@@ -161,6 +170,9 @@ class PushNotificationTests : StreamTestCase() {
         }
         step("AND user goes to background") {
             device.goToBackground()
+        }
+        step("AND user's WebSocket connection is closed") {
+            backendRobot.waitForWebSocketDisconnection()
         }
         step("WHEN participant sends a message and a push notification with $rest optional values") {
             participantRobot
