@@ -31,8 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -133,6 +131,8 @@ import io.getstream.result.Error
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
+import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
+import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -245,16 +245,20 @@ internal object EventMappingTestArguments {
         grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
-        type = EventType.DRAFT_MESSAGE_UPDATED,
-        created_at = EXACT_DATE,
-        draft = DRAFT,
+    private val draftMessageUpdatedDto = GeneratedEventDto(
+        GeneratedDraftUpdatedEvent(
+            type = EventType.DRAFT_MESSAGE_UPDATED,
+            createdAt = GENERATED_EXACT_DATE,
+            draft = DRAFT,
+        ),
     )
 
-    private val draftMessageDeletedDto = DraftMessageDeletedEventDto(
-        type = EventType.DRAFT_MESSAGE_DELETED,
-        created_at = EXACT_DATE,
-        draft = DRAFT,
+    private val draftMessageDeletedDto = GeneratedEventDto(
+        GeneratedDraftDeletedEvent(
+            type = EventType.DRAFT_MESSAGE_DELETED,
+            createdAt = GENERATED_EXACT_DATE,
+            draft = DRAFT,
+        ),
     )
 
     private val channelDeletedDto = ChannelDeletedEventDto(
@@ -928,17 +932,17 @@ internal object EventMappingTestArguments {
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
-        type = draftMessageUpdatedDto.type,
-        createdAt = draftMessageUpdatedDto.created_at.date,
-        rawCreatedAt = draftMessageUpdatedDto.created_at.rawDate,
-        draftMessage = with(domainMapping) { draftMessageUpdatedDto.draft.toDomain() },
+        type = EventType.DRAFT_MESSAGE_UPDATED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        draftMessage = with(domainMapping) { DRAFT.toDomain() },
     )
 
     private val draftMessageDeletedEvent = DraftMessageDeletedEvent(
-        type = draftMessageDeletedDto.type,
-        createdAt = draftMessageDeletedDto.created_at.date,
-        rawCreatedAt = draftMessageDeletedDto.created_at.rawDate,
-        draftMessage = with(domainMapping) { draftMessageDeletedDto.draft.toDomain() },
+        type = EventType.DRAFT_MESSAGE_DELETED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        draftMessage = with(domainMapping) { DRAFT.toDomain() },
     )
 
     private val channelDeleted = ChannelDeletedEvent(
