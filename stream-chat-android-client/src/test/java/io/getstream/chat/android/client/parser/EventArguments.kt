@@ -539,7 +539,7 @@ internal object EventArguments {
         type = EventType.MESSAGE_READ,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,

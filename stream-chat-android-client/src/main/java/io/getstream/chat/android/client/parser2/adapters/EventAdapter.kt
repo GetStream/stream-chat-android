@@ -40,15 +40,11 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventD
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -64,11 +60,14 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
+import io.getstream.chat.android.network.models.MessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageReadEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent
 import io.getstream.chat.android.network.models.NotificationInvitedEvent
+import io.getstream.chat.android.network.models.NotificationMarkReadEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent
 import io.getstream.chat.android.network.models.PollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent
@@ -91,6 +90,7 @@ import io.getstream.chat.android.network.models.UserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent
 import io.getstream.chat.android.network.models.WSEvent
 import java.lang.reflect.Type
+import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
 
 internal class EventAdapterFactory : JsonAdapter.Factory {
     override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? {
@@ -116,8 +116,20 @@ internal class EventDtoAdapter(
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
     private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
     private val messageUpdatedEventAdapter = moshi.adapter(MessageUpdatedEventDto::class.java)
-    private val messageReadEventAdapter = moshi.adapter(MessageReadEventDto::class.java)
-    private val messageDeliveredEventAdapter = moshi.adapter(MessageDeliveredEventDto::class.java)
+    private val messageReadEventAdapter = generatedEventAdapter<MessageReadEvent> {
+        mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
+    }
+    private val messageDeliveredEventAdapter = generatedEventAdapter<MessageDeliveredEvent> {
+        mapOf(
+            "cid" to cid,
+            "channel_type" to channelType,
+            "channel_id" to channelId,
+            "user" to user,
+            // The spec types it as a string; an unparseable value counts as missing.
+            "last_delivered_at" to lastDeliveredAt?.let(GeneratedExactDate::parseOrNull),
+            "last_delivered_message_id" to lastDeliveredMessageId,
+        )
+    }
     private val typingStartEventAdapter =
         generatedEventAdapter<TypingStartEvent> { mapOf("cid" to cid, "user" to user) }
     private val typingStopEventAdapter =
@@ -140,9 +152,11 @@ internal class EventDtoAdapter(
     private val userStartWatchingEventAdapter = generatedEventAdapter<UserWatchingStartEvent> { mapOf("cid" to cid) }
     private val userStopWatchingEventAdapter = generatedEventAdapter<UserWatchingStopEvent> { mapOf("cid" to cid) }
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
-    private val notificationMarkReadEventAdapter = moshi.adapter(NotificationMarkReadEventDto::class.java)
+    private val notificationMarkReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent> {
+        mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
+    }
     private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
-    private val markAllReadEventAdapter = moshi.adapter(MarkAllReadEventDto::class.java)
+    private val markAllReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent> { mapOf("user" to user) }
     private val notificationMessageNewEventAdapter = generatedEventAdapter<NotificationNewMessageEvent> {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId)
     }
@@ -209,10 +223,7 @@ internal class EventDtoAdapter(
             EventType.MESSAGE_NEW -> newMessageEventAdapter
             EventType.MESSAGE_DELETED -> messageDeletedEventAdapter
             EventType.MESSAGE_UPDATED -> messageUpdatedEventAdapter
-            EventType.MESSAGE_READ -> when {
-                map.containsKey("cid") -> messageReadEventAdapter
-                else -> markAllReadEventAdapter
-            }
+            EventType.MESSAGE_READ -> messageReadEventAdapter
             EventType.MESSAGE_DELIVERED -> messageDeliveredEventAdapter
             EventType.TYPING_START -> typingStartEventAdapter
             EventType.TYPING_STOP -> typingStopEventAdapter
