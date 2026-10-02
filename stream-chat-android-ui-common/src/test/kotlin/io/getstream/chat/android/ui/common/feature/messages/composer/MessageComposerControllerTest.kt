@@ -2103,6 +2103,27 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given the user picked a reply When a draft arrives Then the reply and empty input are kept`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .get()
+        advanceUntilIdle()
+        val reply = Reply(randomMessage(cid = CID))
+        controller.performMessageAction(reply)
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "draft", cid = CID, text = "draft text"))
+        advanceUntilIdle()
+
+        assertEquals("", controller.state.value.inputValue)
+        assertEquals(setOf(reply), controller.messageActions.value)
+    }
+
+    @Test
     fun `Given a draft that never reached the input When the composer closes empty Then the draft is not deleted`() =
         runTest {
             val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())

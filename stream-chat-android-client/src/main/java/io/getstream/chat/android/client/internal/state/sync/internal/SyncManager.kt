@@ -664,6 +664,7 @@ internal class SyncManager(
                     logger.v {
                         "[updateActiveQueryChannels] request completed; foundChannels.size: ${foundChannels.size}"
                     }
+                    mutableGlobalState.updateChannelDrafts(foundChannels)
                     updatedCids.addAll(foundChannels.map { it.cid })
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }
