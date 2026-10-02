@@ -85,9 +85,3 @@ internal data class DownstreamMessageDto(
     val deleted_for_me: Boolean?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
-
-@JsonClass(generateAdapter = true)
-internal data class DownstreamPendingMessageDto(
-    val message: DownstreamMessageDto,
-    val metadata: Map<String, String>?,
-)
