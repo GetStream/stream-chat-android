@@ -787,6 +787,7 @@ public class MessageComposerController(
         logger.i { "[clearData]" }
         dismissMessageActions()
         scope.launch { clearDraftMessage(_state.value.messageMode) }
+        currentDraftId = null
         _messageInput.value = MessageInput()
         clearAttachments()
         discardCommandStash()

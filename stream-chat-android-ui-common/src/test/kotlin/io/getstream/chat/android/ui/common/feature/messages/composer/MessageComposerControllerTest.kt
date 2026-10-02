@@ -2103,6 +2103,51 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given a shown draft was cleared When a new draft arrives Then the new draft is shown`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf(CID to DraftMessage(id = "first", cid = CID, text = "first draft")))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .givenDraftMessageStubs()
+            .get()
+        advanceUntilIdle()
+        controller.clearData()
+        channelDrafts.value = mapOf()
+        advanceUntilIdle()
+
+        channelDrafts.value = mapOf(CID to DraftMessage(id = "second", cid = CID, text = "second draft"))
+        advanceUntilIdle()
+
+        assertEquals("second draft", controller.state.value.inputValue)
+    }
+
+    @Test
+    fun `Given a shown draft was cleared When another channel draft changes Then the typed input is kept`() = runTest {
+        val channelDrafts = MutableStateFlow(mapOf(CID to DraftMessage(id = "first", cid = CID, text = "first draft")))
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenDraftFlows(channelDrafts = channelDrafts)
+            .givenChannelState()
+            .givenDraftMessageStubs()
+            .get()
+        advanceUntilIdle()
+        controller.clearData()
+        channelDrafts.value = mapOf()
+        advanceUntilIdle()
+        controller.setMessageInput("typed text")
+
+        channelDrafts.value = mapOf("messaging:other" to DraftMessage(id = "other", cid = "messaging:other", text = "x"))
+        advanceUntilIdle()
+
+        assertEquals("typed text", controller.state.value.inputValue)
+    }
+
+    @Test
     fun `Given the user picked a reply When a draft arrives Then the reply and empty input are kept`() = runTest {
         val channelDrafts = MutableStateFlow(mapOf<String, DraftMessage>())
         val controller = Fixture()
