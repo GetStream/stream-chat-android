@@ -307,10 +307,12 @@ public class StateRegistry @JvmOverloads constructor(
 
     private fun removeChanel(channelType: String, channelId: String) {
         val id = ChannelId.fromTypeAndId(channelType, channelId) ?: return
+        // The state is dropped from the registry but not destroyed: consumers already holding it keep
+        // the channel as it was, with ChannelData.deletedAt set, instead of seeing it blanked.
         val removed = if (useLegacyChannelState) {
-            legacyChannels.remove(id)?.destroy()
+            legacyChannels.remove(id) != null
         } else {
-            channels.remove(id)?.destroy()
+            channels.remove(id) != null
         }
         logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }
     }
