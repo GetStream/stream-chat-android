@@ -105,6 +105,8 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.DraftResponse
@@ -114,6 +116,7 @@ import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.PendingMessageResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -381,6 +384,36 @@ internal class DomainMapping(
     ): PendingMessage = PendingMessage(
         message = message.toDomain(fallbackChannelInfo).enrichWithCid(cid),
         metadata = metadata.orEmpty(),
+    )
+
+    /**
+     * Transforms the generated [PendingMessageResponse] into a [PendingMessage], or null when it carries no message.
+     * The metadata is server-side only (never sent to client-side callers), so it stays empty.
+     */
+    internal fun PendingMessageResponse.toDomain(cid: String, fallbackChannelInfo: ChannelInfo?): PendingMessage? =
+        message?.let {
+            PendingMessage(message = it.toDomain(fallbackChannelInfo).enrichWithCid(cid), metadata = emptyMap())
+        }
+
+    /**
+     * The [ChannelStateResponseFields] of a single channel query: the same state without the request duration.
+     */
+    internal fun ChannelStateResponse.toStateFields(): ChannelStateResponseFields = ChannelStateResponseFields(
+        members = members,
+        messages = messages,
+        pinnedMessages = pinnedMessages,
+        threads = threads,
+        hidden = hidden,
+        hideMessagesBefore = hideMessagesBefore,
+        watcherCount = watcherCount,
+        activeLiveLocations = activeLiveLocations,
+        pendingMessages = pendingMessages,
+        read = read,
+        watchers = watchers,
+        channel = channel,
+        draft = draft,
+        membership = membership,
+        pushPreferences = pushPreferences,
     )
 
     /**

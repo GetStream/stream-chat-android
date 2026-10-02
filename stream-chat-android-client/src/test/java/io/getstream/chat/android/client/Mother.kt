@@ -66,7 +66,10 @@ import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
@@ -80,6 +83,7 @@ import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.PendingMessageResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -1220,6 +1224,74 @@ internal object Mother {
         createdAt = randomDate(),
         updatedAt = randomDate(),
         custom = custom,
+    )
+
+    fun randomChannelStateResponseFields(
+        channel: ChannelResponse? = randomChannelResponse(),
+        hidden: Boolean? = randomBoolean(),
+        membership: ChannelMemberResponse? = randomChannelMemberResponse(),
+        hideMessagesBefore: Date? = randomDateOrNull(),
+        draft: DraftResponse? = randomDraftResponse(),
+    ): ChannelStateResponseFields = ChannelStateResponseFields(
+        channel = channel,
+        hidden = hidden,
+        membership = membership,
+        hideMessagesBefore = hideMessagesBefore,
+        draft = draft,
+    )
+
+    /** A channel state with every field set, each to a distinguishable value. */
+    fun randomFullChannelStateResponseFields(): ChannelStateResponseFields {
+        val channel = randomChannelResponse(id = randomString(), type = "messaging")
+        return ChannelStateResponseFields(
+            channel = channel,
+            members = listOf(randomChannelMemberResponse(), randomChannelMemberResponse()),
+            messages = listOf(randomMessageResponse(cid = channel.cid), randomMessageResponse(cid = channel.cid)),
+            pinnedMessages = listOf(randomMessageResponse(cid = channel.cid)),
+            threads = listOf(randomThreadStateResponse(channelCid = channel.cid)),
+            hidden = true,
+            hideMessagesBefore = randomDate(),
+            watcherCount = positiveRandomInt(),
+            activeLiveLocations = listOf(
+                SharedLocationResponseData(
+                    channelCid = channel.cid,
+                    createdAt = randomDate(),
+                    createdByDeviceId = randomString(),
+                    latitude = 1.5,
+                    longitude = 2.5,
+                    messageId = randomString(),
+                    updatedAt = randomDate(),
+                    userId = randomString(),
+                    endAt = randomDate(),
+                ),
+            ),
+            pendingMessages = listOf(PendingMessageResponse(message = randomMessageResponse(cid = channel.cid))),
+            read = listOf(randomReadStateResponse(), randomReadStateResponse()),
+            watchers = listOf(randomUserResponse()),
+            draft = randomDraftResponse(),
+            membership = randomChannelMemberResponse(),
+            pushPreferences = ChannelPushPreferencesResponse(chatLevel = "mentions", disabledUntil = randomDate()),
+        )
+    }
+
+    /** The single channel query response carrying the given state. */
+    fun ChannelStateResponseFields.toChannelStateResponse(): ChannelStateResponse = ChannelStateResponse(
+        duration = "1ms",
+        members = members,
+        messages = messages,
+        pinnedMessages = pinnedMessages,
+        threads = threads,
+        hidden = hidden,
+        hideMessagesBefore = hideMessagesBefore,
+        watcherCount = watcherCount,
+        activeLiveLocations = activeLiveLocations,
+        pendingMessages = pendingMessages,
+        read = read,
+        watchers = watchers,
+        channel = channel,
+        draft = draft,
+        membership = membership,
+        pushPreferences = pushPreferences,
     )
 
     fun randomThreadResponse(
