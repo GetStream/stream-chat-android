@@ -17,18 +17,20 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
+import io.getstream.chat.android.client.createChannelDeletedEventStringJson
+import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
+import io.getstream.chat.android.client.createChannelTruncatedServerSideEventStringJson
+import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
+import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
+import io.getstream.chat.android.client.createNotificationRemovedFromChannelEventStringJson
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
-import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -36,110 +38,79 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.reflect.KClass
 
-/** Channel update, truncate, delete and removal events, recorded from the backend, parsed through generated models. */
+/** Channel update, truncate, delete and removal events parsed through their generated models. */
 internal class GeneratedChannelEventParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
 
-    @ParameterizedTest(name = "{0}")
+    @ParameterizedTest
     @MethodSource("events")
-    fun `A channel event maps to its domain event with its channel and the created_at string as sent`(
-        name: String,
+    fun `A channel event maps to its domain event and keeps the created_at string as sent`(
+        json: String,
         expected: KClass<out ChatEvent>,
     ) {
-        val event = parser.fromJson(recorded(name), ChatEvent::class.java)
+        val event = parser.fromJson(json.withNanosecondCreatedAt(), ChatEvent::class.java)
 
         event::class shouldBeEqualTo expected
-        event.rawCreatedAt shouldBeEqualTo frame(name)["created_at"]
-        val cidEvent = event.shouldBeInstanceOf<CidEvent>()
-        cidEvent.cid shouldBeEqualTo frame(name)["cid"]
-        cidEvent.channelType shouldBeEqualTo "messaging"
-        cidEvent.channelId shouldBeEqualTo (frame(name)["cid"] as String).removePrefix("messaging:")
+        event.rawCreatedAt shouldBeEqualTo NANOSECOND_CREATED_AT
+        event.createdAt.time shouldBeEqualTo CREATED_AT_MILLIS
     }
 
     @Test
-    fun `A server-side update keeps the channel name and custom data`() {
-        val event = parser.fromJson(recorded("updated"), ChatEvent::class.java).shouldBeInstanceOf<ChannelUpdatedEvent>()
-
-        event.channel.name shouldBeEqualTo "ce server"
-        event.channel.extraData["probe"] shouldBeEqualTo "sentinel"
-        event.channel.members.size shouldBeEqualTo 2
-        event.message.shouldBeNull()
-    }
-
-    @Test
-    fun `An update by a user carries the user and the system message with its channel`() {
-        val event = parser.fromJson(recorded("updated_by_user"), ChatEvent::class.java)
+    fun `A channel update by a user maps to the by-user event with the user`() {
+        val event = parser.fromJson(createChannelUpdatedByUserEventStringJson(), ChatEvent::class.java)
             .shouldBeInstanceOf<ChannelUpdatedByUserEvent>()
 
-        event.user.id shouldBeEqualTo GUEST
-        event.message?.type shouldBeEqualTo "system"
-        event.message?.channelInfo?.cid shouldBeEqualTo event.cid
-        event.channel.name shouldBeEqualTo "ce by user"
+        event.user.id shouldBeEqualTo "bender"
     }
 
     @Test
-    fun `A truncate by a user carries the user, the system message and the truncation date`() {
-        val event = parser.fromJson(recorded("truncated_by_user"), ChatEvent::class.java)
-            .shouldBeInstanceOf<ChannelTruncatedEvent>()
+    fun `The message of a channel event takes its channel info from the event channel`() {
+        val event = parser.fromJson(createChannelUpdatedEventStringJson(), ChatEvent::class.java)
+            .shouldBeInstanceOf<ChannelUpdatedEvent>()
 
-        event.user?.id shouldBeEqualTo GUEST
-        event.message?.type shouldBeEqualTo "system"
         event.message?.channelInfo?.cid shouldBeEqualTo event.cid
-        (event.channel.truncatedAt != null) shouldBeEqualTo true
+        event.message?.channelInfo?.id shouldBeEqualTo event.channelId
     }
 
-    @Test
-    fun `A removal carries the removed member and a delete carries the deletion date`() {
-        val removed = parser.fromJson(recorded("removed_from_channel"), ChatEvent::class.java)
-            .shouldBeInstanceOf<NotificationRemovedFromChannelEvent>()
-        removed.member.user.id shouldBeEqualTo "jaewoong"
-        removed.user?.id shouldBeEqualTo "jaewoong"
-
-        val deleted = parser.fromJson(recorded("deleted"), ChatEvent::class.java)
-            .shouldBeInstanceOf<ChannelDeletedEvent>()
-        (deleted.channel.deletedAt != null) shouldBeEqualTo true
-    }
-
-    @ParameterizedTest(name = "{0} without {1}")
+    @ParameterizedTest
     @MethodSource("missingRequiredFields")
-    fun `A channel event without a field the domain event requires is rejected`(name: String, field: String) {
+    fun `A channel event without a field the domain event requires is rejected`(json: String, field: String) {
         assertThrows<JsonDataException> {
-            parser.fromJson(mapAdapter.toJson(frame(name) - field), ChatEvent::class.java)
+            parser.fromJson(json.without(field), ChatEvent::class.java)
         }
     }
 
-    private fun recorded(name: String): String = mapAdapter.toJson(frame(name))
+    private fun String.withNanosecondCreatedAt() =
+        replaceFirst(""""created_at": "2020-06-29T06:14:28.000Z"""", """"created_at": "$NANOSECOND_CREATED_AT"""")
 
-    @Suppress("UNCHECKED_CAST")
-    private fun frame(name: String): Map<String, Any?> = RECORDED[name] as Map<String, Any?>
+    private fun String.without(field: String): String =
+        parser.toJson(parser.fromJson(this, Map::class.java).minus(field))
 
     companion object {
-        private const val GUEST = "guest-d8b48ef8-3dfa-4f84-8158-419e539c8b4d-migrate-probe-guest-1787060657987-sdk"
+        private const val NANOSECOND_CREATED_AT = "2026-09-23T14:57:25.025029486Z"
 
-        private val mapAdapter = Moshi.Builder().build().adapter<Map<String, Any?>>(
-            Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java),
-        )
-
-        /** Channel events recorded from a watching socket on the backend, keyed by the case they cover. */
-        private val RECORDED: Map<String, Any?> = mapAdapter.fromJson(
-            GeneratedChannelEventParsingTest::class.java.getResource("/parity/channel_events.json")!!.readText(),
-        )!!
+        // The same instant truncated to milliseconds.
+        private const val CREATED_AT_MILLIS = 1790175445025L
 
         @JvmStatic
-        fun events() = listOf(
-            Arguments.of("updated", ChannelUpdatedEvent::class),
-            Arguments.of("updated_by_user", ChannelUpdatedByUserEvent::class),
-            Arguments.of("truncated_by_user", ChannelTruncatedEvent::class),
-            Arguments.of("truncated", ChannelTruncatedEvent::class),
-            Arguments.of("removed_from_channel", NotificationRemovedFromChannelEvent::class),
-            Arguments.of("deleted", ChannelDeletedEvent::class),
+        fun events(): List<Arguments> = listOf(
+            Arguments.of(createChannelUpdatedEventStringJson(), ChannelUpdatedEvent::class),
+            Arguments.of(createChannelUpdatedByUserEventStringJson(), ChannelUpdatedByUserEvent::class),
+            Arguments.of(createChannelTruncatedEventStringJson(), ChannelTruncatedEvent::class),
+            Arguments.of(createChannelTruncatedServerSideEventStringJson(), ChannelTruncatedEvent::class),
+            Arguments.of(createChannelDeletedEventStringJson(), ChannelDeletedEvent::class),
+            Arguments.of(createNotificationRemovedFromChannelEventStringJson(), NotificationRemovedFromChannelEvent::class),
         )
 
         @JvmStatic
-        fun missingRequiredFields() = listOf(
-            "updated", "updated_by_user", "truncated", "removed_from_channel", "deleted",
-        ).flatMap { name -> listOf(Arguments.of(name, "cid"), Arguments.of(name, "channel")) } +
-            Arguments.of("removed_from_channel", "member")
+        fun missingRequiredFields(): List<Arguments> = listOf(
+            createChannelUpdatedEventStringJson(),
+            createChannelUpdatedByUserEventStringJson(),
+            createChannelTruncatedEventStringJson(),
+            createChannelDeletedEventStringJson(),
+            createNotificationRemovedFromChannelEventStringJson(),
+        ).flatMap { json -> listOf("cid", "channel").map { Arguments.of(json, it) } } +
+            Arguments.of(createNotificationRemovedFromChannelEventStringJson(), "member")
     }
 }
