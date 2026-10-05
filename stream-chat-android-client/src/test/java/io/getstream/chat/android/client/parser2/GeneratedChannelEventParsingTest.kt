@@ -100,7 +100,10 @@ internal class GeneratedChannelEventParsingTest {
             Arguments.of(createChannelTruncatedEventStringJson(), ChannelTruncatedEvent::class),
             Arguments.of(createChannelTruncatedServerSideEventStringJson(), ChannelTruncatedEvent::class),
             Arguments.of(createChannelDeletedEventStringJson(), ChannelDeletedEvent::class),
-            Arguments.of(createNotificationRemovedFromChannelEventStringJson(), NotificationRemovedFromChannelEvent::class),
+            Arguments.of(
+                createNotificationRemovedFromChannelEventStringJson(),
+                NotificationRemovedFromChannelEvent::class,
+            ),
         )
 
         @JvmStatic
