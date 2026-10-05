@@ -33,10 +33,7 @@ public data class Moderation(
     val originalText: String,
     val textHarms: List<String>,
     val imageHarms: List<String>,
-    @Deprecated(
-        message = "Use blocklistsMatched instead.",
-        replaceWith = ReplaceWith("blocklistsMatched.firstOrNull()"),
-    )
+    @Deprecated("Use blocklistsMatched instead.")
     val blocklistMatched: String?,
     val semanticFilterMatched: String?,
     val platformCircumvented: Boolean,
