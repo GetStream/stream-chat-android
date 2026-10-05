@@ -112,8 +112,10 @@ import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
+import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.MessageResponse
+import io.getstream.chat.android.network.models.MessageWithChannelResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PendingMessageResponse
@@ -148,7 +150,6 @@ import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
 import java.util.Date
-import io.getstream.chat.android.client.api2.model.response.MessageResponse as MessageEnvelope
 import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.FileUploadConfig as UploadConfigDto
@@ -433,15 +434,6 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [MessageEnvelope] to [PendingMessage].
-     */
-    internal fun MessageEnvelope.toDomain(): PendingMessage =
-        PendingMessage(
-            message = message.toDomain(),
-            metadata = pending_message_metadata.orEmpty(),
-        )
-
-    /**
      * Maps the reactions of one message, dropping any that the response attributes to another message.
      */
     @StreamHandsOff(
@@ -519,6 +511,76 @@ internal class DomainMapping(
      * same message mapper.
      */
     internal fun SearchResultMessage.toMessageResponse(): MessageResponse = MessageResponse(
+        cid = cid,
+        createdAt = createdAt,
+        deletedReplyCount = deletedReplyCount,
+        html = html,
+        id = id,
+        mentionedChannel = mentionedChannel,
+        mentionedHere = mentionedHere,
+        pinned = pinned,
+        replyCount = replyCount,
+        shadowed = shadowed,
+        silent = silent,
+        text = text,
+        type = type,
+        updatedAt = updatedAt,
+        attachments = attachments,
+        latestReactions = latestReactions,
+        mentionedUsers = mentionedUsers,
+        ownReactions = ownReactions,
+        restrictedVisibility = restrictedVisibility,
+        custom = custom,
+        reactionCounts = reactionCounts,
+        reactionScores = reactionScores,
+        user = user,
+        command = command,
+        deletedAt = deletedAt,
+        deletedForMe = deletedForMe,
+        messageTextUpdatedAt = messageTextUpdatedAt,
+        mml = mml,
+        parentId = parentId,
+        pinExpires = pinExpires,
+        pinnedAt = pinnedAt,
+        pollId = pollId,
+        quotedMessageId = quotedMessageId,
+        showInChannel = showInChannel,
+        mentionedGroupIds = mentionedGroupIds,
+        mentionedGroups = mentionedGroups,
+        mentionedRoles = mentionedRoles,
+        threadParticipants = threadParticipants,
+        draft = draft,
+        i18n = i18n,
+        imageLabels = imageLabels,
+        member = member,
+        mentionedChannelMembers = mentionedChannelMembers,
+        moderation = moderation,
+        pinnedBy = pinnedBy,
+        poll = poll,
+        quotedMessage = quotedMessage,
+        reactionGroups = reactionGroups,
+        reminder = reminder,
+        sharedLocation = sharedLocation,
+    )
+
+    /**
+     * Transforms the generated [GetMessageResponse] into a [PendingMessage]. Its metadata stays empty: the backend
+     * only sends it to server-side callers.
+     */
+    internal fun GetMessageResponse.toPendingMessage(): PendingMessage =
+        PendingMessage(message = message.toDomain(), metadata = emptyMap())
+
+    /**
+     * Transforms the generated [MessageWithChannelResponse] into a domain [Message], with the channel info of the
+     * channel it carries.
+     */
+    internal fun MessageWithChannelResponse.toDomain(): Message = toMessageResponse().toDomain(channel.toChannelInfo())
+
+    /**
+     * The [MessageResponse] this response extends: every field but the channel, so it maps through the same message
+     * mapper.
+     */
+    internal fun MessageWithChannelResponse.toMessageResponse(): MessageResponse = MessageResponse(
         cid = cid,
         createdAt = createdAt,
         deletedReplyCount = deletedReplyCount,

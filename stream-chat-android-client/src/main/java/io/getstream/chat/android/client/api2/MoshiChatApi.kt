@@ -135,7 +135,9 @@ import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.MessageRequest
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
@@ -164,6 +166,7 @@ import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialResponse
 import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
@@ -356,9 +359,7 @@ constructor(
                 unset = unset,
                 skipEnrichUrl = skipEnrichUrl,
             ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+        ).mapMessage(UpdateMessagePartialResponse::message)
     }
 
     private fun Map<String, Any>.toDto(): Map<String, Any> = with(dtoMapping) {
@@ -385,7 +386,7 @@ constructor(
     }
 
     override fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return messageApi.getMessage(messageId).mapDomain { it.toDomain() }
+        return messageApi.getMessage(messageId).mapDomain { it.toPendingMessage() }
     }
 
     override fun deleteMessage(
@@ -673,6 +674,13 @@ constructor(
                     else -> Result.Success(with(domainMapping) { userGroup.toDomain() })
                 }
             }
+        }
+
+    private fun <T : Any> RetrofitCall<T>.mapMessage(extract: (T) -> MessageResponse?): Call<Message> =
+        flatMapDomain { response ->
+            extract(response)
+                ?.let { message -> CoroutineCall(coroutineScope) { Result.Success(message.toDomain()) } }
+                ?: ErrorCall(coroutineScope, Error.GenericError(MISSING_MESSAGE))
         }
 
     private fun <T : Any> RetrofitCall<T>.mapUserGroups(extract: (T) -> List<UserGroupResponse>) =
@@ -1373,9 +1381,7 @@ constructor(
             request = MessageActionRequest(
                 formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
             ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+        ).mapMessage(MessageActionResponse::message)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
@@ -2086,4 +2092,5 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
     }
 
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
+private const val MISSING_MESSAGE = "The response carried no message"
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
