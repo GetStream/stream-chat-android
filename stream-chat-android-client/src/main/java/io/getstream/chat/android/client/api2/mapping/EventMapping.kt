@@ -19,13 +19,11 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -112,8 +110,10 @@ import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedC
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
+import io.getstream.chat.android.network.models.ConnectedEvent as GeneratedConnectedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
+import io.getstream.chat.android.network.models.HealthCheckEvent as GeneratedHealthCheckEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -174,12 +174,10 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ConnectedEventDto -> toDomain()
             is ConnectionErrorEventDto -> toDomain()
             is ConnectingEventDto -> toDomain()
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
-            is HealthEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
         }
@@ -222,14 +220,15 @@ internal class EventMapping(
         )
     }
 
-    private fun HealthEventDto.toDomain(): HealthEvent {
-        return HealthEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
-        )
-    }
+    /**
+     * Transforms the generated [GeneratedHealthCheckEvent] to [HealthEvent].
+     */
+    private fun GeneratedHealthCheckEvent.toDomain(): HealthEvent = HealthEvent(
+        type = type,
+        createdAt = createdAt.date,
+        rawCreatedAt = createdAt.raw,
+        connectionId = connectionId,
+    )
 
     /**
      * Transforms the generated [GeneratedMessageDeletedEvent] to [MessageDeletedEvent].
@@ -510,6 +509,8 @@ internal class EventMapping(
         is GeneratedAIIndicatorUpdateEvent -> toDomain()
         is GeneratedAIIndicatorClearEvent -> toDomain()
         is GeneratedAIIndicatorStopEvent -> toDomain()
+        is GeneratedConnectedEvent -> toDomain()
+        is GeneratedHealthCheckEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -1345,15 +1346,16 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ConnectedEventDto] to [ConnectedEvent].
+     * Transforms the generated [GeneratedConnectedEvent] to [ConnectedEvent]. On the v1 socket it is the
+     * `health.check` hello that carries `me`.
      */
-    private fun ConnectedEventDto.toDomain(): ConnectedEvent = with(domainMapping) {
+    private fun GeneratedConnectedEvent.toDomain(): ConnectedEvent = with(domainMapping) {
         ConnectedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             me = me.toDomain(),
-            connectionId = connection_id,
+            connectionId = connectionId,
         )
     }
 
