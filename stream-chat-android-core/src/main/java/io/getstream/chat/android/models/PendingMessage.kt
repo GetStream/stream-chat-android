@@ -22,11 +22,17 @@ import androidx.compose.runtime.Immutable
  * Represents a message that is pending delivery or processing.
  *
  * @property message The [Message] object containing all the content and attributes of the message.
- * @property metadata Additional metadata associated with this pending message, stored as key-value pairs.
+ * @property metadata Additional metadata associated with this pending message, stored as key-value pairs. Always empty:
+ * the backend only sends it to server-side callers.
  */
 @Immutable
 public data class PendingMessage(
     val message: Message,
+    @Deprecated(
+        message = "The backend only sends pending message metadata to server-side callers, so it is always empty " +
+            "on the client.",
+        level = DeprecationLevel.WARNING,
+    )
     val metadata: Map<String, String>,
 ) {
     /**
@@ -50,6 +56,7 @@ public data class PendingMessage(
          *
          * @param pendingMessage The PendingMessage to initialize this Builder with.
          */
+        @Suppress("DEPRECATION")
         public constructor(pendingMessage: PendingMessage) : this() {
             message = pendingMessage.message
             metadata = pendingMessage.metadata
@@ -69,6 +76,11 @@ public data class PendingMessage(
          * @param metadata The metadata map to set.
          * @return This Builder instance.
          */
+        @Deprecated(
+            message = "The backend only sends pending message metadata to server-side callers, so it is always empty " +
+                "on the client.",
+            level = DeprecationLevel.WARNING,
+        )
         public fun withMetadata(metadata: Map<String, String>): Builder = apply { this.metadata = metadata }
 
         /**
