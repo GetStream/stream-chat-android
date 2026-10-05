@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.ModerationAction
 /**
  * Maps the domain model [Moderation] to the database model [ModerationEntity].
  */
+@Suppress("DEPRECATION")
 internal fun Moderation.toEntity() = ModerationEntity(
     action = action.value,
     originalText = originalText,
@@ -30,6 +31,7 @@ internal fun Moderation.toEntity() = ModerationEntity(
     blocklistMatched = blocklistMatched,
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
+    blocklistsMatched = blocklistsMatched,
 )
 
 /**
@@ -43,4 +45,5 @@ internal fun ModerationEntity.toDomain() = Moderation(
     blocklistMatched = blocklistMatched,
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
+    blocklistsMatched = blocklistsMatched,
 )
