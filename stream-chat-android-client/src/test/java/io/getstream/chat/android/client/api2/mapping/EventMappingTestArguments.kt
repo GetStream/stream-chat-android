@@ -20,11 +20,7 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
@@ -40,7 +36,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
@@ -127,6 +122,9 @@ import io.getstream.result.Error
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
+import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
+import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -142,6 +140,7 @@ import io.getstream.chat.android.network.models.NotificationMarkReadEvent as Gen
 import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
+import io.getstream.chat.android.network.models.NotificationRemovedFromChannelEvent as GeneratedNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.network.models.NotificationThreadMessageNewEvent as GeneratedNotificationThreadMessageNewEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -258,15 +257,15 @@ internal object EventMappingTestArguments {
         draft = DRAFT,
     )
 
-    private val channelDeletedDto = ChannelDeletedEventDto(
+    private val channelDeletedEvent = GeneratedChannelDeletedEvent(
         type = EventType.CHANNEL_DELETED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
     )
+
+    private val channelDeletedDto = GeneratedEventDto(channelDeletedEvent)
 
     private val channelHiddenDto = ChannelHiddenEventDto(
         type = EventType.CHANNEL_HIDDEN,
@@ -279,37 +278,37 @@ internal object EventMappingTestArguments {
         clear_history = CLEAR_HISTORY,
     )
 
-    private val channelTruncatedDto = ChannelTruncatedEventDto(
+    private val channelTruncatedEvent = GeneratedChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
-        channel = CHANNEL,
+        user = COMMON_USER,
+        message = GENERATED_MESSAGE,
+        channel = GENERATED_CHANNEL,
     )
 
-    private val channelUpdatedByUserDto = ChannelUpdatedByUserEventDto(
+    private val channelTruncatedDto = GeneratedEventDto(channelTruncatedEvent)
+
+    private val channelUpdatedByUserEvent = GeneratedChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
-        channel = CHANNEL,
+        user = COMMON_USER,
+        message = GENERATED_MESSAGE,
+        channel = GENERATED_CHANNEL,
     )
 
-    private val channelUpdatedDto = ChannelUpdatedEventDto(
+    private val channelUpdatedByUserDto = GeneratedEventDto(channelUpdatedByUserEvent)
+
+    private val channelUpdatedEvent = GeneratedChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        message = MESSAGE,
-        channel = CHANNEL,
+        message = GENERATED_MESSAGE,
+        channel = GENERATED_CHANNEL,
     )
+
+    private val channelUpdatedDto = GeneratedEventDto(channelUpdatedEvent)
 
     private val channelUserBannedEvent = GeneratedUserBannedEvent(
         type = EventType.USER_BANNED,
@@ -651,16 +650,16 @@ internal object EventMappingTestArguments {
 
     private val notificationMutesUpdatedDto = GeneratedEventDto(notificationMutesUpdatedEvent)
 
-    private val notificationRemovedFromChannelDto = NotificationRemovedFromChannelEventDto(
+    private val notificationRemovedFromChannelEvent = GeneratedNotificationRemovedFromChannelEvent(
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
+        channel = GENERATED_CHANNEL,
         member = MEMBER,
-        user = USER,
+        user = COMMON_USER,
     )
+
+    private val notificationRemovedFromChannelDto = GeneratedEventDto(notificationRemovedFromChannelEvent)
 
     private val reactionDeletedDto = ReactionDeletedEventDto(
         type = EventType.REACTION_DELETED,
@@ -968,14 +967,14 @@ internal object EventMappingTestArguments {
     )
 
     private val channelDeleted = ChannelDeletedEvent(
-        type = channelDeletedDto.type,
-        createdAt = channelDeletedDto.created_at.date,
-        rawCreatedAt = channelDeletedDto.created_at.rawDate,
-        user = with(domainMapping) { channelDeletedDto.user?.toDomain() },
-        cid = channelDeletedDto.cid,
-        channelType = channelDeletedDto.channel_type,
-        channelId = channelDeletedDto.channel_id,
-        channel = with(domainMapping) { channelDeletedDto.channel.toDomain() },
+        type = channelDeletedEvent.type,
+        createdAt = channelDeletedEvent.createdAt.date,
+        rawCreatedAt = channelDeletedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
     )
 
     private val channelHidden = ChannelHiddenEvent(
@@ -991,44 +990,38 @@ internal object EventMappingTestArguments {
     )
 
     private val channelTruncated = ChannelTruncatedEvent(
-        type = channelTruncatedDto.type,
-        createdAt = channelTruncatedDto.created_at.date,
-        rawCreatedAt = channelTruncatedDto.created_at.rawDate,
-        user = with(domainMapping) { channelTruncatedDto.user?.toDomain() },
-        cid = channelTruncatedDto.cid,
-        channelType = channelTruncatedDto.channel_type,
-        channelId = channelTruncatedDto.channel_id,
-        message = with(domainMapping) { channelTruncatedDto.message?.toDomain() },
-        channel = with(domainMapping) {
-            channelTruncatedDto.channel.toDomain()
-        },
+        type = channelTruncatedEvent.type,
+        createdAt = channelTruncatedEvent.createdAt.date,
+        rawCreatedAt = channelTruncatedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain(GENERATED_CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
     )
 
     private val channelUpdatedByUser = ChannelUpdatedByUserEvent(
-        type = channelUpdatedByUserDto.type,
-        createdAt = channelUpdatedByUserDto.created_at.date,
-        rawCreatedAt = channelUpdatedByUserDto.created_at.rawDate,
-        user = with(domainMapping) { channelUpdatedByUserDto.user.toDomain() },
-        cid = channelUpdatedByUserDto.cid,
-        channelType = channelUpdatedByUserDto.channel_type,
-        channelId = channelUpdatedByUserDto.channel_id,
-        message = with(domainMapping) { channelUpdatedByUserDto.message?.toDomain() },
-        channel = with(domainMapping) {
-            channelUpdatedByUserDto.channel.toDomain()
-        },
+        type = channelUpdatedByUserEvent.type,
+        createdAt = channelUpdatedByUserEvent.createdAt.date,
+        rawCreatedAt = channelUpdatedByUserEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain(GENERATED_CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
     )
 
     private val channelUpdated = ChannelUpdatedEvent(
-        type = channelUpdatedDto.type,
-        createdAt = channelUpdatedDto.created_at.date,
-        rawCreatedAt = channelUpdatedDto.created_at.rawDate,
-        cid = channelUpdatedDto.cid,
-        channelType = channelUpdatedDto.channel_type,
-        channelId = channelUpdatedDto.channel_id,
-        message = with(domainMapping) { channelUpdatedDto.message?.toDomain() },
-        channel = with(domainMapping) {
-            channelUpdatedDto.channel.toDomain()
-        },
+        type = channelUpdatedEvent.type,
+        createdAt = channelUpdatedEvent.createdAt.date,
+        rawCreatedAt = channelUpdatedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain(GENERATED_CHANNEL.toChannelInfo()) },
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
     )
 
     private val channelUserBanned = ChannelUserBannedEvent(
@@ -1376,17 +1369,15 @@ internal object EventMappingTestArguments {
     )
 
     private val notificationRemovedFromChannel = NotificationRemovedFromChannelEvent(
-        type = notificationRemovedFromChannelDto.type,
-        createdAt = notificationRemovedFromChannelDto.created_at.date,
-        rawCreatedAt = notificationRemovedFromChannelDto.created_at.rawDate,
-        cid = notificationRemovedFromChannelDto.cid,
-        channelType = notificationRemovedFromChannelDto.channel_type,
-        channelId = notificationRemovedFromChannelDto.channel_id,
-        channel = with(domainMapping) {
-            notificationRemovedFromChannelDto.channel.toDomain()
-        },
-        member = with(domainMapping) { notificationRemovedFromChannelDto.member.toDomain() },
-        user = with(domainMapping) { notificationRemovedFromChannelDto.user?.toDomain() },
+        type = notificationRemovedFromChannelEvent.type,
+        createdAt = notificationRemovedFromChannelEvent.createdAt.date,
+        rawCreatedAt = notificationRemovedFromChannelEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
+        user = with(domainMapping) { COMMON_USER.toDomain() },
     )
 
     private val reactionDeleted = ReactionDeletedEvent(

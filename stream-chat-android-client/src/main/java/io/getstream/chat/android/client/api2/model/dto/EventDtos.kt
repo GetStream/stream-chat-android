@@ -31,17 +31,6 @@ import java.util.Date
 internal sealed class ChatEventDto
 
 @JsonClass(generateAdapter = true)
-internal data class ChannelDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val user: DownstreamUserDto?,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class ChannelHiddenEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -51,41 +40,6 @@ internal data class ChannelHiddenEventDto(
     val user: DownstreamUserDto,
     val channel: DownstreamChannelDto,
     val clear_history: Boolean,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ChannelTruncatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto?,
-    val message: DownstreamMessageDto?,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ChannelUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto?,
-    val channel: DownstreamChannelDto,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ChannelUpdatedByUserEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val message: DownstreamMessageDto?,
-    val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -174,18 +128,6 @@ internal data class NotificationAddedToChannelEventDto(
     val member: ChannelMemberResponse,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationRemovedFromChannelEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto?,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: DownstreamChannelDto,
-    val member: ChannelMemberResponse,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
