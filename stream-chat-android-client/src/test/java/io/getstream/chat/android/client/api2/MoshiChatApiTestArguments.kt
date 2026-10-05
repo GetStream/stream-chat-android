@@ -32,12 +32,10 @@ import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
 import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -56,7 +54,9 @@ import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
+import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
@@ -79,6 +79,7 @@ import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchResult
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -225,10 +226,16 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun sendReactionInput() = listOf(
         Arguments.of(
-            RetroSuccess(ReactionResponse(Mother.randomReactionResponse())).toRetrofitCall(),
+            RetroSuccess(
+                SendReactionResponse(
+                    duration = "1ms",
+                    message = Mother.randomMessageResponse(),
+                    reaction = Mother.randomReactionResponse(),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<SendReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
@@ -333,7 +340,7 @@ internal object MoshiChatApiTestArguments {
     fun stopWatchingInput() = completableResponseArguments()
 
     @JvmStatic
-    fun getPinnedMessagesInput() = messagesResponseArguments()
+    fun getPinnedMessagesInput() = pinnedMessagesResponseArguments()
 
     @JvmStatic
     fun updateChannelInput() = channelResponseArguments()
@@ -411,16 +418,16 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun getNewerRepliesInput() = messagesResponseArguments()
+    fun getNewerRepliesInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun getRepliesInput() = messagesResponseArguments()
+    fun getRepliesInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun getRepliesMoreInput() = messagesResponseArguments()
+    fun getRepliesMoreInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun getRepliesAroundInput() = messagesResponseArguments()
+    fun getRepliesAroundInput() = repliesResponseArguments()
 
     @JvmStatic
     fun sendActionInput() = messageResponseArguments()
@@ -931,12 +938,23 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    private fun messagesResponseArguments() = listOf(
+    private fun repliesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(MessagesResponse(listOf(Mother.randomMessageResponse()))).toRetrofitCall(),
+            RetroSuccess(GetRepliesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())))
+                .toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<MessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetRepliesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun pinnedMessagesResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                GetPinnedMessagesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<GetPinnedMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun updateUsersResponseArguments(): List<Arguments> {
