@@ -22,17 +22,18 @@ import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
-import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
+import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
+import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.QueryChannelsRequest
+import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
@@ -71,14 +72,14 @@ internal interface ChannelApi {
     fun queryGroupedChannels(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: GroupedQueryChannelsRequest,
-    ): RetrofitCall<QueryGroupedChannelsResponse>
+    ): RetrofitCall<GroupedQueryChannelsResponse>
 
     @POST("/channels/{type}/query")
     fun queryChannel(
         @Path("type") channelType: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: ChannelGetOrCreateRequest,
-    ): RetrofitCall<ChannelResponse>
+    ): RetrofitCall<ChannelStateResponse>
 
     @POST("/channels/read")
     fun markAllRead(
@@ -141,7 +142,7 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: ChannelGetOrCreateRequest,
-    ): RetrofitCall<ChannelResponse>
+    ): RetrofitCall<ChannelStateResponse>
 
     @POST("/channels/{type}/{id}/read")
     fun markRead(

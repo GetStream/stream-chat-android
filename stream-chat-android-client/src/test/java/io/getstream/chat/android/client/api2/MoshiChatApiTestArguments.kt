@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
+import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -33,9 +34,6 @@ import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
-import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -48,6 +46,8 @@ import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
@@ -59,6 +59,8 @@ import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
+import io.getstream.chat.android.network.models.GroupedChannelsBucket
+import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
@@ -68,6 +70,7 @@ import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
+import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
@@ -487,14 +490,9 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 QueryChannelsResponse(
-                    listOf(
-                        ChannelResponse(
-                            channel = Mother.randomDownstreamChannelDto(),
-                            hidden = randomBoolean(),
-                            membership = Mother.randomChannelMemberResponse(),
-                            hide_messages_before = randomDateOrNull(),
-                            draft = randomDraftResponse(),
-                        ),
+                    duration = "1ms",
+                    channels = listOf(
+                        Mother.randomChannelStateResponseFields(),
                     ),
                 ),
             ).toRetrofitCall(),
@@ -507,19 +505,13 @@ internal object MoshiChatApiTestArguments {
     fun queryGroupedChannelsInput() = listOf(
         Arguments.of(
             RetroSuccess(
-                QueryGroupedChannelsResponse(
+                GroupedQueryChannelsResponse(
                     groups = mapOf(
-                        "all-open" to QueryGroupedChannelsGroup(
+                        "all-open" to GroupedChannelsBucket(
                             channels = listOf(
-                                ChannelResponse(
-                                    channel = Mother.randomDownstreamChannelDto(),
-                                    hidden = randomBoolean(),
-                                    membership = Mother.randomChannelMemberResponse(),
-                                    hide_messages_before = randomDateOrNull(),
-                                    draft = randomDraftResponse(),
-                                ),
+                                Mother.randomChannelStateResponseFields(),
                             ),
-                            unread_channels = positiveRandomInt(),
+                            unreadChannels = positiveRandomInt(),
                             next = null,
                             prev = null,
                         ),
@@ -530,7 +522,7 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<QueryGroupedChannelsResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<GroupedQueryChannelsResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
@@ -540,16 +532,11 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 QueryChannelsResponse(
+                    duration = "1ms",
                     channels = listOf(
-                        ChannelResponse(
-                            channel = Mother.randomDownstreamChannelDto(),
-                            hidden = randomBoolean(),
-                            membership = Mother.randomChannelMemberResponse(),
-                            hide_messages_before = randomDateOrNull(),
-                            draft = randomDraftResponse(),
-                        ),
+                        Mother.randomChannelStateResponseFields(),
                     ),
-                    predefined_filter = ParsedPredefinedFilterResponse(
+                    predefinedFilter = ParsedPredefinedFilterResponse(
                         name = "android_sample_filter",
                         filter = mapOf("type" to "messaging"),
                         sort = listOf(SortParamRequest(field = "last_message_at", direction = -1)),
@@ -562,7 +549,13 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun queryChannelInput() = channelResponseArguments()
+    fun queryChannelInput() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomChannelStateResponseFields().toChannelStateResponse()).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<ChannelStateResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     /**
      * Rows of (stub serving a channel state, call reading the mapped channels back) for each REST path
@@ -572,9 +565,9 @@ internal object MoshiChatApiTestArguments {
     fun channelStateInput() = listOf(
         Arguments.of(
             "queryChannel",
-            { api: ChannelApi, response: ChannelResponse ->
+            { api: ChannelApi, response: ChannelStateResponseFields ->
                 whenever(api.queryChannel(any(), any(), any(), any()))
-                    .doReturn(RetroSuccess(response).toRetrofitCall())
+                    .doReturn(RetroSuccess(response.toChannelStateResponse()).toRetrofitCall())
             },
             { sut: MoshiChatApi ->
                 sut.queryChannel(randomString(), randomString(), Mother.randomQueryChannelRequest())
@@ -583,9 +576,9 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(
             "queryChannels",
-            { api: ChannelApi, response: ChannelResponse ->
-                whenever(api.queryChannels(any(), any()))
-                    .doReturn(RetroSuccess(QueryChannelsResponse(listOf(response))).toRetrofitCall())
+            { api: ChannelApi, response: ChannelStateResponseFields ->
+                val channels = QueryChannelsResponse(duration = "1ms", channels = listOf(response))
+                whenever(api.queryChannels(any(), any())).doReturn(RetroSuccess(channels).toRetrofitCall())
             },
             { sut: MoshiChatApi ->
                 sut.queryChannels(Mother.randomQueryChannelsRequest()).map { it.channels }
@@ -593,16 +586,11 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(
             "queryGroupedChannels",
-            { api: ChannelApi, response: ChannelResponse ->
-                val group = QueryGroupedChannelsGroup(
-                    channels = listOf(response),
-                    unread_channels = null,
-                    next = null,
-                    prev = null,
-                )
+            { api: ChannelApi, response: ChannelStateResponseFields ->
+                val group = GroupedChannelsBucket(channels = listOf(response))
                 whenever(api.queryGroupedChannels(any(), any())).doReturn(
                     RetroSuccess(
-                        QueryGroupedChannelsResponse(groups = mapOf("all" to group), duration = "1ms"),
+                        GroupedQueryChannelsResponse(groups = mapOf("all" to group), duration = "1ms"),
                     ).toRetrofitCall(),
                 )
             },

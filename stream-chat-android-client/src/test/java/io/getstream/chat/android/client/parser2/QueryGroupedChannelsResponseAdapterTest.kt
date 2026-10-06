@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
+import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /**
- * Tests for JSON deserialization of [QueryGroupedChannelsResponse] using Moshi.
+ * Tests for JSON deserialization of [GroupedQueryChannelsResponse] using Moshi.
  */
 internal class QueryGroupedChannelsResponseAdapterTest {
     private val parser = ParserFactory.createMoshiChatParser()
@@ -158,24 +158,25 @@ internal class QueryGroupedChannelsResponseAdapterTest {
 
     @Test
     fun `Deserialize grouped query channels response`() {
-        val response = parser.fromJson(json, QueryGroupedChannelsResponse::class.java)
+        val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
 
         assertEquals("12ms", response.duration)
         assertEquals(setOf("all-open"), response.groups.keys)
 
         val group = response.groups["all-open"]!!
-        assertEquals(1, group.unread_channels)
+        assertEquals(1, group.unreadChannels)
         assertEquals(1, group.channels.size)
 
-        val channelResponse = group.channels[0]
-        assertEquals("messaging:support-123", channelResponse.channel.cid)
-        assertEquals("support-123", channelResponse.channel.id)
-        assertEquals("messaging", channelResponse.channel.type)
-        assertEquals("Support", channelResponse.channel.name)
-        assertEquals("https://getstream.imgix.net/images/random_svg/stream_logo.svg", channelResponse.channel.image)
-        assertFalse(channelResponse.channel.frozen)
-        assertEquals(0, channelResponse.channel.member_count)
-        val config = channelResponse.channel.config!!
+        val state = group.channels[0]
+        val channel = state.channel!!
+        assertEquals("messaging:support-123", channel.cid)
+        assertEquals("support-123", channel.id)
+        assertEquals("messaging", channel.type)
+        assertEquals("Support", channel.custom["name"])
+        assertEquals("https://getstream.imgix.net/images/random_svg/stream_logo.svg", channel.custom["image"])
+        assertFalse(channel.frozen)
+        assertEquals(0, channel.memberCount)
+        val config = channel.config!!
         assertTrue(config.typingEvents)
         assertTrue(config.readEvents)
         assertTrue(config.connectEvents)
@@ -195,24 +196,24 @@ internal class QueryGroupedChannelsResponseAdapterTest {
         assertEquals("messaging", config.name)
         assertEquals("infinite", config.messageRetention)
         assertEquals(5000, config.maxMessageLength)
-        assertEquals(emptyList<Any>(), channelResponse.members)
-        assertEquals(emptyList<Any>(), channelResponse.messages)
-        assertEquals(emptyList<Any>(), channelResponse.pinned_messages)
-        assertEquals(emptyList<Any>(), channelResponse.watchers)
-        assertEquals(0, channelResponse.watcher_count)
-        assertEquals(emptyList<Any>(), channelResponse.read)
+        assertEquals(emptyList<Any>(), state.members)
+        assertEquals(emptyList<Any>(), state.messages)
+        assertEquals(emptyList<Any>(), state.pinnedMessages)
+        assertEquals(emptyList<Any>(), state.watchers)
+        assertEquals(0, state.watcherCount)
+        assertEquals(emptyList<Any>(), state.read)
     }
 
     @Test
     fun `Deserialize default unread counters when missing`() {
-        val response = parser.fromJson(jsonWithoutUnreadCounters, QueryGroupedChannelsResponse::class.java)
+        val response = parser.fromJson(jsonWithoutUnreadCounters, GroupedQueryChannelsResponse::class.java)
 
         assertEquals("12ms", response.duration)
         assertEquals(setOf("expired"), response.groups.keys)
 
         val group = response.groups["expired"]!!
-        assertEquals(null, group.unread_channels)
+        assertEquals(null, group.unreadChannels)
         assertEquals(1, group.channels.size)
-        assertEquals("messaging:support-123", group.channels[0].channel.cid)
+        assertEquals("messaging:support-123", group.channels[0].channel?.cid)
     }
 }
