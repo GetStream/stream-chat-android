@@ -30,7 +30,7 @@ public data class PendingMessage(
     val message: Message,
     @Deprecated(
         message = "The backend only sends pending message metadata to server-side callers, so it is always empty " +
-            "on the client.",
+            "on the client. It will be removed in the next major version.",
         level = DeprecationLevel.WARNING,
     )
     val metadata: Map<String, String>,
@@ -78,7 +78,7 @@ public data class PendingMessage(
          */
         @Deprecated(
             message = "The backend only sends pending message metadata to server-side callers, so it is always empty " +
-                "on the client.",
+                "on the client. It will be removed in the next major version.",
             level = DeprecationLevel.WARNING,
         )
         public fun withMetadata(metadata: Map<String, String>): Builder = apply { this.metadata = metadata }
