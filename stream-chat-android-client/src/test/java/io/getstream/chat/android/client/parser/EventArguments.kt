@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.createAIIndicatorUpdatedEventStringJson
 import io.getstream.chat.android.client.createAnswerCastedEventStringJson
 import io.getstream.chat.android.client.createChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createChannelHiddenEventStringJson
+import io.getstream.chat.android.client.createChannelHiddenSyncReplayEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedServerSideEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
 import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
 import io.getstream.chat.android.client.createChannelUserUnbannedEventStringJson
 import io.getstream.chat.android.client.createChannelVisibleEventStringJson
+import io.getstream.chat.android.client.createChannelVisibleSyncReplayEventStringJson
 import io.getstream.chat.android.client.createConnectedEventStringJson
 import io.getstream.chat.android.client.createConnectionErrorEventStringJson
 import io.getstream.chat.android.client.createDraftMessageDeletedEventStringJson
@@ -1157,6 +1159,10 @@ internal object EventArguments {
         Arguments.of(createChannelUpdatedEventStringJson(), channelUpdatedEvent),
         Arguments.of(createChannelUpdatedByUserEventStringJson(), channelUpdatedByUserEvent),
         Arguments.of(createChannelVisibleEventStringJson(), channelVisibleEvent),
+        Arguments.of(
+            createChannelVisibleSyncReplayEventStringJson(),
+            channelVisibleEvent.copy(channel = Channel(id = channelId, type = channelType)),
+        ),
         Arguments.of(createMemberAddedEventStringJson(), memberAddedEvent),
         Arguments.of(createMemberRemovedEventStringJson(), memberRemovedEvent),
         Arguments.of(createMemberUpdatedEventStringJson(), memberUpdatedEvent),
@@ -1192,6 +1198,7 @@ internal object EventArguments {
         Arguments.of(createConnectedEventStringJson(null), healthEvent),
         Arguments.of(createChannelDeletedEventStringJson(), channelDeletedEvent),
         Arguments.of(createChannelHiddenEventStringJson(), channelHiddenEvent),
+        Arguments.of(createChannelHiddenSyncReplayEventStringJson(), channelHiddenEvent.copy(clearHistory = false)),
         Arguments.of(createHealthEventStringJson(), healthEvent),
         Arguments.of(createNotificationChannelMutesUpdatedEventStringJson(), notificationChannelMutesUpdatedEvent),
         Arguments.of(createNotificationMutesUpdatedEventStringJson(), notificationMutesUpdatedEvent),

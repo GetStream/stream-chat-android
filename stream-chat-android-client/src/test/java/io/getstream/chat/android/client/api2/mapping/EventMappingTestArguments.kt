@@ -115,6 +115,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -340,6 +341,8 @@ internal object EventMappingTestArguments {
         channel = CHANNEL,
         user = USER,
     )
+
+    private val channelVisibleWithoutChannelDto = channelVisibleDto.copy(channel = null)
 
     private val connectedDto = ConnectedEventDto(
         type = EventType.CONNECTION_CONNECTING,
@@ -1060,8 +1063,12 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { channelVisibleDto.user.toDomain() },
         cid = channelVisibleDto.cid,
         channelType = channelVisibleDto.channel_type,
-        channel = with(domainMapping) { channelVisibleDto.channel.toDomain() },
+        channel = with(domainMapping) { CHANNEL.toDomain() },
         channelId = channelVisibleDto.channel_id,
+    )
+
+    private val channelVisibleWithoutChannel = channelVisible.copy(
+        channel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE),
     )
 
     private val connected = ConnectedEvent(
@@ -1691,6 +1698,7 @@ internal object EventMappingTestArguments {
         Arguments.of(channelUserBannedDto, channelUserBanned),
         Arguments.of(channelUserUnbannedDto, channelUserUnbanned),
         Arguments.of(channelVisibleDto, channelVisible),
+        Arguments.of(channelVisibleWithoutChannelDto, channelVisibleWithoutChannel),
         Arguments.of(connectedDto, connected),
         Arguments.of(connectionErrorDto, connectionError),
         Arguments.of(connectingDto, connecting),

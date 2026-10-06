@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
+import io.getstream.chat.android.client.test.randomChannelVisibleEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
@@ -145,6 +146,31 @@ internal class GroupAwareChatEventHandlerTest {
         val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
 
         assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given no cached channel When ChannelVisibleEvent arrives Should route by the event channel`() {
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
+        val event = randomChannelVisibleEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a cached channel When ChannelVisibleEvent carries only type and id Should route by the cached channel`() {
+        val cachedChannel = randomChannel(extraData = mapOf("group" to "vip"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
+        val event = randomChannelVisibleEvent(
+            cid = cachedChannel.cid,
+            channel = Channel(id = cachedChannel.id, type = cachedChannel.type),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(cachedChannel.cid), result)
     }
 
     @Test

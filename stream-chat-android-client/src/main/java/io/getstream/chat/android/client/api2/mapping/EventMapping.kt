@@ -117,6 +117,7 @@ import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
@@ -301,7 +302,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
-            channel = channel.toDomain(),
+            channel = channel?.toDomain() ?: Channel(id = channel_id, type = channel_type),
         )
     }
 
