@@ -1195,9 +1195,10 @@ internal class DomainMapping(
         originalText = originalText,
         textHarms = textHarms.orEmpty(),
         imageHarms = imageHarms.orEmpty(),
-        blocklistMatched = blocklistMatched,
+        blocklistMatched = blocklistMatched ?: blocklistsMatched?.firstOrNull(),
         semanticFilterMatched = semanticFilterMatched,
         platformCircumvented = platformCircumvented ?: false,
+        blocklistsMatched = blocklistsMatched.orEmpty(),
     )
 
     /**

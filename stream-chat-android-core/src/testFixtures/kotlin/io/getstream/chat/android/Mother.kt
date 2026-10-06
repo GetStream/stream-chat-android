@@ -1201,6 +1201,7 @@ public fun randomModeration(
     blocklistMatched: String = randomString(),
     semanticFilterMatched: String = randomString(),
     platformCircumvented: Boolean = randomBoolean(),
+    blocklistsMatched: List<String> = listOf(randomString()),
 ): Moderation = Moderation(
     action = action,
     originalText = originalText,
@@ -1209,6 +1210,7 @@ public fun randomModeration(
     blocklistMatched = blocklistMatched,
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
+    blocklistsMatched = blocklistsMatched,
 )
 
 public fun randomMessageReminder(

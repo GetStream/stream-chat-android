@@ -1708,7 +1708,8 @@ public final class io/getstream/chat/android/models/MessagesState$Result : io/ge
 }
 
 public final class io/getstream/chat/android/models/Moderation {
-	public fun <init> (Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Z)V
+	public fun <init> (Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ZLjava/util/List;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/ModerationAction;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/util/List;
@@ -1716,11 +1717,13 @@ public final class io/getstream/chat/android/models/Moderation {
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Z
-	public final fun copy (Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/models/Moderation;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Moderation;Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/models/Moderation;
+	public final fun component8 ()Ljava/util/List;
+	public final fun copy (Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ZLjava/util/List;)Lio/getstream/chat/android/models/Moderation;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Moderation;Lio/getstream/chat/android/models/ModerationAction;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ZLjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Moderation;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAction ()Lio/getstream/chat/android/models/ModerationAction;
 	public final fun getBlocklistMatched ()Ljava/lang/String;
+	public final fun getBlocklistsMatched ()Ljava/util/List;
 	public final fun getImageHarms ()Ljava/util/List;
 	public final fun getOriginalText ()Ljava/lang/String;
 	public final fun getPlatformCircumvented ()Z
