@@ -549,6 +549,7 @@ internal class SyncManager(
                     logger.v {
                         "[updateActiveQueryChannels] request completed; foundChannels.size: ${foundChannels.size}"
                     }
+                    mutableGlobalState.updateChannelDrafts(foundChannels)
                     updatedCids.addAll(foundChannels.map { it.cid })
                     logger.v { "[updateActiveQueryChannels] updatedCids.size: ${updatedCids.size}" }
                 }
@@ -594,6 +595,7 @@ internal class SyncManager(
                     val channelLogic = logicRegistry.channel(channel.type, channel.id)
                     channelLogic.updateDataForChannel(channel, channel.messages.size)
                 }
+                mutableGlobalState.updateChannelDrafts(foundChannels)
                 repos.storeStateForChannels(foundChannels)
                 val foundCids = foundChannels.map { it.cid }
                 val stillMissingCids = missingCids - foundCids.toSet()
