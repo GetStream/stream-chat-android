@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
-import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
@@ -115,42 +114,6 @@ internal data class NotificationAddedToChannelEventDto(
     val member: ChannelMemberResponse,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ReactionDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-    val reaction: ReactionResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ReactionNewEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-    val reaction: ReactionResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ReactionUpdateEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-    val reaction: ReactionResponse,
 ) : ChatEventDto()
 
 /**

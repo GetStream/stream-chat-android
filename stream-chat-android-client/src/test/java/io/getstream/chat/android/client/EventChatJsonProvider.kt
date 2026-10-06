@@ -393,11 +393,13 @@ internal fun createReactionDeletedEventStringJson() =
     createChatEventStringJson(
         "reaction.deleted",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "message": ${createMessageJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -407,11 +409,13 @@ internal fun createReactionNewEventStringJson() =
     createChatEventStringJson(
         "reaction.new",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "message": ${createMessageJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
@@ -421,11 +425,13 @@ internal fun createReactionUpdateEventStringJson() =
     createChatEventStringJson(
         "reaction.updated",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "message": ${createMessageJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
