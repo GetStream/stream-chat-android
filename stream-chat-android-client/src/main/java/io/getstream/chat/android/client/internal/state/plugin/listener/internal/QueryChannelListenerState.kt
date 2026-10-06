@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.models.Channel
@@ -28,8 +29,12 @@ import io.getstream.result.Result
  * Implementation of [QueryChannelListener] that handles state updates in the SDK.
  *
  * @param logic [LogicRegistry]
+ * @param mutableGlobalState [MutableGlobalState]
  */
-internal class QueryChannelListenerState(private val logic: LogicRegistry) : QueryChannelListener {
+internal class QueryChannelListenerState(
+    private val logic: LogicRegistry,
+    private val mutableGlobalState: MutableGlobalState,
+) : QueryChannelListener {
 
     private val logger by taggedLogger("QueryChannelListenerS")
 
@@ -77,5 +82,6 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
                 "request: $request, result: ${result.stringify { it.cid }}"
         }
         logic.channel(channelType, channelId).onQueryChannelResult(request, result)
+        result.onSuccess { channel -> mutableGlobalState.updateChannelDrafts(listOf(channel)) }
     }
 }

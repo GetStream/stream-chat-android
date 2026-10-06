@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.global.inte
 
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Location
@@ -128,6 +129,11 @@ internal class MutableGlobalState(
         _channelDraftMessages
             ?.takeUnless { draftMessage.parentId != null }
             ?.let { it.value += (draftMessage.cid to draftMessage) }
+    }
+
+    /** Adds the drafts the server returned with [channels]. */
+    fun updateChannelDrafts(channels: List<Channel>) {
+        channels.forEach { channel -> channel.draftMessage?.let(::updateDraftMessage) }
     }
 
     fun removeDraftMessage(draftMessage: DraftMessage) {
