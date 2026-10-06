@@ -187,7 +187,7 @@ internal fun createMessageReadEventStringJson() =
     createChatEventStringJson(
         "message.read",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -304,6 +304,7 @@ internal fun createNotificationMarkReadEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createCommonFieldsUserJsonString()},
             "watcher_count": 3,
+            "unread_count": 4,
             "total_unread_count": 4,
             "unread_channels": 5,
             "grouped_unread_channels": {"direct": 2, "support": 5},

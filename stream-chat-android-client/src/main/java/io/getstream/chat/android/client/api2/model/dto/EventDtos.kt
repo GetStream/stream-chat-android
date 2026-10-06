@@ -22,7 +22,6 @@ import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.ReactionResponse
-import io.getstream.chat.android.network.models.ThreadResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WSEvent
@@ -122,31 +121,6 @@ internal data class MessageDeletedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class MessageDeliveredEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val last_delivered_at: ExactDate,
-    val last_delivered_message_id: String,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class MessageReadEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val thread: ThreadResponse? = null,
-    val last_read_message_id: String?,
-    val team: String? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class MessageUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -200,34 +174,6 @@ internal data class NotificationAddedToChannelEventDto(
     val member: ChannelMemberResponse,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class NotificationMarkReadEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val thread_id: String? = null,
-    val thread: ThreadResponse? = null,
-    val unread_threads: Int? = null,
-    val unread_thread_messages: Int? = null,
-    val last_read_message_id: String?,
-    val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class MarkAllReadEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val grouped_unread_channels: Map<String, Int>? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
