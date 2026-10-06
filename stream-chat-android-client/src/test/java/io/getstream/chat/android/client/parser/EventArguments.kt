@@ -916,8 +916,13 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
-        channel = channel,
+        message = message.copy(
+            user = nestedUser,
+            mentionedUsers = listOf(nestedUser),
+            threadParticipants = listOf(nestedUser),
+            channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 1),
+        ),
+        channel = wireChannel,
         unreadThreads = 1,
         unreadThreadMessages = 2,
     )
