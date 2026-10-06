@@ -1604,20 +1604,28 @@ internal class DomainMappingTest {
 
     @Test
     fun `DownstreamFlagDto is correctly mapped to Flag`() {
-        val downstreamFlagDto = randomDownstreamFlagDto()
+        // Distinct dates, so a field mapped from the wrong source can't pass.
+        val downstreamFlagDto = randomDownstreamFlagDto(
+            createdAt = Date(1_000),
+            approvedAt = Date(2_000),
+            updatedAt = Date(3_000),
+            reviewedAt = Date(4_000),
+            rejectedAt = Date(5_000),
+            reviewedBy = "reviewer",
+        )
         val sut = Fixture().get()
         val flag = with(sut) { downstreamFlagDto.toDomain() }
         val expected = Flag(
             user = with(sut) { downstreamFlagDto.user.toDomain() },
             targetUser = with(sut) { downstreamFlagDto.target_user?.toDomain() },
             targetMessageId = downstreamFlagDto.target_message_id.orEmpty(),
-            reviewedBy = downstreamFlagDto.created_at,
+            reviewedBy = "reviewer",
             createdByAutomod = downstreamFlagDto.created_by_automod,
-            createdAt = downstreamFlagDto.approved_at,
-            updatedAt = downstreamFlagDto.updated_at,
-            reviewedAt = downstreamFlagDto.reviewed_at,
-            approvedAt = downstreamFlagDto.approved_at,
-            rejectedAt = downstreamFlagDto.rejected_at,
+            createdAt = Date(1_000),
+            updatedAt = Date(3_000),
+            reviewedAt = Date(4_000),
+            approvedAt = Date(2_000),
+            rejectedAt = Date(5_000),
         )
         assertEquals(expected, flag)
     }
