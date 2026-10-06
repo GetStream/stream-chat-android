@@ -17,12 +17,13 @@
 package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.network.models.UserResponse
 import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamFlagDto(
-    val user: DownstreamUserDto,
-    val target_user: DownstreamUserDto?,
+    val user: UserResponse,
+    val target_user: UserResponse?,
     val target_message_id: String?,
     val created_at: Date,
     val created_by_automod: Boolean,

@@ -876,8 +876,8 @@ internal object Mother {
     )
 
     fun randomDownstreamFlagDto(
-        user: DownstreamUserDto = randomDownstreamUserDto(),
-        targetUser: DownstreamUserDto = randomDownstreamUserDto(),
+        user: UserResponse = randomUserResponse(),
+        targetUser: UserResponse? = randomUserResponse(),
         targetMessageId: String = randomString(),
         createdAt: Date = randomDate(),
         createdByAutomod: Boolean = randomBoolean(),
