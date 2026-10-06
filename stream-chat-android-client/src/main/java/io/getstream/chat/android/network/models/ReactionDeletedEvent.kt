@@ -33,8 +33,11 @@ internal data class ReactionDeletedEvent(
     @Json(name = "created_at")
     internal val createdAt: io.getstream.chat.android.network.infrastructure.ExactDate,
 
+    // Patched: the spec marks `channel` required, but backends before v239.47.0 (CHA-3482, chat#17545) replay reaction
+    // events on /sync without it, and a parse failure fails the whole /sync response. On regen, make it required again
+    // only once every region runs v239.47.0 or later.
     @Json(name = "channel")
-    internal val channel: io.getstream.chat.android.network.models.ChannelResponse,
+    internal val channel: io.getstream.chat.android.network.models.ChannelResponse? = null,
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
