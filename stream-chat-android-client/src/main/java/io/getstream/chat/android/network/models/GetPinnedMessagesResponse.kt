@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.domain.message.internal
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
+
+import com.squareup.moshi.Json
 
 /**
- * DB entity holding data for a message moderated by Moderation V2.
+ *
  */
-@JsonClass(generateAdapter = true)
-internal data class ModerationEntity(
-    val action: String,
-    val originalText: String,
-    val textHarms: List<String>,
-    val imageHarms: List<String>,
-    val blocklistMatched: String?,
-    val semanticFilterMatched: String?,
-    val platformCircumvented: Boolean,
-    val blocklistsMatched: List<String> = emptyList(),
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class GetPinnedMessagesResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "messages")
+    internal val messages: List<io.getstream.chat.android.network.models.MessageResponse> = emptyList(),
 )

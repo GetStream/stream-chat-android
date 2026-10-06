@@ -929,6 +929,7 @@ internal object Mother {
         blocklistMatched: String = randomString(),
         semanticFilterMatched: String = randomString(),
         platformCircumvented: Boolean = randomBoolean(),
+        blocklistsMatched: List<String> = listOf(randomString()),
     ): ModerationV2Response = ModerationV2Response(
         action = action,
         originalText = originalText,
@@ -937,6 +938,7 @@ internal object Mother {
         blocklistMatched = blocklistMatched,
         semanticFilterMatched = semanticFilterMatched,
         platformCircumvented = platformCircumvented,
+        blocklistsMatched = blocklistsMatched,
     )
 
     fun randomQueryUsersRequest(

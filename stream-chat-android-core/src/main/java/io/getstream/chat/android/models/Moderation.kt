@@ -23,18 +23,21 @@ package io.getstream.chat.android.models
  * @property originalText The original text of the message.
  * @property textHarms The list of harmful text detected in the message.
  * @property imageHarms The list of harmful images detected in the message.
- * @property blocklistMatched The blocklist matched by the message.
+ * @property blocklistMatched The first blocklist matched by the message.
  * @property semanticFilterMatched The semantic filter matched by the message.
  * @property platformCircumvented true/false if the message triggered the platform circumvention model.
+ * @property blocklistsMatched The blocklists matched by the message.
  */
 public data class Moderation(
     val action: ModerationAction,
     val originalText: String,
     val textHarms: List<String>,
     val imageHarms: List<String>,
+    @Deprecated("Use blocklistsMatched instead.")
     val blocklistMatched: String?,
     val semanticFilterMatched: String?,
     val platformCircumvented: Boolean,
+    val blocklistsMatched: List<String> = emptyList(),
 )
 
 /**

@@ -479,7 +479,6 @@ internal fun randomChannelEntity(
     team: String = randomString(),
     ownCapabilities: Set<String> = emptySet(),
     membership: MemberEntity? = null,
-    activeLiveLocations: List<LocationEntity> = emptyList(),
     messageCount: Int? = randomInt(),
 ): ChannelEntity = ChannelEntity(
     type = type,
@@ -510,7 +509,6 @@ internal fun randomChannelEntity(
     team = team,
     ownCapabilities = ownCapabilities,
     membership = membership,
-    activeLiveLocations = activeLiveLocations,
     messageCount = messageCount,
 )
 
