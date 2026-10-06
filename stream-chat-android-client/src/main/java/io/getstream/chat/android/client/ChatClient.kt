@@ -5535,6 +5535,12 @@ internal constructor(
             DownstreamUserDto::class.members
             DownstreamChannelDto::class.members
             DownstreamMessageDto::class.members
+            io.getstream.chat.android.network.models.MessageResponse::class.members
+            io.getstream.chat.android.network.models.UserResponse::class.members
+            io.getstream.chat.android.network.models.UserResponseCommonFields::class.members
+            io.getstream.chat.android.network.models.OwnUserResponse::class.members
+            io.getstream.chat.android.network.models.ChannelResponse::class.members
+            io.getstream.chat.android.network.models.ChannelMemberResponse::class.members
             io.getstream.chat.android.network.models.Attachment::class.members
             io.getstream.chat.android.network.models.ReactionResponse::class.members
         }

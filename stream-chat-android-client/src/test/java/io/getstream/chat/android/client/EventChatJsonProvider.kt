@@ -241,7 +241,7 @@ internal fun createNotificationAddedToChannelEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "channel": ${createChannelJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "member": ${createMemberJsonString()},
             "total_unread_count": 4,
             "unread_channels": 5,
@@ -798,7 +798,7 @@ internal fun createAIIndicatorUpdatedEventStringJson() =
         "ai_indicator.update",
         """
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "ai_state": "AI_STATE_THINKING",
             "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
         """.trimIndent(),
@@ -809,7 +809,7 @@ internal fun createAIIndicatorClearEventStringJson() =
         "ai_indicator.clear",
         """
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 
@@ -818,7 +818,7 @@ internal fun createAIIndicatorStopEventStringJson() =
         "ai_indicator.stop",
         """
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 

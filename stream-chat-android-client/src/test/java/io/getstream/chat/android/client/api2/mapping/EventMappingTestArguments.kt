@@ -499,7 +499,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        channel = CHANNEL,
+        channel = GENERATED_CHANNEL,
         member = MEMBER,
     )
 
@@ -914,7 +914,7 @@ internal object EventMappingTestArguments {
         type = EventType.AI_TYPING_INDICATOR_UPDATED,
         created_at = EXACT_DATE,
         cid = CID,
-        user = USER,
+        user = COMMON_USER,
         message_id = AI_MESSAGE_ID,
         ai_state = AI_STATE,
     )
@@ -923,14 +923,14 @@ internal object EventMappingTestArguments {
         type = EventType.AI_TYPING_INDICATOR_STOP,
         created_at = EXACT_DATE,
         cid = CID,
-        user = USER,
+        user = COMMON_USER,
     )
 
     private val ioIndicatorClearDto = AIIndicatorClearEventDto(
         type = EventType.AI_TYPING_INDICATOR_CLEAR,
         created_at = EXACT_DATE,
         cid = CID,
-        user = USER,
+        user = COMMON_USER,
     )
 
     // END: DTO Models
