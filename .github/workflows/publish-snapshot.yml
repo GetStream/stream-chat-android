@@ -12,10 +12,11 @@ jobs:
   release:
     permissions:
       contents: write
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@v0.14.1
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@v1.0.0
     with:
       bump: patch
       snapshot: true
+      publish-targets: streamRepo
     secrets:
       github-token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
       maven-central-username: ${{ secrets.OSSRH_USERNAME }}
@@ -24,3 +25,7 @@ jobs:
       signing-key-id: ${{ secrets.SIGNING_KEY_ID }}
       signing-key-password: ${{ secrets.SIGNING_PASSWORD }}
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_ANDROID_CICD }}
+      stream-repo-endpoint: ${{ secrets.STREAM_REPO_ENDPOINT }}
+      stream-repo-bucket: ${{ secrets.STREAM_REPO_BUCKET }}
+      stream-repo-access-key-id: ${{ secrets.STREAM_REPO_ACCESS_KEY_ID }}
+      stream-repo-secret-access-key: ${{ secrets.STREAM_REPO_SECRET_ACCESS_KEY }}
