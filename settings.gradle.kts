@@ -32,6 +32,8 @@ pluginManagement {
 
 		// Fallback for the rest of the dependencies
 		mavenCentral()
+
+		maven("https://stream-io-repo.com")
 	}
 	resolutionStrategy {
 		eachPlugin {
