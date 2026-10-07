@@ -20,8 +20,6 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
@@ -113,8 +111,10 @@ import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
+import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
@@ -288,16 +288,21 @@ internal object EventMappingTestArguments {
 
     private val channelDeletedDto = GeneratedEventDto(channelDeletedEvent)
 
-    private val channelHiddenDto = ChannelHiddenEventDto(
+    private val channelHiddenEvent = GeneratedChannelHiddenEvent(
         type = EventType.CHANNEL_HIDDEN,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        channel = CHANNEL,
-        clear_history = CLEAR_HISTORY,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = COMMON_USER,
+        channel = GENERATED_CHANNEL,
+        clearHistory = CLEAR_HISTORY,
     )
+
+    private val channelHiddenDto = GeneratedEventDto(channelHiddenEvent)
+
+    // As /sync replays it on backends before v239.47.0: no clear_history.
+    private val channelHiddenWithoutClearHistoryDto = GeneratedEventDto(channelHiddenEvent.copy(clearHistory = null))
 
     private val channelTruncatedEvent = GeneratedChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
@@ -351,17 +356,19 @@ internal object EventMappingTestArguments {
 
     private val channelUserUnbannedDto = GeneratedEventDto(channelUserUnbannedEvent)
 
-    private val channelVisibleDto = ChannelVisibleEventDto(
+    private val channelVisibleEvent = GeneratedChannelVisibleEvent(
         type = EventType.CHANNEL_VISIBLE,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel = CHANNEL,
-        user = USER,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
     )
 
-    private val channelVisibleWithoutChannelDto = channelVisibleDto.copy(channel = null)
+    private val channelVisibleDto = GeneratedEventDto(channelVisibleEvent)
+
+    private val channelVisibleWithoutChannelDto = GeneratedEventDto(channelVisibleEvent.copy(channel = null))
 
     private val connectedDto = ConnectedEventDto(
         type = EventType.CONNECTION_CONNECTING,
@@ -1030,16 +1037,18 @@ internal object EventMappingTestArguments {
     )
 
     private val channelHidden = ChannelHiddenEvent(
-        type = channelHiddenDto.type,
-        createdAt = channelHiddenDto.created_at.date,
-        rawCreatedAt = channelHiddenDto.created_at.rawDate,
-        user = with(domainMapping) { channelHiddenDto.user.toDomain() },
-        cid = channelHiddenDto.cid,
-        channelType = channelHiddenDto.channel_type,
-        channelId = channelHiddenDto.channel_id,
-        channel = with(domainMapping) { channelHiddenDto.channel.toDomain() },
-        clearHistory = channelHiddenDto.clear_history,
+        type = channelHiddenEvent.type,
+        createdAt = channelHiddenEvent.createdAt.date,
+        rawCreatedAt = channelHiddenEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        clearHistory = CLEAR_HISTORY,
     )
+
+    private val channelHiddenWithoutClearHistory = channelHidden.copy(clearHistory = false)
 
     private val channelTruncated = ChannelTruncatedEvent(
         type = channelTruncatedEvent.type,
@@ -1099,14 +1108,14 @@ internal object EventMappingTestArguments {
     )
 
     private val channelVisible = ChannelVisibleEvent(
-        type = channelVisibleDto.type,
-        createdAt = channelVisibleDto.created_at.date,
-        rawCreatedAt = channelVisibleDto.created_at.rawDate,
-        user = with(domainMapping) { channelVisibleDto.user.toDomain() },
-        cid = channelVisibleDto.cid,
-        channelType = channelVisibleDto.channel_type,
-        channel = with(domainMapping) { CHANNEL.toDomain() },
-        channelId = channelVisibleDto.channel_id,
+        type = channelVisibleEvent.type,
+        createdAt = channelVisibleEvent.createdAt.date,
+        rawCreatedAt = channelVisibleEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        channelId = CHANNEL_ID,
     )
 
     private val channelVisibleWithoutChannel = channelVisible.copy(
@@ -1735,6 +1744,7 @@ internal object EventMappingTestArguments {
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelDeletedDto, channelDeleted),
         Arguments.of(channelHiddenDto, channelHidden),
+        Arguments.of(channelHiddenWithoutClearHistoryDto, channelHiddenWithoutClearHistory),
         Arguments.of(channelTruncatedDto, channelTruncated),
         Arguments.of(channelUpdatedByUserDto, channelUpdatedByUser),
         Arguments.of(channelUpdatedDto, channelUpdated),
