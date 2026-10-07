@@ -34,8 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
@@ -52,8 +50,10 @@ import io.getstream.chat.android.network.models.DraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
+import io.getstream.chat.android.network.models.MessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent
+import io.getstream.chat.android.network.models.MessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent
@@ -113,8 +113,9 @@ internal class EventDtoAdapter(
     private val draftMessageUpdatedEventAdapter = generatedEventAdapter<DraftUpdatedEvent> { mapOf("draft" to draft) }
     private val draftMessageDeletedEventAdapter = generatedEventAdapter<DraftDeletedEvent> { mapOf("draft" to draft) }
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
-    private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
-    private val messageUpdatedEventAdapter = moshi.adapter(MessageUpdatedEventDto::class.java)
+    private val messageDeletedEventAdapter = generatedEventAdapter<MessageDeletedEvent> { mapOf("cid" to cid) }
+    private val messageUpdatedEventAdapter =
+        generatedEventAdapter<MessageUpdatedEvent> { mapOf("cid" to cid, "user" to user) }
     private val messageReadEventAdapter = generatedEventAdapter<MessageReadEvent> {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
     }

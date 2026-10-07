@@ -76,8 +76,11 @@ internal class CustomAdapterCoverageTest {
         /** Read from the type parameter, since an adapter's name need not match the model it adapts. */
         private val ADAPTER_DECLARATION = Regex("""object\s+(\w+)\s*:\s*CustomObjectDtoAdapter<(\w+)>""")
 
-        /** The colon matters: without it this also matches unrelated properties like `customEvents`. */
-        private const val CUSTOM_PROPERTY = "internal val custom:"
+        /**
+         * Custom data is a map. Matching the type also skips unrelated properties like `customEvents` and change flags
+         * like `MessageChangeSet.custom: Boolean`.
+         */
+        private const val CUSTOM_PROPERTY = "internal val custom: Map<"
 
         private val WS_EVENT_SUPERTYPE = Regex("""\bio\.getstream\.chat\.android\.network\.models\.WSEvent\s*\{""")
         private const val CUSTOM_EVENT = "CustomEvent"
