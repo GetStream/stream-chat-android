@@ -80,8 +80,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          # The release concurrency group means the newest release is this run's.
-          TAG=$(gh release list -R "$GITHUB_REPOSITORY" --limit 1 --json tagName -q '.[0].tagName')
+          # The release this run created: the reusable workflow targets it at the
+          # release-<branch>-<tag> branch, and it was published after this run started.
+          # "Newest release" alone could be one made by hand, or one from another branch.
+          STARTED=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" -q .created_at)
+          TAG=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=30" -q "
+            [.[] | select((.target_commitish | startswith(\"release-${GITHUB_REF_NAME}-\"))
+                          and .published_at != null and .published_at >= \"$STARTED\")]
+            | first | .tag_name // empty")
+          if [ -z "$TAG" ]; then
+            echo "::error::No release from this run found for ${GITHUB_REF_NAME}"
+            exit 1
+          fi
 
           cat > card.md <<EOF
           > [!IMPORTANT]
