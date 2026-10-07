@@ -61,24 +61,6 @@ internal data class HealthEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class NewMessageEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: DownstreamUserDto,
-    val cid: String,
-    val channel_member_count: Int?,
-    val channel_custom: DownstreamChannelCustomDto?,
-    val channel_type: String,
-    val channel_id: String,
-    val message: DownstreamMessageDto,
-    val watcher_count: Int = 0,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val channel_message_count: Int? = null,
-    val grouped_unread_channels: Map<String, Int>? = null,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationAddedToChannelEventDto(
     val type: String,
     val created_at: ExactDate,

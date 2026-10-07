@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -49,6 +48,7 @@ import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent
@@ -112,7 +112,7 @@ internal class EventDtoAdapter(
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
     private val draftMessageUpdatedEventAdapter = generatedEventAdapter<DraftUpdatedEvent> { mapOf("draft" to draft) }
     private val draftMessageDeletedEventAdapter = generatedEventAdapter<DraftDeletedEvent> { mapOf("draft" to draft) }
-    private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
+    private val newMessageEventAdapter = generatedEventAdapter<MessageNewEvent> { mapOf("cid" to cid, "user" to user) }
     private val messageDeletedEventAdapter = generatedEventAdapter<MessageDeletedEvent> { mapOf("cid" to cid) }
     private val messageUpdatedEventAdapter =
         generatedEventAdapter<MessageUpdatedEvent> { mapOf("cid" to cid, "user" to user) }

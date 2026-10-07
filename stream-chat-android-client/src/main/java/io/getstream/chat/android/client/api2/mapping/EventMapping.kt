@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -121,6 +120,7 @@ import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedM
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageNewEvent as GeneratedMessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
@@ -174,7 +174,6 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is NewMessageEventDto -> toDomain()
             is ChannelHiddenEventDto -> toDomain()
             is ChannelVisibleEventDto -> toDomain()
             is ConnectedEventDto -> toDomain()
@@ -309,32 +308,34 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NewMessageEventDto] to [NewMessageEvent].
+     * Transforms the generated [GeneratedMessageNewEvent] to [NewMessageEvent].
      */
-    private fun NewMessageEventDto.toDomain(): NewMessageEvent = with(domainMapping) {
-        // build ChannelInfo from the event data, as it is not delivered within the `message` field
+    private fun GeneratedMessageNewEvent.toDomain(): NewMessageEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        // The message carries no channel, so its channel info comes from the event.
         val channelInfo = ChannelInfo(
             cid = cid,
-            id = channel_id,
-            type = channel_type,
-            memberCount = channel_member_count ?: 0,
-            name = channel_custom?.name,
-            image = channel_custom?.image,
+            id = channelId,
+            type = channelType,
+            memberCount = channelMemberCount ?: 0,
+            name = channelCustom?.get("name") as? String,
+            image = channelCustom?.get("image") as? String,
         )
-        NewMessageEvent(
+        return NewMessageEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
             cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            channelType = channelType,
+            channelId = channelId,
             message = message.toDomain(channelInfo),
-            watcherCount = watcher_count,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            channelMessageCount = channel_message_count,
-            groupedUnreadChannels = grouped_unread_channels,
+            watcherCount = watcherCount ?: 0,
+            totalUnreadCount = totalUnreadCount ?: 0,
+            unreadChannels = unreadChannels ?: 0,
+            channelMessageCount = channelMessageCount,
+            groupedUnreadChannels = groupedUnreadChannels,
         )
     }
 
@@ -485,6 +486,7 @@ internal class EventMapping(
         is GeneratedNotificationNewMessageEvent -> toDomain()
         is GeneratedThreadUpdatedEvent -> toDomain()
         is GeneratedUserDeletedEvent -> toDomain()
+        is GeneratedMessageNewEvent -> toDomain()
         is GeneratedMessageReadEvent -> toDomain()
         is GeneratedMessageDeliveredEvent -> toDomain()
         is GeneratedMessageDeletedEvent -> toDomain()

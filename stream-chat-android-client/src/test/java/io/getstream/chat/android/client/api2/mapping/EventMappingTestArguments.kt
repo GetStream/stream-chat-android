@@ -26,11 +26,9 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -124,6 +122,7 @@ import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedM
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
 import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
+import io.getstream.chat.android.network.models.MessageNewEvent as GeneratedMessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
@@ -192,7 +191,6 @@ internal object EventMappingTestArguments {
     private val CHANNEL_IMAGE = randomString()
     private val MESSAGE_ID = randomString()
     private val MESSAGE = Mother.randomDownstreamMessageDto()
-    private val MESSAGE_WITHOUT_CHANNEL_INFO = MESSAGE.copy(channel = null)
     private val DRAFT = Mother.randomDraftResponse()
     private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val THREAD_ID = randomString()
@@ -218,6 +216,7 @@ internal object EventMappingTestArguments {
     private val PARENT_ID = randomString()
     private val TEAM = randomString()
     private val WATCHER_COUNT = positiveRandomInt()
+    private val NEW_MESSAGE_CHANNEL_MESSAGE_COUNT = positiveRandomInt()
     private val GENERATED_MESSAGE = Mother.randomMessageResponse(cid = CID)
     private val POLL = Mother.randomPollResponseData()
     private val POLL_VOTE = Mother.randomPollVoteResponseData(isAnswer = false)
@@ -231,20 +230,36 @@ internal object EventMappingTestArguments {
 
     // BEGIN: DTO Models
 
-    private val newMessageDto = NewMessageEventDto(
+    private val newMessageEvent = GeneratedMessageNewEvent(
         type = EventType.MESSAGE_NEW,
-        created_at = EXACT_DATE,
-        user = USER,
+        createdAt = GENERATED_EXACT_DATE,
+        user = COMMON_USER,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        channel_member_count = CHANNEL_MEMBER_COUNT,
-        channel_custom = DownstreamChannelCustomDto(
-            name = CHANNEL_NAME,
-            image = CHANNEL_IMAGE,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channelMemberCount = CHANNEL_MEMBER_COUNT,
+        channelCustom = mapOf("name" to CHANNEL_NAME, "image" to CHANNEL_IMAGE),
+        message = GENERATED_MESSAGE,
+        messageId = GENERATED_MESSAGE.id,
+        watcherCount = WATCHER_COUNT,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        channelMessageCount = NEW_MESSAGE_CHANNEL_MESSAGE_COUNT,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
+    )
+
+    private val newMessageDto = GeneratedEventDto(newMessageEvent)
+
+    // As /sync replays it: no message id, watcher count, unread counts or channel custom data.
+    private val newMessageReplayDto = GeneratedEventDto(
+        newMessageEvent.copy(
+            messageId = null,
+            watcherCount = null,
+            totalUnreadCount = null,
+            unreadChannels = null,
+            channelCustom = null,
+            groupedUnreadChannels = null,
         ),
-        message = MESSAGE_WITHOUT_CHANNEL_INFO,
-        grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
     private val draftMessageUpdatedDto = GeneratedEventDto(
@@ -954,30 +969,39 @@ internal object EventMappingTestArguments {
 
     // BEGIN: Domain models
 
+    private val newMessageChannelInfo = ChannelInfo(
+        cid = CID,
+        id = CHANNEL_ID,
+        type = CHANNEL_TYPE,
+        memberCount = CHANNEL_MEMBER_COUNT,
+        name = CHANNEL_NAME,
+        image = CHANNEL_IMAGE,
+    )
+
     private val newMessage = NewMessageEvent(
-        type = newMessageDto.type,
-        createdAt = newMessageDto.created_at.date,
-        rawCreatedAt = newMessageDto.created_at.rawDate,
-        user = with(domainMapping) { newMessageDto.user.toDomain() },
-        cid = newMessageDto.cid,
-        channelType = newMessageDto.channel_type,
-        channelId = newMessageDto.channel_id,
+        type = newMessageEvent.type,
+        createdAt = newMessageEvent.createdAt.date,
+        rawCreatedAt = newMessageEvent.createdAt.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain(newMessageChannelInfo) },
+        watcherCount = WATCHER_COUNT,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
+        channelMessageCount = NEW_MESSAGE_CHANNEL_MESSAGE_COUNT,
+        groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
+    )
+
+    private val newMessageReplay = newMessage.copy(
         message = with(domainMapping) {
-            val channelInfo = ChannelInfo(
-                cid = newMessageDto.cid,
-                id = newMessageDto.channel_id,
-                type = newMessageDto.channel_type,
-                memberCount = newMessageDto.channel_member_count ?: 0,
-                name = newMessageDto.channel_custom?.name,
-                image = newMessageDto.channel_custom?.image,
-            )
-            newMessageDto.message.toDomain(channelInfo)
+            GENERATED_MESSAGE.toDomain(newMessageChannelInfo.copy(name = null, image = null))
         },
-        watcherCount = newMessageDto.watcher_count,
-        totalUnreadCount = newMessageDto.total_unread_count,
-        unreadChannels = newMessageDto.unread_channels,
-        channelMessageCount = newMessageDto.channel_message_count,
-        groupedUnreadChannels = newMessageDto.grouped_unread_channels,
+        watcherCount = 0,
+        totalUnreadCount = 0,
+        unreadChannels = 0,
+        groupedUnreadChannels = null,
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
@@ -1706,6 +1730,7 @@ internal object EventMappingTestArguments {
     @Suppress("LongMethod")
     fun arguments() = listOf(
         Arguments.of(newMessageDto, newMessage),
+        Arguments.of(newMessageReplayDto, newMessageReplay),
         Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelDeletedDto, channelDeleted),

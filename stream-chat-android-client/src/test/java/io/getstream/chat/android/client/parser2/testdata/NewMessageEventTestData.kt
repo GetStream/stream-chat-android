@@ -27,7 +27,8 @@ internal object NewMessageEventTestData {
 
     @Language("JSON")
     private const val MINIMAL_USER_JSON =
-        """{"id":"user-1","role":"user","banned":false,"online":true}"""
+        """{"id":"user-1","role":"user","banned":false,"online":true,"language":"en",""" +
+            """"created_at":"2020-01-01T00:00:00.000Z","updated_at":"2020-01-01T00:00:00.000Z"}"""
 
     @Language("JSON")
     private const val MINIMAL_MESSAGE_JSON = """{
@@ -45,11 +46,15 @@ internal object NewMessageEventTestData {
         "deleted_reply_count":0,
         "created_at":"2020-01-01T00:00:00.000Z",
         "updated_at":"2020-01-01T00:00:00.000Z",
-        "silent":false
+        "silent":false,
+        "shadowed":false,
+        "pinned":false,
+        "mentioned_channel":false,
+        "mentioned_here":false
     }"""
 
-    @Language("JSON")
-    val jsonAllFields = """{
+    val jsonAllFields = WireShape.newMessageEvent(
+        """{
         "type": "message.new",
         "created_at": "2020-01-01T00:00:00.000Z",
         "user": ${UserTestData.jsonAllFields},
@@ -64,7 +69,8 @@ internal object NewMessageEventTestData {
         "unread_channels": 1,
         "channel_message_count": 42,
         "grouped_unread_channels": {"team": 2, "messaging": 5}
-    }"""
+    }""",
+    )
 
     @Language("JSON")
     val jsonOptionalFieldsMissing = """{
@@ -197,8 +203,8 @@ internal object NewMessageEventTestData {
         "quoted_message":$QUOTED_MESSAGE_NO_CHANNEL_JSON
     }"""
 
-    @Language("JSON")
-    val jsonQuotedMessageNoChannel = """{
+    val jsonQuotedMessageNoChannel = WireShape.newMessageEvent(
+        """{
         "type": "message.new",
         "created_at": "2020-01-01T00:00:00.000Z",
         "user": $MINIMAL_USER_JSON,
@@ -206,7 +212,8 @@ internal object NewMessageEventTestData {
         "channel_type": "messaging",
         "channel_id": "general",
         "message": $MESSAGE_WITH_QUOTED_NO_CHANNEL_JSON
-    }"""
+    }""",
+    )
 
     private val minimalUser = User(
         id = "user-1",
@@ -214,6 +221,9 @@ internal object NewMessageEventTestData {
         invisible = null,
         banned = false,
         online = true,
+        language = "en",
+        createdAt = Date(1577836800000L),
+        updatedAt = Date(1577836800000L),
     )
 
     private val optionalMissingChannelInfo = ChannelInfo(

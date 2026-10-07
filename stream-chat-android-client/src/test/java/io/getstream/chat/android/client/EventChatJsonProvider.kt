@@ -600,7 +600,7 @@ internal fun createNewMessageEventStringJson() =
     createChatEventStringJson(
         "message.new",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -608,7 +608,8 @@ internal fun createNewMessageEventStringJson() =
             "total_unread_count": 4,
             "unread_channels": 5,
             "grouped_unread_channels": {"direct": 2, "support": 5},
-            "message": ${createMessageJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1
         """.trimIndent(),
@@ -618,12 +619,13 @@ internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
     createChatEventStringJson(
         "message.new",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "message": ${createMessageJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1
         """.trimIndent(),

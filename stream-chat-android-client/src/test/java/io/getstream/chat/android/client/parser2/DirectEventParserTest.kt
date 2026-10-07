@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
+import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.parser2.DirectEventParser.Companion.extractType
 import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
@@ -113,7 +113,7 @@ internal class DirectEventParserTest {
             val directResult = parser.parse(NewMessageEventTestData.jsonAllFields)
             val dtoResult = with(eventMapping) {
                 moshiChatParser
-                    .fromJson(NewMessageEventTestData.jsonAllFields, NewMessageEventDto::class.java)
+                    .fromJson(NewMessageEventTestData.jsonAllFields, ChatEventDto::class.java)
                     .toDomain()
             }
 

@@ -858,15 +858,24 @@ internal object EventArguments {
         rawCreatedAt = streamDateFormatter.format(date),
         me = ownUser,
     )
+
+    /** The message as message.new sends it: common-field users, channel info built from the event. */
+    private val newMessageEventMessage = message.copy(
+        user = nestedUser,
+        mentionedUsers = listOf(nestedUser),
+        threadParticipants = listOf(nestedUser),
+        channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 0),
+    )
+
     private val newMessageEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = newMessageEventMessage,
         watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
@@ -877,11 +886,11 @@ internal object EventArguments {
         type = EventType.MESSAGE_NEW,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = newMessageEventMessage,
         watcherCount = watcherCount,
         channelMessageCount = 1,
     )
