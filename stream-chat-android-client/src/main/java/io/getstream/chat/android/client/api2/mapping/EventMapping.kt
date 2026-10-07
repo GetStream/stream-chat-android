@@ -21,11 +21,7 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
@@ -41,7 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
@@ -125,6 +120,9 @@ import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.WSEvent
+import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
+import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
+import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -140,6 +138,7 @@ import io.getstream.chat.android.network.models.NotificationMarkReadEvent as Gen
 import io.getstream.chat.android.network.models.NotificationMarkUnreadEvent as GeneratedNotificationMarkUnreadEvent
 import io.getstream.chat.android.network.models.NotificationMutesUpdatedEvent as GeneratedNotificationMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationNewMessageEvent as GeneratedNotificationNewMessageEvent
+import io.getstream.chat.android.network.models.NotificationRemovedFromChannelEvent as GeneratedNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.network.models.NotificationThreadMessageNewEvent as GeneratedNotificationThreadMessageNewEvent
 import io.getstream.chat.android.network.models.PollClosedEvent as GeneratedPollClosedEvent
 import io.getstream.chat.android.network.models.PollDeletedEvent as GeneratedPollDeletedEvent
@@ -176,11 +175,7 @@ internal class EventMapping(
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
             is NewMessageEventDto -> toDomain()
-            is ChannelDeletedEventDto -> toDomain()
             is ChannelHiddenEventDto -> toDomain()
-            is ChannelTruncatedEventDto -> toDomain()
-            is ChannelUpdatedByUserEventDto -> toDomain()
-            is ChannelUpdatedEventDto -> toDomain()
             is ChannelVisibleEventDto -> toDomain()
             is ConnectedEventDto -> toDomain()
             is ConnectionErrorEventDto -> toDomain()
@@ -191,7 +186,6 @@ internal class EventMapping(
             is MessageDeletedEventDto -> toDomain()
             is MessageUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
-            is NotificationRemovedFromChannelEventDto -> toDomain()
             is ReactionDeletedEventDto -> toDomain()
             is ReactionNewEventDto -> toDomain()
             is ReactionUpdateEventDto -> toDomain()
@@ -208,22 +202,6 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ChannelDeletedEventDto] to [ChannelDeletedEvent].
-     */
-    private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent = with(domainMapping) {
-        ChannelDeletedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(),
-            user = user?.toDomain(),
-        )
-    }
-
-    /**
      * Transforms [ChannelHiddenEventDto] to [ChannelHiddenEvent].
      */
     private fun ChannelHiddenEventDto.toDomain(): ChannelHiddenEvent = with(domainMapping) {
@@ -237,56 +215,6 @@ internal class EventMapping(
             user = user.toDomain(),
             channel = channel.toDomain(),
             clearHistory = clear_history,
-        )
-    }
-
-    /**
-     * Transforms [ChannelTruncatedEventDto] to [ChannelTruncatedEvent].
-     */
-    private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent = with(domainMapping) {
-        ChannelTruncatedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user?.toDomain(),
-            message = message?.toDomain(channel.toChannelInfo()),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [ChannelUpdatedEventDto] to [ChannelUpdatedEvent].
-     */
-    private fun ChannelUpdatedEventDto.toDomain(): ChannelUpdatedEvent = with(domainMapping) {
-        ChannelUpdatedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            message = message?.toDomain(channel.toChannelInfo()),
-            channel = channel.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [ChannelUpdatedByUserEventDto] to [ChannelUpdatedByUserEvent].
-     */
-    private fun ChannelUpdatedByUserEventDto.toDomain(): ChannelUpdatedByUserEvent = with(domainMapping) {
-        ChannelUpdatedByUserEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            user = user.toDomain(),
-            message = message?.toDomain(channel.toChannelInfo()),
-            channel = channel.toDomain(),
         )
     }
 
@@ -502,24 +430,6 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationRemovedFromChannelEventDto] to [NotificationRemovedFromChannelEvent].
-     */
-    private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemovedFromChannelEvent =
-        with(domainMapping) {
-            NotificationRemovedFromChannelEvent(
-                type = type,
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                user = user?.toDomain(),
-                cid = cid,
-                channelType = channel_type,
-                channelId = channel_id,
-                channel = channel.toDomain(),
-                member = member.toDomain(),
-            )
-        }
-
-    /**
      * Transforms [ReactionDeletedEventDto] to [ReactionDeletedEvent].
      */
     private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent = with(domainMapping) {
@@ -634,6 +544,10 @@ internal class EventMapping(
         is GeneratedMessageReadEvent -> toDomain()
         is GeneratedMessageDeliveredEvent -> toDomain()
         is GeneratedNotificationMarkReadEvent -> toDomain()
+        is GeneratedChannelUpdatedEvent -> toDomain()
+        is GeneratedChannelTruncatedEvent -> toDomain()
+        is GeneratedChannelDeletedEvent -> toDomain()
+        is GeneratedNotificationRemovedFromChannelEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -888,6 +802,96 @@ internal class EventMapping(
                 user = requireNotNull(user).toDomain(),
                 member = member.toDomain(),
                 channel = channel.toDomain(),
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedChannelUpdatedEvent] to [ChannelUpdatedByUserEvent] when a user made the
+     * change, or to [ChannelUpdatedEvent] otherwise.
+     */
+    private fun GeneratedChannelUpdatedEvent.toDomain(): ChatEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val channelInfo = channel.toChannelInfo()
+        return when (val user = user) {
+            null -> ChannelUpdatedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                message = message?.toDomain(channelInfo),
+                channel = channel.toDomain(),
+            )
+            else -> ChannelUpdatedByUserEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                user = user.toDomain(),
+                message = message?.toDomain(channelInfo),
+                channel = channel.toDomain(),
+            )
+        }
+    }
+
+    /**
+     * Transforms the generated [GeneratedChannelTruncatedEvent] to [ChannelTruncatedEvent].
+     */
+    private fun GeneratedChannelTruncatedEvent.toDomain(): ChannelTruncatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ChannelTruncatedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            user = user?.toDomain(),
+            message = message?.toDomain(channel.toChannelInfo()),
+            channel = channel.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedChannelDeletedEvent] to [ChannelDeletedEvent].
+     */
+    private fun GeneratedChannelDeletedEvent.toDomain(): ChannelDeletedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ChannelDeletedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            channel = channel.toDomain(),
+            user = user?.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedNotificationRemovedFromChannelEvent] to [NotificationRemovedFromChannelEvent].
+     */
+    private fun GeneratedNotificationRemovedFromChannelEvent.toDomain(): NotificationRemovedFromChannelEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationRemovedFromChannelEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                user = user?.toDomain(),
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                member = member.toDomain(),
             )
         }
 
