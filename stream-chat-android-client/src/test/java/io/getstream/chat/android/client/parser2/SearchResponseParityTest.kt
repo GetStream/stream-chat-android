@@ -27,11 +27,9 @@ import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchResultMessage
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import java.lang.reflect.Modifier
 
 /**
  * Search results parsed through the generated [SearchResultMessage], against the generated [MessageResponse] it
@@ -57,7 +55,7 @@ internal class SearchResponseParityTest {
 
         // Fixtures missing a required field must be rejected by both.
         searchResult.isSuccess shouldBeEqualTo message.isSuccess
-        if (message.isSuccess) assertSame(name, message.getOrThrow(), searchResult.getOrThrow())
+        if (message.isSuccess) assertFieldsEqual(name, message.getOrThrow(), searchResult.getOrThrow())
     }
 
     @ParameterizedTest(name = "{0}")
@@ -67,7 +65,7 @@ internal class SearchResponseParityTest {
         val searchResult = parser.fromJson(json, SearchResultMessage::class.java)
 
         // Compares every field, including the ones the message mapper doesn't read yet.
-        assertSame(name, message, with(mapping) { searchResult.toMessageResponse() })
+        assertFieldsEqual(name, message, with(mapping) { searchResult.toMessageResponse() })
     }
 
     @Test
@@ -83,7 +81,7 @@ internal class SearchResponseParityTest {
         // Without the channel, which MessageResponse doesn't declare and would collect into custom.
         val message = parser.fromJson(mapAdapter.toJson(mapAdapter.fromJson(json)!! - "channel"), MessageResponse::class.java)
 
-        assertSame("extra fields", message, with(mapping) { searchResult.toMessageResponse() })
+        assertFieldsEqual("extra fields", message, with(mapping) { searchResult.toMessageResponse() })
     }
 
     @Test
@@ -92,7 +90,7 @@ internal class SearchResponseParityTest {
             val legacy = with(mapping) { parser.fromJson(json, DownstreamMessageDto::class.java).toDomain() }
             val generated = with(mapping) { parser.fromJson(json, SearchResultMessage::class.java).toDomain() }
 
-            assertSame("result $index", legacy, generated)
+            assertFieldsEqual("result $index", legacy, generated)
         }
     }
 
@@ -120,26 +118,6 @@ internal class SearchResponseParityTest {
         warning?.channelSearchCids shouldBeEqualTo
             listOf("messaging:search-parity", "messaging:general", "messaging:random")
     }
-
-    private fun <T : Any> assertSame(name: String, expected: T, actual: T) {
-        val differences = expected.javaClass.declaredFields
-            .filterNot { Modifier.isStatic(it.modifiers) }
-            .onEach { it.isAccessible = true }
-            .mapNotNull { field ->
-                val a = field.get(expected)
-                val b = field.get(actual)
-                if (a == b || a.isEmptyCollection() && b == null) {
-                    null
-                } else {
-                    "  ${field.name}:\n    expected = $a\n    actual   = $b"
-                }
-            }
-        if (differences.isNotEmpty()) fail<Unit>("$name differs:\n" + differences.joinToString("\n"))
-    }
-
-    // MessageResponse defaults its optional collections to empty and SearchResultMessage to null; the message
-    // mapper reads both with orEmpty().
-    private fun Any?.isEmptyCollection() = this is Collection<*> && isEmpty() || this is Map<*, *> && isEmpty()
 
     private fun recordedMessages(): List<String> {
         val response = mapAdapter.fromJson(RECORDED_RESPONSE)!!

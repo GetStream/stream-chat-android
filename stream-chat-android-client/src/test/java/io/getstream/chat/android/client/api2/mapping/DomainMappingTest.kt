@@ -61,7 +61,6 @@ import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
 import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
-import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
@@ -93,7 +92,6 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -150,7 +148,6 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
@@ -674,20 +671,6 @@ internal class DomainMappingTest {
         assertNull(result.command)
         assertNull(result.args)
         assertEquals(mapOf("flair" to "gold"), result.extraData)
-    }
-
-    @Test
-    fun `MessageResponse is correctly mapped to PendingMessage`() {
-        val messageDto = randomDownstreamMessageDto()
-        val pendingMessageMetadata = randomPendingMessageMetadata()
-        val messageResponse = MessageResponse(messageDto, pendingMessageMetadata)
-        val sut = Fixture().get()
-        val expected = PendingMessage(
-            message = with(sut) { messageDto.toDomain() },
-            metadata = pendingMessageMetadata,
-        )
-        val result = with(sut) { messageResponse.toDomain() }
-        assertEquals(expected, result)
     }
 
     @Test

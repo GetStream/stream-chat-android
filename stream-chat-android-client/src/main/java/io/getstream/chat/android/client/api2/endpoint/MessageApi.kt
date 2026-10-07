@@ -17,23 +17,30 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.CreateDraftResponse
+import io.getstream.chat.android.network.models.DeleteMessageResponse
+import io.getstream.chat.android.network.models.DeleteReactionResponse
+import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
 import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.QueryDraftsRequest
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryReactionsRequest
 import io.getstream.chat.android.network.models.QueryReactionsResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendMessageRequest
+import io.getstream.chat.android.network.models.SendMessageResponse
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.TranslateMessageRequest
+import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialResponse
 import io.getstream.chat.android.network.models.UpdateMessageRequest
+import io.getstream.chat.android.network.models.UpdateMessageResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -54,7 +61,7 @@ internal interface MessageApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body message: SendMessageRequest,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<SendMessageResponse>
 
     @POST("/channels/{type}/{id}/draft")
     fun createDraftMessage(
@@ -77,7 +84,7 @@ internal interface MessageApi {
     fun queryDrafts(@Body body: QueryDraftsRequest): RetrofitCall<QueryDraftsResponse>
 
     @GET("/messages/{id}")
-    fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>
+    fun getMessage(@Path("id") messageId: String): RetrofitCall<GetMessageResponse>
 
     /**
      * [REST documentation]()https://getstream.io/chat/docs/rest/#messages-updatemessage)
@@ -86,7 +93,7 @@ internal interface MessageApi {
     fun updateMessage(
         @Path("id") messageId: String,
         @Body message: UpdateMessageRequest,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<UpdateMessageResponse>
 
     /**
      * [Rest documentation](https://getstream.io/chat/docs/rest/#messages-updatemessagepartial-request)
@@ -95,20 +102,20 @@ internal interface MessageApi {
     fun partialUpdateMessage(
         @Path("id") messageId: String,
         @Body body: UpdateMessagePartialRequest,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<UpdateMessagePartialResponse>
 
     @DELETE("/messages/{id}")
     fun deleteMessage(
         @Path("id") messageId: String,
         @Query("hard") hard: Boolean?,
         @Query("delete_for_me") deleteForMe: Boolean?,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<DeleteMessageResponse>
 
     @POST("/messages/{id}/action")
     fun sendAction(
         @Path("id") messageId: String,
         @Body request: MessageActionRequest,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<MessageActionResponse>
 
     @POST("/messages/{id}/reaction")
     fun sendReaction(
@@ -120,7 +127,7 @@ internal interface MessageApi {
     fun deleteReaction(
         @Path("id") messageId: String,
         @Path("type") reactionType: String,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<DeleteReactionResponse>
 
     @GET("/messages/{id}/reactions")
     fun getReactions(
@@ -139,7 +146,7 @@ internal interface MessageApi {
     fun translate(
         @Path("messageId") messageId: String,
         @Body request: TranslateMessageRequest,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<TranslateMessageResponse>
 
     @GET("/messages/{parent_id}/replies")
     fun getReplies(

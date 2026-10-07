@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class MessageResponse(
-    val message: DownstreamMessageDto,
-    val pending_message_metadata: Map<String, String>? = null,
+import com.squareup.moshi.Json
+
+/**
+ * Basic response information
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class GetMessageResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "message")
+    internal val message: io.getstream.chat.android.network.models.MessageWithChannelResponse,
 )

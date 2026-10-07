@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -114,10 +113,13 @@ import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
+import io.getstream.chat.android.network.models.DeleteMessageResponse
+import io.getstream.chat.android.network.models.DeleteReactionResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
+import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
@@ -136,6 +138,7 @@ import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MuteChannelRequest
@@ -171,11 +174,13 @@ import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
+import io.getstream.chat.android.network.models.SendMessageResponse
 import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
+import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
@@ -187,6 +192,8 @@ import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialResponse
+import io.getstream.chat.android.network.models.UpdateMessageResponse
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
 import io.getstream.chat.android.network.models.UpdateReminderRequest
@@ -278,7 +285,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendMessageInput")
-    fun testSendMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testSendMessage(call: RetrofitCall<SendMessageResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.sendMessage(any(), any(), any())).doReturn(call)
@@ -352,7 +359,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateMessageInput")
-    fun testUpdateMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateMessage(call: RetrofitCall<UpdateMessageResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.updateMessage(any(), any())).doReturn(call)
@@ -369,7 +376,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateMessageInput")
-    fun testPartialUpdateMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdateMessage(call: RetrofitCall<UpdateMessagePartialResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.partialUpdateMessage(any(), any())).doReturn(call)
@@ -394,7 +401,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getMessageInput")
-    fun testGetMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testGetMessage(call: RetrofitCall<GetMessageResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getMessage(any())).doReturn(call)
@@ -411,7 +418,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPendingMessageInput")
-    fun testGetPendingMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testGetPendingMessage(call: RetrofitCall<GetMessageResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.getMessage(any())).doReturn(call)
@@ -431,7 +438,7 @@ internal class MoshiChatApiTest {
     fun testDeleteMessage(
         hard: Boolean,
         deleteForMe: Boolean,
-        call: RetrofitCall<MessageResponse>,
+        call: RetrofitCall<DeleteMessageResponse>,
         expected: KClass<*>,
     ) = runTest {
         // given
@@ -517,7 +524,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteReactionInput")
-    fun testDeleteReaction(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteReaction(call: RetrofitCall<DeleteReactionResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.deleteReaction(any(), any())).doReturn(call)
@@ -1816,7 +1823,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendActionInput")
-    fun testSendAction(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testSendAction(call: RetrofitCall<MessageActionResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.sendAction(any(), any())).doReturn(call)
@@ -1975,7 +1982,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#translateInput")
-    fun testTranslate(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testTranslate(call: RetrofitCall<TranslateMessageResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.translate(any(), any())).doReturn(call)
