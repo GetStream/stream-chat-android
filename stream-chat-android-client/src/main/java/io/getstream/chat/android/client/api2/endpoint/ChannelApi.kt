@@ -20,11 +20,11 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
@@ -37,8 +37,11 @@ import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.Response
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
+import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 import io.getstream.chat.android.network.models.UpdateChannelRequest
+import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import retrofit2.http.Body
@@ -91,7 +94,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: UpdateChannelRequest,
-    ): RetrofitCall<ChannelResponse>
+    ): RetrofitCall<UpdateChannelResponse>
 
     @PATCH("/channels/{type}/{id}")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
@@ -99,13 +102,13 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: UpdateChannelPartialRequest,
-    ): RetrofitCall<ChannelResponse>
+    ): RetrofitCall<UpdateChannelPartialResponse>
 
     @DELETE("/channels/{type}/{id}")
     fun deleteChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-    ): RetrofitCall<ChannelResponse>
+    ): RetrofitCall<DeleteChannelResponse>
 
     @PATCH("/channels/{type}/{id}/member/{user_id}")
     fun partialUpdateMember(
@@ -134,7 +137,7 @@ internal interface ChannelApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body body: TruncateChannelRequest,
-    ): RetrofitCall<ChannelResponse>
+    ): RetrofitCall<TruncateChannelResponse>
 
     @POST("/channels/{type}/{id}/query")
     fun queryChannel(

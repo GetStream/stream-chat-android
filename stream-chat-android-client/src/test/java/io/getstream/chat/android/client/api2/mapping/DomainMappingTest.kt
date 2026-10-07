@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
-import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomDraftResponse
@@ -124,10 +123,12 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -136,7 +137,10 @@ import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
+import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
@@ -673,18 +677,6 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamPendingMessageDto is correctly mapped to PendingMessage`() {
-        val downstreamPendingMessageDto = randomDownstreamPendingMessageDto()
-        val sut = Fixture().get()
-        val expected = PendingMessage(
-            message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
-            metadata = downstreamPendingMessageDto.metadata.orEmpty(),
-        )
-        val result = with(sut) { downstreamPendingMessageDto.toDomain(downstreamPendingMessageDto.message.cid) }
-        assertEquals(expected, result)
-    }
-
-    @Test
     fun `MessageResponse is correctly mapped to PendingMessage`() {
         val messageDto = randomDownstreamMessageDto()
         val pendingMessageMetadata = randomPendingMessageMetadata()
@@ -843,6 +835,34 @@ internal class DomainMappingTest {
         channel.extraData["disabled"] shouldBeEqualTo true
         channel.extraData["blocked"] shouldBeEqualTo true
         channel.extraData["truncated_at"] shouldBeEqualTo "2020-06-10T11:04:31.588Z"
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("channelMutationResponseArguments")
+    fun `Channel mutation responses map the channel and its members`(
+        @Suppress("UNUSED_PARAMETER") name: String,
+        toDomain: (DomainMapping, ChannelResponse?, List<ChannelMemberResponse>) -> Channel?,
+        topLevelMembers: Boolean,
+    ) {
+        val nested = randomChannelMemberResponse()
+        val topLevel = randomChannelMemberResponse()
+        val channelResponse = randomChannelResponse().copy(members = listOf(nested))
+        val sut = Fixture().get()
+
+        val channel = toDomain(sut, channelResponse, listOf(topLevel))
+
+        val expectedMembers = with(sut) { listOf(if (topLevelMembers) topLevel.toDomain() else nested.toDomain()) }
+        assertEquals(with(sut) { channelResponse.toDomain() }.copy(members = expectedMembers), channel)
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("channelMutationResponseArguments")
+    fun `Channel mutation responses without a channel map to null`(
+        @Suppress("UNUSED_PARAMETER") name: String,
+        toDomain: (DomainMapping, ChannelResponse?, List<ChannelMemberResponse>) -> Channel?,
+        @Suppress("UNUSED_PARAMETER") topLevelMembers: Boolean,
+    ) {
+        assertNull(toDomain(Fixture().get(), null, listOf(randomChannelMemberResponse())))
     }
 
     @Test
@@ -2025,6 +2045,43 @@ internal class DomainMappingTest {
     }
 
     companion object {
+        // Update responses send the members at the top level; truncate and delete only nest them in the channel.
+        @JvmStatic
+        fun channelMutationResponseArguments() = listOf(
+            Arguments.of(
+                "UpdateChannelResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, members: List<ChannelMemberResponse> ->
+                    with(mapping) {
+                        UpdateChannelResponse(duration = "1ms", members = members, channel = channel).toDomain()
+                    }
+                },
+                true,
+            ),
+            Arguments.of(
+                "UpdateChannelPartialResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, members: List<ChannelMemberResponse> ->
+                    with(mapping) {
+                        UpdateChannelPartialResponse(duration = "1ms", members = members, channel = channel).toDomain()
+                    }
+                },
+                true,
+            ),
+            Arguments.of(
+                "TruncateChannelResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, _: List<ChannelMemberResponse> ->
+                    with(mapping) { TruncateChannelResponse(duration = "1ms", channel = channel).toDomain() }
+                },
+                false,
+            ),
+            Arguments.of(
+                "DeleteChannelResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, _: List<ChannelMemberResponse> ->
+                    with(mapping) { DeleteChannelResponse(duration = "1ms", channel = channel).toDomain() }
+                },
+                false,
+            ),
+        )
+
         @JvmStatic
         fun toSortDomainArguments() = listOf(
             // null/error → null

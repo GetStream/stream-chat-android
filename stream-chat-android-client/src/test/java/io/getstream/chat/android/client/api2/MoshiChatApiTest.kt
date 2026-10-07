@@ -46,7 +46,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -114,6 +113,7 @@ import io.getstream.chat.android.network.models.CreateReminderRequest
 import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupRequest
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeliveredMessagePayload
 import io.getstream.chat.android.network.models.EventRequest
 import io.getstream.chat.android.network.models.GetApplicationResponse
@@ -176,10 +176,13 @@ import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
+import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
+import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 import io.getstream.chat.android.network.models.UpdateChannelRequest
+import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
@@ -1246,7 +1249,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#enableSlowModeInput")
-    fun testEnableSlowMode(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testEnableSlowMode(call: RetrofitCall<UpdateChannelPartialResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
@@ -1266,7 +1269,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#disableSlowModeInput")
-    fun testDisableSlowMode(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testDisableSlowMode(call: RetrofitCall<UpdateChannelPartialResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
@@ -1332,7 +1335,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateChannelInput")
-    fun testUpdateChannel(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateChannel(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannel(any(), any(), any())).doReturn(call)
@@ -1352,7 +1355,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateChannelPartialInput")
-    fun testUpdateChannelPartial(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testUpdateChannelPartial(call: RetrofitCall<UpdateChannelPartialResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
@@ -1412,7 +1415,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#truncateChannelInput")
-    fun testTruncateChannel(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testTruncateChannel(call: RetrofitCall<TruncateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.truncateChannel(any(), any(), any())).doReturn(call)
@@ -1431,7 +1434,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#rejectInviteInput")
-    fun testRejectInvite(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testRejectInvite(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannel(any(), any(), any())).doReturn(call)
@@ -1450,7 +1453,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#acceptInviteInput")
-    fun testAcceptInvite(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testAcceptInvite(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannel(any(), any(), any())).doReturn(call)
@@ -1476,7 +1479,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteChannelInput")
-    fun testDeleteChannel(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteChannel(call: RetrofitCall<DeleteChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.deleteChannel(any(), any())).doReturn(call)
@@ -1598,7 +1601,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#addMembersInput")
-    fun testAddMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testAddMembers(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannel(any(), any(), any())).doReturn(call)
@@ -1634,7 +1637,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#removeMembersInput")
-    fun testRemoveMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testRemoveMembers(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannel(any(), any(), any())).doReturn(call)
@@ -1664,7 +1667,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#inviteMembersInput")
-    fun testInviteMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+    fun testInviteMembers(call: RetrofitCall<UpdateChannelResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ChannelApi>()
         whenever(api.updateChannel(any(), any(), any())).doReturn(call)
