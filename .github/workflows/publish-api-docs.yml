@@ -7,6 +7,8 @@ on:
 
 jobs:
   docs:
-    uses: GetStream/stream-build-conventions-android/.github/workflows/publish-api-docs.yml@32c7cb5ec6ecc7c588b2de1409f497b7946b70be
+    uses: GetStream/stream-build-conventions-android/.github/workflows/publish-api-docs.yml@f1696693da135081bbb836470332ac5396aedfe9
     permissions:
       contents: write
+    secrets:
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_ANDROID_CICD }}
