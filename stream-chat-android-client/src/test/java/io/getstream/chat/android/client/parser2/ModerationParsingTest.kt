@@ -57,6 +57,13 @@ internal class ModerationParsingTest {
         assertEquals(ModerationTestData.expectedOptionalFieldsMissing, domain)
     }
 
+    @Test
+    fun `Generated path - falls back to the first blocklists_matched entry`() {
+        val dto = parser.fromJson(ModerationTestData.jsonOnlyBlocklistsMatched, ModerationV2Response::class.java)
+        val domain = with(domainMapping) { dto.toDomain() }
+        assertEquals(ModerationTestData.expectedOnlyBlocklistsMatched, domain)
+    }
+
     // endregion
 
     // region Direct path (JSON → Moderation via ModerationAdapter)
@@ -71,6 +78,12 @@ internal class ModerationParsingTest {
     fun `Direct path - deserializes with optional fields missing`() {
         val domain = adapter.fromJson(ModerationTestData.jsonOptionalFieldsMissing)
         assertEquals(ModerationTestData.expectedOptionalFieldsMissing, domain)
+    }
+
+    @Test
+    fun `Direct path - falls back to the first blocklists_matched entry`() {
+        val domain = adapter.fromJson(ModerationTestData.jsonOnlyBlocklistsMatched)
+        assertEquals(ModerationTestData.expectedOnlyBlocklistsMatched, domain)
     }
 
     // endregion

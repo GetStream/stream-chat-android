@@ -73,14 +73,15 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             return
         }
 
-        binding = StreamUiActivityAttachmentMediaBinding.inflate(streamThemeInflater)
-        setContentView(binding.root)
-
         if ((type.isNullOrEmpty() && mimeType.isNullOrEmpty()) || url.isNullOrEmpty()) {
             logger.e { "This file can't be displayed. The TYPE or the URL are null" }
             showPlaybackError()
+            finish()
             return
         }
+
+        binding = StreamUiActivityAttachmentMediaBinding.inflate(streamThemeInflater)
+        setContentView(binding.root)
 
         setupEdgeToEdge()
         setupViews()

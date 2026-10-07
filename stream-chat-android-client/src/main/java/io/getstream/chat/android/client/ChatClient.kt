@@ -656,7 +656,8 @@ internal constructor(
                 )
             }
         }.onErrorSuspend {
-            disconnectSuspend(flushPersistence = true)
+            // A failed connection is not a logout: keep the offline data and stored credentials.
+            disconnectSuspend(flushPersistence = false)
         }
     }
 
@@ -1611,7 +1612,7 @@ internal constructor(
      * This method should only be used whenever the user logouts from the main app.
      * You shouldn't call this method, if the user will continue using the Chat in the future.
      *
-     * @param flushPersistence if true will clear user data.
+     * @param flushPersistence if true will clear user data, also when no user is connected.
      * @param deleteDevice If set to true, will attempt to delete the registered device from Stream backend. For
      * backwards compatibility, by default it's set to the value of [flushPersistence].
      *
@@ -1634,7 +1635,10 @@ internal constructor(
                     Result.Success(Unit)
                 }
 
-                false -> {
+                false -> if (flushPersistence) {
+                    // The data of a previous session can outlive it, e.g. after a failed connectUser.
+                    clearPersistence().await()
+                } else {
                     logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
                     Result.Failure(
                         Error.GenericError(

@@ -21,13 +21,15 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
-import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.LocationEntity
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**
  * ChannelEntity stores both the channel information as well as references to all of the channel's state.
  * Messages are stored on their own table for easier pagination and updates.
+ *
+ * Active live locations are not stored: stopping one does not update the stored channel, so a stored copy could
+ * bring back a stopped location after a restart.
  *
  * @param type Type of the channel.
  * @param channelId Channel's unique ID.
@@ -58,7 +60,6 @@ import java.util.Date
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in
  * the events.
  * @param membership Represents relationship of the current user to this channel.
- * @param activeLiveLocations List of active live locations in the channel.
  * @param messageCount The total number of messages in the channel, if known.
  */
 @Entity(tableName = CHANNEL_ENTITY_TABLE_NAME, indices = [Index(value = ["syncStatus"])])
@@ -91,7 +92,6 @@ internal data class ChannelEntity(
     val team: String,
     val ownCapabilities: Set<String>,
     val membership: MemberEntity?,
-    val activeLiveLocations: List<LocationEntity>,
     val messageCount: Int?,
 ) {
     /**

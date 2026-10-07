@@ -17,13 +17,13 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.response.ChannelResponse
-import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
 import io.getstream.chat.android.client.parser2.testdata.LocationTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
+import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -36,8 +36,7 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
     private val parser = ParserFactory.createMoshiChatParser()
 
     private val channelState =
-        """{"channel":{"cid":"messaging:123","id":"123","type":"messaging","frozen":false},""" +
-            """"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
+        """{"channel":$CHANNEL,"active_live_locations":[${LocationTestData.jsonAllFields}]}"""
 
     private val domainMapping = DomainMapping(
         currentUserIdProvider = { "" },
@@ -48,37 +47,45 @@ internal class ChannelStateActiveLiveLocationsParsingTest {
 
     private val expected = listOf(LocationTestData.expectedAllFields)
 
+    private fun String.withDuration() = replaceFirst("{", """{"duration":"1ms",""")
+
     private fun List<SharedLocationResponseData>.toDomain() = with(domainMapping) { map { it.toDomain() } }
 
     @Test
     fun `query channel response`() {
-        val response = parser.fromJson(channelState, ChannelResponse::class.java)
+        val response = parser.fromJson(channelState.withDuration(), ChannelStateResponse::class.java)
 
-        assertEquals(expected, response.active_live_locations.toDomain())
+        assertEquals(expected, response.activeLiveLocations.orEmpty().toDomain())
     }
 
     @Test
     fun `query channels response`() {
-        val response = parser.fromJson("""{"channels":[$channelState]}""", QueryChannelsResponse::class.java)
+        val json = """{"channels":[$channelState],"duration":"1ms"}"""
 
-        assertEquals(expected, response.channels.single().active_live_locations.toDomain())
+        val response = parser.fromJson(json, QueryChannelsResponse::class.java)
+
+        assertEquals(expected, response.channels.single().activeLiveLocations.orEmpty().toDomain())
     }
 
     @Test
     fun `query grouped channels response`() {
         val json = """{"groups":{"all":{"channels":[$channelState]}},"duration":"1ms"}"""
 
-        val response = parser.fromJson(json, QueryGroupedChannelsResponse::class.java)
+        val response = parser.fromJson(json, GroupedQueryChannelsResponse::class.java)
 
-        assertEquals(expected, response.groups.getValue("all").channels.single().active_live_locations.toDomain())
+        val state = response.groups.getValue("all").channels.single()
+        assertEquals(expected, state.activeLiveLocations.orEmpty().toDomain())
     }
 
     @Test
-    fun `missing field parses as empty`() {
-        val json = """{"channel":{"cid":"messaging:123","id":"123","type":"messaging","frozen":false}}"""
+    fun `missing field parses as null`() {
+        val response = parser.fromJson("""{"channel":$CHANNEL}""".withDuration(), ChannelStateResponse::class.java)
 
-        val response = parser.fromJson(json, ChannelResponse::class.java)
+        assertEquals(null, response.activeLiveLocations)
+    }
 
-        assertEquals(emptyList<SharedLocationResponseData>(), response.active_live_locations)
+    private companion object {
+        private const val CHANNEL = """{"cid":"messaging:123","id":"123","type":"messaging","frozen":false,""" +
+            """"disabled":false,"created_at":"2025-04-01T10:00:00.000Z","updated_at":"2025-04-01T10:00:00.000Z"}"""
     }
 }

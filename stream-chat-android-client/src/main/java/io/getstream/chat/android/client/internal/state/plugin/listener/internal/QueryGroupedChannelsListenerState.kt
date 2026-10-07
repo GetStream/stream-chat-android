@@ -105,6 +105,8 @@ internal class QueryGroupedChannelsListenerState(
         // would never come down.
         finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups, completed = true)
 
+        result.value.groups.values.forEach { group -> globalState.updateChannelDrafts(group.channels) }
+
         // Route each returned group's channels into the per-group state. The captured config lets
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
         // reuse the caller's original parameters on paginated and recovery calls respectively.

@@ -20,28 +20,6 @@ import com.squareup.moshi.JsonClass
 import java.util.Date
 
 /**
- * Model representing the API model for message reminders.
- *
- * @property remind_at The date when the reminder should be sent.
- * @property channel_cid The ID of the channel in which the message is.
- * @property channel The channel in which the message is.
- * @property message_id The ID of the message for which the reminder is set.
- * @property message The message for which the reminder is set.
- * @property created_at The date when the reminder was created.
- * @property updated_at The date when the reminder was last updated.
- */
-@JsonClass(generateAdapter = true)
-internal data class DownstreamReminderDto(
-    val remind_at: Date?,
-    val channel_cid: String,
-    val channel: DownstreamChannelDto?,
-    val message_id: String,
-    val message: DownstreamMessageDto?,
-    val created_at: Date,
-    val updated_at: Date,
-)
-
-/**
  * Model holding limited data about a message reminder.
  *
  * @property remind_at The date when the reminder should be sent.

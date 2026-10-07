@@ -65,7 +65,6 @@ internal fun Channel.toEntity(): ChannelEntity {
         team = team,
         ownCapabilities = ownCapabilities,
         membership = membership?.toEntity(),
-        activeLiveLocations = activeLiveLocations.map { it.toEntity() },
         messageCount = messageCount,
     )
 }
@@ -104,6 +103,5 @@ internal suspend fun ChannelEntity.toModel(
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
     draftMessage = getDraftMessage(channelId),
-    activeLiveLocations = activeLiveLocations.map { it.toModel() },
     messageCount = messageCount,
 ).syncUnreadCountWithReads()

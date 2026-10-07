@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.createAIIndicatorUpdatedEventStringJson
 import io.getstream.chat.android.client.createAnswerCastedEventStringJson
 import io.getstream.chat.android.client.createChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createChannelHiddenEventStringJson
+import io.getstream.chat.android.client.createChannelHiddenSyncReplayEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedServerSideEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
 import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
 import io.getstream.chat.android.client.createChannelUserUnbannedEventStringJson
 import io.getstream.chat.android.client.createChannelVisibleEventStringJson
+import io.getstream.chat.android.client.createChannelVisibleSyncReplayEventStringJson
 import io.getstream.chat.android.client.createConnectedEventStringJson
 import io.getstream.chat.android.client.createConnectionErrorEventStringJson
 import io.getstream.chat.android.client.createDraftMessageDeletedEventStringJson
@@ -323,6 +325,17 @@ internal object EventArguments {
         threadParticipants = listOf(user),
     )
 
+    /** The channel as the wire sends it: `disabled` always present, kept in extra data like the hand-written DTO. */
+    private val wireChannel = channel.copy(extraData = channel.extraData + ("disabled" to false))
+
+    /** A message inside a channel event: it carries no channel of its own, so its channel info is the event's. */
+    private val channelEventMessage = message.copy(
+        user = nestedUser,
+        mentionedUsers = listOf(nestedUser),
+        threadParticipants = listOf(nestedUser),
+        channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 1),
+    )
+
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         type = "type",
@@ -407,8 +420,8 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
-        user = user,
+        channel = wireChannel,
+        user = commonFieldsUser,
     )
 
     private val channelHiddenEvent = ChannelHiddenEvent(
@@ -430,8 +443,8 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
-        user = user,
+        channel = wireChannel,
+        user = commonFieldsUser,
         message = null,
     )
     private val channelTruncatedServerSideEvent = ChannelTruncatedEvent(
@@ -441,7 +454,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
         user = null,
         message = null,
     )
@@ -452,8 +465,8 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
-        channel = channel,
+        message = channelEventMessage,
+        channel = wireChannel,
     )
     private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(
         type = EventType.CHANNEL_UPDATED,
@@ -462,9 +475,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
-        channel = channel,
-        message = message,
+        user = commonFieldsUser,
+        channel = wireChannel,
+        message = channelEventMessage,
     )
     private val channelVisibleEvent = ChannelVisibleEvent(
         type = EventType.CHANNEL_VISIBLE,
@@ -480,7 +493,7 @@ internal object EventArguments {
         type = EventType.MEMBER_ADDED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -490,7 +503,7 @@ internal object EventArguments {
         type = EventType.MEMBER_REMOVED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -500,7 +513,7 @@ internal object EventArguments {
         type = EventType.MEMBER_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -536,7 +549,7 @@ internal object EventArguments {
         type = EventType.MESSAGE_READ,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -572,7 +585,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
         groupedUnreadChannels = groupedUnreadChannels,
     )
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
@@ -582,7 +595,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
@@ -591,9 +604,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
@@ -602,9 +615,9 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
-        channel = channel,
+        channel = wireChannel,
     )
     private val notificationInvitedEvent = NotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
@@ -613,7 +626,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        user = user,
+        user = commonFieldsUser,
         member = member,
     )
     private val notificationMarkReadEvent = NotificationMarkReadEvent(
@@ -652,8 +665,13 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
-        message = message,
+        channel = wireChannel,
+        message = message.copy(
+            user = nestedUser,
+            mentionedUsers = listOf(nestedUser),
+            threadParticipants = listOf(nestedUser),
+            channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 1),
+        ),
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         groupedUnreadChannels = groupedUnreadChannels,
@@ -662,11 +680,11 @@ internal object EventArguments {
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel,
+        channel = wireChannel,
         member = member,
     )
     private val reactionDeletedEvent = ReactionDeletedEvent(
@@ -706,7 +724,7 @@ internal object EventArguments {
         type = EventType.TYPING_START,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -716,7 +734,7 @@ internal object EventArguments {
         type = EventType.TYPING_STOP,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -908,8 +926,13 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
-        channel = channel,
+        message = message.copy(
+            user = nestedUser,
+            mentionedUsers = listOf(nestedUser),
+            threadParticipants = listOf(nestedUser),
+            channelInfo = ChannelInfo(cid = cid, id = channelId, type = channelType, memberCount = 1),
+        ),
+        channel = wireChannel,
         unreadThreads = 1,
         unreadThreadMessages = 2,
     )
@@ -1144,6 +1167,10 @@ internal object EventArguments {
         Arguments.of(createChannelUpdatedEventStringJson(), channelUpdatedEvent),
         Arguments.of(createChannelUpdatedByUserEventStringJson(), channelUpdatedByUserEvent),
         Arguments.of(createChannelVisibleEventStringJson(), channelVisibleEvent),
+        Arguments.of(
+            createChannelVisibleSyncReplayEventStringJson(),
+            channelVisibleEvent.copy(channel = Channel(id = channelId, type = channelType)),
+        ),
         Arguments.of(createMemberAddedEventStringJson(), memberAddedEvent),
         Arguments.of(createMemberRemovedEventStringJson(), memberRemovedEvent),
         Arguments.of(createMemberUpdatedEventStringJson(), memberUpdatedEvent),
@@ -1179,6 +1206,7 @@ internal object EventArguments {
         Arguments.of(createConnectedEventStringJson(null), healthEvent),
         Arguments.of(createChannelDeletedEventStringJson(), channelDeletedEvent),
         Arguments.of(createChannelHiddenEventStringJson(), channelHiddenEvent),
+        Arguments.of(createChannelHiddenSyncReplayEventStringJson(), channelHiddenEvent.copy(clearHistory = false)),
         Arguments.of(createHealthEventStringJson(), healthEvent),
         Arguments.of(createNotificationChannelMutesUpdatedEventStringJson(), notificationChannelMutesUpdatedEvent),
         Arguments.of(createNotificationMutesUpdatedEventStringJson(), notificationMutesUpdatedEvent),

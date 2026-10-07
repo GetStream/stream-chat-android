@@ -29,8 +29,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
@@ -67,7 +65,10 @@ import io.getstream.chat.android.network.models.BlockedUserResponse
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
+import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.DeviceResponse
@@ -81,6 +82,7 @@ import io.getstream.chat.android.network.models.GetOGResponse
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
 import io.getstream.chat.android.network.models.OwnUserResponse
+import io.getstream.chat.android.network.models.PendingMessageResponse
 import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
@@ -94,6 +96,7 @@ import io.getstream.chat.android.network.models.ReactionGroupResponse
 import io.getstream.chat.android.network.models.ReactionResponse
 import io.getstream.chat.android.network.models.ReadStateResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
+import io.getstream.chat.android.network.models.SearchResultMessage
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.ThreadParticipant
 import io.getstream.chat.android.network.models.ThreadResponse
@@ -115,7 +118,6 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
-import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomStringOrNull
@@ -264,14 +266,6 @@ internal object Mother {
         parentMessage = parentMessage,
         parentId = parentId,
         createdAt = createdAt,
-    )
-
-    fun randomDownstreamPendingMessageDto(
-        message: DownstreamMessageDto = randomDownstreamMessageDto(),
-        metadata: Map<String, String> = randomPendingMessageMetadata(),
-    ): DownstreamPendingMessageDto = DownstreamPendingMessageDto(
-        message = message,
-        metadata = metadata,
     )
 
     fun randomDraftPayloadResponse(
@@ -885,12 +879,12 @@ internal object Mother {
         user: DownstreamUserDto = randomDownstreamUserDto(),
         targetUser: DownstreamUserDto = randomDownstreamUserDto(),
         targetMessageId: String = randomString(),
-        createdAt: String = randomString(),
+        createdAt: Date = randomDate(),
         createdByAutomod: Boolean = randomBoolean(),
         approvedAt: Date? = randomDateOrNull(),
         updatedAt: Date = randomDate(),
         reviewedAt: Date? = randomDateOrNull(),
-        reviewedBy: Date? = randomDateOrNull(),
+        reviewedBy: String? = randomString(),
         rejectedAt: Date? = randomDateOrNull(),
     ): DownstreamFlagDto = DownstreamFlagDto(
         user = user,
@@ -925,6 +919,7 @@ internal object Mother {
         blocklistMatched: String = randomString(),
         semanticFilterMatched: String = randomString(),
         platformCircumvented: Boolean = randomBoolean(),
+        blocklistsMatched: List<String> = listOf(randomString()),
     ): ModerationV2Response = ModerationV2Response(
         action = action,
         originalText = originalText,
@@ -933,6 +928,7 @@ internal object Mother {
         blocklistMatched = blocklistMatched,
         semanticFilterMatched = semanticFilterMatched,
         platformCircumvented = platformCircumvented,
+        blocklistsMatched = blocklistsMatched,
     )
 
     fun randomQueryUsersRequest(
@@ -947,6 +943,31 @@ internal object Mother {
         limit = limit,
         querySort = querySort,
         presence = presence,
+    )
+
+    fun randomSearchResultMessage(
+        id: String = randomString(),
+        cid: String = randomCID(),
+        text: String = randomString(),
+        user: UserResponse = randomUserResponse(),
+        channel: ChannelResponse? = null,
+    ): SearchResultMessage = SearchResultMessage(
+        cid = cid,
+        createdAt = randomDate(),
+        deletedReplyCount = randomInt(),
+        html = randomString(),
+        id = id,
+        mentionedChannel = randomBoolean(),
+        mentionedHere = randomBoolean(),
+        pinned = randomBoolean(),
+        replyCount = randomInt(),
+        shadowed = randomBoolean(),
+        silent = randomBoolean(),
+        text = text,
+        type = randomString(),
+        updatedAt = randomDate(),
+        user = user,
+        channel = channel,
     )
 
     fun randomSearchWarningResponse(
@@ -1197,6 +1218,74 @@ internal object Mother {
         custom = custom,
     )
 
+    fun randomChannelStateResponseFields(
+        channel: ChannelResponse? = randomChannelResponse(),
+        hidden: Boolean? = randomBoolean(),
+        membership: ChannelMemberResponse? = randomChannelMemberResponse(),
+        hideMessagesBefore: Date? = randomDateOrNull(),
+        draft: DraftResponse? = randomDraftResponse(),
+    ): ChannelStateResponseFields = ChannelStateResponseFields(
+        channel = channel,
+        hidden = hidden,
+        membership = membership,
+        hideMessagesBefore = hideMessagesBefore,
+        draft = draft,
+    )
+
+    /** A channel state with every field set, each to a distinguishable value. */
+    fun randomFullChannelStateResponseFields(): ChannelStateResponseFields {
+        val channel = randomChannelResponse(id = randomString(), type = "messaging")
+        return ChannelStateResponseFields(
+            channel = channel,
+            members = listOf(randomChannelMemberResponse(), randomChannelMemberResponse()),
+            messages = listOf(randomMessageResponse(cid = channel.cid), randomMessageResponse(cid = channel.cid)),
+            pinnedMessages = listOf(randomMessageResponse(cid = channel.cid)),
+            threads = listOf(randomThreadStateResponse(channelCid = channel.cid)),
+            hidden = true,
+            hideMessagesBefore = randomDate(),
+            watcherCount = positiveRandomInt(),
+            activeLiveLocations = listOf(
+                SharedLocationResponseData(
+                    channelCid = channel.cid,
+                    createdAt = randomDate(),
+                    createdByDeviceId = randomString(),
+                    latitude = 1.5,
+                    longitude = 2.5,
+                    messageId = randomString(),
+                    updatedAt = randomDate(),
+                    userId = randomString(),
+                    endAt = randomDate(),
+                ),
+            ),
+            pendingMessages = listOf(PendingMessageResponse(message = randomMessageResponse(cid = channel.cid))),
+            read = listOf(randomReadStateResponse(), randomReadStateResponse()),
+            watchers = listOf(randomUserResponse()),
+            draft = randomDraftResponse(),
+            membership = randomChannelMemberResponse(),
+            pushPreferences = ChannelPushPreferencesResponse(chatLevel = "mentions", disabledUntil = randomDate()),
+        )
+    }
+
+    /** The single channel query response carrying the given state. */
+    fun ChannelStateResponseFields.toChannelStateResponse(): ChannelStateResponse = ChannelStateResponse(
+        duration = "1ms",
+        members = members,
+        messages = messages,
+        pinnedMessages = pinnedMessages,
+        threads = threads,
+        hidden = hidden,
+        hideMessagesBefore = hideMessagesBefore,
+        watcherCount = watcherCount,
+        activeLiveLocations = activeLiveLocations,
+        pendingMessages = pendingMessages,
+        read = read,
+        watchers = watchers,
+        channel = channel,
+        draft = draft,
+        membership = membership,
+        pushPreferences = pushPreferences,
+    )
+
     fun randomThreadResponse(
         channelCid: String = randomString(),
         channel: ChannelResponse? = randomChannelResponse(id = channelCid),
@@ -1306,24 +1395,6 @@ internal object Mother {
             isClosed = isClosed,
             extraData = extraData,
         )
-
-    fun randomDownstreamReminderDto(
-        channelCid: String = randomString(),
-        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
-        messageId: String = randomString(),
-        message: DownstreamMessageDto = randomDownstreamMessageDto(id = messageId),
-        remindAt: Date? = randomDateOrNull(),
-        createdAt: Date = randomDate(),
-        updatedAt: Date = randomDate(),
-    ): DownstreamReminderDto = DownstreamReminderDto(
-        channel_cid = channelCid,
-        channel = channel,
-        message_id = messageId,
-        message = message,
-        remind_at = remindAt,
-        created_at = createdAt,
-        updated_at = updatedAt,
-    )
 
     fun randomReminderResponseData(
         channelCid: String = randomCID(),

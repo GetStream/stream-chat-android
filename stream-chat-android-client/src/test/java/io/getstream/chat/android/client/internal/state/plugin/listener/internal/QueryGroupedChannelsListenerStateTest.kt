@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.internal.state.plugin.state.global.inter
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -218,6 +220,34 @@ internal class QueryGroupedChannelsListenerStateTest {
         )
         // then - pagination payload does not carry unread counts
         verify(globalState, never()).setGroupedUnreadChannels(any())
+    }
+
+    @Test
+    fun `successful result adds the returned channel drafts to the global state`() = runTest {
+        val channels = listOf(randomChannel(draftMessage = randomDraftMessage(parentId = null)))
+        val result = Result.Success(
+            value = GroupedChannels(
+                groups = mapOf(
+                    "support" to GroupedChannelsGroup(
+                        groupKey = "support",
+                        channels = channels,
+                        unreadChannels = 0,
+                        next = null,
+                        prev = null,
+                    ),
+                ),
+            ),
+        )
+
+        listener.onQueryGroupedChannelsResult(
+            result = result,
+            limit = null,
+            groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
+            watch = false,
+            presence = false,
+        )
+
+        verify(globalState).updateChannelDrafts(channels)
     }
 
     @Test

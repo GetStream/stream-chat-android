@@ -17,29 +17,21 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
-import io.getstream.chat.android.client.Mother.randomDraftResponse
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
+import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.MessageResponse
-import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
-import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsGroup
-import io.getstream.chat.android.client.api2.model.response.QueryGroupedChannelsResponse
-import io.getstream.chat.android.client.api2.model.response.ReactionResponse
-import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
+import io.getstream.chat.android.client.parser2.GetMessageResponseParityTest
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
@@ -51,24 +43,36 @@ import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
+import io.getstream.chat.android.network.models.ChannelStateResponse
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
+import io.getstream.chat.android.network.models.CreateDraftResponse
 import io.getstream.chat.android.network.models.CreateGuestResponse
 import io.getstream.chat.android.network.models.CreateReminderResponse
 import io.getstream.chat.android.network.models.CreateUserGroupResponse
+import io.getstream.chat.android.network.models.DeleteChannelResponse
+import io.getstream.chat.android.network.models.DeleteMessageResponse
+import io.getstream.chat.android.network.models.DeleteReactionResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetBlockedUsersResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
 import io.getstream.chat.android.network.models.GetReactionsResponse
+import io.getstream.chat.android.network.models.GetRepliesResponse
 import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
+import io.getstream.chat.android.network.models.GroupedChannelsBucket
+import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
+import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
 import io.getstream.chat.android.network.models.PollVoteResponse
 import io.getstream.chat.android.network.models.PollVotesResponse
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
+import io.getstream.chat.android.network.models.QueryChannelsResponse
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
 import io.getstream.chat.android.network.models.QueryReactionsResponse
@@ -76,24 +80,31 @@ import io.getstream.chat.android.network.models.QueryThreadsResponse
 import io.getstream.chat.android.network.models.QueryUsersResponse
 import io.getstream.chat.android.network.models.RemoveUserGroupMembersResponse
 import io.getstream.chat.android.network.models.Response
+import io.getstream.chat.android.network.models.SearchResponse
+import io.getstream.chat.android.network.models.SearchResult
 import io.getstream.chat.android.network.models.SearchRolesResponse
 import io.getstream.chat.android.network.models.SearchUserGroupsResponse
+import io.getstream.chat.android.network.models.SendMessageResponse
+import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.TranslateMessageResponse
+import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
+import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
+import io.getstream.chat.android.network.models.UpdateMessagePartialResponse
+import io.getstream.chat.android.network.models.UpdateMessageResponse
 import io.getstream.chat.android.network.models.UpdateReminderResponse
 import io.getstream.chat.android.network.models.UpdateThreadPartialResponse
 import io.getstream.chat.android.network.models.UpdateUserGroupResponse
 import io.getstream.chat.android.network.models.UpdateUsersResponse
 import io.getstream.chat.android.positiveRandomInt
-import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
-import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomLocation
-import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -114,7 +125,8 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun sendMessageInput() = messageResponseArguments()
+    fun sendMessageInput() =
+        responseArguments(SendMessageResponse(duration = "1ms", message = Mother.randomMessageResponse()))
 
     @JvmStatic
     fun createDraftMessageInput() = draftMessageResponseArguments()
@@ -129,65 +141,69 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun updateMessageInput() = messageResponseArguments()
+    fun updateMessageInput() =
+        responseArguments(UpdateMessageResponse(duration = "1ms", message = Mother.randomMessageResponse()))
 
     @JvmStatic
-    fun partialUpdateMessageInput() = messageResponseArguments()
+    fun partialUpdateMessageInput() = responseArguments(
+        UpdateMessagePartialResponse(duration = "1ms", message = Mother.randomMessageResponse()),
+        missingMessage = UpdateMessagePartialResponse(duration = "1ms", message = null),
+    )
 
     @JvmStatic
-    fun getMessageInput() = messageResponseArguments()
+    fun getMessageInput() = getMessageResponseArguments()
 
     @JvmStatic
-    fun getPendingMessageInput() = messageResponseArguments()
+    fun getPendingMessageInput() = getMessageResponseArguments()
 
     @JvmStatic
     fun deleteMessageInput() = listOf(
         Arguments.of(
             true,
             false,
-            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
+            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             false,
             true,
-            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
+            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             false,
             false,
-            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
+            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             true,
             true,
-            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
+            RetroSuccess(randomDeleteMessageResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             true,
             false,
-            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
             Result.Failure::class,
         ),
         Arguments.of(
             false,
             true,
-            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
             Result.Failure::class,
         ),
         Arguments.of(
             false,
             false,
-            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
             Result.Failure::class,
         ),
         Arguments.of(
             true,
             true,
-            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            RetroError<DeleteMessageResponse>(statusCode = randomInt()).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
@@ -224,14 +240,26 @@ internal object MoshiChatApiTestArguments {
     @JvmStatic
     fun sendReactionInput() = listOf(
         Arguments.of(
-            RetroSuccess(ReactionResponse(Mother.randomReactionResponse())).toRetrofitCall(),
+            RetroSuccess(
+                SendReactionResponse(
+                    duration = "1ms",
+                    message = Mother.randomMessageResponse(),
+                    reaction = Mother.randomReactionResponse(),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<SendReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
-    fun deleteReactionInput() = messageResponseArguments()
+    fun deleteReactionInput() = responseArguments(
+        DeleteReactionResponse(
+            duration = "1ms",
+            message = Mother.randomMessageResponse(),
+            reaction = Mother.randomReactionResponse(),
+        ),
+    )
 
     @JvmStatic
     fun addDeviceInput() = completableResponseArguments()
@@ -323,22 +351,22 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun enableSlowModeInput() = channelResponseArguments()
+    fun enableSlowModeInput() = updateChannelPartialResponseArguments()
 
     @JvmStatic
-    fun disableSlowModeInput() = channelResponseArguments()
+    fun disableSlowModeInput() = updateChannelPartialResponseArguments()
 
     @JvmStatic
     fun stopWatchingInput() = completableResponseArguments()
 
     @JvmStatic
-    fun getPinnedMessagesInput() = messagesResponseArguments()
+    fun getPinnedMessagesInput() = pinnedMessagesResponseArguments()
 
     @JvmStatic
-    fun updateChannelInput() = channelResponseArguments()
+    fun updateChannelInput() = updateChannelResponseArguments()
 
     @JvmStatic
-    fun updateChannelPartialInput() = channelResponseArguments()
+    fun updateChannelPartialInput() = updateChannelPartialResponseArguments()
 
     @JvmStatic
     fun showChannelInput() = completableResponseArguments()
@@ -347,16 +375,16 @@ internal object MoshiChatApiTestArguments {
     fun hideChannelInput() = completableResponseArguments()
 
     @JvmStatic
-    fun truncateChannelInput() = channelResponseArguments()
+    fun truncateChannelInput() = truncateChannelResponseArguments()
 
     @JvmStatic
-    fun rejectInviteInput() = channelResponseArguments()
+    fun rejectInviteInput() = updateChannelResponseArguments()
 
     @JvmStatic
-    fun acceptInviteInput() = channelResponseArguments()
+    fun acceptInviteInput() = updateChannelResponseArguments()
 
     @JvmStatic
-    fun deleteChannelInput() = channelResponseArguments()
+    fun deleteChannelInput() = deleteChannelResponseArguments()
 
     @JvmStatic
     fun markReadInput() = completableResponseArguments()
@@ -377,13 +405,13 @@ internal object MoshiChatApiTestArguments {
     fun markAllReadInput() = completableResponseArguments()
 
     @JvmStatic
-    fun addMembersInput() = channelResponseArguments()
+    fun addMembersInput() = updateChannelResponseArguments()
 
     @JvmStatic
-    fun removeMembersInput() = channelResponseArguments()
+    fun removeMembersInput() = updateChannelResponseArguments()
 
     @JvmStatic
-    fun inviteMembersInput() = channelResponseArguments()
+    fun inviteMembersInput() = updateChannelResponseArguments()
 
     @JvmStatic
     fun partialUpdateMemberInput() = listOf(
@@ -410,19 +438,22 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun getNewerRepliesInput() = messagesResponseArguments()
+    fun getNewerRepliesInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun getRepliesInput() = messagesResponseArguments()
+    fun getRepliesInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun getRepliesMoreInput() = messagesResponseArguments()
+    fun getRepliesMoreInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun getRepliesAroundInput() = messagesResponseArguments()
+    fun getRepliesAroundInput() = repliesResponseArguments()
 
     @JvmStatic
-    fun sendActionInput() = messageResponseArguments()
+    fun sendActionInput() = responseArguments(
+        MessageActionResponse(duration = "1ms", message = Mother.randomMessageResponse()),
+        missingMessage = MessageActionResponse(duration = "1ms", message = null),
+    )
 
     @JvmStatic
     fun updateUsersInput() = updateUsersResponseArguments()
@@ -463,7 +494,8 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun translateInput() = messageResponseArguments()
+    fun translateInput() =
+        responseArguments(TranslateMessageResponse(duration = "1ms", message = Mother.randomMessageResponse()))
 
     @JvmStatic
     fun ogInput() = listOf(
@@ -479,14 +511,9 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 QueryChannelsResponse(
-                    listOf(
-                        ChannelResponse(
-                            channel = Mother.randomDownstreamChannelDto(),
-                            hidden = randomBoolean(),
-                            membership = Mother.randomChannelMemberResponse(),
-                            hide_messages_before = randomDateOrNull(),
-                            draft = randomDraftResponse(),
-                        ),
+                    duration = "1ms",
+                    channels = listOf(
+                        Mother.randomChannelStateResponseFields(),
                     ),
                 ),
             ).toRetrofitCall(),
@@ -499,19 +526,13 @@ internal object MoshiChatApiTestArguments {
     fun queryGroupedChannelsInput() = listOf(
         Arguments.of(
             RetroSuccess(
-                QueryGroupedChannelsResponse(
+                GroupedQueryChannelsResponse(
                     groups = mapOf(
-                        "all-open" to QueryGroupedChannelsGroup(
+                        "all-open" to GroupedChannelsBucket(
                             channels = listOf(
-                                ChannelResponse(
-                                    channel = Mother.randomDownstreamChannelDto(),
-                                    hidden = randomBoolean(),
-                                    membership = Mother.randomChannelMemberResponse(),
-                                    hide_messages_before = randomDateOrNull(),
-                                    draft = randomDraftResponse(),
-                                ),
+                                Mother.randomChannelStateResponseFields(),
                             ),
-                            unread_channels = positiveRandomInt(),
+                            unreadChannels = positiveRandomInt(),
                             next = null,
                             prev = null,
                         ),
@@ -522,7 +543,7 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(
-            RetroError<QueryGroupedChannelsResponse>(statusCode = 500).toRetrofitCall(),
+            RetroError<GroupedQueryChannelsResponse>(statusCode = 500).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
@@ -532,16 +553,11 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 QueryChannelsResponse(
+                    duration = "1ms",
                     channels = listOf(
-                        ChannelResponse(
-                            channel = Mother.randomDownstreamChannelDto(),
-                            hidden = randomBoolean(),
-                            membership = Mother.randomChannelMemberResponse(),
-                            hide_messages_before = randomDateOrNull(),
-                            draft = randomDraftResponse(),
-                        ),
+                        Mother.randomChannelStateResponseFields(),
                     ),
-                    predefined_filter = ParsedPredefinedFilterResponse(
+                    predefinedFilter = ParsedPredefinedFilterResponse(
                         name = "android_sample_filter",
                         filter = mapOf("type" to "messaging"),
                         sort = listOf(SortParamRequest(field = "last_message_at", direction = -1)),
@@ -554,7 +570,13 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun queryChannelInput() = channelResponseArguments()
+    fun queryChannelInput() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomChannelStateResponseFields().toChannelStateResponse()).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<ChannelStateResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     /**
      * Rows of (stub serving a channel state, call reading the mapped channels back) for each REST path
@@ -564,9 +586,9 @@ internal object MoshiChatApiTestArguments {
     fun channelStateInput() = listOf(
         Arguments.of(
             "queryChannel",
-            { api: ChannelApi, response: ChannelResponse ->
+            { api: ChannelApi, response: ChannelStateResponseFields ->
                 whenever(api.queryChannel(any(), any(), any(), any()))
-                    .doReturn(RetroSuccess(response).toRetrofitCall())
+                    .doReturn(RetroSuccess(response.toChannelStateResponse()).toRetrofitCall())
             },
             { sut: MoshiChatApi ->
                 sut.queryChannel(randomString(), randomString(), Mother.randomQueryChannelRequest())
@@ -575,9 +597,9 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(
             "queryChannels",
-            { api: ChannelApi, response: ChannelResponse ->
-                whenever(api.queryChannels(any(), any()))
-                    .doReturn(RetroSuccess(QueryChannelsResponse(listOf(response))).toRetrofitCall())
+            { api: ChannelApi, response: ChannelStateResponseFields ->
+                val channels = QueryChannelsResponse(duration = "1ms", channels = listOf(response))
+                whenever(api.queryChannels(any(), any())).doReturn(RetroSuccess(channels).toRetrofitCall())
             },
             { sut: MoshiChatApi ->
                 sut.queryChannels(Mother.randomQueryChannelsRequest()).map { it.channels }
@@ -585,16 +607,11 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(
             "queryGroupedChannels",
-            { api: ChannelApi, response: ChannelResponse ->
-                val group = QueryGroupedChannelsGroup(
-                    channels = listOf(response),
-                    unread_channels = null,
-                    next = null,
-                    prev = null,
-                )
+            { api: ChannelApi, response: ChannelStateResponseFields ->
+                val group = GroupedChannelsBucket(channels = listOf(response))
                 whenever(api.queryGroupedChannels(any(), any())).doReturn(
                     RetroSuccess(
-                        QueryGroupedChannelsResponse(groups = mapOf("all" to group), duration = "1ms"),
+                        GroupedQueryChannelsResponse(groups = mapOf("all" to group), duration = "1ms"),
                     ).toRetrofitCall(),
                 )
             },
@@ -893,49 +910,109 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<FlagResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    private fun channelResponseArguments() = listOf(
+    private fun updateChannelResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                ChannelResponse(
-                    channel = Mother.randomDownstreamChannelDto(),
-                    hidden = randomBoolean(),
-                    membership = Mother.randomChannelMemberResponse(),
-                    hide_messages_before = randomDateOrNull(),
-                    draft = randomDraftResponse(),
+                UpdateChannelResponse(
+                    duration = randomString(),
+                    members = listOf(Mother.randomChannelMemberResponse()),
+                    channel = Mother.randomChannelResponse(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ChannelResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(
+            RetroSuccess(UpdateChannelResponse(duration = randomString())).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(RetroError<UpdateChannelResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    private fun messageResponseArguments() = listOf(
+    private fun updateChannelPartialResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                MessageResponse(
-                    message = randomDownstreamMessageDto(),
-                    pending_message_metadata = randomPendingMessageMetadata(),
+                UpdateChannelPartialResponse(
+                    duration = randomString(),
+                    members = listOf(Mother.randomChannelMemberResponse()),
+                    channel = Mother.randomChannelResponse(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(
+            RetroSuccess(UpdateChannelPartialResponse(duration = randomString())).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(
+            RetroError<UpdateChannelPartialResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
     )
+
+    private fun truncateChannelResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                TruncateChannelResponse(duration = randomString(), channel = Mother.randomChannelResponse()),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            RetroSuccess(TruncateChannelResponse(duration = randomString())).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(RetroError<TruncateChannelResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun deleteChannelResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                DeleteChannelResponse(duration = randomString(), channel = Mother.randomChannelResponse()),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            RetroSuccess(DeleteChannelResponse(duration = randomString())).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(RetroError<DeleteChannelResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun randomDeleteMessageResponse() =
+        DeleteMessageResponse(duration = "1ms", message = Mother.randomMessageResponse())
+
+    private inline fun <reified T : Any> responseArguments(response: T, missingMessage: T? = null) = listOfNotNull(
+        Arguments.of(RetroSuccess(response).toRetrofitCall(), Result.Success::class),
+        missingMessage?.let { Arguments.of(RetroSuccess(it).toRetrofitCall(), Result.Failure::class) },
+        Arguments.of(RetroError<T>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun getMessageResponseArguments() = responseArguments(GetMessageResponseParityTest.getMessageResponse())
 
     private fun draftMessageResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(Mother.randomCreateDraftResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<CreateDraftResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
-    private fun messagesResponseArguments() = listOf(
+    private fun repliesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(MessagesResponse(listOf(Mother.randomMessageResponse()))).toRetrofitCall(),
+            RetroSuccess(GetRepliesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())))
+                .toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<MessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<GetRepliesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun pinnedMessagesResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                GetPinnedMessagesResponse(duration = "1ms", messages = listOf(Mother.randomMessageResponse())),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<GetPinnedMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun updateUsersResponseArguments(): List<Arguments> {
@@ -955,8 +1032,9 @@ internal object MoshiChatApiTestArguments {
     private fun searchMessagesResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                SearchMessagesResponse(
-                    results = listOf(MessageResponse(randomDownstreamMessageDto())),
+                SearchResponse(
+                    duration = randomString(),
+                    results = listOf(SearchResult(Mother.randomSearchResultMessage())),
                     next = randomString(),
                     previous = randomString(),
                     resultsWarning = Mother.randomSearchWarningResponse(),
@@ -964,7 +1042,7 @@ internal object MoshiChatApiTestArguments {
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<SearchMessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<SearchResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun threadResponseArguments() = listOf(

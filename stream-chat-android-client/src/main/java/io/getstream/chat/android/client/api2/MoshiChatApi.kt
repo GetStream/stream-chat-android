@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -119,6 +118,7 @@ import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.ChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
+import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
@@ -135,7 +135,9 @@ import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
 import io.getstream.chat.android.network.models.MarkUnreadRequest
 import io.getstream.chat.android.network.models.MessageActionRequest
+import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.MessageRequest
+import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
@@ -164,6 +166,7 @@ import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import io.getstream.chat.android.network.models.UpdateMessagePartialRequest
+import io.getstream.chat.android.network.models.UpdateMessagePartialResponse
 import io.getstream.chat.android.network.models.UpdateMessageRequest
 import io.getstream.chat.android.network.models.UpdatePollOptionRequest
 import io.getstream.chat.android.network.models.UpdatePollPartialRequest
@@ -356,9 +359,7 @@ constructor(
                 unset = unset,
                 skipEnrichUrl = skipEnrichUrl,
             ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+        ).mapMessage(UpdateMessagePartialResponse::message)
     }
 
     private fun Map<String, Any>.toDto(): Map<String, Any> = with(dtoMapping) {
@@ -385,7 +386,7 @@ constructor(
     }
 
     override fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return messageApi.getMessage(messageId).mapDomain { it.toDomain() }
+        return messageApi.getMessage(messageId).mapDomain { it.toPendingMessage() }
     }
 
     override fun deleteMessage(
@@ -673,6 +674,13 @@ constructor(
                     else -> Result.Success(with(domainMapping) { userGroup.toDomain() })
                 }
             }
+        }
+
+    private fun <T : Any> RetrofitCall<T>.mapMessage(extract: (T) -> MessageResponse?): Call<Message> =
+        flatMapDomain { response ->
+            extract(response)
+                ?.let { message -> CoroutineCall(coroutineScope) { Result.Success(message.toDomain()) } }
+                ?: ErrorCall(coroutineScope, Error.GenericError(MISSING_MESSAGE))
         }
 
     private fun <T : Any> RetrofitCall<T>.mapUserGroups(extract: (T) -> List<UserGroupResponse>) =
@@ -1019,7 +1027,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelPartialRequest(set = mapOf("cooldown" to cooldownTimeInSeconds)),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
@@ -1068,7 +1076,7 @@ constructor(
                     message = updateMessage?.toMessageRequest(),
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun updateChannelPartial(
@@ -1081,7 +1089,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelPartialRequest(set = set, unset = unset),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun showChannel(
@@ -1116,7 +1124,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toMessageRequest()) },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
@@ -1124,7 +1132,7 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             body = UpdateChannelRequest(rejectInvite = true),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun acceptInvite(
@@ -1139,14 +1147,14 @@ constructor(
                 acceptInvite = true,
                 message = message?.let { MessageRequest(text = it) },
             ),
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return channelApi.deleteChannel(
             channelType = channelType,
             channelId = channelId,
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun getUnreadCounts(): Call<UnreadCounts> = generalApi.getUnreadCounts()
@@ -1215,7 +1223,7 @@ constructor(
                     skipPush = skipPush,
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun removeMembers(
@@ -1235,7 +1243,7 @@ constructor(
                     skipPush = skipPush,
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun inviteMembers(
@@ -1255,7 +1263,7 @@ constructor(
                     skipPush = skipPush,
                 )
             },
-        ).map(this::flattenChannel)
+        ).flatMapDomain { it.toDomain().toChannelCall() }
     }
 
     override fun partialUpdateMember(
@@ -1273,36 +1281,47 @@ constructor(
         ).flatMapDomain { toMemberCall(it) }
     }
 
-    private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
-        return response.channel.toDomain().let { channel ->
-            val channelInfo = response.channel.toChannelInfo()
-            val channelMessages = response.messages.map {
-                it.toDomain(channelInfo).enrichWithCid(channel.cid)
-            }
-            channel.copy(
-                watcherCount = response.watcher_count,
-                read = response.read.map {
-                    it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.lastRead)
-                },
-                members = response.members.map { it.toDomain() },
-                membership = response.membership?.toDomain(),
-                messages = channelMessages,
-                pendingMessages = response.pending_messages.map { pending ->
-                    pending.toDomain(channel.cid, channelInfo)
-                },
-                pinnedMessages = response.pinned_messages.map {
-                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
-                },
-                pushPreference = response.push_preferences?.toDomain(),
-                watchers = response.watchers.map {
-                    it.toDomain()
-                },
-                hidden = response.hidden,
-                hiddenMessagesBefore = response.hide_messages_before,
-                draftMessage = response.draft?.toDomain(),
-                activeLiveLocations = response.active_live_locations.map { it.toDomain() },
-            ).syncUnreadCountWithReads(domainMapping.currentUserIdProvider())
+    /**
+     * Succeeds with [this] channel, or fails the call when the response carried none.
+     */
+    private fun Channel?.toChannelCall(): Call<Channel> = this
+        ?.let { channel -> CoroutineCall(coroutineScope) { Result.Success(channel) } }
+        ?: ErrorCall(coroutineScope, Error.GenericError("The response carried no channel"))
+
+    /**
+     * Maps each channel state, or fails the call when one carries no channel: a channel state always has one, so the
+     * response cannot be mapped without it.
+     */
+    private fun <R : Any> List<ChannelStateResponseFields>.toChannelsCall(transform: (List<Channel>) -> R): Call<R> {
+        val channels = mapNotNull(::flattenChannelState)
+        return if (channels.size == size) {
+            CoroutineCall(coroutineScope) { Result.Success(transform(channels)) }
+        } else {
+            ErrorCall(coroutineScope, Error.GenericError("A channel state in the response carried no channel"))
         }
+    }
+
+    private fun flattenChannelState(state: ChannelStateResponseFields): Channel? = with(domainMapping) {
+        val response = state.channel ?: return null
+        val channelInfo = response.toChannelInfo()
+        val channel = response.toDomain()
+        return channel.copy(
+            watcherCount = state.watcherCount ?: 0,
+            read = state.read.orEmpty().map {
+                it.toDomain(lastReceivedEventDate = channel.lastMessageAt ?: it.lastRead)
+            },
+            members = state.members.map { it.toDomain() },
+            membership = state.membership?.toDomain(),
+            messages = state.messages.map { it.toDomain(channelInfo).enrichWithCid(channel.cid) },
+            pendingMessages = state.pendingMessages.orEmpty().mapNotNull { it.toDomain(channel.cid, channelInfo) },
+            pinnedMessages = state.pinnedMessages.map { it.toDomain(channelInfo).enrichWithCid(channel.cid) },
+            pushPreference = state.pushPreferences?.toDomain(),
+            watchers = state.watchers.orEmpty().map { it.toDomain() },
+            hidden = state.hidden,
+            hiddenMessagesBefore = state.hideMessagesBefore,
+            draftMessage = state.draft?.toDomain(),
+            activeLiveLocations = state.activeLiveLocations.orEmpty().map { it.toDomain() },
+        ).syncUnreadCountWithReads(currentUserIdProvider())
     }
 
     override fun getNewerReplies(
@@ -1362,9 +1381,7 @@ constructor(
             request = MessageActionRequest(
                 formData = request.formData.entries.associate { (k, v) -> k.toString() to v.toString() },
             ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+        ).mapMessage(MessageActionResponse::message)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
@@ -1449,14 +1466,10 @@ constructor(
         )
         return generalApi.searchMessages(newRequest)
             .mapDomain { response ->
-                val results = response.results
-
-                val messages = results.map { resp ->
-                    resp.message.toDomain().let { message ->
-                        (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
-                            ?.let(message::enrichWithCid)
-                            ?: message
-                    }
+                val messages = response.results.mapNotNull { it.message?.toDomain() }.map { message ->
+                    (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+                        ?.let(message::enrichWithCid)
+                        ?: message
                 }
                 SearchMessagesResult(
                     messages = messages,
@@ -1487,11 +1500,11 @@ constructor(
             channelApi.queryChannels(
                 connectionId = connectionId,
                 request = request,
-            ).map { response ->
-                with(domainMapping) {
+            ).flatMapDomain { response ->
+                response.channels.toChannelsCall { channels ->
                     QueryChannelsResult(
-                        channels = response.channels.map(this@MoshiChatApi::flattenChannel),
-                        predefinedFilter = response.predefined_filter?.let {
+                        channels = channels,
+                        predefinedFilter = response.predefinedFilter?.let {
                             val (filter, filterFields) = it.filter.toFilterDomainWithFields()
                                 ?: return@let null
                             val sort = it.sort.toSortDomain()
@@ -1534,18 +1547,20 @@ constructor(
             channelApi.queryGroupedChannels(
                 connectionId = connectionId,
                 body = body,
-            ).map { response ->
-                GroupedChannels(
-                    groups = response.groups.mapValues { entry ->
-                        GroupedChannelsGroup(
-                            groupKey = entry.key,
-                            channels = entry.value.channels.map(::flattenChannel),
-                            unreadChannels = entry.value.unread_channels ?: 0,
-                            next = entry.value.next,
-                            prev = entry.value.prev,
-                        )
-                    },
-                )
+            ).flatMapDomain { response ->
+                response.groups.values.flatMap { it.channels }.toChannelsCall {
+                    GroupedChannels(
+                        groups = response.groups.mapValues { entry ->
+                            GroupedChannelsGroup(
+                                groupKey = entry.key,
+                                channels = entry.value.channels.mapNotNull(::flattenChannelState),
+                                unreadChannels = entry.value.unreadChannels ?: 0,
+                                next = entry.value.next,
+                                prev = entry.value.prev,
+                            )
+                        },
+                    )
+                }
             }
         }
         val isConnectionRequired = watch || presence
@@ -1574,7 +1589,7 @@ constructor(
                     connectionId = connectionId,
                     request = request,
                 )
-            }.map(::flattenChannel)
+            }.flatMapDomain { response -> listOf(response.toStateFields()).toChannelsCall { it.single() } }
         }
 
         val isConnectionRequired = query.watch || query.presence
@@ -2078,3 +2093,4 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
 
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
+private const val MISSING_MESSAGE = "The response carried no message"

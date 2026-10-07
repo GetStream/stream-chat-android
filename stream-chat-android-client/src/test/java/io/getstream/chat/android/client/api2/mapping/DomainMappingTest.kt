@@ -33,8 +33,6 @@ import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
-import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomDraftResponse
@@ -63,7 +61,6 @@ import io.getstream.chat.android.client.Mother.randomUserGroupMemberDto
 import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
-import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
@@ -95,7 +92,6 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -125,8 +121,12 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
+import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelOwnCapability
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
+import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
+import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -135,7 +135,10 @@ import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.ReminderResponseData
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.TruncateChannelResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
+import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
+import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import io.getstream.chat.android.network.models.UserResponseCommonFields
@@ -145,7 +148,6 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
@@ -672,32 +674,6 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamPendingMessageDto is correctly mapped to PendingMessage`() {
-        val downstreamPendingMessageDto = randomDownstreamPendingMessageDto()
-        val sut = Fixture().get()
-        val expected = PendingMessage(
-            message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
-            metadata = downstreamPendingMessageDto.metadata.orEmpty(),
-        )
-        val result = with(sut) { downstreamPendingMessageDto.toDomain(downstreamPendingMessageDto.message.cid) }
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun `MessageResponse is correctly mapped to PendingMessage`() {
-        val messageDto = randomDownstreamMessageDto()
-        val pendingMessageMetadata = randomPendingMessageMetadata()
-        val messageResponse = MessageResponse(messageDto, pendingMessageMetadata)
-        val sut = Fixture().get()
-        val expected = PendingMessage(
-            message = with(sut) { messageDto.toDomain() },
-            metadata = pendingMessageMetadata,
-        )
-        val result = with(sut) { messageResponse.toDomain() }
-        assertEquals(expected, result)
-    }
-
-    @Test
     fun `User should be transformed after it is mapped`() {
         val transformedUser = randomUser()
         val userTransformer = UserTransformer { transformedUser }
@@ -768,6 +744,65 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `ChannelResponse maps every field onto the Channel`() {
+        val creator = Mother.randomUserResponse()
+        val member = Mother.randomChannelMemberResponse()
+        val response = ChannelResponse(
+            cid = "messaging:general",
+            id = "general",
+            type = "messaging",
+            createdAt = Date(1_000),
+            updatedAt = Date(2_000),
+            deletedAt = Date(3_000),
+            truncatedAt = Date(4_000),
+            lastMessageAt = Date(5_000),
+            hideMessagesBefore = Date(6_000),
+            disabled = true,
+            frozen = true,
+            blocked = true,
+            hidden = true,
+            memberCount = 7,
+            messageCount = 8,
+            cooldown = 9,
+            team = "team-a",
+            filterTags = listOf("tag-a", "tag-b"),
+            members = listOf(member),
+            ownCapabilities = listOf(ChannelOwnCapability.SendMessage),
+            config = ChannelDtoTestData.channelResponse.config,
+            createdBy = creator,
+            custom = mapOf("name" to "General", "image" to "https://example.com/g.png", "color" to "teal"),
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { response.toDomain() }
+
+        assertEquals("general", channel.id)
+        assertEquals("messaging", channel.type)
+        assertEquals("General", channel.name)
+        assertEquals("https://example.com/g.png", channel.image)
+        assertEquals(Date(1_000), channel.createdAt)
+        assertEquals(Date(2_000), channel.updatedAt)
+        assertEquals(Date(3_000), channel.deletedAt)
+        assertEquals(Date(4_000), channel.truncatedAt)
+        assertEquals(Date(5_000), channel.lastMessageAt)
+        assertEquals(Date(6_000), channel.hiddenMessagesBefore)
+        assertEquals(true, channel.disabled)
+        assertEquals(true, channel.frozen)
+        assertEquals(true, channel.blocked)
+        assertEquals(true, channel.hidden)
+        assertEquals(7, channel.memberCount)
+        assertEquals(8, channel.messageCount)
+        assertEquals(9, channel.cooldown)
+        assertEquals("team-a", channel.team)
+        assertEquals(listOf("tag-a", "tag-b"), channel.filterTags)
+        assertEquals(listOf(member.user!!.id), channel.members.map { it.user.id })
+        assertEquals(setOf("send-message"), channel.ownCapabilities)
+        assertEquals(with(sut) { response.config?.toDomain() }, channel.config)
+        assertEquals(creator.id, channel.createdBy.id)
+        assertEquals(mapOf<String, Any>("color" to "teal"), channel.extraData)
+    }
+
+    @Test
     fun `ChannelResponse maps the channel state to properties and keeps it in extraData`() {
         val channelResponse = ChannelDtoTestData.channelResponse
         val sut = Fixture().get()
@@ -783,6 +818,34 @@ internal class DomainMappingTest {
         channel.extraData["disabled"] shouldBeEqualTo true
         channel.extraData["blocked"] shouldBeEqualTo true
         channel.extraData["truncated_at"] shouldBeEqualTo "2020-06-10T11:04:31.588Z"
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("channelMutationResponseArguments")
+    fun `Channel mutation responses map the channel and its members`(
+        @Suppress("UNUSED_PARAMETER") name: String,
+        toDomain: (DomainMapping, ChannelResponse?, List<ChannelMemberResponse>) -> Channel?,
+        topLevelMembers: Boolean,
+    ) {
+        val nested = randomChannelMemberResponse()
+        val topLevel = randomChannelMemberResponse()
+        val channelResponse = randomChannelResponse().copy(members = listOf(nested))
+        val sut = Fixture().get()
+
+        val channel = toDomain(sut, channelResponse, listOf(topLevel))
+
+        val expectedMembers = with(sut) { listOf(if (topLevelMembers) topLevel.toDomain() else nested.toDomain()) }
+        assertEquals(with(sut) { channelResponse.toDomain() }.copy(members = expectedMembers), channel)
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("channelMutationResponseArguments")
+    fun `Channel mutation responses without a channel map to null`(
+        @Suppress("UNUSED_PARAMETER") name: String,
+        toDomain: (DomainMapping, ChannelResponse?, List<ChannelMemberResponse>) -> Channel?,
+        @Suppress("UNUSED_PARAMETER") topLevelMembers: Boolean,
+    ) {
+        assertNull(toDomain(Fixture().get(), null, listOf(randomChannelMemberResponse())))
     }
 
     @Test
@@ -1544,20 +1607,28 @@ internal class DomainMappingTest {
 
     @Test
     fun `DownstreamFlagDto is correctly mapped to Flag`() {
-        val downstreamFlagDto = randomDownstreamFlagDto()
+        // Distinct dates, so a field mapped from the wrong source can't pass.
+        val downstreamFlagDto = randomDownstreamFlagDto(
+            createdAt = Date(1_000),
+            approvedAt = Date(2_000),
+            updatedAt = Date(3_000),
+            reviewedAt = Date(4_000),
+            rejectedAt = Date(5_000),
+            reviewedBy = "reviewer",
+        )
         val sut = Fixture().get()
         val flag = with(sut) { downstreamFlagDto.toDomain() }
         val expected = Flag(
             user = with(sut) { downstreamFlagDto.user.toDomain() },
             targetUser = with(sut) { downstreamFlagDto.target_user?.toDomain() },
             targetMessageId = downstreamFlagDto.target_message_id.orEmpty(),
-            reviewedBy = downstreamFlagDto.created_at,
+            reviewedBy = "reviewer",
             createdByAutomod = downstreamFlagDto.created_by_automod,
-            createdAt = downstreamFlagDto.approved_at,
-            updatedAt = downstreamFlagDto.updated_at,
-            reviewedAt = downstreamFlagDto.reviewed_at,
-            approvedAt = downstreamFlagDto.approved_at,
-            rejectedAt = downstreamFlagDto.rejected_at,
+            createdAt = Date(1_000),
+            updatedAt = Date(3_000),
+            reviewedAt = Date(4_000),
+            approvedAt = Date(2_000),
+            rejectedAt = Date(5_000),
         )
         assertEquals(expected, flag)
     }
@@ -1588,8 +1659,23 @@ internal class DomainMappingTest {
             blocklistMatched = moderationResponse.blocklistMatched,
             semanticFilterMatched = moderationResponse.semanticFilterMatched,
             platformCircumvented = moderationResponse.platformCircumvented ?: false,
+            blocklistsMatched = moderationResponse.blocklistsMatched.orEmpty(),
         )
         assertEquals(expected, moderation)
+    }
+
+    @Test
+    fun `ModerationV2Response without blocklist_matched falls back to the first blocklists_matched entry`() {
+        val blocklists = listOf(randomString(), randomString())
+        val moderationResponse = randomModerationV2Response().copy(
+            blocklistMatched = null,
+            blocklistsMatched = blocklists,
+        )
+        val sut = Fixture().get()
+        val moderation = with(sut) { moderationResponse.toDomain() }
+        @Suppress("DEPRECATION")
+        assertEquals(blocklists.first(), moderation.blocklistMatched)
+        assertEquals(blocklists, moderation.blocklistsMatched)
     }
 
     @Test
@@ -1801,23 +1887,6 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `DownstreamReminderDto is correctly mapped to MessageReminder`() {
-        val downstreamReminderDto = randomDownstreamReminderDto()
-        val sut = Fixture().get()
-        val messageReminder = with(sut) { downstreamReminderDto.toDomain() }
-        val expected = MessageReminder(
-            remindAt = downstreamReminderDto.remind_at,
-            messageId = downstreamReminderDto.message_id,
-            message = with(sut) { downstreamReminderDto.message?.toDomain() },
-            cid = downstreamReminderDto.channel_cid,
-            channel = with(sut) { downstreamReminderDto.channel?.toDomain() },
-            createdAt = downstreamReminderDto.created_at,
-            updatedAt = downstreamReminderDto.updated_at,
-        )
-        assertEquals(expected, messageReminder)
-    }
-
-    @Test
     fun `ReminderResponseData is correctly mapped to MessageReminder`() {
         val input = Mother.randomReminderResponseData()
         val sut = Fixture().get()
@@ -1959,6 +2028,43 @@ internal class DomainMappingTest {
     }
 
     companion object {
+        // Update responses send the members at the top level; truncate and delete only nest them in the channel.
+        @JvmStatic
+        fun channelMutationResponseArguments() = listOf(
+            Arguments.of(
+                "UpdateChannelResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, members: List<ChannelMemberResponse> ->
+                    with(mapping) {
+                        UpdateChannelResponse(duration = "1ms", members = members, channel = channel).toDomain()
+                    }
+                },
+                true,
+            ),
+            Arguments.of(
+                "UpdateChannelPartialResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, members: List<ChannelMemberResponse> ->
+                    with(mapping) {
+                        UpdateChannelPartialResponse(duration = "1ms", members = members, channel = channel).toDomain()
+                    }
+                },
+                true,
+            ),
+            Arguments.of(
+                "TruncateChannelResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, _: List<ChannelMemberResponse> ->
+                    with(mapping) { TruncateChannelResponse(duration = "1ms", channel = channel).toDomain() }
+                },
+                false,
+            ),
+            Arguments.of(
+                "DeleteChannelResponse",
+                { mapping: DomainMapping, channel: ChannelResponse?, _: List<ChannelMemberResponse> ->
+                    with(mapping) { DeleteChannelResponse(duration = "1ms", channel = channel).toDomain() }
+                },
+                false,
+            ),
+        )
+
         @JvmStatic
         fun toSortDomainArguments() = listOf(
             // null/error → null
