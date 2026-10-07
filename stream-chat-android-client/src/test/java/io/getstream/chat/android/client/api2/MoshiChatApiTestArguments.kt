@@ -877,10 +877,7 @@ internal object MoshiChatApiTestArguments {
     private fun muteUserResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                MuteUserResponse(
-                    Mother.randomUserMuteResponse(),
-                    Mother.randomOwnUserResponse(),
-                ),
+                MuteUserResponse(Mother.randomUserMuteResponse()),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
