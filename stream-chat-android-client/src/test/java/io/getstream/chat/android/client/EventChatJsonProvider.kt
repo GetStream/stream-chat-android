@@ -45,6 +45,18 @@ internal fun createChannelHiddenEventStringJson() =
         """.trimIndent(),
     )
 
+internal fun createChannelHiddenSyncReplayEventStringJson() =
+    createChatEventStringJson(
+        "channel.hidden",
+        """
+            "user": ${createUserJsonString()},
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "channel": ${createChannelJsonString()}
+        """.trimIndent(),
+    )
+
 internal fun createChannelTruncatedEventStringJson() =
     createChatEventStringJson(
         "channel.truncated",
@@ -108,6 +120,17 @@ internal fun createChannelVisibleEventStringJson() =
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+        """.trimIndent(),
+    )
+
+internal fun createChannelVisibleSyncReplayEventStringJson() =
+    createChatEventStringJson(
+        "channel.visible",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "user": ${createUserJsonString()}
         """.trimIndent(),
     )
 

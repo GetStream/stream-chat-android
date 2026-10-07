@@ -62,11 +62,17 @@ internal class GroupAwareChatEventHandler(
 
             is NotificationAddedToChannelEvent,
             is NotificationMessageNewEvent,
-            is ChannelVisibleEvent,
-            -> if (channelBelongsHere(event.channel)) {
-                EventHandlingResult.WatchAndAdd(event.cid)
-            } else {
-                EventHandlingResult.Skip
+            -> watchAndAddIfBelongsHere(event.cid, event.channel)
+
+            // channel.visible replayed by /sync can carry a channel with only its type and id.
+            is ChannelVisibleEvent -> {
+                val hasOnlyTypeAndId = event.channel == Channel(id = event.channel.id, type = event.channel.type)
+                when {
+                    !hasOnlyTypeAndId -> watchAndAddIfBelongsHere(event.cid, event.channel)
+                    cachedChannel != null -> watchAndAddIfBelongsHere(event.cid, cachedChannel)
+                    // Nothing to resolve the group against: a later channel.updated removes it if it belongs elsewhere.
+                    else -> EventHandlingResult.WatchAndAdd(event.cid)
+                }
             }
 
             else -> super.handleChatEvent(event, filter, cachedChannel)
@@ -103,6 +109,9 @@ internal class GroupAwareChatEventHandler(
             else -> EventHandlingResult.Skip
         }
     }
+
+    private fun watchAndAddIfBelongsHere(cid: String, channel: Channel): EventHandlingResult =
+        if (channelBelongsHere(channel)) EventHandlingResult.WatchAndAdd(cid) else EventHandlingResult.Skip
 
     private fun channelBelongsHere(channel: Channel): Boolean =
         resolver.resolve(channel).contains(groupKey)
