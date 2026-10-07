@@ -326,6 +326,8 @@ internal object EventArguments {
     )
 
     /** The channel as the wire sends it: `disabled` always present, kept in extra data like the hand-written DTO. */
+    private val wireChannel = channel.copy(extraData = channel.extraData + ("disabled" to false))
+
     /** The message as reaction events send it: common-field users and no nested channel. */
     private val reactionEventMessage = message.copy(
         user = nestedUser,
@@ -333,8 +335,6 @@ internal object EventArguments {
         threadParticipants = listOf(nestedUser),
         channelInfo = null,
     )
-
-    private val wireChannel = channel.copy(extraData = channel.extraData + ("disabled" to false))
 
     /** A message inside a channel event: it carries no channel of its own, so its channel info is the event's. */
     private val channelEventMessage = message.copy(
