@@ -174,6 +174,20 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given no cached channel When ChannelVisibleEvent carries only type and id Should watch and add`() {
+        val channel = randomChannel()
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
+        val event = randomChannelVisibleEvent(
+            cid = channel.cid,
+            channel = Channel(id = channel.id, type = channel.type),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
     fun `Given a stale cached channel When ChannelVisibleEvent carries the full channel Should route by the event channel`() {
         val channel = randomChannel(extraData = mapOf("group" to "vip"))
         val cachedChannel = channel.copy(extraData = mapOf("group" to "other"))

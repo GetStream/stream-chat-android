@@ -67,8 +67,12 @@ internal class GroupAwareChatEventHandler(
             // channel.visible replayed by /sync can carry a channel with only its type and id.
             is ChannelVisibleEvent -> {
                 val hasOnlyTypeAndId = event.channel == Channel(id = event.channel.id, type = event.channel.type)
-                val channel = cachedChannel.takeIf { hasOnlyTypeAndId } ?: event.channel
-                watchAndAddIfBelongsHere(event.cid, channel)
+                when {
+                    !hasOnlyTypeAndId -> watchAndAddIfBelongsHere(event.cid, event.channel)
+                    cachedChannel != null -> watchAndAddIfBelongsHere(event.cid, cachedChannel)
+                    // Nothing to resolve the group against: a later channel.updated removes it if it belongs elsewhere.
+                    else -> EventHandlingResult.WatchAndAdd(event.cid)
+                }
             }
 
             else -> super.handleChatEvent(event, filter, cachedChannel)
