@@ -1,0 +1,14 @@
+name: Publish API Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docs:
+    uses: GetStream/stream-build-conventions-android/.github/workflows/publish-api-docs.yml@d275481d345e4b3b1252006dbb6cf029c9e32767
+    permissions:
+      contents: write
+    secrets:
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_ANDROID_CICD }}
