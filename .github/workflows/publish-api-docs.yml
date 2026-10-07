@@ -1,0 +1,12 @@
+name: Publish API Docs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  docs:
+    uses: GetStream/stream-build-conventions-android/.github/workflows/publish-api-docs.yml@32c7cb5ec6ecc7c588b2de1409f497b7946b70be
+    permissions:
+      contents: write
