@@ -2092,5 +2092,5 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
     }
 
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
-private const val MISSING_MESSAGE = "The response carried no message"
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
+private const val MISSING_MESSAGE = "The response carried no message"
