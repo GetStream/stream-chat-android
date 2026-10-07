@@ -12,7 +12,7 @@ jobs:
   release:
     permissions:
       contents: write
-    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@v1.0.0
+    uses: GetStream/stream-build-conventions-android/.github/workflows/release.yml@v1.0.1
     with:
       bump: patch
       snapshot: true

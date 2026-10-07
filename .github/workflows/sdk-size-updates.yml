@@ -15,7 +15,7 @@ jobs:
   update-sdk-sizes:
     permissions:
       contents: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@161dace284ff29473ea607bf26f436f6bb46c057
+    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@d275481d345e4b3b1252006dbb6cf029c9e32767
     with:
       modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose"
       metrics-project: "stream-chat-android-metrics"
