@@ -27,8 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -40,8 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -126,6 +122,8 @@ import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedEx
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
+import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
+import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -158,8 +156,10 @@ import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTyp
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
+import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
+import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
@@ -246,16 +246,20 @@ internal object EventMappingTestArguments {
         grouped_unread_channels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
-        type = EventType.DRAFT_MESSAGE_UPDATED,
-        created_at = EXACT_DATE,
-        draft = DRAFT,
+    private val draftMessageUpdatedDto = GeneratedEventDto(
+        GeneratedDraftUpdatedEvent(
+            type = EventType.DRAFT_MESSAGE_UPDATED,
+            createdAt = GENERATED_EXACT_DATE,
+            draft = DRAFT,
+        ),
     )
 
-    private val draftMessageDeletedDto = DraftMessageDeletedEventDto(
-        type = EventType.DRAFT_MESSAGE_DELETED,
-        created_at = EXACT_DATE,
-        draft = DRAFT,
+    private val draftMessageDeletedDto = GeneratedEventDto(
+        GeneratedDraftDeletedEvent(
+            type = EventType.DRAFT_MESSAGE_DELETED,
+            createdAt = GENERATED_EXACT_DATE,
+            draft = DRAFT,
+        ),
     )
 
     private val channelDeletedEvent = GeneratedChannelDeletedEvent(
@@ -768,11 +772,13 @@ internal object EventMappingTestArguments {
 
     private val userStopWatchingDto = GeneratedEventDto(userStopWatchingEvent)
 
-    private val userUpdatedDto = UserUpdatedEventDto(
+    private val userUpdatedEvent = GeneratedUserUpdatedEvent(
         type = EventType.USER_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = PRIVACY_USER,
     )
+
+    private val userUpdatedDto = GeneratedEventDto(userUpdatedEvent)
 
     private val pollClosedEvent = GeneratedPollClosedEvent(
         type = EventType.POLL_CLOSED,
@@ -892,15 +898,17 @@ internal object EventMappingTestArguments {
 
     private val notificationReminderDueDto = GeneratedEventDto(notificationReminderDueGeneratedEvent)
 
-    private val userMessagesDeletedEventDto = UserMessagesDeletedEventDto(
+    private val userMessagesDeletedGeneratedEvent = GeneratedUserMessagesDeletedEvent(
         type = EventType.USER_MESSAGES_DELETED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        hard_delete = HARD_DELETE,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        hardDelete = true,
     )
+
+    private val userMessagesDeletedEventDto = GeneratedEventDto(userMessagesDeletedGeneratedEvent)
 
     private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
         type = EventType.AI_TYPING_INDICATOR_UPDATED,
@@ -956,17 +964,17 @@ internal object EventMappingTestArguments {
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
-        type = draftMessageUpdatedDto.type,
-        createdAt = draftMessageUpdatedDto.created_at.date,
-        rawCreatedAt = draftMessageUpdatedDto.created_at.rawDate,
-        draftMessage = with(domainMapping) { draftMessageUpdatedDto.draft.toDomain() },
+        type = EventType.DRAFT_MESSAGE_UPDATED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        draftMessage = with(domainMapping) { DRAFT.toDomain() },
     )
 
     private val draftMessageDeletedEvent = DraftMessageDeletedEvent(
-        type = draftMessageDeletedDto.type,
-        createdAt = draftMessageDeletedDto.created_at.date,
-        rawCreatedAt = draftMessageDeletedDto.created_at.rawDate,
-        draftMessage = with(domainMapping) { draftMessageDeletedDto.draft.toDomain() },
+        type = EventType.DRAFT_MESSAGE_DELETED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        draftMessage = with(domainMapping) { DRAFT.toDomain() },
     )
 
     private val channelDeleted = ChannelDeletedEvent(
@@ -1492,10 +1500,10 @@ internal object EventMappingTestArguments {
     )
 
     private val userUpdated = UserUpdatedEvent(
-        type = userUpdatedDto.type,
-        createdAt = userUpdatedDto.created_at.date,
-        rawCreatedAt = userUpdatedDto.created_at.rawDate,
-        user = with(domainMapping) { userUpdatedDto.user.toDomain() },
+        type = EventType.USER_UPDATED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        user = with(domainMapping) { PRIVACY_USER.toDomain() },
     )
 
     private val pollClosed = PollClosedEvent(
@@ -1660,14 +1668,14 @@ internal object EventMappingTestArguments {
     )
 
     private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
-        type = userMessagesDeletedEventDto.type,
-        createdAt = userMessagesDeletedEventDto.created_at.date,
-        rawCreatedAt = userMessagesDeletedEventDto.created_at.rawDate,
-        user = with(domainMapping) { userMessagesDeletedEventDto.user.toDomain() },
-        cid = userMessagesDeletedEventDto.cid,
-        channelType = userMessagesDeletedEventDto.channel_type,
-        channelId = userMessagesDeletedEventDto.channel_id,
-        hardDelete = userMessagesDeletedEventDto.hard_delete == true,
+        type = EventType.USER_MESSAGES_DELETED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        hardDelete = true,
     )
 
     // END: Domain models

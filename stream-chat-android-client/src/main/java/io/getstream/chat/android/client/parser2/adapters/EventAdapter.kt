@@ -32,8 +32,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
@@ -44,13 +42,13 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.models.ChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent
+import io.getstream.chat.android.network.models.DraftDeletedEvent
+import io.getstream.chat.android.network.models.DraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
@@ -83,8 +81,10 @@ import io.getstream.chat.android.network.models.TypingStartEvent
 import io.getstream.chat.android.network.models.TypingStopEvent
 import io.getstream.chat.android.network.models.UserBannedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent
+import io.getstream.chat.android.network.models.UserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent
+import io.getstream.chat.android.network.models.UserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent
 import io.getstream.chat.android.network.models.WSEvent
@@ -110,8 +110,8 @@ internal class EventDtoAdapter(
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
-    private val draftMessageUpdatedEventAdapter = moshi.adapter(DraftMessageUpdatedEventDto::class.java)
-    private val draftMessageDeletedEventAdapter = moshi.adapter(DraftMessageDeletedEventDto::class.java)
+    private val draftMessageUpdatedEventAdapter = generatedEventAdapter<DraftUpdatedEvent> { mapOf("draft" to draft) }
+    private val draftMessageDeletedEventAdapter = generatedEventAdapter<DraftDeletedEvent> { mapOf("draft" to draft) }
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
     private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
     private val messageUpdatedEventAdapter = moshi.adapter(MessageUpdatedEventDto::class.java)
@@ -192,7 +192,7 @@ internal class EventDtoAdapter(
     private val notificationChannelTruncatedEventAdapter =
         generatedEventAdapter<NotificationChannelTruncatedEvent> { mapOf("cid" to cid) }
     private val userPresenceChangedEventAdapter = generatedEventAdapter<UserPresenceChangedEvent> { emptyMap() }
-    private val userUpdatedEventAdapter = moshi.adapter(UserUpdatedEventDto::class.java)
+    private val userUpdatedEventAdapter = generatedEventAdapter<UserUpdatedEvent> { emptyMap() }
     private val userDeletedEventAdapter = generatedEventAdapter<UserDeletedEvent> { emptyMap() }
     private val userBannedEventAdapter = generatedEventAdapter<UserBannedEvent> { emptyMap() }
     private val userUnbannedEventAdapter = generatedEventAdapter<UserUnbannedEvent> { emptyMap() }
@@ -206,7 +206,7 @@ internal class EventDtoAdapter(
     private val reminderUpdatedEventAdapter = generatedEventAdapter<ReminderUpdatedEvent> { emptyMap() }
     private val reminderDeletedEventAdapter = generatedEventAdapter<ReminderDeletedEvent> { emptyMap() }
     private val notificationReminderDueEventAdapter = generatedEventAdapter<ReminderNotificationEvent> { emptyMap() }
-    private val userMessagesDeletedEventAdapter = moshi.adapter(UserMessagesDeletedEventDto::class.java)
+    private val userMessagesDeletedEventAdapter = generatedEventAdapter<UserMessagesDeletedEvent> { emptyMap() }
     private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
     private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
     private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)

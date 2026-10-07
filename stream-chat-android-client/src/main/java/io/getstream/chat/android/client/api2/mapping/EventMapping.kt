@@ -28,8 +28,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -41,8 +39,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
 import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
@@ -123,6 +119,8 @@ import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
+import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
+import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -155,8 +153,10 @@ import io.getstream.chat.android.network.models.TypingStartEvent as GeneratedTyp
 import io.getstream.chat.android.network.models.TypingStopEvent as GeneratedTypingStopEvent
 import io.getstream.chat.android.network.models.UserBannedEvent as GeneratedUserBannedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent as GeneratedUserDeletedEvent
+import io.getstream.chat.android.network.models.UserMessagesDeletedEvent as GeneratedUserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent as GeneratedUserPresenceChangedEvent
 import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUserUnbannedEvent
+import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
@@ -190,11 +190,7 @@ internal class EventMapping(
             is ReactionNewEventDto -> toDomain()
             is ReactionUpdateEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
-            is UserUpdatedEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
-            is DraftMessageDeletedEventDto -> toDomain()
-            is DraftMessageUpdatedEventDto -> toDomain()
-            is UserMessagesDeletedEventDto -> toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
             is AIIndicatorStopEventDto -> toDomain()
@@ -493,13 +489,13 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [UserUpdatedEventDto] to [UserUpdatedEvent].
+     * Transforms the generated [GeneratedUserUpdatedEvent] to [UserUpdatedEvent].
      */
-    private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent = with(domainMapping) {
+    private fun GeneratedUserUpdatedEvent.toDomain(): UserUpdatedEvent = with(domainMapping) {
         UserUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             user = user.toDomain(),
         )
     }
@@ -548,6 +544,10 @@ internal class EventMapping(
         is GeneratedChannelTruncatedEvent -> toDomain()
         is GeneratedChannelDeletedEvent -> toDomain()
         is GeneratedNotificationRemovedFromChannelEvent -> toDomain()
+        is GeneratedUserUpdatedEvent -> toDomain()
+        is GeneratedUserMessagesDeletedEvent -> toDomain()
+        is GeneratedDraftUpdatedEvent -> toDomain()
+        is GeneratedDraftDeletedEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -1161,26 +1161,26 @@ internal class EventMapping(
             } ?: this
 
     /**
-     * Transforms [DraftMessageUpdatedEventDto] to [DraftMessageUpdatedEvent].
+     * Transforms the generated [GeneratedDraftUpdatedEvent] to [DraftMessageUpdatedEvent].
      */
-    private fun DraftMessageUpdatedEventDto.toDomain(): DraftMessageUpdatedEvent = with(domainMapping) {
-        return DraftMessageUpdatedEvent(
+    private fun GeneratedDraftUpdatedEvent.toDomain(): DraftMessageUpdatedEvent = with(domainMapping) {
+        DraftMessageUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            draftMessage = draft.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            draftMessage = requireNotNull(draft).toDomain(),
         )
     }
 
     /**
-     * Transforms [DraftMessageDeletedEventDto] to [DraftMessageDeletedEvent].
+     * Transforms the generated [GeneratedDraftDeletedEvent] to [DraftMessageDeletedEvent].
      */
-    private fun DraftMessageDeletedEventDto.toDomain(): DraftMessageDeletedEvent = with(domainMapping) {
-        return DraftMessageDeletedEvent(
+    private fun GeneratedDraftDeletedEvent.toDomain(): DraftMessageDeletedEvent = with(domainMapping) {
+        DraftMessageDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            draftMessage = draft.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            draftMessage = requireNotNull(draft).toDomain(),
         )
     }
 
@@ -1256,16 +1256,19 @@ internal class EventMapping(
         )
     }
 
-    private fun UserMessagesDeletedEventDto.toDomain(): UserMessagesDeletedEvent = with(domainMapping) {
-        return UserMessagesDeletedEvent(
+    /**
+     * Transforms the generated [GeneratedUserMessagesDeletedEvent] to [UserMessagesDeletedEvent].
+     */
+    private fun GeneratedUserMessagesDeletedEvent.toDomain(): UserMessagesDeletedEvent = with(domainMapping) {
+        UserMessagesDeletedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
+            channelType = channelType,
+            channelId = channelId,
             user = user.toDomain(),
-            hardDelete = hard_delete == true,
+            hardDelete = hardDelete == true,
         )
     }
 

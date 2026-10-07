@@ -19,11 +19,8 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.network.models.ChannelMemberResponse
-import io.getstream.chat.android.network.models.DraftResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.ReactionResponse
-import io.getstream.chat.android.network.models.UserResponseCommonFields
-import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
 import java.util.Date
@@ -106,20 +103,6 @@ internal data class NewMessageEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
-internal data class DraftMessageUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val draft: DraftResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class DraftMessageDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val draft: DraftResponse,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class NotificationAddedToChannelEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -168,13 +151,6 @@ internal data class ReactionUpdateEventDto(
     val reaction: ReactionResponse,
 ) : ChatEventDto()
 
-@JsonClass(generateAdapter = true)
-internal data class UserUpdatedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponsePrivacyFields,
-) : ChatEventDto()
-
 /**
  * An event parsed with its generated model, which the event mapping turns into the domain event.
  */
@@ -204,17 +180,6 @@ internal data class AIIndicatorStopEventDto(
     val cid: String,
     val user: DownstreamUserDto,
     val created_at: ExactDate,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class UserMessagesDeletedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val user: UserResponseCommonFields,
-    val cid: String?,
-    val channel_type: String?,
-    val channel_id: String?,
-    val hard_delete: Boolean?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
