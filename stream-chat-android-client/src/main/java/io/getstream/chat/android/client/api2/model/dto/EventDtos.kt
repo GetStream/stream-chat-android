@@ -19,8 +19,10 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.network.models.ChannelMemberResponse
+import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.ReactionResponse
+import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
 import java.util.Date
@@ -109,7 +111,7 @@ internal data class NotificationAddedToChannelEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val channel: DownstreamChannelDto,
+    val channel: ChannelResponse,
     val member: ChannelMemberResponse,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
@@ -161,7 +163,7 @@ internal data class AIIndicatorUpdatedEventDto(
     val type: String,
     val ai_state: String,
     val cid: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val created_at: ExactDate,
     val message_id: String,
 ) : ChatEventDto()
@@ -170,7 +172,7 @@ internal data class AIIndicatorUpdatedEventDto(
 internal data class AIIndicatorClearEventDto(
     val type: String,
     val cid: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val created_at: ExactDate,
 ) : ChatEventDto()
 
@@ -178,7 +180,7 @@ internal data class AIIndicatorClearEventDto(
 internal data class AIIndicatorStopEventDto(
     val type: String,
     val cid: String,
-    val user: DownstreamUserDto,
+    val user: UserResponseCommonFields,
     val created_at: ExactDate,
 ) : ChatEventDto()
 
