@@ -328,6 +328,14 @@ internal object EventArguments {
     /** The channel as the wire sends it: `disabled` always present, kept in extra data like the hand-written DTO. */
     private val wireChannel = channel.copy(extraData = channel.extraData + ("disabled" to false))
 
+    /** The message as reaction events send it: common-field users and no nested channel. */
+    private val reactionEventMessage = message.copy(
+        user = nestedUser,
+        mentionedUsers = listOf(nestedUser),
+        threadParticipants = listOf(nestedUser),
+        channelInfo = null,
+    )
+
     /** A message inside a channel event: it carries no channel of its own, so its channel info is the event's. */
     private val channelEventMessage = message.copy(
         user = nestedUser,
@@ -691,33 +699,33 @@ internal object EventArguments {
         type = EventType.REACTION_DELETED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = reactionEventMessage,
         reaction = reaction,
     )
     private val reactionNewEvent = ReactionNewEvent(
         type = EventType.REACTION_NEW,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = reactionEventMessage,
         reaction = reaction,
     )
     private val reactionUpdateEvent = ReactionUpdateEvent(
         type = EventType.REACTION_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = reactionEventMessage,
         reaction = reaction,
     )
     private val typingStartEvent = TypingStartEvent(

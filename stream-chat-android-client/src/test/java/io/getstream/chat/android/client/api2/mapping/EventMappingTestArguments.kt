@@ -34,9 +34,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -147,6 +144,9 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPol
 import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
+import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
+import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
+import io.getstream.chat.android.network.models.ReactionUpdatedEvent as GeneratedReactionUpdatedEvent
 import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
 import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderNotificationEvent as GeneratedReminderNotificationEvent
@@ -668,38 +668,42 @@ internal object EventMappingTestArguments {
 
     private val notificationRemovedFromChannelDto = GeneratedEventDto(notificationRemovedFromChannelEvent)
 
-    private val reactionDeletedDto = ReactionDeletedEventDto(
+    private val reactionDeletedEvent = GeneratedReactionDeletedEvent(
         type = EventType.REACTION_DELETED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
         reaction = REACTION,
-        message = MESSAGE,
+        message = GENERATED_MESSAGE,
     )
 
-    private val reactionNewDto = ReactionNewEventDto(
+    private val reactionDeletedDto = GeneratedEventDto(reactionDeletedEvent)
+
+    private val reactionNewEvent = GeneratedReactionNewEvent(
         type = EventType.REACTION_NEW,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        user = COMMON_USER,
         reaction = REACTION,
-        message = MESSAGE,
+        message = GENERATED_MESSAGE,
     )
 
-    private val reactionUpdateDto = ReactionUpdateEventDto(
+    private val reactionNewDto = GeneratedEventDto(reactionNewEvent)
+
+    private val reactionUpdateEvent = GeneratedReactionUpdatedEvent(
         type = EventType.REACTION_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
+        channel = GENERATED_CHANNEL,
+        messageId = GENERATED_MESSAGE.id,
+        user = COMMON_USER,
         reaction = REACTION,
-        message = MESSAGE,
+        message = GENERATED_MESSAGE,
     )
+
+    private val reactionUpdateDto = GeneratedEventDto(reactionUpdateEvent)
 
     private val typingStartEvent = GeneratedTypingStartEvent(
         type = EventType.TYPING_START,
@@ -1396,39 +1400,39 @@ internal object EventMappingTestArguments {
     )
 
     private val reactionDeleted = ReactionDeletedEvent(
-        type = reactionDeletedDto.type,
-        createdAt = reactionDeletedDto.created_at.date,
-        rawCreatedAt = reactionDeletedDto.created_at.rawDate,
-        cid = reactionDeletedDto.cid,
-        channelType = reactionDeletedDto.channel_type,
-        channelId = reactionDeletedDto.channel_id,
-        user = with(domainMapping) { reactionDeletedDto.user.toDomain() },
-        reaction = with(domainMapping) { reactionDeletedDto.reaction.toDomain() },
-        message = with(domainMapping) { reactionDeletedDto.message.toDomain() },
+        type = reactionDeletedEvent.type,
+        createdAt = reactionDeletedEvent.createdAt.date,
+        rawCreatedAt = reactionDeletedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        reaction = with(domainMapping) { REACTION.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain() },
     )
 
     private val reactionNew = ReactionNewEvent(
-        type = reactionNewDto.type,
-        createdAt = reactionNewDto.created_at.date,
-        rawCreatedAt = reactionNewDto.created_at.rawDate,
-        cid = reactionNewDto.cid,
-        channelType = reactionNewDto.channel_type,
-        channelId = reactionNewDto.channel_id,
-        user = with(domainMapping) { reactionNewDto.user.toDomain() },
-        reaction = with(domainMapping) { reactionNewDto.reaction.toDomain() },
-        message = with(domainMapping) { reactionNewDto.message.toDomain() },
+        type = reactionNewEvent.type,
+        createdAt = reactionNewEvent.createdAt.date,
+        rawCreatedAt = reactionNewEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        reaction = with(domainMapping) { REACTION.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain() },
     )
 
     private val reactionUpdate = ReactionUpdateEvent(
-        type = reactionUpdateDto.type,
-        createdAt = reactionUpdateDto.created_at.date,
-        rawCreatedAt = reactionUpdateDto.created_at.rawDate,
-        cid = reactionUpdateDto.cid,
-        channelType = reactionUpdateDto.channel_type,
-        channelId = reactionUpdateDto.channel_id,
-        user = with(domainMapping) { reactionUpdateDto.user.toDomain() },
-        reaction = with(domainMapping) { reactionUpdateDto.reaction.toDomain() },
-        message = with(domainMapping) { reactionUpdateDto.message.toDomain() },
+        type = reactionUpdateEvent.type,
+        createdAt = reactionUpdateEvent.createdAt.date,
+        rawCreatedAt = reactionUpdateEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        reaction = with(domainMapping) { REACTION.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain() },
     )
 
     private val typingStart = TypingStartEvent(

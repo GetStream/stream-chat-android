@@ -35,9 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -144,6 +141,9 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent as GeneratedPol
 import io.getstream.chat.android.network.models.PollVoteCastedEvent as GeneratedPollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent as GeneratedPollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent as GeneratedPollVoteRemovedEvent
+import io.getstream.chat.android.network.models.ReactionDeletedEvent as GeneratedReactionDeletedEvent
+import io.getstream.chat.android.network.models.ReactionNewEvent as GeneratedReactionNewEvent
+import io.getstream.chat.android.network.models.ReactionUpdatedEvent as GeneratedReactionUpdatedEvent
 import io.getstream.chat.android.network.models.ReminderCreatedEvent as GeneratedReminderCreatedEvent
 import io.getstream.chat.android.network.models.ReminderDeletedEvent as GeneratedReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderNotificationEvent as GeneratedReminderNotificationEvent
@@ -186,9 +186,6 @@ internal class EventMapping(
             is MessageDeletedEventDto -> toDomain()
             is MessageUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
-            is ReactionDeletedEventDto -> toDomain()
-            is ReactionNewEventDto -> toDomain()
-            is ReactionUpdateEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
@@ -426,57 +423,6 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ReactionDeletedEventDto] to [ReactionDeletedEvent].
-     */
-    private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent = with(domainMapping) {
-        ReactionDeletedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            message = message.toDomain(),
-            reaction = reaction.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [ReactionNewEventDto] to [ReactionNewEvent].
-     */
-    private fun ReactionNewEventDto.toDomain(): ReactionNewEvent = with(domainMapping) {
-        ReactionNewEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            message = message.toDomain(),
-            reaction = reaction.toDomain(),
-        )
-    }
-
-    /**
-     * Transforms [ReactionUpdateEventDto] to [ReactionUpdateEvent].
-     */
-    private fun ReactionUpdateEventDto.toDomain(): ReactionUpdateEvent = with(domainMapping) {
-        ReactionUpdateEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            message = message.toDomain(),
-            reaction = reaction.toDomain(),
-        )
-    }
-
-    /**
      * Transforms the generated [GeneratedUserDeletedEvent] to [UserDeletedEvent].
      */
     private fun GeneratedUserDeletedEvent.toDomain(): UserDeletedEvent = with(domainMapping) {
@@ -548,6 +494,9 @@ internal class EventMapping(
         is GeneratedUserMessagesDeletedEvent -> toDomain()
         is GeneratedDraftUpdatedEvent -> toDomain()
         is GeneratedDraftDeletedEvent -> toDomain()
+        is GeneratedReactionDeletedEvent -> toDomain()
+        is GeneratedReactionNewEvent -> toDomain()
+        is GeneratedReactionUpdatedEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -706,6 +655,63 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             member = member.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedReactionDeletedEvent] to [ReactionDeletedEvent].
+     */
+    private fun GeneratedReactionDeletedEvent.toDomain(): ReactionDeletedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ReactionDeletedEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            message = requireNotNull(message).toDomain(),
+            reaction = requireNotNull(reaction).toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedReactionNewEvent] to [ReactionNewEvent].
+     */
+    private fun GeneratedReactionNewEvent.toDomain(): ReactionNewEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ReactionNewEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            message = requireNotNull(message).toDomain(),
+            reaction = requireNotNull(reaction).toDomain(),
+        )
+    }
+
+    /**
+     * Transforms the generated [GeneratedReactionUpdatedEvent] to [ReactionUpdateEvent].
+     */
+    private fun GeneratedReactionUpdatedEvent.toDomain(): ReactionUpdateEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ReactionUpdateEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            message = message.toDomain(),
+            reaction = requireNotNull(reaction).toDomain(),
         )
     }
 

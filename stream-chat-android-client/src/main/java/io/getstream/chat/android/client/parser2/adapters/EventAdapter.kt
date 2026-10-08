@@ -38,9 +38,6 @@ import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
-import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
@@ -72,6 +69,9 @@ import io.getstream.chat.android.network.models.PollUpdatedEvent
 import io.getstream.chat.android.network.models.PollVoteCastedEvent
 import io.getstream.chat.android.network.models.PollVoteChangedEvent
 import io.getstream.chat.android.network.models.PollVoteRemovedEvent
+import io.getstream.chat.android.network.models.ReactionDeletedEvent
+import io.getstream.chat.android.network.models.ReactionNewEvent
+import io.getstream.chat.android.network.models.ReactionUpdatedEvent
 import io.getstream.chat.android.network.models.ReminderCreatedEvent
 import io.getstream.chat.android.network.models.ReminderDeletedEvent
 import io.getstream.chat.android.network.models.ReminderNotificationEvent
@@ -133,9 +133,15 @@ internal class EventDtoAdapter(
         generatedEventAdapter<TypingStartEvent> { mapOf("cid" to cid, "user" to user) }
     private val typingStopEventAdapter =
         generatedEventAdapter<TypingStopEvent> { mapOf("cid" to cid, "user" to user) }
-    private val reactionNewEventAdapter = moshi.adapter(ReactionNewEventDto::class.java)
-    private val reactionUpdateEventAdapter = moshi.adapter(ReactionUpdateEventDto::class.java)
-    private val reactionDeletedEventAdapter = moshi.adapter(ReactionDeletedEventDto::class.java)
+    private val reactionNewEventAdapter = generatedEventAdapter<ReactionNewEvent> {
+        mapOf("cid" to cid, "user" to user, "message" to message, "reaction" to reaction)
+    }
+    private val reactionUpdatedEventAdapter = generatedEventAdapter<ReactionUpdatedEvent> {
+        mapOf("cid" to cid, "user" to user, "reaction" to reaction)
+    }
+    private val reactionDeletedEventAdapter = generatedEventAdapter<ReactionDeletedEvent> {
+        mapOf("cid" to cid, "user" to user, "message" to message, "reaction" to reaction)
+    }
     private val memberAddedEventAdapter =
         generatedEventAdapter<MemberAddedEvent> { mapOf("cid" to cid, "user" to user) }
     private val memberRemovedEventAdapter =
@@ -236,7 +242,7 @@ internal class EventDtoAdapter(
             EventType.TYPING_START -> typingStartEventAdapter
             EventType.TYPING_STOP -> typingStopEventAdapter
             EventType.REACTION_NEW -> reactionNewEventAdapter
-            EventType.REACTION_UPDATED -> reactionUpdateEventAdapter
+            EventType.REACTION_UPDATED -> reactionUpdatedEventAdapter
             EventType.REACTION_DELETED -> reactionDeletedEventAdapter
             EventType.MEMBER_ADDED -> memberAddedEventAdapter
             EventType.MEMBER_REMOVED -> memberRemovedEventAdapter
