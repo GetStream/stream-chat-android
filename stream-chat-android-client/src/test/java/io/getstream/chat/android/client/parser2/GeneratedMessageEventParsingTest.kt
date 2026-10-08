@@ -83,6 +83,13 @@ internal class GeneratedMessageEventParsingTest {
         }
     }
 
+    @Test
+    fun `A message update replayed without message_id maps like the full event`() {
+        val replayed = createMessageUpdatedEventStringJson().without("message_id")
+
+        synced(replayed) shouldBeEqualTo synced(createMessageUpdatedEventStringJson())
+    }
+
     @ParameterizedTest
     @MethodSource("missingRequiredFields")
     fun `A message event without a field the domain event requires is rejected`(json: String, field: String) {
