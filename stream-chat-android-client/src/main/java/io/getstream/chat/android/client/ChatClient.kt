@@ -307,6 +307,7 @@ internal constructor(
     public val cdn: CDN? = null,
     @InternalStreamChatApi
     public val videoCache: VideoMediaCache? = null,
+    internal val fileTransformer: FileTransformer = NoOpFileTransformer,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -1030,6 +1031,8 @@ internal constructor(
      * @param messageId The id of the message the file belongs to, or null when the upload is not part of
      * sending a message.
      * @param callback The callback to track progress.
+     * @param transform Whether to run [file] through the [FileTransformer] first. Pass false when it has already
+     * been transformed.
      *
      * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the file was successfully uploaded.
@@ -1042,8 +1045,9 @@ internal constructor(
         file: File,
         messageId: String?,
         callback: ProgressCallback?,
+        transform: Boolean = true,
     ): Call<UploadedFile> {
-        return api.sendFile(channelType, channelId, file, messageId, callback)
+        return api.sendFile(channelType, channelId, file, messageId, callback, transform)
     }
 
     /**
@@ -1086,6 +1090,8 @@ internal constructor(
      * @param messageId The id of the message the image belongs to, or null when the upload is not part of
      * sending a message.
      * @param callback The callback to track progress.
+     * @param transform Whether to run [file] through the [FileTransformer] first. Pass false when it has already
+     * been transformed.
      *
      * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the image was successfully uploaded.
@@ -1098,8 +1104,9 @@ internal constructor(
         file: File,
         messageId: String?,
         callback: ProgressCallback?,
+        transform: Boolean = true,
     ): Call<UploadedFile> {
-        return api.sendImage(channelType, channelId, file, messageId, callback)
+        return api.sendImage(channelType, channelId, file, messageId, callback, transform)
     }
 
     /**
@@ -5480,6 +5487,7 @@ internal constructor(
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
                 repository = repository,
+                fileTransformer = fileTransformer,
                 messageReceiptReporter = MessageReceiptReporter(
                     scope = userScope,
                     messageReceiptRepository = repository,

@@ -49,7 +49,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()))
+        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), any()))
             .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
         // when
         val result = chatClient.sendFile(channelType, channelId, file, callback).await()
@@ -65,7 +65,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val errorCode = positiveRandomInt()
-        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()))
+        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), any()))
             .thenReturn(RetroError<UploadedFile>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.sendFile(channelType, channelId, file, callback).await()
@@ -81,7 +81,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()))
+        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), any()))
             .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
         // when
         val result = chatClient.sendImage(channelType, channelId, file, callback).await()
@@ -97,7 +97,7 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val file = randomFile()
         val callback = mock<ProgressCallback>()
         val errorCode = positiveRandomInt()
-        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()))
+        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), any()))
             .thenReturn(RetroError<UploadedFile>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.sendImage(channelType, channelId, file, callback).await()
@@ -114,13 +114,13 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val messageId = randomString()
         val callback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull()))
+        whenever(api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), any()))
             .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
         // when
         val result = chatClient.sendFile(channelType, channelId, file, messageId, callback).await()
         // then
         verifySuccess(result, uploadedFile)
-        verify(api).sendFile(eq(channelType), eq(channelId), eq(file), eq(messageId), eq(callback))
+        verify(api).sendFile(eq(channelType), eq(channelId), eq(file), eq(messageId), eq(callback), eq(true))
     }
 
     @Test
@@ -132,13 +132,13 @@ internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
         val messageId = randomString()
         val callback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull()))
+        whenever(api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), any()))
             .thenReturn(RetroSuccess(uploadedFile).toRetrofitCall())
         // when
         val result = chatClient.sendImage(channelType, channelId, file, messageId, callback).await()
         // then
         verifySuccess(result, uploadedFile)
-        verify(api).sendImage(eq(channelType), eq(channelId), eq(file), eq(messageId), eq(callback))
+        verify(api).sendImage(eq(channelType), eq(channelId), eq(file), eq(messageId), eq(callback), eq(true))
     }
 
     @Test
