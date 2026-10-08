@@ -55,11 +55,26 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         messageId: String? = null,
         progressCallback: ProgressCallback? = null,
     ): Result<Attachment> {
-        val file = checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
+        val originalFile =
+            checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
+        val file = when (val result = client.transformFile(originalFile).await()) {
+            is Result.Success -> result.value
+            is Result.Failure -> return onFailedUpload(attachment, result, progressCallback)
+        }
 
-        val mimeType: String = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+        // Prefer the transformed file's type, as the transformer may change the format. Fall back to the original
+        // when the transformer writes to a file whose extension says nothing about the format (e.g. ".tmp").
+        val transformedMimeType = file.mimeTypeFromExtension()
+        val mimeType: String = transformedMimeType
+            ?: originalFile.mimeTypeFromExtension()
             ?: attachment.mimeType ?: ""
         val attachmentType = mimeType.toAttachmentType()
+        val formatChanged = !file.extension.equals(originalFile.extension, ignoreCase = true)
+        val name = if (transformedMimeType != null && formatChanged) {
+            "${originalFile.nameWithoutExtension}.${file.extension}"
+        } else {
+            originalFile.name
+        }
 
         return if (attachmentType == AttachmentType.IMAGE) {
             logger.d { "[uploadAttachment] #uploader; uploading ${attachment.uploadId} as image" }
@@ -70,6 +85,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 file = file,
                 progressCallback = progressCallback,
                 attachment = attachment,
+                name = name,
                 mimeType = mimeType,
                 attachmentType = attachmentType,
             )
@@ -82,6 +98,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 file = file,
                 progressCallback = progressCallback,
                 attachment = attachment,
+                name = name,
                 mimeType = mimeType,
                 attachmentType = attachmentType,
             )
@@ -97,6 +114,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * of sending a message.
      * @param file The file that will be uploaded.
      * @param attachment The attachment to be uploaded.
+     * @param name The name to give the uploaded attachment.
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      * @param mimeType The mime type of the attachment that will be uploaded,
@@ -113,6 +131,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         file: File,
         progressCallback: ProgressCallback?,
         attachment: Attachment,
+        name: String,
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
@@ -120,13 +139,14 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.sendImage(channelType, channelId, file, messageId, progressCallback)
+        val result = client.sendTransformedImage(channelType, channelId, file, messageId, progressCallback)
             .await()
         logger.v { "[uploadImage] #uploader; result: $result" }
         return when (result) {
             is Result.Success -> {
                 val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                     file = file,
+                    name = name,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
                     uploadedFile = result.value,
@@ -156,6 +176,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * of sending a message.
      * @param file The file that will be uploaded.
      * @param attachment The attachment to be uploaded.
+     * @param name The name to give the uploaded attachment.
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      * @param mimeType The mime type of the attachment that will be uploaded,
@@ -172,6 +193,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         file: File,
         progressCallback: ProgressCallback?,
         attachment: Attachment,
+        name: String,
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
@@ -179,13 +201,14 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.sendFile(channelType, channelId, file, messageId, progressCallback)
+        val result = client.sendTransformedFile(channelType, channelId, file, messageId, progressCallback)
             .await()
         logger.v { "[uploadFile] #uploader; result: $result" }
         return when (result) {
             is Result.Success -> {
                 val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
                     file = file,
+                    name = name,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
                     uploadedFile = result.value,
@@ -253,6 +276,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * url.
      *
      * @param file A file that has been uploaded.
+     * @param name The name to give the uploaded attachment.
      * @param mimeType MimeType of uploaded attachment.
      * @param attachmentType File, video or picture enum instance.
      * @param uploadedFile Uploaded file data obtained from BE.
@@ -260,16 +284,17 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      */
     private fun Attachment.augmentAttachmentOnSuccess(
         file: File,
+        name: String,
         mimeType: String,
         attachmentType: AttachmentType,
         uploadedFile: UploadedFile,
     ): Attachment {
         return copy(
-            name = file.name,
+            name = name,
             fileSize = file.length().toInt(),
             mimeType = mimeType,
             uploadState = Attachment.UploadState.Success,
-            title = title.takeUnless { it.isNullOrBlank() } ?: file.name,
+            title = title.takeUnless { it.isNullOrBlank() } ?: name,
             thumbUrl = uploadedFile.thumbUrl,
             type = type ?: attachmentType.toString(),
             imageUrl = when (attachmentType) {
@@ -281,6 +306,9 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             extraData = (extraData + uploadedFile.extraData) - EXTRA_UPLOAD_ID,
         )
     }
+
+    private fun File.mimeTypeFromExtension(): String? =
+        MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
 
     private fun String?.toAttachmentType(): AttachmentType {
         if (this == null) {
