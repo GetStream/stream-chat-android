@@ -47,7 +47,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {
-        val attachment: Attachment = randomAttachment(upload = randomFile())
+        val attachment: Attachment = randomAttachment(upload = randomFile(), uploadState = null)
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
             syncStatus = SyncStatus.SYNC_NEEDED,
@@ -66,7 +66,7 @@ internal class PrepareMessageLogicImplTest {
     @Test
     fun `given message is prepared, it should always have id, user, cid, type, createdLocallyAt and syncStatus`() {
         val newUser = randomUser()
-        val attachment: Attachment = randomAttachment().copy(upload = randomFile())
+        val attachment: Attachment = randomAttachment().copy(upload = randomFile(), uploadState = null)
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
             syncStatus = SyncStatus.SYNC_NEEDED,
@@ -152,7 +152,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given message's attachment upload id is empty, it should be generated`() {
-        val attachment = randomAttachment().copy(upload = randomFile())
+        val attachment = randomAttachment().copy(upload = randomFile(), uploadState = null)
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
         )
@@ -169,5 +169,47 @@ internal class PrepareMessageLogicImplTest {
         println("resultAttachments: ${result.attachments}")
 
         result.attachments.first().uploadId `should not be equal to` null
+    }
+
+    @Test
+    fun `given an attachment was already uploaded, it should not be uploaded again`() {
+        val attachment = randomAttachment(
+            upload = randomFile(),
+            uploadState = Attachment.UploadState.Success,
+            assetUrl = randomString(),
+        )
+        val message = randomMessage(attachments = mutableListOf(attachment))
+        whenever(clientState.isNetworkAvailable) doReturn true
+
+        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+            message,
+            randomString(),
+            randomString(),
+            randomUser(),
+        )
+
+        preparedMessage.attachments.first() `should be equal to` attachment
+        preparedMessage.syncStatus `should be equal to` SyncStatus.IN_PROGRESS
+    }
+
+    @Test
+    fun `given an attachment is marked as uploaded without a url, it should be uploaded`() {
+        val attachment = randomAttachment(
+            upload = randomFile(),
+            uploadState = Attachment.UploadState.Success,
+            assetUrl = null,
+            imageUrl = null,
+        )
+        val message = randomMessage(attachments = mutableListOf(attachment))
+
+        val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
+            message,
+            randomString(),
+            randomString(),
+            randomUser(),
+        )
+
+        preparedMessage.attachments.first().uploadState `should be equal to` Attachment.UploadState.Idle
+        preparedMessage.syncStatus `should be equal to` SyncStatus.AWAITING_ATTACHMENTS
     }
 }

@@ -55,8 +55,10 @@ internal class PrepareMessageLogicImpl(
         val channel = channelStateLogicProvider?.channelStateLogic(channelType, channelId)
 
         val attachments = message.attachments.map {
-            when (it.upload) {
-                null -> it.copy(uploadState = Attachment.UploadState.Success)
+            when {
+                it.upload == null -> it.copy(uploadState = Attachment.UploadState.Success)
+                // Uploaded by a previous attempt to send this message: uploading it again would re-send the file.
+                it.isUploaded() -> it
                 else -> it.copy(
                     extraData = it.extraData + mapOf(EXTRA_UPLOAD_ID to (it.uploadId ?: generateUploadId())),
                     uploadState = Attachment.UploadState.Idle,
@@ -96,4 +98,7 @@ internal class PrepareMessageLogicImpl(
     private fun generateUploadId(): String {
         return "upload_id_${UUID.randomUUID()}"
     }
+
+    private fun Attachment.isUploaded(): Boolean =
+        uploadState == Attachment.UploadState.Success && (assetUrl != null || imageUrl != null)
 }
