@@ -23,11 +23,15 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.coroutines.cancellation.CancellationException
 
 @InternalStreamChatApi
 public class AttachmentUploader(private val client: ChatClient = ChatClient.instance()) {
@@ -57,9 +61,12 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
     ): Result<Attachment> {
         val originalFile =
             checkNotNull(attachment.upload) { "An attachment needs to have a non null attachment.upload value" }
-        val file = when (val result = client.transformFile(originalFile).await()) {
-            is Result.Success -> result.value
-            is Result.Failure -> return onFailedUpload(attachment, result, progressCallback)
+        val file = withContext(DispatcherProvider.IO) {
+            runCatching { client.fileTransformer.transform(originalFile) }
+        }.getOrElse { error ->
+            if (error is CancellationException) throw error
+            val failure = Result.Failure(Error.ThrowableError("Failed to transform ${originalFile.name}", error))
+            return onFailedUpload(attachment, failure, progressCallback)
         }
 
         // Prefer the transformed file's type, as the transformer may change the format. Fall back to the original
@@ -139,7 +146,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.sendTransformedImage(channelType, channelId, file, messageId, progressCallback)
+        val result = client.api.sendImage(channelType, channelId, file, messageId, progressCallback, transform = false)
             .await()
         logger.v { "[uploadImage] #uploader; result: $result" }
         return when (result) {
@@ -201,7 +208,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.sendTransformedFile(channelType, channelId, file, messageId, progressCallback)
+        val result = client.api.sendFile(channelType, channelId, file, messageId, progressCallback, transform = false)
             .await()
         logger.v { "[uploadFile] #uploader; result: $result" }
         return when (result) {

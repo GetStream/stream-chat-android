@@ -740,22 +740,6 @@ internal class MoshiChatApiTest {
     }
 
     @Test
-    fun testTransformFile() = runTest {
-        // given
-        val file = randomFile()
-        val transformedFile = randomFile()
-        val fileTransformer = mock<FileTransformer>()
-        whenever(fileTransformer.transform(file)).doReturn(transformedFile)
-        val sut = Fixture()
-            .withFileTransformer(fileTransformer)
-            .get()
-        // when
-        val result = sut.transformFile(file).await()
-        // then
-        result `should be equal to` Result.Success(transformedFile)
-    }
-
-    @Test
     fun testSendFileWithoutTransform() = runTest {
         // given
         val fileUploader = mock<FileUploader>()

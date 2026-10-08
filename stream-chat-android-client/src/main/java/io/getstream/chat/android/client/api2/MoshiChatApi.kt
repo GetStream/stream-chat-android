@@ -767,10 +767,6 @@ constructor(
         ).toUnitCall()
     }
 
-    override fun transformFile(file: File): Call<File> = CoroutineCall(coroutineScope) {
-        Result.Success(fileTransformer.transform(file))
-    }
-
     override fun sendFile(
         channelType: String,
         channelId: String,
