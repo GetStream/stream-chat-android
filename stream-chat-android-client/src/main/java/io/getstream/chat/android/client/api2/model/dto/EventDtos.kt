@@ -29,31 +29,6 @@ import java.util.Date
 internal sealed class ChatEventDto
 
 @JsonClass(generateAdapter = true)
-internal data class ChannelHiddenEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    val channel: DownstreamChannelDto,
-    // Events replayed by /sync on backends before v239.47.0 omit it.
-    val clear_history: Boolean = false,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ChannelVisibleEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val user: DownstreamUserDto,
-    // Events replayed by /sync on backends before v239.47.0 omit it.
-    val channel: DownstreamChannelDto?,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
 internal data class HealthEventDto(
     val type: String,
     val created_at: ExactDate,

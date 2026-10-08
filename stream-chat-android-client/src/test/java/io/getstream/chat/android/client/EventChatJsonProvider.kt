@@ -35,12 +35,12 @@ internal fun createChannelHiddenEventStringJson() =
     createChatEventStringJson(
         "channel.hidden",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "clear_history": true,
-            "channel": ${createChannelJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -49,11 +49,11 @@ internal fun createChannelHiddenSyncReplayEventStringJson() =
     createChatEventStringJson(
         "channel.hidden",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "channel": ${createChannelJsonString()}
+            "channel": ${createGeneratedChannelJsonString()}
         """.trimIndent(),
     )
 
@@ -117,8 +117,8 @@ internal fun createChannelVisibleEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()},
-            "channel": ${createChannelJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
+            "channel": ${createGeneratedChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -130,7 +130,7 @@ internal fun createChannelVisibleSyncReplayEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "user": ${createUserJsonString()}
+            "user": ${createCommonFieldsUserJsonString()}
         """.trimIndent(),
     )
 

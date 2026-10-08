@@ -26,8 +26,6 @@ import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
@@ -39,8 +37,10 @@ import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.models.ChannelDeletedEvent
+import io.getstream.chat.android.network.models.ChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent
+import io.getstream.chat.android.network.models.ChannelVisibleEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent
@@ -150,9 +150,11 @@ internal class EventDtoAdapter(
     private val memberUpdatedEventAdapter =
         generatedEventAdapter<MemberUpdatedEvent> { mapOf("cid" to cid, "user" to user) }
     private val channelUpdatedEventAdapter = generatedEventAdapter<ChannelUpdatedEvent> { mapOf("cid" to cid) }
-    private val channelHiddenEventAdapter = moshi.adapter(ChannelHiddenEventDto::class.java)
+    private val channelHiddenEventAdapter =
+        generatedEventAdapter<ChannelHiddenEvent> { mapOf("cid" to cid, "user" to user) }
     private val channelDeletedEventAdapter = generatedEventAdapter<ChannelDeletedEvent> { mapOf("cid" to cid) }
-    private val channelVisibleEventAdapter = moshi.adapter(ChannelVisibleEventDto::class.java)
+    private val channelVisibleEventAdapter =
+        generatedEventAdapter<ChannelVisibleEvent> { mapOf("cid" to cid, "user" to user) }
     private val channelTruncatedEventAdapter = generatedEventAdapter<ChannelTruncatedEvent> { mapOf("cid" to cid) }
     private val userStartWatchingEventAdapter = generatedEventAdapter<UserWatchingStartEvent> { mapOf("cid" to cid) }
     private val userStopWatchingEventAdapter = generatedEventAdapter<UserWatchingStopEvent> { mapOf("cid" to cid) }
