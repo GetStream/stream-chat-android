@@ -1103,6 +1103,36 @@ internal constructor(
     }
 
     /**
+     * Runs [file] through the [FileTransformer] configured via [Builder.fileTransformer].
+     */
+    @CheckResult
+    internal fun transformFile(file: File): Call<File> = api.transformFile(file)
+
+    /**
+     * Same as [sendFile], but uploads [file] as is, without running it through the [FileTransformer].
+     */
+    @CheckResult
+    internal fun sendTransformedFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        messageId: String?,
+        callback: ProgressCallback?,
+    ): Call<UploadedFile> = api.sendFile(channelType, channelId, file, messageId, callback, transform = false)
+
+    /**
+     * Same as [sendImage], but uploads [file] as is, without running it through the [FileTransformer].
+     */
+    @CheckResult
+    internal fun sendTransformedImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        messageId: String?,
+        callback: ProgressCallback?,
+    ): Call<UploadedFile> = api.sendImage(channelType, channelId, file, messageId, callback, transform = false)
+
+    /**
      * Deletes the file represented by [url] from the given channel.
      *
      * @param channelType The channel type. ie messaging.

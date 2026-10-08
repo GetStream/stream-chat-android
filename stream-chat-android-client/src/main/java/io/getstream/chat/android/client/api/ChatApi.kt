@@ -86,14 +86,26 @@ internal interface ChatApi {
     fun appSettings(): Call<AppSettings>
 
     @CheckResult
+    fun transformFile(file: File): Call<File>
+
+    /**
+     * @param transform Whether to run the file through the configured file transformer before uploading it.
+     * Pass false when [file] is already the output of [transformFile].
+     */
+    @CheckResult
     fun sendFile(
         channelType: String,
         channelId: String,
         file: File,
         messageId: String?,
         callback: ProgressCallback? = null,
+        transform: Boolean = true,
     ): Call<UploadedFile>
 
+    /**
+     * @param transform Whether to run the file through the configured file transformer before uploading it.
+     * Pass false when [file] is already the output of [transformFile].
+     */
     @CheckResult
     fun sendImage(
         channelType: String,
@@ -101,6 +113,7 @@ internal interface ChatApi {
         file: File,
         messageId: String?,
         callback: ProgressCallback? = null,
+        transform: Boolean = true,
     ): Call<UploadedFile>
 
     @CheckResult

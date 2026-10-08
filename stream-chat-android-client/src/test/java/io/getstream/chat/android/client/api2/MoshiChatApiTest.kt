@@ -739,6 +739,58 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).unmuteChannel(expectedRequest)
     }
 
+    @Test
+    fun testTransformFile() = runTest {
+        // given
+        val file = randomFile()
+        val transformedFile = randomFile()
+        val fileTransformer = mock<FileTransformer>()
+        whenever(fileTransformer.transform(file)).doReturn(transformedFile)
+        val sut = Fixture()
+            .withFileTransformer(fileTransformer)
+            .get()
+        // when
+        val result = sut.transformFile(file).await()
+        // then
+        result `should be equal to` Result.Success(transformedFile)
+    }
+
+    @Test
+    fun testSendFileWithoutTransform() = runTest {
+        // given
+        val fileUploader = mock<FileUploader>()
+        whenever(fileUploader.sendFile(any(), any(), anyOrNull())).doReturn(Result.Success(UploadedFile(randomString())))
+        val fileTransformer = spy<NoOpFileTransformer>()
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+        val file = randomFile()
+        // when
+        sut.sendFile(randomString(), randomString(), file, messageId = null, transform = false).await()
+        // then
+        verify(fileUploader, times(1)).sendFile(any(), eq(file), isNull())
+        verify(fileTransformer, never()).transform(any())
+    }
+
+    @Test
+    fun testSendImageWithoutTransform() = runTest {
+        // given
+        val fileUploader = mock<FileUploader>()
+        whenever(fileUploader.sendImage(any(), any(), anyOrNull())).doReturn(Result.Success(UploadedFile(randomString())))
+        val fileTransformer = spy<NoOpFileTransformer>()
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+        val file = randomFile()
+        // when
+        sut.sendImage(randomString(), randomString(), file, messageId = null, transform = false).await()
+        // then
+        verify(fileUploader, times(1)).sendImage(any(), eq(file), isNull())
+        verify(fileTransformer, never()).transform(any())
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendFileInput")
     fun testSendFileWithCallback(fileUploaderResult: Result<UploadedFile>, expected: KClass<*>) = runTest {
