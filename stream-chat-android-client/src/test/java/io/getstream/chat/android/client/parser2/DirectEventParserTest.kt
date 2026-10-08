@@ -97,9 +97,9 @@ internal class DirectEventParserTest {
         }
 
         @Test
-        fun `direct path produces the same NewMessageEvent as the DTO path`() {
-            // Parity check: the DirectEventParser output must match what the legacy
-            // JSON → NewMessageEventDto → toDomain() pipeline produces for the same JSON.
+        fun `direct path produces the same NewMessageEvent as the generated path`() {
+            // Parity check: the DirectEventParser output must match what the generated
+            // MessageNewEvent → toDomain() pipeline produces for the same JSON.
             val moshiChatParser = ParserFactory.createMoshiChatParser()
             val eventMapping = EventMapping(
                 DomainMapping(
@@ -111,13 +111,13 @@ internal class DirectEventParserTest {
             )
 
             val directResult = parser.parse(NewMessageEventTestData.jsonAllFields)
-            val dtoResult = with(eventMapping) {
+            val generatedResult = with(eventMapping) {
                 moshiChatParser
                     .fromJson(NewMessageEventTestData.jsonAllFields, ChatEventDto::class.java)
                     .toDomain()
             }
 
-            assertEquals(dtoResult, directResult)
+            assertEquals(generatedResult, directResult)
         }
 
         @Test

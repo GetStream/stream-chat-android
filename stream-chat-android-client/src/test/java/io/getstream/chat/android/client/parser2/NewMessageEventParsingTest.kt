@@ -138,28 +138,28 @@ internal class NewMessageEventParsingTest {
         // The fixture transitively pulls in MessageTestData.jsonAllFields, which is the
         // truly-comprehensive Message JSON. Parity here is the meaningful check; a
         // hand-written expected adds maintenance burden without commensurate value.
-        val dto = parser.fromJson(NewMessageEventTestData.jsonAllFields, ChatEventDto::class.java)
-        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val parsed = parser.fromJson(NewMessageEventTestData.jsonAllFields, ChatEventDto::class.java)
+        val generatedResult = with(eventMapping) { parsed.toDomain() }
         val directResult = adapter.fromJson(NewMessageEventTestData.jsonAllFields)
-        assertEquals(dtoResult, directResult, "Generated path and direct path produced different NewMessageEvents")
+        assertEquals(generatedResult, directResult, "Generated path and direct path produced different NewMessageEvents")
     }
 
     @Test
     fun `Both paths - optional fields missing fall back to identical defaults`() {
-        val dto = parser.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing, ChatEventDto::class.java)
-        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val parsed = parser.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing, ChatEventDto::class.java)
+        val generatedResult = with(eventMapping) { parsed.toDomain() }
         val directResult = adapter.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing)
-        assertEquals(dtoResult, directResult)
-        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, dtoResult)
+        assertEquals(generatedResult, directResult)
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, generatedResult)
         assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, directResult)
     }
 
     @Test
     fun `Both paths - propagate event-level channelInfo to replyTo when neither message has channel`() {
-        val dto = parser.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel, ChatEventDto::class.java)
-        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val parsed = parser.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel, ChatEventDto::class.java)
+        val generatedResult = with(eventMapping) { parsed.toDomain() }
         val directResult = adapter.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel)
-        assertEquals(dtoResult, directResult)
+        assertEquals(generatedResult, directResult)
         // Guard the specific parity gap this test covers: replyTo.channelInfo must be populated
         // from event-level data when neither the outer message nor quoted_message had `channel`.
         val replyToChannelInfo = checkNotNull(directResult?.message?.replyTo?.channelInfo)
