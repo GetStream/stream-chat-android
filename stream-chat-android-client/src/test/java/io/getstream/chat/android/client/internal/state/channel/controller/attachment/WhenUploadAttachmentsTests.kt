@@ -32,6 +32,7 @@ import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomMessage
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -42,6 +43,8 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -279,7 +282,7 @@ internal class WhenUploadAttachmentsTests {
 
             sut.uploadAttachmentsForMessage(message.id)
 
-            verify(repository).insertMessage(
+            verify(repository, times(2)).insertMessage(
                 argThat {
                     attachments.run {
                         size == 2 &&
@@ -289,6 +292,65 @@ internal class WhenUploadAttachmentsTests {
                 },
             )
         }
+
+    @Test
+    fun `Given a later upload throws Should keep the earlier successful upload as uploaded`() = runTest {
+        val first = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val second = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"))
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId1" }, anyOrNull(), anyOrNull())) doReturn
+                Result.Success(first.copy(uploadState = Attachment.UploadState.Success))
+            on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())) doThrow
+                IllegalStateException("Error")
+        }
+        val repository = mock<MessageRepository>()
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(first, second))
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .givenMessage(message)
+            .get()
+
+        sut.uploadAttachmentsForMessage(message.id)
+
+        verify(repository).insertMessage(
+            argThat {
+                attachments.any { it.uploadId == "uploadId1" && it.uploadState == Attachment.UploadState.Success } &&
+                    attachments.any { it.uploadId == "uploadId2" && it.uploadState is Attachment.UploadState.Failed }
+            },
+        )
+    }
+
+    @Test
+    fun `Given the worker is cancelled after an upload succeeded Should persist the upload and rethrow`() = runTest {
+        val first = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val second = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"))
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId1" }, anyOrNull(), anyOrNull())) doReturn
+                Result.Success(first.copy(uploadState = Attachment.UploadState.Success))
+            on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())) doAnswer {
+                throw CancellationException("Worker stopped")
+            }
+        }
+        val repository = mock<MessageRepository>()
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(first, second))
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .givenMessage(message)
+            .get()
+
+        val thrown = runCatching { sut.uploadAttachmentsForMessage(message.id) }.exceptionOrNull()
+
+        thrown shouldBeInstanceOf CancellationException::class
+        verify(repository).insertMessage(
+            argThat {
+                attachments.any { it.uploadId == "uploadId1" && it.uploadState == Attachment.UploadState.Success } &&
+                    attachments.any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Idle }
+            },
+        )
+        verify(repository, never()).insertMessage(
+            argThat { attachments.any { it.uploadState is Attachment.UploadState.Failed } },
+        )
+    }
 
     private class Fixture {
         private val channelType = "channelType"

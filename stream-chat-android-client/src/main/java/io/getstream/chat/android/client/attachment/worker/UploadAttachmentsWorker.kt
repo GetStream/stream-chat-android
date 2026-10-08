@@ -32,9 +32,14 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 private const val TAG = "Chat:UploadWorker"
 private const val PROGRESS_THROTTLE_MS = 200L
@@ -61,6 +66,8 @@ public class UploadAttachmentsWorker(
             message?.let { sendAttachments(it) } ?: Result.Failure(
                 Error.GenericError("The message with id $messageId could not be found."),
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.e { "[uploadAttachmentsForMessage] #uploader; couldn't upload attachments ${e.message}" }
             message?.let { updateMessages(it) }
@@ -109,42 +116,29 @@ public class UploadAttachmentsWorker(
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(message: Message): List<Attachment> {
+        val attachments = message.attachments.toMutableList()
+        val attachmentsLock = Mutex()
         return try {
             coroutineScope {
-                message.attachments.map { attachment ->
+                message.attachments.indices.map { index ->
                     async {
-                        if (attachment.uploadState != Attachment.UploadState.Success) {
-                            logger.d {
-                                "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
-                                    "for message ${message.id}"
-                            }
-                            val progressCallback = channelStateLogic?.let { logic ->
-                                ProgressCallbackImpl(
-                                    message.id,
-                                    attachment.uploadId!!,
-                                    logic,
-                                )
-                            }
-
-                            attachmentUploader
-                                .uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
-                                .recover { error ->
-                                    attachment.copy(uploadState = Attachment.UploadState.Failed(error))
-                                }
-                                .value
+                        if (message.attachments[index].uploadState != Attachment.UploadState.Success) {
+                            uploadAttachment(message, attachments, attachmentsLock, index)
                         } else {
                             logger.i {
-                                "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
+                                "[uploadAttachments] #uploader; attachment ${message.attachments[index].uploadId}" +
                                     " for message ${message.id} already uploaded"
                             }
-                            attachment
                         }
                     }
                 }.awaitAll()
             }
+            attachments
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
-            message.attachments.map {
+            attachments.map {
                 it.copy(
                     uploadState = it.uploadState
                         .takeIf { it == Attachment.UploadState.Success }
@@ -153,6 +147,40 @@ public class UploadAttachmentsWorker(
                         ),
                 )
             }
+        }
+    }
+
+    /**
+     * Uploads the attachment at [index] and replaces it in [attachments], guarded by [lock], with the result.
+     */
+    private suspend fun uploadAttachment(
+        message: Message,
+        attachments: MutableList<Attachment>,
+        lock: Mutex,
+        index: Int,
+    ) {
+        val attachment = message.attachments[index]
+        logger.d {
+            "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} for message ${message.id}"
+        }
+        val progressCallback = channelStateLogic?.let { logic ->
+            ProgressCallbackImpl(message.id, attachment.uploadId!!, logic)
+        }
+        val result = attachmentUploader
+            .uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
+        val uploaded = result
+            .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
+            .value
+        if (result is Result.Success) {
+            // Persist each upload as it completes, so a stopped worker can't lose it and upload it again.
+            withContext(NonCancellable) {
+                lock.withLock {
+                    attachments[index] = uploaded
+                    updateMessages(message.copy(attachments = attachments.toList()))
+                }
+            }
+        } else {
+            lock.withLock { attachments[index] = uploaded }
         }
     }
 
