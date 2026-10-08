@@ -275,7 +275,7 @@ public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
     public val config: ChatClientConfig,
-    private val api: ChatApi,
+    internal val api: ChatApi,
     private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
@@ -305,6 +305,7 @@ internal constructor(
     public val cdn: CDN? = null,
     @InternalStreamChatApi
     public val videoCache: VideoMediaCache? = null,
+    internal val fileTransformer: FileTransformer = NoOpFileTransformer,
 ) {
     private val logger by taggedLogger(TAG)
     private val fileManager = StreamFileManager()
@@ -1110,36 +1111,6 @@ internal constructor(
     ): Call<UploadedFile> {
         return api.sendImage(channelType, channelId, file, messageId, callback)
     }
-
-    /**
-     * Runs [file] through the [FileTransformer] configured via [Builder.fileTransformer].
-     */
-    @CheckResult
-    internal fun transformFile(file: File): Call<File> = api.transformFile(file)
-
-    /**
-     * Same as [sendFile], but uploads [file] as is, without running it through the [FileTransformer].
-     */
-    @CheckResult
-    internal fun sendTransformedFile(
-        channelType: String,
-        channelId: String,
-        file: File,
-        messageId: String?,
-        callback: ProgressCallback?,
-    ): Call<UploadedFile> = api.sendFile(channelType, channelId, file, messageId, callback, transform = false)
-
-    /**
-     * Same as [sendImage], but uploads [file] as is, without running it through the [FileTransformer].
-     */
-    @CheckResult
-    internal fun sendTransformedImage(
-        channelType: String,
-        channelId: String,
-        file: File,
-        messageId: String?,
-        callback: ProgressCallback?,
-    ): Call<UploadedFile> = api.sendImage(channelType, channelId, file, messageId, callback, transform = false)
 
     /**
      * Deletes the file represented by [url] from the given channel.
@@ -5383,6 +5354,7 @@ internal constructor(
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
                 repository = repository,
+                fileTransformer = fileTransformer,
                 messageReceiptReporter = MessageReceiptReporter(
                     scope = userScope,
                     messageReceiptRepository = repository,
