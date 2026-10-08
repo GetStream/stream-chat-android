@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.isUploaded
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -50,9 +51,6 @@ internal fun List<Attachment>.prepareForUpload(): List<Attachment> = map { attac
         )
     }
 }
-
-private fun Attachment.isUploaded(): Boolean =
-    uploadState == Attachment.UploadState.Success && (assetUrl != null || imageUrl != null)
 
 internal class MessagePreparer(
     private val clientState: ClientState,

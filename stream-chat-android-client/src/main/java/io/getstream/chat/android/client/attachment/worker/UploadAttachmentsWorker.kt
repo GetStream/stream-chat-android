@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.AttachmentsUploadStates
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.extensions.internal.isUploaded
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -36,6 +37,8 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -92,8 +95,7 @@ public class UploadAttachmentsWorker(
         }
 
         val hasPendingAttachment = message.attachments.any { attachment ->
-            attachment.uploadState is Attachment.UploadState.InProgress ||
-                attachment.uploadState is Attachment.UploadState.Idle
+            attachment.uploadState !is Attachment.UploadState.Failed && !attachment.isUploaded()
         }
 
         return if (!hasPendingAttachment) {
@@ -116,29 +118,32 @@ public class UploadAttachmentsWorker(
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(message: Message): List<Attachment> {
-        val attachments = message.attachments.toMutableList()
-        val attachmentsLock = Mutex()
+        // The message's attachments with each successful upload swapped in, shared by the parallel uploads.
+        val uploaded = message.attachments.toMutableList()
+        val uploadedLock = Mutex()
         return try {
             coroutineScope {
-                message.attachments.indices.map { index ->
+                message.attachments.mapIndexed { index, attachment ->
                     async {
-                        if (message.attachments[index].uploadState != Attachment.UploadState.Success) {
-                            uploadAttachment(message, attachments, attachmentsLock, index)
-                        } else {
+                        if (attachment.isUploaded()) {
                             logger.i {
-                                "[uploadAttachments] #uploader; attachment ${message.attachments[index].uploadId}" +
+                                "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
                                     " for message ${message.id} already uploaded"
+                            }
+                            attachment
+                        } else {
+                            uploadAttachment(message, attachment).also { result ->
+                                persistUploadedAttachment(message, uploaded, uploadedLock, index, result)
                             }
                         }
                     }
                 }.awaitAll()
             }
-            attachments
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
-            attachments.map {
+            uploaded.map {
                 it.copy(
                     uploadState = it.uploadState
                         .takeIf { it == Attachment.UploadState.Success }
@@ -150,37 +155,44 @@ public class UploadAttachmentsWorker(
         }
     }
 
-    /**
-     * Uploads the attachment at [index] and replaces it in [attachments], guarded by [lock], with the result.
-     */
-    private suspend fun uploadAttachment(
-        message: Message,
-        attachments: MutableList<Attachment>,
-        lock: Mutex,
-        index: Int,
-    ) {
-        val attachment = message.attachments[index]
+    private suspend fun uploadAttachment(message: Message, attachment: Attachment): Attachment {
+        // Don't start a new upload once the worker is stopped.
+        currentCoroutineContext().ensureActive()
         logger.d {
             "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} for message ${message.id}"
         }
         val progressCallback = channelStateLogic?.let { logic ->
             ProgressCallbackImpl(message.id, attachment.uploadId!!, logic)
         }
-        val result = attachmentUploader
-            .uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
-        val uploaded = result
-            .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
-            .value
-        if (result is Result.Success) {
-            // Persist each upload as it completes, so a stopped worker can't lose it and upload it again.
-            withContext(NonCancellable) {
-                lock.withLock {
-                    attachments[index] = uploaded
-                    updateMessages(message.copy(attachments = attachments.toList()))
+        // The upload keeps running if the worker is stopped; wait for its result so a success isn't lost.
+        return withContext(NonCancellable) {
+            attachmentUploader.uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
+        }.recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }.value
+    }
+
+    /**
+     * Stores [result], if its upload succeeded, right away, so it isn't uploaded again if the worker is stopped
+     * before it finishes. Doesn't publish the upload states: the sender must only be released by the final
+     * [updateMessages].
+     */
+    @Suppress("LongParameterList")
+    private suspend fun persistUploadedAttachment(
+        message: Message,
+        uploaded: MutableList<Attachment>,
+        uploadedLock: Mutex,
+        index: Int,
+        result: Attachment,
+    ) {
+        if (result.uploadState != Attachment.UploadState.Success) return
+        withContext(NonCancellable) {
+            uploadedLock.withLock {
+                uploaded[index] = result
+                messageRepository.insertMessage(message.copy(attachments = uploaded.toList()))
+                channelStateLogic?.channelState()?.getMessageById(message.id)?.let { current ->
+                    val updated = current.attachments.map { if (it.uploadId == result.uploadId) result else it }
+                    channelStateLogic.upsertMessage(current.copy(attachments = updated))
                 }
             }
-        } else {
-            lock.withLock { attachments[index] = uploaded }
         }
     }
 

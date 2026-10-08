@@ -32,15 +32,21 @@ import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomMessage
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argThat
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -321,35 +327,96 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
-    fun `Given the worker is cancelled after an upload succeeded Should persist the upload and rethrow`() = runTest {
+    fun `Given the worker is stopped while an upload completes Should persist it and not start the next upload`() =
+        runTest {
+            val first = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+            val second = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"))
+            lateinit var workerJob: Job
+            val attachmentUploader = mock<AttachmentUploader> {
+                on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId1" }, anyOrNull(), anyOrNull())) doSuspendableAnswer {
+                    workerJob.cancel()
+                    // Like Call.await: a cancelled caller gets a canceled error although the upload finished.
+                    if (currentCoroutineContext().isActive) {
+                        Result.Success(first.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1"))
+                    } else {
+                        Result.Failure(Error.GenericError("The call was canceled before completing its execution."))
+                    }
+                }
+            }
+            val repository = mock<MessageRepository>()
+            val message = randomMessage(id = "messageId123", attachments = mutableListOf(first, second))
+            val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+                .givenMessageRepository(repository)
+                .givenMessage(message)
+                .get()
+
+            workerJob = launch { sut.uploadAttachmentsForMessage(message.id) }
+            workerJob.join()
+
+            workerJob.isCancelled shouldBeEqualTo true
+            verify(repository).insertMessage(
+                argThat {
+                    syncStatus == message.syncStatus &&
+                        attachments.any { it.uploadId == "uploadId1" && it.assetUrl == "url1" } &&
+                        attachments.any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Idle }
+                },
+            )
+            verify(attachmentUploader, never())
+                .uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())
+        }
+
+    @Test
+    fun `Given an earlier upload failed Should store a later success without marking the message failed`() = runTest {
         val first = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
         val second = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"))
         val attachmentUploader = mock<AttachmentUploader> {
             on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId1" }, anyOrNull(), anyOrNull())) doReturn
-                Result.Success(first.copy(uploadState = Attachment.UploadState.Success))
-            on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())) doAnswer {
-                throw CancellationException("Worker stopped")
-            }
+                Result.Failure(Error.GenericError("Error"))
+            on(it.uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())) doReturn
+                Result.Success(second.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url2"))
         }
         val repository = mock<MessageRepository>()
-        val message = randomMessage(id = "messageId123", attachments = mutableListOf(first, second))
+        val message = randomMessage(
+            id = "messageId123",
+            attachments = mutableListOf(first, second),
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        )
         val sut = Fixture().givenAttachmentUploader(attachmentUploader)
             .givenMessageRepository(repository)
             .givenMessage(message)
             .get()
 
-        val thrown = runCatching { sut.uploadAttachmentsForMessage(message.id) }.exceptionOrNull()
+        sut.uploadAttachmentsForMessage(message.id)
 
-        thrown shouldBeInstanceOf CancellationException::class
-        verify(repository).insertMessage(
-            argThat {
-                attachments.any { it.uploadId == "uploadId1" && it.uploadState == Attachment.UploadState.Success } &&
-                    attachments.any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Idle }
-            },
+        val inserted = argumentCaptor<Message>()
+        verify(repository, times(2)).insertMessage(inserted.capture())
+        with(inserted.firstValue) {
+            syncStatus shouldBeEqualTo SyncStatus.AWAITING_ATTACHMENTS
+            attachments.first { it.uploadId == "uploadId1" }.uploadState shouldBeEqualTo Attachment.UploadState.Idle
+            attachments.first { it.uploadId == "uploadId2" }.assetUrl shouldBeEqualTo "url2"
+        }
+        inserted.lastValue.syncStatus shouldBeEqualTo SyncStatus.FAILED_PERMANENTLY
+    }
+
+    @Test
+    fun `Given an attachment is marked uploaded without an asset url Should upload it`() = runTest {
+        val attachment = randomAttachment().copy(
+            uploadState = Attachment.UploadState.Success,
+            assetUrl = null,
+            extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
         )
-        verify(repository, never()).insertMessage(
-            argThat { attachments.any { it.uploadState is Attachment.UploadState.Failed } },
-        )
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn
+                Result.Success(attachment.copy(assetUrl = "url1"))
+        }
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(attachment))
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessage(message)
+            .get()
+
+        sut.uploadAttachmentsForMessage(message.id)
+
+        verify(attachmentUploader).uploadAttachment(any(), any(), argThat { uploadId == "uploadId1" }, anyOrNull(), anyOrNull())
     }
 
     private class Fixture {
