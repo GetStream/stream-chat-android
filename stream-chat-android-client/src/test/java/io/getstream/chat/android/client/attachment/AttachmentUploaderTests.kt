@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.attachment
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.NoOpFileTransformer
@@ -74,12 +73,12 @@ internal class AttachmentUploaderTests {
         val attachment = randomAttachments(size = 1).first()
         val clientMock = mockClientWithIdentityTransformer()
         whenever(
-            clientMock.api.sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
+            clientMock.sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
         ) doReturn TestCall(Result.Success(UploadedFile(file = "url")))
 
         AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment, messageId = messageId)
 
-        verify(clientMock.api).sendFile(eq(channelType), eq(channelId), any(), eq(messageId), anyOrNull(), eq(false))
+        verify(clientMock).sendFile(eq(channelType), eq(channelId), any(), eq(messageId), anyOrNull(), eq(false))
     }
 
     @Test
@@ -88,12 +87,12 @@ internal class AttachmentUploaderTests {
         val attachment = randomAttachments(size = 1).first().copy(upload = randomFile(extension = "jpg"))
         val clientMock = mockClientWithIdentityTransformer()
         whenever(
-            clientMock.api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
+            clientMock.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
         ) doReturn TestCall(Result.Success(UploadedFile(file = "url")))
 
         AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment, messageId = messageId)
 
-        verify(clientMock.api).sendImage(eq(channelType), eq(channelId), any(), eq(messageId), anyOrNull(), eq(false))
+        verify(clientMock).sendImage(eq(channelType), eq(channelId), any(), eq(messageId), anyOrNull(), eq(false))
     }
 
     @Test
@@ -104,12 +103,12 @@ internal class AttachmentUploaderTests {
         val clientMock = mockClientWithIdentityTransformer()
         whenever(clientMock.fileTransformer) doReturn transformerReturning(transformedFile)
         whenever(
-            clientMock.api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
+            clientMock.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
         ) doReturn TestCall(Result.Success(UploadedFile(file = "url")))
 
         val result = AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment)
 
-        verify(clientMock.api).sendImage(eq(channelType), eq(channelId), same(transformedFile), anyOrNull(), anyOrNull(), eq(false))
+        verify(clientMock).sendImage(eq(channelType), eq(channelId), same(transformedFile), anyOrNull(), anyOrNull(), eq(false))
         with((result as Result.Success).value) {
             type shouldBeEqualTo "image"
             mimeType shouldBeEqualTo "image/jpeg"
@@ -127,12 +126,12 @@ internal class AttachmentUploaderTests {
         val clientMock = mockClientWithIdentityTransformer()
         whenever(clientMock.fileTransformer) doReturn transformerReturning(transformedFile)
         whenever(
-            clientMock.api.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
+            clientMock.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
         ) doReturn TestCall(Result.Success(UploadedFile(file = "url")))
 
         val result = AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment)
 
-        verify(clientMock.api).sendImage(eq(channelType), eq(channelId), same(transformedFile), anyOrNull(), anyOrNull(), eq(false))
+        verify(clientMock).sendImage(eq(channelType), eq(channelId), same(transformedFile), anyOrNull(), anyOrNull(), eq(false))
         with((result as Result.Success).value) {
             type shouldBeEqualTo "image"
             mimeType shouldBeEqualTo "image/jpeg"
@@ -153,8 +152,8 @@ internal class AttachmentUploaderTests {
         val result = AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment)
 
         ((result as Result.Failure).value as Error.ThrowableError).cause shouldBeEqualTo exception
-        verify(clientMock.api, never()).sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), any())
-        verify(clientMock.api, never()).sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), any())
+        verify(clientMock, never()).sendFile(any(), any(), any(), anyOrNull(), anyOrNull(), any())
+        verify(clientMock, never()).sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), any())
     }
 
     @Test
@@ -276,7 +275,7 @@ internal class AttachmentUploaderTests {
 
         fun givenMockedFileUploads(channelType: String, channelId: String, result: Result<UploadedFile>) = apply {
             whenever(
-                clientMock.api.sendFile(
+                clientMock.sendFile(
                     eq(channelType),
                     eq(channelId),
                     any(),
@@ -292,7 +291,7 @@ internal class AttachmentUploaderTests {
                 val fileResult = Result.Success(UploadedFile(file = file.absolutePath))
 
                 whenever(
-                    clientMock.api.sendFile(
+                    clientMock.sendFile(
                         eq(channelType),
                         eq(channelId),
                         same(file),
@@ -302,7 +301,7 @@ internal class AttachmentUploaderTests {
                     ),
                 ) doReturn TestCall(fileResult)
                 whenever(
-                    clientMock.api.sendImage(
+                    clientMock.sendImage(
                         eq(channelType),
                         eq(channelId),
                         same(file),
@@ -321,8 +320,6 @@ internal class AttachmentUploaderTests {
 }
 
 private fun mockClientWithIdentityTransformer(): ChatClient = mock<ChatClient>().also { client ->
-    val api = mock<ChatApi>()
-    whenever(client.api) doReturn api
     whenever(client.fileTransformer) doReturn NoOpFileTransformer
 }
 

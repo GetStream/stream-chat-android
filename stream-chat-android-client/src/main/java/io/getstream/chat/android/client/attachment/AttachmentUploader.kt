@@ -146,7 +146,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadImage] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.api.sendImage(channelType, channelId, file, messageId, progressCallback, transform = false)
+        val result = client.sendImage(channelType, channelId, file, messageId, progressCallback, transform = false)
             .await()
         logger.v { "[uploadImage] #uploader; result: $result" }
         return when (result) {
@@ -208,7 +208,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             "[uploadFile] #uploader; mimeType: $mimeType, attachmentType: $attachmentType, " +
                 "file: $file, cid: $channelType:$$channelId, attachment: $attachment"
         }
-        val result = client.api.sendFile(channelType, channelId, file, messageId, progressCallback, transform = false)
+        val result = client.sendFile(channelType, channelId, file, messageId, progressCallback, transform = false)
             .await()
         logger.v { "[uploadFile] #uploader; result: $result" }
         return when (result) {
