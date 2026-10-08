@@ -527,15 +527,24 @@ internal object EventArguments {
         channelId = channelId,
         member = member,
     )
+
+    /** The message as message events send it: common-field users and no nested channel. */
+    private val messageEventMessage = message.copy(
+        user = nestedUser,
+        mentionedUsers = listOf(nestedUser),
+        threadParticipants = listOf(nestedUser),
+        channelInfo = null,
+    )
+
     private val messageDeletedEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageEventMessage,
         hardDelete = false,
         channelMessageCount = 1,
         deletedForMe = false,
@@ -548,7 +557,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageEventMessage,
         hardDelete = true,
         channelMessageCount = 1,
         deletedForMe = true,
@@ -568,11 +577,11 @@ internal object EventArguments {
         type = EventType.MESSAGE_UPDATED,
         createdAt = date,
         rawCreatedAt = streamDateFormatter.format(date),
-        user = user,
+        user = commonFieldsUser,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        message = message,
+        message = messageEventMessage,
     )
     private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,

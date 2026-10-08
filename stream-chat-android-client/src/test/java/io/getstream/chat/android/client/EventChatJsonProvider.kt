@@ -180,12 +180,13 @@ internal fun createMessageDeletedEventStringJson() =
     createChatEventStringJson(
         "message.deleted",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "message": ${createMessageJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1
         """.trimIndent(),
@@ -198,7 +199,8 @@ internal fun createMessageDeletedServerSideEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
-            "message": ${createMessageJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "hard_delete": true,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1,
@@ -224,12 +226,13 @@ internal fun createMessageUpdatedEventStringJson() =
     createChatEventStringJson(
         "message.updated",
         """
-            "user": ${createUserJsonString()},
+            "user": ${createCommonFieldsUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "message": ${createMessageJsonString()},
+            "message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+            "message": ${createGeneratedMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )

@@ -30,8 +30,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDt
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
-import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -124,8 +122,10 @@ import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDr
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
+import io.getstream.chat.android.network.models.MessageDeletedEvent as GeneratedMessageDeletedEvent
 import io.getstream.chat.android.network.models.MessageDeliveredEvent as GeneratedMessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
+import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
@@ -227,6 +227,7 @@ internal object EventMappingTestArguments {
     private val AI_MESSAGE_ID = randomString()
     private val AI_STATE = randomString()
     private val DELETED_FOR_ME = randomBoolean()
+    private val CHANNEL_MESSAGE_COUNT = positiveRandomInt()
 
     // BEGIN: DTO Models
 
@@ -444,16 +445,25 @@ internal object EventMappingTestArguments {
 
     private val memberUpdatedDto = GeneratedEventDto(memberUpdatedEvent)
 
-    private val messageDeletedDto = MessageDeletedEventDto(
+    private val messageDeletedEvent = GeneratedMessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
-        hard_delete = HARD_DELETE,
-        deleted_for_me = DELETED_FOR_ME,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = COMMON_USER,
+        message = GENERATED_MESSAGE,
+        messageId = GENERATED_MESSAGE.id,
+        hardDelete = HARD_DELETE,
+        deletedForMe = DELETED_FOR_ME,
+        channelMessageCount = CHANNEL_MESSAGE_COUNT,
+    )
+
+    private val messageDeletedDto = GeneratedEventDto(messageDeletedEvent)
+
+    // As /sync replays a server-side delete: no user, message id or hard delete flag.
+    private val messageDeletedReplayDto = GeneratedEventDto(
+        messageDeletedEvent.copy(user = null, messageId = null, hardDelete = null, deletedForMe = null),
     )
 
     private val messageDeliveredEvent = GeneratedMessageDeliveredEvent(
@@ -483,15 +493,18 @@ internal object EventMappingTestArguments {
 
     private val messageReadDto = GeneratedEventDto(messageReadEvent)
 
-    private val messageUpdatedDto = MessageUpdatedEventDto(
+    private val messageUpdatedEvent = GeneratedMessageUpdatedEvent(
         type = EventType.MESSAGE_UPDATED,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
-        user = USER,
-        message = MESSAGE,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = COMMON_USER,
+        message = GENERATED_MESSAGE,
+        messageId = GENERATED_MESSAGE.id,
     )
+
+    private val messageUpdatedDto = GeneratedEventDto(messageUpdatedEvent)
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
@@ -1176,18 +1189,20 @@ internal object EventMappingTestArguments {
     )
 
     private val messageDeleted = MessageDeletedEvent(
-        type = messageDeletedDto.type,
-        createdAt = messageDeletedDto.created_at.date,
-        rawCreatedAt = messageDeletedDto.created_at.rawDate,
-        cid = messageDeletedDto.cid,
-        channelType = messageDeletedDto.channel_type,
-        channelId = messageDeletedDto.channel_id,
-        user = with(domainMapping) { messageDeletedDto.user?.toDomain() },
-        message = with(domainMapping) { messageDeletedDto.message.toDomain() },
-        hardDelete = messageDeletedDto.hard_delete ?: false,
-        channelMessageCount = messageDeletedDto.channel_message_count,
-        deletedForMe = messageDeletedDto.deleted_for_me ?: false,
+        type = messageDeletedEvent.type,
+        createdAt = messageDeletedEvent.createdAt.date,
+        rawCreatedAt = messageDeletedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain() },
+        hardDelete = HARD_DELETE,
+        channelMessageCount = CHANNEL_MESSAGE_COUNT,
+        deletedForMe = DELETED_FOR_ME,
     )
+
+    private val messageDeletedReplay = messageDeleted.copy(user = null, hardDelete = false, deletedForMe = false)
 
     private val messageDelivered = MessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
@@ -1215,14 +1230,14 @@ internal object EventMappingTestArguments {
     )
 
     private val messageUpdated = MessageUpdatedEvent(
-        type = messageUpdatedDto.type,
-        createdAt = messageUpdatedDto.created_at.date,
-        rawCreatedAt = messageUpdatedDto.created_at.rawDate,
-        cid = messageUpdatedDto.cid,
-        channelType = messageUpdatedDto.channel_type,
-        channelId = messageUpdatedDto.channel_id,
-        user = with(domainMapping) { messageUpdatedDto.user.toDomain() },
-        message = with(domainMapping) { messageUpdatedDto.message.toDomain() },
+        type = messageUpdatedEvent.type,
+        createdAt = messageUpdatedEvent.createdAt.date,
+        rawCreatedAt = messageUpdatedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        message = with(domainMapping) { GENERATED_MESSAGE.toDomain() },
     )
 
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
@@ -1715,6 +1730,7 @@ internal object EventMappingTestArguments {
         Arguments.of(memberRemovedDto, memberRemoved),
         Arguments.of(memberUpdatedDto, memberUpdated),
         Arguments.of(messageDeletedDto, messageDeleted),
+        Arguments.of(messageDeletedReplayDto, messageDeletedReplay),
         Arguments.of(messageDeliveredDto, messageDelivered),
         Arguments.of(messageReadDto, messageRead),
         Arguments.of(messageUpdatedDto, messageUpdated),
