@@ -151,89 +151,82 @@ internal class MessagesPaginationManagerImpl : MessagesPaginationManager {
         get() = _state.asStateFlow()
 
     override fun begin(query: QueryChannelRequest) {
-        val current = _state.value
-        val new = when {
-            query.filteringOlderMessages() -> {
-                current.copy(isLoadingPreviousMessages = true)
-            }
-            query.isFilteringNewerMessages() -> {
-                current.copy(isLoadingNextMessages = true)
-            }
-            query.isFilteringAroundIdMessages() -> {
-                current.copy(isLoadingMiddleMessages = true, hasLoadedAllNextMessages = false)
-            }
-            else -> {
-                MessagesPaginationState()
+        _state.update { current ->
+            when {
+                query.filteringOlderMessages() -> {
+                    current.copy(isLoadingPreviousMessages = true)
+                }
+                query.isFilteringNewerMessages() -> {
+                    current.copy(isLoadingNextMessages = true)
+                }
+                query.isFilteringAroundIdMessages() -> {
+                    current.copy(isLoadingMiddleMessages = true, hasLoadedAllNextMessages = false)
+                }
+                else -> {
+                    MessagesPaginationState()
+                }
             }
         }
-        _state.update { new }
     }
 
     override fun end(query: QueryChannelRequest, result: Result<Channel>) {
-        // Failure
+        // Each query clears only its own loading flag, so it can't hide the spinner of a concurrent one
         if (result is Result.Failure) {
-            _state.update { current ->
-                current.copy(
-                    isLoadingNextMessages = false,
-                    isLoadingPreviousMessages = false,
-                    isLoadingMiddleMessages = false,
-                )
-            }
+            _state.update { current -> current.clearLoadingFlagOf(query) }
             return
         }
-        // Success
-        result as Result.Success
-        val current = _state.value
-        val messages = result.value.messages
+        val messages = (result as Result.Success).value.messages
         val oldestMessage = messages.firstOrNull()
         val newestMessage = messages.lastOrNull()
-        val new = when {
-            // Loading older
-            query.filteringOlderMessages() -> {
-                val hasLoadedAllPreviousMessages = messages.size < query.messagesLimit()
-                current.copy(
-                    oldestMessage = oldestMessage,
-                    hasLoadedAllPreviousMessages = hasLoadedAllPreviousMessages,
-                    isLoadingNextMessages = false,
-                    isLoadingPreviousMessages = false,
-                    isLoadingMiddleMessages = false,
-                )
-            }
-            // Loading newer
-            query.isFilteringNewerMessages() -> {
-                val hasLoadedAllNextMessages = messages.size < query.messagesLimit()
-                current.copy(
-                    newestMessage = if (hasLoadedAllNextMessages) null else newestMessage,
-                    hasLoadedAllNextMessages = hasLoadedAllNextMessages,
-                    isLoadingNextMessages = false,
-                    isLoadingPreviousMessages = false,
-                    isLoadingMiddleMessages = false,
-                )
-            }
-            // Loading around
-            query.isFilteringAroundIdMessages() -> {
-                current.copy(
-                    oldestMessage = oldestMessage,
-                    newestMessage = newestMessage,
-                    hasLoadedAllNextMessages = false,
-                    hasLoadedAllPreviousMessages = false,
-                    isLoadingNextMessages = false,
-                    isLoadingPreviousMessages = false,
-                    isLoadingMiddleMessages = false,
-                )
-            }
-            // Else - no pagination
-            else -> {
-                current.copy(
-                    oldestMessage = oldestMessage,
-                    newestMessage = null,
-                    hasLoadedAllNextMessages = true,
-                    hasLoadedAllPreviousMessages = messages.size < query.messagesLimit(),
-                )
+        _state.update { current ->
+            when {
+                // Loading older
+                query.filteringOlderMessages() -> {
+                    current.copy(
+                        oldestMessage = oldestMessage,
+                        hasLoadedAllPreviousMessages = messages.size < query.messagesLimit(),
+                        isLoadingPreviousMessages = false,
+                    )
+                }
+                // Loading newer
+                query.isFilteringNewerMessages() -> {
+                    val hasLoadedAllNextMessages = messages.size < query.messagesLimit()
+                    current.copy(
+                        newestMessage = if (hasLoadedAllNextMessages) null else newestMessage,
+                        hasLoadedAllNextMessages = hasLoadedAllNextMessages,
+                        isLoadingNextMessages = false,
+                    )
+                }
+                // Loading around
+                query.isFilteringAroundIdMessages() -> {
+                    current.copy(
+                        oldestMessage = oldestMessage,
+                        newestMessage = newestMessage,
+                        hasLoadedAllNextMessages = false,
+                        hasLoadedAllPreviousMessages = false,
+                        isLoadingMiddleMessages = false,
+                    )
+                }
+                // Else - no pagination
+                else -> {
+                    current.copy(
+                        oldestMessage = oldestMessage,
+                        newestMessage = null,
+                        hasLoadedAllNextMessages = true,
+                        hasLoadedAllPreviousMessages = messages.size < query.messagesLimit(),
+                    )
+                }
             }
         }
-        _state.update { new }
     }
+
+    private fun MessagesPaginationState.clearLoadingFlagOf(query: QueryChannelRequest): MessagesPaginationState =
+        when {
+            query.filteringOlderMessages() -> copy(isLoadingPreviousMessages = false)
+            query.isFilteringNewerMessages() -> copy(isLoadingNextMessages = false)
+            query.isFilteringAroundIdMessages() -> copy(isLoadingMiddleMessages = false)
+            else -> this
+        }
 
     override fun setOldestMessage(message: Message?) {
         _state.update { it.copy(oldestMessage = message) }

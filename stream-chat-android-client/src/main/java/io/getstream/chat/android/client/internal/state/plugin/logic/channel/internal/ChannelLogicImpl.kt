@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.toChannelData
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -108,17 +109,28 @@ internal class ChannelLogicImpl(
     }
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
-        state.paginationManager.begin(query)
+        if (query.tracksPagination()) {
+            state.paginationManager.begin(query)
+        }
     }
 
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
-        val limit = query.messagesLimit()
-        val isNotificationUpdate = query.isNotificationUpdate
-        // Update pagination state only if it's not a notification update and the call was made for fetching messages
-        // (from LoadNotificationDataWorker) and a limit is set (otherwise we are not loading messages)
-        if (!isNotificationUpdate && limit != 0) {
-            state.paginationManager.end(query, result)
+        var applied = false
+        try {
+            applyQueryChannelResult(query, result)
+            applied = true
+        } finally {
+            // Last, so the next page request can't start before this page's messages are applied and repeat its
+            // cursor. In a finally, so a failure applying the result can't leave the loading flag set, and ended as
+            // a failure then, so a page that never reached the list can't mark the end of the history.
+            if (query.tracksPagination()) {
+                state.paginationManager.end(query, if (applied) result else Result.Failure(APPLY_FAILED_ERROR))
+            }
         }
+    }
+
+    private fun applyQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
+        val limit = query.messagesLimit()
         when (result) {
             is Result.Success -> {
                 val channel = result.value
@@ -150,7 +162,7 @@ internal class ChannelLogicImpl(
                 // The channel state reads its live locations from the global state
                 mutableGlobalState.addLiveLocations(channel.activeLiveLocations)
                 // Reset recovery state
-                if (!isNotificationUpdate && limit != 0) {
+                if (query.tracksPagination()) {
                     state.setRecoveryNeeded(false)
                 }
                 state.endFirstPageLoad()
@@ -370,12 +382,20 @@ internal class ChannelLogicImpl(
     }
 
     private suspend fun queryChannel(request: WatchChannelRequest): Result<Channel> {
-        state.paginationManager.begin(request)
         val (type, id) = cid.cidToTypeAndId()
+        // Begin inside the shared call: a request that joins an identical one in flight gets no end() of its own
         return ChatClient.instance()
-            .queryChannel(type, id, request, skipOnRequest = true)
+            .queryChannelWithStart(type, id, request) {
+                if (request.tracksPagination()) {
+                    state.paginationManager.begin(request)
+                }
+            }
             .await()
     }
+
+    // Notification updates (from LoadNotificationDataWorker) and zero-limit queries don't load messages,
+    // so neither begin nor end of the pagination state applies to them.
+    private fun QueryChannelRequest.tracksPagination(): Boolean = !isNotificationUpdate && messagesLimit() != 0
 
     private fun updateMessages(query: QueryChannelRequest, channel: Channel) {
         when {
@@ -447,3 +467,5 @@ internal class ChannelLogicImpl(
             incomingOldest.getCreatedAtOrDefault(NEVER).after(currentNewest.getCreatedAtOrDefault(NEVER))
     }
 }
+
+private val APPLY_FAILED_ERROR = Error.GenericError("Failed to apply the channel query result")

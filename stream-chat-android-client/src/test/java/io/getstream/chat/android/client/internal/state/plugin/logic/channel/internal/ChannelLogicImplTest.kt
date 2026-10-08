@@ -48,9 +48,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -141,6 +144,26 @@ internal class ChannelLogicImplTest {
             sut.setPaginationDirection(query)
             // Then
             verify(paginationManager).begin(query)
+        }
+
+        @Test
+        fun `setPaginationDirection skips notification updates`() {
+            // Given
+            val query = QueryChannelRequest().withMessages(30).apply { isNotificationUpdate = true }
+            // When
+            sut.setPaginationDirection(query)
+            // Then
+            verify(paginationManager, never()).begin(any())
+        }
+
+        @Test
+        fun `setPaginationDirection skips queries without a message limit`() {
+            // Given
+            val query = QueryChannelRequest().withMessages(0)
+            // When
+            sut.setPaginationDirection(query)
+            // Then
+            verify(paginationManager, never()).begin(any())
         }
     }
 
@@ -394,6 +417,34 @@ internal class ChannelLogicImplTest {
             sut.onQueryChannelResult(query, result)
             // Then
             verify(paginationManager).end(query, result)
+        }
+
+        @Test
+        fun `should end pagination after the older page is applied`() {
+            // Given
+            val messages = listOf(randomMessage(id = "m1"), randomMessage(id = "m2"))
+            val channel = randomChannel(id = "123", type = "messaging", messages = messages)
+            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
+            val result = Result.Success(channel)
+            // When
+            sut.onQueryChannelResult(query, result)
+            // Then
+            inOrder(stateImpl, paginationManager) {
+                verify(stateImpl).upsertMessages(messages)
+                verify(paginationManager).end(query, result)
+            }
+        }
+
+        @Test
+        fun `should end pagination as a failure when applying the page fails`() {
+            // Given
+            val channel = randomChannel(id = "123", type = "messaging", messages = listOf(randomMessage()))
+            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "msgId", 30)
+            whenever(stateImpl.upsertMessages(any(), any())).thenThrow(IllegalStateException())
+            // When
+            assertThrows<IllegalStateException> { sut.onQueryChannelResult(query, Result.Success(channel)) }
+            // Then
+            verify(paginationManager).end(eq(query), argThat { this is Result.Failure })
         }
 
         @Test
