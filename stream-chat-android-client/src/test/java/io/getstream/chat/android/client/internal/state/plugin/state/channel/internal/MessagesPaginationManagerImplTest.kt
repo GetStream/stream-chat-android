@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 internal class MessagesPaginationManagerImplTest {
@@ -748,11 +749,13 @@ internal class MessagesPaginationManagerImplTest {
             sut.begin(olderQuery)
             val watchReading = CountDownLatch(1)
             val olderPageEnded = CountDownLatch(1)
+            val sizeReads = AtomicInteger(0)
             // end() reads messages.size only while computing the new state, so blocking there pauses the watch
             // end() after it has read the current state and before it writes the new one
             val watchMessages = object : List<Message> by emptyList() {
                 override val size: Int
                     get() {
+                        sizeReads.incrementAndGet()
                         watchReading.countDown()
                         olderPageEnded.await(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                         return 0
@@ -768,6 +771,8 @@ internal class MessagesPaginationManagerImplTest {
             watchEnd.join()
             // then
             assertFalse(sut.state.value.isLoadingPreviousMessages)
+            // The watch update lost to the older page write and recomputed, so the overlap really happened
+            assertEquals(2, sizeReads.get())
         }
     }
 
