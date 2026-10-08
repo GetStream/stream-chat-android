@@ -193,12 +193,12 @@ internal class PrepareMessageLogicImplTest {
     }
 
     @Test
-    fun `given an attachment is marked as uploaded without a url, it should be uploaded`() {
+    fun `given an attachment is marked as uploaded without an asset url, it should be uploaded`() {
         val attachment = randomAttachment(
             upload = randomFile(),
             uploadState = Attachment.UploadState.Success,
             assetUrl = null,
-            imageUrl = null,
+            imageUrl = randomString(),
         )
         val message = randomMessage(attachments = mutableListOf(attachment))
 

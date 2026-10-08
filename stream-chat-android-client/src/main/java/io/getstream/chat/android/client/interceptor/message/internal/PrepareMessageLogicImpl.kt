@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.isUploaded
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
@@ -98,7 +99,4 @@ internal class PrepareMessageLogicImpl(
     private fun generateUploadId(): String {
         return "upload_id_${UUID.randomUUID()}"
     }
-
-    private fun Attachment.isUploaded(): Boolean =
-        uploadState == Attachment.UploadState.Success && (assetUrl != null || imageUrl != null)
 }
