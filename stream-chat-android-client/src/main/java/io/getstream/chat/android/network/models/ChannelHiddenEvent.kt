@@ -30,9 +30,9 @@ import com.squareup.moshi.Json
  */
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class ChannelHiddenEvent(
-    // Patched: the spec marks `clear_history` required, but backends before v239.47.0 (CHA-3482, chat#17545) replay channel.hidden on /sync
-    // without it, and a parse failure fails the whole /sync response. On regen, make it required again only once every
-    // region runs v239.47.0 or later.
+    // Patched: the spec marks `clear_history` required, but backends before v239.47.0 (CHA-3482, chat#17545) replay
+    // channel.hidden on /sync without it, and a parse failure fails the whole /sync response. On regen, make it
+    // required again only once every region runs v239.47.0 or later.
     @Json(name = "clear_history")
     internal val clearHistory: Boolean? = null,
 
