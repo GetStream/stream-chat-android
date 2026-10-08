@@ -18,10 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.network.models.ChannelMemberResponse
-import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.OwnUserResponse
-import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
 import java.util.Date
@@ -35,49 +32,10 @@ internal data class HealthEventDto(
     val connection_id: String,
 ) : ChatEventDto()
 
-@JsonClass(generateAdapter = true)
-internal data class NotificationAddedToChannelEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val cid: String,
-    val channel_type: String,
-    val channel_id: String,
-    val channel: ChannelResponse,
-    val member: ChannelMemberResponse,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-) : ChatEventDto()
-
 /**
  * An event parsed with its generated model, which the event mapping turns into the domain event.
  */
 internal data class GeneratedEventDto(val event: WSEvent) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class AIIndicatorUpdatedEventDto(
-    val type: String,
-    val ai_state: String,
-    val cid: String,
-    val user: UserResponseCommonFields,
-    val created_at: ExactDate,
-    val message_id: String,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class AIIndicatorClearEventDto(
-    val type: String,
-    val cid: String,
-    val user: UserResponseCommonFields,
-    val created_at: ExactDate,
-) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class AIIndicatorStopEventDto(
-    val type: String,
-    val cid: String,
-    val user: UserResponseCommonFields,
-    val created_at: ExactDate,
-) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(

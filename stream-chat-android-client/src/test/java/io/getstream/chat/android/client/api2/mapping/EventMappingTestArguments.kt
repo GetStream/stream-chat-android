@@ -17,9 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
@@ -27,7 +24,6 @@ import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -110,6 +106,9 @@ import io.getstream.result.Error
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
+import io.getstream.chat.android.network.models.AIIndicatorClearEvent as GeneratedAIIndicatorClearEvent
+import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
+import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
@@ -125,6 +124,7 @@ import io.getstream.chat.android.network.models.MessageDeliveredEvent as Generat
 import io.getstream.chat.android.network.models.MessageNewEvent as GeneratedMessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent as GeneratedNotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
@@ -528,15 +528,17 @@ internal object EventMappingTestArguments {
 
     private val messageUpdatedDto = GeneratedEventDto(messageUpdatedEvent)
 
-    private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
+    private val notificationAddedToChannelEvent = GeneratedNotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        created_at = EXACT_DATE,
+        createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        channel_type = CHANNEL_TYPE,
-        channel_id = CHANNEL_ID,
         channel = GENERATED_CHANNEL,
         member = MEMBER,
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
     )
+
+    private val notificationAddedToChannelDto = GeneratedEventDto(notificationAddedToChannelEvent)
 
     private val notificationChannelDeletedEvent = GeneratedNotificationChannelDeletedEvent(
         type = EventType.NOTIFICATION_CHANNEL_DELETED,
@@ -949,27 +951,33 @@ internal object EventMappingTestArguments {
 
     private val userMessagesDeletedEventDto = GeneratedEventDto(userMessagesDeletedGeneratedEvent)
 
-    private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
-        type = EventType.AI_TYPING_INDICATOR_UPDATED,
-        created_at = EXACT_DATE,
-        cid = CID,
-        user = COMMON_USER,
-        message_id = AI_MESSAGE_ID,
-        ai_state = AI_STATE,
+    private val aiIndicatorUpdatedDto = GeneratedEventDto(
+        GeneratedAIIndicatorUpdateEvent(
+            type = EventType.AI_TYPING_INDICATOR_UPDATED,
+            createdAt = GENERATED_EXACT_DATE,
+            cid = CID,
+            user = COMMON_USER,
+            messageId = AI_MESSAGE_ID,
+            aiState = AI_STATE,
+        ),
     )
 
-    private val aiIndicatorStopDto = AIIndicatorStopEventDto(
-        type = EventType.AI_TYPING_INDICATOR_STOP,
-        created_at = EXACT_DATE,
-        cid = CID,
-        user = COMMON_USER,
+    private val aiIndicatorStopDto = GeneratedEventDto(
+        GeneratedAIIndicatorStopEvent(
+            type = EventType.AI_TYPING_INDICATOR_STOP,
+            createdAt = GENERATED_EXACT_DATE,
+            cid = CID,
+            user = COMMON_USER,
+        ),
     )
 
-    private val ioIndicatorClearDto = AIIndicatorClearEventDto(
-        type = EventType.AI_TYPING_INDICATOR_CLEAR,
-        created_at = EXACT_DATE,
-        cid = CID,
-        user = COMMON_USER,
+    private val aiIndicatorClearDto = GeneratedEventDto(
+        GeneratedAIIndicatorClearEvent(
+            type = EventType.AI_TYPING_INDICATOR_CLEAR,
+            createdAt = GENERATED_EXACT_DATE,
+            cid = CID,
+            user = COMMON_USER,
+        ),
     )
 
     // END: DTO Models
@@ -1274,16 +1282,16 @@ internal object EventMappingTestArguments {
     )
 
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
-        type = notificationAddedToChannelDto.type,
-        createdAt = notificationAddedToChannelDto.created_at.date,
-        rawCreatedAt = notificationAddedToChannelDto.created_at.rawDate,
-        cid = notificationAddedToChannelDto.cid,
-        channelType = notificationAddedToChannelDto.channel_type,
-        channelId = notificationAddedToChannelDto.channel_id,
-        channel = with(domainMapping) {
-            notificationAddedToChannelDto.channel.toDomain()
-        },
-        member = with(domainMapping) { notificationAddedToChannelDto.member.toDomain() },
+        type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = with(domainMapping) { GENERATED_CHANNEL.toDomain() },
+        member = with(domainMapping) { MEMBER.toDomain() },
+        totalUnreadCount = TOTAL_UNREAD_COUNT,
+        unreadChannels = UNREAD_CHANNELS,
     )
 
     private val notificationChannelDeleted = NotificationChannelDeletedEvent(
@@ -1688,35 +1696,35 @@ internal object EventMappingTestArguments {
     )
 
     private val aiIndicatorUpdated = AIIndicatorUpdatedEvent(
-        type = aiIndicatorUpdatedDto.type,
-        createdAt = aiIndicatorUpdatedDto.created_at.date,
-        rawCreatedAt = aiIndicatorUpdatedDto.created_at.rawDate,
-        cid = aiIndicatorUpdatedDto.cid,
-        channelType = aiIndicatorUpdatedDto.cid.split(":").first(),
-        channelId = aiIndicatorUpdatedDto.cid.split(":").last(),
-        user = with(domainMapping) { aiIndicatorUpdatedDto.user.toDomain() },
-        messageId = aiIndicatorUpdatedDto.message_id,
-        aiState = aiIndicatorUpdatedDto.ai_state,
+        type = EventType.AI_TYPING_INDICATOR_UPDATED,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
+        messageId = AI_MESSAGE_ID,
+        aiState = AI_STATE,
     )
 
     private val aiIndicatorStop = AIIndicatorStopEvent(
-        type = aiIndicatorStopDto.type,
-        createdAt = aiIndicatorStopDto.created_at.date,
-        rawCreatedAt = aiIndicatorStopDto.created_at.rawDate,
-        cid = aiIndicatorStopDto.cid,
-        channelType = aiIndicatorStopDto.cid.split(":").first(),
-        channelId = aiIndicatorStopDto.cid.split(":").last(),
-        user = with(domainMapping) { aiIndicatorStopDto.user.toDomain() },
+        type = EventType.AI_TYPING_INDICATOR_STOP,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
     )
 
     private val aiIndicatorClear = AIIndicatorClearEvent(
-        type = ioIndicatorClearDto.type,
-        createdAt = ioIndicatorClearDto.created_at.date,
-        rawCreatedAt = ioIndicatorClearDto.created_at.rawDate,
-        cid = ioIndicatorClearDto.cid,
-        channelType = ioIndicatorClearDto.cid.split(":").first(),
-        channelId = ioIndicatorClearDto.cid.split(":").last(),
-        user = with(domainMapping) { ioIndicatorClearDto.user.toDomain() },
+        type = EventType.AI_TYPING_INDICATOR_CLEAR,
+        createdAt = GENERATED_EXACT_DATE.date,
+        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = with(domainMapping) { COMMON_USER.toDomain() },
     )
 
     private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
@@ -1807,7 +1815,7 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
         Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
-        Arguments.of(ioIndicatorClearDto, aiIndicatorClear),
+        Arguments.of(aiIndicatorClearDto, aiIndicatorClear),
         Arguments.of(userMessagesDeletedEventDto, userMessagesDeletedEvent),
     )
 }
