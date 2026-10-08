@@ -176,6 +176,7 @@ internal class UploadAttachmentsIntegrationTests {
                     same(file),
                     anyOrNull(),
                     anyOrNull(),
+                    any(),
                 ),
             ) doReturn TestCall(fileResult)
             whenever(
@@ -185,6 +186,7 @@ internal class UploadAttachmentsIntegrationTests {
                     same(file),
                     anyOrNull(),
                     anyOrNull(),
+                    any(),
                 ),
             ) doReturn TestCall(imageResult)
         }
@@ -201,6 +203,7 @@ internal class UploadAttachmentsIntegrationTests {
                     any(),
                     anyOrNull(),
                     anyOrNull(),
+                    any(),
                 ),
             ) doReturn TestCall(fileResult)
             whenever(
@@ -210,6 +213,7 @@ internal class UploadAttachmentsIntegrationTests {
                     any(),
                     anyOrNull(),
                     anyOrNull(),
+                    any(),
                 ),
             ) doReturn TestCall(fileResult)
         }

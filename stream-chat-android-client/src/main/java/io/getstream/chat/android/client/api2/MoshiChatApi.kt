@@ -601,8 +601,9 @@ constructor(
         file: File,
         messageId: String?,
         callback: ProgressCallback?,
+        transform: Boolean,
     ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
-        val transformedFile = fileTransformer.transform(file)
+        val transformedFile = if (transform) fileTransformer.transform(file) else file
         // Read userId only after the (potentially slow) file transform, so a connection established in the
         // meantime is picked up.
         val uploadContext = FileUploadContext(
@@ -621,8 +622,9 @@ constructor(
         file: File,
         messageId: String?,
         callback: ProgressCallback?,
+        transform: Boolean,
     ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
-        val transformedFile = fileTransformer.transform(file)
+        val transformedFile = if (transform) fileTransformer.transform(file) else file
         // Read userId only after the (potentially slow) file transform, so a connection established in the
         // meantime is picked up.
         val uploadContext = FileUploadContext(

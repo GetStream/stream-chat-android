@@ -24,6 +24,9 @@ import java.io.File
  * This can be used to compress images or videos before uploading them.
  * The transformed file will be uploaded to the CDN.
  * The original file will not be modified.
+ *
+ * The attachment type and MIME type are inferred from the extension of the transformed file, so a transformer
+ * that changes the file format must return a file whose extension matches the new format (e.g. `.jpg` for JPEG).
  */
 public interface FileTransformer {
 
