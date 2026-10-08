@@ -20,7 +20,10 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
+import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
@@ -44,6 +47,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.Date
@@ -124,6 +128,9 @@ internal class NewMessageEventParsingTest {
         userAdapter = userAdapter,
     )
 
+    private fun generated(json: String): ChatEvent =
+        with(eventMapping) { parser.fromJson(json, ChatEventDto::class.java).toDomain() }
+
     // region Both paths produce identical events
 
     @Test
@@ -131,28 +138,28 @@ internal class NewMessageEventParsingTest {
         // The fixture transitively pulls in MessageTestData.jsonAllFields, which is the
         // truly-comprehensive Message JSON. Parity here is the meaningful check; a
         // hand-written expected adds maintenance burden without commensurate value.
-        val dto = parser.fromJson(NewMessageEventTestData.jsonAllFields, NewMessageEventDto::class.java)
-        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val parsed = parser.fromJson(NewMessageEventTestData.jsonAllFields, ChatEventDto::class.java)
+        val generatedResult = with(eventMapping) { parsed.toDomain() }
         val directResult = adapter.fromJson(NewMessageEventTestData.jsonAllFields)
-        assertEquals(dtoResult, directResult, "DTO path and direct path produced different NewMessageEvents")
+        assertEquals(generatedResult, directResult, "Generated path and direct path produced different NewMessageEvents")
     }
 
     @Test
     fun `Both paths - optional fields missing fall back to identical defaults`() {
-        val dto = parser.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing, NewMessageEventDto::class.java)
-        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val parsed = parser.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing, ChatEventDto::class.java)
+        val generatedResult = with(eventMapping) { parsed.toDomain() }
         val directResult = adapter.fromJson(NewMessageEventTestData.jsonOptionalFieldsMissing)
-        assertEquals(dtoResult, directResult)
-        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, dtoResult)
+        assertEquals(generatedResult, directResult)
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, generatedResult)
         assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, directResult)
     }
 
     @Test
     fun `Both paths - propagate event-level channelInfo to replyTo when neither message has channel`() {
-        val dto = parser.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel, NewMessageEventDto::class.java)
-        val dtoResult = with(eventMapping) { dto.toDomain() }
+        val parsed = parser.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel, ChatEventDto::class.java)
+        val generatedResult = with(eventMapping) { parsed.toDomain() }
         val directResult = adapter.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel)
-        assertEquals(dtoResult, directResult)
+        assertEquals(generatedResult, directResult)
         // Guard the specific parity gap this test covers: replyTo.channelInfo must be populated
         // from event-level data when neither the outer message nor quoted_message had `channel`.
         val replyToChannelInfo = checkNotNull(directResult?.message?.replyTo?.channelInfo)
@@ -166,10 +173,9 @@ internal class NewMessageEventParsingTest {
     // region Error message parity
 
     @Test
-    fun `DTO path - throws on missing type`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingType, NewMessageEventDto::class.java)
-        }
+    fun `Generated path - an event without a type parses as an unknown event`() {
+        val event = generated(NewMessageEventTestData.jsonMissingType)
+        assertTrue(event is UnknownEvent, "Expected an UnknownEvent, got $event")
     }
 
     @Test
@@ -180,9 +186,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing created_at`() {
+    fun `Generated path - throws on missing created_at`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingCreatedAt, NewMessageEventDto::class.java)
+            parser.fromJson(NewMessageEventTestData.jsonMissingCreatedAt, ChatEventDto::class.java)
         }
     }
 
@@ -194,9 +200,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing user`() {
+    fun `Generated path - throws on missing user`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingUser, NewMessageEventDto::class.java)
+            parser.fromJson(NewMessageEventTestData.jsonMissingUser, ChatEventDto::class.java)
         }
     }
 
@@ -208,9 +214,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing cid`() {
+    fun `Generated path - throws on missing cid`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingCid, NewMessageEventDto::class.java)
+            parser.fromJson(NewMessageEventTestData.jsonMissingCid, ChatEventDto::class.java)
         }
     }
 
@@ -222,10 +228,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing channel_type`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingChannelType, NewMessageEventDto::class.java)
-        }
+    fun `Generated path - takes the channel type from the cid`() {
+        val event = generated(NewMessageEventTestData.jsonMissingChannelType) as NewMessageEvent
+        assertEquals("messaging", event.channelType)
     }
 
     @Test
@@ -236,10 +241,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing channel_id`() {
-        assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingChannelId, NewMessageEventDto::class.java)
-        }
+    fun `Generated path - takes the channel id from the cid`() {
+        val event = generated(NewMessageEventTestData.jsonMissingChannelId) as NewMessageEvent
+        assertEquals("general", event.channelId)
     }
 
     @Test
@@ -250,9 +254,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on missing message`() {
+    fun `Generated path - throws on missing message`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMissingMessage, NewMessageEventDto::class.java)
+            parser.fromJson(NewMessageEventTestData.jsonMissingMessage, ChatEventDto::class.java)
         }
     }
 
@@ -264,9 +268,9 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `DTO path - throws on malformed created_at`() {
+    fun `Generated path - throws on malformed created_at`() {
         assertThrows<JsonDataException> {
-            parser.fromJson(NewMessageEventTestData.jsonMalformedCreatedAt, NewMessageEventDto::class.java)
+            parser.fromJson(NewMessageEventTestData.jsonMalformedCreatedAt, ChatEventDto::class.java)
         }
     }
 
