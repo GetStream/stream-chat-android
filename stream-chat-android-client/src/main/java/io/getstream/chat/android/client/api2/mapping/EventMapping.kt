@@ -453,6 +453,7 @@ internal class EventMapping(
      * Transforms an event parsed with its generated model. The event adapter only produces the types
      * handled here, and rejects an event missing a field its domain event requires.
      */
+    @Suppress("LongMethod")
     private fun WSEvent.toDomain(): ChatEvent = when (this) {
         is GeneratedUserWatchingStartEvent -> toDomain()
         is GeneratedUserWatchingStopEvent -> toDomain()
