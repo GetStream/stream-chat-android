@@ -16,10 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.DeliveryReceipts
-import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.ReadReceipts
-import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.User
@@ -123,12 +119,6 @@ internal object UserTestData {
         name = "John Doe",
         image = "https://example.com/avatar.jpg",
         role = "user",
-        invisible = true,
-        privacySettings = PrivacySettings(
-            typingIndicators = TypingIndicators(enabled = true),
-            readReceipts = ReadReceipts(enabled = false),
-            deliveryReceipts = DeliveryReceipts(enabled = true),
-        ),
         language = "en",
         banned = false,
         devices = listOf(
@@ -143,28 +133,24 @@ internal object UserTestData {
         deactivatedAt = null,
         updatedAt = Date(1577923200000L),
         lastActive = Date(1578009600000L),
-        totalUnreadCount = 5,
-        unreadChannels = 3,
-        unreadThreads = 2,
         teams = listOf("team1", "team2"),
         teamsRole = mapOf("team1" to "admin", "team2" to "member"),
         blockedUserIds = listOf("blocked1"),
         avgResponseTime = 3600,
-        extraData = mapOf("custom_field" to "custom_value"),
+        // Own-user fields the generated user models don't declare, so both paths keep them as extra data.
+        extraData = mapOf(
+            "custom_field" to "custom_value",
+            "invisible" to true,
+            "privacy_settings" to mapOf(
+                "typing_indicators" to mapOf("enabled" to true),
+                "read_receipts" to mapOf("enabled" to false),
+                "delivery_receipts" to mapOf("enabled" to true),
+            ),
+            "total_unread_count" to 5.0,
+            "unread_channels" to 3.0,
+            "unread_threads" to 2.0,
+        ),
     )
-
-    @Language("JSON")
-    val jsonUnreadCountsNull = """
-        {
-            "id": "user123",
-            "role": "user",
-            "banned": false,
-            "online": true,
-            "total_unread_count": null,
-            "unread_channels": null,
-            "unread_threads": null
-        }
-    """.trimIndent()
 
     val expectedOptionalFieldsMissing = User(
         id = "user456",

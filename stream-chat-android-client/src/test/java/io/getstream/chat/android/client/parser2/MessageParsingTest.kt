@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.parser2.direct.MessageReminderInfoAdapte
 import io.getstream.chat.android.client.parser2.direct.ModerationAdapter
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.direct.PollAdapter
-import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
@@ -67,10 +66,8 @@ internal class MessageParsingTest {
     private val dateAdapter = moshi.adapter(Date::class.java)
 
     private val deviceAdapter = DeviceAdapter()
-    private val privacySettingsAdapter = PrivacySettingsAdapter()
     private val userAdapter = UserAdapter(
         deviceAdapter = deviceAdapter,
-        privacySettingsAdapter = privacySettingsAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -316,7 +313,6 @@ internal class MessageParsingTest {
         )
         val transformedUserAdapter = UserAdapter(
             deviceAdapter = deviceAdapter,
-            privacySettingsAdapter = privacySettingsAdapter,
             dateAdapter = dateAdapter,
             userTransformer = customUserTransformer,
         )

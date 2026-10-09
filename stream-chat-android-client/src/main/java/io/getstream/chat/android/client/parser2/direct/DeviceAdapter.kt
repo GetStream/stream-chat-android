@@ -22,9 +22,16 @@ import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
 
+/**
+ * Reads an event user's device the way the generated path reads it from custom data: an entry that isn't an
+ * object or has no string `id` is dropped (null), and a missing `push_provider` maps to an unknown provider.
+ */
 internal class DeviceAdapter : JsonAdapter<Device>() {
     override fun fromJson(reader: JsonReader): Device? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
+        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
+            reader.skipValue()
+            return null
+        }
 
         reader.beginObject()
         var id: String? = null
@@ -33,23 +40,30 @@ internal class DeviceAdapter : JsonAdapter<Device>() {
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
-                "id" -> id = reader.nextString()
-                "push_provider" -> pushProvider = reader.nextString()
-                "push_provider_name" -> pushProviderName = JsonParsingUtils.readNullableString(reader)
+                "id" -> id = readStringOrNull(reader)
+                "push_provider" -> pushProvider = readStringOrNull(reader)
+                "push_provider_name" -> pushProviderName = readStringOrNull(reader)
                 else -> reader.skipValue()
             }
         }
         reader.endObject()
 
-        JsonParsingUtils.requireField(id, "id", reader)
-        JsonParsingUtils.requireField(pushProvider, "push_provider", reader)
-
-        return Device(
-            token = id,
-            pushProvider = PushProvider.fromKey(pushProvider),
-            providerName = pushProviderName,
-        )
+        return id?.let {
+            Device(
+                token = it,
+                pushProvider = PushProvider.fromKey(pushProvider.orEmpty()),
+                providerName = pushProviderName,
+            )
+        }
     }
+
+    private fun readStringOrNull(reader: JsonReader): String? =
+        if (reader.peek() == JsonReader.Token.STRING) {
+            reader.nextString()
+        } else {
+            reader.skipValue()
+            null
+        }
 
     override fun toJson(p0: JsonWriter, p1: Device?) {
         error("Serialization not supported for direct-to-domain path")

@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.direct.PollAdapter
-import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.PollTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -52,10 +51,8 @@ internal class PollParsingTest {
     private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
     private val deviceAdapter = DeviceAdapter()
-    private val privacySettingsAdapter = PrivacySettingsAdapter()
     private val userAdapter = UserAdapter(
         deviceAdapter = deviceAdapter,
-        privacySettingsAdapter = privacySettingsAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )

@@ -35,16 +35,17 @@ import io.getstream.chat.android.client.parser2.direct.ModerationAdapter
 import io.getstream.chat.android.client.parser2.direct.NewMessageEventAdapter
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.direct.PollAdapter
-import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -69,10 +70,8 @@ internal class NewMessageEventParsingTest {
     private val dateAdapter = moshi.adapter(Date::class.java)
 
     private val deviceAdapter = DeviceAdapter()
-    private val privacySettingsAdapter = PrivacySettingsAdapter()
     private val userAdapter = UserAdapter(
         deviceAdapter = deviceAdapter,
-        privacySettingsAdapter = privacySettingsAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -162,6 +161,25 @@ internal class NewMessageEventParsingTest {
         )
         assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, generated(json))
         assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, adapter.fromJson(json))
+    }
+
+    @Test
+    fun `Both paths - read event user devices leniently and keep undeclared user fields as extra data`() {
+        val json = NewMessageEventTestData.jsonUserWithDevicesAndOwnUserFields
+        val direct = adapter.fromJson(json)!!
+
+        assertEquals(generated(json), direct)
+        assertEquals(
+            listOf(
+                Device(token = "device-1", pushProvider = PushProvider.FIREBASE, providerName = "Firebase"),
+                Device(token = "device-2", pushProvider = PushProvider.fromKey(""), providerName = null),
+            ),
+            direct.user.devices,
+        )
+        assertEquals(
+            setOf("invisible", "privacy_settings", "total_unread_count"),
+            direct.user.extraData.keys,
+        )
     }
 
     @Test
