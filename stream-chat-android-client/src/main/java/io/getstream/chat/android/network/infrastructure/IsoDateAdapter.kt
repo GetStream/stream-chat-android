@@ -52,10 +52,13 @@ internal class IsoDateAdapter {
         }
     }
 
+    /** Parses an ISO-8601 date-time or unix nanoseconds. */
     @FromJson
     internal fun fromJson(value: String): Date? {
         if (value.isEmpty()) return null
-        cache.get(value)?.let { return it }
+        if (value.all { it in '0'..'9' }) return value.toLongOrNull()?.let { Date(it / NANOS_PER_MILLI) }
+        // Date is mutable; hand back a copy so a caller mutating it can't corrupt the cache.
+        cache.get(value)?.let { return Date(it.time) }
         val parsed = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Date.from(ITU.parseDateTime(value).toInstant())
@@ -70,10 +73,12 @@ internal class IsoDateAdapter {
             }
         }
         if (parsed != null) cache.put(value, parsed)
-        return parsed
+        // Return a copy for the same reason as the cache-hit path above.
+        return parsed?.let { Date(it.time) }
     }
 
     private companion object {
         const val CACHE_SIZE = 300
+        const val NANOS_PER_MILLI = 1_000_000L
     }
 }
