@@ -93,13 +93,21 @@ internal class AttachmentsSenderTest {
     }
 
     @Test
-    fun `a pending attachment is sent once its upload succeeds`() = runTest {
+    fun `a pending attachment is sent once its upload succeeds`() = `a pending attachment is sent once uploaded`(
+        isRetrying = false,
+    )
+
+    @Test
+    fun `a retried message with a pending attachment is sent once its upload succeeds`() =
+        `a pending attachment is sent once uploaded`(isRetrying = true)
+
+    private fun `a pending attachment is sent once uploaded`(isRetrying: Boolean) = runTest {
         val message = message(Attachment.UploadState.Idle)
         val uploaded = message.attachments.map {
             it.copy(uploadState = Attachment.UploadState.Success, assetUrl = "https://cdn/${randomString()}")
         }
 
-        val result = async { sender().sendAttachments(message, "messaging", channelId, isRetrying = false) }
+        val result = async { sender().sendAttachments(message, "messaging", channelId, isRetrying) }
         runCurrent()
         uploadWork(message).size shouldBeEqualTo 1
         AttachmentsUploadStates.updateMessageAttachments(message.copy(attachments = uploaded))

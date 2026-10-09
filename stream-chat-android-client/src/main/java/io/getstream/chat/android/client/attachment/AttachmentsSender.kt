@@ -59,42 +59,19 @@ internal class AttachmentsSender(
         channelId: String,
         isRetrying: Boolean,
     ): Result<Message> {
-        val result = when {
+        val result = if (message.hasPendingAttachments()) {
+            logger.d {
+                "[sendAttachments] Message ${message.id} (isRetrying: $isRetrying)" +
+                    " has ${message.attachments.size} pending attachments"
+            }
+            uploadAttachments(message, channelType, channelId)
+        } else {
             // Also covers a retried message whose attachments were all uploaded by a previous attempt.
-            !message.hasPendingAttachments() -> {
-                logger.d { "[sendAttachments] Message ${message.id} without pending attachments" }
-                Result.Success(message)
-            }
-            isRetrying -> {
-                logger.d { "[sendAttachments] Retrying Message ${message.id}" }
-                retryMessage(message, channelType, channelId)
-            }
-            else -> {
-                logger.d {
-                    "[sendAttachments] Message ${message.id}" +
-                        " has ${message.attachments.size} pending attachments"
-                }
-                uploadAttachments(message, channelType, channelId)
-            }
+            logger.d { "[sendAttachments] Message ${message.id} without pending attachments" }
+            Result.Success(message)
         }
         return verifier.verifyAttachments(result)
     }
-
-    /**
-     * Tries to upload attachments of this [message] without preparing.
-     *
-     * It is used when we have some messages already pending in database (due to any non permanent error)
-     *
-     * @param message [Message] to be retried.
-     *
-     * @return [Result] having message with latest attachments state or error if there was any.
-     */
-    private suspend fun retryMessage(
-        message: Message,
-        channelType: String,
-        channelId: String,
-    ): Result<Message> =
-        uploadAttachments(message, channelType, channelId)
 
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
@@ -144,8 +121,8 @@ internal class AttachmentsSender(
                     attachments.all { it.uploadState == Attachment.UploadState.Success } ||
                         attachments.any { it.uploadState is Attachment.UploadState.Failed }
                 }
-            uploadedAttachments = attachments.takeUnless { list ->
-                list.any { it.uploadState is Attachment.UploadState.Failed }
+            uploadedAttachments = attachments.takeIf { list ->
+                list.all { it.uploadState == Attachment.UploadState.Success }
             }
         }
         jobsMap = jobsMap + (newMessage.id to job)
