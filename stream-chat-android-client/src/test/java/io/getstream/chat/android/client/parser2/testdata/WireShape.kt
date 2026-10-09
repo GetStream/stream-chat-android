@@ -43,7 +43,8 @@ internal object WireShape {
 
         @Suppress("UNCHECKED_CAST")
         val normalized = normalize(transform(root)) as Map<String, Any?>
-        return mapAdapter.toJson(normalized)
+        // Keeps explicit nulls, so the generated path sees the same nulls as the direct path.
+        return mapAdapter.serializeNulls().toJson(normalized)
     }
 
     private fun normalize(value: Any?): Any? = when (value) {
