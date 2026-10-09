@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -162,7 +163,7 @@ class MessagesActivity : AppCompatActivity() {
         viewModel: MessageComposerViewModel,
         onDateSelected: (Long) -> Unit,
     ) {
-        val activity = LocalContext.current as AppCompatActivity
+        val activity = LocalActivity.current as AppCompatActivity
 
         MessageComposer(
             modifier = Modifier
