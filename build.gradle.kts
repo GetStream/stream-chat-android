@@ -124,6 +124,7 @@ apiValidation {
     ignoredPackages.add("io/getstream/chat/android/ui/databinding")
 
     ignoredProjects += listOf(
+        "stream-chat-android-ai-compose-sample",
         "stream-chat-android-benchmark",
         "stream-chat-android-client-test",
         "stream-chat-android-compose-sample",

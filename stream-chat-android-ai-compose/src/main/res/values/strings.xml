@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <string name="stream_ai_compose_speech_to_text_idle_button">Voice input</string>
+    <string name="stream_ai_compose_speech_to_text_recording_button">Recording…</string>
+    <string name="stream_ai_compose_composer_mic_permission_message">Microphone permission is required to record audio</string>
+    <string name="stream_ai_compose_composer_mic_permission_action">Settings</string>
+    <string name="stream_ai_compose_composer_input_placeholder">Ask Assistant</string>
+    <string name="stream_ai_compose_composer_stop_button">Stop</string>
+    <string name="stream_ai_compose_composer_send_button">Send</string>
+    <string name="stream_ai_compose_composer_add_attachments_button">Add context</string>
+    <string name="stream_ai_compose_reasoning_thinking">Thinking…</string>
+    <string name="stream_ai_compose_reasoning_thinking_for">Thinking… %1$s</string>
+    <string name="stream_ai_compose_reasoning_thought">Thought process</string>
+    <string name="stream_ai_compose_reasoning_thought_for">Thought for %1$s</string>
+    <string name="stream_ai_compose_reasoning_show">show reasoning</string>
+    <string name="stream_ai_compose_reasoning_hide">hide reasoning</string>
+    <string name="stream_ai_compose_reasoning_expanded">Expanded</string>
+    <string name="stream_ai_compose_reasoning_collapsed">Collapsed</string>
+    <string name="stream_ai_compose_tool_call_running">In progress</string>
+    <string name="stream_ai_compose_tool_call_completed">Completed</string>
+    <string name="stream_ai_compose_tool_call_awaiting_client">Waiting for the device</string>
+    <string name="stream_ai_compose_tool_call_awaiting_approval">Waiting for approval</string>
+    <string name="stream_ai_compose_tool_call_declined">Declined</string>
+    <string name="stream_ai_compose_tool_call_failed">Didn\'t complete</string>
+    <string name="stream_ai_compose_tool_call_cancelled">Cancelled</string>
+    <!-- Short durations, such as "7s", "2m", "1m 5s" and "0.4s". -->
+    <string name="stream_ai_compose_duration_seconds">%1$ds</string>
+    <string name="stream_ai_compose_duration_minutes">%1$dm</string>
+    <string name="stream_ai_compose_duration_minutes_seconds">%1$dm %2$ds</string>
+    <string name="stream_ai_compose_duration_fraction">%1$ss</string>
+    <string name="stream_ai_compose_part_unsupported">A step this app version can\'t show</string>
+    <string name="stream_ai_compose_tool_approval_allow">Allow</string>
+    <string name="stream_ai_compose_tool_approval_decline">Don\'t allow</string>
+    <string name="stream_ai_compose_tool_approval_not_sent">Your answer couldn\'t be sent. Try again.</string>
+</resources>
