@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.api.internal.DistinctChatApi
 import io.getstream.chat.android.client.api.internal.DistinctChatApiEnabler
 import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
+import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -74,6 +75,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.DirectEventParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.parser2.withErrorLogging
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
@@ -89,10 +91,12 @@ import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.UserId
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.log.StreamLog
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
@@ -249,13 +253,14 @@ constructor(
         config: ChatApiConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean,
+        configConverters: (Retrofit.Builder) -> Retrofit.Builder = parser::configRetrofit,
     ): Retrofit {
         val okHttpClient = clientBuilder(timeout, config, parser, isAnonymousApi).build()
 
         return Retrofit.Builder()
             .baseUrl(endpoint)
             .client(okHttpClient)
-            .also(parser::configRetrofit)
+            .also { configConverters(it) }
             .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser, userScope))
             .build()
     }
@@ -344,18 +349,18 @@ constructor(
             buildRetrofitApi<GuestApi>(),
             buildRetrofitApi<MessageApi>(),
             buildRetrofitApi<ChannelApi>(),
-            buildRetrofitApi<DeviceApi>(),
+            buildV2RetrofitApi<DeviceApi>(),
             buildRetrofitApi<ModerationApi>(),
             buildRetrofitApi<GeneralApi>(),
-            buildRetrofitApi<ConfigApi>(),
+            buildV2RetrofitApi<ConfigApi>(),
             buildFileDownloadApi(),
-            buildRetrofitApi<OpenGraphApi>(),
+            buildV2RetrofitApi<OpenGraphApi>(),
             buildRetrofitApi<ThreadsApi>(),
             buildRetrofitApi<PollsApi>(),
             buildRetrofitApi<RemindersApi>(),
-            buildRetrofitApi<PushPreferencesApi>(),
+            buildV2RetrofitApi<PushPreferencesApi>(),
             buildRetrofitApi<UserGroupApi>(),
-            buildRetrofitApi<RoleApi>(),
+            buildV2RetrofitApi<RoleApi>(),
             userScope,
             userScope,
         ).let { originalApi ->
@@ -378,6 +383,26 @@ constructor(
             moshiParser,
             apiClass.isAnonymousApi,
         ).create(apiClass)
+    }
+
+    /**
+     * Builds an API whose paths are on the v2 endpoints. v2 responses carry integer dates and nest custom data under
+     * `custom`, which the generated [Serializer] reads as emitted, so bodies go through it instead of the v1 parser.
+     * Errors keep the v1 envelope, so the interceptors and the call adapter still use [moshiParser].
+     */
+    private inline fun <reified T> buildV2RetrofitApi(): T {
+        val apiClass = T::class.java
+        return buildRetrofit(
+            config.httpUrl,
+            BASE_TIMEOUT,
+            config,
+            moshiParser,
+            apiClass.isAnonymousApi,
+        ) { builder ->
+            builder
+                .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
+                .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi).withErrorLogging())
+        }.create(apiClass)
     }
 
     private fun buildRetrofitCdnApi(): RetrofitCdnApi {
