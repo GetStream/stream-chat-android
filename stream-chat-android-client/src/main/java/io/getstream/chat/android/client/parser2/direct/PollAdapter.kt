@@ -103,17 +103,15 @@ internal class PollAdapter(
         JsonParsingUtils.requireField(id, "id", reader)
         JsonParsingUtils.requireField(name, "name", reader)
         JsonParsingUtils.requireField(description, "description", reader)
-        JsonParsingUtils.requireField(options, "options", reader)
         JsonParsingUtils.requireField(enforceUniqueVote, "enforce_unique_vote", reader)
         JsonParsingUtils.requireField(allowUserSuggestedOptions, "allow_user_suggested_options", reader)
         JsonParsingUtils.requireField(allowAnswers, "allow_answers", reader)
         JsonParsingUtils.requireField(voteCount, "vote_count", reader)
-        JsonParsingUtils.requireField(ownVotes, "own_votes", reader)
         JsonParsingUtils.requireField(createdAt, "created_at", reader)
         JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
         JsonParsingUtils.requireField(answersCount, "answers_count", reader)
 
-        val ownUserId = currentUserIdProvider() ?: ownVotes.firstOrNull()?.user?.id
+        val ownUserId = currentUserIdProvider() ?: ownVotes?.firstOrNull()?.user?.id
 
         // Split parsed votes/answers into actual Vote and Answer objects
         val votes = latestVotesByOption
@@ -122,7 +120,7 @@ internal class PollAdapter(
             ?.filter { !it.isAnswer }
             ?.map { it.toVote() } ?: emptyList()
         val mergedOwnVotes = (
-            ownVotes
+            ownVotes.orEmpty()
                 .filter { !it.isAnswer }
                 .map { it.toVote() } +
                 votes.filter { it.user?.id == ownUserId }
@@ -137,7 +135,7 @@ internal class PollAdapter(
             id = id,
             name = name,
             description = description,
-            options = options,
+            options = options.orEmpty(),
             votingVisibility = toVotingVisibility(votingVisibility),
             enforceUniqueVote = enforceUniqueVote,
             maxVotesAllowed = maxVotesAllowed,

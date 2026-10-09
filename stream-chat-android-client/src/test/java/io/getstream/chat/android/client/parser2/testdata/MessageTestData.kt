@@ -463,78 +463,6 @@ internal object MessageTestData {
         "silent": false
     }"""
 
-    @Language("JSON")
-    val jsonMissingAttachments = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingLatestReactions = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingMentionedUsers = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
-    @Language("JSON")
-    val jsonMissingOwnReactions = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello world",
-        "html": "<p>Hello world</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false
-    }"""
-
     val expectedOptionalFieldsMissing = Message(
         id = "msg-1",
         cid = "messaging:general",
@@ -577,6 +505,7 @@ internal object MessageTestData {
         "updated_at": "2020-01-01T00:00:00.000Z",
         "silent": false,
         "pinned": false,
+        "show_in_channel": null,
         "command": null,
         "parent_id": null,
         "quoted_message_id": null,
@@ -982,14 +911,7 @@ internal object MessageTestData {
 
     // region Explicit-null collections (defaults must apply identically on both paths)
 
-    /**
-     * Only the collection fields both paths accept as null are set to explicit JSON null:
-     * `reaction_counts`, `reaction_scores`, and `reaction_groups`. Both paths must coerce them
-     * to empty defaults.
-     *
-     * The direct path rejects an explicit null for fields like `i18n` and `thread_participants`;
-     * the throw cases below cover them separately.
-     */
+    /** Collection fields set to explicit JSON null, which both paths coerce to empty defaults. */
     @Language("JSON")
     val jsonExplicitNullCollections = """{
         "id": "msg-1",
@@ -998,10 +920,10 @@ internal object MessageTestData {
         "html": "<p>Hello</p>",
         "type": "regular",
         "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
+        "attachments": null,
+        "latest_reactions": null,
+        "own_reactions": null,
+        "mentioned_users": null,
         "reply_count": 0,
         "deleted_reply_count": 0,
         "created_at": "2020-01-01T00:00:00.000Z",
@@ -1009,7 +931,11 @@ internal object MessageTestData {
         "silent": false,
         "reaction_counts": null,
         "reaction_scores": null,
-        "reaction_groups": null
+        "reaction_groups": null,
+        "i18n": null,
+        "thread_participants": null,
+        "mentioned_groups": null,
+        "mentioned_roles": null
     }"""
 
     val expectedExplicitNullCollections = Message(
@@ -1038,99 +964,6 @@ internal object MessageTestData {
         reactionGroups = emptyMap(),
         extraData = emptyMap(),
     )
-
-    /**
-     * `i18n` explicitly null, which MessageAdapter rejects. Field-absent is a separate case (covered
-     * elsewhere) that falls back to the empty default.
-     */
-    @Language("JSON")
-    val jsonExplicitNullI18n = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "i18n": null
-    }"""
-
-    /**
-     * `thread_participants` explicitly null. Same explicit-null rejection as `i18n` above.
-     */
-    @Language("JSON")
-    val jsonExplicitNullThreadParticipants = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "thread_participants": null
-    }"""
-
-    /**
-     * `mentioned_groups` explicitly null. Same explicit-null rejection as `thread_participants` above.
-     */
-    @Language("JSON")
-    val jsonExplicitNullMentionedGroups = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "mentioned_groups": null
-    }"""
-
-    /**
-     * `mentioned_roles` explicitly null. Same explicit-null rejection as `mentioned_groups` above.
-     */
-    @Language("JSON")
-    val jsonExplicitNullMentionedRoles = """{
-        "id": "msg-1",
-        "cid": "messaging:general",
-        "text": "Hello",
-        "html": "<p>Hello</p>",
-        "type": "regular",
-        "user": {"id": "user-1", "role": "user", "banned": false, "online": true},
-        "attachments": [],
-        "latest_reactions": [],
-        "own_reactions": [],
-        "mentioned_users": [],
-        "reply_count": 0,
-        "deleted_reply_count": 0,
-        "created_at": "2020-01-01T00:00:00.000Z",
-        "updated_at": "2020-01-01T00:00:00.000Z",
-        "silent": false,
-        "mentioned_roles": null
-    }"""
 
     // endregion
     // region Member info (message.member)

@@ -162,32 +162,24 @@ internal class PollParsingTest {
         }
     }
 
-    /**
-     * The generated model defaults `options` where `PollAdapter` requires it. The backend always sends
-     * the key, so only a hand-built payload can tell the two apart.
-     */
     @Test
-    fun `Missing options is empty on the response path and throws on the direct path`() {
+    fun `Both paths - missing options is empty`() {
         val dto = parser.fromJson(PollTestData.jsonMissingOptions, PollResponseData::class.java)
 
         assertEquals(emptyList<Option>(), with(domainMapping) { dto.toDomain() }.options)
-        assertThrows<JsonDataException> { adapter.fromJson(PollTestData.jsonMissingOptions) }
+        assertEquals(emptyList<Option>(), adapter.fromJson(PollTestData.jsonMissingOptions)?.options)
     }
 
-    /**
-     * `own_votes` splits the same way as `options`, and this one is new: the hand-written DTO required it,
-     * matching `PollAdapter`.
-     */
     @Test
-    fun `Missing own_votes is empty on the response path and throws on the direct path`() {
+    fun `Both paths - missing own_votes is empty`() {
         val dto = parser.fromJson(PollTestData.jsonMissingOwnVotes, PollResponseData::class.java)
 
         assertEquals(emptyList<Vote>(), with(domainMapping) { dto.toDomain() }.ownVotes)
-        assertThrows<JsonDataException> { adapter.fromJson(PollTestData.jsonMissingOwnVotes) }
+        assertEquals(emptyList<Vote>(), adapter.fromJson(PollTestData.jsonMissingOwnVotes)?.ownVotes)
     }
 
     /**
-     * The mirror image: the generated model requires `voting_visibility` where `PollAdapter` defaults it
+     * The generated model requires `voting_visibility` where `PollAdapter` defaults it
      * to [VotingVisibility.PUBLIC].
      */
     @Test

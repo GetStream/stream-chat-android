@@ -41,21 +41,6 @@ internal object JsonParsingUtils {
         )
     }
 
-    /**
-     * Throws [JsonDataException] if the next JSON value is an explicit `null`. Use for fields
-     * whose DTO declaration is non-nullable but has a default value — Moshi codegen rejects
-     * explicit JSON null for such fields, so we mirror that for parser parity. Fields that are
-     * absent altogether do not reach this check (the surrounding `when` branch isn't entered),
-     * which preserves the default-on-missing behavior.
-     */
-    fun rejectExplicitNull(reader: JsonReader, fieldName: String) {
-        if (reader.peek() == JsonReader.Token.NULL) {
-            throw JsonDataException(
-                "Non-null value '$fieldName' was null at ${reader.path}",
-            )
-        }
-    }
-
     /** Reads a nullable Int (returns null if JSON value is null). */
     fun readNullableInt(reader: JsonReader): Int? {
         return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextInt()
