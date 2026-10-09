@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
@@ -190,11 +191,12 @@ internal class QueryChannelsStateLogic(
         }
     }
 
-    private fun Channel.joinMessages(existingChannel: Channel?): Channel =
-        copy(
-            messages = ((existingChannel?.messages ?: emptyList()) + messages)
-                .distinctBy { it.id },
-        )
+    private fun Channel.joinMessages(existingChannel: Channel?): Channel {
+        val existingMessages = existingChannel?.messages.orEmpty()
+        // The incoming copy wins, unless ours has local changes the server has not seen yet.
+        val unsyncedMessages = existingMessages.filter { it.isLocalOnly() }
+        return copy(messages = (unsyncedMessages + messages + existingMessages).distinctBy { it.id })
+    }
 
     /**
      * The list of members is merged with the existing list of members but only used if it is smaller than the
