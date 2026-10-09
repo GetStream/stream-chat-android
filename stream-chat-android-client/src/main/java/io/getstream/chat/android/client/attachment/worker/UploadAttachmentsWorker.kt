@@ -37,8 +37,6 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -95,7 +93,7 @@ public class UploadAttachmentsWorker(
         }
 
         val hasPendingAttachment = message.attachments.any { attachment ->
-            attachment.uploadState !is Attachment.UploadState.Failed && !attachment.isUploaded()
+            attachment.needsUpload() && attachment.uploadState !is Attachment.UploadState.Failed
         }
 
         return if (!hasPendingAttachment) {
@@ -125,7 +123,7 @@ public class UploadAttachmentsWorker(
             coroutineScope {
                 message.attachments.mapIndexed { index, attachment ->
                     async {
-                        if (attachment.isUploaded()) {
+                        if (!attachment.needsUpload()) {
                             logger.i {
                                 "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
                                     " for message ${message.id} already uploaded"
@@ -155,8 +153,6 @@ public class UploadAttachmentsWorker(
     }
 
     private suspend fun uploadAttachment(message: Message, attachment: Attachment): Attachment {
-        // Don't start a new upload once the worker is stopped.
-        currentCoroutineContext().ensureActive()
         logger.d {
             "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} for message ${message.id}"
         }
@@ -188,7 +184,9 @@ public class UploadAttachmentsWorker(
                 uploaded[index] = result
                 insertMessageIfStored(message.copy(attachments = uploaded.toList()))
                 channelStateLogic?.channelState()?.getMessageById(message.id)?.let { current ->
-                    val updated = current.attachments.map { if (it.uploadId == result.uploadId) result else it }
+                    // The upload removes the upload id from result, so match on the one it was uploaded with.
+                    val uploadId = message.attachments[index].uploadId
+                    val updated = current.attachments.map { if (it.uploadId == uploadId) result else it }
                     channelStateLogic.upsertMessage(current.copy(attachments = updated))
                 }
             }
@@ -214,6 +212,8 @@ public class UploadAttachmentsWorker(
             messageRepository.insertMessage(message)
         }
     }
+
+    private fun Attachment.needsUpload(): Boolean = upload != null && !isUploaded()
 
     private class ProgressCallbackImpl(
         private val messageId: String,
