@@ -82,6 +82,21 @@ The best place to start is the [Compose Chat Messaging Tutorial](https://getstre
 
 ## 🛠️ Installation and Getting Started 🚀
 
+Releases are published to the [Stream Maven repository](https://browse.stream-io-repo.com/releases/stream-chat-android). Add it to your `settings.gradle.kts`:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://jitpack.io")
+        maven("https://stream-io-repo.com")
+    }
+}
+```
+
+Earlier versions remain available from Maven Central.
+
 See the [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/) and [Getting Started](https://getstream.io/chat/docs/sdk/android/client/overview/) pages of the documentation.
 
 ## 🔮 Sample Apps
