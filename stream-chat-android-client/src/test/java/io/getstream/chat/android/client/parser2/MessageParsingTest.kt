@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
@@ -37,6 +36,7 @@ import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageTestData
+import io.getstream.chat.android.client.parser2.testdata.WireShape
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageTransformer
@@ -45,6 +45,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
+import io.getstream.chat.android.network.models.MessageResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -122,21 +123,25 @@ internal class MessageParsingTest {
     )
 
     /**
-     * Parses [json] via both the legacy DTO+toDomain path and the direct [MessageAdapter] path,
-     * asserts they produce identical [Message] instances (1-to-1 parser parity), and returns the
-     * shared result for any extra assertions.
+     * Parses [json] with the direct [MessageAdapter], checks it against [expected] when given, and returns the
+     * result for any extra assertions. On the wire-shaped [json], the direct path must also produce the same
+     * [Message] as the generated [MessageResponse] path (1-to-1 parser parity).
      *
-     * If [expected] is supplied, it must equal the parser output — this guards against shared
-     * bugs (both paths wrong in the same way) that pure cross-path equality can't catch.
+     * [expected] guards against shared bugs (both paths wrong in the same way) that pure cross-path equality
+     * can't catch.
      */
     private fun assertBothPaths(json: String, expected: Message? = null): Message {
-        val dtoResult = with(domainMapping) {
-            parser.fromJson(json, DownstreamMessageDto::class.java).toDomain()
+        val wireJson = WireShape.message(json)
+        val generatedResult = with(domainMapping) {
+            parser.fromJson(wireJson, MessageResponse::class.java).toDomain()
         }
+        assertEquals(
+            generatedResult,
+            messageAdapter.fromJson(wireJson),
+            "Generated path and direct path produced different Messages",
+        )
         val directResult = messageAdapter.fromJson(json)!!
-        assertEquals(dtoResult, directResult, "DTO path and direct path produced different Messages")
         if (expected != null) {
-            assertEquals(expected, dtoResult, "DTO path did not match the hand-written expected")
             assertEquals(expected, directResult, "Direct path did not match the hand-written expected")
         }
         return directResult
@@ -220,77 +225,74 @@ internal class MessageParsingTest {
 
     // endregion
 
-    // region Required field error parity (both paths must throw on the same JSON)
+    // region Required fields (the direct path throws)
 
     @Test
-    fun `Both paths - throw on missing cid`() = assertBothPathsThrow(MessageTestData.jsonMissingCid)
+    fun `Direct path - throws on missing cid`() = assertDirectPathThrows(MessageTestData.jsonMissingCid)
 
     @Test
-    fun `Both paths - throw on missing created_at`() = assertBothPathsThrow(MessageTestData.jsonMissingCreatedAt)
+    fun `Direct path - throws on missing created_at`() = assertDirectPathThrows(MessageTestData.jsonMissingCreatedAt)
 
     @Test
-    fun `Both paths - throw on missing html`() = assertBothPathsThrow(MessageTestData.jsonMissingHtml)
+    fun `Direct path - throws on missing html`() = assertDirectPathThrows(MessageTestData.jsonMissingHtml)
 
     @Test
-    fun `Both paths - throw on missing id`() = assertBothPathsThrow(MessageTestData.jsonMissingId)
+    fun `Direct path - throws on missing id`() = assertDirectPathThrows(MessageTestData.jsonMissingId)
 
     @Test
-    fun `Both paths - throw on missing reply_count`() = assertBothPathsThrow(MessageTestData.jsonMissingReplyCount)
+    fun `Direct path - throws on missing reply_count`() = assertDirectPathThrows(MessageTestData.jsonMissingReplyCount)
 
     @Test
-    fun `Both paths - throw on missing deleted_reply_count`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingDeletedReplyCount)
+    fun `Direct path - throws on missing deleted_reply_count`() =
+        assertDirectPathThrows(MessageTestData.jsonMissingDeletedReplyCount)
 
     @Test
-    fun `Both paths - throw on missing silent`() = assertBothPathsThrow(MessageTestData.jsonMissingSilent)
+    fun `Direct path - throws on missing silent`() = assertDirectPathThrows(MessageTestData.jsonMissingSilent)
 
     @Test
-    fun `Both paths - throw on missing text`() = assertBothPathsThrow(MessageTestData.jsonMissingText)
+    fun `Direct path - throws on missing text`() = assertDirectPathThrows(MessageTestData.jsonMissingText)
 
     @Test
-    fun `Both paths - throw on missing type`() = assertBothPathsThrow(MessageTestData.jsonMissingType)
+    fun `Direct path - throws on missing type`() = assertDirectPathThrows(MessageTestData.jsonMissingType)
 
     @Test
-    fun `Both paths - throw on missing updated_at`() = assertBothPathsThrow(MessageTestData.jsonMissingUpdatedAt)
+    fun `Direct path - throws on missing updated_at`() = assertDirectPathThrows(MessageTestData.jsonMissingUpdatedAt)
 
     @Test
-    fun `Both paths - throw on missing user`() = assertBothPathsThrow(MessageTestData.jsonMissingUser)
+    fun `Direct path - throws on missing user`() = assertDirectPathThrows(MessageTestData.jsonMissingUser)
 
     @Test
-    fun `Both paths - throw on missing attachments`() = assertBothPathsThrow(MessageTestData.jsonMissingAttachments)
+    fun `Direct path - throws on missing attachments`() = assertDirectPathThrows(MessageTestData.jsonMissingAttachments)
 
     @Test
-    fun `Both paths - throw on missing latest_reactions`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingLatestReactions)
+    fun `Direct path - throws on missing latest_reactions`() =
+        assertDirectPathThrows(MessageTestData.jsonMissingLatestReactions)
 
     @Test
-    fun `Both paths - throw on missing mentioned_users`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingMentionedUsers)
+    fun `Direct path - throws on missing mentioned_users`() =
+        assertDirectPathThrows(MessageTestData.jsonMissingMentionedUsers)
 
     @Test
-    fun `Both paths - throw on missing own_reactions`() =
-        assertBothPathsThrow(MessageTestData.jsonMissingOwnReactions)
+    fun `Direct path - throws on missing own_reactions`() =
+        assertDirectPathThrows(MessageTestData.jsonMissingOwnReactions)
 
     @Test
-    fun `Both paths - throw on explicit null i18n`() =
-        assertBothPathsThrow(MessageTestData.jsonExplicitNullI18n)
+    fun `Direct path - throws on explicit null i18n`() =
+        assertDirectPathThrows(MessageTestData.jsonExplicitNullI18n)
 
     @Test
-    fun `Both paths - throw on explicit null thread_participants`() =
-        assertBothPathsThrow(MessageTestData.jsonExplicitNullThreadParticipants)
+    fun `Direct path - throws on explicit null thread_participants`() =
+        assertDirectPathThrows(MessageTestData.jsonExplicitNullThreadParticipants)
 
     @Test
-    fun `Both paths - throw on explicit null mentioned_groups`() =
-        assertBothPathsThrow(MessageTestData.jsonExplicitNullMentionedGroups)
+    fun `Direct path - throws on explicit null mentioned_groups`() =
+        assertDirectPathThrows(MessageTestData.jsonExplicitNullMentionedGroups)
 
     @Test
-    fun `Both paths - throw on explicit null mentioned_roles`() =
-        assertBothPathsThrow(MessageTestData.jsonExplicitNullMentionedRoles)
+    fun `Direct path - throws on explicit null mentioned_roles`() =
+        assertDirectPathThrows(MessageTestData.jsonExplicitNullMentionedRoles)
 
-    private fun assertBothPathsThrow(json: String) {
-        assertThrows<JsonDataException> {
-            parser.fromJson(json, DownstreamMessageDto::class.java)
-        }
+    private fun assertDirectPathThrows(json: String) {
         assertThrows<JsonDataException> {
             messageAdapter.fromJson(json)
         }
@@ -325,12 +327,13 @@ internal class MessageParsingTest {
             messageTransformer = customTransformer,
         )
 
-        val dto = parser.fromJson(MessageTestData.jsonAllFields, DownstreamMessageDto::class.java)
-        val dtoResult = with(transformedDomainMapping) { dto.toDomain() }
-        val directResult = transformedMessageAdapter.fromJson(MessageTestData.jsonAllFields)
+        val json = WireShape.message(MessageTestData.jsonAllFields)
+        val response = parser.fromJson(json, MessageResponse::class.java)
+        val generatedResult = with(transformedDomainMapping) { response.toDomain() }
+        val directResult = transformedMessageAdapter.fromJson(json)
 
-        assertEquals(dtoResult, directResult)
-        assertTrue(dtoResult.text.endsWith(" [transformed]"))
+        assertEquals(generatedResult, directResult)
+        assertTrue(generatedResult.text.endsWith(" [transformed]"))
     }
 
     @Test
@@ -374,19 +377,20 @@ internal class MessageParsingTest {
             messageTransformer = NoOpMessageTransformer,
         )
 
-        val dto = parser.fromJson(MessageTestData.jsonAllFields, DownstreamMessageDto::class.java)
-        val dtoResult = with(transformedDomainMapping) { dto.toDomain() }
-        val directResult = transformedMessageAdapter.fromJson(MessageTestData.jsonAllFields)
+        val json = WireShape.message(MessageTestData.jsonAllFields)
+        val response = parser.fromJson(json, MessageResponse::class.java)
+        val generatedResult = with(transformedDomainMapping) { response.toDomain() }
+        val directResult = transformedMessageAdapter.fromJson(json)
 
-        assertEquals(dtoResult, directResult)
+        assertEquals(generatedResult, directResult)
 
         // Verify transformer was applied to all nested users
-        assertTrue(dtoResult.user.name.endsWith(" [transformed]"))
-        dtoResult.mentionedUsers.forEach { assertTrue(it.name.endsWith(" [transformed]")) }
-        dtoResult.threadParticipants.forEach { assertTrue(it.name.endsWith(" [transformed]")) }
-        dtoResult.latestReactions.forEach { it.user?.let { u -> assertTrue(u.name.endsWith(" [transformed]")) } }
-        dtoResult.ownReactions.forEach { it.user?.let { u -> assertTrue(u.name.endsWith(" [transformed]")) } }
-        dtoResult.poll?.let { poll ->
+        assertTrue(generatedResult.user.name.endsWith(" [transformed]"))
+        generatedResult.mentionedUsers.forEach { assertTrue(it.name.endsWith(" [transformed]")) }
+        generatedResult.threadParticipants.forEach { assertTrue(it.name.endsWith(" [transformed]")) }
+        generatedResult.latestReactions.forEach { it.user?.let { u -> assertTrue(u.name.endsWith(" [transformed]")) } }
+        generatedResult.ownReactions.forEach { it.user?.let { u -> assertTrue(u.name.endsWith(" [transformed]")) } }
+        generatedResult.poll?.let { poll ->
             poll.createdBy?.let { assertTrue(it.name.endsWith(" [transformed]")) }
             poll.votes.forEach { it.user?.let { u -> assertTrue(u.name.endsWith(" [transformed]")) } }
             poll.ownVotes.forEach { it.user?.let { u -> assertTrue(u.name.endsWith(" [transformed]")) } }

@@ -24,7 +24,14 @@ import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.ChannelResponse
 
 /**
- * Keys `ChannelResponse` declares that `DownstreamChannelDto` did not, so they used to reach
+ * Channel fields that were only reachable through `Channel.extraData` before they became declared properties.
+ *
+ * TODO(AND-1398): drop in the next major, along with the [CustomObjectDtoAdapter.alsoKeepInExtraData] plumbing.
+ */
+internal val LEGACY_CHANNEL_EXTRA_DATA_KEYS = setOf("disabled", "blocked", "truncated_at")
+
+/**
+ * Keys `ChannelResponse` declares that the hand-written channel DTO did not, so they used to reach
  * `Channel.extraData` and would otherwise stop doing so. Kept there as well as mapped, matching how
  * [LEGACY_CHANNEL_EXTRA_DATA_KEYS] treats the keys the hand-written DTO declared. Drop with AND-1398.
  */

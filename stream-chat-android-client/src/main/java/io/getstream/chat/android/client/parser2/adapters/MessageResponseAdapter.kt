@@ -24,7 +24,7 @@ import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.MessageResponse
 
 /**
- * Keys `MessageResponse` declares that `DownstreamMessageDto` did not, so they used to reach
+ * Keys `MessageResponse` declares that the hand-written message DTO did not, so they used to reach
  * `Message.extraData` and would otherwise stop doing so. Kept there as well as mapped. Drop with AND-1398.
  */
 internal val GENERATED_MESSAGE_EXTRA_DATA_KEYS = setOf(
