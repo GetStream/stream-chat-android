@@ -30,12 +30,12 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface DeviceApi {
 
-    @GET("/devices")
+    @GET("/api/v2/devices")
     fun getDevices(): RetrofitCall<ListDevicesResponse>
 
-    @POST("/devices")
+    @POST("/api/v2/devices")
     fun addDevices(@Body request: CreateDeviceRequest): RetrofitCall<Response>
 
-    @DELETE("/devices")
+    @DELETE("/api/v2/devices")
     fun deleteDevice(@Query("id") id: String): RetrofitCall<Response>
 }

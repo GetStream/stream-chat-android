@@ -25,7 +25,7 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface RoleApi {
 
-    @GET("/roles/search")
+    @GET("/api/v2/roles/search")
     fun searchRoles(
         @Query("query") query: String,
         @Query("limit") limit: Int? = null,

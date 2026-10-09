@@ -34,6 +34,6 @@ internal interface PushPreferencesApi {
      *
      * @param body The request body containing the push preferences to be upserted.
      */
-    @POST("/push_preferences")
+    @POST("/api/v2/push_preferences")
     fun upsertPushPreferences(@Body body: UpsertPushPreferencesRequest): RetrofitCall<UpsertPushPreferencesResponse>
 }

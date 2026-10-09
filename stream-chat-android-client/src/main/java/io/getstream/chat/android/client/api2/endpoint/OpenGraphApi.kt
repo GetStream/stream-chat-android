@@ -29,6 +29,6 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface OpenGraphApi {
 
-    @GET("/og")
+    @GET("/api/v2/og")
     fun get(@Query(QueryParams.URL) url: String): RetrofitCall<GetOGResponse>
 }
