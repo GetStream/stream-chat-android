@@ -28,6 +28,7 @@ import java.util.TimeZone
  * A date-time as a [Date] together with the string the server sent for it.
  * [raw] keeps the full precision (up to nanoseconds) that [Date] cannot hold,
  * and is what gets written back when the value is serialized.
+ * A date sent as unix nanoseconds keeps [raw] as the same instant in RFC 3339 with 9 fractional digits.
  */
 internal class ExactDate private constructor(
     private val epochMillis: Long,
@@ -51,17 +52,23 @@ internal class ExactDate private constructor(
             timeZone = TimeZone.getTimeZone("UTC")
         }
 
-        // Guards withMillis, which is not thread-safe.
+        // Formats the seconds of a date sent as unix nanoseconds.
+        private val toSeconds = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+
+        // Guards withMillis and toSeconds, which are not thread-safe.
         private val legacyFormatterLock = Any()
 
         /**
-         * Parses an RFC 3339 date-time, keeping [raw] as given.
+         * Parses an RFC 3339 date-time, keeping [raw] as given, or unix nanoseconds.
          * On API 26+ any offset and up to 9 fractional digits are accepted; below API 26 only a `Z`
          * offset, with the fraction read to milliseconds.
          * Returns null if [raw] is empty or cannot be parsed.
          */
         internal fun parseOrNull(raw: String): ExactDate? {
             if (raw.isEmpty()) return null
+            if (raw.all { it in '0'..'9' }) return fromUnixNanosOrNull(raw)
             val parsed = try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     Date.from(ITU.parseDateTime(raw).toInstant())
@@ -88,6 +95,18 @@ internal class ExactDate private constructor(
             val fraction = raw.substring(SECONDS_END + 1, raw.length - 1)
             return "$seconds.${fraction.take(3).padEnd(3, '0')}Z"
         }
+
+        private fun fromUnixNanosOrNull(raw: String): ExactDate? {
+            val nanos = raw.toLongOrNull() ?: return null
+            val epochMillis = nanos / NANOS_PER_MILLI
+            val seconds = synchronized(legacyFormatterLock) { toSeconds.format(Date(epochMillis)) }
+            val fraction = (nanos % NANOS_PER_SECOND).toString().padStart(NANO_DIGITS, '0')
+            return ExactDate(epochMillis, "$seconds.${fraction}Z")
+        }
+
+        private const val NANOS_PER_SECOND = 1_000_000_000L
+        private const val NANOS_PER_MILLI = 1_000_000L
+        private const val NANO_DIGITS = 9
 
         // Length of `yyyy-MM-ddTHH:mm:ss`.
         private const val SECONDS_END = 19
