@@ -24,11 +24,9 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
@@ -40,8 +38,10 @@ import io.getstream.chat.android.network.models.ChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent
+import io.getstream.chat.android.network.models.ConnectedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent
+import io.getstream.chat.android.network.models.HealthCheckEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent
@@ -107,9 +107,9 @@ internal class EventDtoAdapter(
     private val mapAdapter: JsonAdapter<MutableMap<String, Any?>> =
         moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
 
-    private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
+    private val connectedEventAdapter = generatedEventAdapter<ConnectedEvent> { emptyMap() }
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
+    private val healthEventAdapter = generatedEventAdapter<HealthCheckEvent> { emptyMap() }
     private val draftMessageUpdatedEventAdapter = generatedEventAdapter<DraftUpdatedEvent> { mapOf("draft" to draft) }
     private val draftMessageDeletedEventAdapter = generatedEventAdapter<DraftDeletedEvent> { mapOf("draft" to draft) }
     private val newMessageEventAdapter = generatedEventAdapter<MessageNewEvent> { mapOf("cid" to cid, "user" to user) }

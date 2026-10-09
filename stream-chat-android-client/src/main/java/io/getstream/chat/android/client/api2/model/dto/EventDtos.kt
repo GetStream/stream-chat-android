@@ -18,32 +18,16 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
 import java.util.Date
 
 internal sealed class ChatEventDto
 
-@JsonClass(generateAdapter = true)
-internal data class HealthEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val connection_id: String,
-) : ChatEventDto()
-
 /**
  * An event parsed with its generated model, which the event mapping turns into the domain event.
  */
 internal data class GeneratedEventDto(val event: WSEvent) : ChatEventDto()
-
-@JsonClass(generateAdapter = true)
-internal data class ConnectedEventDto(
-    val type: String,
-    val created_at: ExactDate,
-    val me: OwnUserResponse,
-    val connection_id: String,
-) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class ConnectionErrorEventDto(
