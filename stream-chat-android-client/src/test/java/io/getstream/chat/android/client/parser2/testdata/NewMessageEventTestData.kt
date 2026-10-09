@@ -83,6 +83,32 @@ internal object NewMessageEventTestData {
         "message": $MINIMAL_MESSAGE_JSON
     }"""
 
+    /**
+     * An event user carrying devices as custom data, with entries the generated path drops, plus own-user
+     * fields the generated user models don't declare.
+     */
+    @Language("JSON")
+    val jsonUserWithDevicesAndOwnUserFields = """{
+        "type": "message.new",
+        "created_at": "2020-01-01T00:00:00.000Z",
+        "user": {
+            "id": "user-1", "role": "user", "banned": false, "online": true, "language": "en",
+            "created_at": "2020-01-01T00:00:00.000Z", "updated_at": "2020-01-01T00:00:00.000Z",
+            "devices": [
+                {"id": "device-1", "push_provider": "firebase", "push_provider_name": "Firebase"},
+                {"id": "device-2"},
+                {"push_provider": "firebase"},
+                {"id": 42, "push_provider": "firebase"},
+                "not-a-device"
+            ],
+            "invisible": true,
+            "privacy_settings": {"typing_indicators": {"enabled": false}},
+            "total_unread_count": 5
+        },
+        "cid": "messaging:general",
+        "message": $MINIMAL_MESSAGE_JSON
+    }"""
+
     @Language("JSON")
     val jsonMissingType = """{
         "created_at": "2020-01-01T00:00:00.000Z",

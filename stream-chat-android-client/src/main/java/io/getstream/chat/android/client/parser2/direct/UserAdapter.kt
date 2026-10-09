@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.parser2.direct
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserTransformer
@@ -27,7 +26,6 @@ import java.util.Date
 
 internal class UserAdapter(
     private val deviceAdapter: JsonAdapter<Device>,
-    private val privacySettingsAdapter: JsonAdapter<PrivacySettings>,
     private val dateAdapter: JsonAdapter<Date>,
     private val userTransformer: UserTransformer,
 ) : JsonAdapter<User>() {
@@ -42,8 +40,6 @@ internal class UserAdapter(
         var name: String? = null
         var image: String? = null
         var role: String? = null
-        var invisible: Boolean? = null // the wire only sends invisible for the own user
-        var privacySettings: PrivacySettings? = null
         var language: String? = null
         var banned: Boolean? = null
         var devices: List<Device>? = null
@@ -52,9 +48,6 @@ internal class UserAdapter(
         var deactivatedAt: Date? = null
         var updatedAt: Date? = null
         var lastActive: Date? = null
-        var totalUnreadCount: Int = 0
-        var unreadChannels: Int = 0
-        var unreadThreads: Int = 0
         var teams: List<String>? = null
         var teamsRole: Map<String, String>? = null
         var blockedUserIds: List<String>? = null
@@ -72,27 +65,14 @@ internal class UserAdapter(
                 "devices" -> devices = JsonParsingUtils.parseList(reader, deviceAdapter)
                 "id" -> id = reader.nextString()
                 "image" -> image = JsonParsingUtils.readNullableString(reader)
-                "invisible" -> invisible = JsonParsingUtils.readNullableBoolean(reader)
                 "language" -> language = JsonParsingUtils.readNullableString(reader)
                 "last_active" -> lastActive = dateAdapter.fromJson(reader)
                 "name" -> name = JsonParsingUtils.readNullableString(reader)
                 "online" -> online = reader.nextBoolean()
-                "privacy_settings" -> privacySettings = privacySettingsAdapter.fromJson(reader)
                 "role" -> role = reader.nextString()
                 "teams" -> teams = JsonParsingUtils.parseStringList(reader)
                 "teams_role" -> teamsRole = JsonParsingUtils.parseStringMap(reader)
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
-
-                // OwnUserResponse fields — parsed to maintain parity with the DTO path.
-                // DTO declares `Int = 0`: default applies when field is absent; null throws.
-                // reader.nextInt() also throws on null, matching the DTO behavior.
-                "total_unread_count" -> totalUnreadCount = reader.nextInt()
-                "unread_channels" -> unreadChannels = reader.nextInt()
-                "unread_threads" -> unreadThreads = reader.nextInt()
-                // The following are not part of the UserResponse (they are part of OwnUserResponse):
-                // This is an intentional change from DownstreamUserDto which covers both UserResponse/OwnUserResponse
-                "mutes", "channel_mutes", "push_preferences" -> reader.skipValue()
-
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
@@ -108,8 +88,6 @@ internal class UserAdapter(
             name = name ?: "",
             image = image ?: "",
             role = role,
-            invisible = invisible,
-            privacySettings = privacySettings,
             language = language ?: "",
             banned = banned,
             devices = devices ?: emptyList(),
@@ -118,9 +96,6 @@ internal class UserAdapter(
             deactivatedAt = deactivatedAt,
             updatedAt = updatedAt,
             lastActive = lastActive,
-            totalUnreadCount = totalUnreadCount,
-            unreadChannels = unreadChannels,
-            unreadThreads = unreadThreads,
             teams = teams ?: emptyList(),
             teamsRole = teamsRole ?: emptyMap(),
             blockedUserIds = blockedUserIds ?: emptyList(),

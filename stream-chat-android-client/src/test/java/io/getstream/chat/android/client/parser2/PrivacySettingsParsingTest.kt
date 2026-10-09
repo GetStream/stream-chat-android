@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.testdata.PrivacySettingsTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -39,8 +38,6 @@ internal class PrivacySettingsParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private val privacySettingsAdapter = PrivacySettingsAdapter()
-
     // region Response path (JSON → PrivacySettingsResponse → PrivacySettings)
 
     @Test
@@ -59,55 +56,27 @@ internal class PrivacySettingsParsingTest {
 
     // endregion
 
-    // region Direct path (JSON → PrivacySettings via PrivacySettingsAdapter)
+    // region Nested mandatory fields
 
     @Test
-    fun `Direct path - deserializes all fields`() {
-        val privacySettings = privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonAllFields)
-        assertEquals(PrivacySettingsTestData.expectedAllFields, privacySettings)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val privacySettings = privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonOptionalFieldsMissing)
-        assertEquals(PrivacySettingsTestData.expectedOptionalFieldsMissing, privacySettings)
-    }
-
-    // endregion
-
-    // region Error message parity (nested mandatory fields)
-
-    @Test
-    fun `Both paths - same error on typing_indicators missing enabled`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Response path - throws on typing_indicators missing enabled`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled, PrivacySettingsResponse::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonTypingIndicatorsMissingEnabled)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error on delivery_receipts missing enabled`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Response path - throws on delivery_receipts missing enabled`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled, PrivacySettingsResponse::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonDeliveryReceiptsMissingEnabled)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     @Test
-    fun `Both paths - same error on read_receipts missing enabled`() {
-        val dtoException = assertThrows<JsonDataException> {
+    fun `Response path - throws on read_receipts missing enabled`() {
+        assertThrows<JsonDataException> {
             parser.fromJson(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled, PrivacySettingsResponse::class.java)
         }
-        val directException = assertThrows<JsonDataException> {
-            privacySettingsAdapter.fromJson(PrivacySettingsTestData.jsonReadReceiptsMissingEnabled)
-        }
-        assertEquals(dtoException.message, directException.message)
     }
 
     // endregion

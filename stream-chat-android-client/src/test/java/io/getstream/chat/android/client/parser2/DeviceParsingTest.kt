@@ -20,12 +20,15 @@ import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.testdata.DeviceTestData
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.network.models.CreateDeviceRequest
 import io.getstream.chat.android.network.models.DeviceResponse
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -96,7 +99,7 @@ internal class DeviceParsingTest {
 
     // endregion
 
-    // region Error message parity
+    // region Required fields
 
     @Test
     fun `DTO path - throws on missing id`() {
@@ -106,10 +109,8 @@ internal class DeviceParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing id`() {
-        assertThrows<JsonDataException> {
-            deviceAdapter.fromJson(DeviceTestData.jsonMissingId)
-        }
+    fun `Direct path - drops a device without an id`() {
+        assertNull(deviceAdapter.fromJson(DeviceTestData.jsonMissingId))
     }
 
     @Test
@@ -120,10 +121,11 @@ internal class DeviceParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing push_provider`() {
-        assertThrows<JsonDataException> {
-            deviceAdapter.fromJson(DeviceTestData.jsonMissingPushProvider)
-        }
+    fun `Direct path - reads a missing push_provider as an unknown provider`() {
+        assertEquals(
+            Device(token = "token1", pushProvider = PushProvider.fromKey(""), providerName = "myProvider"),
+            deviceAdapter.fromJson(DeviceTestData.jsonMissingPushProvider),
+        )
     }
 
     // endregion
