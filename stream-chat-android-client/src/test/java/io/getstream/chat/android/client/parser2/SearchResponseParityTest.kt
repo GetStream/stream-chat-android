@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -33,7 +32,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 /**
  * Search results parsed through the generated [SearchResultMessage], against the generated [MessageResponse] it
- * extends and the hand-written [DownstreamMessageDto] search used before.
+ * extends.
  */
 internal class SearchResponseParityTest {
 
@@ -46,7 +45,7 @@ internal class SearchResponseParityTest {
     )
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("io.getstream.chat.android.client.parser2.MessageResponseParityTest#fixtures")
+    @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")
     fun `A search result maps like the MessageResponse it extends`(name: String, json: String) {
         val message = runCatching { with(mapping) { parser.fromJson(json, MessageResponse::class.java).toDomain() } }
         val searchResult = runCatching {
@@ -59,7 +58,7 @@ internal class SearchResponseParityTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("io.getstream.chat.android.client.parser2.MessageResponseParityTest#fixtures")
+    @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")
     fun `A search result converts to the MessageResponse of its JSON`(name: String, json: String) {
         val message = runCatching { parser.fromJson(json, MessageResponse::class.java) }.getOrNull() ?: return
         val searchResult = parser.fromJson(json, SearchResultMessage::class.java)
@@ -82,16 +81,6 @@ internal class SearchResponseParityTest {
         val message = parser.fromJson(mapAdapter.toJson(mapAdapter.fromJson(json)!! - "channel"), MessageResponse::class.java)
 
         assertFieldsEqual("extra fields", message, with(mapping) { searchResult.toMessageResponse() })
-    }
-
-    @Test
-    fun `Recorded search results map to the same Message as the hand-written DTO`() {
-        recordedMessages().forEachIndexed { index, json ->
-            val legacy = with(mapping) { parser.fromJson(json, DownstreamMessageDto::class.java).toDomain() }
-            val generated = with(mapping) { parser.fromJson(json, SearchResultMessage::class.java).toDomain() }
-
-            assertFieldsEqual("result $index", legacy, generated)
-        }
     }
 
     @Test

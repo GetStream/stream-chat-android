@@ -24,20 +24,17 @@ import io.getstream.chat.android.client.Mother.randomAppSettingsResponse
 import io.getstream.chat.android.client.Mother.randomBanResponse
 import io.getstream.chat.android.client.Mother.randomBlockUsersResponse
 import io.getstream.chat.android.client.Mother.randomBlockedUserResponse
-import io.getstream.chat.android.client.Mother.randomChannelInfoDto
 import io.getstream.chat.android.client.Mother.randomChannelMemberResponse
 import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
-import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
-import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
-import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetailsDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomDraftResponse
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
 import io.getstream.chat.android.client.Mother.randomFullUserResponse
+import io.getstream.chat.android.client.Mother.randomMessageResponse
 import io.getstream.chat.android.client.Mother.randomModerationV2Response
 import io.getstream.chat.android.client.Mother.randomPollOptionResponseData
 import io.getstream.chat.android.client.Mother.randomPollResponseData
@@ -82,8 +79,6 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageModerationAction
-import io.getstream.chat.android.models.MessageModerationDetails
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Moderation
@@ -155,7 +150,6 @@ import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -178,7 +172,7 @@ internal class DomainMappingTest {
             .get()
 
         val result = with(sut) {
-            randomDownstreamMessageDto().toDomain()
+            randomMessageResponse().toDomain()
         }
 
         assertEquals(transformedMessage, result)
@@ -209,39 +203,16 @@ internal class DomainMappingTest {
             .get()
 
         val result = with(sut) {
-            randomDownstreamMessageDto(
-                pinned_by = randomDownstreamUserDto(),
-                quoted_message = randomDownstreamMessageDto(),
-                moderation_details = randomDownstreamModerationDetailsDto(),
+            randomMessageResponse(
+                pinnedBy = randomUserResponse(),
+                quotedMessage = randomMessageResponse(),
                 moderation = randomModerationV2Response(),
                 poll = randomPollResponseData(),
-                deleted_for_me = randomBoolean(),
+                deletedForMe = randomBoolean(),
             ).toDomain()
         }
 
         assertEquals(transformedMessage, result)
-    }
-
-    @Test
-    fun `Mention fields propagate from DownstreamMessageDto to Message`() {
-        val sut = Fixture().get()
-        val dto = randomDownstreamMessageDto(
-            mentioned_here = true,
-            mentioned_channel = true,
-            mentioned_groups = listOf(
-                randomUserGroupResponse(id = "g1", name = "platform"),
-                randomUserGroupResponse(id = "g2", name = "support"),
-            ),
-            mentioned_roles = listOf("admin", "moderator"),
-        )
-
-        val result = with(sut) { dto.toDomain() }
-
-        assertTrue(result.mentionedHere)
-        assertTrue(result.mentionedChannel)
-        assertEquals(listOf("admin", "moderator"), result.mentionedRoles)
-        assertEquals(listOf("g1", "g2"), result.mentionedGroups.map(UserGroup::id))
-        assertEquals(listOf("platform", "support"), result.mentionedGroups.map(UserGroup::name))
     }
 
     /** Every field non-default: a default would let a mapper that drops it pass. */
@@ -699,7 +670,7 @@ internal class DomainMappingTest {
             .get()
 
         val result = with(sut) {
-            randomDownstreamChannelDto().toDomain()
+            randomChannelResponse().toDomain()
         }
 
         assertEquals(transformedChannel, result)
@@ -948,36 +919,6 @@ internal class DomainMappingTest {
             sharedLocationsEnabled = true,
             markMessagesPending = true,
         )
-
-    @Test
-    fun `DownstreamChannelDto is correctly mapped to Channel`() {
-        val downstreamChannelDto = randomDownstreamChannelDto()
-        val sut = Fixture().get()
-        val channel = with(sut) {
-            downstreamChannelDto.toDomain()
-        }
-
-        assertEquals(downstreamChannelDto.id, channel.id)
-        assertEquals(downstreamChannelDto.type, channel.type)
-        assertEquals(downstreamChannelDto.name ?: "", channel.name)
-        assertEquals(downstreamChannelDto.image ?: "", channel.image)
-        assertEquals(downstreamChannelDto.watcher_count, channel.watcherCount)
-        assertEquals(downstreamChannelDto.filter_tags.orEmpty(), channel.filterTags)
-        assertEquals(downstreamChannelDto.frozen, channel.frozen)
-        assertEquals(downstreamChannelDto.created_at, channel.createdAt)
-        assertEquals(downstreamChannelDto.deleted_at, channel.deletedAt)
-        assertEquals(downstreamChannelDto.updated_at, channel.updatedAt)
-        assertEquals(downstreamChannelDto.truncated_at, channel.truncatedAt)
-        assertEquals(downstreamChannelDto.disabled, channel.disabled)
-        assertEquals(downstreamChannelDto.blocked, channel.blocked)
-        assertEquals(downstreamChannelDto.member_count, channel.memberCount)
-        assertEquals(downstreamChannelDto.team, channel.team)
-        assertEquals(downstreamChannelDto.cooldown, channel.cooldown)
-        assertEquals(downstreamChannelDto.own_capabilities.toSet(), channel.ownCapabilities)
-        assertEquals(downstreamChannelDto.message_count, channel.messageCount)
-        assertEquals(downstreamChannelDto.last_message_at, channel.lastMessageAt)
-        assertEquals(downstreamChannelDto.extraData, channel.extraData)
-    }
 
     @Test
     fun `GetApplicationResponse is correctly mapped to AppSettings`() {
@@ -1563,22 +1504,6 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `ChannelInfoDto is correctly mapped to ChannelInfo`() {
-        val channelInfoDto = randomChannelInfoDto()
-        val sut = Fixture().get()
-        val channelInfo = with(sut) { channelInfoDto.toDomain() }
-        val expected = ChannelInfo(
-            cid = channelInfoDto.cid,
-            type = channelInfoDto.type,
-            id = channelInfoDto.id,
-            name = channelInfoDto.name,
-            memberCount = channelInfoDto.member_count,
-            image = channelInfoDto.image,
-        )
-        assertEquals(expected, channelInfo)
-    }
-
-    @Test
     fun `CommandDto is correctly mapped to Command`() {
         val commandDto = randomCommandDto()
         val sut = Fixture().get()
@@ -1631,19 +1556,6 @@ internal class DomainMappingTest {
             rejectedAt = Date(5_000),
         )
         assertEquals(expected, flag)
-    }
-
-    @Test
-    fun `DownstreamModerationDetailsDto is correctly mapped to ModerationDetails`() {
-        val downstreamModerationDetailsDto = randomDownstreamModerationDetailsDto()
-        val sut = Fixture().get()
-        val moderationDetails = with(sut) { downstreamModerationDetailsDto.toDomain() }
-        val expected = MessageModerationDetails(
-            originalText = downstreamModerationDetailsDto.original_text.orEmpty(),
-            action = MessageModerationAction(downstreamModerationDetailsDto.action.orEmpty()),
-            errorMsg = downstreamModerationDetailsDto.error_msg.orEmpty(),
-        )
-        assertEquals(expected, moderationDetails)
     }
 
     @Test
