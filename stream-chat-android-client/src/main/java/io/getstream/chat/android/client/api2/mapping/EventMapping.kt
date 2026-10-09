@@ -18,9 +18,6 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
@@ -29,7 +26,6 @@ import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -108,6 +104,9 @@ import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.WSEvent
+import io.getstream.chat.android.network.models.AIIndicatorClearEvent as GeneratedAIIndicatorClearEvent
+import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
+import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
@@ -123,6 +122,7 @@ import io.getstream.chat.android.network.models.MessageDeliveredEvent as Generat
 import io.getstream.chat.android.network.models.MessageNewEvent as GeneratedMessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent as GeneratedNotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
@@ -180,12 +180,8 @@ internal class EventMapping(
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
             is HealthEventDto -> toDomain()
-            is NotificationAddedToChannelEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
-            is AIIndicatorUpdatedEventDto -> toDomain()
-            is AIIndicatorClearEventDto -> toDomain()
-            is AIIndicatorStopEventDto -> toDomain()
         }
     }
 
@@ -342,22 +338,25 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationAddedToChannelEventDto] to [NotificationAddedToChannelEvent].
+     * Transforms the generated [GeneratedNotificationAddedToChannelEvent] to [NotificationAddedToChannelEvent].
      */
-    private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToChannelEvent = with(domainMapping) {
-        NotificationAddedToChannelEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(),
-            member = member.toDomain(),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-        )
-    }
+    private fun GeneratedNotificationAddedToChannelEvent.toDomain(): NotificationAddedToChannelEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationAddedToChannelEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                member = member.toDomain(),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+            )
+        }
 
     /**
      * Transforms the generated [GeneratedNotificationMarkReadEvent] to [NotificationMarkReadEvent], or to
@@ -507,6 +506,10 @@ internal class EventMapping(
         is GeneratedReactionDeletedEvent -> toDomain()
         is GeneratedReactionNewEvent -> toDomain()
         is GeneratedReactionUpdatedEvent -> toDomain()
+        is GeneratedNotificationAddedToChannelEvent -> toDomain()
+        is GeneratedAIIndicatorUpdateEvent -> toDomain()
+        is GeneratedAIIndicatorClearEvent -> toDomain()
+        is GeneratedAIIndicatorStopEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -1289,33 +1292,35 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorUpdatedEventDto] to [AIIndicatorUpdatedEvent].
+     * Transforms the generated [GeneratedAIIndicatorUpdateEvent] to [AIIndicatorUpdatedEvent].
      */
-    private fun AIIndicatorUpdatedEventDto.toDomain(): AIIndicatorUpdatedEvent = with(domainMapping) {
+    private fun GeneratedAIIndicatorUpdateEvent.toDomain(): AIIndicatorUpdatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AIIndicatorUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
-            user = user.toDomain(),
+            user = requireNotNull(user).toDomain(),
             channelType = channelType,
             channelId = channelId,
-            aiState = ai_state,
-            messageId = message_id,
+            aiState = aiState,
+            messageId = messageId,
         )
     }
 
     /**
-     * Transforms [AIIndicatorClearEventDto] to [AIIndicatorClearEvent].
+     * Transforms the generated [GeneratedAIIndicatorClearEvent] to [AIIndicatorClearEvent].
      */
-    private fun AIIndicatorClearEventDto.toDomain(): AIIndicatorClearEvent = with(domainMapping) {
+    private fun GeneratedAIIndicatorClearEvent.toDomain(): AIIndicatorClearEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AIIndicatorClearEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
             cid = cid,
             channelType = channelType,
             channelId = channelId,
@@ -1323,16 +1328,17 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorStopEventDto] to [AIIndicatorStopEvent].
+     * Transforms the generated [GeneratedAIIndicatorStopEvent] to [AIIndicatorStopEvent].
      */
-    private fun AIIndicatorStopEventDto.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
+    private fun GeneratedAIIndicatorStopEvent.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AIIndicatorStopEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
-            user = user.toDomain(),
+            user = requireNotNull(user).toDomain(),
             channelType = channelType,
             channelId = channelId,
         )

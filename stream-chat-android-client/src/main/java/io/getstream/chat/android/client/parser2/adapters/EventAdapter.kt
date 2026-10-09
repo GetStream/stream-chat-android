@@ -23,19 +23,18 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.network.models.AIIndicatorClearEvent
+import io.getstream.chat.android.network.models.AIIndicatorStopEvent
+import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent
@@ -51,6 +50,7 @@ import io.getstream.chat.android.network.models.MessageDeliveredEvent
 import io.getstream.chat.android.network.models.MessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent
@@ -158,7 +158,8 @@ internal class EventDtoAdapter(
     private val channelTruncatedEventAdapter = generatedEventAdapter<ChannelTruncatedEvent> { mapOf("cid" to cid) }
     private val userStartWatchingEventAdapter = generatedEventAdapter<UserWatchingStartEvent> { mapOf("cid" to cid) }
     private val userStopWatchingEventAdapter = generatedEventAdapter<UserWatchingStopEvent> { mapOf("cid" to cid) }
-    private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
+    private val notificationAddedToChannelEventAdapter =
+        generatedEventAdapter<NotificationAddedToChannelEvent> { mapOf("cid" to cid) }
     private val notificationMarkReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent> {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
     }
@@ -216,9 +217,12 @@ internal class EventDtoAdapter(
     private val reminderDeletedEventAdapter = generatedEventAdapter<ReminderDeletedEvent> { emptyMap() }
     private val notificationReminderDueEventAdapter = generatedEventAdapter<ReminderNotificationEvent> { emptyMap() }
     private val userMessagesDeletedEventAdapter = generatedEventAdapter<UserMessagesDeletedEvent> { emptyMap() }
-    private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
-    private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
-    private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
+    private val aiTypingIndicatorUpdatedEventAdapter =
+        generatedEventAdapter<AIIndicatorUpdateEvent> { mapOf("cid" to cid, "user" to user) }
+    private val aiTypingIndicatorClearEventAdapter =
+        generatedEventAdapter<AIIndicatorClearEvent> { mapOf("cid" to cid, "user" to user) }
+    private val aiTypingIndicatorStopEventAdapter =
+        generatedEventAdapter<AIIndicatorStopEvent> { mapOf("cid" to cid, "user" to user) }
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
