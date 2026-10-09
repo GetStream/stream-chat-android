@@ -72,7 +72,7 @@ This SDK consists of two low-level artifacts you can build on:
   - [Sample app](/stream-chat-android-ui-components-sample)
   - [Documentation](https://getstream.io/chat/docs/sdk/android/ui/overview/)
 
-**For AI assistants** there are two separate artifacts, which no other module depends on:
+**For AI assistants** there are two separate artifacts. No other Chat SDK artifact depends on them:
 
 - [**AI Compose Components**](/stream-chat-android-ai-compose): Composables for AI replies: streaming text, reasoning and tool-call steps, tool approvals and a composer.
   - [Sample app](/stream-chat-android-ai-compose-sample)
