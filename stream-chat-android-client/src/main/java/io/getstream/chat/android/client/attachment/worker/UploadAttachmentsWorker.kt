@@ -89,7 +89,7 @@ public class UploadAttachmentsWorker(
         }
 
         val hasPendingAttachment = message.attachments.any { attachment ->
-            attachment.uploadState !is Attachment.UploadState.Failed && !attachment.isUploaded()
+            attachment.needsUpload() && attachment.uploadState !is Attachment.UploadState.Failed
         }
 
         return if (!hasPendingAttachment) {
@@ -116,14 +116,14 @@ public class UploadAttachmentsWorker(
         return try {
             attachments.indices.forEach { index ->
                 val attachment = attachments[index]
-                if (attachment.isUploaded()) {
+                if (!attachment.needsUpload()) {
                     logger.i {
                         "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
                             " for message ${message.id} already uploaded"
                     }
                 } else {
                     attachments[index] = uploadAttachment(message, attachment)
-                    persistUploadedAttachment(message, attachments, attachments[index])
+                    persistUploadedAttachment(message, attachments, attachment.uploadId, attachments[index])
                 }
             }
             attachments
@@ -158,27 +158,28 @@ public class UploadAttachmentsWorker(
     }
 
     /**
-     * Stores [uploaded], if its upload succeeded, right away, so it isn't uploaded again if the worker is stopped
-     * before it finishes. Doesn't publish the upload states: the sender must only be released by the final
+     * Stores the successful uploads in [attachments] right away, so they aren't uploaded again if the worker is
+     * stopped before it finishes. Doesn't publish the upload states: the sender must only be released by the final
      * [updateMessages].
+     *
+     * @param uploadId The attachment's upload id before the upload, which removes it from [uploaded].
      */
     private suspend fun persistUploadedAttachment(
         message: Message,
         attachments: List<Attachment>,
+        uploadId: String?,
         uploaded: Attachment,
     ) {
         if (uploaded.uploadState != Attachment.UploadState.Success) return
-        withContext(NonCancellable) { persist(message, attachments, uploaded) }
-    }
-
-    private suspend fun persist(message: Message, attachments: List<Attachment>, uploaded: Attachment) {
-        val uploadedAttachments = message.attachments.mapIndexed { index, original ->
-            attachments[index].takeIf { it.uploadState == Attachment.UploadState.Success } ?: original
-        }
-        insertMessageIfStored(message.copy(attachments = uploadedAttachments))
-        channelStateLogic?.listenForChannelState()?.getMessageById(message.id)?.let { current ->
-            val updated = current.attachments.map { if (it.uploadId == uploaded.uploadId) uploaded else it }
-            channelStateLogic.upsertMessage(current.copy(attachments = updated))
+        withContext(NonCancellable) {
+            val uploadedAttachments = message.attachments.mapIndexed { index, original ->
+                attachments[index].takeIf { it.uploadState == Attachment.UploadState.Success } ?: original
+            }
+            insertMessageIfStored(message.copy(attachments = uploadedAttachments))
+            channelStateLogic?.listenForChannelState()?.getMessageById(message.id)?.let { current ->
+                val updated = current.attachments.map { if (it.uploadId == uploadId) uploaded else it }
+                channelStateLogic.upsertMessage(current.copy(attachments = updated))
+            }
         }
     }
 
@@ -201,6 +202,8 @@ public class UploadAttachmentsWorker(
             messageRepository.insertMessage(message)
         }
     }
+
+    private fun Attachment.needsUpload(): Boolean = upload != null && !isUploaded()
 
     private class ProgressCallbackImpl(
         private val messageId: String,

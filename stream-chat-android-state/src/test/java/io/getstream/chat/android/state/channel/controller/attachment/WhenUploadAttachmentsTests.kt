@@ -402,6 +402,47 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
+    fun `Given an upload succeeds Should replace only that attachment in the channel state`() = runTest {
+        val uploadedEarlier = randomAttachment().copy(
+            uploadState = Attachment.UploadState.Success,
+            assetUrl = "url0",
+            extraData = emptyMap(),
+        )
+        val pending = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        // Like the real uploader, the result no longer carries the upload id.
+        val uploaded = pending.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1", extraData = emptyMap())
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doReturn Result.Success(uploaded)
+        }
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(uploadedEarlier, pending))
+        val fixture = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessage(message)
+            .givenMessageInChannelState(message)
+
+        fixture.get().uploadAttachmentsForMessage(message.id)
+
+        // The first upsert is the update made as soon as the upload succeeds, before the final write.
+        val upserted = argumentCaptor<Message>()
+        verify(fixture.channelStateLogic(), times(2)).upsertMessage(upserted.capture())
+        upserted.firstValue.attachments shouldBeEqualTo listOf(uploadedEarlier, uploaded)
+    }
+
+    @Test
+    fun `Given an attachment without a file Should not upload it`() = runTest {
+        val link = randomAttachment().copy(upload = null, uploadState = null)
+        val attachmentUploader = mock<AttachmentUploader>()
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(link))
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessage(message)
+            .get()
+
+        val result = sut.uploadAttachmentsForMessage(message.id)
+
+        result shouldBeInstanceOf Result.Success::class
+        verify(attachmentUploader, never()).uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())
+    }
+
+    @Test
     fun `Given an earlier upload failed Should store a later success without marking the message failed`() = runTest {
         val first = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
         val second = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"))
@@ -477,6 +518,12 @@ internal class WhenUploadAttachmentsTests {
             apply {
                 uploader = attachmentUploader
             }
+
+        fun givenMessageInChannelState(message: Message) = apply {
+            whenever(channelMutableState.getMessageById(message.id)) doReturn message
+        }
+
+        fun channelStateLogic(): ChannelStateLogic = channelStateLogic
 
         fun givenMessageRepository(repository: MessageRepository) = apply {
             messageRepository = repository
