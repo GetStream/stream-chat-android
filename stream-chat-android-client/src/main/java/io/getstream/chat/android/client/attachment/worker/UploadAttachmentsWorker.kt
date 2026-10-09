@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.AttachmentsUploadStates
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.extensions.internal.isUploaded
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -32,6 +33,11 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 private const val TAG = "Chat:UploadWorker"
 
@@ -57,6 +63,8 @@ public class UploadAttachmentsWorker(
             message?.let { sendAttachments(it) } ?: Result.Failure(
                 Error.GenericError("The message with id $messageId could not be found."),
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.e { "[uploadAttachmentsForMessage] #uploader; couldn't upload attachments ${e.message}" }
             message?.let { updateMessages(it) }
@@ -81,8 +89,7 @@ public class UploadAttachmentsWorker(
         }
 
         val hasPendingAttachment = message.attachments.any { attachment ->
-            attachment.uploadState is Attachment.UploadState.InProgress ||
-                attachment.uploadState is Attachment.UploadState.Idle
+            attachment.needsUpload() && attachment.uploadState !is Attachment.UploadState.Failed
         }
 
         return if (!hasPendingAttachment) {
@@ -105,36 +112,25 @@ public class UploadAttachmentsWorker(
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun uploadAttachments(message: Message): List<Attachment> {
+        val attachments = message.attachments.toMutableList()
         return try {
-            message.attachments.map { attachment ->
-                if (attachment.uploadState != Attachment.UploadState.Success) {
-                    logger.d {
-                        "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
-                            "for message ${message.id}"
-                    }
-                    val progressCallback = channelStateLogic?.let { logic ->
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            logic,
-                        )
-                    }
-
-                    attachmentUploader
-                        .uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
-                        .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
-                        .value
-                } else {
+            attachments.indices.forEach { index ->
+                val attachment = attachments[index]
+                if (!attachment.needsUpload()) {
                     logger.i {
                         "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
                             " for message ${message.id} already uploaded"
                     }
-                    attachment
+                } else {
+                    attachments[index] = uploadAttachment(message, attachment)
+                    persistUploadedAttachment(message, attachments, attachment.uploadId, attachments[index])
                 }
-            }.toMutableList()
+            }
+            attachments
         } catch (e: Exception) {
+            // Also reached when the worker is stopped: the failed states release the sender waiting for them.
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
-            message.attachments.map {
+            attachments.map {
                 it.copy(
                     uploadState = it.uploadState
                         .takeIf { it == Attachment.UploadState.Success }
@@ -146,7 +142,49 @@ public class UploadAttachmentsWorker(
         }
     }
 
-    private suspend fun updateMessages(message: Message) {
+    private suspend fun uploadAttachment(message: Message, attachment: Attachment): Attachment {
+        // Don't start a new upload once the worker is stopped.
+        currentCoroutineContext().ensureActive()
+        logger.d {
+            "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} for message ${message.id}"
+        }
+        val progressCallback = channelStateLogic?.let { logic ->
+            ProgressCallbackImpl(message.id, attachment.uploadId!!, logic)
+        }
+        // The upload keeps running if the worker is stopped; wait for its result so a success isn't lost.
+        return withContext(NonCancellable) {
+            attachmentUploader.uploadAttachment(channelType, channelId, attachment, message.id, progressCallback)
+        }.recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }.value
+    }
+
+    /**
+     * Stores the successful uploads in [attachments] right away, so they aren't uploaded again if the worker is
+     * stopped before it finishes. Doesn't publish the upload states: the sender must only be released by the final
+     * [updateMessages].
+     *
+     * @param uploadId The attachment's upload id before the upload, which removes it from [uploaded].
+     */
+    private suspend fun persistUploadedAttachment(
+        message: Message,
+        attachments: List<Attachment>,
+        uploadId: String?,
+        uploaded: Attachment,
+    ) {
+        if (uploaded.uploadState != Attachment.UploadState.Success) return
+        withContext(NonCancellable) {
+            val uploadedAttachments = message.attachments.mapIndexed { index, original ->
+                attachments[index].takeIf { it.uploadState == Attachment.UploadState.Success } ?: original
+            }
+            insertMessageIfStored(message.copy(attachments = uploadedAttachments))
+            channelStateLogic?.listenForChannelState()?.getMessageById(message.id)?.let { current ->
+                val updated = current.attachments.map { if (it.uploadId == uploadId) uploaded else it }
+                channelStateLogic.upsertMessage(current.copy(attachments = updated))
+            }
+        }
+    }
+
+    // Runs even if the worker was stopped: the upload states it publishes release the sender waiting for them.
+    private suspend fun updateMessages(message: Message) = withContext(NonCancellable) {
         val updatedMessage = message.copy(
             syncStatus = message.syncStatus
                 .takeUnless {
@@ -154,9 +192,18 @@ public class UploadAttachmentsWorker(
                 } ?: SyncStatus.FAILED_PERMANENTLY,
         )
         channelStateLogic?.upsertMessage(updatedMessage)
-        messageRepository.insertMessage(updatedMessage)
+        insertMessageIfStored(updatedMessage)
         AttachmentsUploadStates.updateMessageAttachments(updatedMessage)
     }
+
+    private suspend fun insertMessageIfStored(message: Message) {
+        // A logout that flushed the database also removed the message: don't bring it back.
+        if (messageRepository.selectMessage(message.id) != null) {
+            messageRepository.insertMessage(message)
+        }
+    }
+
+    private fun Attachment.needsUpload(): Boolean = upload != null && !isUploaded()
 
     private class ProgressCallbackImpl(
         private val messageId: String,
