@@ -29,6 +29,7 @@ import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -58,20 +59,23 @@ internal class AttachmentsSender(
         channelId: String,
         isRetrying: Boolean,
     ): Result<Message> {
-        val result = if (!isRetrying) {
-            if (message.hasPendingAttachments()) {
+        val result = when {
+            // Also covers a retried message whose attachments were all uploaded by a previous attempt.
+            !message.hasPendingAttachments() -> {
+                logger.d { "[sendAttachments] Message ${message.id} without pending attachments" }
+                Result.Success(message)
+            }
+            isRetrying -> {
+                logger.d { "[sendAttachments] Retrying Message ${message.id}" }
+                retryMessage(message, channelType, channelId)
+            }
+            else -> {
                 logger.d {
                     "[sendAttachments] Message ${message.id}" +
                         " has ${message.attachments.size} pending attachments"
                 }
                 uploadAttachments(message, channelType, channelId)
-            } else {
-                logger.d { "[sendAttachments] Message ${message.id} without attachments" }
-                Result.Success(message)
             }
-        } else {
-            logger.d { "[sendAttachments] Retrying Message ${message.id}" }
-            retryMessage(message, channelType, channelId)
         }
         return verifier.verifyAttachments(result)
     }
@@ -128,36 +132,29 @@ internal class AttachmentsSender(
         channelId: String,
     ): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
-        var allAttachmentsUploaded = false
-        var messageToBeSent = newMessage
+        var uploadedAttachments: List<Attachment>? = null
 
-        AttachmentsUploadStates.updateMessageAttachments(messageToBeSent)
+        AttachmentsUploadStates.updateMessageAttachments(newMessage)
+        val attachmentsStates = AttachmentsUploadStates.observeAttachments(newMessage.id)
 
-        jobsMap = jobsMap + (
-            newMessage.id to scope.launch {
-                AttachmentsUploadStates.observeAttachments(newMessage.id)
-                    .filterNot(Collection<Attachment>::isEmpty)
-                    .collect { attachments ->
-                        when {
-                            attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                messageToBeSent = newMessage.copy(attachments = attachments.toMutableList())
-                                allAttachmentsUploaded = true
-                                jobsMap[newMessage.id]?.cancel()
-                            }
-                            attachments.any { it.uploadState is Attachment.UploadState.Failed } -> {
-                                jobsMap[newMessage.id]?.cancel()
-                            }
-                            else -> Unit
-                        }
-                    }
+        val job = scope.launch {
+            val attachments = attachmentsStates
+                .filterNot(Collection<Attachment>::isEmpty)
+                .first { attachments ->
+                    attachments.all { it.uploadState == Attachment.UploadState.Success } ||
+                        attachments.any { it.uploadState is Attachment.UploadState.Failed }
+                }
+            uploadedAttachments = attachments.takeUnless { list ->
+                list.any { it.uploadState is Attachment.UploadState.Failed }
             }
-            )
+        }
+        jobsMap = jobsMap + (newMessage.id to job)
         enqueueAttachmentUpload(newMessage, channelType, channelId)
-        jobsMap[newMessage.id]?.join()
-        return if (allAttachmentsUploaded) {
+        job.join()
+        return uploadedAttachments?.let { attachments ->
             logger.d { "[waitForAttachmentsToBeSent] All attachments for message ${newMessage.id} uploaded" }
-            Result.Success(messageToBeSent.copy(type = Message.TYPE_REGULAR))
-        } else {
+            Result.Success(newMessage.copy(attachments = attachments.toMutableList(), type = Message.TYPE_REGULAR))
+        } ?: run {
             logger.i { "[waitForAttachmentsToBeSent] Could not upload attachments for message ${newMessage.id}" }
             Result.Failure(
                 Error.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
