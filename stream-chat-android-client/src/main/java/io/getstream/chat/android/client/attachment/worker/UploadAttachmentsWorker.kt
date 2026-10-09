@@ -139,9 +139,8 @@ public class UploadAttachmentsWorker(
                     }
                 }.awaitAll()
             }
-        } catch (e: CancellationException) {
-            throw e
         } catch (e: Exception) {
+            // Also reached when the worker is stopped: the failed states release the sender waiting for them.
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
             uploaded.map {
                 it.copy(
@@ -187,7 +186,7 @@ public class UploadAttachmentsWorker(
         withContext(NonCancellable) {
             uploadedLock.withLock {
                 uploaded[index] = result
-                messageRepository.insertMessage(message.copy(attachments = uploaded.toList()))
+                insertMessageIfStored(message.copy(attachments = uploaded.toList()))
                 channelStateLogic?.channelState()?.getMessageById(message.id)?.let { current ->
                     val updated = current.attachments.map { if (it.uploadId == result.uploadId) result else it }
                     channelStateLogic.upsertMessage(current.copy(attachments = updated))
@@ -196,7 +195,8 @@ public class UploadAttachmentsWorker(
         }
     }
 
-    private suspend fun updateMessages(message: Message) {
+    // Runs even if the worker was stopped: the upload states it publishes release the sender waiting for them.
+    private suspend fun updateMessages(message: Message) = withContext(NonCancellable) {
         val updatedMessage = message.copy(
             syncStatus = message.syncStatus
                 .takeUnless {
@@ -204,8 +204,15 @@ public class UploadAttachmentsWorker(
                 } ?: SyncStatus.FAILED_PERMANENTLY,
         )
         channelStateLogic?.upsertMessage(updatedMessage)
-        messageRepository.insertMessage(updatedMessage)
+        insertMessageIfStored(updatedMessage)
         AttachmentsUploadStates.updateMessageAttachments(updatedMessage)
+    }
+
+    private suspend fun insertMessageIfStored(message: Message) {
+        // A logout that flushed the database also removed the message: don't bring it back.
+        if (messageRepository.selectMessage(message.id) != null) {
+            messageRepository.insertMessage(message)
+        }
     }
 
     private class ProgressCallbackImpl(

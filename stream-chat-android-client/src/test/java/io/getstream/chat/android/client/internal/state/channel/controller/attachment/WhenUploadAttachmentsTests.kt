@@ -363,7 +363,41 @@ internal class WhenUploadAttachmentsTests {
             )
             verify(attachmentUploader, never())
                 .uploadAttachment(any(), any(), argThat { uploadId == "uploadId2" }, anyOrNull(), anyOrNull())
+            // The final write still publishes a terminal state, which releases the sender.
+            verify(repository).insertMessage(
+                argThat {
+                    attachments.any { it.uploadId == "uploadId1" && it.uploadState == Attachment.UploadState.Success } &&
+                        attachments.any { it.uploadId == "uploadId2" && it.uploadState is Attachment.UploadState.Failed }
+                },
+            )
         }
+
+    @Test
+    fun `Given a logout flushed the database during an upload Should not store the message again`() = runTest {
+        val attachment = randomAttachment().copy(uploadState = Attachment.UploadState.Idle, extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"))
+        val message = randomMessage(id = "messageId123", attachments = mutableListOf(attachment))
+        var flushed = false
+        lateinit var workerJob: Job
+        val repository = mock<MessageRepository> {
+            onBlocking { selectMessage(message.id) } doAnswer { message.takeUnless { flushed } }
+        }
+        val attachmentUploader = mock<AttachmentUploader> {
+            on(it.uploadAttachment(any(), any(), any(), anyOrNull(), anyOrNull())) doSuspendableAnswer {
+                // The logout clears the database, then stops the worker, while the upload completes.
+                flushed = true
+                workerJob.cancel()
+                Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success, assetUrl = "url1"))
+            }
+        }
+        val sut = Fixture().givenAttachmentUploader(attachmentUploader)
+            .givenMessageRepository(repository)
+            .get()
+
+        workerJob = launch { sut.uploadAttachmentsForMessage(message.id) }
+        workerJob.join()
+
+        verify(repository, never()).insertMessage(any())
+    }
 
     @Test
     fun `Given an earlier upload failed Should store a later success without marking the message failed`() = runTest {
