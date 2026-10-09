@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:autoMirrored="true"
+    android:height="24dp"
+    android:viewportHeight="960"
+    android:viewportWidth="960"
+    android:width="24dp">
+
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M200,840Q167,840 143.5,816.5Q120,793 120,760L120,200Q120,167 143.5,143.5Q167,120 200,120L461,120Q481,120 491,132.5Q501,145 501,160Q501,175 490.5,187.5Q480,200 460,200L200,200Q200,200 200,200Q200,200 200,200L200,760Q200,760 200,760Q200,760 200,760L760,760Q760,760 760,760Q760,760 760,760L760,499Q760,479 772.5,469Q785,459 800,459Q815,459 827.5,469Q840,479 840,499L840,760Q840,793 816.5,816.5Q793,840 760,840L200,840ZM480,480Q480,480 480,480Q480,480 480,480L480,480Q480,480 480,480Q480,480 480,480L480,480L480,480Q480,480 480,480Q480,480 480,480L480,480Q480,480 480,480Q480,480 480,480L480,480Q480,480 480,480Q480,480 480,480L480,480L480,480Q480,480 480,480Q480,480 480,480ZM360,560L360,463Q360,447 366,432.5Q372,418 383,407L727,63Q739,51 754,45Q769,39 784,39Q800,39 814.5,45Q829,51 841,63L897,120Q908,132 914,146.5Q920,161 920,176Q920,191 914.5,205.5Q909,220 897,232L553,576Q542,587 527.5,593.5Q513,600 497,600L400,600Q383,600 371.5,588.5Q360,577 360,560ZM841,176L841,176L785,120L785,120L841,176ZM440,520L496,520L728,288L700,260L671,232L440,463L440,520ZM700,260L671,232L671,232L700,260L728,288L728,288L700,260Z" />
+
+</vector>
