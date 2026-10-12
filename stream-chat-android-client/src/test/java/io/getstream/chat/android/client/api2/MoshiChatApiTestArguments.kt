@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -586,7 +587,7 @@ internal object MoshiChatApiTestArguments {
     fun channelStateInput() = listOf(
         Arguments.of(
             "queryChannel",
-            { api: ChannelApi, response: ChannelStateResponseFields ->
+            { api: ChannelApi, _: ChannelV1Api, response: ChannelStateResponseFields ->
                 whenever(api.queryChannel(any(), any(), any(), any()))
                     .doReturn(RetroSuccess(response.toChannelStateResponse()).toRetrofitCall())
             },
@@ -597,7 +598,7 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(
             "queryChannels",
-            { api: ChannelApi, response: ChannelStateResponseFields ->
+            { api: ChannelApi, _: ChannelV1Api, response: ChannelStateResponseFields ->
                 val channels = QueryChannelsResponse(duration = "1ms", channels = listOf(response))
                 whenever(api.queryChannels(any(), any())).doReturn(RetroSuccess(channels).toRetrofitCall())
             },
@@ -607,7 +608,7 @@ internal object MoshiChatApiTestArguments {
         ),
         Arguments.of(
             "queryGroupedChannels",
-            { api: ChannelApi, response: ChannelStateResponseFields ->
+            { _: ChannelApi, api: ChannelV1Api, response: ChannelStateResponseFields ->
                 val group = GroupedChannelsBucket(channels = listOf(response))
                 whenever(api.queryGroupedChannels(any(), any())).doReturn(
                     RetroSuccess(

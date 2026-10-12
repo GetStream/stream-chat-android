@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -118,7 +119,6 @@ import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
-import io.getstream.chat.android.network.models.ChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDeviceRequest
@@ -216,6 +216,7 @@ constructor(
     private val messageApi: MessageApi,
     private val draftApi: DraftApi,
     private val channelApi: ChannelApi,
+    private val channelV1Api: ChannelV1Api,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
@@ -1079,7 +1080,7 @@ constructor(
             channelId = channelId,
             body = with(dtoMapping) {
                 UpdateChannelRequest(
-                    data = ChannelInputRequest(custom = extraData),
+                    data = extraData.toChannelInputRequest(),
                     message = updateMessage?.toMessageRequest(),
                 )
             },
@@ -1280,7 +1281,7 @@ constructor(
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Member> {
-        return channelApi.partialUpdateMember(
+        return channelV1Api.partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
             userId = userId,
@@ -1554,7 +1555,7 @@ constructor(
             sort = sort?.toSortParams(),
         )
         val lazyCall = {
-            channelApi.queryGroupedChannels(
+            channelV1Api.queryGroupedChannels(
                 connectionId = connectionId,
                 body = body,
             ).flatMapDomain { response ->
@@ -1674,7 +1675,7 @@ constructor(
     ): Call<ChatEvent> = with(eventMapping) {
         val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
-        return channelApi.sendEvent(
+        return channelV1Api.sendEvent(
             channelType = channelType,
             channelId = channelId,
             request = SendEventRequest(
