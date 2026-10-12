@@ -45,6 +45,8 @@ internal class PollEntity(
     val answers: List<AnswerEntity>,
     val createdById: String?,
     val extraData: Map<String, Any>,
+    val nameI18n: Map<String, String> = emptyMap(),
+    val descriptionI18n: Map<String, String> = emptyMap(),
 )
 
 @JsonClass(generateAdapter = true)
@@ -52,6 +54,7 @@ internal class OptionEntity(
     val id: String,
     val text: String,
     val extraData: Map<String, Any>,
+    val textI18n: Map<String, String> = emptyMap(),
 )
 
 @JsonClass(generateAdapter = true)
@@ -72,6 +75,7 @@ internal class AnswerEntity(
     val createdAt: Date,
     val updatedAt: Date,
     val userId: String?,
+    val textI18n: Map<String, String> = emptyMap(),
 )
 
 internal const val POLL_ENTITY_TABLE_NAME = "stream_chat_poll"

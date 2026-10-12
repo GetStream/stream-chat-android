@@ -92,4 +92,10 @@ internal data class PollResponseData(
 
     @Json(name = "created_by")
     internal val createdBy: UserResponse? = null,
+
+    @Json(name = "description_i18n")
+    internal val descriptionI18n: Map<String, String>? = null,
+
+    @Json(name = "name_i18n")
+    internal val nameI18n: Map<String, String>? = null,
 )

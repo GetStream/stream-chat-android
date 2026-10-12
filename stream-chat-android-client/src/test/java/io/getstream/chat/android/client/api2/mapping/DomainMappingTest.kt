@@ -1402,14 +1402,23 @@ internal class DomainMappingTest {
     @Suppress("LongMethod")
     fun `PollResponseData is correctly mapped to Poll`() {
         val options = listOf(
-            randomPollOptionResponseData(custom = mapOf("optionKey" to "optionValue")),
+            randomPollOptionResponseData(
+                custom = mapOf("optionKey" to "optionValue"),
+                textI18n = mapOf("language" to "en", "it_text" to "Opzione"),
+            ),
             randomPollOptionResponseData(),
         )
         val ownVote = randomPollVoteResponseData(user = randomUserResponse())
         val otherVote = randomPollVoteResponseData(user = randomUserResponse())
-        val answer = randomPollVoteResponseData(isAnswer = true, answerText = randomString())
+        val answer = randomPollVoteResponseData(
+            isAnswer = true,
+            answerText = randomString(),
+            answerTextI18n = mapOf("language" to "en", "it_text" to "Risposta"),
+        )
         val pollDto = randomPollResponseData(
             custom = mapOf("pollKey" to "pollValue"),
+            nameI18n = mapOf("language" to "en", "it_text" to "Nome"),
+            descriptionI18n = mapOf("language" to "en", "it_text" to "Descrizione"),
             options = options,
             ownVotes = listOf(ownVote),
             latestAnswers = listOf(answer),
@@ -1425,7 +1434,12 @@ internal class DomainMappingTest {
             name = pollDto.name,
             description = pollDto.description,
             options = listOf(
-                Option(options[0].id, options[0].text, mapOf("optionKey" to "optionValue")),
+                Option(
+                    id = options[0].id,
+                    text = options[0].text,
+                    extraData = mapOf("optionKey" to "optionValue"),
+                    textI18n = mapOf("language" to "en", "it_text" to "Opzione"),
+                ),
                 Option(options[1].id, options[1].text, emptyMap()),
             ),
             votingVisibility = VotingVisibility.PUBLIC,
@@ -1475,10 +1489,13 @@ internal class DomainMappingTest {
                     createdAt = answer.createdAt,
                     updatedAt = answer.updatedAt,
                     user = with(sut) { answer.user?.toDomain() },
+                    textI18n = mapOf("language" to "en", "it_text" to "Risposta"),
                 ),
             ),
             createdBy = with(sut) { pollDto.createdBy?.toDomain() },
             extraData = mapOf("pollKey" to "pollValue"),
+            nameI18n = mapOf("language" to "en", "it_text" to "Nome"),
+            descriptionI18n = mapOf("language" to "en", "it_text" to "Descrizione"),
         )
         assertEquals(expected, poll)
     }

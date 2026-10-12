@@ -22,6 +22,9 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.randomOption
+import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollAnswer
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -355,6 +358,27 @@ internal class PollsMapperTest {
         assertEquals(originalPoll.voteCount, resultPoll.voteCount)
         assertEquals(originalPoll.closed, resultPoll.closed)
         assertEquals(originalPoll.extraData, resultPoll.extraData)
+    }
+
+    @Test
+    fun `Poll round-trip conversion should preserve translations`() = runTest {
+        val originalPoll = randomPoll(
+            options = listOf(randomOption(textI18n = mapOf("language" to "en", "it_text" to "Opzione"))),
+            answers = listOf(
+                randomPollAnswer(user = testUser, textI18n = mapOf("language" to "en", "it_text" to "Risposta")),
+            ),
+            createdBy = testUser,
+            extraData = emptyMap(),
+            nameI18n = mapOf("language" to "en", "it_text" to "Nome"),
+            descriptionI18n = mapOf("language" to "en", "it_text" to "Descrizione"),
+        )
+
+        val resultPoll = originalPoll.toEntity().toModel { testUser }
+
+        assertEquals(originalPoll.nameI18n, resultPoll.nameI18n)
+        assertEquals(originalPoll.descriptionI18n, resultPoll.descriptionI18n)
+        assertEquals(originalPoll.options, resultPoll.options)
+        assertEquals(originalPoll.answers, resultPoll.answers)
     }
 
     // endregion

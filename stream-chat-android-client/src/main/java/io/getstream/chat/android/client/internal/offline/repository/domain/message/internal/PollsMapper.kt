@@ -49,6 +49,8 @@ internal fun Poll.toEntity(): PollEntity = PollEntity(
     answers = answers.map { it.toEntity() },
     createdById = createdBy?.id,
     extraData = extraData,
+    nameI18n = nameI18n,
+    descriptionI18n = descriptionI18n,
 )
 
 /**
@@ -80,6 +82,8 @@ internal suspend fun PollEntity.toModel(
     answers = answers.map { it.toModel(getUser) },
     createdBy = createdById?.let { getUser(it) },
     extraData = extraData,
+    nameI18n = nameI18n,
+    descriptionI18n = descriptionI18n,
 )
 
 /**
@@ -91,6 +95,7 @@ internal fun Option.toEntity(): OptionEntity = OptionEntity(
     id = id,
     text = text,
     extraData = extraData,
+    textI18n = textI18n,
 )
 
 /**
@@ -102,6 +107,7 @@ internal fun OptionEntity.toModel(): Option = Option(
     id = id,
     text = text,
     extraData = extraData,
+    textI18n = textI18n,
 )
 
 /**
@@ -147,6 +153,7 @@ internal fun Answer.toEntity(): AnswerEntity = AnswerEntity(
     createdAt = createdAt,
     updatedAt = updatedAt,
     userId = user?.id,
+    textI18n = textI18n,
 )
 
 /**
@@ -164,6 +171,7 @@ internal suspend fun AnswerEntity.toModel(
     createdAt = createdAt,
     updatedAt = updatedAt,
     user = userId?.let { getUser(it) },
+    textI18n = textI18n,
 )
 
 /**

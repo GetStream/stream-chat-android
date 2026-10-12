@@ -125,4 +125,45 @@ internal class PollTest {
         assertNull(result2)
         assertNull(result3)
     }
+
+    @Test
+    fun `getNameTranslation should return the translated name for the given language`() {
+        val poll = poll.copy(nameI18n = mapOf("language" to "en", "fr_text" to "Sondage"))
+        assertEquals("Sondage", poll.getNameTranslation("fr"))
+    }
+
+    @Test
+    fun `getDescriptionTranslation should return the translated description for the given language`() {
+        val poll = poll.copy(descriptionI18n = mapOf("language" to "en", "fr_text" to "Description du sondage"))
+        assertEquals("Description du sondage", poll.getDescriptionTranslation("fr"))
+    }
+
+    @Test
+    fun `poll translations should return empty string when the translation is missing`() {
+        val poll = poll.copy(nameI18n = mapOf("language" to "en"))
+        assertEquals("", poll.getNameTranslation("fr"))
+        assertEquals("", poll.getDescriptionTranslation("fr"))
+    }
+
+    @Test
+    fun `Option getTranslation should return the translated text or empty when missing`() {
+        val option = Option(id = "opt1", text = "Yes", textI18n = mapOf("language" to "en", "fr_text" to "Oui"))
+        assertEquals("Oui", option.getTranslation("fr"))
+        assertEquals("", option.getTranslation("de"))
+    }
+
+    @Test
+    fun `Answer getTranslation should return the translated text or empty when missing`() {
+        val answer = Answer(
+            id = "ans1",
+            pollId = pollId,
+            text = "Blue",
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            user = null,
+            textI18n = mapOf("language" to "en", "fr_text" to "Bleu"),
+        )
+        assertEquals("Bleu", answer.getTranslation("fr"))
+        assertEquals("", answer.getTranslation("de"))
+    }
 }
