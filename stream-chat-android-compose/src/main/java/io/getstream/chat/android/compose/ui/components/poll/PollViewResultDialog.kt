@@ -125,7 +125,8 @@ public fun PollViewResultDialog(
                     else -> {
                         PollOptionVotesDialog(
                             poll = selectedPoll.poll,
-                            option = option,
+                            // The saved option only keeps id and text, so take the poll's copy with its translations.
+                            option = selectedPoll.poll.options.firstOrNull { it.id == option.id } ?: option,
                             currentUser = currentUser,
                             onDismissRequest = { showAllOptionVotes = null },
                             onBackPressed = { showAllOptionVotes = null },
