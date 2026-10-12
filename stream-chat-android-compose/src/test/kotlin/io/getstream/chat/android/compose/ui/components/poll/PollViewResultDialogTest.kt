@@ -20,6 +20,11 @@ import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.previewdata.PreviewPollData
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import org.junit.Rule
 import org.junit.Test
 
@@ -36,4 +41,28 @@ internal class PollViewResultDialogTest : PaparazziComposeTest {
 
     @Test
     fun `poll results in dark mode`() = snapshot(isInDarkMode = true) { PollResultsSheet() }
+
+    @Test
+    fun `translated poll results`() {
+        val poll = PreviewPollData.poll1.let { poll ->
+            poll.copy(
+                nameI18n = mapOf("language" to "en", "it_text" to "Dove andiamo in vacanza?"),
+                options = poll.options.mapIndexed { index, option ->
+                    option.copy(textI18n = mapOf("language" to "en", "it_text" to "Opzione ${index + 1}"))
+                },
+            )
+        }
+        snapshot {
+            PollViewResultDialog(
+                selectedPoll = SelectedPoll(
+                    poll = poll,
+                    message = PreviewMessageData.messageWithPoll.copy(poll = poll),
+                    pollSelectionType = PollSelectionType.ViewResult,
+                ),
+                onDismissRequest = {},
+                onBackPressed = {},
+                currentUser = User(id = "user", language = "it"),
+            )
+        }
+    }
 }
