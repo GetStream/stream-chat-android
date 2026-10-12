@@ -42,7 +42,7 @@ internal interface RemindersApi {
      *
      * @param body The request body containing the query parameters.
      */
-    @POST("/reminders/query")
+    @POST("/api/v2/chat/reminders/query")
     fun queryReminders(
         @Body body: QueryRemindersRequest,
     ): RetrofitCall<QueryRemindersResponse>
@@ -53,7 +53,7 @@ internal interface RemindersApi {
      * @param messageId The ID of the message to create a reminder for.
      * @param body The request body containing the reminder details.
      */
-    @POST("/messages/{id}/reminders")
+    @POST("/api/v2/chat/messages/{id}/reminders")
     fun createReminder(
         @Path("id") messageId: String,
         @Body body: CreateReminderRequest,
@@ -65,7 +65,7 @@ internal interface RemindersApi {
      * @param messageId The ID of the message to update the reminder for.
      * @param body The request body containing the updated reminder details.
      */
-    @PATCH("/messages/{id}/reminders")
+    @PATCH("/api/v2/chat/messages/{id}/reminders")
     fun updateReminder(
         @Path("id") messageId: String,
         @Body body: UpdateReminderRequest,
@@ -76,7 +76,7 @@ internal interface RemindersApi {
      *
      * @param messageId The ID of the message to delete the reminder for.
      */
-    @DELETE("/messages/{id}/reminders")
+    @DELETE("/api/v2/chat/messages/{id}/reminders")
     fun deleteReminder(
         @Path("id") messageId: String,
     ): RetrofitCall<Response>
