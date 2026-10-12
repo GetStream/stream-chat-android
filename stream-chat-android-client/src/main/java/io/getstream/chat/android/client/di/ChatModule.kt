@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiConfig
 import io.getstream.chat.android.client.api.ProxyChatApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
-import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
 import io.getstream.chat.android.client.api.interceptor.ApiRequestAnalyserInterceptor
 import io.getstream.chat.android.client.api.interceptor.HeadersInterceptor
@@ -50,6 +49,7 @@ import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
@@ -196,7 +196,7 @@ constructor(
     internal val chatSocket: ChatSocket by lazy { buildChatSocket(config) }
     private val defaultFileUploader by lazy {
         StreamFileUploader(
-            retrofitCdnApi = buildRetrofitCdnApi(),
+            retrofitCdnApi = buildV2RetrofitApi(config.cdnHttpUrl, CDN_TIMEOUT),
         )
     }
 
@@ -355,7 +355,8 @@ constructor(
             buildV2RetrofitApi<ChannelApi>(),
             buildRetrofitApi<ChannelV1Api>(),
             buildV2RetrofitApi<DeviceApi>(),
-            buildRetrofitApi<ModerationApi>(),
+            buildV2RetrofitApi<ModerationApi>(),
+            buildRetrofitApi<ModerationV1Api>(),
             buildV2RetrofitApi<GeneralApi>(),
             buildRetrofitApi<SyncApi>(),
             buildV2RetrofitApi<ConfigApi>(),
@@ -396,11 +397,14 @@ constructor(
      * `custom`, which the generated [Serializer] reads as emitted, so bodies go through it instead of the v1 parser.
      * Errors keep the v1 envelope, so the interceptors and the call adapter still use [moshiParser].
      */
-    private inline fun <reified T> buildV2RetrofitApi(): T {
+    private inline fun <reified T> buildV2RetrofitApi(
+        endpoint: String = config.httpUrl,
+        timeout: Long = BASE_TIMEOUT,
+    ): T {
         val apiClass = T::class.java
         return buildRetrofit(
-            config.httpUrl,
-            BASE_TIMEOUT,
+            endpoint,
+            timeout,
             config,
             moshiParser,
             apiClass.isAnonymousApi,
@@ -409,17 +413,6 @@ constructor(
                 .addConverterFactory(MoshiUrlQueryPayloadFactory(Serializer.moshi))
                 .addConverterFactory(MoshiConverterFactory.create(Serializer.moshi).withErrorLogging())
         }.create(apiClass)
-    }
-
-    private fun buildRetrofitCdnApi(): RetrofitCdnApi {
-        val apiClass = RetrofitCdnApi::class.java
-        return buildRetrofit(
-            config.cdnHttpUrl,
-            CDN_TIMEOUT,
-            config,
-            moshiParser,
-            apiClass.isAnonymousApi,
-        ).create(apiClass)
     }
 
     /**

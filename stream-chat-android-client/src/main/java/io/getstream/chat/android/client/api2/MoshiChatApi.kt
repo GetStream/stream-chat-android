@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
@@ -219,6 +220,7 @@ constructor(
     private val channelV1Api: ChannelV1Api,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
+    private val moderationV1Api: ModerationV1Api,
     private val generalApi: GeneralApi,
     private val syncApi: SyncApi,
     private val configApi: ConfigApi,
@@ -727,7 +729,7 @@ constructor(
         userId: String,
         timeout: Int?,
     ): Call<Mute> {
-        return moderationApi.muteUser(
+        return moderationV1Api.muteUser(
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
@@ -739,7 +741,7 @@ constructor(
     }
 
     override fun unmuteUser(userId: String): Call<Unit> {
-        return moderationApi.unmuteUser(
+        return moderationV1Api.unmuteUser(
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
@@ -929,13 +931,13 @@ constructor(
         unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: FlagRequest): Call<Flag> {
-        return moderationApi.flag(body = body).mapDomain { response ->
+        return moderationV1Api.flag(body = body).mapDomain { response ->
             response.flag.toDomain()
         }
     }
 
     private fun unflag(body: Map<String, String>): Call<Flag> {
-        return moderationApi.unflag(body = body).mapDomain { response ->
+        return moderationV1Api.unflag(body = body).mapDomain { response ->
             response.flag.toDomain()
         }
     }
@@ -948,7 +950,7 @@ constructor(
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return moderationApi.banUser(
+        return moderationV1Api.banUser(
             body = BanUserRequest(
                 target_user_id = targetId,
                 timeout = timeout,
@@ -966,7 +968,7 @@ constructor(
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return moderationApi.unbanUser(
+        return moderationV1Api.unbanUser(
             targetUserId = targetId,
             channelId = channelId,
             channelType = channelType,
