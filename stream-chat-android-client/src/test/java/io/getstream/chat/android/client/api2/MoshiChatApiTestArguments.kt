@@ -25,8 +25,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
@@ -34,13 +33,13 @@ import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.parser2.GetMessageResponseParityTest
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
-import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
@@ -62,6 +61,7 @@ import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.GroupedChannelsBucket
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
+import io.getstream.chat.android.network.models.HealthCheckEvent
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
@@ -649,10 +649,11 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 EventResponse(
-                    event = HealthEventDto(
-                        type = EventType.HEALTH_CHECK,
-                        created_at = ExactDate(randomDate(), randomString()),
-                        connection_id = randomString(),
+                    event = GeneratedEventDto(
+                        HealthCheckEvent(
+                            connectionId = randomString(),
+                            createdAt = ExactDate.parseOrNull("2026-10-05T10:00:00.000Z")!!,
+                        ),
                     ),
                     duration = randomString(),
                 ),

@@ -18,18 +18,12 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
-import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
-import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
@@ -108,13 +102,18 @@ import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.WSEvent
+import io.getstream.chat.android.network.models.AIIndicatorClearEvent as GeneratedAIIndicatorClearEvent
+import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
+import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
 import io.getstream.chat.android.network.models.ChannelDeletedEvent as GeneratedChannelDeletedEvent
 import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedChannelHiddenEvent
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
+import io.getstream.chat.android.network.models.ConnectedEvent as GeneratedConnectedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
+import io.getstream.chat.android.network.models.HealthCheckEvent as GeneratedHealthCheckEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -123,6 +122,7 @@ import io.getstream.chat.android.network.models.MessageDeliveredEvent as Generat
 import io.getstream.chat.android.network.models.MessageNewEvent as GeneratedMessageNewEvent
 import io.getstream.chat.android.network.models.MessageReadEvent as GeneratedMessageReadEvent
 import io.getstream.chat.android.network.models.MessageUpdatedEvent as GeneratedMessageUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent as GeneratedNotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
@@ -174,18 +174,12 @@ internal class EventMapping(
     @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
-            is ConnectedEventDto -> toDomain()
             is ConnectionErrorEventDto -> toDomain()
             is ConnectingEventDto -> toDomain()
             is DisconnectedEventDto -> toDomain()
             is ErrorEventDto -> toDomain()
-            is HealthEventDto -> toDomain()
-            is NotificationAddedToChannelEventDto -> toDomain()
             is UnknownEventDto -> toDomain()
             is GeneratedEventDto -> event.toDomain()
-            is AIIndicatorUpdatedEventDto -> toDomain()
-            is AIIndicatorClearEventDto -> toDomain()
-            is AIIndicatorStopEventDto -> toDomain()
         }
     }
 
@@ -226,14 +220,15 @@ internal class EventMapping(
         )
     }
 
-    private fun HealthEventDto.toDomain(): HealthEvent {
-        return HealthEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
-        )
-    }
+    /**
+     * Transforms the generated [GeneratedHealthCheckEvent] to [HealthEvent].
+     */
+    private fun GeneratedHealthCheckEvent.toDomain(): HealthEvent = HealthEvent(
+        type = type,
+        createdAt = createdAt.date,
+        rawCreatedAt = createdAt.raw,
+        connectionId = connectionId,
+    )
 
     /**
      * Transforms the generated [GeneratedMessageDeletedEvent] to [MessageDeletedEvent].
@@ -342,22 +337,25 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationAddedToChannelEventDto] to [NotificationAddedToChannelEvent].
+     * Transforms the generated [GeneratedNotificationAddedToChannelEvent] to [NotificationAddedToChannelEvent].
      */
-    private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToChannelEvent = with(domainMapping) {
-        NotificationAddedToChannelEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(),
-            member = member.toDomain(),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-        )
-    }
+    private fun GeneratedNotificationAddedToChannelEvent.toDomain(): NotificationAddedToChannelEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationAddedToChannelEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
+                member = member.toDomain(),
+                totalUnreadCount = totalUnreadCount ?: 0,
+                unreadChannels = unreadChannels ?: 0,
+            )
+        }
 
     /**
      * Transforms the generated [GeneratedNotificationMarkReadEvent] to [NotificationMarkReadEvent], or to
@@ -455,6 +453,7 @@ internal class EventMapping(
      * Transforms an event parsed with its generated model. The event adapter only produces the types
      * handled here, and rejects an event missing a field its domain event requires.
      */
+    @Suppress("LongMethod")
     private fun WSEvent.toDomain(): ChatEvent = when (this) {
         is GeneratedUserWatchingStartEvent -> toDomain()
         is GeneratedUserWatchingStopEvent -> toDomain()
@@ -507,6 +506,12 @@ internal class EventMapping(
         is GeneratedReactionDeletedEvent -> toDomain()
         is GeneratedReactionNewEvent -> toDomain()
         is GeneratedReactionUpdatedEvent -> toDomain()
+        is GeneratedNotificationAddedToChannelEvent -> toDomain()
+        is GeneratedAIIndicatorUpdateEvent -> toDomain()
+        is GeneratedAIIndicatorClearEvent -> toDomain()
+        is GeneratedAIIndicatorStopEvent -> toDomain()
+        is GeneratedConnectedEvent -> toDomain()
+        is GeneratedHealthCheckEvent -> toDomain()
         else -> error("No mapping for the generated ${getWSEventType()} event")
     }
 
@@ -1289,33 +1294,35 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorUpdatedEventDto] to [AIIndicatorUpdatedEvent].
+     * Transforms the generated [GeneratedAIIndicatorUpdateEvent] to [AIIndicatorUpdatedEvent].
      */
-    private fun AIIndicatorUpdatedEventDto.toDomain(): AIIndicatorUpdatedEvent = with(domainMapping) {
+    private fun GeneratedAIIndicatorUpdateEvent.toDomain(): AIIndicatorUpdatedEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AIIndicatorUpdatedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
-            user = user.toDomain(),
+            user = requireNotNull(user).toDomain(),
             channelType = channelType,
             channelId = channelId,
-            aiState = ai_state,
-            messageId = message_id,
+            aiState = aiState,
+            messageId = messageId,
         )
     }
 
     /**
-     * Transforms [AIIndicatorClearEventDto] to [AIIndicatorClearEvent].
+     * Transforms the generated [GeneratedAIIndicatorClearEvent] to [AIIndicatorClearEvent].
      */
-    private fun AIIndicatorClearEventDto.toDomain(): AIIndicatorClearEvent = with(domainMapping) {
+    private fun GeneratedAIIndicatorClearEvent.toDomain(): AIIndicatorClearEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AIIndicatorClearEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            user = user.toDomain(),
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = requireNotNull(user).toDomain(),
             cid = cid,
             channelType = channelType,
             channelId = channelId,
@@ -1323,31 +1330,33 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorStopEventDto] to [AIIndicatorStopEvent].
+     * Transforms the generated [GeneratedAIIndicatorStopEvent] to [AIIndicatorStopEvent].
      */
-    private fun AIIndicatorStopEventDto.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
+    private fun GeneratedAIIndicatorStopEvent.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
+        val cid = requireNotNull(cid)
         val (channelType, channelId) = cid.cidToTypeAndId()
         return AIIndicatorStopEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             cid = cid,
-            user = user.toDomain(),
+            user = requireNotNull(user).toDomain(),
             channelType = channelType,
             channelId = channelId,
         )
     }
 
     /**
-     * Transforms [ConnectedEventDto] to [ConnectedEvent].
+     * Transforms the generated [GeneratedConnectedEvent] to [ConnectedEvent]. On the v1 socket it is the
+     * `health.check` hello that carries `me`.
      */
-    private fun ConnectedEventDto.toDomain(): ConnectedEvent = with(domainMapping) {
+    private fun GeneratedConnectedEvent.toDomain(): ConnectedEvent = with(domainMapping) {
         ConnectedEvent(
             type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
             me = me.toDomain(),
-            connectionId = connection_id,
+            connectionId = connectionId,
         )
     }
 

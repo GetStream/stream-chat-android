@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.isUploaded
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -35,11 +36,14 @@ import java.util.UUID
 /**
  * Marks each attachment for upload: attachments without a local file are marked
  * [Attachment.UploadState.Success]; those with a local [Attachment.upload] file are
- * marked [Attachment.UploadState.Idle] and assigned an [EXTRA_UPLOAD_ID].
+ * marked [Attachment.UploadState.Idle] and assigned an [EXTRA_UPLOAD_ID], unless they
+ * were already uploaded.
  */
 internal fun List<Attachment>.prepareForUpload(): List<Attachment> = map { attachment ->
-    when (attachment.upload) {
-        null -> attachment.copy(uploadState = Attachment.UploadState.Success)
+    when {
+        attachment.upload == null -> attachment.copy(uploadState = Attachment.UploadState.Success)
+        // Uploaded by a previous attempt to send this message: uploading it again would re-send the file.
+        attachment.isUploaded() -> attachment
         else -> attachment.copy(
             extraData = attachment.extraData +
                 mapOf(EXTRA_UPLOAD_ID to (attachment.uploadId ?: "upload_id_${UUID.randomUUID()}")),

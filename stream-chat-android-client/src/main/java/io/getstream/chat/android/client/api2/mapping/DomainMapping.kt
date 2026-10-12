@@ -20,13 +20,8 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
@@ -202,57 +197,6 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DownstreamChannelDto] into [Channel]
-     *
-     */
-    internal fun DownstreamChannelDto.toDomain(): Channel =
-        Channel(
-            id = id,
-            type = type,
-            name = name ?: "",
-            image = image ?: "",
-            watcherCount = watcher_count,
-            filterTags = filter_tags.orEmpty(),
-            frozen = frozen,
-            createdAt = created_at,
-            deletedAt = deleted_at,
-            updatedAt = updated_at,
-            truncatedAt = truncated_at,
-            disabled = disabled,
-            blocked = blocked,
-            memberCount = member_count,
-            messages = messages.map { it.toDomain(this.toChannelInfo()) },
-            members = members.map { it.toDomain() },
-            watchers = watchers.map { it.toDomain() },
-            read = read.map {
-                it.toDomain(
-                    lastReceivedEventDate = last_message_at ?: it.lastRead,
-                )
-            },
-            config = config?.toDomain() ?: Config(),
-            createdBy = created_by?.toDomain() ?: User(),
-            team = team,
-            cooldown = cooldown,
-            pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
-            ownCapabilities = own_capabilities.toSet(),
-            membership = membership?.toDomain(),
-            messageCount = message_count,
-            lastMessageAt = last_message_at,
-            extraData = extraData.toMutableMap(),
-        ).syncUnreadCountWithReads(currentUserIdProvider())
-            .let(channelTransformer::transform)
-
-    internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo =
-        ChannelInfo(
-            cid = cid,
-            id = id,
-            memberCount = member_count,
-            name = name,
-            type = type,
-            image = image,
-        )
-
-    /**
      * Transforms [ChannelResponse] into [Channel]. Channel-level wire fields only: the type carries
      * no `messages`, `watchers`, `read`, `pinned_messages`, `membership` or `active_live_locations`,
      * so those stay empty. `name` and `image` are custom data on the wire.
@@ -322,67 +266,6 @@ internal class DomainMapping(
      * Transforms [DeleteChannelResponse] into [Channel], or null when it carries no channel.
      */
     internal fun DeleteChannelResponse.toDomain(): Channel? = channel?.toDomain()
-
-    /**
-     * Transforms [DownstreamMessageDto] to [Message].
-     */
-    @Suppress("DEPRECATION")
-    internal fun DownstreamMessageDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): Message =
-        (channel?.toDomain() ?: fallbackChannelInfo).let { channelInfo: ChannelInfo? ->
-            Message(
-                attachments = attachments.map { it.toDomain() },
-                channelInfo = channelInfo,
-                cid = cid,
-                command = command,
-                createdAt = created_at,
-                deletedAt = deleted_at,
-                html = html,
-                i18n = i18n,
-                id = id,
-                latestReactions = latest_reactions.toReactions(messageId = id),
-                mentionedUsers = mentioned_users.map { it.toDomain() },
-                mentionedHere = mentioned_here ?: false,
-                mentionedChannel = mentioned_channel ?: false,
-                mentionedGroups = mentioned_groups.map { it.toDomain() },
-                mentionedRoles = mentioned_roles,
-                ownReactions = own_reactions.toReactions(messageId = id),
-                parentId = parent_id,
-                pinExpires = pin_expires,
-                pinned = pinned,
-                pinnedAt = pinned_at,
-                pinnedBy = pinned_by?.toDomain(),
-                reactionCounts = reaction_counts.orEmpty().toMutableMap(),
-                reactionScores = reaction_scores.orEmpty().toMutableMap(),
-                reactionGroups = reaction_groups.orEmpty().mapValues { it.value.toDomain(it.key) },
-                replyCount = reply_count,
-                deletedReplyCount = deleted_reply_count,
-                replyMessageId = quoted_message_id,
-                replyTo = quoted_message?.toDomain(channelInfo),
-                shadowed = shadowed,
-                showInChannel = show_in_channel,
-                silent = silent,
-                text = text,
-                threadParticipants = thread_participants.map { it.toDomain() },
-                type = type,
-                updatedAt = lastUpdateTime(),
-                user = user.toDomain(),
-                moderationDetails = moderation_details?.toDomain(),
-                moderation = moderation?.toDomain(),
-                messageTextUpdatedAt = message_text_updated_at,
-                poll = poll?.toDomain(),
-                restrictedVisibility = emptyList(),
-                reminder = reminder?.toDomain(),
-                sharedLocation = shared_location?.toDomain(),
-                channelRole = member?.channelRole,
-                member = member?.toDomain(),
-                mentionedChannelMembers = mentioned_channel_members
-                    ?.mapNotNull { (userId, memberInfo) -> memberInfo?.let { userId to it.toDomain() } }
-                    ?.toMap()
-                    .orEmpty(),
-                deletedForMe = deleted_for_me ?: false,
-                extraData = extraData.toMutableMap(),
-            ).let(messageTransformer::transform)
-        }
 
     internal fun DraftResponse.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
@@ -671,11 +554,6 @@ internal class DomainMapping(
             deviceId = createdByDeviceId,
             endAt = endAt,
         )
-
-    private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
-        updated_at,
-        poll?.updatedAt,
-    ).maxBy { it.time }
 
     /**
      * Transforms the own-user payload the connection and mute-notification events carry. It is the same
@@ -1190,19 +1068,6 @@ internal class DomainMapping(
     }
 
     /**
-     * Transforms [ChannelInfoDto] to [ChannelInfo].
-     */
-    internal fun ChannelInfoDto.toDomain(): ChannelInfo =
-        ChannelInfo(
-            cid = cid,
-            id = id,
-            memberCount = member_count,
-            name = name,
-            type = type,
-            image = image,
-        )
-
-    /**
      * Transforms [CommandDto] to [Command].
      */
     internal fun CommandDto.toDomain(): Command = Command(
@@ -1288,15 +1153,6 @@ internal class DomainMapping(
             rejectedAt = rejected_at,
         )
     }
-
-    /**
-     * Maps an [DownstreamModerationDetailsDto] to its [MessageModerationDetails] representation.
-     */
-    internal fun DownstreamModerationDetailsDto.toDomain(): MessageModerationDetails = MessageModerationDetails(
-        originalText = original_text.orEmpty(),
-        action = MessageModerationAction.fromRawValue(action.orEmpty()),
-        errorMsg = error_msg.orEmpty(),
-    )
 
     /**
      * Maps the network [ModerationV2Response] to the domain model [Moderation].
@@ -1428,15 +1284,6 @@ internal class DomainMapping(
         message = message?.toDomain(),
         createdAt = createdAt,
         updatedAt = updatedAt,
-    )
-
-    /**
-     * Transforms a network [DownstreamReminderInfoDto] model to a domain [MessageReminderInfo].
-     */
-    internal fun DownstreamReminderInfoDto.toDomain(): MessageReminderInfo = MessageReminderInfo(
-        remindAt = remind_at,
-        createdAt = created_at,
-        updatedAt = updated_at,
     )
 
     /**

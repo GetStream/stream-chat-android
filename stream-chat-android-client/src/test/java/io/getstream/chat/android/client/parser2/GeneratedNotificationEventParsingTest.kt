@@ -17,18 +17,21 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
+import io.getstream.chat.android.client.createNotificationAddedToChannelEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createNotificationInviteAcceptedEventStringJson
 import io.getstream.chat.android.client.createNotificationInviteRejectedEventStringJson
 import io.getstream.chat.android.client.createNotificationInvitedEventStringJson
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -58,6 +61,16 @@ internal class GeneratedNotificationEventParsingTest {
         }
     }
 
+    @Test
+    fun `An added to channel event without unread counts maps them to zero`() {
+        val json = createNotificationAddedToChannelEventStringJson().without("total_unread_count").without("unread_channels")
+
+        val event = parser.fromJson(json, ChatEvent::class.java) as NotificationAddedToChannelEvent
+
+        event.totalUnreadCount shouldBeEqualTo 0
+        event.unreadChannels shouldBeEqualTo 0
+    }
+
     private fun String.withNanosecondCreatedAt() =
         replaceFirst(""""created_at": "2020-06-29T06:14:28.000Z"""", """"created_at": "$NANOSECOND_CREATED_AT"""")
 
@@ -80,8 +93,12 @@ internal class GeneratedNotificationEventParsingTest {
             createNotificationChannelTruncatedEventStringJson() to NotificationChannelTruncatedEvent::class,
         )
 
+        private val addedToChannelEvent =
+            createNotificationAddedToChannelEventStringJson() to NotificationAddedToChannelEvent::class
+
         @JvmStatic
-        fun events(): List<Arguments> = (inviteEvents + channelEvents).map { (json, type) -> Arguments.of(json, type) }
+        fun events(): List<Arguments> =
+            (inviteEvents + channelEvents + addedToChannelEvent).map { (json, type) -> Arguments.of(json, type) }
 
         @JvmStatic
         fun missingRequiredFields(): List<Arguments> =
@@ -89,6 +106,6 @@ internal class GeneratedNotificationEventParsingTest {
                 listOf("cid", "user", "member", "channel").map { Arguments.of(json, it) }
             } + channelEvents.flatMap { (json, _) ->
                 listOf("cid", "channel").map { Arguments.of(json, it) }
-            }
+            } + listOf("cid", "channel", "member").map { Arguments.of(addedToChannelEvent.first, it) }
     }
 }
