@@ -190,9 +190,7 @@ internal object EventMappingTestArguments {
     private val CHANNEL_NAME = randomString()
     private val CHANNEL_IMAGE = randomString()
     private val MESSAGE_ID = randomString()
-    private val MESSAGE = Mother.randomDownstreamMessageDto()
     private val DRAFT = Mother.randomDraftResponse()
-    private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val THREAD_ID = randomString()
     private val CLEAR_HISTORY = randomBoolean()
     private val SHADOW_BAN = randomBoolean()
@@ -903,7 +901,7 @@ internal object EventMappingTestArguments {
         type = EventType.REMINDER_CREATED,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -914,7 +912,7 @@ internal object EventMappingTestArguments {
         type = EventType.REMINDER_UPDATED,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -925,7 +923,7 @@ internal object EventMappingTestArguments {
         type = EventType.REMINDER_DELETED,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -936,7 +934,7 @@ internal object EventMappingTestArguments {
         type = EventType.NOTIFICATION_REMINDER_DUE,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )

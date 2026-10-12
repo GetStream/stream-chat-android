@@ -119,8 +119,7 @@ internal class MessageAdapter(
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "html" -> html = reader.nextString()
-                // i18n is non-nullable in DownstreamMessageDto (with default), so the DTO path
-                // throws on explicit JSON null even though missing is fine. Match that here.
+                // An explicit null is rejected; a missing key falls back to the empty default.
                 "i18n" -> {
                     JsonParsingUtils.rejectExplicitNull(reader, "i18n")
                     i18n = JsonParsingUtils.parseStringMap(reader)
@@ -161,8 +160,7 @@ internal class MessageAdapter(
                 "show_in_channel" -> showInChannel = reader.nextBoolean()
                 "silent" -> silent = reader.nextBoolean()
                 "text" -> text = reader.nextString()
-                // thread_participants is non-nullable in DownstreamMessageDto (with default),
-                // so the DTO path throws on explicit JSON null. Match that here.
+                // An explicit null is rejected; a missing key falls back to the empty default.
                 "thread_participants" -> {
                     JsonParsingUtils.rejectExplicitNull(reader, "thread_participants")
                     threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
