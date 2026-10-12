@@ -135,6 +135,9 @@ internal class DtoMapping(
 
     private fun MutableMap<String, Any>.takeString(key: String): String? = takeTyped(key) { it as? String }
 
+    private fun MutableMap<String, Any>.takeStrings(key: String): List<String>? =
+        takeTyped(key) { list -> (list as List<*>).map { it as String } }
+
     private fun <T> MutableMap<String, Any>.takeList(key: String, adapter: JsonAdapter<T>): List<T>? =
         takeTyped(key) { list -> (list as List<*>).map { adapter.fromJsonValue(it)!! } }
 
@@ -230,6 +233,12 @@ internal class DtoMapping(
         messageTransformer.transform(this)
             .run {
                 val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
+                // Responses also copy these declared fields into extraData (see DomainMapping.withDeclared), so a
+                // message sent back carries them. They go back to their typed fields, taking precedence as they did
+                // when v1 flattened extraData over the root. The response-only ones are dropped, since the backend
+                // would store them as custom data on either version.
+                val custom = extraData.toMutableMap()
+                custom.keys.removeAll(RESPONSE_ONLY_MESSAGE_KEYS)
                 MessageRequest(
                     id = id,
                     text = text,
@@ -238,8 +247,10 @@ internal class DtoMapping(
                     mentionedUsers = mentionedUsersIds,
                     mentionedHere = mentionedHere,
                     mentionedChannel = mentionedChannel,
-                    mentionedGroupIds = mentionedGroups.map(UserGroup::id),
+                    mentionedGroupIds = custom.takeStrings("mentioned_group_ids") ?: mentionedGroups.map(UserGroup::id),
                     mentionedRoles = mentionedRoles,
+                    mml = custom.takeString("mml"),
+                    pollId = custom.takeString("poll_id"),
                     parentId = parentId,
                     pinExpires = pinExpires,
                     pinned = pinned,
@@ -247,9 +258,9 @@ internal class DtoMapping(
                     quotedMessageId = replyMessageId,
                     showInChannel = showInChannel,
                     silent = silent,
-                    restrictedVisibility = restrictedVisibility,
+                    restrictedVisibility = custom.takeStrings("restricted_visibility") ?: restrictedVisibility,
                     sharedLocation = sharedLocation?.toSharedLocation(),
-                    custom = extraData,
+                    custom = custom,
                 )
             }
 
@@ -360,3 +371,10 @@ internal class DtoMapping(
         defaultPreference = defaultPreference?.value?.let(ChatPreferencesInput.DefaultPreference::fromString),
     )
 }
+
+/**
+ * Declared message fields that responses also copy into extraData but a message request doesn't carry. Sent back, the
+ * backend stores them as custom data: hidden from v1 readers, where the name clashes with the field, and shown to v2
+ * readers under `custom`.
+ */
+private val RESPONSE_ONLY_MESSAGE_KEYS = setOf("draft", "image_labels")

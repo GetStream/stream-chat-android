@@ -52,20 +52,20 @@ internal interface MessageApi {
     /**
      * [REST documentation](https://getstream.io/chat/docs/rest/#messages-sendmessage)
      */
-    @POST("/channels/{type}/{id}/message")
+    @POST("/api/v2/chat/channels/{type}/{id}/message")
     fun sendMessage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body message: SendMessageRequest,
     ): RetrofitCall<SendMessageResponse>
 
-    @GET("/messages/{id}")
+    @GET("/api/v2/chat/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<GetMessageResponse>
 
     /**
-     * [REST documentation]()https://getstream.io/chat/docs/rest/#messages-updatemessage)
+     * [REST documentation](https://getstream.io/chat/docs/rest/#messages-updatemessage)
      */
-    @POST("/messages/{id}")
+    @POST("/api/v2/chat/messages/{id}")
     fun updateMessage(
         @Path("id") messageId: String,
         @Body message: UpdateMessageRequest,
@@ -74,77 +74,77 @@ internal interface MessageApi {
     /**
      * [Rest documentation](https://getstream.io/chat/docs/rest/#messages-updatemessagepartial-request)
      */
-    @PUT("/messages/{id}")
+    @PUT("/api/v2/chat/messages/{id}")
     fun partialUpdateMessage(
         @Path("id") messageId: String,
         @Body body: UpdateMessagePartialRequest,
     ): RetrofitCall<UpdateMessagePartialResponse>
 
-    @DELETE("/messages/{id}")
+    @DELETE("/api/v2/chat/messages/{id}")
     fun deleteMessage(
         @Path("id") messageId: String,
         @Query("hard") hard: Boolean?,
         @Query("delete_for_me") deleteForMe: Boolean?,
     ): RetrofitCall<DeleteMessageResponse>
 
-    @POST("/messages/{id}/action")
+    @POST("/api/v2/chat/messages/{id}/action")
     fun sendAction(
         @Path("id") messageId: String,
         @Body request: MessageActionRequest,
     ): RetrofitCall<MessageActionResponse>
 
-    @POST("/messages/{id}/reaction")
+    @POST("/api/v2/chat/messages/{id}/reaction")
     fun sendReaction(
         @Path("id") messageId: String,
         @Body request: SendReactionRequest,
     ): RetrofitCall<SendReactionResponse>
 
-    @DELETE("/messages/{id}/reaction/{type}")
+    @DELETE("/api/v2/chat/messages/{id}/reaction/{type}")
     fun deleteReaction(
         @Path("id") messageId: String,
         @Path("type") reactionType: String,
     ): RetrofitCall<DeleteReactionResponse>
 
-    @GET("/messages/{id}/reactions")
+    @GET("/api/v2/chat/messages/{id}/reactions")
     fun getReactions(
         @Path("id") messageId: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
     ): RetrofitCall<GetReactionsResponse>
 
-    @POST("/messages/{id}/reactions")
+    @POST("/api/v2/chat/messages/{id}/reactions")
     fun queryReactions(
         @Path("id") messageId: String,
         @Body body: QueryReactionsRequest,
     ): RetrofitCall<QueryReactionsResponse>
 
-    @POST("/messages/{messageId}/translate")
+    @POST("/api/v2/chat/messages/{messageId}/translate")
     fun translate(
         @Path("messageId") messageId: String,
         @Body request: TranslateMessageRequest,
     ): RetrofitCall<TranslateMessageResponse>
 
-    @GET("/messages/{parent_id}/replies")
+    @GET("/api/v2/chat/messages/{parent_id}/replies")
     fun getReplies(
         @Path("parent_id") messageId: String,
         @Query("limit") limit: Int,
     ): RetrofitCall<GetRepliesResponse>
 
-    @GET("/messages/{parent_id}/replies?sort=[{\"field\":\"created_at\",\"direction\":1}]")
+    @GET("/api/v2/chat/messages/{parent_id}/replies?sort=[{\"field\":\"created_at\",\"direction\":1}]")
     fun getNewerReplies(
         @Path("parent_id") parentId: String,
         @Query("limit") limit: Int,
         @Query("id_gt") lastId: String?,
     ): RetrofitCall<GetRepliesResponse>
 
-    @GET("/messages/{parent_id}/replies")
+    @GET("/api/v2/chat/messages/{parent_id}/replies")
     fun getRepliesMore(
         @Path("parent_id") messageId: String,
         @Query("limit") limit: Int,
         @Query("id_lt") firstId: String,
     ): RetrofitCall<GetRepliesResponse>
 
-    @GET("/messages/{parent_id}/replies")
+    @GET("/api/v2/chat/messages/{parent_id}/replies")
     fun getRepliesAround(
         @Path("parent_id") parentId: String,
         @Query("limit") limit: Int,

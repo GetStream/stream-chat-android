@@ -89,7 +89,7 @@ internal abstract class BaseUiTest {
                     okResponse(readFileContents(HTTP_CHANNELS))
                 } else if (path.startsWith("/channels/messaging/general/query")) {
                     okResponse(readFileContents(HTTP_CHANNEL))
-                } else if (path.startsWith("/channels/messaging/general/message")) {
+                } else if (path.startsWith("/api/v2/chat/channels/messaging/general/message")) {
                     val messageId = JSONObject(request.body.readUtf8()).getString("id")
                     webSocket.send(readFileContents(WS_MESSAGE_NEW).replace(":messageId", messageId))
                     okResponse(readFileContents(HTTP_MESSAGE).replace(":messageId", messageId))

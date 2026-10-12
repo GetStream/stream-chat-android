@@ -349,7 +349,7 @@ constructor(
             fileTransformer = fileTransformer,
             buildV2RetrofitApi<UserApi>(),
             buildV2RetrofitApi<GuestApi>(),
-            buildRetrofitApi<MessageApi>(),
+            buildV2RetrofitApi<MessageApi>(),
             buildV2RetrofitApi<DraftApi>(),
             buildRetrofitApi<ChannelApi>(),
             buildV2RetrofitApi<DeviceApi>(),
