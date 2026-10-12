@@ -26,7 +26,7 @@ import retrofit2.http.POST
 @AnonymousApi
 internal interface GuestApi {
 
-    @POST("/guest")
+    @POST("/api/v2/guest")
     fun getGuestUser(
         @Body body: CreateGuestRequest,
     ): RetrofitCall<CreateGuestResponse>

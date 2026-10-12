@@ -43,39 +43,39 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface UserApi {
 
-    @POST("/users")
+    @POST("/api/v2/users")
     fun updateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateUsersRequest,
     ): RetrofitCall<UpdateUsersResponse>
 
-    @POST("/users/block")
+    @POST("/api/v2/users/block")
     @JvmSuppressWildcards
     fun blockUser(@Body body: BlockUsersRequest): RetrofitCall<BlockUsersResponse>
 
-    @POST("/users/unblock")
+    @POST("/api/v2/users/unblock")
     fun unblockUser(@Body body: UnblockUsersRequest): RetrofitCall<UnblockUsersResponse>
 
-    @GET("/users/block")
+    @GET("/api/v2/users/block")
     fun queryBlockedUsers(): RetrofitCall<GetBlockedUsersResponse>
 
-    @PATCH("/users")
+    @PATCH("/api/v2/users")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun partialUpdateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateUsersPartialRequest,
     ): RetrofitCall<UpdateUsersResponse>
 
-    @GET("/users")
+    @GET("/api/v2/users")
     fun queryUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryUsersPayload,
     ): RetrofitCall<QueryUsersResponse>
 
-    @GET("/users/live_locations")
+    @GET("/api/v2/users/live_locations")
     fun liveLocations(): RetrofitCall<SharedLocationsResponse>
 
-    @PUT("/users/live_locations")
+    @PUT("/api/v2/users/live_locations")
     fun updateLiveLocation(
         @Body body: UpdateLiveLocationRequest,
     ): RetrofitCall<SharedLocationResponse>

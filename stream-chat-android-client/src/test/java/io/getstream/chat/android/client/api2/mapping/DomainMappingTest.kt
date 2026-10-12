@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
@@ -1250,7 +1251,7 @@ internal class DomainMappingTest {
             channelMutes = with(sut) { userResponse.channelMutes.map { it.toDomain() } },
             privacySettings = PrivacySettings(typingIndicators = TypingIndicators(enabled = true)),
             // `absent` is dropped: the domain map does not hold null values.
-            extraData = mutableMapOf("birthland" to "Polis Massa"),
+            extraData = mutableMapOf("birthland" to "Polis Massa", "shadow_banned" to false),
         )
         assertEquals(expected, user)
     }
@@ -1273,7 +1274,7 @@ internal class DomainMappingTest {
 
         val user = with(sut) { userResponse.toDomain() }
 
-        assertEquals(mapOf<String, Any>("customKey" to "customValue"), user.extraData)
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), user.extraData - GENERATED_FULL_USER_EXTRA_DATA_KEYS)
     }
 
     @Test

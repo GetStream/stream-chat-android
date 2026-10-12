@@ -696,7 +696,12 @@ internal class DomainMapping(
             channelMutes = channelMutes.map { it.toDomain() },
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = custom.withDeclared(
+                "ban_expires" to banExpires,
+                "deleted_at" to deletedAt,
+                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+                "shadow_banned" to shadowBanned,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
 
     /**
@@ -792,8 +797,33 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            extraData = custom.withDeclared(
+                "deleted_at" to deletedAt,
+                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         ).let(userTransformer::transform)
+
+    /**
+     * The v1 adapters also keep some declared fields in `custom`, so the domain has always carried them in `extraData`,
+     * in their wire shape. v2 sends them only as typed fields: each present one is added here where `custom` lacks it,
+     * so both lanes map to the same domain object.
+     */
+    private fun Map<String, Any?>.withDeclared(vararg fields: Pair<String, Any?>): Map<String, Any?> {
+        val missing = fields.filter { (key, value) -> key !in this && value.isPresent() }
+        if (missing.isEmpty()) return this
+        return this + missing.map { (key, value) -> key to wireValueAdapter.toJsonValue(value) }
+    }
+
+    private fun Any?.isPresent(): Boolean = when (this) {
+        null -> false
+        is Collection<*> -> isNotEmpty()
+        is Map<*, *> -> isNotEmpty()
+        else -> true
+    }
+
+    private val wireValueAdapter by lazy {
+        io.getstream.chat.android.network.infrastructure.Serializer.moshi.adapter(Any::class.java)
+    }
 
     /**
      * Transforms [ChannelMemberPartialResponse] to [MemberInfo].
