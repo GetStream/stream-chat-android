@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -351,7 +352,8 @@ constructor(
             buildV2RetrofitApi<GuestApi>(),
             buildV2RetrofitApi<MessageApi>(),
             buildV2RetrofitApi<DraftApi>(),
-            buildRetrofitApi<ChannelApi>(),
+            buildV2RetrofitApi<ChannelApi>(),
+            buildRetrofitApi<ChannelV1Api>(),
             buildV2RetrofitApi<DeviceApi>(),
             buildRetrofitApi<ModerationApi>(),
             buildV2RetrofitApi<GeneralApi>(),

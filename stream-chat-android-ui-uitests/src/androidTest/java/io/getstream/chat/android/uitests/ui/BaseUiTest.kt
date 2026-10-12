@@ -85,9 +85,9 @@ internal abstract class BaseUiTest {
                             }
                         },
                     )
-                } else if (path.startsWith("/channels?")) {
+                } else if (path.startsWith("/api/v2/chat/channels?")) {
                     okResponse(readFileContents(HTTP_CHANNELS))
-                } else if (path.startsWith("/channels/messaging/general/query")) {
+                } else if (path.startsWith("/api/v2/chat/channels/messaging/general/query")) {
                     okResponse(readFileContents(HTTP_CHANNEL))
                 } else if (path.startsWith("/api/v2/chat/channels/messaging/general/message")) {
                     val messageId = JSONObject(request.body.readUtf8()).getString("id")

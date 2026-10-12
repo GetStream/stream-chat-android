@@ -41,10 +41,13 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.Action
+import io.getstream.chat.android.network.models.ChannelConfigOverrides
 import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChannelInput
+import io.getstream.chat.android.network.models.ChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChatPreferencesInput
+import io.getstream.chat.android.network.models.ConfigOverridesRequest
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.Field
 import io.getstream.chat.android.network.models.Images
@@ -120,6 +123,10 @@ internal class DtoMapping(
     }
 
     private val actionAdapter by lazy { Serializer.moshi.adapter(Action::class.java) }
+    private val channelConfigOverridesAdapter by lazy { Serializer.moshi.adapter(ChannelConfigOverrides::class.java) }
+    private val configOverridesRequestAdapter by lazy { Serializer.moshi.adapter(ConfigOverridesRequest::class.java) }
+    private val userRequestAdapter by lazy { Serializer.moshi.adapter(UserRequest::class.java) }
+    private val channelMemberRequestAdapter by lazy { Serializer.moshi.adapter(ChannelMemberRequest::class.java) }
     private val fieldAdapter by lazy { Serializer.moshi.adapter(Field::class.java) }
     private val imagesAdapter by lazy { Serializer.moshi.adapter(Images::class.java) }
 
@@ -168,9 +175,7 @@ internal class DtoMapping(
     /**
      * Maps the public [QueryChannelRequest] to the generated network [ChannelGetOrCreateRequest] model.
      *
-     * The whole `data` map goes into [ChannelInput.custom], which the adapter flattens back into `data`: the
-     * backend reads undeclared `data` keys as channel custom data, and matches declared ones first. Pagination
-     * keys the generated models do not declare are not sent.
+     * The `data` map goes through [toChannelInput]. Pagination keys the generated models do not declare are not sent.
      */
     internal fun QueryChannelRequest.toChannelGetOrCreateRequest(): ChannelGetOrCreateRequest =
         ChannelGetOrCreateRequest(
@@ -181,8 +186,98 @@ internal class DtoMapping(
             messages = messages.toMessagePaginationParams(),
             members = members.toPaginationParams(),
             watchers = watchers.toPaginationParams(),
-            data = ChannelInput(custom = data),
+            data = data.toChannelInput(),
         )
+
+    /**
+     * Splits a channel `data` map into the declared [ChannelInput] fields and custom data. v1 flattened the whole map
+     * into `data`, where the backend matched declared keys first; v2 reads custom data only under `custom`, so the
+     * declared keys go to their typed fields. A value that doesn't read as its type stays in custom data.
+     */
+    internal fun Map<String, Any>.toChannelInput(): ChannelInput {
+        val custom = toMutableMap()
+        val shared = SharedChannelData(custom)
+        return ChannelInput(
+            autoTranslationEnabled = shared.autoTranslationEnabled,
+            autoTranslationLanguage = shared.autoTranslationLanguage,
+            disabled = shared.disabled,
+            frozen = shared.frozen,
+            team = shared.team,
+            invites = shared.invites,
+            members = shared.members,
+            createdBy = shared.createdBy,
+            createdById = custom.takeString("created_by_id"),
+            truncatedById = custom.takeString("truncated_by_id"),
+            filterTags = custom.takeStrings("filter_tags"),
+            configOverrides = custom.takeTyped("config_overrides") { channelConfigOverridesAdapter.fromJsonValue(it) },
+            custom = custom,
+        )
+    }
+
+    /** The update counterpart of [toChannelInput]. */
+    internal fun Map<String, Any>.toChannelInputRequest(): ChannelInputRequest {
+        val custom = toMutableMap()
+        val shared = SharedChannelData(custom)
+        return ChannelInputRequest(
+            autoTranslationEnabled = shared.autoTranslationEnabled,
+            autoTranslationLanguage = shared.autoTranslationLanguage,
+            disabled = shared.disabled,
+            frozen = shared.frozen,
+            team = shared.team,
+            invites = shared.invites ?: emptyList(),
+            members = shared.members ?: emptyList(),
+            createdBy = shared.createdBy,
+            configOverrides = custom.takeTyped("config_overrides") { value ->
+                val overrides = value as Map<*, *>
+                val read = configOverridesRequestAdapter.fromJsonValue(overrides)!!
+                // Its defaults would also send "commands":[] and "grants":{}, overriding what the caller left alone.
+                read.copy(
+                    commands = read.commands.takeIf { "commands" in overrides },
+                    grants = read.grants.takeIf { "grants" in overrides },
+                )
+            },
+            custom = custom,
+        )
+    }
+
+    /** The declared `data` keys [ChannelInput] and [ChannelInputRequest] share, taken out of [custom]. */
+    private inner class SharedChannelData(custom: MutableMap<String, Any>) {
+        val autoTranslationEnabled = custom.takeTyped("auto_translation_enabled") { it as? Boolean }
+        val autoTranslationLanguage = custom.takeString("auto_translation_language")
+        val disabled = custom.takeTyped("disabled") { it as? Boolean }
+        val frozen = custom.takeTyped("frozen") { it as? Boolean }
+        val team = custom.takeString("team")
+        val invites = custom.takeMembers("invites")
+        val members = custom.takeMembers("members")
+        val createdBy = custom.takeTyped("created_by") { user ->
+            userRequestAdapter.fromJsonValue(user.nestingCustomData(USER_REQUEST_KEYS))
+        }
+    }
+
+    /** Members as typed requests, user ids or JSON-shaped maps; null entries are skipped. */
+    private fun MutableMap<String, Any>.takeMembers(key: String): List<ChannelMemberRequest>? =
+        takeTyped(key) { list ->
+            (list as List<*>).filterNotNull().map { member ->
+                when (member) {
+                    is ChannelMemberRequest -> member
+                    is String -> ChannelMemberRequest(userId = member)
+                    else -> channelMemberRequestAdapter.fromJsonValue(member.nestingCustomData(MEMBER_REQUEST_KEYS))!!
+                }
+            }
+        }
+
+    /**
+     * A JSON-shaped map with its undeclared keys moved under `custom`, the way v1 callers write custom data flat.
+     * Reading it as is would drop them.
+     */
+    private fun Any.nestingCustomData(declared: Set<String>): Map<String, Any?> {
+        val map = this as Map<*, *>
+        val flat = map.filterKeys { it !in declared }.mapKeys { it.key.toString() }
+        val nested = (map["custom"] as? Map<*, *>).orEmpty().mapKeys { it.key.toString() }
+        val declaredPart = map.filterKeys { it in declared && it != "custom" }.mapKeys { it.key.toString() }
+        val custom = nested + flat
+        return if (custom.isEmpty()) declaredPart else declaredPart + ("custom" to custom)
+    }
 
     private fun Map<String, Any>.toMessagePaginationParams() = MessagePaginationParams(
         limit = int("limit"),
@@ -378,3 +473,9 @@ internal class DtoMapping(
  * readers under `custom`.
  */
 private val RESPONSE_ONLY_MESSAGE_KEYS = setOf("draft", "image_labels")
+
+/** The JSON names [ChannelMemberRequest] declares. */
+private val MEMBER_REQUEST_KEYS = setOf("channel_role", "user_id", "custom", "user")
+
+/** The JSON names [UserRequest] declares. */
+private val USER_REQUEST_KEYS = setOf("id", "image", "invisible", "language", "name", "custom", "privacy_settings")

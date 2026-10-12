@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.models.Action
+import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -209,6 +210,57 @@ internal class DtoMappingTest {
 
         request.giphy shouldBeEqualTo null
         request.custom["giphy"] shouldBeEqualTo partialGiphy
+    }
+
+    @Test
+    fun `Channel data sends its declared keys as typed fields and keeps the rest as custom data`() {
+        val data = mapOf(
+            "name" to "Channel",
+            "members" to listOf(mapOf("user_id" to "amit", "channel_role" to "channel_moderator")),
+            "filter_tags" to listOf("vip"),
+            "config_overrides" to mapOf("replies" to false),
+            "frozen" to "not a boolean",
+        )
+        val mapping = Fixture().get()
+
+        val input = with(mapping) { data.toChannelInput() }
+
+        input.members shouldBeEqualTo listOf(ChannelMemberRequest(userId = "amit", channelRole = "channel_moderator"))
+        input.filterTags shouldBeEqualTo listOf("vip")
+        input.configOverrides?.replies shouldBeEqualTo false
+        input.frozen shouldBeEqualTo null
+        // A value that doesn't read as its declared type stays custom data, as v1 sent it.
+        input.custom shouldBeEqualTo mapOf("name" to "Channel", "frozen" to "not a boolean")
+    }
+
+    @Test
+    fun `Channel data keeps flat custom data of members and the creator, and skips null members`() {
+        val data = mapOf(
+            "members" to listOf(mapOf("user_id" to "amit", "is_vip" to true), null, "jaewoong"),
+            "created_by" to mapOf("id" to "filip", "nickname" to "Chewie"),
+        )
+        val mapping = Fixture().get()
+
+        val input = with(mapping) { data.toChannelInput() }
+
+        input.members shouldBeEqualTo listOf(
+            ChannelMemberRequest(userId = "amit", custom = mapOf("is_vip" to true)),
+            ChannelMemberRequest(userId = "jaewoong"),
+        )
+        input.createdBy?.custom shouldBeEqualTo mapOf("nickname" to "Chewie")
+        input.custom shouldBeEqualTo emptyMap()
+    }
+
+    @Test
+    fun `Channel update data sends only the config overrides it carries`() {
+        val data = mapOf("config_overrides" to mapOf("replies" to false))
+        val mapping = Fixture().get()
+
+        val input = with(mapping) { data.toChannelInputRequest() }
+
+        input.configOverrides?.replies shouldBeEqualTo false
+        input.configOverrides?.commands shouldBeEqualTo null
+        input.configOverrides?.grants shouldBeEqualTo null
     }
 
     @Test
