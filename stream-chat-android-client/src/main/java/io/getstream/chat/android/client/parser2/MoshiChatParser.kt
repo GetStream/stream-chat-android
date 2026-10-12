@@ -74,21 +74,8 @@ import io.getstream.chat.android.client.parser2.adapters.UserResponsePrivacyFiel
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.network.infrastructure.Serializer
-import io.getstream.chat.android.network.models.BlockListOptions
-import io.getstream.chat.android.network.models.ChannelConfigOverrides
-import io.getstream.chat.android.network.models.ChannelConfigWithInfo
-import io.getstream.chat.android.network.models.ChannelOwnCapability
-import io.getstream.chat.android.network.models.ChatPreferencesInput
-import io.getstream.chat.android.network.models.ConfigOverridesRequest
-import io.getstream.chat.android.network.models.CreatePollRequest
-import io.getstream.chat.android.network.models.FeedsPreferences
-import io.getstream.chat.android.network.models.MessageRequest
-import io.getstream.chat.android.network.models.PushPreferenceInput
-import io.getstream.chat.android.network.models.TranslateMessageRequest
-import io.getstream.chat.android.network.models.UpdatePollRequest
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import io.getstream.chat.android.network.infrastructure.ExactDateAdapter as GeneratedExactDateAdapter
 
 internal class MoshiChatParser(
     private val eventMapping: EventMapping,
@@ -99,7 +86,6 @@ internal class MoshiChatParser(
     private val moshi: Moshi by lazy {
         Serializer.moshi.newBuilder()
             .addAdapter(ExactDateAdapter())
-            .add(GeneratedExactDateAdapter())
             .add(EventAdapterFactory())
             .add(DownstreamMessageDtoAdapter)
             .add(DownstreamModerationDetailsDtoAdapter)
@@ -140,130 +126,6 @@ internal class MoshiChatParser(
             .add(PollResponseDataAdapter)
             .add(ReactionResponseAdapter)
             .add(DraftPayloadResponseAdapter)
-            .add(
-                CreatePollRequest.VotingVisibility::class.java,
-                CreatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
-            )
-            .add(
-                UpdatePollRequest.VotingVisibility::class.java,
-                UpdatePollRequest.VotingVisibility.VotingVisibilityAdapter(),
-            )
-            .add(
-                MessageRequest.Type::class.java,
-                MessageRequest.Type.TypeAdapter(),
-            )
-            .add(
-                ChannelConfigOverrides.BlocklistBehavior::class.java,
-                ChannelConfigOverrides.BlocklistBehavior.BlocklistBehaviorAdapter(),
-            )
-            .add(
-                ChannelConfigOverrides.PushLevel::class.java,
-                ChannelConfigOverrides.PushLevel.PushLevelAdapter(),
-            )
-            .add(
-                ConfigOverridesRequest.BlocklistBehavior::class.java,
-                ConfigOverridesRequest.BlocklistBehavior.BlocklistBehaviorAdapter(),
-            )
-            .add(
-                ConfigOverridesRequest.PushLevel::class.java,
-                ConfigOverridesRequest.PushLevel.PushLevelAdapter(),
-            )
-            .add(
-                TranslateMessageRequest.Language::class.java,
-                TranslateMessageRequest.Language.LanguageAdapter(),
-            )
-            .add(
-                ChannelOwnCapability::class.java,
-                ChannelOwnCapability.ChannelOwnCapabilityAdapter(),
-            )
-            .add(
-                ChannelConfigWithInfo.Automod::class.java,
-                ChannelConfigWithInfo.Automod.AutomodAdapter(),
-            )
-            .add(
-                ChannelConfigWithInfo.AutomodBehavior::class.java,
-                ChannelConfigWithInfo.AutomodBehavior.AutomodBehaviorAdapter(),
-            )
-            .add(
-                ChannelConfigWithInfo.BlocklistBehavior::class.java,
-                ChannelConfigWithInfo.BlocklistBehavior.BlocklistBehaviorAdapter(),
-            )
-            .add(
-                ChannelConfigWithInfo.PushLevel::class.java,
-                ChannelConfigWithInfo.PushLevel.PushLevelAdapter(),
-            )
-            .add(
-                BlockListOptions.Behavior::class.java,
-                BlockListOptions.Behavior.BehaviorAdapter(),
-            )
-            .add(
-                PushPreferenceInput.CallLevel::class.java,
-                PushPreferenceInput.CallLevel.CallLevelAdapter(),
-            )
-            .add(
-                PushPreferenceInput.ChatLevel::class.java,
-                PushPreferenceInput.ChatLevel.ChatLevelAdapter(),
-            )
-            .add(
-                PushPreferenceInput.FeedsLevel::class.java,
-                PushPreferenceInput.FeedsLevel.FeedsLevelAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.ChannelMentions::class.java,
-                ChatPreferencesInput.ChannelMentions.ChannelMentionsAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.DefaultPreference::class.java,
-                ChatPreferencesInput.DefaultPreference.DefaultPreferenceAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.DirectMentions::class.java,
-                ChatPreferencesInput.DirectMentions.DirectMentionsAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.GroupMentions::class.java,
-                ChatPreferencesInput.GroupMentions.GroupMentionsAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.HereMentions::class.java,
-                ChatPreferencesInput.HereMentions.HereMentionsAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.RoleMentions::class.java,
-                ChatPreferencesInput.RoleMentions.RoleMentionsAdapter(),
-            )
-            .add(
-                ChatPreferencesInput.ThreadReplies::class.java,
-                ChatPreferencesInput.ThreadReplies.ThreadRepliesAdapter(),
-            )
-            .add(
-                FeedsPreferences.Comment::class.java,
-                FeedsPreferences.Comment.CommentAdapter(),
-            )
-            .add(
-                FeedsPreferences.CommentMention::class.java,
-                FeedsPreferences.CommentMention.CommentMentionAdapter(),
-            )
-            .add(
-                FeedsPreferences.CommentReaction::class.java,
-                FeedsPreferences.CommentReaction.CommentReactionAdapter(),
-            )
-            .add(
-                FeedsPreferences.CommentReply::class.java,
-                FeedsPreferences.CommentReply.CommentReplyAdapter(),
-            )
-            .add(
-                FeedsPreferences.Follow::class.java,
-                FeedsPreferences.Follow.FollowAdapter(),
-            )
-            .add(
-                FeedsPreferences.Mention::class.java,
-                FeedsPreferences.Mention.MentionAdapter(),
-            )
-            .add(
-                FeedsPreferences.Reaction::class.java,
-                FeedsPreferences.Reaction.ReactionAdapter(),
-            )
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)
             .build()
