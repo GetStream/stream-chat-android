@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.DraftApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
@@ -303,10 +304,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
     fun testCreateDraftMessage(call: RetrofitCall<CreateDraftResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
+        val api = mock<DraftApi>()
         whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withDraftApi(api)
             .get()
         // when
         val result = sut.createDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
@@ -319,10 +320,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
     fun testDeleteDraftMessage(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
+        val api = mock<DraftApi>()
         whenever(api.deleteDraftMessage(any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withDraftApi(api)
             .get()
         // when
         val result = sut.deleteDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
@@ -335,10 +336,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
     fun testQueryDrafts(call: RetrofitCall<QueryDraftsResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<MessageApi>()
+        val api = mock<DraftApi>()
         whenever(api.queryDrafts(any())).doReturn(call)
         val sut = Fixture()
-            .withMessageApi(api)
+            .withDraftApi(api)
             .get()
         // when
         val filter = Filters.neutral()
@@ -3758,6 +3759,7 @@ internal class MoshiChatApiTest {
         private var userApi: UserApi = mock()
         private var guestApi: GuestApi = mock()
         private var messageApi: MessageApi = mock()
+        private var draftApi: DraftApi = mock()
         private var channelApi: ChannelApi = mock()
         private var deviceApi: DeviceApi = mock()
         private var moderationApi: ModerationApi = mock()
@@ -3789,6 +3791,10 @@ internal class MoshiChatApiTest {
 
         fun withMessageApi(messageApi: MessageApi) = apply {
             this.messageApi = messageApi
+        }
+
+        fun withDraftApi(draftApi: DraftApi) = apply {
+            this.draftApi = draftApi
         }
 
         fun withChannelApi(channelApi: ChannelApi) = apply {
@@ -3867,6 +3873,7 @@ internal class MoshiChatApiTest {
                 userApi = userApi,
                 guestApi = guestApi,
                 messageApi = messageApi,
+                draftApi = draftApi,
                 channelApi = channelApi,
                 deviceApi = deviceApi,
                 moderationApi = moderationApi,

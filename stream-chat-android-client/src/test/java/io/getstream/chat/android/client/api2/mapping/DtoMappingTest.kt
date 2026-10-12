@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.models.Action
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
@@ -156,6 +157,58 @@ internal class DtoMappingTest {
             "mime_type" to "image/png",
             "file_size" to 2048,
         )
+    }
+
+    @Test
+    fun `Attachment sends the extraData keys the model declares as typed fields`() {
+        val url = "https://giphy.com/h.gif"
+        val image = mapOf("frames" to "1", "height" to "200", "size" to "100", "url" to url, "width" to "320")
+        val giphy = listOf(
+            "fixed_height",
+            "fixed_height_downsampled",
+            "fixed_height_still",
+            "fixed_width",
+            "fixed_width_downsampled",
+            "fixed_width_still",
+            "original",
+        ).associateWith { image }
+        val attachment = randomAttachment().copy(
+            image = null,
+            name = null,
+            mimeType = null,
+            extraData = mapOf(
+                "color" to "red",
+                "actions" to listOf(mapOf("name" to "image_action", "text" to "Send", "type" to "button")),
+                "giphy" to giphy,
+                "sentinel" to "keep-me",
+            ),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { attachment.toAttachmentRequest() }
+
+        request.color shouldBeEqualTo "red"
+        request.actions shouldBeEqualTo listOf(Action(name = "image_action", text = "Send", type = "button"))
+        request.giphy?.fixedHeight?.url shouldBeEqualTo url
+        request.fields shouldBeEqualTo null
+        request.custom shouldBeEqualTo mapOf("sentinel" to "keep-me", "file_size" to attachment.fileSize)
+    }
+
+    @Test
+    fun `Attachment keeps an extraData key in custom data when it does not read as the typed field`() {
+        val partialGiphy = mapOf("original" to mapOf("url" to "https://giphy.com/o.gif"))
+        val attachment = randomAttachment().copy(
+            image = null,
+            name = null,
+            mimeType = null,
+            extraData = mapOf("giphy" to partialGiphy),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { attachment.toAttachmentRequest() }
+
+        request.giphy shouldBeEqualTo null
+        request.custom["giphy"] shouldBeEqualTo partialGiphy
     }
 
     @Test

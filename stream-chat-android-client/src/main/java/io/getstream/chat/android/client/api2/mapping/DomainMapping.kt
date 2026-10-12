@@ -89,6 +89,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
@@ -298,7 +299,18 @@ internal class DomainMapping(
             ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
             messageCount = messageCount,
             lastMessageAt = lastMessageAt,
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }
+            extraData = custom.withDeclared(
+                "auto_translation_enabled" to autoTranslationEnabled,
+                "auto_translation_language" to autoTranslationLanguage,
+                "blocked" to blocked,
+                "disabled" to disabled,
+                "hidden" to hidden,
+                "hide_messages_before" to hideMessagesBefore,
+                "mute_expires_at" to muteExpiresAt,
+                "muted" to muted,
+                "truncated_at" to truncatedAt,
+                "truncated_by" to truncatedBy,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }
                 .toMap()
                 .minus(listOf("name", "image"))
                 .toMutableMap(),
@@ -600,7 +612,14 @@ internal class DomainMapping(
     }
 
     private fun MessageResponse.messageExtraData(): MutableMap<String, Any> =
-        custom.mapNotNull { (key, value) -> value?.let { key to it } }
+        custom.withDeclared(
+            "draft" to draft,
+            "image_labels" to imageLabels,
+            "mentioned_group_ids" to mentionedGroupIds,
+            "mml" to mml,
+            "poll_id" to pollId,
+            "restricted_visibility" to restrictedVisibility,
+        ).mapNotNull { (key, value) -> value?.let { key to it } }
             .toMap()
             .minus(MODERATION_DETAILS_KEY)
             .toMutableMap()
@@ -851,7 +870,13 @@ internal class DomainMapping(
             banExpires = banExpires,
             pinnedAt = pinnedAt,
             archivedAt = archivedAt,
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            extraData = custom.withDeclared(
+                "deleted_at" to deletedAt,
+                "deleted_messages" to deletedMessages,
+                "is_moderator" to isModerator,
+                "role" to role,
+                "user_id" to userId,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         )
 
     internal fun UserResponse.toDomain(): User =
@@ -895,9 +920,7 @@ internal class DomainMapping(
         else -> true
     }
 
-    private val wireValueAdapter by lazy {
-        io.getstream.chat.android.network.infrastructure.Serializer.moshi.adapter(Any::class.java)
-    }
+    private val wireValueAdapter by lazy { Serializer.moshi.adapter(Any::class.java) }
 
     /**
      * Transforms [ChannelMemberPartialResponse] to [MemberInfo].
@@ -1089,8 +1112,16 @@ internal class DomainMapping(
             type = type,
             originalHeight = originalHeight,
             originalWidth = originalWidth,
-            extraData = undeclared.remaining
-                .mapNotNull { (key, value) -> value?.let { key to it } }
+            extraData = undeclared.remaining.withDeclared(
+                "actions" to actions,
+                "author_icon" to authorIcon,
+                "color" to color,
+                "fields" to fields,
+                "footer" to footer,
+                "footer_icon" to footerIcon,
+                "giphy" to giphy,
+                "pretext" to pretext,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }
                 .toMap().toMutableMap(),
         )
     }

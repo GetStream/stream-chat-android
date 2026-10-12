@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import com.squareup.moshi.JsonAdapter
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -38,11 +39,15 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.UserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.Action
 import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChannelInput
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChatPreferencesInput
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
+import io.getstream.chat.android.network.models.Field
+import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.PaginationParams
@@ -77,9 +82,10 @@ internal class DtoMapping(
     /**
      * Maps the domain [Attachment] to the generated network [AttachmentRequest] model.
      *
-     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, but the wire carries them at
-     * the root, so they go through `custom`, which the adapter flattens back out. `file_size` stays an Int
-     * here: parsing yields a Double for an undeclared number, and writing that would change `1` to `1.0`.
+     * The spec does not declare `file_size`, `image`, `mime_type` or `name`, so they go through `custom`: the v1
+     * adapter flattens it to the root and v2 sends it nested, and the backend stores them as custom data either way.
+     * `file_size` stays an Int here: parsing yields a Double for an undeclared number, and writing that would change
+     * `1` to `1.0`.
      */
     internal fun Attachment.toAttachmentRequest(): AttachmentRequest {
         val custom = extraData.toMutableMap()
@@ -88,6 +94,14 @@ internal class DtoMapping(
         mimeType?.let { custom["mime_type"] = it }
         custom["file_size"] = fileSize
         return AttachmentRequest(
+            authorIcon = custom.takeString("author_icon"),
+            color = custom.takeString("color"),
+            footer = custom.takeString("footer"),
+            footerIcon = custom.takeString("footer_icon"),
+            pretext = custom.takeString("pretext"),
+            actions = custom.takeList("actions", actionAdapter),
+            fields = custom.takeList("fields", fieldAdapter),
+            giphy = custom.takeTyped("giphy") { imagesAdapter.fromJsonValue(it) },
             assetUrl = assetUrl,
             authorName = authorName,
             fallback = fallback,
@@ -102,12 +116,27 @@ internal class DtoMapping(
             originalHeight = originalHeight,
             originalWidth = originalWidth,
             custom = custom,
-            // The domain holds actions and fields in extraData, so they reach the root through custom.
-            // Both default to an empty list here, which would be emitted alongside.
-            actions = null,
-            fields = null,
         )
     }
+
+    private val actionAdapter by lazy { Serializer.moshi.adapter(Action::class.java) }
+    private val fieldAdapter by lazy { Serializer.moshi.adapter(Field::class.java) }
+    private val imagesAdapter by lazy { Serializer.moshi.adapter(Images::class.java) }
+
+    /**
+     * Removes [key] and returns its value read as a typed field, so it is sent where v2 reads it (v2 ignores these
+     * keys under `custom`, and v1 writes typed fields at the root like flattened custom data). A value that doesn't
+     * read as the type stays in custom data.
+     */
+    private fun <T> MutableMap<String, Any>.takeTyped(key: String, read: (Any) -> T?): T? {
+        val value = this[key] ?: return null
+        return runCatching { read(value) }.getOrNull()?.also { remove(key) }
+    }
+
+    private fun MutableMap<String, Any>.takeString(key: String): String? = takeTyped(key) { it as? String }
+
+    private fun <T> MutableMap<String, Any>.takeList(key: String, adapter: JsonAdapter<T>): List<T>? =
+        takeTyped(key) { list -> (list as List<*>).map { adapter.fromJsonValue(it)!! } }
 
     /**
      * Maps the domain [MemberData] to the generated network [ChannelMemberRequest] model.
