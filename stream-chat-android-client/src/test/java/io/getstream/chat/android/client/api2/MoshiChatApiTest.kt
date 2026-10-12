@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
+import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
@@ -2651,10 +2652,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getSyncHistoryInput")
     fun testGetSyncHistory(call: RetrofitCall<SyncHistoryResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<GeneralApi>()
+        val api = mock<SyncApi>()
         whenever(api.getSyncHistory(any(), any())).doReturn(call)
         val sut = Fixture()
-            .withGeneralApi(api)
+            .withSyncApi(api)
             .get()
         // when
         val userId = randomString()
@@ -3503,10 +3504,10 @@ internal class MoshiChatApiTest {
     @Test
     fun testWarmUp() = runTest {
         // given
-        val api = mock<GeneralApi>()
+        val api = mock<SyncApi>()
         whenever(api.warmUp()).doReturn(RetroSuccess(randomString().toResponseBody()).toRetrofitCall())
         val sut = Fixture()
-            .withGeneralApi(api)
+            .withSyncApi(api)
             .get()
         // when
         sut.warmUp()
@@ -3764,6 +3765,7 @@ internal class MoshiChatApiTest {
         private var deviceApi: DeviceApi = mock()
         private var moderationApi: ModerationApi = mock()
         private var generalApi: GeneralApi = mock()
+        private var syncApi: SyncApi = mock()
         private var configApi: ConfigApi = mock()
         private var fileDownloadApi: FileDownloadApi = mock()
         private var ogApi: OpenGraphApi = mock()
@@ -3811,6 +3813,10 @@ internal class MoshiChatApiTest {
 
         fun withGeneralApi(generalApi: GeneralApi) = apply {
             this.generalApi = generalApi
+        }
+
+        fun withSyncApi(syncApi: SyncApi) = apply {
+            this.syncApi = syncApi
         }
 
         fun withConfigApi(configApi: ConfigApi) = apply {
@@ -3878,6 +3884,7 @@ internal class MoshiChatApiTest {
                 deviceApi = deviceApi,
                 moderationApi = moderationApi,
                 generalApi = generalApi,
+                syncApi = syncApi,
                 configApi = configApi,
                 fileDownloadApi = fileDownloadApi,
                 ogApi = ogApi,

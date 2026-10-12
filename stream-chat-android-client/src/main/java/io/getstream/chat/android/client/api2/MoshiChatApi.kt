@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.RoleApi
+import io.getstream.chat.android.client.api2.endpoint.SyncApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
@@ -218,6 +219,7 @@ constructor(
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val generalApi: GeneralApi,
+    private val syncApi: SyncApi,
     private val configApi: ConfigApi,
     private val fileDownloadApi: FileDownloadApi,
     private val ogApi: OpenGraphApi,
@@ -1682,7 +1684,7 @@ constructor(
 
     override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> =
         with(eventMapping) {
-            return generalApi.getSyncHistory(
+            return syncApi.getSyncHistory(
                 body = SyncHistoryRequest(channelIds, lastSyncAt),
                 connectionId = connectionId,
             ).map { response ->
@@ -2012,7 +2014,7 @@ constructor(
         }
 
     override fun warmUp() {
-        generalApi.warmUp().enqueue()
+        syncApi.warmUp().enqueue()
     }
 
     private fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
