@@ -119,6 +119,24 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
+    fun `Should keep the size of an uploaded file that the uploader deletes`() = runTest {
+        val transformedFile = File.createTempFile("transformed", ".jpg").apply { writeBytes(ByteArray(1234)) }
+        val attachment = Attachment(type = "image", upload = File("photo.jpg"))
+        val clientMock = mockClientWithIdentityTransformer()
+        whenever(clientMock.fileTransformer) doReturn transformerReturning(transformedFile)
+        whenever(
+            clientMock.sendImage(any(), any(), any(), anyOrNull(), anyOrNull(), eq(false)),
+        ).thenAnswer {
+            transformedFile.delete()
+            TestCall(Result.Success(UploadedFile(file = "url")))
+        }
+
+        val result = AttachmentUploader(clientMock).uploadAttachment(channelType, channelId, attachment)
+
+        (result as Result.Success).value.fileSize shouldBeEqualTo 1234
+    }
+
+    @Test
     fun `Should describe the original file when the transformed file extension is unknown`() = runTest {
         val originalFile = File("photo.jpg")
         val transformedFile = File("compressed.tmp")
