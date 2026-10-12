@@ -56,7 +56,7 @@ internal interface PollsApi {
      *
      * @return The poll response.
      */
-    @POST("/polls")
+    @POST("/api/v2/polls")
     fun createPoll(@Body body: CreatePollRequest): RetrofitCall<PollResponse>
 
     /**
@@ -66,7 +66,7 @@ internal interface PollsApi {
      *
      * @param body Body holding the poll properties to be updated.
      */
-    @PUT("/polls")
+    @PUT("/api/v2/polls")
     fun updatePoll(@Body body: UpdatePollRequest): RetrofitCall<PollResponse>
 
     /**
@@ -76,7 +76,7 @@ internal interface PollsApi {
      *
      * @param pollId The ID of the poll to delete.
      */
-    @DELETE("/polls/{poll_id}")
+    @DELETE("/api/v2/polls/{poll_id}")
     fun deletePoll(@Path("poll_id") pollId: String): RetrofitCall<Response>
 
     /**
@@ -88,7 +88,7 @@ internal interface PollsApi {
      *
      * @return The poll response.
      */
-    @GET("/polls/{poll_id}")
+    @GET("/api/v2/polls/{poll_id}")
     fun getPoll(@Path("poll_id") pollId: String): RetrofitCall<PollResponse>
 
     /**
@@ -101,7 +101,7 @@ internal interface PollsApi {
      *
      * @return The poll response.
      */
-    @PATCH("/polls/{poll_id}")
+    @PATCH("/api/v2/polls/{poll_id}")
     fun partialUpdatePoll(
         @Path("poll_id") pollId: String,
         @Body body: UpdatePollPartialRequest,
@@ -117,7 +117,7 @@ internal interface PollsApi {
      *
      * @return The suggest poll option response.
      */
-    @POST("/polls/{poll_id}/options")
+    @POST("/api/v2/polls/{poll_id}/options")
     fun createPollOption(
         @Path("poll_id") pollId: String,
         @Body body: CreatePollOptionRequest,
@@ -131,7 +131,7 @@ internal interface PollsApi {
      * @param pollId The poll ID.
      * @param body The update poll option request.
      */
-    @PUT("/polls/{poll_id}/options")
+    @PUT("/api/v2/polls/{poll_id}/options")
     fun updatePollOption(
         @Path("poll_id") pollId: String,
         @Body body: UpdatePollOptionRequest,
@@ -145,7 +145,7 @@ internal interface PollsApi {
      * @param pollId The poll ID.
      * @param optionId The option ID.
      */
-    @DELETE("/polls/{poll_id}/options/{option_id}")
+    @DELETE("/api/v2/polls/{poll_id}/options/{option_id}")
     fun deletePollOption(
         @Path("poll_id") pollId: String,
         @Path("option_id") optionId: String,
@@ -161,7 +161,7 @@ internal interface PollsApi {
      * @param pollId The poll ID.
      * @param body The query poll votes request.
      */
-    @POST("/polls/{poll_id}/votes")
+    @POST("/api/v2/polls/{poll_id}/votes")
     fun queryPollVotes(
         @Path("poll_id") pollId: String,
         @Body body: QueryPollVotesRequest,
@@ -174,7 +174,7 @@ internal interface PollsApi {
      *
      * @param body The query polls request.
      */
-    @POST("/polls/query")
+    @POST("/api/v2/polls/query")
     fun queryPolls(@Body body: QueryPollsRequest): RetrofitCall<QueryPollsResponse>
 
     /**
@@ -188,7 +188,7 @@ internal interface PollsApi {
      *
      * @return The poll vote response.
      */
-    @POST("/messages/{message_id}/polls/{poll_id}/vote")
+    @POST("/api/v2/chat/messages/{message_id}/polls/{poll_id}/vote")
     fun castPollVote(
         @Path("message_id") messageId: String,
         @Path("poll_id") pollId: String,
@@ -206,7 +206,7 @@ internal interface PollsApi {
      *
      * @return The poll vote response.
      */
-    @DELETE("/messages/{message_id}/polls/{poll_id}/vote/{vote_id}")
+    @DELETE("/api/v2/chat/messages/{message_id}/polls/{poll_id}/vote/{vote_id}")
     fun removePollVote(
         @Path("message_id") messageId: String,
         @Path("poll_id") pollId: String,
