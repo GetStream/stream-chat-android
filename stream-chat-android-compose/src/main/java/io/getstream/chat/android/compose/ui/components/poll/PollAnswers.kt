@@ -66,10 +66,12 @@ import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import io.getstream.chat.android.ui.common.utils.extensions.displayedText
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,6 +97,7 @@ public fun PollAnswersDialog(
     StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
         Content(
             poll = selectedPoll.poll,
+            currentUser = user,
             currentUserAnswer = currentUserAnswer,
             onBackPressed = onBackPressed,
             onAddOrEditClick = { showAddAnswerDialog = true },
@@ -105,6 +108,7 @@ public fun PollAnswersDialog(
 @Composable
 private fun Content(
     poll: Poll,
+    currentUser: User? = null,
     currentUserAnswer: Answer? = null,
     onBackPressed: () -> Unit = {},
     onAddOrEditClick: () -> Unit = {},
@@ -146,6 +150,7 @@ private fun Content(
             if (currentUserAnswer != null) {
                 PollAnswersItem(
                     answer = currentUserAnswer,
+                    currentUser = currentUser,
                     showAvatar = showAvatar,
                     showUpdateButton = !poll.closed,
                     onUpdateClick = onAddOrEditClick,
@@ -155,6 +160,7 @@ private fun Content(
                 if (answer.id != currentUserAnswer?.id) {
                     PollAnswersItem(
                         answer = answer,
+                        currentUser = currentUser,
                         showAvatar = showAvatar,
                     )
                 }
@@ -166,6 +172,7 @@ private fun Content(
 @Composable
 internal fun PollAnswersItem(
     answer: Answer,
+    currentUser: User?,
     showAvatar: Boolean,
     showUpdateButton: Boolean = false,
     onUpdateClick: () -> Unit = {},
@@ -183,7 +190,7 @@ internal fun PollAnswersItem(
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             Text(
-                text = answer.text,
+                text = answer.displayedText(currentUser, ChatTheme.config.translation.enabled),
                 color = colors.textPrimary,
                 style = typography.bodyDefault,
             )

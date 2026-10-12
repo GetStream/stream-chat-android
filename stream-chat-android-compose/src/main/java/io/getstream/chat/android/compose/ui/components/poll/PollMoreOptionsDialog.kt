@@ -31,6 +31,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +55,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import io.getstream.chat.android.ui.common.utils.extensions.displayedName
 
 /**
  * A dialog that should be shown if a user taps the seeing more options on the poll message.
@@ -70,9 +73,11 @@ public fun PollMoreOptionsDialog(
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
+    val user by listViewModel.user.collectAsState()
     StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
         Content(
             selectedPoll = selectedPoll,
+            currentUser = user,
             onBackPressed = onBackPressed,
             onCastVote = { option ->
                 listViewModel.castVote(
@@ -95,6 +100,7 @@ public fun PollMoreOptionsDialog(
 @Composable
 private fun Content(
     selectedPoll: SelectedPoll,
+    currentUser: User? = null,
     onBackPressed: () -> Unit = {},
     onCastVote: (Option) -> Unit = {},
     onRemoveVote: (Vote) -> Unit = {},
@@ -120,12 +126,13 @@ private fun Content(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = StreamTokens.spacingMd),
         ) {
-            PollMoreOptionsTitle(title = poll.name)
+            PollMoreOptionsTitle(title = poll.displayedName(currentUser, ChatTheme.config.translation.enabled))
 
             val totalVoteCount = remember(poll.voteCountsByOption) { poll.voteCountsByOption.values.sum() }
 
             PollMoreOptionsItemList(
                 poll = poll,
+                currentUser = currentUser,
                 totalVoteCount = totalVoteCount,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
@@ -179,6 +186,7 @@ internal fun PollMoreOptionsTitle(title: String) {
 @Composable
 private fun PollMoreOptionsItemList(
     poll: Poll,
+    currentUser: User?,
     totalVoteCount: Int,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
@@ -202,6 +210,7 @@ private fun PollMoreOptionsItemList(
                 totalVoteCount = totalVoteCount,
                 users = users,
                 checked = isVotedByMine,
+                currentUser = currentUser,
                 onCastVote = { onCastVote(option) },
                 onRemoveVote = { poll.votes.find { it.optionId == option.id }?.let(onRemoveVote) },
             )
@@ -218,6 +227,7 @@ private fun PollMoreOptionItem(
     totalVoteCount: Int,
     users: List<User>,
     checked: Boolean,
+    currentUser: User?,
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
 ) {
@@ -229,6 +239,7 @@ private fun PollMoreOptionItem(
         totalVoteCount = totalVoteCount,
         users = users,
         checked = checked,
+        currentUser = currentUser,
         style = PollStyle(
             textColor = colors.chatTextIncoming,
             outlineColor = colors.chatBorderOnChatIncoming,

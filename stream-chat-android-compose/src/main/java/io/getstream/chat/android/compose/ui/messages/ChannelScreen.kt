@@ -799,10 +799,12 @@ public fun PollDialogs(listViewModel: MessageListViewModel) {
     }
 
     if (selectedPoll?.pollSelectionType == PollSelectionType.ViewResult) {
+        val user by listViewModel.user.collectAsState()
         PollViewResultDialog(
             selectedPoll = selectedPoll,
             onDismissRequest = { dismiss.invoke() },
             onBackPressed = { dismiss.invoke() },
+            currentUser = user,
         )
     }
 

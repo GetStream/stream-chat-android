@@ -18,7 +18,10 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import android.content.Context
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.R
 import kotlin.math.min
 
@@ -48,4 +51,37 @@ public fun Poll.getSubtitle(context: Context): String {
         null -> context.getString(R.string.stream_ui_poll_description_unlimited_answers)
         else -> context.getString(R.string.stream_ui_poll_description_multiple_answers, maxVotes)
     }
+}
+
+/**
+ * The poll name to display: the translation into [currentUser]'s language when [autoTranslationEnabled]
+ * and available, the original name otherwise.
+ */
+@InternalStreamChatApi
+public fun Poll.displayedName(currentUser: User?, autoTranslationEnabled: Boolean): String =
+    translatedOrOriginal(name, currentUser, autoTranslationEnabled, ::getNameTranslation)
+
+/**
+ * The option text to display, following the same rules as [Poll.displayedName].
+ */
+@InternalStreamChatApi
+public fun Option.displayedText(currentUser: User?, autoTranslationEnabled: Boolean): String =
+    translatedOrOriginal(text, currentUser, autoTranslationEnabled, ::getTranslation)
+
+/**
+ * The answer text to display, following the same rules as [Poll.displayedName].
+ */
+@InternalStreamChatApi
+public fun Answer.displayedText(currentUser: User?, autoTranslationEnabled: Boolean): String =
+    translatedOrOriginal(text, currentUser, autoTranslationEnabled, ::getTranslation)
+
+private fun translatedOrOriginal(
+    original: String,
+    currentUser: User?,
+    autoTranslationEnabled: Boolean,
+    translation: (language: String) -> String,
+): String {
+    if (!autoTranslationEnabled) return original
+    val language = currentUser?.language?.takeIf(String::isNotEmpty) ?: return original
+    return translation(language).ifEmpty { original }
 }

@@ -63,10 +63,12 @@ import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionVotesViewState
+import io.getstream.chat.android.ui.common.utils.extensions.displayedText
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -86,6 +88,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun PollOptionVotesDialog(
     poll: Poll,
     option: Option,
+    currentUser: User?,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
@@ -100,6 +103,7 @@ internal fun PollOptionVotesDialog(
 
             Content(
                 state = state,
+                currentUser = currentUser,
                 onLoadMoreRequested = { viewModel.onViewAction(PollOptionVotesViewAction.LoadMoreRequested) },
                 onBackPressed = onBackPressed,
             )
@@ -122,6 +126,7 @@ internal fun PollOptionVotesDialog(
 @Composable
 private fun Content(
     state: PollOptionVotesViewState,
+    currentUser: User? = null,
     onLoadMoreRequested: () -> Unit = {},
     onBackPressed: () -> Unit = {},
 ) {
@@ -140,7 +145,7 @@ private fun Content(
             .fillMaxSize(),
     ) {
         PollDialogHeader(
-            title = state.option.text,
+            title = state.option.displayedText(currentUser, ChatTheme.config.translation.enabled),
             onBackPressed = onBackPressed,
         )
 

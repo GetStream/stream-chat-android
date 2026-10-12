@@ -113,6 +113,22 @@ internal class QuotedMessageBodyBuilderTest {
                 ),
             ),
             Arguments.of(
+                "Message with translated poll",
+                Message(
+                    text = "What's your favorite?",
+                    poll = randomPoll(
+                        name = "Test Poll",
+                        nameI18n = mapOf("language" to "en", "it_text" to "Sondaggio"),
+                    ),
+                ),
+                User(id = "user", language = "it"),
+                true,
+                QuotedMessageBody(
+                    text = "Sondaggio",
+                    iconId = R.drawable.stream_design_ic_poll,
+                ),
+            ),
+            Arguments.of(
                 "Message with static location",
                 Message(text = "I'm here", sharedLocation = randomLocation(endAt = null)),
                 null,
