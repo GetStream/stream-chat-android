@@ -51,7 +51,7 @@ jobs:
             -PsampleAppBuildSha=${{ steps.build_identity.outputs.sha }} \
             --stacktrace
       - name: Upload APK
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: stream-chat-android-ui-components-sample-release
           path: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/
@@ -108,7 +108,7 @@ jobs:
             -PsampleAppBuildSha=${{ steps.build_identity.outputs.sha }} \
             --stacktrace
       - name: Upload APK
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: stream-chat-android-compose-sample-release
           path: stream-chat-android-compose-sample/build/outputs/apk/demo/release/
