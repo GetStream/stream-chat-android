@@ -20,7 +20,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+import io.getstream.chat.android.client.parser2.testdata.MessageFixtures
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -35,7 +35,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 /**
  * Get message responses parsed through the generated [MessageWithChannelResponse], against the generated
- * [MessageResponse] it extends and the hand-written [DownstreamMessageDto] used before.
+ * [MessageResponse] it extends.
  */
 internal class GetMessageResponseParityTest {
 
@@ -48,27 +48,13 @@ internal class GetMessageResponseParityTest {
     )
 
     @ParameterizedTest(name = "{0}")
-    @MethodSource("io.getstream.chat.android.client.parser2.MessageResponseParityTest#fixtures")
+    @MethodSource("io.getstream.chat.android.client.parser2.testdata.MessageFixtures#fixtures")
     fun `A message with its channel converts to the MessageResponse of its JSON`(name: String, json: String) {
         val message = runCatching { parser.fromJson(json, MessageResponse::class.java) }.getOrNull() ?: return
         val withChannel = parser.fromJson(json.withChannel(), MessageWithChannelResponse::class.java)
 
         // Compares every field, including the ones the message mapper doesn't read yet.
         assertFieldsEqual(name, message, with(mapping) { withChannel.toMessageResponse() })
-    }
-
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("io.getstream.chat.android.client.parser2.MessageResponseParityTest#fixtures")
-    fun `A message with its channel maps to the same Message as the hand-written DTO`(name: String, json: String) {
-        val legacy = runCatching {
-            with(mapping) { parser.fromJson(json.withChannel(), DownstreamMessageDto::class.java).toDomain() }
-        }
-        val generated = runCatching {
-            with(mapping) { parser.fromJson(json.withChannel(), MessageWithChannelResponse::class.java).toDomain() }
-        }
-
-        // The hand-written DTO rejects fixtures without its required collections, which the generated model defaults.
-        if (legacy.isSuccess) assertFieldsEqual(name, legacy.getOrThrow(), generated.getOrThrow())
     }
 
     @Test
@@ -166,7 +152,7 @@ internal class GetMessageResponseParityTest {
         private val parser = ParserFactory.createMoshiChatParser()
 
         /** The first shared message fixture the generated [MessageResponse] accepts. */
-        private fun message(): String = MessageResponseParityTest.fixtures()
+        private fun message(): String = MessageFixtures.fixtures()
             .map { it.get()[1] as String }
             .first { runCatching { parser.fromJson(it, MessageResponse::class.java) }.isSuccess }
 
