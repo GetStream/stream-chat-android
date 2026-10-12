@@ -82,6 +82,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         } else {
             originalFile.name
         }
+        // Read before uploading, as a custom FileUploader may delete the file once it's uploaded.
+        val fileSize = file.length().toInt()
 
         return if (attachmentType == AttachmentType.IMAGE) {
             logger.d { "[uploadAttachment] #uploader; uploading ${attachment.uploadId} as image" }
@@ -93,6 +95,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 progressCallback = progressCallback,
                 attachment = attachment,
                 name = name,
+                fileSize = fileSize,
                 mimeType = mimeType,
                 attachmentType = attachmentType,
             )
@@ -106,6 +109,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 progressCallback = progressCallback,
                 attachment = attachment,
                 name = name,
+                fileSize = fileSize,
                 mimeType = mimeType,
                 attachmentType = attachmentType,
             )
@@ -122,6 +126,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * @param file The file that will be uploaded.
      * @param attachment The attachment to be uploaded.
      * @param name The name to give the uploaded attachment.
+     * @param fileSize The size of [file], read before uploading it.
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      * @param mimeType The mime type of the attachment that will be uploaded,
@@ -139,6 +144,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         progressCallback: ProgressCallback?,
         attachment: Attachment,
         name: String,
+        fileSize: Int,
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
@@ -152,8 +158,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         return when (result) {
             is Result.Success -> {
                 val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
-                    file = file,
                     name = name,
+                    fileSize = fileSize,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
                     uploadedFile = result.value,
@@ -184,6 +190,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * @param file The file that will be uploaded.
      * @param attachment The attachment to be uploaded.
      * @param name The name to give the uploaded attachment.
+     * @param fileSize The size of [file], read before uploading it.
      * @param progressCallback Used to listen to file upload
      * progress, success, and failure.
      * @param mimeType The mime type of the attachment that will be uploaded,
@@ -201,6 +208,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         progressCallback: ProgressCallback?,
         attachment: Attachment,
         name: String,
+        fileSize: Int,
         mimeType: String,
         attachmentType: AttachmentType,
     ): Result<Attachment> {
@@ -214,8 +222,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         return when (result) {
             is Result.Success -> {
                 val augmentedAttachment = attachment.augmentAttachmentOnSuccess(
-                    file = file,
                     name = name,
+                    fileSize = fileSize,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
                     uploadedFile = result.value,
@@ -282,23 +290,23 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * Augment an attachment instance with data from uploaded file, mimeType, attachmentType and obtained from backend
      * url.
      *
-     * @param file A file that has been uploaded.
      * @param name The name to give the uploaded attachment.
+     * @param fileSize The size of the uploaded file, read before uploading it.
      * @param mimeType MimeType of uploaded attachment.
      * @param attachmentType File, video or picture enum instance.
      * @param uploadedFile Uploaded file data obtained from BE.
      * Usually returned for uploaded videos, can be null otherwise.
      */
     private fun Attachment.augmentAttachmentOnSuccess(
-        file: File,
         name: String,
+        fileSize: Int,
         mimeType: String,
         attachmentType: AttachmentType,
         uploadedFile: UploadedFile,
     ): Attachment {
         return copy(
             name = name,
-            fileSize = file.length().toInt(),
+            fileSize = fileSize,
             mimeType = mimeType,
             uploadState = Attachment.UploadState.Success,
             title = title.takeUnless { it.isNullOrBlank() } ?: name,
