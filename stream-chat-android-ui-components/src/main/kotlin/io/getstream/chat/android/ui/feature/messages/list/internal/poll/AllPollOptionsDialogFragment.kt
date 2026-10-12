@@ -43,6 +43,8 @@ import io.getstream.chat.android.ui.common.utils.extensions.canCastVote
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAllPollOptionsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -106,7 +108,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 .pollState
                 .mapNotNull { it }
                 .collect { poll ->
-                    binding.question.text = poll.name
+                    binding.question.text = poll.getTranslatedName()
                     adapter.setPoll(poll)
                 }
         }
@@ -192,7 +194,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 } else {
                     binding.root.setOnClickListener { onOptionClick(result.option) }
                 }
-                binding.option.text = result.option.text
+                binding.option.text = result.option.getTranslatedText()
                 binding.votes.text = result.votes.toString()
                 binding.check.isEnabled = result.isVotedByUser
                 binding.check.isVisible = !result.readonly

@@ -46,6 +46,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemPollViewCommentsBind
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.PollViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
 import io.getstream.chat.android.ui.common.R as UiCommonR
@@ -105,7 +107,7 @@ internal class PollView : RecyclerView {
         val pollItems = mutableListOf<PollItem>()
         pollItems.add(
             PollItem.Header(
-                title = poll.name,
+                title = poll.getTranslatedName(),
                 subtitle = poll.getSubtitle(context),
             ),
         )
@@ -313,7 +315,7 @@ private class AnswerViewHolder(
             }
         }
         binding.check.isEnabled = pollItem.isVotedByUser
-        binding.option.text = pollItem.option.text
+        binding.option.text = pollItem.option.getTranslatedText()
         binding.votesPercentage.setIndicatorColor(
             if (pollItem.isVotedByUser) {
                 ContextCompat.getColor(binding.root.context, R.color.stream_ui_accent_green)

@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollCommentsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCommentBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollCommentsViewModel
 
@@ -144,7 +145,7 @@ internal class PollCommentsDialogFragment : AppCompatDialogFragment() {
 
             fun bind(item: CommentItem) {
                 val answer = item.answer
-                binding.answerText.text = answer.text
+                binding.answerText.text = answer.getTranslatedText()
                 val user = answer.user?.takeIf { item.showUser }
                 if (user != null) {
                     binding.name.text = user.name

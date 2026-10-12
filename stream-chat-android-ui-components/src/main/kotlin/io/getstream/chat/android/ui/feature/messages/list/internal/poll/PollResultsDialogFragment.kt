@@ -41,6 +41,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollResultsBindi
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollResultsViewModel
 
@@ -99,7 +101,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.question.text = state.pollName
+            binding.question.text = poll.getTranslatedName()
             resultsAdapter.submitList(state.results)
             binding.loadingContainer.isVisible = false
         }
@@ -177,7 +179,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(result: PollResultsViewState.ResultItem) {
-                binding.option.text = result.option.text
+                binding.option.text = result.option.getTranslatedText()
                 binding.votes.text = binding.root.resources.getString(
                     R.string.stream_ui_poll_vote_counts,
                     result.voteCount,

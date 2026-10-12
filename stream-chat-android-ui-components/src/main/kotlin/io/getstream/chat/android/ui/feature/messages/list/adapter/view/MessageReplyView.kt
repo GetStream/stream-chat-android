@@ -46,6 +46,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
@@ -237,7 +238,7 @@ public class MessageReplyView : FrameLayout {
         binding.replyText.text = if (message.isDeleted()) {
             context.getString(UiCommonR.string.stream_ui_message_list_message_deleted)
         } else if (poll != null) {
-            context.getString(R.string.stream_ui_quoted_message_poll, poll.name)
+            context.getString(R.string.stream_ui_quoted_message_poll, poll.getTranslatedName())
         } else if (attachment == null || displayedText.isNotBlank()) {
             if (ellipsize) {
                 ellipsize(displayedText)

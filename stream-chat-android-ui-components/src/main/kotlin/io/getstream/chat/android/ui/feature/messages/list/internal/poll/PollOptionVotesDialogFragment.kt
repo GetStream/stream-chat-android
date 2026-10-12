@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollOptionVotesB
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollOptionHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
@@ -111,7 +112,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_arrow_left)?.apply {
             setTint(ContextCompat.getColor(requireContext(), R.color.stream_ui_black))
         }?.let(toolbar::setNavigationIcon)
-        toolbar.title = option.text
+        toolbar.title = option.getTranslatedText()
     }
 
     private fun setupVotesList() {
@@ -121,7 +122,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.toolbar.title = state.option.text
+            binding.toolbar.title = state.option.getTranslatedText()
             binding.voteList.isInvisible = state.isLoading
             binding.loadingContainer.isVisible = state.isLoading
             binding.loadingMoreProgress.isVisible = state.isLoadingMore && !state.isLoading
