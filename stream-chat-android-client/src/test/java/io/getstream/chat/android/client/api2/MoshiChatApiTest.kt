@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.ModerationV1Api
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
@@ -602,10 +603,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#muteCurrentUserInput")
     fun testMuteCurrentUser(call: RetrofitCall<MuteUserResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.muteUser(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -626,10 +627,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#muteUserInput")
     fun testMuteUser(call: RetrofitCall<MuteUserResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.muteUser(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -652,10 +653,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteCurrentUserInput")
     fun testUnmuteCurrentUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.unmuteUser(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -676,10 +677,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteUserInput")
     fun testUnmuteUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.unmuteUser(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -1120,10 +1121,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#flagUserInput")
     fun testFlagUser(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.flag(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -1144,10 +1145,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#flagMessageInput")
     fun testFlagMessage(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.flag(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val messageId = randomString()
@@ -1168,10 +1169,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unflagUserInput")
     fun testUnflagUser(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.unflag(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -1186,10 +1187,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unflagMessageInput")
     fun testUnflagMessage(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.unflag(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val messageId = randomString()
@@ -1204,10 +1205,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#banUserInput")
     fun testBanUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.banUser(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val targetId = randomString()
@@ -1234,10 +1235,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unbanUserInput")
     fun testUnbanUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationApi>()
+        val api = mock<ModerationV1Api>()
         whenever(api.unbanUser(any(), any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withModerationApi(api)
+            .withModerationV1Api(api)
             .get()
         // when
         val targetId = randomString()
@@ -3768,6 +3769,7 @@ internal class MoshiChatApiTest {
         private var channelV1Api: ChannelV1Api = mock()
         private var deviceApi: DeviceApi = mock()
         private var moderationApi: ModerationApi = mock()
+        private var moderationV1Api: ModerationV1Api = mock()
         private var generalApi: GeneralApi = mock()
         private var syncApi: SyncApi = mock()
         private var configApi: ConfigApi = mock()
@@ -3817,6 +3819,10 @@ internal class MoshiChatApiTest {
 
         fun withModerationApi(moderationApi: ModerationApi) = apply {
             this.moderationApi = moderationApi
+        }
+
+        fun withModerationV1Api(moderationV1Api: ModerationV1Api) = apply {
+            this.moderationV1Api = moderationV1Api
         }
 
         fun withGeneralApi(generalApi: GeneralApi) = apply {
@@ -3892,6 +3898,7 @@ internal class MoshiChatApiTest {
                 channelV1Api = channelV1Api,
                 deviceApi = deviceApi,
                 moderationApi = moderationApi,
+                moderationV1Api = moderationV1Api,
                 generalApi = generalApi,
                 syncApi = syncApi,
                 configApi = configApi,

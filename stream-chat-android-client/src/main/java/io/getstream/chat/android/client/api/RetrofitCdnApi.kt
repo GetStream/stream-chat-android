@@ -32,7 +32,7 @@ import retrofit2.http.Tag
 @AuthenticatedApi
 internal interface RetrofitCdnApi {
     @Multipart
-    @POST("/channels/{type}/{id}/image")
+    @POST("/api/v2/chat/channels/{type}/{id}/image")
     fun sendImage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
@@ -41,7 +41,7 @@ internal interface RetrofitCdnApi {
     ): RetrofitCall<FileUploadResponse>
 
     @Multipart
-    @POST("/channels/{type}/{id}/file")
+    @POST("/api/v2/chat/channels/{type}/{id}/file")
     fun sendFile(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
@@ -49,14 +49,14 @@ internal interface RetrofitCdnApi {
         @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<FileUploadResponse>
 
-    @DELETE("/channels/{type}/{id}/file")
+    @DELETE("/api/v2/chat/channels/{type}/{id}/file")
     fun deleteFile(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query("url") url: String,
     ): RetrofitCall<Response>
 
-    @DELETE("/channels/{type}/{id}/image")
+    @DELETE("/api/v2/chat/channels/{type}/{id}/image")
     fun deleteImage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
@@ -64,25 +64,25 @@ internal interface RetrofitCdnApi {
     ): RetrofitCall<Response>
 
     @Multipart
-    @POST("/uploads/file")
+    @POST("/api/v2/uploads/file")
     fun uploadFile(
         @Part file: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<FileUploadResponse>
 
-    @DELETE("/uploads/file")
+    @DELETE("/api/v2/uploads/file")
     fun deleteFile(
         @Query("url") url: String,
     ): RetrofitCall<Response>
 
     @Multipart
-    @POST("/uploads/image")
+    @POST("/api/v2/uploads/image")
     fun uploadImage(
         @Part file: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<FileUploadResponse>
 
-    @DELETE("/uploads/image")
+    @DELETE("/api/v2/uploads/image")
     fun deleteImage(
         @Query("url") url: String,
     ): RetrofitCall<Response>
