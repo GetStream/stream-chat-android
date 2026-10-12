@@ -774,6 +774,16 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `ChannelResponse without a config maps to the default Config`() {
+        val channelResponse = randomChannelResponse().copy(config = null)
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        channel.config shouldBeEqualTo Config()
+    }
+
+    @Test
     fun `ChannelResponse maps the channel state to properties and keeps it in extraData`() {
         val channelResponse = ChannelDtoTestData.channelResponse
         val sut = Fixture().get()
