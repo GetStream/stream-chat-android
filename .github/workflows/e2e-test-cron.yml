@@ -90,7 +90,7 @@ jobs:
           ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
           LAUNCH_ID: ${{ env.LAUNCH_ID }}
       - name: Upload test results
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         if: failure()
         with:
           name: logs_${{ env.ANDROID_API_LEVEL }}
