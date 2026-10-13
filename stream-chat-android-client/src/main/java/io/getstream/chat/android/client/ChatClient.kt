@@ -3290,7 +3290,8 @@ internal constructor(
      * Contact & Support.**
      *
      * @param groups The per-group options keyed by group name. Required; must contain at least one group. Use
-     * [GroupedChannelsGroupQuery.filter] to narrow a group by `group` and `query_timestamp`.
+     * [GroupedChannelsGroupQuery.filter] to narrow a group by `query_timestamp`, or the `all` group by `group`
+     * and `query_timestamp`.
      * @param sort The order of the channels in every group. Required as `query_timestamp` descending when any group
      * has a filter. `null` uses the server default.
      * @param limit Default max channels per group. Accepted range is `1..10`. `null` uses the

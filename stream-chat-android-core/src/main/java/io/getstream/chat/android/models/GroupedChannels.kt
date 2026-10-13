@@ -48,7 +48,9 @@ public data class GroupedChannelsGroup(
  * @param next Cursor for the next page of this group. Mutually exclusive with [prev].
  * @param prev Cursor for the previous page of this group. Mutually exclusive with [next].
  * @param filter Conditions the group's channels must match, or `null` to return the group as stored.
- * Supports `group` (`eq`, `in`, `ne`) and `query_timestamp` (`greaterThanEquals`), combined with `or`.
+ * For a named group, only a `query_timestamp` `greaterThanEquals` cutoff is accepted, given as a date, a full
+ * timestamp or a relative `now-7d` / `7d` value. For the `all` group, `or` branches each combine a `group`
+ * condition (`eq` or `in`) with an optional cutoff using `and`, or a single standalone `ne` excludes one group.
  * [Filters.neutral] matches every channel of the stored group. A non-null filter requires the request
  * to sort by `query_timestamp` descending.
  */
