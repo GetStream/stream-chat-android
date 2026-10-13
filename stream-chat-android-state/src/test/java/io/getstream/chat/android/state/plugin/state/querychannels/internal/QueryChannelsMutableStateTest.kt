@@ -44,6 +44,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class QueryChannelsMutableStateTest {
@@ -59,11 +60,12 @@ internal class QueryChannelsMutableStateTest {
 
     private lateinit var state: QueryChannelsMutableState
 
-    private fun newState(identifier: QueryChannelsIdentifier) = QueryChannelsMutableState(
+    private fun newState(identifier: QueryChannelsIdentifier, now: () -> Date = ::Date) = QueryChannelsMutableState(
         identifier = identifier,
         scope = testCoroutines.scope,
         latestUsers = latestUsers,
         activeLiveLocations = activeLiveLocations,
+        now = now,
     )
 
     @BeforeEach
@@ -378,6 +380,33 @@ internal class QueryChannelsMutableStateTest {
 
         groupedState.setGroupedQueryConfig(GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = false))
         assertEquals(Filters.neutral(), groupedState.filter)
+    }
+
+    @Test
+    fun `grouped state hides a channel once it passes the group's cutoff`() {
+        var now = Date(1_800_000_000_000)
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"), now = { now })
+        val createdAt = Date(now.time - TimeUnit.DAYS.toMillis(30))
+        val recent = randomChannel(createdAt = createdAt, lastMessageAt = Date(now.time - TimeUnit.DAYS.toMillis(13)))
+        val old = randomChannel(createdAt = createdAt, lastMessageAt = Date(now.time - TimeUnit.DAYS.toMillis(15)))
+        groupedState.setChannels(mapOf(recent.cid to recent, old.cid to old))
+
+        groupedState.setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = Filters.greaterThanEquals("query_timestamp", "now-14d"),
+            ),
+        )
+        assertEquals(listOf(recent.cid), groupedState.channels.value?.map(Channel::cid))
+
+        // Two days later the recent channel passes the cutoff too, with no event to remove it.
+        now = Date(now.time + TimeUnit.DAYS.toMillis(2))
+        testCoroutines.scope.testScheduler.advanceTimeBy(TimeUnit.MINUTES.toMillis(1) + 1)
+        assertEquals(emptyList<String>(), groupedState.channels.value?.map(Channel::cid))
+        assertEquals(setOf(recent.cid, old.cid), groupedState.rawChannels?.keys)
     }
 
     @Test

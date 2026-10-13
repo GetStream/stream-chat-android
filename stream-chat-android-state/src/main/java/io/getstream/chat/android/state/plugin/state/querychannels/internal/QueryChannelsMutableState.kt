@@ -26,21 +26,32 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.group
+import io.getstream.chat.android.state.event.handler.grouped.internal.matchesGroupedChannel
+import io.getstream.chat.android.state.event.handler.grouped.internal.queryTimestamp
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import java.util.Date
 
 /**
  * Mutable backing state for a query channels operation. Each instance corresponds to a unique
@@ -65,6 +76,7 @@ internal class QueryChannelsMutableState(
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
+    private val now: () -> Date = ::Date,
 ) : QueryChannelsState {
 
     /**
@@ -127,9 +139,38 @@ internal class QueryChannelsMutableState(
         get() = if (channels.value.isNullOrEmpty()) loading else loadingMore
 
     private var _endOfChannels: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+
+    /**
+     * Which channels of a filtered group are shown. Re-checked every [GROUPED_FILTER_CHECK_INTERVAL_MS], because a
+     * channel can pass its `query_timestamp` cutoff without any event.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val isShown: Flow<(Channel) -> Boolean> = _filter.flatMapLatest { filter ->
+        if (identifier !is QueryChannelsIdentifier.Grouped || filter is NeutralFilterObject) {
+            flowOf { true }
+        } else {
+            flow {
+                while (true) {
+                    val checkedAt = now()
+                    emit { channel: Channel ->
+                        filter.matchesGroupedChannel(channel.group, channel.queryTimestamp, checkedAt)
+                    }
+                    delay(GROUPED_FILTER_CHECK_INTERVAL_MS)
+                }
+            }
+        }
+    }
+
     private val sortedChannels: StateFlow<List<Channel>?> =
-        combine(mapChannels, latestUsers, activeLiveLocations, _sort) { channelMap, userMap, activeLocations, sort ->
+        combine(
+            mapChannels,
+            latestUsers,
+            activeLiveLocations,
+            _sort,
+            isShown,
+        ) { channelMap, userMap, activeLocations, sort, isShown ->
             channelMap?.values
+                ?.filter(isShown)
                 ?.updateUsers(userMap)
                 ?.updateLiveLocations(activeLocations)
                 ?.sortedWith(sort.comparator)
@@ -300,3 +341,5 @@ internal class QueryChannelsMutableState(
 }
 
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState
+
+private const val GROUPED_FILTER_CHECK_INTERVAL_MS = 60_000L
