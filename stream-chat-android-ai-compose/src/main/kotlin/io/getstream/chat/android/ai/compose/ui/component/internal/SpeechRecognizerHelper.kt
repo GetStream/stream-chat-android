@@ -182,7 +182,7 @@ private class SpeechRecognizerHelperViewModel(
             extractResult(partialResults)
                 ?.takeIf(String::isNotBlank)
                 ?.let { result ->
-                    onPartialResult?.invoke(speechResults.joinToString() + result)
+                    onPartialResult?.invoke((speechResults + result).joinToString(" "))
 
                     if (partialResults.isFinalResult()) {
                         speechResults += result
@@ -199,7 +199,12 @@ private class SpeechRecognizerHelperViewModel(
         override fun onResults(results: Bundle?) {
             logger.d { "onResults: ${results?.getData()}" }
 
-            onFinalResult?.invoke(speechResults.joinToString())
+            // A recognizer may deliver the last segment, or all of the speech, only here. One that
+            // repeats the last segment is not added twice, at the cost of a phrase said twice in a
+            // row when only the second arrives here.
+            val last = extractResult(results)?.takeIf(String::isNotBlank)
+            val heard = if (last != null && last != speechResults.lastOrNull()) speechResults + last else speechResults
+            onFinalResult?.invoke(heard.joinToString(" "))
 
             resetState()
         }
@@ -296,8 +301,9 @@ private fun createRecognitionIntent(): Intent = Intent(RecognizerIntent.ACTION_R
     putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, SilenceTimeoutMs)
 }
 
+// Trimmed: Google's recognizer starts every segment after the first with a space.
 private fun extractResult(bundle: Bundle?): String? =
-    bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+    bundle?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()?.trim()
 
 private fun Bundle?.isFinalResult(): Boolean =
     this?.getBoolean("final_result", false) ?: false

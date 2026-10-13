@@ -84,12 +84,12 @@ private fun rotateBitmap(bitmap: Bitmap, orientation: Int): Bitmap {
         ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.preScale(1f, -1f)
         ExifInterface.ORIENTATION_TRANSPOSE -> {
             matrix.postRotate(90f)
-            matrix.preScale(-1f, 1f)
+            matrix.postScale(-1f, 1f)
         }
 
         ExifInterface.ORIENTATION_TRANSVERSE -> {
             matrix.postRotate(270f)
-            matrix.preScale(-1f, 1f)
+            matrix.postScale(-1f, 1f)
         }
 
         else -> return bitmap // No rotation needed
