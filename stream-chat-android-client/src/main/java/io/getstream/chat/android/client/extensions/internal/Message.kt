@@ -237,6 +237,12 @@ public fun Message.hasPendingAttachments(): Boolean =
     }
 
 /**
+ * Whether a previous upload of this attachment's local file succeeded.
+ */
+internal fun Attachment.isUploaded(): Boolean =
+    uploadState == Attachment.UploadState.Success && assetUrl != null
+
+/**
  * Checks if the message mentions the [user].
  */
 internal fun Message.containsUserMention(user: User): Boolean {

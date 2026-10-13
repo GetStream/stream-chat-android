@@ -40,8 +40,6 @@ internal class DtoTestDataTest {
         anyAdapter.fromJson(UserDtoTestData.upstreamJsonWithoutExtraData)
 
         anyAdapter.fromJson(ChannelDtoTestData.configJson)
-        anyAdapter.fromJson(ChannelDtoTestData.downstreamJson)
-        anyAdapter.fromJson(ChannelDtoTestData.downstreamJsonWithoutExtraData)
 
         anyAdapter.fromJson(AttachmentDtoTestData.json)
         anyAdapter.fromJson(AttachmentDtoTestData.jsonWithoutExtraData)

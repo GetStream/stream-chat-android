@@ -16,13 +16,26 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.parser2.testdata.MessageFixtures
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.MessageResponse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContain
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 internal class MessageResponseParsingTest {
     private val parser = ParserFactory.createMoshiChatParser()
+    private val mapping = DomainMapping(
+        currentUserIdProvider = { "user-1" },
+        channelTransformer = NoOpChannelTransformer,
+        messageTransformer = NoOpMessageTransformer,
+        userTransformer = NoOpUserTransformer,
+    )
 
     private fun message(extra: String) = parser.fromJson(
         """
@@ -81,5 +94,15 @@ internal class MessageResponseParsingTest {
 
         parsed.custom["flair"] shouldBeEqualTo "gold"
         parsed.custom.keys shouldContain "moderation_details"
+    }
+
+    @Test
+    fun `A message by a deleted user parses with the placeholder the backend sends`() {
+        val message = with(mapping) { parser.fromJson(MessageFixtures.DELETED_AUTHOR_JSON, MessageResponse::class.java).toDomain() }
+
+        assertEquals("deleted-user", message.user.id)
+        assertEquals("", message.user.language)
+        // The exact instant depends on the calendar the date parser uses for year 1; it only has to parse.
+        assertTrue((message.user.createdAt?.time ?: 0) < 0) { "createdAt = ${message.user.createdAt}" }
     }
 }
