@@ -3332,8 +3332,8 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun onQueryDraftMessagesResult$suspendImpl (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun onQueryDraftMessagesResult$suspendImpl (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun onQueryGroupedChannelsResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun onQueryGroupedChannelsResult$suspendImpl (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onQueryGroupedChannelsResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onQueryGroupedChannelsResult$suspendImpl (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun onQueryMembersResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun onQueryMembersResult$suspendImpl (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun onQueryThreadsPrecondition (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -3482,8 +3482,12 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryGroupedChannelsListener {
 	public fun onQueryGroupedChannelsRequest (Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onQueryGroupedChannelsRequest (Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun onQueryGroupedChannelsRequest$suspendImpl (Lio/getstream/chat/android/client/plugin/listeners/QueryGroupedChannelsListener;Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onQueryGroupedChannelsResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onQueryGroupedChannelsRequest$suspendImpl (Lio/getstream/chat/android/client/plugin/listeners/QueryGroupedChannelsListener;Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun onQueryGroupedChannelsResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryGroupedChannelsResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun onQueryGroupedChannelsResult$suspendImpl (Lio/getstream/chat/android/client/plugin/listeners/QueryGroupedChannelsListener;Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/util/Map;ZZLio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/QueryMembersListener {

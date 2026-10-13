@@ -433,7 +433,6 @@ public interface Plugin :
         groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
-        sort: QuerySorter<Channel>?,
     ) {
         /* No-Op */
     }

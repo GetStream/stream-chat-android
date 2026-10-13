@@ -87,6 +87,16 @@ internal class QueryGroupedChannelsListenerState(
         groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
+    ) {
+        onQueryGroupedChannelsResult(result, limit, groups, watch, presence, sort = null)
+    }
+
+    override suspend fun onQueryGroupedChannelsResult(
+        result: Result<GroupedChannels>,
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
         sort: QuerySorter<Channel>?,
     ) {
         if (result !is Result.Success) {
