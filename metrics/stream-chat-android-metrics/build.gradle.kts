@@ -34,19 +34,19 @@ android {
         }
         create("stream-chat-android-ai-compose-baseline") {
             dimension = "sdk"
-            minSdk = 23
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
         }
         create("stream-chat-android-ai-compose-stream") {
             dimension = "sdk"
-            minSdk = 23
+            minSdk = libs.versions.aiComposeMinSdk.get().toInt()
         }
         create("stream-chat-android-ai-ondevice-baseline") {
             dimension = "sdk"
-            minSdk = 26
+            minSdk = libs.versions.aiOnDeviceMinSdk.get().toInt()
         }
         create("stream-chat-android-ai-ondevice-stream") {
             dimension = "sdk"
-            minSdk = 26
+            minSdk = libs.versions.aiOnDeviceMinSdk.get().toInt()
         }
     }
 }

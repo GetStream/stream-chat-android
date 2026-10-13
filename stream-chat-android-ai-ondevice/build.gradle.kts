@@ -9,8 +9,7 @@ android {
     namespace = "io.getstream.chat.android.ai.ondevice"
 
     defaultConfig {
-        // ML Kit's GenAI APIs need Android 8.0.
-        minSdk = 26
+        minSdk = libs.versions.aiOnDeviceMinSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 

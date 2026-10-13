@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId = "io.getstream.chat.android.ai.compose.sample"
-        // The on-device model needs Android 8.0.
-        minSdk = 26
+        // The on-device model sets the floor.
+        minSdk = libs.versions.aiOnDeviceMinSdk.get().toInt()
         targetSdk = libs.versions.sampleTargetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
