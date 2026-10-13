@@ -23,7 +23,14 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_OWN_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.test.randomConnectedEvent
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -231,6 +238,38 @@ internal class DtoMappingTest {
         input.frozen shouldBeEqualTo null
         // A value that doesn't read as its declared type stays custom data, as v1 sent it.
         input.custom shouldBeEqualTo mapOf("name" to "Channel", "frozen" to "not a boolean")
+    }
+
+    @Test
+    fun `Channel data sends back none of the declared fields the channel adapters keep in extraData`() {
+        val kept = GENERATED_CHANNEL_EXTRA_DATA_KEYS + LEGACY_CHANNEL_EXTRA_DATA_KEYS
+        val typed = mapOf("auto_translation_enabled" to true, "auto_translation_language" to "it", "disabled" to true)
+        val data = kept.associateWith { "from a response" } + typed + ("color" to "teal")
+        val mapping = Fixture().get()
+
+        with(mapping) {
+            data.toChannelInput().run {
+                custom shouldBeEqualTo mapOf("color" to "teal")
+                autoTranslationLanguage shouldBeEqualTo "it"
+                disabled shouldBeEqualTo true
+            }
+            data.toChannelInputRequest().run {
+                custom shouldBeEqualTo mapOf("color" to "teal")
+                autoTranslationEnabled shouldBeEqualTo true
+            }
+        }
+    }
+
+    @Test
+    fun `Members send back none of the declared fields the member adapter keeps in extraData`() {
+        val extraData = GENERATED_MEMBER_EXTRA_DATA_KEYS.associateWith { "from a response" } + ("color" to "teal")
+        val mapping = Fixture().get()
+
+        with(mapping) {
+            MemberData("amit", extraData).toChannelMemberRequest().custom shouldBeEqualTo mapOf("color" to "teal")
+            randomMember().copy(extraData = extraData).toChannelMemberRequest().custom shouldBeEqualTo
+                mapOf("color" to "teal")
+        }
     }
 
     @Test
@@ -501,6 +540,18 @@ internal class DtoMappingTest {
         request shouldBeEqualTo expected
         // Verify the transformer is called
         verify(userTransformer, times(1)).transform(user)
+    }
+
+    @Test
+    fun `User sends back none of the declared fields the user adapters keep in extraData`() {
+        val kept = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
+            GENERATED_OWN_USER_EXTRA_DATA_KEYS
+        val user = randomUser(extraData = (kept.associateWith { "from a response" } + ("color" to "teal")).toMutableMap())
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        request.custom shouldBeEqualTo mapOf("color" to "teal")
     }
 
     @Test
