@@ -17,9 +17,12 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
@@ -74,6 +77,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             ),
             watch = true,
             presence = false,
+            sort = null,
         )
 
         // then — the offline read cannot tell an in-flight first page from one that never comes,
@@ -90,6 +94,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(limit = 5, next = "cursor")),
             watch = true,
             presence = false,
+            sort = null,
         )
 
         // then
@@ -105,6 +110,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(limit = 5)),
             watch = true,
             presence = false,
+            sort = null,
         )
 
         // then — the success path ends it while applying the result, so a failure that skipped
@@ -135,6 +141,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             ),
             watch = true,
             presence = false,
+            sort = null,
         )
 
         // then — the omitted group never reaches applyGroupedResult, so its loader is ended here.
@@ -151,6 +158,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(limit = 5, next = "cursor")),
             watch = true,
             presence = false,
+            sort = null,
         )
 
         // then
@@ -184,6 +192,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery()),
             watch = false,
             presence = false,
+            sort = null,
         )
         // then - merged: direct stays at 4, support updated to 7
         verify(globalState, times(1)).setGroupedUnreadChannels(
@@ -217,6 +226,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
             watch = false,
             presence = false,
+            sort = null,
         )
         // then - pagination payload does not carry unread counts
         verify(globalState, never()).setGroupedUnreadChannels(any())
@@ -245,6 +255,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
             watch = false,
             presence = false,
+            sort = null,
         )
 
         verify(globalState).updateChannelDrafts(channels)
@@ -276,6 +287,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(prev = "cursor")),
             watch = false,
             presence = false,
+            sort = null,
         )
         // then - pagination payload does not carry unread counts
         verify(globalState, never()).setGroupedUnreadChannels(any())
@@ -315,6 +327,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = null,
             watch = false,
             presence = false,
+            sort = null,
         )
         // then - direct updated to 2, support added with 0; merging preserves any pre-existing keys
         verify(globalState, times(1)).setGroupedUnreadChannels(
@@ -333,6 +346,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = null,
             watch = false,
             presence = false,
+            sort = null,
         )
         // then
         verify(globalState, never()).setGroupedUnreadChannels(any())
@@ -370,6 +384,7 @@ internal class QueryGroupedChannelsListenerStateTest {
                 groups = null,
                 watch = false,
                 presence = false,
+                sort = null,
             )
             // then
             verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("direct")))
@@ -380,22 +395,26 @@ internal class QueryGroupedChannelsListenerStateTest {
 
     @Test
     fun `onQueryGroupedChannelsRequest with explicit groups writes config per requested key`() = runTest {
+        // given
+        val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+        val sort = QuerySortByField.descByName<Channel>("query_timestamp")
         // when
         listener.onQueryGroupedChannelsRequest(
             limit = 20,
             groups = mapOf(
-                "a" to GroupedChannelsGroupQuery(limit = 5),
+                "a" to GroupedChannelsGroupQuery(limit = 5, filter = filter),
                 "b" to GroupedChannelsGroupQuery(),
             ),
             watch = true,
             presence = false,
+            sort = sort,
         )
-        // then - per-group override captured for "a", request-level only for "b"
+        // then - per-group override and filter captured for "a", request-level only for "b"
         verify(logicFor("a")).setGroupedQueryConfig(
-            GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false),
+            GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false, filter = filter, sort = sort),
         )
         verify(logicFor("b")).setGroupedQueryConfig(
-            GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false),
+            GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false, sort = sort),
         )
         verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("a")))
         verify(logic).queryChannels(eq(QueryChannelsIdentifier.Grouped("b")))
@@ -409,6 +428,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = null,
             watch = true,
             presence = false,
+            sort = null,
         )
         // then - no per-group keys to write to; defer to result-side capture. Asserted on the
         // registry rather than on a group's logic: with groups = null nothing resolves a logic, so
@@ -427,20 +447,30 @@ internal class QueryGroupedChannelsListenerStateTest {
             val result = Result.Success(
                 value = GroupedChannels(groups = mapOf("a" to groupA, "b" to groupB)),
             )
-            // when - "a" has a per-group limit override; "b" only the request-level fallback
+            val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+            val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+            // when - "a" has a per-group limit override and filter; "b" only the request-level fallback
             listener.onQueryGroupedChannelsResult(
                 result = result,
                 limit = 20,
-                groups = mapOf("a" to GroupedChannelsGroupQuery(limit = 5)),
+                groups = mapOf("a" to GroupedChannelsGroupQuery(limit = 5, filter = filter)),
                 watch = true,
                 presence = false,
+                sort = sort,
             )
-            // then - per-group override captured for "a", request-level only for "b"
+            // then - per-group override and filter captured for "a", request-level only for "b"
             verify(logicFor("a")).setGroupedQueryConfig(
-                GroupedQueryConfig(limit = 20, pageSize = 5, watch = true, presence = false),
+                GroupedQueryConfig(
+                    limit = 20,
+                    pageSize = 5,
+                    watch = true,
+                    presence = false,
+                    filter = filter,
+                    sort = sort,
+                ),
             )
             verify(logicFor("b")).setGroupedQueryConfig(
-                GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false),
+                GroupedQueryConfig(limit = 20, pageSize = null, watch = true, presence = false, sort = sort),
             )
         }
 
@@ -458,6 +488,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = null,
             watch = true,
             presence = true,
+            sort = null,
         )
         // then - config still written so subsequent pagination knows the watch/presence flags
         verify(logicFor("direct")).setGroupedQueryConfig(
@@ -487,6 +518,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(next = "cursor")),
             watch = false,
             presence = false,
+            sort = null,
         )
         // then
         verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = false)
@@ -514,6 +546,7 @@ internal class QueryGroupedChannelsListenerStateTest {
             groups = mapOf("support" to GroupedChannelsGroupQuery(prev = "cursor")),
             watch = false,
             presence = false,
+            sort = null,
         )
         // then
         verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = false)

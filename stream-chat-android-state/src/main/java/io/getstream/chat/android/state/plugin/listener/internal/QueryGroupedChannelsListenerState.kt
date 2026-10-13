@@ -18,8 +18,10 @@ package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.plugin.listeners.QueryGroupedChannelsListener
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.grouped.internal.GroupedUnreadChannelsUpdater
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
@@ -37,6 +39,7 @@ internal class QueryGroupedChannelsListenerState(
         groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
+        sort: QuerySorter<Channel>?,
     ) {
         // Capture config for every explicitly named group BEFORE the network call so that a
         // failed request still leaves enough state for SyncManager to retry with the same
@@ -51,6 +54,8 @@ internal class QueryGroupedChannelsListenerState(
                     pageSize = groupQuery.limit,
                     watch = watch,
                     presence = presence,
+                    filter = groupQuery.filter,
+                    sort = sort,
                 ),
             )
             // The only point that knows a fetch is starting: grouped state is initialised separately
@@ -82,6 +87,7 @@ internal class QueryGroupedChannelsListenerState(
         groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
+        sort: QuerySorter<Channel>?,
     ) {
         if (result !is Result.Success) {
             // The success path ends the load while applying the result, so failures must do it here.
@@ -123,6 +129,8 @@ internal class QueryGroupedChannelsListenerState(
                     pageSize = perGroupLimit,
                     watch = watch,
                     presence = presence,
+                    filter = perGroupQuery?.filter,
+                    sort = sort,
                 ),
             )
             queryLogic.applyGroupedResult(group, isFirstPage = isFirstPage)

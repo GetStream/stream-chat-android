@@ -464,8 +464,8 @@ internal class SyncManager(
             return emptySet()
         }
 
-        // Shared fields (limit, watch, presence) are identical across groups from the same
-        // original session — take the first captured config. Per-group page sizes are merged in
+        // Shared fields (limit, watch, presence, sort) are identical across groups from the same
+        // original session — take the first captured config. Per-group page sizes and filters are merged in
         // the `groups` map below so the server returns the same page sizes the caller chose.
         //
         // Always include every active group's key, even when the captured per-group `pageSize` is
@@ -476,7 +476,7 @@ internal class SyncManager(
             .mapNotNull { logic ->
                 val key = logic.groupKey() ?: return@mapNotNull null
                 val cfg = logic.groupedQueryConfig()
-                key to GroupedChannelsGroupQuery(limit = cfg?.pageSize)
+                key to GroupedChannelsGroupQuery(limit = cfg?.pageSize, filter = cfg?.filter)
             }
             .toMap()
             .takeIf { it.isNotEmpty() }
@@ -486,6 +486,7 @@ internal class SyncManager(
             groups = groupsParam,
             watch = shared?.watch ?: true,
             presence = shared?.presence ?: false,
+            sort = shared?.sort,
         ).await()
 
         return when (result) {

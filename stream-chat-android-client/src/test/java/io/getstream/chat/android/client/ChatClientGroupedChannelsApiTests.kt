@@ -39,6 +39,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -119,6 +120,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(groupsParam),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
             verify(plugin).onQueryGroupedChannelsResult(
                 result = any(),
@@ -126,6 +128,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(groupsParam),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
         }
     }
@@ -154,6 +157,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             groups = eq(groupsParam),
             watch = eq(true),
             presence = eq(false),
+            sort = isNull(),
         )
     }
 
@@ -191,6 +195,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             groups = eq(groupsParam),
             watch = eq(true),
             presence = eq(false),
+            sort = isNull(),
         )
     }
 
@@ -226,6 +231,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(expectedGroups),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
             verify(plugin, times(1)).onQueryGroupedChannelsResult(
                 result = any(),
@@ -233,6 +239,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(expectedGroups),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
         }
     }

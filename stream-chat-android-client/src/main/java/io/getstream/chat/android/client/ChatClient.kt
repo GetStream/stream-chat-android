@@ -3353,12 +3353,12 @@ internal constructor(
         )
             .doOnStart(userScope) {
                 plugins.forEach { plugin ->
-                    plugin.onQueryGroupedChannelsRequest(limit, groups, watch, presence)
+                    plugin.onQueryGroupedChannelsRequest(limit, groups, watch, presence, sort)
                 }
             }
             .doOnResult(userScope) { result ->
                 plugins.forEach { plugin ->
-                    plugin.onQueryGroupedChannelsResult(result, limit, groups, watch, presence)
+                    plugin.onQueryGroupedChannelsResult(result, limit, groups, watch, presence, sort)
                 }
             }
     }

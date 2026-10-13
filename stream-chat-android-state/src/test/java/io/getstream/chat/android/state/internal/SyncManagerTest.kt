@@ -35,7 +35,9 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
@@ -45,6 +47,7 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDraftMessage
@@ -1090,13 +1093,22 @@ internal class SyncManagerTest {
         }
 
     @Test
-    fun `on reconnect with multiple grouped queries should pass per-group limits and shared flags`() =
+    fun `on reconnect with multiple grouped queries should pass per-group limits and filters and shared flags`() =
         runTest(testDispatcher) {
             val createdAt = localDate()
             val rawCreatedAt = streamDateFormatter.format(createdAt)
 
-            val sharedConfigA = GroupedQueryConfig(limit = null, pageSize = 5, watch = true, presence = false)
-            val sharedConfigB = GroupedQueryConfig(limit = null, pageSize = 5, watch = true, presence = false)
+            val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+            val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+            val sharedConfigA = GroupedQueryConfig(
+                limit = null,
+                pageSize = 5,
+                watch = true,
+                presence = false,
+                filter = filter,
+                sort = sort,
+            )
+            val sharedConfigB = GroupedQueryConfig(limit = null, pageSize = 5, watch = true, presence = false, sort = sort)
             val queryLogicA: QueryChannelsLogic = mock {
                 on(it.groupKey()) doReturn "a"
                 on(it.currentRequest()) doReturn mock()
@@ -1133,11 +1145,12 @@ internal class SyncManagerTest {
             verify(chatClient).queryGroupedChannelsInternal(
                 limit = null,
                 groups = mapOf(
-                    "a" to GroupedChannelsGroupQuery(limit = 5),
+                    "a" to GroupedChannelsGroupQuery(limit = 5, filter = filter),
                     "b" to GroupedChannelsGroupQuery(limit = 5),
                 ),
                 watch = true,
                 presence = false,
+                sort = sort,
             )
         }
 

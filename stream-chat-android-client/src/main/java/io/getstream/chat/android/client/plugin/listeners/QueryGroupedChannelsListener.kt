@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Result
 
 /**
@@ -35,12 +37,14 @@ public interface QueryGroupedChannelsListener {
      * the server-defined default set of groups.
      * @param watch Whether watching was requested.
      * @param presence Whether presence was requested.
+     * @param sort The order requested for the channels in every group, or `null` for the server default.
      */
     public suspend fun onQueryGroupedChannelsRequest(
         limit: Int?,
         groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
+        sort: QuerySorter<Channel>?,
     ) { /* No-Op */ }
 
     /**
@@ -52,12 +56,15 @@ public interface QueryGroupedChannelsListener {
      * asked for the server-defined default set of groups.
      * @param watch Whether watching was requested.
      * @param presence Whether presence was requested.
+     * @param sort The order requested for the channels in every group, or `null` for the server default.
      */
+    @Suppress("LongParameterList")
     public suspend fun onQueryGroupedChannelsResult(
         result: Result<GroupedChannels>,
         limit: Int?,
         groups: Map<String, GroupedChannelsGroupQuery>?,
         watch: Boolean,
         presence: Boolean,
+        sort: QuerySorter<Channel>?,
     )
 }
