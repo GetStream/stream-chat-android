@@ -49,4 +49,32 @@ internal class RichTextTest {
             rule.onNodeWithText(words[last], substring = true, useUnmergedTree = true).assertExists()
         }
     }
+
+    @Test
+    fun `a code fence shows its code`() {
+        rule.setContent { RichText(text = "```kotlin\nval answer = 42\n```") }
+
+        rule.onNodeWithText("val answer = 42", substring = true, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `an indented code block shows its code`() {
+        rule.setContent { RichText(text = "Example:\n\n    val answer = 42\n") }
+
+        rule.onNodeWithText("val answer = 42", substring = true, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `a chart that is still streaming shows as code until its fence closes`() {
+        rule.setContent { RichText(text = "```chartjs\n{\"type\": \"bar\"") }
+
+        rule.onNodeWithText("\"type\": \"bar\"", substring = true, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `a complete chart no longer shows as code`() {
+        rule.setContent { RichText(text = "```chartjs\n{\"type\": \"bar\"}\n```") }
+
+        rule.onNodeWithText("\"type\": \"bar\"", substring = true, useUnmergedTree = true).assertDoesNotExist()
+    }
 }
