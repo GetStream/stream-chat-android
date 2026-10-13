@@ -1311,7 +1311,7 @@ constructor(
         return if (channels.size == states.size) {
             CoroutineCall(coroutineScope) { Result.Success(transform(channels)) }
         } else {
-            ErrorCall(coroutineScope, Error.GenericError("A channel state in the response carried no channel"))
+            ErrorCall(coroutineScope, Error.GenericError(MISSING_CHANNEL_IN_STATE))
         }
     }
 
@@ -1561,23 +1561,25 @@ constructor(
             sort = sort?.toSortParams(),
         )
         val lazyCall = {
-            channelV1Api.queryGroupedChannels(
+            channelApi.queryGroupedChannels(
                 connectionId = connectionId,
                 body = body,
-            ).flatMapV1Domain { response ->
-                channelsCall(response.groups.values.flatMap { it.channels }) {
-                    GroupedChannels(
-                        groups = response.groups.mapValues { entry ->
-                            GroupedChannelsGroup(
-                                groupKey = entry.key,
-                                channels = entry.value.channels.mapNotNull { flattenChannelState(it) },
-                                unreadChannels = entry.value.unreadChannels ?: 0,
-                                next = entry.value.next,
-                                prev = entry.value.prev,
+            ).flatMapDomain { response ->
+                val groups = response.groups.mapValues { (key, bucket) ->
+                    GroupedChannelsGroup(
+                        groupKey = key,
+                        channels = bucket.channels.map { state ->
+                            flattenChannelState(state) ?: return@flatMapDomain ErrorCall(
+                                coroutineScope,
+                                Error.GenericError(MISSING_CHANNEL_IN_STATE),
                             )
                         },
+                        unreadChannels = bucket.unreadChannels ?: 0,
+                        next = bucket.next,
+                        prev = bucket.prev,
                     )
                 }
+                CoroutineCall(coroutineScope) { Result.Success(GroupedChannels(groups = groups)) }
             }
         }
         val isConnectionRequired = watch || presence
@@ -2119,3 +2121,5 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
 private const val MISSING_MESSAGE = "The response carried no message"
+
+private const val MISSING_CHANNEL_IN_STATE = "A channel state in the response carried no channel"
