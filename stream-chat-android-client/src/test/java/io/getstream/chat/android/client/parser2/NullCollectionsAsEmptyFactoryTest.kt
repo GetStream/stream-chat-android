@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEmpty
@@ -70,21 +70,7 @@ internal class NullCollectionsAsEmptyFactoryTest {
 
     @Test
     fun `Hand-written DTOs are left alone`() {
-        invoking {
-            parser.fromJson(
-                """
-                {
-                    "id": "jc",
-                    "role": "user",
-                    "created_at": "2020-06-10T11:04:31.000Z",
-                    "updated_at": "2020-06-10T11:04:31.000Z",
-                    "banned": false,
-                    "online": true,
-                    "teams": null
-                }
-                """.trimIndent(),
-                DownstreamUserDto::class.java,
-            )
-        }.shouldThrow(Exception::class)
+        invoking { parser.fromJson("""{"events": null}""", SyncHistoryResponse::class.java) }
+            .shouldThrow(Exception::class)
     }
 }

@@ -17,15 +17,11 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
-import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
-import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
-import io.getstream.chat.android.network.models.UserMuteResponse
 import io.getstream.chat.android.network.models.UserResponse
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -55,87 +51,6 @@ internal object UserDtoTestData {
             "teams": [],
             "channel_mutes": []
          }"""
-
-    val downstreamUserWithoutExtraData =
-        DownstreamUserDto(
-            banned = false,
-            id = "",
-            name = "username",
-            image = "image",
-            invisible = false,
-            privacy_settings = null,
-            language = "language",
-            role = "",
-            devices = emptyList(),
-            online = false,
-            updated_at = null,
-            created_at = null,
-            deactivated_at = null,
-            last_active = null,
-            total_unread_count = 0,
-            unread_channels = 0,
-            unread_count = 0,
-            mutes = emptyList(),
-            teams = emptyList(),
-            teams_role = null,
-            channel_mutes = emptyList(),
-            blocked_user_ids = null,
-            avg_response_time = null,
-            push_preferences = null,
-            extraData = emptyMap(),
-        )
-
-    @Language("JSON")
-    val downstreamJsonWithoutImageAndName =
-        """{
-            "id": "",
-            "role": "",
-            "name": null,
-            "image": null,
-            "invisible": false,
-            "banned": false,
-            "devices": [],
-            "online": false,
-            "created_at": null,
-            "deactivated_at": null,
-            "updated_at": null,
-            "last_active": null,
-            "total_unread_count": 0,
-            "unread_channels": 0,
-            "unread_count": 0,
-            "mutes": [],
-            "teams": [],
-            "channel_mutes": []
-         }"""
-
-    val downstreamUserWithoutImageAndName =
-        DownstreamUserDto(
-            banned = false,
-            id = "",
-            name = null,
-            image = null,
-            invisible = false,
-            privacy_settings = null,
-            language = null,
-            role = "",
-            devices = emptyList(),
-            online = false,
-            updated_at = null,
-            deactivated_at = null,
-            created_at = null,
-            last_active = null,
-            total_unread_count = 0,
-            unread_channels = 0,
-            unread_count = 0,
-            mutes = emptyList(),
-            teams = emptyList(),
-            teams_role = null,
-            channel_mutes = emptyList(),
-            blocked_user_ids = null,
-            avg_response_time = null,
-            push_preferences = null,
-            extraData = emptyMap(),
-        )
 
     @Language("JSON")
     val downstreamJson =
@@ -228,75 +143,6 @@ internal object UserDtoTestData {
             updatedAt = Date(1591787071588),
             name = "username",
             image = "image",
-        )
-
-    val downstreamUser =
-        DownstreamUserDto(
-            banned = false,
-            id = "userId",
-            name = "username",
-            image = "image",
-            invisible = false,
-            privacy_settings = PrivacySettingsResponse(
-                typingIndicators = TypingIndicatorsResponse(
-                    enabled = false,
-                ),
-                readReceipts = ReadReceiptsResponse(
-                    enabled = false,
-                ),
-                deliveryReceipts = DeliveryReceiptsResponse(
-                    enabled = false,
-                ),
-            ),
-            language = "language",
-            role = "owner",
-            devices = listOf(
-                DeviceDto(
-                    id = "deviceId",
-                    push_provider = "provider",
-                    push_provider_name = "provider_name",
-                ),
-            ),
-            online = true,
-            updated_at = Date(1591787071588),
-            created_at = Date(1591787071000),
-            deactivated_at = Date(1591787071588),
-            last_active = Date(1591787071588),
-            total_unread_count = 1,
-            unread_channels = 2,
-            unread_count = 3,
-            mutes = listOf(
-                UserMuteResponse(
-                    user = userResponse,
-                    target = userResponse,
-                    createdAt = Date(1591787071000),
-                    updatedAt = Date(1591787071588),
-                    expires = null,
-                ),
-            ),
-            teams = listOf("team1", "team2"),
-            teams_role = mapOf(
-                "team1" to "owner",
-                "team2" to "member",
-            ),
-            channel_mutes = emptyList(),
-            blocked_user_ids = null,
-            avg_response_time = 1000L,
-            push_preferences = PushPreferencesResponse(
-                chatLevel = "default",
-                disabledUntil = Date(1591787071588),
-                // Toggles alternate so a key read into the wrong property cannot look correct.
-                chatPreferences = ChatPreferencesResponse(
-                    directMentions = "all",
-                    roleMentions = "none",
-                    groupMentions = "all",
-                    hereMentions = "none",
-                    channelMentions = "all",
-                    threadReplies = "none",
-                    defaultPreference = "all",
-                ),
-            ),
-            extraData = emptyMap(),
         )
 
     @Language("JSON")

@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
@@ -83,7 +82,6 @@ import io.getstream.chat.android.network.models.PollOptionResponseData
 import io.getstream.chat.android.network.models.PollResponseData
 import io.getstream.chat.android.network.models.PollVoteResponseData
 import io.getstream.chat.android.network.models.PollVotesResponse
-import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.QueryDraftsResponse
 import io.getstream.chat.android.network.models.QueryPollsResponse
@@ -124,7 +122,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
-import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 import io.getstream.chat.android.network.models.Command as CommandDto
 import io.getstream.chat.android.network.models.Role as RoleDto
 import io.getstream.chat.android.network.models.SearchWarning as SearchWarningResponse
@@ -374,62 +371,6 @@ internal object Mother {
         reminder = reminder,
         sharedLocation = sharedLocation,
         custom = custom,
-    )
-
-    fun randomDownstreamUserDto(
-        id: String = randomString(),
-        name: String? = randomString(),
-        image: String? = randomString(),
-        role: String = randomString(),
-        invisible: Boolean? = null,
-        privacy_settings: PrivacySettingsResponse? = null,
-        language: String? = randomString(),
-        banned: Boolean = randomBoolean(),
-        devices: List<DeviceDto>? = emptyList(),
-        online: Boolean = randomBoolean(),
-        created_at: Date? = randomDateOrNull(),
-        deactivated_at: Date? = randomDateOrNull(),
-        updated_at: Date? = randomDateOrNull(),
-        last_active: Date? = randomDateOrNull(),
-        total_unread_count: Int = randomInt(),
-        unread_channels: Int = randomInt(),
-        unread_count: Int = randomInt(),
-        unread_threads: Int = randomInt(),
-        mutes: List<UserMuteResponse>? = emptyList(),
-        teams: List<String> = emptyList(),
-        teamsRole: Map<String, String> = emptyMap(),
-        channel_mutes: List<ChannelMuteResponse>? = emptyList(),
-        blocked_user_ids: List<String>? = emptyList(),
-        avg_response_time: Long? = null,
-        push_preferences: PushPreferencesResponse? = randomPushPreferencesResponse(),
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamUserDto = DownstreamUserDto(
-        id = id,
-        name = name,
-        image = image,
-        role = role,
-        invisible = invisible,
-        privacy_settings = privacy_settings,
-        language = language,
-        banned = banned,
-        devices = devices,
-        online = online,
-        created_at = created_at,
-        deactivated_at = deactivated_at,
-        updated_at = updated_at,
-        last_active = last_active,
-        total_unread_count = total_unread_count,
-        unread_channels = unread_channels,
-        unread_count = unread_count,
-        unread_threads = unread_threads,
-        mutes = mutes,
-        teams = teams,
-        teams_role = teamsRole,
-        channel_mutes = channel_mutes,
-        blocked_user_ids = blocked_user_ids,
-        avg_response_time = avg_response_time,
-        push_preferences = push_preferences,
-        extraData = extraData,
     )
 
     fun randomChannelConfigWithInfo(

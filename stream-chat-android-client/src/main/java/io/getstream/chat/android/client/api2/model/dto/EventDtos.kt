@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.WSEvent
 import io.getstream.result.Error
 import java.util.Date
@@ -72,6 +73,6 @@ internal data class ErrorEventDto(
 internal data class UnknownEventDto(
     val type: String,
     val created_at: ExactDate,
-    val user: DownstreamUserDto?,
+    val user: UserResponseCommonFields?,
     val rawData: Map<*, *>,
 ) : ChatEventDto()
