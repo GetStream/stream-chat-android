@@ -98,7 +98,7 @@ internal class QueryChannelsMutableState(
         )
         is QueryChannelsIdentifier.Grouped -> QueryChannelsSpec(
             filter = Filters.neutral(),
-            querySort = QuerySortByField.descByName("last_updated"),
+            querySort = DEFAULT_GROUPED_SORT,
             groupKey = identifier.groupKey,
         )
     }
@@ -297,10 +297,35 @@ internal class QueryChannelsMutableState(
      * [io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel] for paginated
      * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery. The
      * group's filter becomes this state's [filter], which event handling checks channels against.
+     * The filter and sort are also kept in [queryChannelsSpec], so they are saved with the group.
      */
     fun setGroupedQueryConfig(config: GroupedQueryConfig) {
         _groupedQueryConfig?.value = config
-        _filter.value = config.filter ?: Filters.neutral()
+        val filter = config.filter ?: Filters.neutral()
+        _filter.value = filter
+        _querySpec = _querySpec.copy(filter = filter, querySort = config.sort ?: DEFAULT_GROUPED_SORT)
+    }
+
+    /**
+     * Restores the filter and sort saved with the group by an earlier session, so the cached list is
+     * filtered before the first request. No-op when a request has already set the configuration, or
+     * when the group was saved without a filter or sort.
+     */
+    fun restoreGroupedQueryConfig(filter: FilterObject, sort: QuerySorter<Channel>) {
+        if (_groupedQueryConfig?.value != null) return
+        val hasFilter = filter != Filters.neutral()
+        val hasSort = sort != DEFAULT_GROUPED_SORT
+        if (!hasFilter && !hasSort) return
+        setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = filter.takeIf { hasFilter },
+                sort = sort.takeIf { hasSort },
+            ),
+        )
     }
 
     /**
@@ -343,3 +368,5 @@ internal class QueryChannelsMutableState(
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState
 
 private const val GROUPED_FILTER_CHECK_INTERVAL_MS = 60_000L
+
+private val DEFAULT_GROUPED_SORT = QuerySortByField.descByName<Channel>("last_updated")

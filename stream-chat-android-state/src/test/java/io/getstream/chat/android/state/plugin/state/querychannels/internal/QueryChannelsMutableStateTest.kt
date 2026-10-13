@@ -383,6 +383,59 @@ internal class QueryChannelsMutableStateTest {
     }
 
     @Test
+    fun `setGroupedQueryConfig keeps the group filter and sort in the spec`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+        val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+        val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+
+        groupedState.setGroupedQueryConfig(
+            GroupedQueryConfig(limit = 10, pageSize = 5, watch = true, presence = false, filter = filter, sort = sort),
+        )
+
+        assertEquals(filter, groupedState.queryChannelsSpec.filter)
+        assertEquals(sort, groupedState.queryChannelsSpec.querySort)
+        assertEquals("expired", groupedState.queryChannelsSpec.groupKey)
+    }
+
+    @Test
+    fun `restoreGroupedQueryConfig restores a saved filter and sort with default request options`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+        val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+        val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+
+        groupedState.restoreGroupedQueryConfig(filter, sort)
+
+        assertEquals(
+            GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = false, filter = filter, sort = sort),
+            groupedState.groupedQueryConfig.value,
+        )
+        assertEquals(filter, groupedState.filter)
+    }
+
+    @Test
+    fun `restoreGroupedQueryConfig does nothing for a group saved without a filter or sort`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "new"))
+
+        groupedState.restoreGroupedQueryConfig(Filters.neutral(), QuerySortByField.descByName("last_updated"))
+
+        assertNull(groupedState.groupedQueryConfig.value)
+    }
+
+    @Test
+    fun `restoreGroupedQueryConfig keeps the configuration set by a request`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+        val requested = GroupedQueryConfig(limit = 10, pageSize = 5, watch = false, presence = true)
+        groupedState.setGroupedQueryConfig(requested)
+
+        groupedState.restoreGroupedQueryConfig(
+            Filters.greaterThanEquals("query_timestamp", "now-14d"),
+            QuerySortByField.descByName("query_timestamp"),
+        )
+
+        assertEquals(requested, groupedState.groupedQueryConfig.value)
+    }
+
+    @Test
     fun `grouped state hides a channel once it passes the group's cutoff`() {
         var now = Date(1_800_000_000_000)
         val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"), now = { now })

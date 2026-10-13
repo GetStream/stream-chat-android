@@ -487,6 +487,29 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     @Test
+    fun `loadOfflineGroupedChannels restores the filter and sort saved with the group`() = runTest {
+        // Given
+        val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+        val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn CachedQueryChannels(
+            spec = queryChannelsSpec.copy(filter = filter, querySort = sort),
+            channels = listOf(randomChannel()),
+        )
+
+        // When
+        logic.loadOfflineGroupedChannels()
+
+        // Then
+        verify(queryChannelsStateLogic).restoreGroupedQueryConfig(filter, sort)
+    }
+
+    @Test
     fun `loadOfflineGroupedChannels skips state population when a concurrent apply already populated state`() = runTest {
         // Given — applyGroupedResult landed during the DB read and populated the state first.
         val existingChannels = mapOf("messaging:ch1" to randomChannel(id = "ch1"))

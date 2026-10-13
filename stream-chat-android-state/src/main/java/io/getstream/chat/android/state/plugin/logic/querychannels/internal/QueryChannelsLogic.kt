@@ -115,8 +115,10 @@ internal class QueryChannelsLogic(
             channelOffset = 0
             channelLimit = CHANNEL_LIMIT
         }
-        val cachedChannels = fetchChannelsFromCache(pagination)
+        val cached = queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, identifier)
+        val cachedChannels = cached?.channels
         groupedResultMutex.withLock {
+            cached?.spec?.let { spec -> queryChannelsStateLogic.restoreGroupedQueryConfig(spec.filter, spec.querySort) }
             val existing = queryChannelsStateLogic.getChannels()
             val hasCachedChannels = !cachedChannels.isNullOrEmpty()
             if (existing.isNullOrEmpty() && hasCachedChannels) {
