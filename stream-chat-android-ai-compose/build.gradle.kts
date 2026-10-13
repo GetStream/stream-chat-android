@@ -13,7 +13,7 @@ android {
     namespace = "io.getstream.chat.android.ai.compose"
 
     defaultConfig {
-        minSdk = 23
+        minSdk = libs.versions.aiComposeMinSdk.get().toInt()
         consumerProguardFiles("consumer-rules.pro")
     }
 

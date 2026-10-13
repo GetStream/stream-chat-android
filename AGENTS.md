@@ -18,6 +18,7 @@ This project delivers **Stream Chat Android**, a modular SDK spanning low-level 
 - `stream-chat-android-client/` – core API client, REST/WebSocket, plugin hooks
 - `stream-chat-android-ui-common/` – theming, assets, shared UI helpers
 - `stream-chat-android-compose/` & `stream-chat-android-ui-components/` – Compose and XML UI kits
+- `stream-chat-android-ai-compose/` & `stream-chat-android-ai-ondevice/` – AI components and an on-device model; separate artifacts no other SDK artifact depends on
 - `*-sample/`, `stream-chat-android-ui-uitests/`, `stream-chat-android-test/` – samples, integration, and shared test harnesses
 - `buildSrc/`, `config/`, `scripts/`, `fastlane/`, `metrics/` – build logic, lint configs, automation, release metrics, CI helpers
 
