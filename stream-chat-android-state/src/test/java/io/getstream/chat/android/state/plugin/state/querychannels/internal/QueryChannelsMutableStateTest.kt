@@ -463,6 +463,33 @@ internal class QueryChannelsMutableStateTest {
     }
 
     @Test
+    fun `grouped state sorted by query_timestamp orders and keeps channels by their touched_at date`() {
+        val now = Date(1_800_000_000_000)
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"), now = { now })
+        val createdAt = Date(now.time - TimeUnit.DAYS.toMillis(60))
+        val recentMessage = randomChannel(createdAt = createdAt, lastMessageAt = Date(now.time - TimeUnit.DAYS.toMillis(2)))
+        val touched = randomChannel(
+            createdAt = createdAt,
+            lastMessageAt = Date(now.time - TimeUnit.DAYS.toMillis(30)),
+            extraData = mapOf("touched_at" to Date(now.time - TimeUnit.DAYS.toMillis(1))),
+        )
+        groupedState.setChannels(mapOf(recentMessage.cid to recentMessage, touched.cid to touched))
+
+        groupedState.setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = Filters.greaterThanEquals("query_timestamp", "now-14d"),
+                sort = QuerySortByField.descByName("query_timestamp"),
+            ),
+        )
+
+        assertEquals(listOf(touched.cid, recentMessage.cid), groupedState.channels.value?.map(Channel::cid))
+    }
+
+    @Test
     fun `setCids updates cids on the in-memory spec`() {
         val cids = setOf(randomCID(), randomCID())
         state.setCids(cids)

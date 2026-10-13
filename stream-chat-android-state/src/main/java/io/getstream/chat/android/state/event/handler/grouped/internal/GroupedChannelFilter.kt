@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EqualsFilterObject
@@ -26,18 +27,42 @@ import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.NotEqualsFilterObject
 import io.getstream.chat.android.models.OrFilterObject
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
 private const val QUERY_TIMESTAMP_FIELD_NAME = "query_timestamp"
+private const val TOUCHED_AT_FIELD_NAME = "touched_at"
 private const val RELATIVE_DATE_PREFIX = "now-"
 private const val RELATIVE_DATE_DAYS_SUFFIX = "d"
 
 /**
- * The time grouped channel filters compare against: the latest of the channel's creation and its last message.
+ * The time grouped channel filters and sorts compare against: the latest of the channel's creation, its last message
+ * and its custom `touched_at` date.
  */
 internal val Channel.queryTimestamp: Date?
-    get() = lastUpdated
+    get() = max(lastUpdated, touchedAt)
+
+private val Channel.touchedAt: Date?
+    get() = when (val value = extraData[TOUCHED_AT_FIELD_NAME]) {
+        is Date -> value
+        is String -> dateFormatter.parse(value)
+        else -> null
+    }
+
+private val queryTimestampDescSort = QuerySortByField.descByName<Channel>(QUERY_TIMESTAMP_FIELD_NAME)
+
+/**
+ * The local order for a grouped list requested with [sort]. A `query_timestamp` sort orders channels by
+ * [queryTimestamp], newest first, because the field is computed on the device. Any other sort keeps [defaultSort].
+ */
+internal fun groupedLocalSort(sort: QuerySorter<Channel>?, defaultSort: QuerySorter<Channel>): QuerySorter<Channel> =
+    if (sort == queryTimestampDescSort) QueryTimestampSort(sort) else defaultSort
+
+private class QueryTimestampSort(requested: QuerySorter<Channel>) : QuerySorter<Channel> by requested {
+    override val comparator: Comparator<in Channel> = compareByDescending(Channel::queryTimestamp)
+}
 
 /**
  * Whether a channel with the given [group] and [queryTimestamp] matches this grouped channels filter at [now].

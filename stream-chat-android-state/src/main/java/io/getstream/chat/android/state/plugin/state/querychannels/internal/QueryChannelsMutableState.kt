@@ -34,6 +34,7 @@ import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.event.handler.grouped.internal.group
+import io.getstream.chat.android.state.event.handler.grouped.internal.groupedLocalSort
 import io.getstream.chat.android.state.event.handler.grouped.internal.matchesGroupedChannel
 import io.getstream.chat.android.state.event.handler.grouped.internal.queryTimestamp
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
@@ -303,6 +304,7 @@ internal class QueryChannelsMutableState(
         _groupedQueryConfig?.value = config
         val filter = config.filter ?: Filters.neutral()
         _filter.value = filter
+        _sort.value = groupedLocalSort(config.sort, DEFAULT_GROUPED_SORT)
         _querySpec = _querySpec.copy(filter = filter, querySort = config.sort ?: DEFAULT_GROUPED_SORT)
     }
 

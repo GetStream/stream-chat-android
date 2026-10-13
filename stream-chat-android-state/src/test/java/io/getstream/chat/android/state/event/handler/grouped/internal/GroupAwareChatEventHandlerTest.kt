@@ -367,6 +367,27 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given a channel kept within the cutoff by touched_at When ChannelUpdatedEvent arrives Should keep it`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            extraData = mapOf("group" to "expired", "touched_at" to daysAgo(1)),
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "expired",
+            cachedChannels = mapOf(channel.cid to cachedChannel),
+            currentUser = currentUser,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
     fun `Given a filtered group and a channel within the cutoff When ChannelUpdatedEvent arrives Should add`() {
         val currentUser = randomUser()
         val channel = randomChannel(

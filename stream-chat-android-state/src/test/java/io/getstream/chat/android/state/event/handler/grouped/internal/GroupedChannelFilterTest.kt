@@ -17,6 +17,8 @@
 package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.randomChannel
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -88,6 +90,25 @@ internal class GroupedChannelFilterTest {
         assertFalse(all.matchesGroupedChannel("current", daysAgo(400), now))
         assertFalse(all.matchesGroupedChannel("bee", daysAgo(1), now))
     }
+
+    @Test
+    fun `query timestamp includes a later custom touched_at given as a date or a full timestamp`() {
+        val lastMessageAt = daysAgo(20)
+
+        assertEquals(daysAgo(1), channelWith(lastMessageAt, touchedAt = daysAgo(1)).queryTimestamp)
+        assertEquals(
+            Date(1_800_000_000_000),
+            channelWith(lastMessageAt, touchedAt = "2027-01-15T08:00:00.000Z").queryTimestamp,
+        )
+        assertEquals(lastMessageAt, channelWith(lastMessageAt, touchedAt = daysAgo(30)).queryTimestamp)
+        assertEquals(lastMessageAt, channelWith(lastMessageAt, touchedAt = "not a date").queryTimestamp)
+    }
+
+    private fun channelWith(lastMessageAt: Date, touchedAt: Any) = randomChannel(
+        createdAt = daysAgo(60),
+        lastMessageAt = lastMessageAt,
+        extraData = mapOf("touched_at" to touchedAt),
+    )
 
     private fun daysAgo(days: Long): Date = Date(now.time - TimeUnit.DAYS.toMillis(days))
 }
