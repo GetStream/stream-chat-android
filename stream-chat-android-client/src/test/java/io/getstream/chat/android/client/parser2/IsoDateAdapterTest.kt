@@ -37,6 +37,13 @@ internal class IsoDateAdapterTest {
     }
 
     @Test
+    fun readUnixNanos() {
+        dateAdapter.fromJson("1593411268123456789")!!.time shouldBeEqualTo 1593411268123
+        dateAdapter.fromJson("\"1593411268123456789\"")!!.time shouldBeEqualTo 1593411268123
+        dateAdapter.fromJson("0")!!.time shouldBeEqualTo 0
+    }
+
+    @Test
     fun readEmptyDate() {
         dateAdapter.fromJson("\"\"").shouldBeNull()
     }

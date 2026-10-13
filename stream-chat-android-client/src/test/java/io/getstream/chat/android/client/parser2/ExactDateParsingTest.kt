@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.network.infrastructure.ExactDate
+import io.getstream.chat.android.network.infrastructure.ExactDateAdapter
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -44,8 +46,32 @@ internal class ExactDateParsingTest {
         (StreamDateFormatter().parse(raw)?.time == millis) shouldBeEqualTo sdkAgrees
     }
 
+    @ParameterizedTest
+    @MethodSource("unixNanos")
+    fun `A date sent as unix nanoseconds keeps its full precision as an RFC 3339 raw string`(
+        json: String,
+        raw: String,
+        millis: Long,
+    ) {
+        val parsed = exactDateAdapter.fromJson(json)!!
+
+        parsed.raw shouldBeEqualTo raw
+        parsed.date.time shouldBeEqualTo millis
+        ExactDate.parseOrNull(raw)!!.date.time shouldBeEqualTo millis
+    }
+
     companion object {
         private const val SECOND = 1593411268000L
+
+        private val exactDateAdapter = Moshi.Builder().add(ExactDateAdapter()).build().adapter(ExactDate::class.java)
+
+        @JvmStatic
+        fun unixNanos(): List<Arguments> = listOf(
+            Arguments.of("1593411268123456789", "2020-06-29T06:14:28.123456789Z", SECOND + 123),
+            Arguments.of("\"1593411268123456789\"", "2020-06-29T06:14:28.123456789Z", SECOND + 123),
+            Arguments.of("1593411268000000005", "2020-06-29T06:14:28.000000005Z", SECOND),
+            Arguments.of("1593411268000000000", "2020-06-29T06:14:28.000000000Z", SECOND),
+        )
 
         @JvmStatic
         fun timestamps(): List<Arguments> = listOf(
