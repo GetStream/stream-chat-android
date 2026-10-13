@@ -1765,6 +1765,34 @@ internal class MoshiChatApiTest {
     }
 
     @Test
+    fun `A v2 response hides a custom value stored under a declared user field`() = runTest {
+        val user = Mother.randomFullUserResponse(custom = mapOf("shadow_banned" to true)).copy(shadowBanned = false)
+        val api = mock<UserApi>()
+        whenever(api.queryUsers(any(), any()))
+            .doReturn(RetroSuccess(QueryUsersResponse(duration = randomString(), users = listOf(user))).toRetrofitCall())
+        val sut = Fixture().withUserApi(api).get()
+        sut.setConnection(userId = randomString(), connectionId = randomString())
+
+        val result = sut.queryUsers(Mother.randomQueryUsersRequest()).await()
+
+        (result as Result.Success).value.single().extraData["shadow_banned"] shouldBeEqualTo false
+    }
+
+    @Test
+    fun `A response from an endpoint still on v1 keeps the declared member fields its custom data carries`() = runTest {
+        val member = Mother.randomChannelMemberResponse().copy(custom = mapOf("is_moderator" to true), isModerator = false)
+        val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = member)
+        val api = mock<ChannelV1Api>()
+        whenever(api.partialUpdateMember(any(), any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withChannelV1Api(api).get()
+
+        val result = sut.partialUpdateMember(randomString(), randomString(), randomString(), emptyMap(), emptyList())
+            .await()
+
+        (result as Result.Success).value.extraData["is_moderator"] shouldBeEqualTo true
+    }
+
+    @Test
     fun `partialUpdateMember reports a missing member as an error rather than crashing`() = runTest {
         // given
         val api = mock<ChannelV1Api>()
@@ -3958,7 +3986,14 @@ internal class MoshiChatApiTest {
                 userTransformer = NoOpUserTransformer,
             )
             return MoshiChatApi(
-                domainMapping = domainMapping,
+                domainMapping = DomainMapping(
+                    currentUserIdProvider = { currentUserId },
+                    channelTransformer = NoOpChannelTransformer,
+                    messageTransformer = NoOpMessageTransformer,
+                    userTransformer = NoOpUserTransformer,
+                    hidesStoredDeclaredCustom = true,
+                ),
+                v1DomainMapping = domainMapping,
                 eventMapping = EventMapping(domainMapping),
                 dtoMapping = dtoMapping,
                 fileUploader = fileUploader,

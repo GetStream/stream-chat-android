@@ -162,6 +162,17 @@ constructor(
             apiModelTransformers.incomingUserTransformer,
         )
     }
+
+    /** Maps the responses of the v2 REST endpoints, whose custom data can hold values stored under declared names. */
+    private val v2DomainMapping by lazy {
+        DomainMapping(
+            currentUserIdProvider,
+            apiModelTransformers.incomingChannelTransformer,
+            apiModelTransformers.incomingMessageTransformer,
+            apiModelTransformers.incomingUserTransformer,
+            hidesStoredDeclaredCustom = true,
+        )
+    }
     internal val dtoMapping by lazy {
         DtoMapping(
             apiModelTransformers.outgoingMessageTransformer,
@@ -343,7 +354,8 @@ constructor(
 
     private fun buildApi(chatConfig: ChatApiConfig): ChatApi = ProxyChatApi(
         delegate = MoshiChatApi(
-            domainMapping = domainMapping,
+            domainMapping = v2DomainMapping,
+            v1DomainMapping = domainMapping,
             eventMapping = eventMapping,
             dtoMapping = dtoMapping,
             fileUploader = fileUploader ?: defaultFileUploader,

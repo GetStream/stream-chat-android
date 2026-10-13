@@ -55,6 +55,7 @@ internal class V2LaneBatchThreeTest {
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
+        hidesStoredDeclaredCustom = true,
     )
 
     private inline fun <reified T> parse(json: String): T = Serializer.moshi.adapter(T::class.java).fromJson(json)!!
