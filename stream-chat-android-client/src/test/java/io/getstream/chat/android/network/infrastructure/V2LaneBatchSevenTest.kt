@@ -51,6 +51,7 @@ internal class V2LaneBatchSevenTest {
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
+        hidesStoredDeclaredCustom = true,
     )
     private val dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)
 

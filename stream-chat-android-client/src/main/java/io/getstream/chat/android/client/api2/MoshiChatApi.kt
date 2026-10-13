@@ -208,6 +208,7 @@ internal class MoshiChatApi
 @Suppress("LongParameterList")
 constructor(
     private val domainMapping: DomainMapping,
+    private val v1DomainMapping: DomainMapping,
     private val eventMapping: EventMapping,
     private val dtoMapping: DtoMapping,
     private val fileUploader: FileUploader,
@@ -931,13 +932,13 @@ constructor(
         unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: FlagRequest): Call<Flag> {
-        return moderationV1Api.flag(body = body).mapDomain { response ->
+        return moderationV1Api.flag(body = body).mapV1Domain { response ->
             response.flag.toDomain()
         }
     }
 
     private fun unflag(body: Map<String, String>): Call<Flag> {
-        return moderationV1Api.unflag(body = body).mapDomain { response ->
+        return moderationV1Api.unflag(body = body).mapV1Domain { response ->
             response.flag.toDomain()
         }
     }
@@ -1288,7 +1289,7 @@ constructor(
             channelId = channelId,
             userId = userId,
             body = UpdateMemberPartialRequest(set = set, unset = unset),
-        ).flatMapDomain { toMemberCall(it) }
+        ).flatMapV1Domain { toMemberCall(it) }
     }
 
     /**
@@ -1302,16 +1303,19 @@ constructor(
      * Maps each channel state, or fails the call when one carries no channel: a channel state always has one, so the
      * response cannot be mapped without it.
      */
-    private fun <R : Any> List<ChannelStateResponseFields>.toChannelsCall(transform: (List<Channel>) -> R): Call<R> {
-        val channels = mapNotNull(::flattenChannelState)
-        return if (channels.size == size) {
+    private fun <R : Any> DomainMapping.channelsCall(
+        states: List<ChannelStateResponseFields>,
+        transform: (List<Channel>) -> R,
+    ): Call<R> {
+        val channels = states.mapNotNull { flattenChannelState(it) }
+        return if (channels.size == states.size) {
             CoroutineCall(coroutineScope) { Result.Success(transform(channels)) }
         } else {
             ErrorCall(coroutineScope, Error.GenericError("A channel state in the response carried no channel"))
         }
     }
 
-    private fun flattenChannelState(state: ChannelStateResponseFields): Channel? = with(domainMapping) {
+    private fun DomainMapping.flattenChannelState(state: ChannelStateResponseFields): Channel? {
         val response = state.channel ?: return null
         val channelInfo = response.toChannelInfo()
         val channel = response.toDomain()
@@ -1511,7 +1515,7 @@ constructor(
                 connectionId = connectionId,
                 request = request,
             ).flatMapDomain { response ->
-                response.channels.toChannelsCall { channels ->
+                channelsCall(response.channels) { channels ->
                     QueryChannelsResult(
                         channels = channels,
                         predefinedFilter = response.predefinedFilter?.let {
@@ -1557,13 +1561,13 @@ constructor(
             channelV1Api.queryGroupedChannels(
                 connectionId = connectionId,
                 body = body,
-            ).flatMapDomain { response ->
-                response.groups.values.flatMap { it.channels }.toChannelsCall {
+            ).flatMapV1Domain { response ->
+                channelsCall(response.groups.values.flatMap { it.channels }) {
                     GroupedChannels(
                         groups = response.groups.mapValues { entry ->
                             GroupedChannelsGroup(
                                 groupKey = entry.key,
-                                channels = entry.value.channels.mapNotNull(::flattenChannelState),
+                                channels = entry.value.channels.mapNotNull { flattenChannelState(it) },
                                 unreadChannels = entry.value.unreadChannels ?: 0,
                                 next = entry.value.next,
                                 prev = entry.value.prev,
@@ -1599,7 +1603,7 @@ constructor(
                     connectionId = connectionId,
                     request = request,
                 )
-            }.flatMapDomain { response -> listOf(response.toStateFields()).toChannelsCall { it.single() } }
+            }.flatMapDomain { response -> channelsCall(listOf(response.toStateFields())) { it.single() } }
         }
 
         val isConnectionRequired = query.watch || query.presence
@@ -2089,6 +2093,14 @@ constructor(
 
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
+
+    /** [mapDomain] for the endpoints still on v1. */
+    private fun <T : Any, R : Any> RetrofitCall<T>.mapV1Domain(transform: DomainMapping.(T) -> R): Call<R> =
+        map { v1DomainMapping.transform(it) }
+
+    /** [flatMapDomain] for the endpoints still on v1. */
+    private fun <T : Any, R : Any> RetrofitCall<T>.flatMapV1Domain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
+        flatMap { v1DomainMapping.transform(it) }
 }
 
 internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =

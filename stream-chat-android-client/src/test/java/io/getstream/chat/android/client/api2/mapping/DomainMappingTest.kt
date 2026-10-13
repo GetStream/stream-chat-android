@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import com.squareup.moshi.Json
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.Mother
@@ -62,6 +63,8 @@ import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_OWN_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
@@ -754,6 +757,81 @@ internal class DomainMappingTest {
         val channel = with(sut) { channelResponse.toDomain() }
 
         channel.extraData["hidden"] shouldBeEqualTo "from-custom"
+    }
+
+    @Test
+    fun `The hidden custom names are the kept extraData keys each response model declares`() {
+        val userKeys = GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS +
+            GENERATED_OWN_USER_EXTRA_DATA_KEYS
+        val channelKeys = GENERATED_CHANNEL_EXTRA_DATA_KEYS + LEGACY_CHANNEL_EXTRA_DATA_KEYS
+
+        USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo userKeys.intersect(jsonNames<UserResponse>())
+        FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo userKeys.intersect(jsonNames<FullUserResponse>())
+        CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo channelKeys.intersect(jsonNames<ChannelResponse>())
+        MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo
+            GENERATED_MEMBER_EXTRA_DATA_KEYS.intersect(jsonNames<ChannelMemberResponse>())
+    }
+
+    private inline fun <reified T> jsonNames(): Set<String> = T::class.java.declaredConstructors
+        .filterNot { it.isSynthetic }
+        .maxBy { it.parameterCount }
+        .parameterAnnotations
+        .flatMap { annotations -> annotations.filterIsInstance<Json>().map { it.name } }
+        .toSet()
+
+    @Test
+    fun `On v2, a channel's custom value stored under a declared name gives way to the field, present or not`() {
+        val channelResponse = Mother.randomChannelResponse(
+            custom = mapOf("hidden" to true, "muted" to true, "color" to "teal"),
+        ).copy(hidden = false, muted = null)
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        channel.extraData["hidden"] shouldBeEqualTo false
+        channel.extraData.containsKey("muted") shouldBeEqualTo false
+        channel.extraData["color"] shouldBeEqualTo "teal"
+    }
+
+    @Test
+    fun `On v2, a user's custom value stored under a declared name gives way to the field, present or not`() {
+        val custom = mapOf(
+            "shadow_banned" to false,
+            "ban_expires" to "2030-01-01T00:00:00Z",
+            "deleted_at" to "2030-01-01T00:00:00Z",
+            "color" to "teal",
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val fullUser = with(sut) {
+            Mother.randomFullUserResponse(custom = custom)
+                .copy(shadowBanned = true, banExpires = null, deletedAt = null)
+                .toDomain()
+        }
+        val user = with(sut) { Mother.randomUserResponse().copy(custom = custom, deletedAt = null).toDomain() }
+
+        fullUser.extraData["shadow_banned"] shouldBeEqualTo true
+        fullUser.extraData.containsKey("ban_expires") shouldBeEqualTo false
+        fullUser.extraData.containsKey("deleted_at") shouldBeEqualTo false
+        fullUser.extraData["color"] shouldBeEqualTo "teal"
+        user.extraData.containsKey("deleted_at") shouldBeEqualTo false
+        user.extraData["color"] shouldBeEqualTo "teal"
+    }
+
+    @Test
+    fun `On v2, a member's custom value stored under a declared name gives way to the field, present or not`() {
+        val memberResponse = Mother.randomChannelMemberResponse().copy(
+            custom = mapOf("is_moderator" to true, "deleted_at" to "2030-01-01T00:00:00Z", "color" to "teal"),
+            isModerator = false,
+            deletedAt = null,
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        member.extraData["is_moderator"] shouldBeEqualTo false
+        member.extraData.containsKey("deleted_at") shouldBeEqualTo false
+        member.extraData["color"] shouldBeEqualTo "teal"
     }
 
     @Test
@@ -2196,6 +2274,11 @@ internal class DomainMappingTest {
         private var channelTransformer: ChannelTransformer = NoOpChannelTransformer
         private var messageTransformer: MessageTransformer = NoOpMessageTransformer
         private var userTransformer: UserTransformer = NoOpUserTransformer
+        private var hidesStoredDeclaredCustom = false
+
+        fun hidingStoredDeclaredCustom(): Fixture = apply {
+            hidesStoredDeclaredCustom = true
+        }
 
         fun withCurrentUserIdProvider(provider: () -> UserId?): Fixture = apply {
             currentUserIdProvider = provider
@@ -2219,6 +2302,7 @@ internal class DomainMappingTest {
                 channelTransformer = channelTransformer,
                 messageTransformer = messageTransformer,
                 userTransformer = userTransformer,
+                hidesStoredDeclaredCustom = hidesStoredDeclaredCustom,
             )
         }
     }

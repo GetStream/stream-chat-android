@@ -56,6 +56,7 @@ internal class V2LaneBatchFourTest {
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
+        hidesStoredDeclaredCustom = true,
     )
 
     private val dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)

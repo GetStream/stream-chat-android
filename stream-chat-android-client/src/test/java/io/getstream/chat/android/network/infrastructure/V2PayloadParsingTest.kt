@@ -33,6 +33,7 @@ internal class V2PayloadParsingTest {
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
+        hidesStoredDeclaredCustom = true,
     )
 
     @Test
