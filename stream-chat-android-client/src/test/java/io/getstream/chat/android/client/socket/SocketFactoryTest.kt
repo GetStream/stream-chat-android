@@ -107,6 +107,18 @@ internal class SocketFactoryTest {
                     "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
                 )
             },
+            randomUser(
+                image = randomString(),
+                name = randomString(),
+                language = randomString(),
+                extraData = mutableMapOf("devices" to listOf(mapOf("id" to "token")), "flair" to "gold"),
+            ).let {
+                Arguments.of(
+                    false,
+                    SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
+                )
+            },
             randomUser().let {
                 Arguments.of(
                     false,
@@ -204,7 +216,7 @@ internal class SocketFactoryTest {
                         "language" to user.language,
                         "image" to user.image,
                         "name" to user.name,
-                    ) + user.extraData,
+                    ) + (user.extraData - "devices"),
                 ),
             )
         }

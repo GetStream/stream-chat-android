@@ -216,6 +216,8 @@ internal class DomainMappingTest {
         assertEquals(transformedMessage, result)
     }
 
+    private val storedDevices = listOf(mapOf("id" to "token", "push_provider" to "firebase"))
+
     /** Every field non-default: a default would let a mapper that drops it pass. */
     private fun fullyPopulatedOwnUserResponse() = Mother.randomOwnUserResponse(
         id = "jaewoong",
@@ -1275,6 +1277,36 @@ internal class DomainMappingTest {
         val user = with(sut) { userResponse.toDomain() }
 
         assertEquals(mapOf<String, Any>("customKey" to "customValue"), user.extraData - GENERATED_FULL_USER_EXTRA_DATA_KEYS)
+    }
+
+    @Test
+    fun `UserResponse drops the devices copy stored in custom data`() {
+        val userResponse = randomUserResponse().copy(custom = mapOf("devices" to storedDevices, "flair" to "gold"))
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        user.extraData shouldBeEqualTo mapOf("flair" to "gold")
+    }
+
+    @Test
+    fun `FullUserResponse drops the devices copy stored in custom data`() {
+        val userResponse = randomFullUserResponse(custom = mapOf("devices" to storedDevices, "flair" to "gold"))
+        val sut = Fixture().get()
+
+        val user = with(sut) { userResponse.toDomain() }
+
+        (user.extraData - GENERATED_FULL_USER_EXTRA_DATA_KEYS) shouldBeEqualTo mapOf("flair" to "gold")
+    }
+
+    @Test
+    fun `OwnUserResponse drops the devices copy stored in custom data`() {
+        val response = Mother.randomOwnUserResponse(custom = mapOf("devices" to storedDevices, "flair" to "gold"))
+        val sut = Fixture().get()
+
+        val user = with(sut) { response.toDomain() }
+
+        user.extraData shouldBeEqualTo mapOf("flair" to "gold")
     }
 
     @Test

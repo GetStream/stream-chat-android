@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.client.api2.mapping.USER_DEVICES_CUSTOM_KEY
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.HeadersUtil
@@ -101,7 +102,7 @@ internal class SocketFactory(
                 if (user.language.isNotBlank()) put("language", user.language)
                 if (user.image.isNotBlank()) put("image", user.image)
                 if (user.name.isNotBlank()) put("name", user.name)
-                putAll(user.extraData)
+                putAll(user.extraData - USER_DEVICES_CUSTOM_KEY)
             }
         }
 

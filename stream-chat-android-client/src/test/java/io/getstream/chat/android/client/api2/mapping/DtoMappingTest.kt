@@ -409,6 +409,16 @@ internal class DtoMappingTest {
     }
 
     @Test
+    fun `User devices copy in extraData is not sent back in the UserRequest`() {
+        val user = randomUser(extraData = mutableMapOf("devices" to listOf(mapOf("id" to "token")), "flair" to "gold"))
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { user.toUserRequest() }
+
+        request.custom shouldBeEqualTo mapOf("flair" to "gold")
+    }
+
+    @Test
     fun `ConnectedEvent is correctly mapped to Dto`() {
         val connectedEvent = randomConnectedEvent()
         val mapping = Fixture().get()

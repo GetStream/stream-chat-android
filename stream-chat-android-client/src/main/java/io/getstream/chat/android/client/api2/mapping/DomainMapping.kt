@@ -166,6 +166,12 @@ internal const val DRAFT_ARGS_KEY = "args"
  */
 internal const val EVENT_USER_DEVICES_KEY = "devices"
 
+/**
+ * Older clients sent the user's own devices back as custom data. v1 responses leave that copy out of `custom` and v2
+ * responses don't, so the user mappings drop it in both directions: it holds push tokens.
+ */
+internal const val USER_DEVICES_CUSTOM_KEY = "devices"
+
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
@@ -585,7 +591,9 @@ internal class DomainMapping(
             blockedUserIds = blockedUserIds.orEmpty(),
             avgResponseTime = avgResponseTime?.toLong(),
             pushPreference = pushPreferences?.toDomain(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+                .minus(USER_DEVICES_CUSTOM_KEY)
+                .toMutableMap(),
         ).let(userTransformer::transform)
 
     /** Transforms the user shape most user events carry: common fields only, no own-user state. */
@@ -696,7 +704,7 @@ internal class DomainMapping(
             channelMutes = channelMutes.map { it.toDomain() },
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.withDeclared(
+            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
                 "ban_expires" to banExpires,
                 "deleted_at" to deletedAt,
                 "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
@@ -797,7 +805,7 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.withDeclared(
+            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
                 "deleted_at" to deletedAt,
                 "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
             ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),

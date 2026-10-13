@@ -307,7 +307,7 @@ internal class DtoMapping(
                     invisible = isInvisible,
                     language = language,
                     privacySettings = privacySettings?.toDto(),
-                    custom = extraData,
+                    custom = extraData - USER_DEVICES_CUSTOM_KEY,
                 )
             }
 
