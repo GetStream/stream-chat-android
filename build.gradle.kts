@@ -35,6 +35,8 @@ streamProject {
 
     coverage {
         includedModules = setOf(
+            "stream-chat-android-ai-compose",
+            "stream-chat-android-ai-ondevice",
             "stream-chat-android-client",
             "stream-chat-android-compose",
             "stream-chat-android-core",
@@ -124,6 +126,7 @@ apiValidation {
     ignoredPackages.add("io/getstream/chat/android/ui/databinding")
 
     ignoredProjects += listOf(
+        "stream-chat-android-ai-compose-sample",
         "stream-chat-android-benchmark",
         "stream-chat-android-client-test",
         "stream-chat-android-compose-sample",
