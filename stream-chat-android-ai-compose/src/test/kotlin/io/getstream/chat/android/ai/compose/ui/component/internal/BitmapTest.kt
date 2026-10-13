@@ -57,14 +57,18 @@ internal class BitmapTest {
     }
 
     @Test
-    fun `flips and turns put every corner where the EXIF tag says`() {
+    fun `each orientation puts every corner where the EXIF tag says`() {
         // Corners of the stored image: top-left, top-right, bottom-left, bottom-right.
         val expected = mapOf(
             ExifInterface.ORIENTATION_NORMAL to listOf(Red, Green, Blue, White),
             ExifInterface.ORIENTATION_FLIP_HORIZONTAL to listOf(Green, Red, White, Blue),
             ExifInterface.ORIENTATION_ROTATE_180 to listOf(White, Blue, Green, Red),
             ExifInterface.ORIENTATION_FLIP_VERTICAL to listOf(Blue, White, Red, Green),
+            // Mirrored across the top-left to bottom-right diagonal.
+            ExifInterface.ORIENTATION_TRANSPOSE to listOf(Red, Blue, Green, White),
             ExifInterface.ORIENTATION_ROTATE_90 to listOf(Blue, Red, White, Green),
+            // Mirrored across the top-right to bottom-left diagonal.
+            ExifInterface.ORIENTATION_TRANSVERSE to listOf(White, Green, Blue, Red),
             ExifInterface.ORIENTATION_ROTATE_270 to listOf(Green, White, Red, Blue),
         )
 
@@ -75,16 +79,6 @@ internal class BitmapTest {
             assertEquals("width for orientation $orientation", if (quarterTurn) 30 else 60, bitmap.width)
             assertEquals("height for orientation $orientation", if (quarterTurn) 60 else 30, bitmap.height)
             assertEquals("corners for orientation $orientation", corners, corners(bitmap))
-        }
-    }
-
-    @Test
-    fun `mirrored quarter turns swap width and height`() {
-        listOf(ExifInterface.ORIENTATION_TRANSPOSE, ExifInterface.ORIENTATION_TRANSVERSE).forEach { orientation ->
-            val bitmap = decode(jpeg(width = 60, height = 30, orientation = orientation), targetSize = 100)
-
-            assertEquals("orientation $orientation", 30, bitmap.width)
-            assertEquals("orientation $orientation", 60, bitmap.height)
         }
     }
 
@@ -151,6 +145,11 @@ internal class BitmapTest {
         const val Blue = "blue"
         const val White = "white"
 
-        val QuarterTurns = setOf(ExifInterface.ORIENTATION_ROTATE_90, ExifInterface.ORIENTATION_ROTATE_270)
+        val QuarterTurns = setOf(
+            ExifInterface.ORIENTATION_TRANSPOSE,
+            ExifInterface.ORIENTATION_ROTATE_90,
+            ExifInterface.ORIENTATION_TRANSVERSE,
+            ExifInterface.ORIENTATION_ROTATE_270,
+        )
     }
 }

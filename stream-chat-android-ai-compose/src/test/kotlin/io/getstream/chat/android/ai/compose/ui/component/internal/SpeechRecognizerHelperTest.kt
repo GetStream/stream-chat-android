@@ -158,6 +158,52 @@ internal class SpeechRecognizerHelperTest {
     }
 
     @Test
+    fun `segments are joined with spaces as they are heard and at the end`() {
+        setUp()
+        start()
+
+        recognizer.triggerOnPartialResults(results("hello", final = true))
+        recognizer.triggerOnPartialResults(results("world"))
+        recognizer.triggerOnPartialResults(results("world", final = true))
+        recognizer.triggerOnResults(Bundle())
+
+        assertEquals(listOf("hello", "hello world", "hello world"), partials)
+        assertEquals(listOf("hello world"), finals)
+    }
+
+    @Test
+    fun `speech that only arrives with the final result is kept`() {
+        setUp()
+        start()
+
+        recognizer.triggerOnResults(results("hello"))
+
+        assertEquals(listOf("hello"), finals)
+    }
+
+    @Test
+    fun `a last segment that only arrives with the final result is added once`() {
+        setUp()
+        start()
+        recognizer.triggerOnPartialResults(results("hello", final = true))
+
+        recognizer.triggerOnResults(results("world"))
+
+        assertEquals(listOf("hello world"), finals)
+    }
+
+    @Test
+    fun `a final result repeating the last segment is not added twice`() {
+        setUp()
+        start()
+        recognizer.triggerOnPartialResults(results("hello", final = true))
+
+        recognizer.triggerOnResults(results("hello"))
+
+        assertEquals(listOf("hello"), finals)
+    }
+
+    @Test
     fun `listening after an error starts from nothing`() {
         setUp()
         start()

@@ -100,12 +100,12 @@ private suspend fun handleNonAnimatedState(
     onTextUpdate: (String) -> Unit,
     onPreviousTextUpdate: (String) -> Unit,
 ) {
-    if (animateChangedFromTrueToFalse && displayedText.length < text.length) {
+    if (animateChangedFromTrueToFalse && displayedText.length < text.length && text.startsWith(displayedText)) {
         // Changed from true to false - continue animating until full text is displayed
         onPreviousTextUpdate(text)
         animateNewContent(displayedText, text, chunkDelayMs, onTextUpdate)
     } else {
-        // Initial animate is false or already complete - display immediately
+        // Initial animate is false, already complete, or a new text - display immediately
         onTextUpdate(text)
         onPreviousTextUpdate(text)
     }

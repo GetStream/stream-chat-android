@@ -167,6 +167,21 @@ internal class StreamingTextRevealTest {
     }
 
     @Test
+    fun `a new text arriving as animation turns off shows at once`() {
+        show("Hello", initialAnimate = true)
+        advanceChunks(5)
+        val before = shown.size
+
+        update {
+            text = "Goodbye everyone"
+            animate = false
+        }
+        advanceChunks(5)
+
+        assertEquals(listOf("Goodbye everyone"), shown.drop(before))
+    }
+
+    @Test
     fun `with animation off a new text shows at once`() {
         show("Hello", initialAnimate = false)
         rule.waitForIdle()

@@ -182,7 +182,7 @@ private class SpeechRecognizerHelperViewModel(
             extractResult(partialResults)
                 ?.takeIf(String::isNotBlank)
                 ?.let { result ->
-                    onPartialResult?.invoke(speechResults.joinToString() + result)
+                    onPartialResult?.invoke((speechResults + result).joinToString(" "))
 
                     if (partialResults.isFinalResult()) {
                         speechResults += result
@@ -199,7 +199,10 @@ private class SpeechRecognizerHelperViewModel(
         override fun onResults(results: Bundle?) {
             logger.d { "onResults: ${results?.getData()}" }
 
-            onFinalResult?.invoke(speechResults.joinToString())
+            // A recognizer may deliver the last segment, or all of the speech, only here.
+            val last = extractResult(results)?.takeIf(String::isNotBlank)
+            val heard = if (last != null && last != speechResults.lastOrNull()) speechResults + last else speechResults
+            onFinalResult?.invoke(heard.joinToString(" "))
 
             resetState()
         }
