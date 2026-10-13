@@ -45,14 +45,11 @@ import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
@@ -95,6 +92,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
+import io.getstream.chat.android.network.models.BanRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.CastPollVoteRequest
@@ -145,7 +143,10 @@ import io.getstream.chat.android.network.models.MessageActionRequest
 import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.MessagePaginationParams
 import io.getstream.chat.android.network.models.MessageRequest
+import io.getstream.chat.android.network.models.ModerationBanResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.MuteRequest
+import io.getstream.chat.android.network.models.MuteResponse
 import io.getstream.chat.android.network.models.PaginationParams
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionInput
@@ -186,8 +187,11 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.TruncateChannelResponse
+import io.getstream.chat.android.network.models.UnbanResponse
 import io.getstream.chat.android.network.models.UnblockUsersRequest
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UnmuteRequest
+import io.getstream.chat.android.network.models.UnmuteResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 import io.getstream.chat.android.network.models.UpdateChannelRequest
@@ -601,62 +605,52 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#muteCurrentUserInput")
-    fun testMuteCurrentUser(call: RetrofitCall<MuteUserResponse>, expected: KClass<*>) = runTest {
+    fun testMuteCurrentUser(call: RetrofitCall<MuteResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationV1Api>()
-        whenever(api.muteUser(any())).doReturn(call)
+        val api = mock<ModerationApi>()
+        whenever(api.mute(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationV1Api(api)
+            .withModerationApi(api)
             .get()
         // when
-        val userId = randomString()
+        val userId = MoshiChatApiTestArguments.MUTE_TARGET_ID
         val connectionId = randomString()
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.muteCurrentUser().await()
         // then
-        val expectedRequest = MuteUserRequest(
-            target_id = userId,
-            user_id = userId,
-            timeout = null,
-        )
         result `should be instance of` expected
-        verify(api, times(1)).muteUser(expectedRequest)
+        verify(api, times(1)).mute(MuteRequest(targetIds = listOf(userId), timeout = null))
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#muteUserInput")
-    fun testMuteUser(call: RetrofitCall<MuteUserResponse>, expected: KClass<*>) = runTest {
+    fun testMuteUser(call: RetrofitCall<MuteResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationV1Api>()
-        whenever(api.muteUser(any())).doReturn(call)
+        val api = mock<ModerationApi>()
+        whenever(api.mute(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationV1Api(api)
+            .withModerationApi(api)
             .get()
         // when
         val userId = randomString()
         val connectionId = randomString()
-        val targetId = randomString()
+        val targetId = MoshiChatApiTestArguments.MUTE_TARGET_ID
         val timeout = randomInt()
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.muteUser(targetId, timeout).await()
         // then
-        val expectedRequest = MuteUserRequest(
-            target_id = targetId,
-            user_id = userId,
-            timeout = timeout,
-        )
         result `should be instance of` expected
-        verify(api, times(1)).muteUser(expectedRequest)
+        verify(api, times(1)).mute(MuteRequest(targetIds = listOf(targetId), timeout = timeout))
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteCurrentUserInput")
-    fun testUnmuteCurrentUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testUnmuteCurrentUser(call: RetrofitCall<UnmuteResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationV1Api>()
-        whenever(api.unmuteUser(any())).doReturn(call)
+        val api = mock<ModerationApi>()
+        whenever(api.unmute(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationV1Api(api)
+            .withModerationApi(api)
             .get()
         // when
         val userId = randomString()
@@ -664,23 +658,18 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.unmuteCurrentUser().await()
         // then
-        val expectedRequest = MuteUserRequest(
-            target_id = userId,
-            user_id = userId,
-            timeout = null,
-        )
         result `should be instance of` expected
-        verify(api, times(1)).unmuteUser(expectedRequest)
+        verify(api, times(1)).unmute(UnmuteRequest(targetIds = listOf(userId)))
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unmuteUserInput")
-    fun testUnmuteUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testUnmuteUser(call: RetrofitCall<UnmuteResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationV1Api>()
-        whenever(api.unmuteUser(any())).doReturn(call)
+        val api = mock<ModerationApi>()
+        whenever(api.unmute(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationV1Api(api)
+            .withModerationApi(api)
             .get()
         // when
         val userId = randomString()
@@ -689,13 +678,8 @@ internal class MoshiChatApiTest {
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.unmuteUser(targetId).await()
         // then
-        val expectedRequest = MuteUserRequest(
-            target_id = targetId,
-            user_id = userId,
-            timeout = null,
-        )
         result `should be instance of` expected
-        verify(api, times(1)).unmuteUser(expectedRequest)
+        verify(api, times(1)).unmute(UnmuteRequest(targetIds = listOf(targetId)))
     }
 
     @ParameterizedTest
@@ -1203,12 +1187,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#banUserInput")
-    fun testBanUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testBanUser(call: RetrofitCall<ModerationBanResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationV1Api>()
-        whenever(api.banUser(any())).doReturn(call)
+        val api = mock<ModerationApi>()
+        whenever(api.ban(any())).doReturn(call)
         val sut = Fixture()
-            .withModerationV1Api(api)
+            .withModerationApi(api)
             .get()
         // when
         val targetId = randomString()
@@ -1219,36 +1203,34 @@ internal class MoshiChatApiTest {
         val shadow = randomBoolean()
         val result = sut.banUser(targetId, timeout, reason, channelType, channelId, shadow).await()
         // then
-        val expectedBody = BanUserRequest(
-            target_user_id = targetId,
-            timeout = timeout,
+        val expectedBody = BanRequest(
+            targetUserId = targetId,
+            channelCid = "$channelType:$channelId",
             reason = reason,
-            type = channelType,
-            id = channelId,
             shadow = shadow,
+            timeout = timeout,
         )
         result `should be instance of` expected
-        verify(api, times(1)).banUser(expectedBody)
+        verify(api, times(1)).ban(expectedBody)
     }
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#unbanUserInput")
-    fun testUnbanUser(call: RetrofitCall<Response>, expected: KClass<*>) = runTest {
+    fun testUnbanUser(call: RetrofitCall<UnbanResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ModerationV1Api>()
-        whenever(api.unbanUser(any(), any(), any(), any())).doReturn(call)
+        val api = mock<ModerationApi>()
+        whenever(api.unban(any(), any())).doReturn(call)
         val sut = Fixture()
-            .withModerationV1Api(api)
+            .withModerationApi(api)
             .get()
         // when
         val targetId = randomString()
         val channelType = randomString()
         val channelId = randomString()
-        val shadow = randomBoolean()
-        val result = sut.unbanUser(targetId, channelType, channelId, shadow).await()
+        val result = sut.unbanUser(targetId, channelType, channelId, randomBoolean()).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).unbanUser(targetId, channelType, channelId, shadow)
+        verify(api, times(1)).unban(targetUserId = targetId, channelCid = "$channelType:$channelId")
     }
 
     @ParameterizedTest

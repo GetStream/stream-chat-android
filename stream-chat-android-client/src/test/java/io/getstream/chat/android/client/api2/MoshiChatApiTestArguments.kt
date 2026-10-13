@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.parser2.GetMessageResponseParityTest
 import io.getstream.chat.android.client.utils.RetroError
@@ -66,6 +65,8 @@ import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.MessageActionResponse
+import io.getstream.chat.android.network.models.ModerationBanResponse
+import io.getstream.chat.android.network.models.MuteResponse
 import io.getstream.chat.android.network.models.ParsedPredefinedFilterResponse
 import io.getstream.chat.android.network.models.PollOptionResponse
 import io.getstream.chat.android.network.models.PollResponse
@@ -90,7 +91,9 @@ import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.TruncateChannelResponse
+import io.getstream.chat.android.network.models.UnbanResponse
 import io.getstream.chat.android.network.models.UnblockUsersResponse
+import io.getstream.chat.android.network.models.UnmuteResponse
 import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 import io.getstream.chat.android.network.models.UpdateChannelResponse
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
@@ -117,6 +120,9 @@ import org.mockito.kotlin.whenever
 
 @Suppress("UNUSED", "LargeClass")
 internal object MoshiChatApiTestArguments {
+
+    /** The user the mute responses target, so a mute of this user finds its mute in the response. */
+    const val MUTE_TARGET_ID = "mute-target"
 
     @JvmStatic
     fun appSettingsInput() = listOf(
@@ -285,10 +291,10 @@ internal object MoshiChatApiTestArguments {
     fun muteUserInput() = muteUserResponseArguments()
 
     @JvmStatic
-    fun unmuteCurrentUserInput() = completableResponseArguments()
+    fun unmuteCurrentUserInput() = unmuteResponseArguments()
 
     @JvmStatic
-    fun unmuteUserInput() = completableResponseArguments()
+    fun unmuteUserInput() = unmuteResponseArguments()
 
     @JvmStatic
     fun muteChannelInput() = completableResponseArguments()
@@ -321,10 +327,16 @@ internal object MoshiChatApiTestArguments {
     fun unflagMessageInput() = flagResponseArguments()
 
     @JvmStatic
-    fun banUserInput() = completableResponseArguments()
+    fun banUserInput() = listOf(
+        Arguments.of(RetroSuccess(ModerationBanResponse(randomString())).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<ModerationBanResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     @JvmStatic
-    fun unbanUserInput() = completableResponseArguments()
+    fun unbanUserInput() = listOf(
+        Arguments.of(RetroSuccess(UnbanResponse(randomString())).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<UnbanResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
 
     @JvmStatic
     fun queryBannedUsersInput() = listOf(
@@ -878,11 +890,26 @@ internal object MoshiChatApiTestArguments {
     private fun muteUserResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
-                MuteUserResponse(Mother.randomUserMuteResponse()),
+                MuteResponse(duration = randomString(), mutes = listOf(muteOf(MUTE_TARGET_ID))),
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<Response>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(
+            RetroSuccess(
+                MuteResponse(duration = randomString(), mutes = listOf(muteOf(randomString()))),
+            ).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(RetroSuccess(MuteResponse(duration = randomString())).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<MuteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun muteOf(targetId: String) =
+        Mother.randomUserMuteResponse(target = Mother.randomUserResponse(id = targetId))
+
+    private fun unmuteResponseArguments() = listOf(
+        Arguments.of(RetroSuccess(UnmuteResponse(randomString())).toRetrofitCall(), Result.Success::class),
+        Arguments.of(RetroError<UnmuteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun completableResponseArguments() = listOf(

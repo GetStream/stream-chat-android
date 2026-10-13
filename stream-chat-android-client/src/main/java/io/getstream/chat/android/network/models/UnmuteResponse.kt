@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+@file:Suppress(
+    "ArrayInDataClass",
+    "EnumEntryName",
+    "RemoveRedundantQualifierName",
+    "UnusedImport",
+)
 
-import com.squareup.moshi.JsonClass
+package io.getstream.chat.android.network.models
 
-@JsonClass(generateAdapter = true)
-internal data class BanUserRequest(
-    val target_user_id: String,
-    val timeout: Int?,
-    val reason: String?,
-    val type: String,
-    val id: String,
-    val shadow: Boolean,
+import com.squareup.moshi.Json
+
+/**
+ *
+ */
+@com.squareup.moshi.JsonClass(generateAdapter = true)
+internal data class UnmuteResponse(
+    @Json(name = "duration")
+    internal val duration: String,
+
+    @Json(name = "non_existing_users")
+    internal val nonExistingUsers: List<String>? = null,
 )

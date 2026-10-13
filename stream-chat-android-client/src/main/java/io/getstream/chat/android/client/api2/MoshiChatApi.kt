@@ -51,11 +51,9 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
-import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -118,6 +116,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
+import io.getstream.chat.android.network.models.BanRequest
 import io.getstream.chat.android.network.models.BlockUsersRequest
 import io.getstream.chat.android.network.models.CastPollVoteRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
@@ -143,6 +142,7 @@ import io.getstream.chat.android.network.models.MessageActionResponse
 import io.getstream.chat.android.network.models.MessageRequest
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.MuteChannelRequest
+import io.getstream.chat.android.network.models.MuteRequest
 import io.getstream.chat.android.network.models.PollOptionInput
 import io.getstream.chat.android.network.models.PollOptionRequest
 import io.getstream.chat.android.network.models.PollVoteResponse
@@ -164,6 +164,7 @@ import io.getstream.chat.android.network.models.SortParamRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
+import io.getstream.chat.android.network.models.UnmuteRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateLiveLocationRequest
@@ -730,25 +731,17 @@ constructor(
         userId: String,
         timeout: Int?,
     ): Call<Mute> {
-        return moderationV1Api.muteUser(
-            body = MuteUserRequest(
-                target_id = userId,
-                user_id = this.userId,
-                timeout = timeout,
-            ),
-        ).mapDomain { response ->
-            response.mute.toDomain()
+        return moderationApi.mute(
+            body = MuteRequest(targetIds = listOf(userId), timeout = timeout),
+        ).flatMapDomain { response ->
+            response.mutes?.firstOrNull { it.target?.id == userId }
+                ?.let { mute -> CoroutineCall(coroutineScope) { Result.Success(mute.toDomain()) } }
+                ?: ErrorCall(coroutineScope, Error.GenericError("The mute response carried no mute"))
         }
     }
 
     override fun unmuteUser(userId: String): Call<Unit> {
-        return moderationV1Api.unmuteUser(
-            body = MuteUserRequest(
-                target_id = userId,
-                user_id = this.userId,
-                timeout = null,
-            ),
-        ).toUnitCall()
+        return moderationApi.unmute(body = UnmuteRequest(targetIds = listOf(userId))).toUnitCall()
     }
 
     override fun muteChannel(
@@ -951,14 +944,13 @@ constructor(
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return moderationV1Api.banUser(
-            body = BanUserRequest(
-                target_user_id = targetId,
-                timeout = timeout,
+        return moderationApi.ban(
+            body = BanRequest(
+                targetUserId = targetId,
+                channelCid = "$channelType:$channelId",
                 reason = reason,
-                type = channelType,
-                id = channelId,
                 shadow = shadow,
+                timeout = timeout,
             ),
         ).toUnitCall()
     }
@@ -969,12 +961,8 @@ constructor(
         channelId: String,
         shadow: Boolean,
     ): Call<Unit> {
-        return moderationV1Api.unbanUser(
-            targetUserId = targetId,
-            channelId = channelId,
-            channelType = channelType,
-            shadow = shadow,
-        ).toUnitCall()
+        // The unban lifts the ban whether or not it is a shadow ban, so shadow is not sent.
+        return moderationApi.unban(targetUserId = targetId, channelCid = "$channelType:$channelId").toUnitCall()
     }
 
     override fun queryBannedUsers(

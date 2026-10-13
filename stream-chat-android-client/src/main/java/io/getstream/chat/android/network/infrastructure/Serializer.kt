@@ -28,6 +28,7 @@ import com.squareup.moshi.Moshi
 internal object Serializer {
     @JvmStatic
     internal val moshiBuilder: Moshi.Builder = Moshi.Builder()
+        .add(io.getstream.chat.android.network.models.BanRequest.DeleteMessages.DeleteMessagesAdapter())
         .add(io.getstream.chat.android.network.models.BlockListOptions.Behavior.BehaviorAdapter())
         .add(io.getstream.chat.android.network.models.ChannelConfigOverrides.BlocklistBehavior.BlocklistBehaviorAdapter())
         .add(io.getstream.chat.android.network.models.ChannelConfigOverrides.PushLevel.PushLevelAdapter())
