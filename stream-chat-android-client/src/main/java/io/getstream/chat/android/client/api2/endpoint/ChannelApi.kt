@@ -25,6 +25,8 @@ import io.getstream.chat.android.network.models.ChannelGetOrCreateRequest
 import io.getstream.chat.android.network.models.ChannelStateResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.GetPinnedMessagesResponse
+import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
+import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.HideChannelRequest
 import io.getstream.chat.android.network.models.MarkDeliveredRequest
 import io.getstream.chat.android.network.models.MarkReadRequest
@@ -55,6 +57,21 @@ internal interface ChannelApi {
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: QueryChannelsRequest,
     ): RetrofitCall<QueryChannelsResponse>
+
+    /**
+     * Queries channels grouped into server-defined groups.
+     *
+     * Supports per-group request options (limit, next/prev cursors) and returns per-group
+     * pagination cursors. Pagination is only allowed when exactly one group is requested.
+     *
+     * @param connectionId The current connection ID.
+     * @param body The request body containing the optional per-group configuration map.
+     */
+    @POST("/api/v2/chat/channels/grouped")
+    fun queryGroupedChannels(
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @Body body: GroupedQueryChannelsRequest,
+    ): RetrofitCall<GroupedQueryChannelsResponse>
 
     @POST("/api/v2/chat/channels/{type}/query")
     fun queryChannel(
