@@ -84,11 +84,13 @@ import kotlinx.coroutines.flow.collectLatest
  * @param onBackPressed Handler invoked when the back button is pressed.
  */
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("LongParameterList")
 @Composable
 internal fun PollOptionVotesDialog(
     poll: Poll,
     option: Option,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
@@ -104,6 +106,7 @@ internal fun PollOptionVotesDialog(
             Content(
                 state = state,
                 currentUser = currentUser,
+                autoTranslationEnabled = autoTranslationEnabled,
                 onLoadMoreRequested = { viewModel.onViewAction(PollOptionVotesViewAction.LoadMoreRequested) },
                 onBackPressed = onBackPressed,
             )
@@ -127,6 +130,7 @@ internal fun PollOptionVotesDialog(
 private fun Content(
     state: PollOptionVotesViewState,
     currentUser: User? = null,
+    autoTranslationEnabled: Boolean = false,
     onLoadMoreRequested: () -> Unit = {},
     onBackPressed: () -> Unit = {},
 ) {
@@ -145,7 +149,7 @@ private fun Content(
             .fillMaxSize(),
     ) {
         PollDialogHeader(
-            title = state.option.displayedText(currentUser, ChatTheme.config.translation.enabled),
+            title = state.option.displayedText(currentUser, autoTranslationEnabled),
             onBackPressed = onBackPressed,
         )
 

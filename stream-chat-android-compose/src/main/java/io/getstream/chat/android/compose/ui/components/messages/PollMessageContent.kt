@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.autoTranslationEnabledFor
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
@@ -112,6 +113,7 @@ public fun PollMessageContent(
     val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, messageAlignment)
     val messageBubbleColor = MessageStyling.backgroundColor(messageItem.isMine)
 
+    val autoTranslationEnabled = autoTranslationEnabledFor(message)
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {
         ChatTheme.componentFactory.MessageBubble(
@@ -126,6 +128,7 @@ public fun PollMessageContent(
                         poll = poll,
                         isMine = ownsMessage,
                         currentUser = messageItem.currentUser,
+                        autoTranslationEnabled = autoTranslationEnabled,
                         onCastVote = { option ->
                             onCastVote.invoke(message, poll, option)
                         },
@@ -184,6 +187,7 @@ private fun PollMessageContent(
     poll: Poll,
     isMine: Boolean,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
     onAddAnswer: (answer: String) -> Unit,
@@ -224,7 +228,7 @@ private fun PollMessageContent(
         )
     }
 
-    val pollName = poll.displayedName(currentUser, ChatTheme.config.translation.enabled)
+    val pollName = poll.displayedName(currentUser, autoTranslationEnabled)
     // Announce the sender on the poll name so screen readers attribute every message.
     val senderAwareName = senderAwareContentDescription(
         isMine = isMine,
@@ -266,6 +270,7 @@ private fun PollMessageContent(
                     totalVoteCount = poll.voteCountsByOption.values.sum(),
                     checked = poll.ownVotes.any { it.optionId == option.id },
                     currentUser = currentUser,
+                    autoTranslationEnabled = autoTranslationEnabled,
                     style = style,
                     onCastVote = { onCastVote.invoke(option) },
                     onRemoveVote = {

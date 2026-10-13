@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemOptionBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
+import io.getstream.chat.android.ui.utils.extensions.isShowingOriginalText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -61,6 +62,13 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
     private var _binding: StreamUiFragmentAllPollOptionsBinding? = null
     private val binding get() = _binding!!
+
+    // Read once, so the sheet keeps the language it was opened in.
+    private val showOriginalText by lazy {
+        val args = requireArguments()
+        val cid = "${args.getString(ARG_CHANNEL_TYPE)}:${args.getString(ARG_CHANNEL_ID)}"
+        isShowingOriginalText(cid, args.getString(ARG_MESSAGE_ID)!!)
+    }
     private val viewModel by viewModels<AllPollOptionsViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
@@ -108,8 +116,8 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 .pollState
                 .mapNotNull { it }
                 .collect { poll ->
-                    binding.question.text = poll.getTranslatedName()
-                    adapter.setPoll(poll)
+                    binding.question.text = poll.getTranslatedName(showOriginalText)
+                    adapter.setPoll(poll, showOriginalText)
                 }
         }
     }
@@ -152,11 +160,12 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
         private val onOptionClick: ((Option) -> Unit),
     ) : ListAdapter<OptionsAdapter.OptionItem, OptionsAdapter.OptionViewHolder>(OptionsDiffCallback) {
 
-        fun setPoll(poll: Poll) {
+        fun setPoll(poll: Poll, showOriginalText: Boolean) {
             submitList(
                 poll.options.map {
                     OptionItem(
                         option = it,
+                        optionText = it.getTranslatedText(showOriginalText),
                         votes = poll.voteCountsByOption[it.id] ?: 0,
                         isVotedByUser = poll.ownVotes.any { vote -> vote.optionId == it.id },
                         readonly = poll.closed,
@@ -177,6 +186,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
         private data class OptionItem(
             val option: Option,
+            val optionText: String,
             val votes: Int,
             val isVotedByUser: Boolean,
             val readonly: Boolean,
@@ -194,7 +204,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 } else {
                     binding.root.setOnClickListener { onOptionClick(result.option) }
                 }
-                binding.option.text = result.option.getTranslatedText()
+                binding.option.text = result.optionText
                 binding.votes.text = result.votes.toString()
                 binding.check.isEnabled = result.isVotedByUser
                 binding.check.isVisible = !result.readonly

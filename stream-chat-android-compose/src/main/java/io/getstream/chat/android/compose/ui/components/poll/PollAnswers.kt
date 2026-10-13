@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.UserAvatarParams
+import io.getstream.chat.android.compose.ui.util.autoTranslationEnabledFor
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Poll
@@ -83,6 +84,7 @@ public fun PollAnswersDialog(
     onBackPressed: () -> Unit,
 ) {
     val user by listViewModel.user.collectAsState()
+    val autoTranslationEnabled = autoTranslationEnabledFor(selectedPoll.message)
     val currentUserAnswer = selectedPoll.poll.answers.firstOrNull { it.user?.id == user?.id }
     var showAddAnswerDialog by remember { mutableStateOf(false) }
     if (showAddAnswerDialog) {
@@ -98,6 +100,7 @@ public fun PollAnswersDialog(
         Content(
             poll = selectedPoll.poll,
             currentUser = user,
+            autoTranslationEnabled = autoTranslationEnabled,
             currentUserAnswer = currentUserAnswer,
             onBackPressed = onBackPressed,
             onAddOrEditClick = { showAddAnswerDialog = true },
@@ -109,6 +112,7 @@ public fun PollAnswersDialog(
 private fun Content(
     poll: Poll,
     currentUser: User? = null,
+    autoTranslationEnabled: Boolean = false,
     currentUserAnswer: Answer? = null,
     onBackPressed: () -> Unit = {},
     onAddOrEditClick: () -> Unit = {},
@@ -151,6 +155,7 @@ private fun Content(
                 PollAnswersItem(
                     answer = currentUserAnswer,
                     currentUser = currentUser,
+                    autoTranslationEnabled = autoTranslationEnabled,
                     showAvatar = showAvatar,
                     showUpdateButton = !poll.closed,
                     onUpdateClick = onAddOrEditClick,
@@ -161,6 +166,7 @@ private fun Content(
                     PollAnswersItem(
                         answer = answer,
                         currentUser = currentUser,
+                        autoTranslationEnabled = autoTranslationEnabled,
                         showAvatar = showAvatar,
                     )
                 }
@@ -173,6 +179,7 @@ private fun Content(
 internal fun PollAnswersItem(
     answer: Answer,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     showAvatar: Boolean,
     showUpdateButton: Boolean = false,
     onUpdateClick: () -> Unit = {},
@@ -190,7 +197,7 @@ internal fun PollAnswersItem(
             verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             Text(
-                text = answer.displayedText(currentUser, ChatTheme.config.translation.enabled),
+                text = answer.displayedText(currentUser, autoTranslationEnabled),
                 color = colors.textPrimary,
                 style = typography.bodyDefault,
             )

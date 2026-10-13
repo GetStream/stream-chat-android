@@ -68,6 +68,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.autoTranslationEnabledFor
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.User
@@ -98,6 +99,7 @@ public fun PollViewResultDialog(
     onBackPressed: () -> Unit,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
 ) {
+    val autoTranslationEnabled = autoTranslationEnabledFor(selectedPoll.message)
     StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
         var showAllOptionVotes by rememberSaveable(stateSaver = NullableOptionSaver) { mutableStateOf(null) }
 
@@ -114,9 +116,10 @@ public fun PollViewResultDialog(
                             state = state,
                             pollName = selectedPoll.poll.displayedName(
                                 currentUser,
-                                ChatTheme.config.translation.enabled,
+                                autoTranslationEnabled,
                             ),
                             currentUser = currentUser,
+                            autoTranslationEnabled = autoTranslationEnabled,
                             onBackPressed = onBackPressed,
                             onShowAllClick = { option -> showAllOptionVotes = option },
                         )
@@ -128,6 +131,7 @@ public fun PollViewResultDialog(
                             // The saved option only keeps id and text, so take the poll's copy with its translations.
                             option = selectedPoll.poll.options.firstOrNull { it.id == option.id } ?: option,
                             currentUser = currentUser,
+                            autoTranslationEnabled = autoTranslationEnabled,
                             onDismissRequest = { showAllOptionVotes = null },
                             onBackPressed = { showAllOptionVotes = null },
                         )
@@ -143,6 +147,7 @@ private fun Content(
     state: PollResultsViewState,
     pollName: String = state.pollName,
     currentUser: User? = null,
+    autoTranslationEnabled: Boolean = false,
     onBackPressed: () -> Unit = {},
     onShowAllClick: (option: Option) -> Unit = {},
 ) {
@@ -177,6 +182,7 @@ private fun Content(
                     item = item,
                     index = index,
                     currentUser = currentUser,
+                    autoTranslationEnabled = autoTranslationEnabled,
                     onShowAllClick = onShowAllClick,
                     modifier = Modifier.applyIf(index > 0) { padding(top = StreamTokens.spacingMd) },
                 )
@@ -202,11 +208,13 @@ private fun Content(
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun PollViewResultItem(
     item: ResultItem,
     index: Int,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     onShowAllClick: (option: Option) -> Unit,
     modifier: Modifier,
 ) {
@@ -226,7 +234,7 @@ private fun PollViewResultItem(
                 style = ChatTheme.typography.headingExtraSmall,
             )
 
-            PollResultOptionInfo(item, currentUser)
+            PollResultOptionInfo(item, currentUser, autoTranslationEnabled)
         }
 
         item.votes.forEach { vote ->
@@ -249,7 +257,7 @@ private fun PollViewResultItem(
 }
 
 @Composable
-private fun PollResultOptionInfo(item: ResultItem, currentUser: User?) {
+private fun PollResultOptionInfo(item: ResultItem, currentUser: User?, autoTranslationEnabled: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -263,7 +271,7 @@ private fun PollResultOptionInfo(item: ResultItem, currentUser: User?) {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            text = item.option.displayedText(currentUser, ChatTheme.config.translation.enabled),
+            text = item.option.displayedText(currentUser, autoTranslationEnabled),
             style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
         )

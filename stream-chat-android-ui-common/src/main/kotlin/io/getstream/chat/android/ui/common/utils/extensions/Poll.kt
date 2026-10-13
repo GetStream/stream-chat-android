@@ -75,6 +75,15 @@ public fun Option.displayedText(currentUser: User?, autoTranslationEnabled: Bool
 public fun Answer.displayedText(currentUser: User?, autoTranslationEnabled: Boolean): String =
     translatedOrOriginal(text, currentUser, autoTranslationEnabled, ::getTranslation)
 
+/**
+ * Whether the poll name or any option has a translation into [currentUser]'s language. Answers are not included,
+ * since each one is written by a different user.
+ */
+@InternalStreamChatApi
+public fun Poll.hasTranslation(currentUser: User?): Boolean =
+    displayedName(currentUser, autoTranslationEnabled = true) != name ||
+        options.any { it.displayedText(currentUser, autoTranslationEnabled = true) != it.text }
+
 private fun translatedOrOriginal(
     original: String,
     currentUser: User?,

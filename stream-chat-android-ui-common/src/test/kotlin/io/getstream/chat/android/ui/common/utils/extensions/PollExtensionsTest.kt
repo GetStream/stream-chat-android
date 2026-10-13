@@ -180,4 +180,26 @@ internal class PollExtensionsTest {
         assertEquals("Sushi!", answer.displayedText(randomUser(language = "it"), autoTranslationEnabled = true))
         assertEquals("Sushi", answer.displayedText(randomUser(language = "it"), autoTranslationEnabled = false))
     }
+
+    @Test
+    fun `hasTranslation should be true when the name or an option is translated`() {
+        val user = randomUser(language = "it")
+        val option = randomOption(text = "Pizza", textI18n = mapOf("language" to "en", "it_text" to "Pizza!"))
+
+        assertTrue(randomPoll(name = "Lunch?", nameI18n = mapOf("it_text" to "Pranzo?")).hasTranslation(user))
+        assertTrue(randomPoll(nameI18n = emptyMap(), options = listOf(randomOption(), option)).hasTranslation(user))
+    }
+
+    @Test
+    fun `hasTranslation should be false when nothing differs in the user language`() {
+        val poll = randomPoll(
+            name = "Lunch?",
+            nameI18n = mapOf("language" to "en", "en_text" to "Lunch?", "it_text" to "Pranzo?"),
+            options = listOf(randomOption(textI18n = emptyMap())),
+        )
+
+        assertFalse(poll.hasTranslation(randomUser(language = "en")))
+        assertFalse(poll.hasTranslation(randomUser(language = "fr")))
+        assertFalse(poll.hasTranslation(null))
+    }
 }

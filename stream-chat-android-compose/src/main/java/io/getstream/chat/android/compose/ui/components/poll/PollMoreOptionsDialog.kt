@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.ui.components.StreamScreenBottomSheet
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.autoTranslationEnabledFor
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -74,10 +75,12 @@ public fun PollMoreOptionsDialog(
     onBackPressed: () -> Unit,
 ) {
     val user by listViewModel.user.collectAsState()
+    val autoTranslationEnabled = autoTranslationEnabledFor(selectedPoll.message)
     StreamScreenBottomSheet(onDismissRequest = onDismissRequest) {
         Content(
             selectedPoll = selectedPoll,
             currentUser = user,
+            autoTranslationEnabled = autoTranslationEnabled,
             onBackPressed = onBackPressed,
             onCastVote = { option ->
                 listViewModel.castVote(
@@ -101,6 +104,7 @@ public fun PollMoreOptionsDialog(
 private fun Content(
     selectedPoll: SelectedPoll,
     currentUser: User? = null,
+    autoTranslationEnabled: Boolean = false,
     onBackPressed: () -> Unit = {},
     onCastVote: (Option) -> Unit = {},
     onRemoveVote: (Vote) -> Unit = {},
@@ -126,13 +130,14 @@ private fun Content(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = StreamTokens.spacingMd),
         ) {
-            PollMoreOptionsTitle(title = poll.displayedName(currentUser, ChatTheme.config.translation.enabled))
+            PollMoreOptionsTitle(title = poll.displayedName(currentUser, autoTranslationEnabled))
 
             val totalVoteCount = remember(poll.voteCountsByOption) { poll.voteCountsByOption.values.sum() }
 
             PollMoreOptionsItemList(
                 poll = poll,
                 currentUser = currentUser,
+                autoTranslationEnabled = autoTranslationEnabled,
                 totalVoteCount = totalVoteCount,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
@@ -183,10 +188,12 @@ internal fun PollMoreOptionsTitle(title: String) {
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun PollMoreOptionsItemList(
     poll: Poll,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     totalVoteCount: Int,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
@@ -211,6 +218,7 @@ private fun PollMoreOptionsItemList(
                 users = users,
                 checked = isVotedByMine,
                 currentUser = currentUser,
+                autoTranslationEnabled = autoTranslationEnabled,
                 onCastVote = { onCastVote(option) },
                 onRemoveVote = { poll.votes.find { it.optionId == option.id }?.let(onRemoveVote) },
             )
@@ -228,6 +236,7 @@ private fun PollMoreOptionItem(
     users: List<User>,
     checked: Boolean,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
 ) {
@@ -240,6 +249,7 @@ private fun PollMoreOptionItem(
         users = users,
         checked = checked,
         currentUser = currentUser,
+        autoTranslationEnabled = autoTranslationEnabled,
         style = PollStyle(
             textColor = colors.chatTextIncoming,
             outlineColor = colors.chatBorderOnChatIncoming,

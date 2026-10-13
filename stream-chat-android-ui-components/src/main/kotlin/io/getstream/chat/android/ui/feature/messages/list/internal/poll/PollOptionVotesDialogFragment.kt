@@ -64,6 +64,9 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         get() = requireArguments().getString(ARG_OPTION)
             ?: throw IllegalStateException("Option ID not found in arguments")
 
+    private val showOriginalText: Boolean
+        get() = requireArguments().getBoolean(ARG_SHOW_ORIGINAL_TEXT)
+
     private val poll: Poll by lazy {
         polls[pollId] ?: throw IllegalStateException("Poll not found for ID: $pollId")
     }
@@ -112,7 +115,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_arrow_left)?.apply {
             setTint(ContextCompat.getColor(requireContext(), R.color.stream_ui_black))
         }?.let(toolbar::setNavigationIcon)
-        toolbar.title = option.getTranslatedText()
+        toolbar.title = option.getTranslatedText(showOriginalText)
     }
 
     private fun setupVotesList() {
@@ -122,7 +125,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.toolbar.title = state.option.getTranslatedText()
+            binding.toolbar.title = state.option.getTranslatedText(showOriginalText)
             binding.voteList.isInvisible = state.isLoading
             binding.loadingContainer.isVisible = state.isLoading
             binding.loadingMoreProgress.isVisible = state.isLoadingMore && !state.isLoading
@@ -168,6 +171,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         const val TAG: String = "PollOptionVotesDialogFragment"
         private const val ARG_POLL: String = "arg_poll"
         private const val ARG_OPTION: String = "arg_option"
+        private const val ARG_SHOW_ORIGINAL_TEXT: String = "arg_show_original_text"
         private const val LOAD_MORE_THRESHOLD = 3
         private const val VIEW_TYPE_HEADER = 0
         private const val VIEW_TYPE_VOTE = 1
@@ -175,13 +179,14 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         private val polls = mutableMapOf<String, Poll>()
         private val options = mutableMapOf<String, Option>()
 
-        fun newInstance(poll: Poll, option: Option): PollOptionVotesDialogFragment =
+        fun newInstance(poll: Poll, option: Option, showOriginalText: Boolean): PollOptionVotesDialogFragment =
             PollOptionVotesDialogFragment().apply {
                 polls[poll.id] = poll
                 options[option.id] = option
                 arguments = bundleOf(
                     ARG_POLL to poll.id,
                     ARG_OPTION to option.id,
+                    ARG_SHOW_ORIGINAL_TEXT to showOriginalText,
                 )
             }
     }

@@ -38,6 +38,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollCommentsBind
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCommentBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
+import io.getstream.chat.android.ui.utils.extensions.isShowingOriginalText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollCommentsViewModel
 
@@ -56,7 +57,8 @@ internal class PollCommentsDialogFragment : AppCompatDialogFragment() {
         PollCommentsViewModel.Factory(cid = cid, messageId = messageId)
     }
 
-    private val commentsAdapter = CommentsAdapter()
+    // Read once, so the sheet keeps the language it was opened in.
+    private val commentsAdapter by lazy { CommentsAdapter(showOriginalText = isShowingOriginalText(cid, messageId)) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,12 +121,14 @@ internal class PollCommentsDialogFragment : AppCompatDialogFragment() {
 
     private data class CommentItem(val answer: Answer, val showUser: Boolean)
 
-    private class CommentsAdapter :
-        ListAdapter<CommentItem, CommentsAdapter.CommentViewHolder>(CommentDiffCallback) {
+    private class CommentsAdapter(
+        private val showOriginalText: Boolean,
+    ) : ListAdapter<CommentItem, CommentsAdapter.CommentViewHolder>(CommentDiffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder =
             CommentViewHolder(
                 StreamUiItemPollCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                showOriginalText,
             )
 
         override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
@@ -141,11 +145,12 @@ internal class PollCommentsDialogFragment : AppCompatDialogFragment() {
 
         private class CommentViewHolder(
             private val binding: StreamUiItemPollCommentBinding,
+            private val showOriginalText: Boolean,
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(item: CommentItem) {
                 val answer = item.answer
-                binding.answerText.text = answer.getTranslatedText()
+                binding.answerText.text = answer.getTranslatedText(showOriginalText)
                 val user = answer.user?.takeIf { item.showUser }
                 if (user != null) {
                     binding.name.text = user.name

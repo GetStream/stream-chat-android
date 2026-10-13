@@ -19,10 +19,12 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -43,6 +45,16 @@ public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolea
             .originalTextMessageIds
             .map { it.contains(messageId) }
     }.collectAsStateWithLifecycle(false)
+}
+
+/**
+ * Whether auto-translated content of [message] is shown: translation is enabled and the message isn't switched to
+ * its original text.
+ */
+@Composable
+internal fun autoTranslationEnabledFor(message: Message): Boolean {
+    val showOriginalText by showOriginalTextAsState(message.cid, message.id)
+    return ChatTheme.config.translation.enabled && !showOriginalText
 }
 
 /**

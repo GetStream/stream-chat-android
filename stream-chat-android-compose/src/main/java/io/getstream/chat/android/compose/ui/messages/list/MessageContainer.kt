@@ -119,6 +119,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.extensions.hasTranslation
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -468,8 +469,10 @@ private fun TranslationAnnotation(item: MessageItemState) {
     val isTranslatable = !message.isGiphy() && !message.isDeleted()
     val shouldBeTranslated = userLanguage != message.originalLanguage
     val translatedText = message.getTranslation(userLanguage).ifEmpty { message.text }
+    val isTextTranslated = shouldBeTranslated && translatedText != message.text
+    val isPollTranslated = message.poll?.hasTranslation(item.currentUser) == true
 
-    if (isTranslatable && shouldBeTranslated && translatedText != message.text) {
+    if (isTranslatable && (isTextTranslated || isPollTranslated)) {
         if (config.showOriginalEnabled) {
             MessageAnnotation(
                 iconId = R.drawable.stream_design_ic_translate,

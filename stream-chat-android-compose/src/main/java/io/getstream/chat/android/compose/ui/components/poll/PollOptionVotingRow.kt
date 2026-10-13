@@ -86,6 +86,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.displayedText
  * @param users Subset of users whose avatars are previewed when voting visibility is public.
  * @param checked Whether the current user has voted for this option.
  * @param currentUser The current user, whose language selects the option translation.
+ * @param autoTranslationEnabled Whether the option shows its translation.
  * @param style Colours used for text, radio outline, progress fill and track.
  * @param onCastVote Invoked when the user casts a vote for this option.
  * @param onRemoveVote Invoked when the user removes their vote from this option.
@@ -104,6 +105,7 @@ internal fun PollOptionVotingRow(
     users: List<User>,
     checked: Boolean,
     currentUser: User?,
+    autoTranslationEnabled: Boolean,
     style: PollStyle,
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
@@ -176,7 +178,7 @@ internal fun PollOptionVotingRow(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = option.displayedText(currentUser, ChatTheme.config.translation.enabled),
+                    text = option.displayedText(currentUser, autoTranslationEnabled),
                     // Keep the full line box on every line (including a single line) so the gap
                     // to the progress bar stays consistent regardless of how many lines the
                     // option wraps to.

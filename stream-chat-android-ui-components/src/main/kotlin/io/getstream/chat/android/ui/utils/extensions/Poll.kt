@@ -20,15 +20,28 @@ import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.utils.extensions.displayedName
 import io.getstream.chat.android.ui.common.utils.extensions.displayedText
 import io.getstream.chat.android.ui.helper.CurrentUserProvider
 
-internal fun Poll.getTranslatedName(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String =
-    displayedName(currentUserProvider.getCurrentUser(), ChatUI.autoTranslationEnabled)
+internal fun Poll.getTranslatedName(
+    showOriginalText: Boolean = false,
+    currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider,
+): String = displayedName(currentUserProvider.getCurrentUser(), ChatUI.autoTranslationEnabled && !showOriginalText)
 
-internal fun Option.getTranslatedText(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String =
-    displayedText(currentUserProvider.getCurrentUser(), ChatUI.autoTranslationEnabled)
+internal fun Option.getTranslatedText(
+    showOriginalText: Boolean = false,
+    currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider,
+): String = displayedText(currentUserProvider.getCurrentUser(), ChatUI.autoTranslationEnabled && !showOriginalText)
 
-internal fun Answer.getTranslatedText(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String =
-    displayedText(currentUserProvider.getCurrentUser(), ChatUI.autoTranslationEnabled)
+internal fun Answer.getTranslatedText(
+    showOriginalText: Boolean = false,
+    currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider,
+): String = displayedText(currentUserProvider.getCurrentUser(), ChatUI.autoTranslationEnabled && !showOriginalText)
+
+/**
+ * Whether [messageId] in [cid] is switched to its original text.
+ */
+internal fun isShowingOriginalText(cid: String, messageId: String): Boolean =
+    MessageOriginalTranslationsStore.forChannel(cid).shouldShowOriginalText(messageId)
