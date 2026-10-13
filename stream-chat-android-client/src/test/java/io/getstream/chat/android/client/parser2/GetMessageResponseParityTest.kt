@@ -157,7 +157,7 @@ internal class GetMessageResponseParityTest {
             .first { runCatching { parser.fromJson(it, MessageResponse::class.java) }.isSuccess }
 
         private fun String.withChannel(): String =
-            mapAdapter.toJson(mapAdapter.fromJson(this)!! + ("channel" to CHANNEL))
+            mapAdapter.serializeNulls().toJson(mapAdapter.fromJson(this)!! + ("channel" to CHANNEL))
 
         /** A get message response built from a shared message fixture and its channel. */
         fun getMessageResponse(): GetMessageResponse = parser.fromJson(

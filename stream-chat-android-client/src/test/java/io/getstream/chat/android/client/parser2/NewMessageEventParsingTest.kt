@@ -35,16 +35,17 @@ import io.getstream.chat.android.client.parser2.direct.ModerationAdapter
 import io.getstream.chat.android.client.parser2.direct.NewMessageEventAdapter
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.direct.PollAdapter
-import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.client.parser2.testdata.NewMessageEventTestData
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -69,10 +70,8 @@ internal class NewMessageEventParsingTest {
     private val dateAdapter = moshi.adapter(Date::class.java)
 
     private val deviceAdapter = DeviceAdapter()
-    private val privacySettingsAdapter = PrivacySettingsAdapter()
     private val userAdapter = UserAdapter(
         deviceAdapter = deviceAdapter,
-        privacySettingsAdapter = privacySettingsAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -155,6 +154,35 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
+    fun `Both paths - explicit null counts fall back to zero`() {
+        val json = NewMessageEventTestData.jsonOptionalFieldsMissing.replaceFirst(
+            "{",
+            """{"watcher_count": null, "total_unread_count": null, "unread_channels": null,""",
+        )
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, generated(json))
+        assertEquals(NewMessageEventTestData.expectedOptionalFieldsMissing, adapter.fromJson(json))
+    }
+
+    @Test
+    fun `Both paths - read event user devices leniently and keep undeclared user fields as extra data`() {
+        val json = NewMessageEventTestData.jsonUserWithDevicesAndOwnUserFields
+        val direct = adapter.fromJson(json)!!
+
+        assertEquals(generated(json), direct)
+        assertEquals(
+            listOf(
+                Device(token = "device-1", pushProvider = PushProvider.FIREBASE, providerName = "Firebase"),
+                Device(token = "device-2", pushProvider = PushProvider.fromKey(""), providerName = null),
+            ),
+            direct.user.devices,
+        )
+        assertEquals(
+            setOf("invisible", "privacy_settings", "total_unread_count"),
+            direct.user.extraData.keys,
+        )
+    }
+
+    @Test
     fun `Both paths - propagate event-level channelInfo to replyTo when neither message has channel`() {
         val parsed = parser.fromJson(NewMessageEventTestData.jsonQuotedMessageNoChannel, ChatEventDto::class.java)
         val generatedResult = with(eventMapping) { parsed.toDomain() }
@@ -228,29 +256,17 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `Generated path - takes the channel type from the cid`() {
-        val event = generated(NewMessageEventTestData.jsonMissingChannelType) as NewMessageEvent
-        assertEquals("messaging", event.channelType)
+    fun `Both paths - take the channel type from the cid`() {
+        val json = NewMessageEventTestData.jsonMissingChannelType
+        assertEquals("messaging", (generated(json) as NewMessageEvent).channelType)
+        assertEquals("messaging", adapter.fromJson(json)?.channelType)
     }
 
     @Test
-    fun `Direct path - throws on missing channel_type`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(NewMessageEventTestData.jsonMissingChannelType)
-        }
-    }
-
-    @Test
-    fun `Generated path - takes the channel id from the cid`() {
-        val event = generated(NewMessageEventTestData.jsonMissingChannelId) as NewMessageEvent
-        assertEquals("general", event.channelId)
-    }
-
-    @Test
-    fun `Direct path - throws on missing channel_id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(NewMessageEventTestData.jsonMissingChannelId)
-        }
+    fun `Both paths - take the channel id from the cid`() {
+        val json = NewMessageEventTestData.jsonMissingChannelId
+        assertEquals("general", (generated(json) as NewMessageEvent).channelId)
+        assertEquals("general", adapter.fromJson(json)?.channelId)
     }
 
     @Test

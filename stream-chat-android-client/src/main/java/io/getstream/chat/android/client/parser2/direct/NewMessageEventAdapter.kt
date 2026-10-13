@@ -21,6 +21,7 @@ import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Message
@@ -48,8 +49,6 @@ internal class NewMessageEventAdapter(
         var channelMemberCount: Int? = null
         var channelCustomName: String? = null
         var channelCustomImage: String? = null
-        var channelType: String? = null
-        var channelId: String? = null
         var message: Message? = null
         var watcherCount: Int = 0
         var totalUnreadCount: Int = 0
@@ -77,12 +76,10 @@ internal class NewMessageEventAdapter(
                     channelCustomName = name
                     channelCustomImage = image
                 }
-                "channel_type" -> channelType = reader.nextString()
-                "channel_id" -> channelId = reader.nextString()
                 "message" -> message = messageAdapter.fromJson(reader)
-                "watcher_count" -> watcherCount = reader.nextInt()
-                "total_unread_count" -> totalUnreadCount = reader.nextInt()
-                "unread_channels" -> unreadChannels = reader.nextInt()
+                "watcher_count" -> watcherCount = JsonParsingUtils.readNullableInt(reader) ?: 0
+                "total_unread_count" -> totalUnreadCount = JsonParsingUtils.readNullableInt(reader) ?: 0
+                "unread_channels" -> unreadChannels = JsonParsingUtils.readNullableInt(reader) ?: 0
                 "channel_message_count" -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
                 "grouped_unread_channels" -> groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
                 else -> reader.skipValue()
@@ -98,9 +95,8 @@ internal class NewMessageEventAdapter(
         }
         JsonParsingUtils.requireField(user, "user", reader)
         JsonParsingUtils.requireField(cid, "cid", reader)
-        JsonParsingUtils.requireField(channelType, "channel_type", reader)
-        JsonParsingUtils.requireField(channelId, "channel_id", reader)
         JsonParsingUtils.requireField(message, "message", reader)
+        val (channelType, channelId) = cid.cidToTypeAndId()
 
         // Enrich inline: set channelInfo + cid so parseAndProcessEvent can skip enrichIfNeeded().
         // Only copy if something actually needs to change.

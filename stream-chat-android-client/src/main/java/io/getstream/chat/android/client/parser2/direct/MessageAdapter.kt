@@ -119,24 +119,14 @@ internal class MessageAdapter(
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deleted_at" -> deletedAt = dateAdapter.fromJson(reader)
                 "html" -> html = reader.nextString()
-                // An explicit null is rejected; a missing key falls back to the empty default.
-                "i18n" -> {
-                    JsonParsingUtils.rejectExplicitNull(reader, "i18n")
-                    i18n = JsonParsingUtils.parseStringMap(reader)
-                }
+                "i18n" -> i18n = JsonParsingUtils.parseStringMap(reader)
                 "id" -> id = reader.nextString()
                 "latest_reactions" -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "mentioned_users" -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
                 "mentioned_here" -> mentionedHere = JsonParsingUtils.readNullableBoolean(reader)
                 "mentioned_channel" -> mentionedChannel = JsonParsingUtils.readNullableBoolean(reader)
-                "mentioned_groups" -> {
-                    JsonParsingUtils.rejectExplicitNull(reader, "mentioned_groups")
-                    mentionedGroups = JsonParsingUtils.parseList(reader, userGroupAdapter)
-                }
-                "mentioned_roles" -> {
-                    JsonParsingUtils.rejectExplicitNull(reader, "mentioned_roles")
-                    mentionedRoles = JsonParsingUtils.parseStringList(reader)
-                }
+                "mentioned_groups" -> mentionedGroups = JsonParsingUtils.parseList(reader, userGroupAdapter)
+                "mentioned_roles" -> mentionedRoles = JsonParsingUtils.parseStringList(reader)
                 "own_reactions" -> ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
                 "parent_id" -> parentId = JsonParsingUtils.readNullableString(reader)
                 "pin_expires" -> pinExpires = dateAdapter.fromJson(reader)
@@ -157,14 +147,10 @@ internal class MessageAdapter(
                 "reply_count" -> replyCount = reader.nextInt()
                 "deleted_reply_count" -> deletedReplyCount = reader.nextInt()
                 "shadowed" -> shadowed = reader.nextBoolean()
-                "show_in_channel" -> showInChannel = reader.nextBoolean()
+                "show_in_channel" -> showInChannel = JsonParsingUtils.readNullableBoolean(reader)
                 "silent" -> silent = reader.nextBoolean()
                 "text" -> text = reader.nextString()
-                // An explicit null is rejected; a missing key falls back to the empty default.
-                "thread_participants" -> {
-                    JsonParsingUtils.rejectExplicitNull(reader, "thread_participants")
-                    threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
-                }
+                "thread_participants" -> threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
                 "type" -> type = reader.nextString()
                 "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
                 "user" -> user = userAdapter.fromJson(reader)
@@ -181,14 +167,10 @@ internal class MessageAdapter(
         }
         reader.endObject()
 
-        JsonParsingUtils.requireField(attachments, "attachments", reader)
         JsonParsingUtils.requireField(cid, "cid", reader)
         JsonParsingUtils.requireField(createdAt, "created_at", reader)
         JsonParsingUtils.requireField(html, "html", reader)
         JsonParsingUtils.requireField(id, "id", reader)
-        JsonParsingUtils.requireField(latestReactions, "latest_reactions", reader)
-        JsonParsingUtils.requireField(mentionedUsers, "mentioned_users", reader)
-        JsonParsingUtils.requireField(ownReactions, "own_reactions", reader)
         JsonParsingUtils.requireField(replyCount, "reply_count", reader)
         JsonParsingUtils.requireField(deletedReplyCount, "deleted_reply_count", reader)
         JsonParsingUtils.requireField(silent, "silent", reader)
@@ -218,8 +200,8 @@ internal class MessageAdapter(
         }
 
         // Filter reactions by messageId (matching DomainMapping behavior)
-        val filteredLatestReactions = latestReactions.filter { it.messageId == id }
-        val filteredOwnReactions = ownReactions.filter { it.messageId == id }
+        val filteredLatestReactions = latestReactions.orEmpty().filter { it.messageId == id }
+        val filteredOwnReactions = ownReactions.orEmpty().filter { it.messageId == id }
 
         // Calculate last update time: max of updated_at and poll?.updatedAt
         val lastUpdateTime = listOfNotNull(
@@ -228,7 +210,7 @@ internal class MessageAdapter(
         ).maxByOrNull { it.time } ?: updatedAt
 
         return Message(
-            attachments = attachments,
+            attachments = attachments.orEmpty(),
             channelInfo = resolvedChannelInfo,
             cid = cid,
             command = command,
@@ -238,7 +220,7 @@ internal class MessageAdapter(
             i18n = i18n ?: emptyMap(),
             id = id,
             latestReactions = filteredLatestReactions,
-            mentionedUsers = mentionedUsers,
+            mentionedUsers = mentionedUsers.orEmpty(),
             mentionedHere = mentionedHere == true,
             mentionedChannel = mentionedChannel == true,
             mentionedGroups = mentionedGroups.orEmpty(),

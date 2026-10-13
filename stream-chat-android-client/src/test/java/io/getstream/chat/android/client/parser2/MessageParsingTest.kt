@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.parser2.direct.MessageReminderInfoAdapte
 import io.getstream.chat.android.client.parser2.direct.ModerationAdapter
 import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.direct.PollAdapter
-import io.getstream.chat.android.client.parser2.direct.PrivacySettingsAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
@@ -67,10 +66,8 @@ internal class MessageParsingTest {
     private val dateAdapter = moshi.adapter(Date::class.java)
 
     private val deviceAdapter = DeviceAdapter()
-    private val privacySettingsAdapter = PrivacySettingsAdapter()
     private val userAdapter = UserAdapter(
         deviceAdapter = deviceAdapter,
-        privacySettingsAdapter = privacySettingsAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -261,37 +258,6 @@ internal class MessageParsingTest {
     @Test
     fun `Direct path - throws on missing user`() = assertDirectPathThrows(MessageTestData.jsonMissingUser)
 
-    @Test
-    fun `Direct path - throws on missing attachments`() = assertDirectPathThrows(MessageTestData.jsonMissingAttachments)
-
-    @Test
-    fun `Direct path - throws on missing latest_reactions`() =
-        assertDirectPathThrows(MessageTestData.jsonMissingLatestReactions)
-
-    @Test
-    fun `Direct path - throws on missing mentioned_users`() =
-        assertDirectPathThrows(MessageTestData.jsonMissingMentionedUsers)
-
-    @Test
-    fun `Direct path - throws on missing own_reactions`() =
-        assertDirectPathThrows(MessageTestData.jsonMissingOwnReactions)
-
-    @Test
-    fun `Direct path - throws on explicit null i18n`() =
-        assertDirectPathThrows(MessageTestData.jsonExplicitNullI18n)
-
-    @Test
-    fun `Direct path - throws on explicit null thread_participants`() =
-        assertDirectPathThrows(MessageTestData.jsonExplicitNullThreadParticipants)
-
-    @Test
-    fun `Direct path - throws on explicit null mentioned_groups`() =
-        assertDirectPathThrows(MessageTestData.jsonExplicitNullMentionedGroups)
-
-    @Test
-    fun `Direct path - throws on explicit null mentioned_roles`() =
-        assertDirectPathThrows(MessageTestData.jsonExplicitNullMentionedRoles)
-
     private fun assertDirectPathThrows(json: String) {
         assertThrows<JsonDataException> {
             messageAdapter.fromJson(json)
@@ -347,7 +313,6 @@ internal class MessageParsingTest {
         )
         val transformedUserAdapter = UserAdapter(
             deviceAdapter = deviceAdapter,
-            privacySettingsAdapter = privacySettingsAdapter,
             dateAdapter = dateAdapter,
             userTransformer = customUserTransformer,
         )
