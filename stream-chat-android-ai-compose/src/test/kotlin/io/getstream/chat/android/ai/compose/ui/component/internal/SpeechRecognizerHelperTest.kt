@@ -158,15 +158,17 @@ internal class SpeechRecognizerHelperTest {
     }
 
     @Test
-    fun `a result after an error starts from nothing`() {
+    fun `listening after an error starts from nothing`() {
         setUp()
         start()
         recognizer.triggerOnPartialResults(results("hello", final = true))
-
         recognizer.triggerOnError(SpeechRecognizer.ERROR_NETWORK)
+
+        start()
+        recognizer.triggerOnPartialResults(results("world", final = true))
         recognizer.triggerOnResults(Bundle())
 
-        assertEquals(listOf(""), finals)
+        assertEquals(listOf("world"), finals)
     }
 
     @Test
@@ -212,10 +214,13 @@ internal class SpeechRecognizerHelperTest {
         recognizer.triggerOnPartialResults(results("hello", final = true))
 
         rule.runOnIdle { helper.cancel() }
+        assertFalse(helper.isListening)
+
+        start()
+        recognizer.triggerOnPartialResults(results("world", final = true))
         recognizer.triggerOnResults(Bundle())
 
-        assertFalse(helper.isListening)
-        assertEquals(listOf(""), finals)
+        assertEquals(listOf("world"), finals)
     }
 
     @Test

@@ -124,10 +124,11 @@ internal class ReasoningFoldStateTest {
 
     @Test
     fun `reasoning the reader closed stays closed when the model stops`() = runTest {
-        val state = state(isThinking = true)
+        val state = state(isThinking = true, initiallyExpanded = true)
         state.toggle()
 
-        state.changed(isThinking = false)
+        // Finished reasoning opens by default here, so only the reader's choice keeps it closed.
+        state.changed(isThinking = false, initiallyExpanded = true)
 
         assertFalse(state.open)
     }

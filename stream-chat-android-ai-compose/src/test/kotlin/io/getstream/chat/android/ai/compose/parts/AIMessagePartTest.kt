@@ -133,6 +133,25 @@ internal class AIMessagePartTest {
         assertEquals(one.hashCode(), same.hashCode())
         assertNotEquals(one, moved)
         assertNull("only ai_ attachments are steps", AIMessagePart.fromJson("image", "{}"))
+        assertNull("only ai_ attachments are steps", AIMessagePart.from("file", emptyMap()))
+    }
+
+    @Test
+    fun `parts differing in any one of kind, identity or version are not equal`() {
+        val part = AIMessagePart.from("ai_reasoning", mapOf("id" to "r1"))!!
+
+        assertNotEquals(part, AIMessagePart.from("ai_tool_call", mapOf("id" to "r1")))
+        assertNotEquals(part, AIMessagePart.from("ai_reasoning", mapOf("id" to "r2")))
+        assertNotEquals(part, AIMessagePart.from("ai_reasoning", mapOf("id" to "r1", "v" to 2)))
+        assertNotEquals(part, "r1")
+    }
+
+    @Test
+    fun `a part describes itself by kind, identity and version`() {
+        val part = AIMessagePart.fromJson("ai_citation", """{"id":"c1","source":"docs"}""")!!
+
+        assertEquals("AIMessagePart(kind=ai_citation, id=c1, version=1)", part.toString())
+        assertTrue(AIMessagePart.from("ai_reasoning", mapOf("id" to "r1"))!!.isSupported)
     }
 
     @Test

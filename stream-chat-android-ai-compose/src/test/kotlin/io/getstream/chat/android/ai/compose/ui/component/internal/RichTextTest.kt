@@ -73,8 +73,9 @@ internal class RichTextTest {
 
     @Test
     fun `a complete chart no longer shows as code`() {
-        rule.setContent { RichText(text = "```chartjs\n{\"type\": \"bar\"}\n```") }
+        rule.setContent { RichText(text = "Sales by month:\n\n```chartjs\n{\"type\": \"bar\"}\n```") }
 
+        rule.onNodeWithText("Sales by month:", substring = true, useUnmergedTree = true).assertExists()
         rule.onNodeWithText("\"type\": \"bar\"", substring = true, useUnmergedTree = true).assertDoesNotExist()
     }
 }

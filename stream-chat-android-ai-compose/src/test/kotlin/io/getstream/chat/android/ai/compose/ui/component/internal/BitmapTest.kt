@@ -25,7 +25,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.GraphicsMode
@@ -58,55 +57,35 @@ internal class BitmapTest {
     }
 
     @Test
-    fun `orientations that turn the image a quarter swap width and height`() {
-        listOf(
-            ExifInterface.ORIENTATION_ROTATE_90,
-            ExifInterface.ORIENTATION_ROTATE_270,
-            ExifInterface.ORIENTATION_TRANSPOSE,
-            ExifInterface.ORIENTATION_TRANSVERSE,
-        ).forEach { orientation ->
+    fun `flips and turns put every corner where the EXIF tag says`() {
+        // Corners of the stored image: top-left, top-right, bottom-left, bottom-right.
+        val expected = mapOf(
+            ExifInterface.ORIENTATION_NORMAL to listOf(Red, Green, Blue, White),
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL to listOf(Green, Red, White, Blue),
+            ExifInterface.ORIENTATION_ROTATE_180 to listOf(White, Blue, Green, Red),
+            ExifInterface.ORIENTATION_FLIP_VERTICAL to listOf(Blue, White, Red, Green),
+            ExifInterface.ORIENTATION_ROTATE_90 to listOf(Blue, Red, White, Green),
+            ExifInterface.ORIENTATION_ROTATE_270 to listOf(Green, White, Red, Blue),
+        )
+
+        expected.forEach { (orientation, corners) ->
+            val bitmap = decode(jpeg(width = 60, height = 30, orientation = orientation), targetSize = 100)
+            val quarterTurn = orientation in QuarterTurns
+
+            assertEquals("width for orientation $orientation", if (quarterTurn) 30 else 60, bitmap.width)
+            assertEquals("height for orientation $orientation", if (quarterTurn) 60 else 30, bitmap.height)
+            assertEquals("corners for orientation $orientation", corners, corners(bitmap))
+        }
+    }
+
+    @Test
+    fun `mirrored quarter turns swap width and height`() {
+        listOf(ExifInterface.ORIENTATION_TRANSPOSE, ExifInterface.ORIENTATION_TRANSVERSE).forEach { orientation ->
             val bitmap = decode(jpeg(width = 60, height = 30, orientation = orientation), targetSize = 100)
 
             assertEquals("orientation $orientation", 30, bitmap.width)
             assertEquals("orientation $orientation", 60, bitmap.height)
         }
-    }
-
-    @Test
-    fun `orientations that keep the image upright keep width and height`() {
-        listOf(
-            ExifInterface.ORIENTATION_NORMAL,
-            ExifInterface.ORIENTATION_ROTATE_180,
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL,
-            ExifInterface.ORIENTATION_FLIP_VERTICAL,
-        ).forEach { orientation ->
-            val bitmap = decode(jpeg(width = 60, height = 30, orientation = orientation), targetSize = 100)
-
-            assertEquals("orientation $orientation", 60, bitmap.width)
-            assertEquals("orientation $orientation", 30, bitmap.height)
-        }
-    }
-
-    @Test
-    fun `a horizontal flip mirrors the image`() {
-        val bitmap = decode(
-            jpeg(width = 60, height = 30, orientation = ExifInterface.ORIENTATION_FLIP_HORIZONTAL),
-            targetSize = 100,
-        )
-
-        assertIsBlue(bitmap.getPixel(5, 15))
-        assertIsRed(bitmap.getPixel(54, 15))
-    }
-
-    @Test
-    fun `a half turn puts the left side on the right`() {
-        val bitmap = decode(
-            jpeg(width = 60, height = 30, orientation = ExifInterface.ORIENTATION_ROTATE_180),
-            targetSize = 100,
-        )
-
-        assertIsBlue(bitmap.getPixel(5, 15))
-        assertIsRed(bitmap.getPixel(54, 15))
     }
 
     private fun decode(uri: Uri, targetSize: Int): Bitmap {
@@ -115,12 +94,23 @@ internal class BitmapTest {
         return bitmap!!
     }
 
-    // The left half is red and the right half blue, so mirrored images can be told apart.
+    // Each quarter of the stored image has its own color, so every flip and turn can be told apart.
     private fun jpeg(width: Int, height: Int, orientation: Int? = null): Uri {
         val source = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         for (x in 0 until width) {
             for (y in 0 until height) {
-                source.setPixel(x, y, if (x < width / 2) Color.RED else Color.BLUE)
+                val left = x < width / 2
+                val top = y < height / 2
+                source.setPixel(
+                    x,
+                    y,
+                    when {
+                        top && left -> Color.RED
+                        top -> Color.GREEN
+                        left -> Color.BLUE
+                        else -> Color.WHITE
+                    },
+                )
             }
         }
         val file = File.createTempFile("image", ".jpg", context.cacheDir)
@@ -134,17 +124,33 @@ internal class BitmapTest {
         return Uri.fromFile(file)
     }
 
-    private fun assertIsRed(pixel: Int) {
-        assertTrue("#${Integer.toHexString(pixel)} is red", Color.red(pixel) > Bright && Color.blue(pixel) < Dark)
+    // The color at the center of each quarter: top-left, top-right, bottom-left, bottom-right.
+    private fun corners(bitmap: Bitmap): List<String> {
+        val (w, h) = bitmap.width to bitmap.height
+        return listOf(w / 4 to h / 4, w * 3 / 4 to h / 4, w / 4 to h * 3 / 4, w * 3 / 4 to h * 3 / 4)
+            .map { (x, y) -> colorName(bitmap.getPixel(x, y)) }
     }
 
-    private fun assertIsBlue(pixel: Int) {
-        assertTrue("#${Integer.toHexString(pixel)} is blue", Color.blue(pixel) > Bright && Color.red(pixel) < Dark)
+    private fun colorName(pixel: Int): String {
+        val bright = { channel: Int -> channel > Bright }
+        val (r, g, b) = Triple(bright(Color.red(pixel)), bright(Color.green(pixel)), bright(Color.blue(pixel)))
+        return when {
+            r && g && b -> White
+            r -> Red
+            g -> Green
+            b -> Blue
+            else -> "#${Integer.toHexString(pixel)}"
+        }
     }
 
     private companion object {
         const val JpegQuality = 100
         const val Bright = 200
-        const val Dark = 60
+        const val Red = "red"
+        const val Green = "green"
+        const val Blue = "blue"
+        const val White = "white"
+
+        val QuarterTurns = setOf(ExifInterface.ORIENTATION_ROTATE_90, ExifInterface.ORIENTATION_ROTATE_270)
     }
 }

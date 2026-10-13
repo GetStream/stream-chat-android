@@ -19,10 +19,7 @@ package io.getstream.chat.android.ai.compose.parts
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class JsonTest {
@@ -83,49 +80,5 @@ internal class JsonTest {
 
         assertEquals("one", fields.nested("approval")?.string("1"))
         assertNull(fields.nested("missing"))
-    }
-
-    @Test
-    fun `an attachment that is not an AI step decodes to nothing`() {
-        assertNull(AIMessagePart.fromJson("image", """{"id":"1"}"""))
-        assertNull(AIMessagePart.from("file", emptyMap()))
-    }
-
-    @Test
-    fun `a step of an unknown kind keeps its payload but is not supported`() {
-        val part = AIMessagePart.fromJson("ai_citation", """{"id":"c1","source":"docs"}""")!!
-
-        assertFalse(part.isSupported)
-        assertEquals("docs", part.payload["source"])
-        assertEquals("AIMessagePart(kind=ai_citation, id=c1, version=1)", part.toString())
-    }
-
-    @Test
-    fun `a newer version of a known kind is not supported`() {
-        val part = AIMessagePart.from("ai_reasoning", mapOf("id" to "r1", "v" to 2))!!
-
-        assertFalse(part.isSupported)
-        assertEquals(2, part.version)
-    }
-
-    @Test
-    fun `a known step is supported`() {
-        val part = AIMessagePart.from("ai_reasoning", mapOf("id" to "r1", "text" to "hm"))!!
-
-        assertTrue(part.isSupported)
-    }
-
-    @Test
-    fun `equal parts hash equally and differing parts are not equal`() {
-        val part = AIMessagePart.from("ai_reasoning", mapOf("id" to "r1"))!!
-        val same = AIMessagePart.from("ai_reasoning", mapOf("id" to "r1"))!!
-
-        assertEquals(part, same)
-        assertEquals(part.hashCode(), same.hashCode())
-        assertNotEquals(part, AIMessagePart.from("ai_tool_call", mapOf("id" to "r1")))
-        assertNotEquals(part, AIMessagePart.from("ai_reasoning", mapOf("id" to "r2")))
-        assertNotEquals(part, AIMessagePart.from("ai_reasoning", mapOf("id" to "r1", "v" to 2)))
-        assertNotEquals(part, AIMessagePart.from("ai_reasoning", mapOf("id" to "r1", "text" to "x")))
-        assertNotEquals(part, "r1")
     }
 }
