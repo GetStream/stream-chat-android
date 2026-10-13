@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.event.handler.grouped.internal
 
+import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EqualsFilterObject
@@ -42,8 +43,8 @@ internal val Channel.queryTimestamp: Date?
  * Whether a channel with the given [group] and [queryTimestamp] matches this grouped channels filter at [now].
  *
  * Evaluates the conditions the grouped channels endpoint accepts: `group` with `eq`, `in` and `ne`, and
- * `query_timestamp` with `greaterThanEquals` given as a [Date] or as a relative `now-7d` / `7d` value, combined
- * with `and` and `or`. Any other condition matches, so the server decides on the next query.
+ * `query_timestamp` with `greaterThanEquals` given as a [Date], a full timestamp or a relative `now-7d` / `7d`
+ * value, combined with `and` and `or`. Any other condition matches, so the server decides on the next query.
  */
 internal fun FilterObject.matchesGroupedChannel(group: String?, queryTimestamp: Date?, now: Date): Boolean =
     when (this) {
@@ -64,12 +65,16 @@ internal fun FilterObject.matchesGroupedChannel(group: String?, queryTimestamp: 
         else -> true
     }
 
+private val dateFormatter = StreamDateFormatter()
+
 private fun cutoffOrNull(value: Any, now: Date): Date? = when (value) {
     is Date -> value
-    is String -> value.removePrefix(RELATIVE_DATE_PREFIX)
-        .takeIf { it.endsWith(RELATIVE_DATE_DAYS_SUFFIX) }
-        ?.removeSuffix(RELATIVE_DATE_DAYS_SUFFIX)
-        ?.toLongOrNull()
-        ?.let { days -> Date(now.time - TimeUnit.DAYS.toMillis(days)) }
+    is String -> relativeCutoffOrNull(value, now) ?: dateFormatter.parse(value)
     else -> null
 }
+
+private fun relativeCutoffOrNull(value: String, now: Date): Date? = value.removePrefix(RELATIVE_DATE_PREFIX)
+    .takeIf { it.endsWith(RELATIVE_DATE_DAYS_SUFFIX) }
+    ?.removeSuffix(RELATIVE_DATE_DAYS_SUFFIX)
+    ?.toLongOrNull()
+    ?.let { days -> Date(now.time - TimeUnit.DAYS.toMillis(days)) }

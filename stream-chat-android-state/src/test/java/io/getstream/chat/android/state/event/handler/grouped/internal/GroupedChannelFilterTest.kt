@@ -60,10 +60,16 @@ internal class GroupedChannelFilterTest {
     }
 
     @Test
+    fun `full timestamp cutoff is supported`() {
+        val filter = Filters.greaterThanEquals("query_timestamp", "2027-01-08T08:00:00.000Z")
+
+        assertTrue(filter.matchesGroupedChannel("expired", daysAgo(6), now))
+        assertFalse(filter.matchesGroupedChannel("expired", daysAgo(8), now))
+    }
+
+    @Test
     fun `conditions that cannot be evaluated locally match`() {
-        assertTrue(
-            Filters.greaterThanEquals("query_timestamp", "2026-09-01T00:00:00Z").matchesGroupedChannel("new", null, now),
-        )
+        assertTrue(Filters.greaterThanEquals("query_timestamp", "last week").matchesGroupedChannel("new", null, now))
         assertTrue(Filters.eq("team", "blue").matchesGroupedChannel("new", null, now))
     }
 
