@@ -172,6 +172,19 @@ internal class SpeechRecognizerHelperTest {
     }
 
     @Test
+    fun `segments that start with a space are joined with a single space`() {
+        setUp()
+        start()
+
+        recognizer.triggerOnPartialResults(results("hello world", final = true))
+        recognizer.triggerOnPartialResults(results(" how are you", final = true))
+        recognizer.triggerOnResults(Bundle())
+
+        assertEquals(listOf("hello world", "hello world how are you"), partials)
+        assertEquals(listOf("hello world how are you"), finals)
+    }
+
+    @Test
     fun `speech that only arrives with the final result is kept`() {
         setUp()
         start()
