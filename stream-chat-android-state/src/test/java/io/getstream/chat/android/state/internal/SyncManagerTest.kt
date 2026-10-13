@@ -1155,6 +1155,70 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect with grouped queries requested with different sorts should recover each sort separately`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+            val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+            val filteredLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "expired"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+                    limit = null,
+                    pageSize = null,
+                    watch = true,
+                    presence = false,
+                    filter = filter,
+                    sort = sort,
+                )
+            }
+            val legacyLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "support"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(null, null, watch = true, presence = false)
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(filteredLogic, legacyLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                    sort = anyOrNull(),
+                ),
+            ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = null,
+                groups = mapOf("expired" to GroupedChannelsGroupQuery(filter = filter)),
+                watch = true,
+                presence = false,
+                sort = sort,
+            )
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = null,
+                groups = mapOf("support" to GroupedChannelsGroupQuery()),
+                watch = true,
+                presence = false,
+                sort = null,
+            )
+        }
+
+    @Test
     fun `on reconnect when no captured per-group pageSize should still include the group key with empty entry`() =
         runTest(testDispatcher) {
             val createdAt = localDate()

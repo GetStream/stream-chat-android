@@ -49,6 +49,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.taggedLogger
@@ -448,12 +449,13 @@ internal class SyncManager(
 
     /**
      * Drives the recovery flow for grouped channel queries: when at least one active grouped
-     * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once. The
+     * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once per requested sort,
+     * so groups requested with different sorts keep their own order. The
      * [io.getstream.chat.android.state.plugin.listener.internal.QueryGroupedChannelsListenerState]
      * routes the response into the corresponding per-group state and persists it.
      *
-     * Assumes all active grouped queries share the same request-level `limit`, `watch`, and
-     * `presence` flags — the first captured config wins.
+     * Assumes the grouped queries that share a sort also share the same request-level `limit`,
+     * `watch`, and `presence` flags — the first captured config wins.
      */
     private suspend fun updateGroupedQueryChannels(recoverAll: Boolean): Set<String> {
         val activeGroupedLogics = logicRegistry.getActiveQueryChannelsLogic()
@@ -464,6 +466,13 @@ internal class SyncManager(
             return emptySet()
         }
 
+        return activeGroupedLogics
+            .groupBy { it.groupedQueryConfig()?.sort }
+            .values
+            .flatMapTo(mutableSetOf()) { logics -> recoverGroupedQueryChannels(logics) }
+    }
+
+    private suspend fun recoverGroupedQueryChannels(activeGroupedLogics: List<QueryChannelsLogic>): Set<String> {
         // Shared fields (limit, watch, presence, sort) are identical across groups from the same
         // original session — take the first captured config. Per-group page sizes and filters are merged in
         // the `groups` map below so the server returns the same page sizes the caller chose.
