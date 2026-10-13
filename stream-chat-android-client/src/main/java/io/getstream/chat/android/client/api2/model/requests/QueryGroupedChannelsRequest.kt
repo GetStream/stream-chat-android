@@ -28,6 +28,7 @@ import com.squareup.moshi.JsonClass
  * exactly one group is requested.
  * @param watch Whether to start watching the returned channels for real-time events.
  * @param presence Whether to receive presence events for the members of the returned channels.
+ * @param sort The order of the channels in every group. `null` uses the server default.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryGroupedChannelsRequest(
@@ -35,6 +36,7 @@ internal data class QueryGroupedChannelsRequest(
     val groups: Map<String, QueryGroupedChannelsGroupRequest>?,
     val watch: Boolean,
     val presence: Boolean,
+    val sort: List<Map<String, Any>>? = null,
 )
 
 /**
@@ -43,10 +45,13 @@ internal data class QueryGroupedChannelsRequest(
  * @param limit Max channels for this group. `null` (or `0`) falls back to the request-level limit.
  * @param next Cursor for the next page of this group. Mutually exclusive with [prev].
  * @param prev Cursor for the previous page of this group. Mutually exclusive with [next].
+ * @param filter_conditions Conditions the group's channels must match. An empty map matches the stored group;
+ * `null` keeps the legacy grouping.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryGroupedChannelsGroupRequest(
     val limit: Int?,
     val next: String?,
     val prev: String?,
+    val filter_conditions: Map<*, *>? = null,
 )

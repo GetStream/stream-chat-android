@@ -648,6 +648,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(
                 Result.Success(
@@ -704,6 +705,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(
                 Result.Success(
@@ -751,6 +753,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(
                 Result.Failure(
@@ -804,6 +807,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(
                 Result.Success(GroupedChannels(groups = emptyMap())),
@@ -905,6 +909,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(
                 Result.Success(
@@ -985,6 +990,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
             whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
@@ -1044,6 +1050,7 @@ internal class SyncManagerTest {
                 groups = anyOrNull(),
                 watch = any(),
                 presence = any(),
+                sort = anyOrNull(),
             )
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient).queryChannelsInternal(captor.capture())
@@ -1111,6 +1118,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
             whenever(clientState.isOnline) doReturn true
@@ -1160,6 +1168,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
             whenever(clientState.isOnline) doReturn true
@@ -1203,6 +1212,7 @@ internal class SyncManagerTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
             whenever(clientState.isOnline) doReturn true

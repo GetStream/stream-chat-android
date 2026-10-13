@@ -880,6 +880,7 @@ internal class ChannelListViewModelTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn result.asCall()
         }
