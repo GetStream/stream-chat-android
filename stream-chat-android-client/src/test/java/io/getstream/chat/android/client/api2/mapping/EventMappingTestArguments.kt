@@ -17,13 +17,11 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
@@ -114,8 +112,10 @@ import io.getstream.chat.android.network.models.ChannelHiddenEvent as GeneratedC
 import io.getstream.chat.android.network.models.ChannelTruncatedEvent as GeneratedChannelTruncatedEvent
 import io.getstream.chat.android.network.models.ChannelUpdatedEvent as GeneratedChannelUpdatedEvent
 import io.getstream.chat.android.network.models.ChannelVisibleEvent as GeneratedChannelVisibleEvent
+import io.getstream.chat.android.network.models.ConnectedEvent as GeneratedConnectedEvent
 import io.getstream.chat.android.network.models.DraftDeletedEvent as GeneratedDraftDeletedEvent
 import io.getstream.chat.android.network.models.DraftUpdatedEvent as GeneratedDraftUpdatedEvent
+import io.getstream.chat.android.network.models.HealthCheckEvent as GeneratedHealthCheckEvent
 import io.getstream.chat.android.network.models.MemberAddedEvent as GeneratedMemberAddedEvent
 import io.getstream.chat.android.network.models.MemberRemovedEvent as GeneratedMemberRemovedEvent
 import io.getstream.chat.android.network.models.MemberUpdatedEvent as GeneratedMemberUpdatedEvent
@@ -190,9 +190,7 @@ internal object EventMappingTestArguments {
     private val CHANNEL_NAME = randomString()
     private val CHANNEL_IMAGE = randomString()
     private val MESSAGE_ID = randomString()
-    private val MESSAGE = Mother.randomDownstreamMessageDto()
     private val DRAFT = Mother.randomDraftResponse()
-    private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val THREAD_ID = randomString()
     private val CLEAR_HISTORY = randomBoolean()
     private val SHADOW_BAN = randomBoolean()
@@ -370,12 +368,14 @@ internal object EventMappingTestArguments {
 
     private val channelVisibleWithoutChannelDto = GeneratedEventDto(channelVisibleEvent.copy(channel = null))
 
-    private val connectedDto = ConnectedEventDto(
-        type = EventType.CONNECTION_CONNECTING,
-        created_at = EXACT_DATE,
+    private val connectedEvent = GeneratedConnectedEvent(
+        connectionId = CONNECTION_ID,
+        createdAt = GENERATED_EXACT_DATE,
         me = OWN_USER,
-        connection_id = CONNECTION_ID,
+        type = EventType.HEALTH_CHECK,
     )
+
+    private val connectedDto = GeneratedEventDto(connectedEvent)
 
     private val connectionErrorDto = ConnectionErrorEventDto(
         type = EventType.CONNECTION_ERROR,
@@ -416,11 +416,13 @@ internal object EventMappingTestArguments {
 
     private val globalUserUnbannedDto = GeneratedEventDto(globalUserUnbannedEvent)
 
-    private val healthDto = HealthEventDto(
+    private val healthEvent = GeneratedHealthCheckEvent(
+        connectionId = CONNECTION_ID,
+        createdAt = GENERATED_EXACT_DATE,
         type = EventType.HEALTH_CHECK,
-        created_at = EXACT_DATE,
-        connection_id = CONNECTION_ID,
     )
+
+    private val healthDto = GeneratedEventDto(healthEvent)
 
     private val markAllReadEvent = GeneratedNotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
@@ -899,7 +901,7 @@ internal object EventMappingTestArguments {
         type = EventType.REMINDER_CREATED,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -910,7 +912,7 @@ internal object EventMappingTestArguments {
         type = EventType.REMINDER_UPDATED,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -921,7 +923,7 @@ internal object EventMappingTestArguments {
         type = EventType.REMINDER_DELETED,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -932,7 +934,7 @@ internal object EventMappingTestArguments {
         type = EventType.NOTIFICATION_REMINDER_DUE,
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
-        messageId = MESSAGE.id,
+        messageId = MESSAGE_ID,
         userId = USER.id,
         reminder = REMINDER,
     )
@@ -1131,11 +1133,11 @@ internal object EventMappingTestArguments {
     )
 
     private val connected = ConnectedEvent(
-        type = connectedDto.type,
-        createdAt = connectedDto.created_at.date,
-        rawCreatedAt = connectedDto.created_at.rawDate,
-        me = with(domainMapping) { connectedDto.me.toDomain() },
-        connectionId = connectedDto.connection_id,
+        type = connectedEvent.type,
+        createdAt = connectedEvent.createdAt.date,
+        rawCreatedAt = connectedEvent.createdAt.raw,
+        me = with(domainMapping) { connectedEvent.me.toDomain() },
+        connectionId = connectedEvent.connectionId,
     )
 
     private val connectionError = ConnectionErrorEvent(
@@ -1180,10 +1182,10 @@ internal object EventMappingTestArguments {
     )
 
     private val health = HealthEvent(
-        type = healthDto.type,
-        createdAt = healthDto.created_at.date,
-        rawCreatedAt = healthDto.created_at.rawDate,
-        connectionId = healthDto.connection_id,
+        type = healthEvent.type,
+        createdAt = healthEvent.createdAt.date,
+        rawCreatedAt = healthEvent.createdAt.raw,
+        connectionId = healthEvent.connectionId,
     )
 
     private val markAllRead = MarkAllReadEvent(

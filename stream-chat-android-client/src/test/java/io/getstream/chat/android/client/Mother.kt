@@ -23,12 +23,8 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
-import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
@@ -380,98 +376,6 @@ internal object Mother {
         custom = custom,
     )
 
-    fun randomDownstreamMessageDto(
-        attachments: List<Attachment> = emptyList(),
-        channel: ChannelInfoDto? = randomChannelInfoDto(),
-        cid: String = randomString(),
-        command: String? = randomString(),
-        created_at: Date = randomDate(),
-        deleted_at: Date? = randomDateOrNull(),
-        html: String = randomString(),
-        i18n: Map<String, String> = emptyMap(),
-        id: String = randomString(),
-        latest_reactions: List<ReactionResponse> = emptyList(),
-        mentioned_users: List<DownstreamUserDto> = emptyList(),
-        mentioned_here: Boolean? = null,
-        mentioned_channel: Boolean? = null,
-        mentioned_groups: List<UserGroupResponse> = emptyList(),
-        mentioned_roles: List<String> = emptyList(),
-        own_reactions: List<ReactionResponse> = emptyList(),
-        parent_id: String? = randomString(),
-        pin_expires: Date? = randomDateOrNull(),
-        pinned: Boolean = randomBoolean(),
-        pinned_at: Date? = randomDateOrNull(),
-        message_text_updated_at: Date? = randomDateOrNull(),
-        pinned_by: DownstreamUserDto? = null,
-        quoted_message: DownstreamMessageDto? = null,
-        quoted_message_id: String? = randomString(),
-        reaction_counts: Map<String, Int>? = emptyMap(),
-        reaction_scores: Map<String, Int>? = emptyMap(),
-        reaction_groups: Map<String, ReactionGroupResponse>? = emptyMap(),
-        reply_count: Int = randomInt(),
-        deleted_reply_count: Int = randomInt(),
-        shadowed: Boolean = randomBoolean(),
-        show_in_channel: Boolean = randomBoolean(),
-        silent: Boolean = randomBoolean(),
-        text: String = randomString(),
-        thread_participants: List<DownstreamUserDto> = emptyList(),
-        type: String = randomString(),
-        updated_at: Date = randomDate(),
-        user: DownstreamUserDto = randomDownstreamUserDto(),
-        moderation_details: DownstreamModerationDetailsDto? = null,
-        moderation: ModerationV2Response? = null,
-        poll: PollResponseData? = null,
-        member: ChannelMemberPartialResponse? = randomChannelMemberPartialResponse(),
-        deleted_for_me: Boolean? = null,
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamMessageDto {
-        return DownstreamMessageDto(
-            attachments = attachments,
-            channel = channel,
-            cid = cid,
-            command = command,
-            created_at = created_at,
-            deleted_at = deleted_at,
-            html = html,
-            i18n = i18n,
-            id = id,
-            latest_reactions = latest_reactions,
-            mentioned_users = mentioned_users,
-            mentioned_here = mentioned_here,
-            mentioned_channel = mentioned_channel,
-            mentioned_groups = mentioned_groups,
-            mentioned_roles = mentioned_roles,
-            own_reactions = own_reactions,
-            parent_id = parent_id,
-            pin_expires = pin_expires,
-            pinned = pinned,
-            pinned_at = pinned_at,
-            message_text_updated_at = message_text_updated_at,
-            pinned_by = pinned_by,
-            quoted_message = quoted_message,
-            quoted_message_id = quoted_message_id,
-            reaction_counts = reaction_counts,
-            reaction_scores = reaction_scores,
-            reaction_groups = reaction_groups,
-            reply_count = reply_count,
-            deleted_reply_count = deleted_reply_count,
-            shadowed = shadowed,
-            show_in_channel = show_in_channel,
-            silent = silent,
-            text = text,
-            thread_participants = thread_participants,
-            type = type,
-            updated_at = updated_at,
-            user = user,
-            moderation_details = moderation_details,
-            moderation = moderation,
-            poll = poll,
-            member = member,
-            deleted_for_me = deleted_for_me,
-            extraData = extraData,
-        )
-    }
-
     fun randomDownstreamUserDto(
         id: String = randomString(),
         name: String? = randomString(),
@@ -526,82 +430,6 @@ internal object Mother {
         avg_response_time = avg_response_time,
         push_preferences = push_preferences,
         extraData = extraData,
-    )
-
-    fun randomDownstreamChannelDto(
-        cid: String = randomString(),
-        id: String = randomString(),
-        type: String = randomString(),
-        name: String? = randomString(),
-        image: String? = randomString(),
-        watcher_count: Int = randomInt(),
-        filter_tags: List<String> = emptyList(),
-        frozen: Boolean = randomBoolean(),
-        last_message_at: Date? = randomDateOrNull(),
-        created_at: Date? = randomDateOrNull(),
-        deleted_at: Date? = randomDateOrNull(),
-        updated_at: Date? = randomDateOrNull(),
-        truncated_at: Date? = randomDateOrNull(),
-        disabled: Boolean = randomBoolean(),
-        blocked: Boolean? = randomBoolean(),
-        member_count: Int = randomInt(),
-        messages: List<DownstreamMessageDto> = emptyList(),
-        members: List<ChannelMemberResponse> = emptyList(),
-        watchers: List<UserResponse> = listOf(randomUserResponse()),
-        read: List<ReadStateResponse> = emptyList(),
-        config: ChannelConfigWithInfo = randomChannelConfigWithInfo(),
-        created_by: UserResponse? = randomUserResponse(),
-        team: String = randomString(),
-        cooldown: Int = randomInt(),
-        pinned_messages: List<DownstreamMessageDto> = emptyList(),
-        own_capabilities: List<String> = emptyList(),
-        membership: ChannelMemberResponse? = null,
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamChannelDto = DownstreamChannelDto(
-        cid = cid,
-        id = id,
-        type = type,
-        name = name,
-        image = image,
-        watcher_count = watcher_count,
-        filter_tags = filter_tags,
-        frozen = frozen,
-        last_message_at = last_message_at,
-        created_at = created_at,
-        deleted_at = deleted_at,
-        updated_at = updated_at,
-        truncated_at = truncated_at,
-        disabled = disabled,
-        blocked = blocked,
-        member_count = member_count,
-        messages = messages,
-        members = members,
-        watchers = watchers,
-        read = read,
-        config = config,
-        created_by = created_by,
-        team = team,
-        cooldown = cooldown,
-        pinned_messages = pinned_messages,
-        own_capabilities = own_capabilities,
-        membership = membership,
-        extraData = extraData,
-    )
-
-    fun randomChannelInfoDto(
-        type: String = randomString(),
-        id: String = randomString(),
-        cid: String = "$type:$id",
-        memberCount: Int = randomInt(),
-        name: String? = randomString(),
-        image: String? = randomString(),
-    ): ChannelInfoDto = ChannelInfoDto(
-        cid = cid,
-        id = id,
-        member_count = memberCount,
-        name = name,
-        type = type,
-        image = image,
     )
 
     fun randomChannelConfigWithInfo(
@@ -897,18 +725,6 @@ internal object Mother {
         reviewed_at = reviewedAt,
         reviewed_by = reviewedBy,
         rejected_at = rejectedAt,
-    )
-
-    fun randomDownstreamModerationDetailsDto(
-        originalText: String = randomString(),
-        action: String = randomString(),
-        errorMsg: String = randomString(),
-        extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamModerationDetailsDto = DownstreamModerationDetailsDto(
-        original_text = originalText,
-        action = action,
-        error_msg = errorMsg,
-        extraData = extraData,
     )
 
     fun randomModerationV2Response(

@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.client.utils.message.isThreadStart
+import io.getstream.chat.android.client.utils.message.shouldDeleteRemote
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
@@ -1709,14 +1710,18 @@ public class MessageListController(
         removeOverlay()
         pauseRunningAudioRecordings(message)
 
+        // Messages that never reached the server are deleted locally and the call fails without a request.
+        val deletedLocally = message.shouldDeleteRemote(clientState.user.value?.id).isFailure
         chatClient.deleteMessage(message.id, hard)
             .enqueue(
                 onError = { error ->
-                    logger.e {
-                        "Could not delete message: ${error.message}, Hard: $hard. " +
-                            "Cause: ${error.extractCause()}. If you're using OfflinePlugin, the message " +
-                            "should be deleted in the database and it will be deleted in the backend when " +
-                            "the SDK sync its information."
+                    if (!deletedLocally) {
+                        logger.e {
+                            "Could not delete message: ${error.message}, Hard: $hard. " +
+                                "Cause: ${error.extractCause()}. If you're using OfflinePlugin, the message " +
+                                "should be deleted in the database and it will be deleted in the backend when " +
+                                "the SDK sync its information."
+                        }
                     }
                 },
             )

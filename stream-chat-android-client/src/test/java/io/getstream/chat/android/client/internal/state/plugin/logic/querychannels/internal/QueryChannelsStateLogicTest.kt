@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.utils.internal.ChannelId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -51,6 +53,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class QueryChannelsStateLogicTest {
 
@@ -391,13 +394,13 @@ internal class QueryChannelsStateLogicTest {
     }
 
     @Test
-    fun `addChannelsState deduplicates messages by id`() = runTest {
-        val sharedMsg = randomMessage(id = "shared")
+    fun `addChannelsState prefers the incoming copy of a synced message`() = runTest {
+        val sharedMsg = syncedMessage(id = "shared", text = "old")
         val channelType = "messaging"
         val channelId = "ch1"
         val cid = "$channelType:$channelId"
         val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(sharedMsg))
-        val newChannel = existingChannel.copy(messages = listOf(sharedMsg.copy(text = "updated")))
+        val newChannel = existingChannel.copy(messages = listOf(sharedMsg.copy(text = "edited")))
         whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
 
         queryChannelsStateLogic.addChannelsState(listOf(newChannel))
@@ -405,7 +408,26 @@ internal class QueryChannelsStateLogicTest {
         val captor = argumentCaptor<Map<String, Channel>>()
         verify(mutableState).setChannels(captor.capture())
         val merged = captor.firstValue[cid]!!
-        assertEquals(1, merged.messages.count { it.id == "shared" })
+        assertEquals(listOf("edited"), merged.messages.filter { it.id == "shared" }.map { it.text })
+    }
+
+    @Test
+    fun `addChannelsState keeps the existing copy of an unsynced message`() = runTest {
+        val serverMsg = syncedMessage(id = "shared", text = "old")
+        val unsyncedEdit = serverMsg.copy(text = "edited", syncStatus = SyncStatus.SYNC_NEEDED)
+        val channelType = "messaging"
+        val channelId = "ch1"
+        val cid = "$channelType:$channelId"
+        val existingChannel = randomChannel(type = channelType, id = channelId).copy(messages = listOf(unsyncedEdit))
+        val newChannel = existingChannel.copy(messages = listOf(serverMsg))
+        whenever(mutableState.rawChannels) doReturn mapOf(cid to existingChannel)
+
+        queryChannelsStateLogic.addChannelsState(listOf(newChannel))
+
+        val captor = argumentCaptor<Map<String, Channel>>()
+        verify(mutableState).setChannels(captor.capture())
+        val merged = captor.firstValue[cid]!!
+        assertEquals(listOf("edited"), merged.messages.filter { it.id == "shared" }.map { it.text })
     }
 
     @Test
@@ -438,4 +460,12 @@ internal class QueryChannelsStateLogicTest {
     }
 
     // endregion
+
+    private fun syncedMessage(id: String, text: String) = randomMessage(
+        id = id,
+        text = text,
+        type = MessageType.REGULAR,
+        createdAt = Date(),
+        syncStatus = SyncStatus.COMPLETED,
+    )
 }
