@@ -410,7 +410,8 @@ internal class GroupAwareChatEventHandlerTest {
 
         val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
 
-        assertEquals(EventHandlingResult.Add(cachedChannel), result)
+        // The stored copy carries the new message time, so the next cutoff check keeps it.
+        assertEquals(EventHandlingResult.Add(cachedChannel.copy(lastMessageAt = now)), result)
     }
 
     private fun daysAgo(days: Long): Date = Date(now.time - TimeUnit.DAYS.toMillis(days))

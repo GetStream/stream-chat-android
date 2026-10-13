@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.core.utils.date.maxOf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
@@ -110,13 +109,17 @@ internal class GroupAwareChatEventHandler(
         }
     }
 
-    private fun channelBelongsHere(channel: Channel, filter: FilterObject, latestActivity: Date? = null): Boolean =
+    private fun channelBelongsHere(channel: Channel, filter: FilterObject): Boolean =
         resolver.resolve(channel).contains(groupKey) &&
-            filter.matchesGroupedChannel(
-                group = channel.group,
-                queryTimestamp = maxOf(channel.queryTimestamp, latestActivity),
-                now = now(),
-            )
+            filter.matchesGroupedChannel(group = channel.group, queryTimestamp = channel.queryTimestamp, now = now())
+
+    /** The channel with [latestActivity] as its last message time, when that is more recent. */
+    private fun Channel.withActivity(latestActivity: Date?): Channel =
+        if (latestActivity != null && latestActivity.after(lastMessageAt ?: Date(0))) {
+            copy(lastMessageAt = latestActivity)
+        } else {
+            this
+        }
 
     /**
      * Reads `cachedChannel.membership`: the SDK maintains this field via member events and does
@@ -142,14 +145,16 @@ internal class GroupAwareChatEventHandler(
         filter: FilterObject,
         latestActivity: Date?,
     ): EventHandlingResult = when (result) {
-        is EventHandlingResult.Add ->
-            if (channelBelongsHere(result.channel, filter, latestActivity)) result else EventHandlingResult.Skip
+        // The stored copy carries the new activity, so it still matches when the list is checked again.
+        is EventHandlingResult.Add -> result.channel.withActivity(latestActivity).let { channel ->
+            if (channelBelongsHere(channel, filter)) EventHandlingResult.Add(channel) else EventHandlingResult.Skip
+        }
 
         is EventHandlingResult.WatchAndAdd ->
             // No channel data on the event; use cachedChannel if available. If we have nothing
             // to resolve against, trust the default and rely on the subsequent channel.updated
             // (which carries full channel data) to clean up.
-            if (cachedChannel != null && !channelBelongsHere(cachedChannel, filter, latestActivity)) {
+            if (cachedChannel != null && !channelBelongsHere(cachedChannel.withActivity(latestActivity), filter)) {
                 EventHandlingResult.Skip
             } else {
                 result
