@@ -26,6 +26,7 @@ import io.getstream.chat.android.randomModeration
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
@@ -179,7 +180,7 @@ internal class DeleteMessageListenerStateTest {
 
     @Test
     fun `onMessageDeletePrecondition when message not found locally should return Success`() = runTest {
-        whenever(logicRegistry.channelFromMessageId(any())) doReturn null
+        whenever(logicRegistry.getMessageById(any())) doReturn null
 
         val result = deleteMessageListenerState.onMessageDeletePrecondition("unknown-message-id")
 
@@ -199,11 +200,10 @@ internal class DeleteMessageListenerStateTest {
             )
 
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
-            whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
             whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
             whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
             whenever(logicRegistry.threadFromMessage(any())) doReturn null
-            whenever(channelLogic.getMessage(any())) doReturn testMessage
+            whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
             val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
@@ -221,11 +221,10 @@ internal class DeleteMessageListenerStateTest {
             syncStatus = SyncStatus.COMPLETED,
         )
 
-        whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
         whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
         whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         whenever(logicRegistry.threadFromMessage(any())) doReturn null
-        whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
         val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
@@ -243,11 +242,10 @@ internal class DeleteMessageListenerStateTest {
                 syncStatus = SyncStatus.COMPLETED,
             )
 
-            whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
             whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
             whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
             whenever(logicRegistry.threadFromMessage(any())) doReturn null
-            whenever(channelLogic.getMessage(any())) doReturn testMessage
+            whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
             val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
@@ -265,8 +263,7 @@ internal class DeleteMessageListenerStateTest {
                 syncStatus = SyncStatus.SYNC_NEEDED,
             )
 
-            whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
-            whenever(channelLogic.getMessage(any())) doReturn testMessage
+            whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
             val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
@@ -283,16 +280,39 @@ internal class DeleteMessageListenerStateTest {
                 syncStatus = SyncStatus.FAILED_PERMANENTLY,
             )
 
-            whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
             whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
             whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
             whenever(logicRegistry.threadFromMessage(any())) doReturn null
-            whenever(channelLogic.getMessage(any())) doReturn testMessage
+            whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
             val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
             assertTrue(result is Result.Failure)
             verify(channelLogic).deleteMessage(argThat { id == testMessage.id })
+        }
+
+    @Test
+    fun `onMessageDeletePrecondition when thread-only reply is local-only should delete it from the thread`() =
+        runTest {
+            val threadLogic: ThreadLogic = mock()
+            val testMessage = randomMessage(
+                id = "msg-1",
+                cid = randomCID(),
+                parentId = "parent-1",
+                showInChannel = false,
+                type = MessageType.REGULAR,
+                syncStatus = SyncStatus.FAILED_PERMANENTLY,
+            )
+
+            whenever(logicRegistry.getMessageById(any())) doReturn testMessage
+            whenever(logicRegistry.channelFromMessage(any())) doReturn null
+            whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
+
+            val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
+
+            assertTrue(result is Result.Failure)
+            verify(threadLogic).deleteMessage(argThat { id == testMessage.id })
+            verify(channelLogic, never()).deleteMessage(any())
         }
 
     @Test
@@ -304,8 +324,7 @@ internal class DeleteMessageListenerStateTest {
             syncStatus = SyncStatus.COMPLETED,
         )
 
-        whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
-        whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
         val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
@@ -315,7 +334,7 @@ internal class DeleteMessageListenerStateTest {
     @Test
     fun `when a message is deleted only locally, the channel lists should be refreshed`() = runTest {
         val testMessage = randomMessage(cid = randomCID(), type = MessageType.ERROR)
-        whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
         deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
@@ -330,7 +349,7 @@ internal class DeleteMessageListenerStateTest {
                 type = MessageType.REGULAR,
                 syncStatus = SyncStatus.COMPLETED,
             )
-            whenever(channelLogic.getMessage(any())) doReturn testMessage
+            whenever(logicRegistry.getMessageById(any())) doReturn testMessage
 
             deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 

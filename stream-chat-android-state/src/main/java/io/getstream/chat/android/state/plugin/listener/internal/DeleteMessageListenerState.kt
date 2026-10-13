@@ -43,7 +43,7 @@ internal class DeleteMessageListenerState(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        val localMessage = logic.channelFromMessageId(messageId)?.getMessage(messageId)
+        val localMessage = logic.getMessageById(messageId)
         val currentUserId = clientState.user.value?.id
         // We don't have the message locally, we must attempt to delete the message remotely
         if (localMessage == null) {
