@@ -17,11 +17,8 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.network.models.GroupedQueryChannelsRequest
-import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
 import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
 import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
@@ -29,30 +26,13 @@ import retrofit2.http.Body
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 /**
  * Channel endpoints that stay on v1. Sending an event returns a hand-written v1 model. The v2 member update can only
- * change the current user's membership, while this one takes any user. Grouped queries are enabled only for some apps,
- * so their v2 response can't be verified yet.
+ * change the current user's membership, while this one takes any user.
  */
 @AuthenticatedApi
 internal interface ChannelV1Api {
-
-    /**
-     * Queries channels grouped into server-defined groups.
-     *
-     * Supports per-group request options (limit, next/prev cursors) and returns per-group
-     * pagination cursors. Pagination is only allowed when exactly one group is requested.
-     *
-     * @param connectionId The current connection ID.
-     * @param body The request body containing the optional per-group configuration map.
-     */
-    @POST("/channels/grouped")
-    fun queryGroupedChannels(
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
-        @Body body: GroupedQueryChannelsRequest,
-    ): RetrofitCall<GroupedQueryChannelsResponse>
 
     @PATCH("/channels/{type}/{id}/member/{user_id}")
     fun partialUpdateMember(
