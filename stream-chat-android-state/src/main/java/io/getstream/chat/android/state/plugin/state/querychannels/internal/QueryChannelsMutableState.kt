@@ -254,10 +254,12 @@ internal class QueryChannelsMutableState(
     /**
      * Store the configuration that produced the current page of grouped results. Read back by
      * [io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel] for paginated
-     * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery.
+     * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery. The
+     * group's filter becomes this state's [filter], which event handling checks channels against.
      */
     fun setGroupedQueryConfig(config: GroupedQueryConfig) {
         _groupedQueryConfig?.value = config
+        _filter.value = config.filter ?: Filters.neutral()
     }
 
     /**

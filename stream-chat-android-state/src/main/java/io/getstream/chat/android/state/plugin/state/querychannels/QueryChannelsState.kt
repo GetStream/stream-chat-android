@@ -34,10 +34,9 @@ public interface QueryChannelsState {
     /**
      * The filter associated with this query channels state.
      *
-     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is a
-     * placeholder ([io.getstream.chat.android.models.Filters.neutral]) — grouped lists are
-     * partitioned server-side and do not have a client-side filter. Do not rely on this value
-     * for grouped states.
+     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is the
+     * group's [io.getstream.chat.android.models.GroupedChannelsGroupQuery.filter] from the latest
+     * request, or [io.getstream.chat.android.models.Filters.neutral] when the group has none.
      */
     public val filter: FilterObject
 

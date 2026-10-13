@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
+import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.models.Channel
@@ -28,6 +29,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,10 +38,14 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 internal class GroupAwareChatEventHandlerTest {
 
     private val defaultResolver = DefaultChannelGroupResolver()
+    private val now = Date(1_800_000_000_000)
+    private val cutoff14Days = Filters.greaterThanEquals("query_timestamp", "now-14d")
 
     @Test
     fun `Given channel belongs to this group and is not cached When ChannelUpdatedEvent arrives Should add`() {
@@ -339,6 +345,76 @@ internal class GroupAwareChatEventHandlerTest {
         assertEquals(EventHandlingResult.Add(channel), result)
     }
 
+    @Test
+    fun `Given a filtered group and a channel past the cutoff in the list When ChannelUpdatedEvent arrives Should remove`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            extraData = mapOf("group" to "expired"),
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(15),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "expired",
+            cachedChannels = mapOf(channel.cid to cachedChannel),
+            currentUser = currentUser,
+        )
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Remove(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a filtered group and a channel within the cutoff When ChannelUpdatedEvent arrives Should add`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            extraData = mapOf("group" to "expired"),
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(3),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(groupKey = "expired", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = randomChannelUpdatedEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Add(channel), result)
+    }
+
+    @Test
+    fun `Given the all group filter excludes a group When NotificationMessageNewEvent arrives for it Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "bee"), lastMessageAt = daysAgo(0))
+        val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap())
+        val event = randomNotificationMessageNewEvent(cid = channel.cid, channel = channel)
+
+        val result = handler.handleChatEvent(event, Filters.ne("group", "bee"), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a cached channel past the cutoff When a new message arrives Should add it back`() {
+        val cachedChannel = randomChannel(
+            extraData = mapOf("group" to "expired"),
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+        )
+        val handler = handlerFor(groupKey = "expired", cachedChannels = emptyMap())
+        val event = randomNewMessageEvent(
+            cid = cachedChannel.cid,
+            createdAt = now,
+            message = randomMessage(type = "regular", createdAt = now),
+        )
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Add(cachedChannel), result)
+    }
+
+    private fun daysAgo(days: Long): Date = Date(now.time - TimeUnit.DAYS.toMillis(days))
+
     private fun handlerFor(
         groupKey: String,
         cachedChannels: Map<String, Channel>,
@@ -353,6 +429,7 @@ internal class GroupAwareChatEventHandlerTest {
             resolver = resolver,
             channels = MutableStateFlow(cachedChannels),
             clientState = clientState,
+            now = { now },
         )
     }
 }

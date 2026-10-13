@@ -367,6 +367,20 @@ internal class QueryChannelsMutableStateTest {
     }
 
     @Test
+    fun `setGroupedQueryConfig makes the group filter the state filter`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+        val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+
+        groupedState.setGroupedQueryConfig(
+            GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = false, filter = filter),
+        )
+        assertEquals(filter, groupedState.filter)
+
+        groupedState.setGroupedQueryConfig(GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = false))
+        assertEquals(Filters.neutral(), groupedState.filter)
+    }
+
+    @Test
     fun `setCids updates cids on the in-memory spec`() {
         val cids = setOf(randomCID(), randomCID())
         state.setCids(cids)
