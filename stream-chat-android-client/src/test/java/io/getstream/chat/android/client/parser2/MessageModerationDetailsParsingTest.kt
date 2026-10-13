@@ -16,46 +16,14 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.parser2.direct.MessageModerationDetailsAdapter
 import io.getstream.chat.android.client.parser2.testdata.MessageModerationDetailsTestData
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
-import io.getstream.chat.android.models.NoOpUserTransformer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class MessageModerationDetailsParsingTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
-
-    private val domainMapping = DomainMapping(
-        currentUserIdProvider = { "" },
-        channelTransformer = NoOpChannelTransformer,
-        messageTransformer = NoOpMessageTransformer,
-        userTransformer = NoOpUserTransformer,
-    )
-
     private val adapter = MessageModerationDetailsAdapter()
-
-    // region DTO path (JSON → DownstreamModerationDetailsDto → MessageModerationDetails)
-
-    @Test
-    fun `DTO path - deserializes all fields`() {
-        val dto = parser.fromJson(MessageModerationDetailsTestData.jsonAllFields, DownstreamModerationDetailsDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(MessageModerationDetailsTestData.expectedAllFields, domain)
-    }
-
-    @Test
-    fun `DTO path - deserializes with optional fields missing`() {
-        val dto = parser.fromJson(MessageModerationDetailsTestData.jsonOptionalFieldsMissing, DownstreamModerationDetailsDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(MessageModerationDetailsTestData.expectedOptionalFieldsMissing, domain)
-    }
-
-    // endregion
 
     // region Direct path (JSON → MessageModerationDetails via MessageModerationDetailsAdapter)
 
@@ -74,13 +42,6 @@ internal class MessageModerationDetailsParsingTest {
     // endregion
 
     // region Explicit null values
-
-    @Test
-    fun `DTO path - deserializes with explicit null values`() {
-        val dto = parser.fromJson(MessageModerationDetailsTestData.jsonWithExplicitNulls, DownstreamModerationDetailsDto::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(MessageModerationDetailsTestData.expectedWithExplicitNulls, domain)
-    }
 
     @Test
     fun `Direct path - deserializes with explicit null values`() {

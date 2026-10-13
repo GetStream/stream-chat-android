@@ -983,12 +983,12 @@ internal object MessageTestData {
     // region Explicit-null collections (defaults must apply identically on both paths)
 
     /**
-     * Only the genuinely-nullable collection fields are set to explicit JSON null:
-     * `reaction_counts`, `reaction_scores`, and `reaction_groups` (all `T?` in the DTO).
-     * Both paths must coerce them to empty defaults.
+     * Only the collection fields both paths accept as null are set to explicit JSON null:
+     * `reaction_counts`, `reaction_scores`, and `reaction_groups`. Both paths must coerce them
+     * to empty defaults.
      *
-     * Non-null DTO fields like `i18n` and `thread_participants` reject explicit null in
-     * the DTO path; the throw cases below cover them separately.
+     * The direct path rejects an explicit null for fields like `i18n` and `thread_participants`;
+     * the throw cases below cover them separately.
      */
     @Language("JSON")
     val jsonExplicitNullCollections = """{
@@ -1040,9 +1040,8 @@ internal object MessageTestData {
     )
 
     /**
-     * `i18n` is non-nullable in DownstreamMessageDto (defaults to `emptyMap()`). The DTO path
-     * throws on explicit JSON null; MessageAdapter must do the same. Field-absent is a separate
-     * case (covered elsewhere) where both paths fall back to the empty default.
+     * `i18n` explicitly null, which MessageAdapter rejects. Field-absent is a separate case (covered
+     * elsewhere) that falls back to the empty default.
      */
     @Language("JSON")
     val jsonExplicitNullI18n = """{
@@ -1065,8 +1064,7 @@ internal object MessageTestData {
     }"""
 
     /**
-     * `thread_participants` is non-nullable in DownstreamMessageDto (defaults to `emptyList()`).
-     * Same explicit-null-rejection as `i18n` above.
+     * `thread_participants` explicitly null. Same explicit-null rejection as `i18n` above.
      */
     @Language("JSON")
     val jsonExplicitNullThreadParticipants = """{
@@ -1089,8 +1087,7 @@ internal object MessageTestData {
     }"""
 
     /**
-     * `mentioned_groups` is non-nullable in DownstreamMessageDto (defaults to `emptyList()`).
-     * Same explicit-null-rejection as `thread_participants` above.
+     * `mentioned_groups` explicitly null. Same explicit-null rejection as `thread_participants` above.
      */
     @Language("JSON")
     val jsonExplicitNullMentionedGroups = """{
@@ -1113,8 +1110,7 @@ internal object MessageTestData {
     }"""
 
     /**
-     * `mentioned_roles` is non-nullable in DownstreamMessageDto (defaults to `emptyList()`).
-     * Same explicit-null-rejection as `mentioned_groups` above.
+     * `mentioned_roles` explicitly null. Same explicit-null rejection as `mentioned_groups` above.
      */
     @Language("JSON")
     val jsonExplicitNullMentionedRoles = """{
