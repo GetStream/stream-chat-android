@@ -379,7 +379,7 @@ internal class EventHandlerSequential(
         var me = clientState.user.value
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
-        var groupedUnreadChannels = mutableGlobalState.groupedUnreadChannels.value
+        var groupedUnreadChannels = mutableGlobalState.rawGroupedUnreadChannels
         var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
         var blockedUserIds = mutableGlobalState.blockedUserIds.value
 

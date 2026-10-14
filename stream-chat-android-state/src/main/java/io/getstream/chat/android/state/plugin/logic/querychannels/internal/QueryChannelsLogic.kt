@@ -28,11 +28,13 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.event.handler.grouped.internal.isUnreadInGroupFor
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
@@ -349,6 +351,7 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setNextCursor(group.next)
             queryChannelsStateLogic.setEndOfChannels(group.next == null)
             queryChannelsStateLogic.addChannelsState(channels)
+            updateGroupedUnreadBase(group, isFirstPage)
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
             queryChannelsStateLogic.setRecoveryNeeded(false)
@@ -360,6 +363,21 @@ internal class QueryChannelsLogic(
             queryChannelsDatabaseLogic.insertChannelConfigs(channelConfigs)
             queryChannelsDatabaseLogic.storeStateForChannels(group.channels.toSet())
         }
+    }
+
+    /**
+     * A filtered group's badge is the unread channels not loaded yet plus the loaded ones that are unread now.
+     * The server's count covers both, so the unread channels of each loaded page are taken out of it.
+     */
+    private fun updateGroupedUnreadBase(group: GroupedChannelsGroup, isFirstPage: Boolean) {
+        val userId = client.getCurrentUser()?.id
+        if (queryChannelsStateLogic.getFilter() == Filters.neutral() || userId == null) {
+            queryChannelsStateLogic.setGroupedUnreadBase(null)
+            return
+        }
+        val pageUnread = group.channels.count { it.isUnreadInGroupFor(userId) }
+        val notLoaded = if (isFirstPage) group.unreadChannels else queryChannelsStateLogic.getGroupedUnreadBase()
+        queryChannelsStateLogic.setGroupedUnreadBase(notLoaded?.let { (it - pageUnread).coerceAtLeast(0) })
     }
 
     private suspend fun Channel.withLocalOnlyMessages(): Channel {

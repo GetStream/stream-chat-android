@@ -184,6 +184,13 @@ internal class QueryChannelsMutableState(
 
     private var _nextCursor: MutableStateFlow<String?>? = MutableStateFlow(null)
     private var _groupedQueryConfig: MutableStateFlow<GroupedQueryConfig?>? = MutableStateFlow(null)
+    private val _groupedUnreadBase = MutableStateFlow<Int?>(null)
+
+    /**
+     * For a filtered group, the unread channels the server counted that are not loaded in [channels]. `null` when
+     * the group has no filter, so its badge keeps the count the server sends with events.
+     */
+    val groupedUnreadBase: StateFlow<Int?> = _groupedUnreadBase
 
     override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
         set(value) {
@@ -306,11 +313,17 @@ internal class QueryChannelsMutableState(
         _groupedQueryConfig?.value = config
         val filter = config.filter ?: Filters.neutral()
         _filter.value = filter
+        if (filter == Filters.neutral()) _groupedUnreadBase.value = null
         _sort.value = groupedLocalSort(config.sort, DEFAULT_GROUPED_SORT)
         // The 2-arg copy drops cids; keep them, since a paginated result appends to them.
         val cids = _querySpec.cids
         _querySpec = _querySpec.copy(filter = filter, querySort = config.sort ?: DEFAULT_GROUPED_SORT)
             .also { it.cids = cids }
+    }
+
+    /** Sets [groupedUnreadBase]. */
+    fun setGroupedUnreadBase(base: Int?) {
+        _groupedUnreadBase.value = base
     }
 
     /**

@@ -109,7 +109,7 @@ internal class QueryGroupedChannelsListenerState(
         val isFirstPageRequest = groups.orEmpty().values.all { it.isFirstPage() }
         if (isFirstPageRequest) {
             val next = groupedUnreadChannelsUpdater.calculateUpdatedCounts(
-                current = globalState.groupedUnreadChannels.value,
+                current = globalState.rawGroupedUnreadChannels,
                 result = result.value,
             )
             globalState.setGroupedUnreadChannels(next)

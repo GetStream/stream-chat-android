@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.event.handler.grouped.internal
 
+import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.AndFilterObject
@@ -50,6 +51,13 @@ private val Channel.touchedAt: Date?
         is String -> dateFormatter.parse(value)
         else -> null
     }
+
+/**
+ * Whether the channel counts towards a grouped unread badge for [userId]: it is not hidden and has unread messages,
+ * as the backend counts it.
+ */
+internal fun Channel.isUnreadInGroupFor(userId: String): Boolean =
+    hidden != true && currentUserUnreadCount(userId) > 0
 
 private val queryTimestampDescSort = QuerySortByField.descByName<Channel>(QUERY_TIMESTAMP_FIELD_NAME)
 

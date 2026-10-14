@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.isUnreadInGroupFor
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
@@ -44,8 +45,11 @@ import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryT
 import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsStateLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
@@ -76,6 +80,25 @@ internal class LogicRegistry internal constructor(
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
     /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
+    /**
+     * Keeps the badge of a filtered group in [MutableGlobalState]: the unread channels not loaded yet plus the
+     * shown channels that are unread now, so it follows reads, new messages and cutoffs between queries.
+     */
+    private fun publishFilteredGroupUnreadCount(groupKey: String, state: QueryChannelsMutableState) {
+        coroutineScope.launch {
+            combine(state.groupedUnreadBase, state.channels) { base, channels ->
+                val userId = clientState.user.value?.id
+                if (base == null || userId == null) {
+                    null
+                } else {
+                    base + channels.orEmpty().count { it.isUnreadInGroupFor(userId) }
+                }
+            }
+                .distinctUntilChanged()
+                .collect { count -> mutableGlobalState.setFilteredGroupedUnreadChannels(groupKey, count) }
+        }
+    }
+
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
         return queryChannels.getOrPut(identifier) {
             val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
@@ -88,6 +111,9 @@ internal class LogicRegistry internal constructor(
                     groupKey = identifier.groupKey,
                     clientState = clientState,
                 )
+            }
+            if (identifier is QueryChannelsIdentifier.Grouped) {
+                publishFilteredGroupUnreadCount(identifier.groupKey, mutableState)
             }
             val queryChannelsStateLogic = QueryChannelsStateLogic(
                 mutableState = mutableState,

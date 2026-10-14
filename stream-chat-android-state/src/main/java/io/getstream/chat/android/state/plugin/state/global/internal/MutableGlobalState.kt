@@ -94,8 +94,28 @@ internal class MutableGlobalState(
         _channelUnreadCount?.value = channelUnreadCount
     }
 
+    /**
+     * The per-group counts the server sends with grouped queries and events, before the counts of filtered groups
+     * replace them. Code that updates the counts from the server reads and writes this map.
+     */
+    var rawGroupedUnreadChannels: Map<String, Int> = emptyMap()
+        private set
+    private var filteredGroupedUnreadChannels: Map<String, Int> = emptyMap()
+
+    @Synchronized
     fun setGroupedUnreadChannels(groupedUnreadChannels: Map<String, Int>) {
-        _groupedUnreadChannels?.value = groupedUnreadChannels
+        rawGroupedUnreadChannels = groupedUnreadChannels
+        _groupedUnreadChannels?.value = rawGroupedUnreadChannels + filteredGroupedUnreadChannels
+    }
+
+    /** Sets the badge count of a filtered group, which replaces the server's count for it. `null` removes it. */
+    @Synchronized
+    fun setFilteredGroupedUnreadChannels(groupKey: String, count: Int?) {
+        filteredGroupedUnreadChannels = when (count) {
+            null -> filteredGroupedUnreadChannels - groupKey
+            else -> filteredGroupedUnreadChannels + (groupKey to count)
+        }
+        _groupedUnreadChannels?.value = rawGroupedUnreadChannels + filteredGroupedUnreadChannels
     }
 
     fun setUnreadThreadsCount(unreadThreadsCount: Int) {
