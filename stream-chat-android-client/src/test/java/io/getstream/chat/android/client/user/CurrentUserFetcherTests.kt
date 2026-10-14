@@ -18,17 +18,24 @@ package io.getstream.chat.android.client.user
 
 import io.getstream.chat.android.client.Mother.randomConnectedEvent
 import io.getstream.chat.android.client.api.ChatApiConfig
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.ParserFactory
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.StreamWebSocket
+import io.getstream.chat.android.client.socket.V2SocketProtocol
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -68,6 +75,16 @@ internal class CurrentUserFetcherTests {
     lateinit var webSocketListener: WebSocketListener
     lateinit var streamWebSocket: StreamWebSocket
     private val ws: WebSocket = mock()
+    private val config = ChatApiConfig(
+        apiKey = randomString(),
+        httpUrl = randomString(),
+        cdnHttpUrl = randomString(),
+        wssUrl = randomString(),
+        warmUp = randomBoolean(),
+        loggerConfig = mock(),
+        debugRequests = randomBoolean(),
+        notificationConfig = NotificationConfig(),
+    ).apply { isAnonymous = randomBoolean() }
 
     @BeforeEach
     fun before() {
@@ -82,16 +99,7 @@ internal class CurrentUserFetcherTests {
         fetcher = CurrentUserFetcher(
             networkStateProvider = networkStateProvider,
             socketFactory = socketFactory,
-            ChatApiConfig(
-                apiKey = randomString(),
-                httpUrl = randomString(),
-                cdnHttpUrl = randomString(),
-                wssUrl = randomString(),
-                warmUp = randomBoolean(),
-                loggerConfig = mock(),
-                debugRequests = randomBoolean(),
-                notificationConfig = NotificationConfig(),
-            ).apply { isAnonymous = randomBoolean() },
+            config,
         )
     }
 
@@ -195,5 +203,43 @@ internal class CurrentUserFetcherTests {
         /* Then */
         result.isSuccess `should be equal to` true
         result.getOrThrow() `should be equal to` connectedEvent.me
+    }
+
+    @Test
+    fun `When the v2 socket connects, the own user is fetched`() = runTest {
+        /* Given */
+        var listener: WebSocketListener? = null
+        val v2Socket = StreamWebSocket(
+            ParserFactory.createMoshiChatParser(),
+            V2SocketProtocol(
+                authFrame = "{}",
+                eventParser = V2EventParser(
+                    DomainMapping({ "filip" }, NoOpChannelTransformer, NoOpMessageTransformer, NoOpUserTransformer, true),
+                ),
+            ),
+        ) {
+            listener = it
+            ws
+        }
+        val socketFactory: SocketFactory = mock()
+        whenever(socketFactory.createSocket(any())) doReturn v2Socket
+        val v2Fetcher = CurrentUserFetcher(networkStateProvider, socketFactory, config)
+        whenever(networkStateProvider.isConnected()) doReturn true
+
+        /* When */
+        val localScope = testCoroutines.scope + Job()
+        val deferredResult = localScope.async { v2Fetcher.fetch(randomUser()) }
+        testCoroutines.scope.advanceTimeBy(2_000)
+        listener!!.onMessage(
+            ws,
+            """{"type":"connection.ok","connection_id":"conn-1","created_at":1791976405614650759,"me":{"id":"filip",
+            "role":"user","language":"en","banned":false,"online":true,"invisible":false,"total_unread_count":0,
+            "unread_channels":0,"unread_count":0,"unread_threads":0,"created_at":1634853490403855000,
+            "updated_at":1791791284528654000,"custom":{}}}""",
+        )
+        testCoroutines.scope.advanceTimeBy(2_000)
+
+        /* Then */
+        deferredResult.await().getOrNull()?.id `should be equal to` "filip"
     }
 }

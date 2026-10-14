@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api2.mapping.USER_DEVICES_CUSTOM_KEY
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.User
@@ -29,20 +30,85 @@ import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+/**
+ * @param v2EventParser Connects through the v2 endpoint and parses its events with it, or null for v1.
+ */
 internal class SocketFactory(
     private val parser: ChatParser,
     private val tokenManager: TokenManager,
     private val headersUtil: HeadersUtil,
     private val httpClient: OkHttpClient = OkHttpClient(),
+    private val v2EventParser: V2EventParser? = null,
 ) {
     private val logger by taggedLogger("Chat:SocketFactory")
 
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(connectionConf: ConnectionConf): StreamWebSocket {
+        if (v2EventParser != null) return createV2Socket(connectionConf, v2EventParser)
         val request = buildRequest(connectionConf)
         logger.i { "new web socket: ${request.url}" }
         return StreamWebSocket(parser) { httpClient.newWebSocket(request, it) }
     }
+
+    /**
+     * The v2 socket authenticates with a frame sent once open, which must arrive within the server's handshake
+     * deadline, so the token is resolved before the upgrade. The request carries no Authorization header: the server
+     * prefers it over the frame's token.
+     */
+    private fun createV2Socket(connectionConf: ConnectionConf, eventParser: V2EventParser): StreamWebSocket {
+        val authType = when (connectionConf) {
+            is ConnectionConf.AnonymousConnectionConf -> "anonymous"
+            is ConnectionConf.UserConnectionConf -> "jwt"
+        }
+        val request = Request.Builder()
+            .url(
+                "${connectionConf.endpoint}api/v2/connect?api_key=${connectionConf.apiKey}" +
+                    "&stream-auth-type=$authType" +
+                    "&$X_STREAM_CLIENT=${encodedSdkTrackingHeaders()}",
+            )
+            .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
+            .build()
+        logger.i { "new v2 web socket: ${request.url}" }
+        val protocol = V2SocketProtocol(buildAuthFrame(connectionConf), eventParser)
+        return StreamWebSocket(parser, protocol) { httpClient.newWebSocket(request, it) }
+    }
+
+    private fun encodedSdkTrackingHeaders(): String =
+        URLEncoder.encode(headersUtil.buildSdkTrackingHeaders(), StandardCharsets.UTF_8.name())
+
+    private fun buildAuthFrame(connectionConf: ConnectionConf): String {
+        val token = when (connectionConf) {
+            // iOS sends this placeholder until anonymous connections with an empty token are deployed everywhere.
+            is ConnectionConf.AnonymousConnectionConf -> ANONYMOUS_TOKEN
+            is ConnectionConf.UserConnectionConf -> {
+                tokenManager.ensureTokenLoaded()
+                tokenManager.getToken()
+            }
+        }
+        val frame = mapOf(
+            "token" to token,
+            "user_details" to connectionConf.reduceV2UserDetails(),
+            "products" to listOf("chat"),
+        )
+        return V2SocketProtocol.frameAdapter.toJson(frame)
+    }
+
+    /**
+     * The user details the v2 connect reads, with custom data nested under `custom`; it ignores any other field.
+     * Reconnections send the id only, as on v1.
+     */
+    private fun ConnectionConf.reduceV2UserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
+        .apply {
+            if (!isReconnection) {
+                if (user.name.isNotBlank()) put("name", user.name)
+                if (user.image.isNotBlank()) put("image", user.image)
+                if (user.language.isNotBlank()) put("language", user.language)
+                user.invisible?.also { put("invisible", it) }
+                user.privacySettings?.also { put("privacy_settings", it.reducePrivacySettings()) }
+                val custom = user.extraData - USER_DEVICES_CUSTOM_KEY
+                if (custom.isNotEmpty()) put("custom", custom)
+            }
+        }
 
     @Throws(UnsupportedEncodingException::class)
     private fun buildRequest(connectionConf: ConnectionConf): Request =
@@ -57,8 +123,7 @@ internal class SocketFactory(
         var json = buildUserDetailJson(connectionConf)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val sdkTrackingHeaders =
-                URLEncoder.encode(headersUtil.buildSdkTrackingHeaders(), StandardCharsets.UTF_8.name())
+            val sdkTrackingHeaders = encodedSdkTrackingHeaders()
             val baseWsUrl = "${connectionConf.endpoint}connect?" +
                 "json=$json" +
                 "&api_key=${connectionConf.apiKey}" +
@@ -149,5 +214,6 @@ internal class SocketFactory(
 
     companion object {
         private const val X_STREAM_CLIENT = "X-Stream-Client"
+        private const val ANONYMOUS_TOKEN = "anon"
     }
 }

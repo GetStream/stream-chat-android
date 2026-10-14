@@ -37,8 +37,12 @@ private const val EVENTS_BUFFER_SIZE = 100
 private const val CLOSE_SOCKET_CODE = 1000
 private const val CLOSE_SOCKET_REASON = "Connection close by client"
 
+/**
+ * @param v2 What the v2 socket does differently, or null for the v1 socket.
+ */
 internal class StreamWebSocket(
     private val parser: ChatParser,
+    private val v2: V2SocketProtocol? = null,
     socketCreator: (WebSocketListener) -> WebSocket,
 ) {
     private val logger by taggedLogger("Chat:StreamWebSocket")
@@ -48,9 +52,17 @@ internal class StreamWebSocket(
     private var connected = false
 
     private val webSocket = socketCreator(object : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            v2?.let { webSocket.send(it.authFrame) }
+        }
+
         override fun onMessage(webSocket: WebSocket, text: String) {
             StreamLog.v("Chat:Events") { "[handleEvent] event: `$text`" }
-            parseMessage(text)?.let(eventFlow::tryEmit)
+            val event = when (v2) {
+                null -> parseMessage(text)
+                else -> parseV2Message(text, v2)
+            }
+            event?.let(eventFlow::tryEmit)
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
@@ -79,6 +91,10 @@ internal class StreamWebSocket(
     })
 
     fun send(chatEvent: ChatEvent): Boolean = webSocket.send(parser.toJson(chatEvent))
+
+    /** Keeps the connection [connectedEvent] established alive: v1 echoes the event, v2 sends a health check. */
+    fun sendKeepAlive(connectedEvent: ConnectedEvent): Boolean =
+        v2?.let { webSocket.send(it.keepAliveFrame(connectedEvent)) } ?: send(connectedEvent)
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
     fun listen(): Flow<StreamWebSocketEvent> = eventFlow.asSharedFlow()
 
@@ -95,6 +111,18 @@ internal class StreamWebSocket(
             }
             is Result.Failure -> parseFailure(text, result.value)
         }
+
+    /** Null for a frame the v2 parser ignores, or one dropped as [parseFailure] describes. */
+    @Suppress("TooGenericExceptionCaught")
+    private fun parseV2Message(text: String, v2: V2SocketProtocol): StreamWebSocketEvent? = try {
+        v2.eventParser.parse(text)?.let { event ->
+            if (event is ConnectedEvent) connected = true
+            StreamWebSocketEvent.Message(event)
+        }
+    } catch (expected: Throwable) {
+        // Throwable, as v1's parser catches: an error escaping here would reach OkHttp's reader thread.
+        parseFailure(text, Error.ThrowableError("Failed to parse the v2 event", expected))
+    }
 
     private fun parseFailure(text: String, parseChatError: Error): StreamWebSocketEvent? {
         val errorResponse = when (val chatErrorResult = parser.fromJsonOrError(text, SocketErrorMessage::class.java)) {
