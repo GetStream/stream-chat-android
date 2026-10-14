@@ -1746,22 +1746,21 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateMemberInput")
     fun testPartialUpdateMember(call: RetrofitCall<UpdateMemberPartialResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelV1Api>()
-        whenever(api.partialUpdateMember(any(), any(), any(), any())).doReturn(call)
+        val api = mock<ChannelApi>()
+        whenever(api.partialUpdateMember(any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withChannelV1Api(api)
+            .withChannelApi(api)
             .get()
         // when
         val channelType = randomString()
         val channelId = randomString()
-        val userId = randomString()
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
-        val result = sut.partialUpdateMember(channelType, channelId, userId, set, unset).await()
+        val result = sut.partialUpdateMember(channelType, channelId, set, unset).await()
         // then
         val expectedBody = UpdateMemberPartialRequest(set = set, unset = unset)
         result `should be instance of` expected
-        verify(api, times(1)).partialUpdateMember(channelType, channelId, userId, expectedBody)
+        verify(api, times(1)).partialUpdateMember(channelType, channelId, expectedBody)
     }
 
     @Test
@@ -1779,31 +1778,42 @@ internal class MoshiChatApiTest {
     }
 
     @Test
-    fun `A response from an endpoint still on v1 keeps the declared member fields its custom data carries`() = runTest {
+    fun `A v2 member response hides a custom value stored under a declared member field`() = runTest {
         val member = Mother.randomChannelMemberResponse().copy(custom = mapOf("is_moderator" to true), isModerator = false)
         val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = member)
-        val api = mock<ChannelV1Api>()
-        whenever(api.partialUpdateMember(any(), any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
-        val sut = Fixture().withChannelV1Api(api).get()
+        val api = mock<ChannelApi>()
+        whenever(api.partialUpdateMember(any(), any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
 
-        val result = sut.partialUpdateMember(randomString(), randomString(), randomString(), emptyMap(), emptyList())
-            .await()
+        val result = sut.partialUpdateMember(randomString(), randomString(), emptyMap(), emptyList()).await()
 
-        (result as Result.Success).value.extraData["is_moderator"] shouldBeEqualTo true
+        (result as Result.Success).value.extraData["is_moderator"] shouldBeEqualTo false
+    }
+
+    @Test
+    fun `A response from an endpoint still on v1 keeps the declared user fields its custom data carries`() = runTest {
+        val user = Mother.randomUserResponse().copy(custom = mapOf("deleted_at" to "stored"), deletedAt = null)
+        val response = FlagResponse(flag = Mother.randomDownstreamFlagDto(user = user))
+        val api = mock<ModerationV1Api>()
+        whenever(api.flag(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture().withModerationV1Api(api).get()
+
+        val result = sut.flagUser(randomString(), null, emptyMap()).await()
+
+        (result as Result.Success).value.user.extraData["deleted_at"] shouldBeEqualTo "stored"
     }
 
     @Test
     fun `partialUpdateMember reports a missing member as an error rather than crashing`() = runTest {
         // given
-        val api = mock<ChannelV1Api>()
+        val api = mock<ChannelApi>()
         val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = null)
-        whenever(api.partialUpdateMember(any(), any(), any(), any()))
+        whenever(api.partialUpdateMember(any(), any(), any()))
             .doReturn(RetroSuccess(response).toRetrofitCall())
-        val sut = Fixture().withChannelV1Api(api).get()
+        val sut = Fixture().withChannelApi(api).get()
 
         // when
-        val result = sut.partialUpdateMember(randomString(), randomString(), randomString(), emptyMap(), emptyList())
-            .await()
+        val result = sut.partialUpdateMember(randomString(), randomString(), emptyMap(), emptyList()).await()
 
         // then
         // Asserting the error, not just Result.Failure: a throw inside the mapping also lands as a

@@ -40,6 +40,8 @@ import io.getstream.chat.android.network.models.UpdateChannelPartialRequest
 import io.getstream.chat.android.network.models.UpdateChannelPartialResponse
 import io.getstream.chat.android.network.models.UpdateChannelRequest
 import io.getstream.chat.android.network.models.UpdateChannelResponse
+import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
+import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -99,6 +101,13 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Body body: UpdateChannelPartialRequest,
     ): RetrofitCall<UpdateChannelPartialResponse>
+
+    @PATCH("/api/v2/chat/channels/{type}/{id}/member")
+    fun partialUpdateMember(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Body body: UpdateMemberPartialRequest,
+    ): RetrofitCall<UpdateMemberPartialResponse>
 
     @DELETE("/api/v2/chat/channels/{type}/{id}")
     fun deleteChannel(
