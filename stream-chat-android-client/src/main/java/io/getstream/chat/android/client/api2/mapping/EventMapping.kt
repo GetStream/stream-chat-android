@@ -96,6 +96,7 @@ import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelInfo
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.network.infrastructure.ExactDate
@@ -159,6 +160,15 @@ import io.getstream.chat.android.network.models.UserUnbannedEvent as GeneratedUs
 import io.getstream.chat.android.network.models.UserUpdatedEvent as GeneratedUserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent as GeneratedUserWatchingStartEvent
 import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
+
+/**
+ * The type [ConnectedEvent] reports, the v1 connection frame's. The v2 one is "connection.ok".
+ */
+@Deprecated(
+    "v1 compatibility: the v1 connection frame is a health.check and the v2 one a connection.ok. ConnectedEvent " +
+        "keeps reporting health.check so apps reading its type see no change. Report connection.ok in the next major.",
+)
+internal const val CONNECTED_EVENT_TYPE: String = EventType.HEALTH_CHECK
 
 @Suppress("LargeClass")
 internal class EventMapping(
@@ -1350,9 +1360,10 @@ internal class EventMapping(
      * Transforms the generated [GeneratedConnectedEvent] to [ConnectedEvent]. On the v1 socket it is the
      * `health.check` hello that carries `me`.
      */
+    @Suppress("DEPRECATION")
     private fun GeneratedConnectedEvent.toDomain(): ConnectedEvent = with(domainMapping) {
         ConnectedEvent(
-            type = type,
+            type = CONNECTED_EVENT_TYPE,
             createdAt = createdAt.date,
             rawCreatedAt = createdAt.raw,
             me = me.toDomain(),

@@ -260,6 +260,65 @@ internal val CHANNEL_HIDDEN_CUSTOM_KEYS = setOf(
     "updated_at",
 )
 
+/** The [OwnUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
+internal val OWN_USER_HIDDEN_CUSTOM_KEYS = setOf(
+    "avg_response_time",
+    "banned",
+    "blocked_user_ids",
+    "channel_mutes",
+    "created_at",
+    "deactivated_at",
+    "deleted_at",
+    "devices",
+    "id",
+    "image",
+    "invisible",
+    "language",
+    "last_active",
+    "latest_hidden_channels",
+    "mutes",
+    "name",
+    "online",
+    "privacy_settings",
+    "push_preferences",
+    "revoke_tokens_issued_before",
+    "role",
+    "teams",
+    "teams_role",
+    "total_unread_count",
+    "total_unread_count_by_team",
+    "unread_channels",
+    "unread_count",
+    "unread_threads",
+    "updated_at",
+)
+
+/**
+ * The [UserResponsePrivacyFields] counterpart of [USER_HIDDEN_CUSTOM_KEYS], also used for [UserResponseCommonFields],
+ * whose fields are a subset.
+ */
+internal val EVENT_USER_HIDDEN_CUSTOM_KEYS = setOf(
+    "avg_response_time",
+    "banned",
+    "blocked_user_ids",
+    "created_at",
+    "deactivated_at",
+    "deleted_at",
+    "id",
+    "image",
+    "invisible",
+    "language",
+    "last_active",
+    "name",
+    "online",
+    "privacy_settings",
+    "revoke_tokens_issued_before",
+    "role",
+    "teams",
+    "teams_role",
+    "updated_at",
+)
+
 /** The [ChannelMemberResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
 internal val MEMBER_HIDDEN_CUSTOM_KEYS = setOf(
     "archived_at",
@@ -722,9 +781,13 @@ internal class DomainMapping(
             blockedUserIds = blockedUserIds.orEmpty(),
             avgResponseTime = avgResponseTime?.toLong(),
             pushPreference = pushPreferences?.toDomain(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
-                .minus(USER_DEVICES_CUSTOM_KEY)
-                .toMutableMap(),
+            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+                OWN_USER_HIDDEN_CUSTOM_KEYS,
+                "deleted_at" to deletedAt,
+                "latest_hidden_channels" to latestHiddenChannels,
+                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+                "total_unread_count_by_team" to totalUnreadCountByTeam,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
 
     /** Transforms the user shape most user events carry: common fields only, no own-user state. */
@@ -745,9 +808,11 @@ internal class DomainMapping(
             custom = custom,
             avgResponseTime = avgResponseTime,
             deactivatedAt = deactivatedAt,
+            deletedAt = deletedAt,
             image = image,
             lastActive = lastActive,
             name = name,
+            revokeTokensIssuedBefore = revokeTokensIssuedBefore,
             teamsRole = teamsRole,
         ).toUser()
             .copy(invisible = invisible, privacySettings = privacySettings?.toDomain())
@@ -769,9 +834,11 @@ internal class DomainMapping(
         teamsRole = teamsRole.orEmpty(),
         blockedUserIds = blockedUserIds,
         avgResponseTime = avgResponseTime?.toLong(),
-        extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
-            .minus(USER_DEVICES_CUSTOM_KEY)
-            .toMutableMap(),
+        extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+            EVENT_USER_HIDDEN_CUSTOM_KEYS,
+            "deleted_at" to deletedAt,
+            "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
     )
 
     /**
@@ -884,7 +951,7 @@ internal class DomainMapping(
             banExpires = banExpires,
             pinnedAt = pinnedAt,
             archivedAt = archivedAt,
-            extraData = custom.withDeclaredHidingStored(
+            extraData = custom.hoistingNestedMemberCustom().withDeclaredHidingStored(
                 MEMBER_HIDDEN_CUSTOM_KEYS,
                 "deleted_at" to deletedAt,
                 "deleted_messages" to deletedMessages,
@@ -927,7 +994,7 @@ internal class DomainMapping(
     private fun Map<String, Any?>.withDeclared(vararg fields: Pair<String, Any?>): Map<String, Any?> {
         val missing = fields.filter { (key, value) -> key !in this && value.isPresent() }
         if (missing.isEmpty()) return this
-        return this + missing.map { (key, value) -> key to wireValueAdapter.toJsonValue(value) }
+        return this + missing.map { (key, value) -> key to wireValueAdapter.toJsonValue(value).withDoubles() }
     }
 
     /**
@@ -944,6 +1011,17 @@ internal class DomainMapping(
         return custom.withDeclared(*fields)
     }
 
+    /**
+     * Member custom data written under a `custom` key is stored as a literal `custom` entry. v2 REST responses hoist
+     * it into the map itself, the v2 socket doesn't: with [hidesStoredDeclaredCustom] set, it is hoisted here the way
+     * the backend does it for REST, the nested entries winning on a collision.
+     */
+    private fun Map<String, Any?>.hoistingNestedMemberCustom(): Map<String, Any?> {
+        val nested = this["custom"] as? Map<*, *>
+        if (!hidesStoredDeclaredCustom || nested == null) return this
+        return (this - "custom") + nested.entries.associate { (key, value) -> key.toString() to value }
+    }
+
     private fun Any?.isPresent(): Boolean = when (this) {
         null -> false
         is Collection<*> -> isNotEmpty()
@@ -952,6 +1030,14 @@ internal class DomainMapping(
     }
 
     private val wireValueAdapter by lazy { Serializer.moshi.adapter(Any::class.java) }
+
+    /** Numbers as the doubles the v1 adapters give custom data. */
+    private fun Any?.withDoubles(): Any? = when (this) {
+        is Number -> toDouble()
+        is List<*> -> map { it.withDoubles() }
+        is Map<*, *> -> mapValues { (_, value) -> value.withDoubles() }
+        else -> this
+    }
 
     /**
      * Transforms [ChannelMemberPartialResponse] to [MemberInfo].
