@@ -39,6 +39,7 @@ import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -506,6 +507,24 @@ internal class QueryChannelsMutableStateTest {
         )
 
         assertEquals(listOf(touched.cid, recentMessage.cid), groupedState.channels.value?.map(Channel::cid))
+    }
+
+    @Test
+    fun `applying the same query_timestamp sort again keeps the same local sort`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+        val config = GroupedQueryConfig(
+            limit = null,
+            pageSize = null,
+            watch = true,
+            presence = false,
+            sort = QuerySortByField.descByName("query_timestamp"),
+        )
+
+        groupedState.setGroupedQueryConfig(config)
+        val sort = groupedState.sort
+        groupedState.setGroupedQueryConfig(config.copy(pageSize = 5))
+
+        assertSame(sort, groupedState.sort)
     }
 
     @Test

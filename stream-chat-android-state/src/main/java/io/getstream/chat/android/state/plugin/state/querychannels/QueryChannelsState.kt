@@ -43,10 +43,10 @@ public interface QueryChannelsState {
     /**
      * The sort associated with this query channels state.
      *
-     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this is
-     * `query_timestamp` descending when the latest request asked for it, ordering channels by the
-     * latest of their creation, last message and custom `touched_at` date. Otherwise it is
-     * `last_updated` descending.
+     * For grouped queries (states keyed by `QueryChannelsIdentifier.Grouped`), this orders channels
+     * by `query_timestamp` descending when the latest request asked for it: the latest of their
+     * creation, last message and custom `touched_at` date. It is a sorter of its own and is not
+     * equal to the requested one. Otherwise it is `last_updated` descending.
      */
     public val sort: QuerySorter<Channel>
 

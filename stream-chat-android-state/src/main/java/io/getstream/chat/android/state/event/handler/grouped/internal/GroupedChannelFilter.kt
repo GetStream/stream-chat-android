@@ -53,12 +53,15 @@ private val Channel.touchedAt: Date?
 
 private val queryTimestampDescSort = QuerySortByField.descByName<Channel>(QUERY_TIMESTAMP_FIELD_NAME)
 
+// One shared instance, so applying the same request again does not replace the sort and re-sort the list.
+private val queryTimestampSort: QuerySorter<Channel> = QueryTimestampSort(queryTimestampDescSort)
+
 /**
  * The local order for a grouped list requested with [sort]. A `query_timestamp` sort orders channels by
  * [queryTimestamp], newest first, because the field is computed on the device. Any other sort keeps [defaultSort].
  */
 internal fun groupedLocalSort(sort: QuerySorter<Channel>?, defaultSort: QuerySorter<Channel>): QuerySorter<Channel> =
-    if (sort == queryTimestampDescSort) QueryTimestampSort(sort) else defaultSort
+    if (sort == queryTimestampDescSort) queryTimestampSort else defaultSort
 
 private class QueryTimestampSort(requested: QuerySorter<Channel>) : QuerySorter<Channel> by requested {
     override val comparator: Comparator<in Channel> = compareByDescending(Channel::queryTimestamp)
