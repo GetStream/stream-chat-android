@@ -223,8 +223,16 @@ internal class QueryChannelsLogic(
 
     internal fun groupedQueryConfig(): GroupedQueryConfig? = queryChannelsStateLogic.getGroupedQueryConfig()
 
-    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
-        queryChannelsStateLogic.setGroupedQueryConfig(config)
+    internal fun isGroupedQueryConfigRestored(): Boolean = queryChannelsStateLogic.isGroupedQueryConfigRestored()
+
+    /**
+     * Shares [groupedResultMutex], so storing a request's configuration cannot interleave with a result
+     * being applied or with the cache restore.
+     */
+    internal suspend fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        groupedResultMutex.withLock {
+            queryChannelsStateLogic.setGroupedQueryConfig(config)
+        }
     }
 
     internal fun currentRequest(): QueryChannelsRequest? = queryChannelsStateLogic.getState().currentRequest.value

@@ -68,9 +68,10 @@ import java.util.Date
  * internal `_sort` flow drives the sorted channel list, so re-sorting happens automatically once
  * the resolved sort is applied.
  *
- * For [QueryChannelsIdentifier.Grouped], `filter` is neutral and `sort` defaults to
- * `last_updated` descending. Channels are populated via the listener-driven grouped-channels
- * endpoint, and the cursor lives on [_nextCursor].
+ * For [QueryChannelsIdentifier.Grouped], `filter` starts neutral and `sort` starts as
+ * `last_updated` descending; both follow the group's latest request through [setGroupedQueryConfig].
+ * Channels are populated via the listener-driven grouped-channels endpoint, and the cursor lives on
+ * [_nextCursor].
  */
 internal class QueryChannelsMutableState(
     val identifier: QueryChannelsIdentifier,
@@ -301,6 +302,7 @@ internal class QueryChannelsMutableState(
      * The filter and sort are also kept in [queryChannelsSpec], so they are saved with the group.
      */
     fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        isGroupedQueryConfigRestored = false
         _groupedQueryConfig?.value = config
         val filter = config.filter ?: Filters.neutral()
         _filter.value = filter
@@ -331,7 +333,16 @@ internal class QueryChannelsMutableState(
                 sort = sort.takeIf { hasSort },
             ),
         )
+        isGroupedQueryConfigRestored = true
     }
+
+    /**
+     * Whether [groupedQueryConfig] was restored from the cache rather than set by a request. A restored
+     * configuration only has defaults for its request-level fields (`limit`, `watch`, `presence`).
+     */
+    @Volatile
+    var isGroupedQueryConfigRestored: Boolean = false
+        private set
 
     /**
      * Applies the resolved filter/sort to the state. Only relevant for predefined-filter queries,
@@ -339,8 +350,9 @@ internal class QueryChannelsMutableState(
      *  - The server response arrives carrying `QueryChannelsResult.predefinedFilter`, or
      *  - The offline DB rehydrates a previously persisted resolved spec for the same identifier.
      *
-     * No-op for [QueryChannelsIdentifier.Standard] and [QueryChannelsIdentifier.Grouped] queries —
-     * their filter/sort are fixed at construction time and must not be replaced.
+     * No-op for [QueryChannelsIdentifier.Standard] queries, whose filter/sort are fixed at construction
+     * time, and for [QueryChannelsIdentifier.Grouped] queries, whose filter/sort come from
+     * [setGroupedQueryConfig].
      *
      * The 2-arg [QueryChannelsSpec.copy] preserves variant-specific identity fields (predefined
      * name/values, groupKey) and `cids` from the previous spec instance.

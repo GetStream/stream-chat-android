@@ -1219,6 +1219,56 @@ internal class SyncManagerTest {
         }
 
     @Test
+    fun `on reconnect should take the shared request options from a requested config over a restored one`() =
+        runTest(testDispatcher) {
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+            val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+            val restoredLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "expired"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.isGroupedQueryConfigRestored()) doReturn true
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(null, null, watch = true, presence = false, sort = sort)
+            }
+            val requestedLogic: QueryChannelsLogic = mock {
+                on(it.groupKey()) doReturn "current"
+                on(it.currentRequest()) doReturn mock()
+                on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+                on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(20, null, watch = true, presence = true, sort = sort)
+            }
+
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(restoredLogic, requestedLogic)
+            whenever(logicRegistry.getActiveChannelsLogic()) doReturn emptyList()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                    sort = anyOrNull(),
+                ),
+            ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+            whenever(clientState.isOnline) doReturn true
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn null
+
+            val syncManager = buildSyncManager()
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+            syncManager.onEvent(connectedEvent(createdAt, rawCreatedAt))
+            delay(100)
+
+            verify(chatClient).queryGroupedChannelsInternal(
+                limit = 20,
+                groups = mapOf("expired" to GroupedChannelsGroupQuery(), "current" to GroupedChannelsGroupQuery()),
+                watch = true,
+                presence = true,
+                sort = sort,
+            )
+        }
+
+    @Test
     fun `on reconnect when no captured per-group pageSize should still include the group key with empty entry`() =
         runTest(testDispatcher) {
             val createdAt = localDate()

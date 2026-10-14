@@ -480,7 +480,13 @@ internal class SyncManager(
         // Always include every active group's key, even when the captured per-group `pageSize` is
         // null. An empty `{}` per-group entry is meaningful: it tells the server "refresh this
         // group too". Filtering it out would cause re-sync to skip that group entirely.
-        val shared = activeGroupedLogics.firstNotNullOfOrNull { it.groupedQueryConfig() }
+        // A configuration restored from the cache only has defaults for the shared fields,
+        // so prefer one a request set.
+        val shared = activeGroupedLogics
+            .firstNotNullOfOrNull { logic ->
+                logic.groupedQueryConfig()?.takeUnless { logic.isGroupedQueryConfigRestored() }
+            }
+            ?: activeGroupedLogics.firstNotNullOfOrNull { it.groupedQueryConfig() }
         val groupsParam = activeGroupedLogics
             .mapNotNull { logic ->
                 val key = logic.groupKey() ?: return@mapNotNull null

@@ -433,6 +433,20 @@ internal class QueryChannelsMutableStateTest {
     }
 
     @Test
+    fun `a restored configuration is marked until a request sets one`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+
+        groupedState.restoreGroupedQueryConfig(
+            Filters.greaterThanEquals("query_timestamp", "now-14d"),
+            QuerySortByField.descByName("query_timestamp"),
+        )
+        assertTrue(groupedState.isGroupedQueryConfigRestored)
+
+        groupedState.setGroupedQueryConfig(GroupedQueryConfig(limit = 10, pageSize = 5, watch = true, presence = true))
+        assertFalse(groupedState.isGroupedQueryConfigRestored)
+    }
+
+    @Test
     fun `restoreGroupedQueryConfig does nothing for a group saved without a filter or sort`() {
         val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "new"))
 
