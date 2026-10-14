@@ -22,7 +22,6 @@ import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
-import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageModerationDetailsAdapter
@@ -60,7 +59,6 @@ internal class DirectEventParser(
 
     private val moshi by lazy { Moshi.Builder().add(IsoDateAdapter()).build() }
     private val dateAdapter by lazy { moshi.adapter(Date::class.java) }
-    private val deviceAdapter by lazy { DeviceAdapter() }
     private val attachmentAdapter by lazy { AttachmentAdapter() }
     private val channelInfoAdapter by lazy { ChannelInfoAdapter() }
     private val moderationDetailsAdapter by lazy { MessageModerationDetailsAdapter() }
@@ -74,7 +72,7 @@ internal class DirectEventParser(
     // region Composed adapters
 
     private val userAdapter by lazy {
-        UserAdapter(deviceAdapter, dateAdapter, userTransformer)
+        UserAdapter(dateAdapter, userTransformer)
     }
     private val userGroupMemberAdapter by lazy { UserGroupMemberAdapter(dateAdapter) }
     private val userGroupAdapter by lazy { UserGroupAdapter(userGroupMemberAdapter, dateAdapter) }

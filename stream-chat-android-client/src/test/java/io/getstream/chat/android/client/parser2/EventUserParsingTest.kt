@@ -19,15 +19,13 @@ package io.getstream.chat.android.client.parser2
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.models.Device
-import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.User
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 
 /**
- * Parses whole event payloads, so the event-user adapters, their keep-set and the devices promotion are
+ * Parses whole event payloads, so the event-user adapters, their keep-set and the dropped devices copy are
  * exercised end to end rather than through models built directly.
  */
 internal class EventUserParsingTest {
@@ -58,7 +56,7 @@ internal class EventUserParsingTest {
     """.trimIndent()
 
     @Test
-    fun `A user event keeps the legacy keys in extraData and reads devices as typed devices`() {
+    fun `A user event keeps the legacy keys in extraData and drops the devices copy`() {
         val json = """
             {
               "type": "user.watching.start",
@@ -78,7 +76,7 @@ internal class EventUserParsingTest {
     }
 
     @Test
-    fun `user updated keeps the legacy keys in extraData and reads devices as typed devices`() {
+    fun `user updated keeps the legacy keys in extraData and drops the devices copy`() {
         val json = """
             {
               "type": "user.updated",
@@ -97,9 +95,7 @@ internal class EventUserParsingTest {
 
     private fun assertCustomHandling(user: User) {
         user.language shouldBeEqualTo "en"
-        user.devices shouldBeEqualTo listOf(
-            Device(token = "token-1", pushProvider = PushProvider.FIREBASE, providerName = "chat-android-firebase"),
-        )
+        user.devices shouldBeEqualTo emptyList()
         // Declared on the generated models but kept in extraData, since the domain has no property for them.
         user.extraData.keys shouldBeEqualTo setOf("deleted_at", "revoke_tokens_issued_before", "flair")
         user.extraData["flair"] shouldBeEqualTo "gold"

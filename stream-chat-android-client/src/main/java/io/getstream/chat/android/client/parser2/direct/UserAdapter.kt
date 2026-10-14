@@ -19,13 +19,12 @@ package io.getstream.chat.android.client.parser2.direct
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
-import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.client.api2.mapping.USER_DEVICES_CUSTOM_KEY
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserTransformer
 import java.util.Date
 
 internal class UserAdapter(
-    private val deviceAdapter: JsonAdapter<Device>,
     private val dateAdapter: JsonAdapter<Date>,
     private val userTransformer: UserTransformer,
 ) : JsonAdapter<User>() {
@@ -42,7 +41,6 @@ internal class UserAdapter(
         var role: String? = null
         var language: String? = null
         var banned: Boolean? = null
-        var devices: List<Device>? = null
         var online: Boolean? = null
         var createdAt: Date? = null
         var deactivatedAt: Date? = null
@@ -62,7 +60,8 @@ internal class UserAdapter(
                 "blocked_user_ids" -> blockedUserIds = JsonParsingUtils.parseStringList(reader)
                 "created_at" -> createdAt = dateAdapter.fromJson(reader)
                 "deactivated_at" -> deactivatedAt = dateAdapter.fromJson(reader)
-                "devices" -> devices = JsonParsingUtils.parseList(reader, deviceAdapter)
+                // Not sent on other users' objects; skipped so a stray device list never surfaces as their devices.
+                USER_DEVICES_CUSTOM_KEY -> reader.skipValue()
                 "id" -> id = reader.nextString()
                 "image" -> image = JsonParsingUtils.readNullableString(reader)
                 "language" -> language = JsonParsingUtils.readNullableString(reader)
@@ -90,7 +89,6 @@ internal class UserAdapter(
             role = role,
             language = language ?: "",
             banned = banned,
-            devices = devices ?: emptyList(),
             online = online,
             createdAt = createdAt,
             deactivatedAt = deactivatedAt,
