@@ -23,7 +23,7 @@ internal object OptionTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"id":"option1","text":"First option","custom_field":"custom_value"}"""
+        """{"id":"option1","text":"First option","text_i18n":{"language":"en","it_text":"Prima opzione"},"custom_field":"custom_value"}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =
@@ -41,6 +41,7 @@ internal object OptionTestData {
         id = "option1",
         text = "First option",
         extraData = mapOf("custom_field" to "custom_value"),
+        textI18n = mapOf("language" to "en", "it_text" to "Prima opzione"),
     )
 
     val expectedOptionalFieldsMissing = Option(

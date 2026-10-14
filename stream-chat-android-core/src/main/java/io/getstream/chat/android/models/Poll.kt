@@ -45,6 +45,9 @@ import java.util.Date
  * @property answers The list of poll answers.
  * @property createdBy The user who created the poll. This property is optional and might be null.
  * @property extraData Any additional data associated with the poll.
+ * @property nameI18n Automatic translations of [name]. Key `language` contains the original language,
+ * other keys (`<language>_text`) contain translations.
+ * @property descriptionI18n Automatic translations of [description], in the same format as [nameI18n].
  */
 @Immutable
 public data class Poll(
@@ -68,7 +71,23 @@ public data class Poll(
     val answers: List<Answer> = emptyList(),
     val createdBy: User?,
     val extraData: Map<String, Any> = emptyMap(),
+    val nameI18n: Map<String, String> = emptyMap(),
+    val descriptionI18n: Map<String, String> = emptyMap(),
 ) : ComparableFieldProvider {
+
+    /**
+     * Retrieves the translated [name] for the given [language].
+     *
+     * @return The translated name, or empty if the translation is not available.
+     */
+    public fun getNameTranslation(language: String): String = nameI18n.translation(language)
+
+    /**
+     * Retrieves the translated [description] for the given [language].
+     *
+     * @return The translated description, or empty if the translation is not available.
+     */
+    public fun getDescriptionTranslation(language: String): String = descriptionI18n.translation(language)
 
     /**
      * Get the votes for a specific option.
@@ -97,6 +116,8 @@ public data class Poll(
  * @property createdAt The creation date of the answer.
  * @property updatedAt The last update date of the answer.
  * @property user The user who sent the answer.
+ * @property textI18n Automatic translations of [text]. Key `language` contains the original language,
+ * other keys (`<language>_text`) contain translations.
  */
 @Immutable
 public data class Answer(
@@ -106,7 +127,16 @@ public data class Answer(
     val createdAt: Date,
     val updatedAt: Date,
     val user: User?,
-)
+    val textI18n: Map<String, String> = emptyMap(),
+) {
+
+    /**
+     * Retrieves the translated [text] for the given [language].
+     *
+     * @return The translated text, or empty if the translation is not available.
+     */
+    public fun getTranslation(language: String): String = textI18n.translation(language)
+}
 
 /**
  * The Option object represents an answer option in a poll.
@@ -114,13 +144,24 @@ public data class Answer(
  * @property id The unique identifier of the option.
  * @property text The text of the option.
  * @property extraData Any additional data associated with the option.
+ * @property textI18n Automatic translations of [text]. Key `language` contains the original language,
+ * other keys (`<language>_text`) contain translations.
  */
 @Immutable
 public data class Option(
     val id: String,
     val text: String,
     val extraData: Map<String, Any> = emptyMap(),
-)
+    val textI18n: Map<String, String> = emptyMap(),
+) {
+
+    /**
+     * Retrieves the translated [text] for the given [language].
+     *
+     * @return The translated text, or empty if the translation is not available.
+     */
+    public fun getTranslation(language: String): String = textI18n.translation(language)
+}
 
 /**
  * The [CreatePollParams] object is used to configure a poll.
@@ -257,3 +298,5 @@ public enum class VotingVisibility {
     /** Votes are anonymous. */
     ANONYMOUS,
 }
+
+private fun Map<String, String>.translation(language: String): String = this["${language}_text"].orEmpty()

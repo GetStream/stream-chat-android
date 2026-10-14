@@ -63,10 +63,12 @@ import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionVotesViewState
+import io.getstream.chat.android.ui.common.utils.extensions.displayedText
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -82,10 +84,13 @@ import kotlinx.coroutines.flow.collectLatest
  * @param onBackPressed Handler invoked when the back button is pressed.
  */
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("LongParameterList")
 @Composable
 internal fun PollOptionVotesDialog(
     poll: Poll,
     option: Option,
+    currentUser: User?,
+    autoTranslationEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
@@ -100,6 +105,8 @@ internal fun PollOptionVotesDialog(
 
             Content(
                 state = state,
+                currentUser = currentUser,
+                autoTranslationEnabled = autoTranslationEnabled,
                 onLoadMoreRequested = { viewModel.onViewAction(PollOptionVotesViewAction.LoadMoreRequested) },
                 onBackPressed = onBackPressed,
             )
@@ -122,6 +129,8 @@ internal fun PollOptionVotesDialog(
 @Composable
 private fun Content(
     state: PollOptionVotesViewState,
+    currentUser: User? = null,
+    autoTranslationEnabled: Boolean = false,
     onLoadMoreRequested: () -> Unit = {},
     onBackPressed: () -> Unit = {},
 ) {
@@ -140,7 +149,7 @@ private fun Content(
             .fillMaxSize(),
     ) {
         PollDialogHeader(
-            title = state.option.text,
+            title = state.option.displayedText(currentUser, autoTranslationEnabled),
             onBackPressed = onBackPressed,
         )
 

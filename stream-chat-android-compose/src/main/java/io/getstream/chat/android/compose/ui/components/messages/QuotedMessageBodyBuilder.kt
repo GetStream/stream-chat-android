@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.common.images.internal.videoThumbnailImageDa
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizer
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizing
+import io.getstream.chat.android.ui.common.utils.extensions.displayedName
 import io.getstream.chat.android.ui.common.utils.extensions.giphyFallbackPreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.linkPreviewImageUrl
@@ -82,7 +83,7 @@ internal class QuotedMessageBodyBuilder(
             poll != null -> {
                 QuotedMessageBody(
                     iconId = R.drawable.stream_design_ic_poll,
-                    text = poll.name,
+                    text = poll.displayedName(currentUser, autoTranslationEnabled),
                 )
             }
 

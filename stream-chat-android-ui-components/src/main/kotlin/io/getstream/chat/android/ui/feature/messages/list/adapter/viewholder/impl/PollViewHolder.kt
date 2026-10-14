@@ -38,12 +38,18 @@ public class PollViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
+    init {
+        binding.footnote.setOnTranslatedLabelClickListener {
+            messageListListeners?.translatedLabelClickListener?.onTranslatedLabelClick(data.message)
+        }
+    }
+
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
         data.message.poll
-            ?.takeIf { diff.poll }
+            ?.takeIf { diff.poll || diff.showOriginalText }
             ?.let { poll ->
-                binding.pollView.setPoll(poll, data.isMine)
+                binding.pollView.setPoll(poll, data.isMine, data.showOriginalText)
                 binding.pollView.onOptionClick = { option ->
                     messageListListeners?.onPollOptionClickListener?.onPollOptionClick(data.message, poll, option)
                 }

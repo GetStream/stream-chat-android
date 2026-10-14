@@ -968,6 +968,8 @@ public fun randomPoll(
     answers: List<Answer> = emptyList(),
     createdBy: User = randomUser(),
     extraData: Map<String, Any> = randomExtraData(1),
+    nameI18n: Map<String, String> = emptyMap(),
+    descriptionI18n: Map<String, String> = emptyMap(),
 ): Poll = Poll(
     id = id,
     name = name,
@@ -989,14 +991,18 @@ public fun randomPoll(
     answers = answers,
     extraData = extraData,
     createdBy = createdBy,
+    nameI18n = nameI18n,
+    descriptionI18n = descriptionI18n,
 )
 
 public fun randomOption(
     id: String = randomString(),
     text: String = randomString(),
+    textI18n: Map<String, String> = emptyMap(),
 ): Option = Option(
     id = id,
     text = text,
+    textI18n = textI18n,
 )
 
 public fun randomVote(
@@ -1048,6 +1054,7 @@ public fun randomPollAnswer(
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
     user: User? = randomUser(),
+    textI18n: Map<String, String> = emptyMap(),
 ): Answer = Answer(
     id = id,
     pollId = pollId,
@@ -1055,6 +1062,7 @@ public fun randomPollAnswer(
     createdAt = createdAt,
     updatedAt = updatedAt,
     user = user,
+    textI18n = textI18n,
 )
 
 public fun randomQueryThreadsResult(

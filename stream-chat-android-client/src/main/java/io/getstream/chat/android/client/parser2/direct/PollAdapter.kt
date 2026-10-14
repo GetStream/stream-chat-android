@@ -43,6 +43,7 @@ internal class PollAdapter(
         val user: User?,
         val isAnswer: Boolean,
         val answerText: String?,
+        val answerTextI18n: Map<String, String>?,
     )
 
     @Suppress("LongMethod")
@@ -71,6 +72,8 @@ internal class PollAdapter(
         var answers: List<ParsedVoteDto>? = null
         var createdBy: User? = null
         var extraData: MutableMap<String, Any>? = null
+        var nameI18n: Map<String, String>? = null
+        var descriptionI18n: Map<String, String>? = null
 
         while (reader.hasNext()) {
             val key = reader.nextName()
@@ -95,6 +98,8 @@ internal class PollAdapter(
                 "latest_answers" -> answers = parseParsedVotesList(reader)
                 "created_by" -> createdBy = userAdapter.fromJson(reader)
                 "created_by_id" -> reader.skipValue()
+                "name_i18n" -> nameI18n = JsonParsingUtils.parseStringMap(reader)
+                "description_i18n" -> descriptionI18n = JsonParsingUtils.parseStringMap(reader)
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
@@ -152,6 +157,8 @@ internal class PollAdapter(
             answers = answersList,
             createdBy = createdBy,
             extraData = extraData?.toMap() ?: emptyMap(),
+            nameI18n = nameI18n.orEmpty(),
+            descriptionI18n = descriptionI18n.orEmpty(),
         )
     }
 
@@ -171,6 +178,7 @@ internal class PollAdapter(
         createdAt = createdAt,
         updatedAt = updatedAt,
         user = user,
+        textI18n = answerTextI18n.orEmpty(),
     )
 
     private fun parseParsedVotesList(reader: JsonReader): List<ParsedVoteDto>? {
@@ -200,6 +208,7 @@ internal class PollAdapter(
         var user: User? = null
         var isAnswer: Boolean = false
         var answerText: String? = null
+        var answerTextI18n: Map<String, String>? = null
 
         while (reader.hasNext()) {
             when (reader.nextName()) {
@@ -211,6 +220,7 @@ internal class PollAdapter(
                 "user" -> user = userAdapter.fromJson(reader)
                 "is_answer" -> isAnswer = JsonParsingUtils.readNullableBoolean(reader) ?: false
                 "answer_text" -> answerText = JsonParsingUtils.readNullableString(reader)
+                "answer_text_i18n" -> answerTextI18n = JsonParsingUtils.parseStringMap(reader)
                 "user_id" -> reader.skipValue()
                 else -> reader.skipValue()
             }
@@ -232,6 +242,7 @@ internal class PollAdapter(
             user = user,
             isAnswer = isAnswer,
             answerText = answerText,
+            answerTextI18n = answerTextI18n,
         )
     }
 

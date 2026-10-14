@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
@@ -167,6 +168,37 @@ internal class PollMessageContentTest : PaparazziComposeTest {
                     messageItem = MessageItemState(
                         message = PreviewMessageData.messageWithError,
                         isMine = true,
+                        ownCapabilities = ChannelCapabilities.toSet(),
+                    ),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `translated poll content`() {
+        val poll = PreviewPollData.poll1.let { poll ->
+            poll.copy(
+                nameI18n = mapOf("language" to "en", "it_text" to "Dove andiamo in vacanza?"),
+                options = poll.options.mapIndexed { index, option ->
+                    option.copy(textI18n = mapOf("language" to "en", "it_text" to "Opzione ${index + 1}"))
+                },
+            )
+        }
+        snapshotWithDarkMode {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                PollMessageContent(
+                    modifier = Modifier,
+                    onCastVote = { _, _, _ -> },
+                    onRemoveVote = { _, _, _ -> },
+                    selectPoll = { _, _, _ -> },
+                    onAddAnswer = { _, _, _ -> },
+                    onClosePoll = {},
+                    onAddPollOption = { _, _ -> },
+                    messageItem = MessageItemState(
+                        message = PreviewMessageData.messageWithPoll.copy(poll = poll),
+                        isMine = true,
+                        currentUser = User(id = "user", language = "it"),
                         ownCapabilities = ChannelCapabilities.toSet(),
                     ),
                 )

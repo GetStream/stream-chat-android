@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageFailedIconParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.autoTranslationEnabledFor
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.passiveRipple
 import io.getstream.chat.android.compose.ui.util.senderAwareContentDescription
@@ -69,11 +70,13 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.PollsConstants
+import io.getstream.chat.android.ui.common.utils.extensions.displayedName
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
@@ -110,6 +113,7 @@ public fun PollMessageContent(
     val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, messageAlignment)
     val messageBubbleColor = MessageStyling.backgroundColor(messageItem.isMine)
 
+    val autoTranslationEnabled = autoTranslationEnabledFor(message)
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {
         ChatTheme.componentFactory.MessageBubble(
@@ -123,6 +127,8 @@ public fun PollMessageContent(
                         message = message,
                         poll = poll,
                         isMine = ownsMessage,
+                        currentUser = messageItem.currentUser,
+                        autoTranslationEnabled = autoTranslationEnabled,
                         onCastVote = { option ->
                             onCastVote.invoke(message, poll, option)
                         },
@@ -180,6 +186,8 @@ private fun PollMessageContent(
     message: Message,
     poll: Poll,
     isMine: Boolean,
+    currentUser: User?,
+    autoTranslationEnabled: Boolean,
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
     onAddAnswer: (answer: String) -> Unit,
@@ -220,11 +228,12 @@ private fun PollMessageContent(
         )
     }
 
+    val pollName = poll.displayedName(currentUser, autoTranslationEnabled)
     // Announce the sender on the poll name so screen readers attribute every message.
     val senderAwareName = senderAwareContentDescription(
         isMine = isMine,
         senderName = message.user.name,
-        content = poll.name,
+        content = pollName,
         isReply = message.replyTo != null,
     )
     Column(modifier = Modifier.passiveRipple()) {
@@ -234,7 +243,7 @@ private fun PollMessageContent(
         ) {
             Text(
                 modifier = Modifier.semantics { contentDescription = senderAwareName },
-                text = poll.name,
+                text = pollName,
                 style = typography.bodyEmphasis,
                 color = style.textColor,
             )
@@ -260,6 +269,8 @@ private fun PollMessageContent(
                     users = remember(poll.votes, option) { poll.getVotes(option).mapNotNull(Vote::user) },
                     totalVoteCount = poll.voteCountsByOption.values.sum(),
                     checked = poll.ownVotes.any { it.optionId == option.id },
+                    currentUser = currentUser,
+                    autoTranslationEnabled = autoTranslationEnabled,
                     style = style,
                     onCastVote = { onCastVote.invoke(option) },
                     onRemoveVote = {

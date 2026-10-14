@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.displayedName
 
 /**
  * An interface that allows to generate a preview text for the given message.
@@ -164,20 +165,21 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 message.isPoll() -> {
+                    val pollName = message.poll?.displayedName(currentUser, autoTranslationEnabled).orEmpty()
                     appendInlineContent(DefaultMessagePreviewIconFactory.POLL)
                     append(SPACE)
                     if (message.isPollClosed()) {
                         append(
                             context.getString(
                                 R.string.stream_compose_poll_closed_preview,
-                                message.poll?.name.orEmpty(),
+                                pollName,
                             ),
                         )
                     } else {
                         append(
                             context.getString(
                                 R.string.stream_compose_poll_created_preview,
-                                message.poll?.name.orEmpty(),
+                                pollName,
                             ),
                         )
                     }

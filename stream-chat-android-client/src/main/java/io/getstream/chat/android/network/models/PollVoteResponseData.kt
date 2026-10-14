@@ -54,6 +54,9 @@ internal data class PollVoteResponseData(
     @Json(name = "user_id")
     internal val userId: String? = null,
 
+    @Json(name = "answer_text_i18n")
+    internal val answerTextI18n: Map<String, String>? = null,
+
     @Json(name = "user")
     internal val user: UserResponse? = null,
 )

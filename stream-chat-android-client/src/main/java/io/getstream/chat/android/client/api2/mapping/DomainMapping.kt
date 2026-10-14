@@ -858,6 +858,8 @@ internal class DomainMapping(
             answers = latestAnswers.map { it.toAnswerDomain() },
             createdBy = createdBy?.toDomain(),
             extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            nameI18n = nameI18n.orEmpty(),
+            descriptionI18n = descriptionI18n.orEmpty(),
         )
     }
 
@@ -883,6 +885,7 @@ internal class DomainMapping(
         createdAt = createdAt,
         updatedAt = updatedAt,
         user = user?.toDomain(),
+        textI18n = answerTextI18n.orEmpty(),
     )
 
     /**
@@ -910,6 +913,7 @@ internal class DomainMapping(
         id = id,
         text = text,
         extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+        textI18n = textI18n.orEmpty(),
     )
 
     /**

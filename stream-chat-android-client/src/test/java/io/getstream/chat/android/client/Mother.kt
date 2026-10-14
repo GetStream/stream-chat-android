@@ -1179,10 +1179,12 @@ internal object Mother {
         id: String = randomString(),
         text: String = randomString(),
         custom: Map<String, Any?> = emptyMap(),
+        textI18n: Map<String, String>? = null,
     ): PollOptionResponseData = PollOptionResponseData(
         id = id,
         text = text,
         custom = custom,
+        textI18n = textI18n,
     )
 
     fun randomUpdatePollRequest(
@@ -1286,6 +1288,8 @@ internal object Mother {
         answersCount: Int = randomInt(),
         isClosed: Boolean = randomBoolean(),
         custom: Map<String, Any?> = emptyMap(),
+        nameI18n: Map<String, String>? = null,
+        descriptionI18n: Map<String, String>? = null,
     ): PollResponseData = PollResponseData(
         id = id,
         name = name,
@@ -1308,6 +1312,8 @@ internal object Mother {
         answersCount = answersCount,
         isClosed = isClosed,
         custom = custom,
+        nameI18n = nameI18n,
+        descriptionI18n = descriptionI18n,
     )
 
     fun randomPollVoteResponseData(
@@ -1316,6 +1322,7 @@ internal object Mother {
         optionId: String = randomString(),
         isAnswer: Boolean? = null,
         answerText: String? = null,
+        answerTextI18n: Map<String, String>? = null,
         user: UserResponse? = null,
     ): PollVoteResponseData = PollVoteResponseData(
         id = id,
@@ -1325,6 +1332,7 @@ internal object Mother {
         updatedAt = randomDate(),
         isAnswer = isAnswer,
         answerText = answerText,
+        answerTextI18n = answerTextI18n,
         user = user,
     )
 

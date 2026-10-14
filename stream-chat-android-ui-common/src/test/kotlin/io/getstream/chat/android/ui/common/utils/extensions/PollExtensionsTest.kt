@@ -19,6 +19,8 @@ package io.getstream.chat.android.ui.common.utils.extensions
 import android.content.Context
 import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollAnswer
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.randomVote
 import io.getstream.chat.android.ui.common.R
 import org.junit.Assert.assertEquals
@@ -138,5 +140,66 @@ internal class PollExtensionsTest {
         val poll = randomPoll(maxVotesAllowed = 2, ownVotes = listOf(randomVote(), randomVote()))
 
         assertFalse(poll.canCastVote())
+    }
+
+    @Test
+    fun `displayedName should return the translation in the user language`() {
+        val poll = randomPoll(name = "Lunch?", nameI18n = mapOf("language" to "en", "it_text" to "Pranzo?"))
+
+        assertEquals("Pranzo?", poll.displayedName(randomUser(language = "it"), autoTranslationEnabled = true))
+    }
+
+    @Test
+    fun `displayedName should return the original when auto-translation is disabled`() {
+        val poll = randomPoll(name = "Lunch?", nameI18n = mapOf("language" to "en", "it_text" to "Pranzo?"))
+
+        assertEquals("Lunch?", poll.displayedName(randomUser(language = "it"), autoTranslationEnabled = false))
+    }
+
+    @Test
+    fun `displayedName should return the original when the translation or the user language is missing`() {
+        val poll = randomPoll(name = "Lunch?", nameI18n = mapOf("language" to "en", "it_text" to "Pranzo?"))
+
+        assertEquals("Lunch?", poll.displayedName(randomUser(language = "fr"), autoTranslationEnabled = true))
+        assertEquals("Lunch?", poll.displayedName(randomUser(language = ""), autoTranslationEnabled = true))
+        assertEquals("Lunch?", poll.displayedName(null, autoTranslationEnabled = true))
+    }
+
+    @Test
+    fun `Option displayedText should return the translation in the user language`() {
+        val option = randomOption(text = "Pizza", textI18n = mapOf("language" to "en", "it_text" to "Pizza!"))
+
+        assertEquals("Pizza!", option.displayedText(randomUser(language = "it"), autoTranslationEnabled = true))
+        assertEquals("Pizza", option.displayedText(randomUser(language = "fr"), autoTranslationEnabled = true))
+    }
+
+    @Test
+    fun `Answer displayedText should return the translation in the user language`() {
+        val answer = randomPollAnswer(text = "Sushi", textI18n = mapOf("language" to "en", "it_text" to "Sushi!"))
+
+        assertEquals("Sushi!", answer.displayedText(randomUser(language = "it"), autoTranslationEnabled = true))
+        assertEquals("Sushi", answer.displayedText(randomUser(language = "it"), autoTranslationEnabled = false))
+    }
+
+    @Test
+    fun `hasTranslation should be true when the name or an option is translated`() {
+        val user = randomUser(language = "it")
+        val option = randomOption(text = "Pizza", textI18n = mapOf("language" to "en", "it_text" to "Pizza!"))
+
+        assertTrue(randomPoll(name = "Lunch?", nameI18n = mapOf("it_text" to "Pranzo?")).hasTranslation(user))
+        assertTrue(randomPoll(nameI18n = emptyMap(), options = listOf(randomOption(), option)).hasTranslation(user))
+    }
+
+    @Test
+    fun `hasTranslation should be false when nothing differs in the user language`() {
+        val poll = randomPoll(
+            name = "Lunch?",
+            nameI18n = mapOf("language" to "en", "en_text" to "Lunch?", "it_text" to "Pranzo?"),
+            options = listOf(randomOption(textI18n = emptyMap())),
+        )
+
+        assertFalse(poll.hasTranslation(randomUser(language = "en")))
+        assertFalse(poll.hasTranslation(randomUser(language = "fr")))
+        assertFalse(poll.hasTranslation(null))
     }
 }

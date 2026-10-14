@@ -46,6 +46,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemPollViewCommentsBind
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.PollViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
 import io.getstream.chat.android.ui.common.R as UiCommonR
@@ -86,7 +88,7 @@ internal class PollView : RecyclerView {
         style = PollViewStyle(context, attrs)
     }
 
-    fun setPoll(poll: Poll, isMine: Boolean) {
+    fun setPoll(poll: Poll, isMine: Boolean, showOriginalText: Boolean) {
         logger.d { "[setPoll] poll: $poll" }
         if (!::pollAdapter.isInitialized) {
             pollAdapter = PollAdapter(
@@ -105,7 +107,7 @@ internal class PollView : RecyclerView {
         val pollItems = mutableListOf<PollItem>()
         pollItems.add(
             PollItem.Header(
-                title = poll.name,
+                title = poll.getTranslatedName(showOriginalText),
                 subtitle = poll.getSubtitle(context),
             ),
         )
@@ -119,6 +121,7 @@ internal class PollView : RecyclerView {
                 .map { option ->
                     PollItem.Answer(
                         option = option,
+                        optionText = option.getTranslatedText(showOriginalText),
                         votes = poll.getVotesUnlessAnonymous(option),
                         voteCount = poll.voteCountsByOption[option.id] ?: 0,
                         isVotedByUser = poll.ownVotes.any { it.optionId == option.id },
@@ -264,6 +267,7 @@ private sealed class PollItem {
 
     data class Answer(
         val option: Option,
+        val optionText: String,
         val votes: List<Vote>,
         val isVotedByUser: Boolean,
         val voteCount: Int,
@@ -313,7 +317,7 @@ private class AnswerViewHolder(
             }
         }
         binding.check.isEnabled = pollItem.isVotedByUser
-        binding.option.text = pollItem.option.text
+        binding.option.text = pollItem.optionText
         binding.votesPercentage.setIndicatorColor(
             if (pollItem.isVotedByUser) {
                 ContextCompat.getColor(binding.root.context, R.color.stream_ui_accent_green)

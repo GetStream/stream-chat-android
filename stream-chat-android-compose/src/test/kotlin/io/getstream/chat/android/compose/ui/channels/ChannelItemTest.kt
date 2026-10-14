@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui.channels
 
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.PIXEL_2_HDPI
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDeletedLastMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDraftMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageDeliveredStatus
@@ -36,6 +38,10 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItemOnlyDeleted
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemPinned
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemPinnedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
+import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.previewdata.PreviewPollData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import org.junit.Rule
 import org.junit.Test
 
@@ -156,6 +162,27 @@ internal class ChannelItemTest : PaparazziComposeTest {
     fun `only deleted message`() {
         snapshotWithDarkMode {
             ChannelItemOnlyDeletedMessage()
+        }
+    }
+
+    @Test
+    fun `translated poll last message`() {
+        val poll = PreviewPollData.poll1.copy(
+            nameI18n = mapOf("language" to "en", "it_text" to "Dove andiamo in vacanza?"),
+        )
+        snapshotWithDarkMode {
+            ChannelItem(
+                channelItem = ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithMessages.copy(
+                        messages = listOf(
+                            PreviewMessageData.messageWithPoll.copy(poll = poll, user = PreviewUserData.user2),
+                        ),
+                    ),
+                ),
+                currentUser = PreviewUserData.user1.copy(language = "it"),
+                onChannelClick = {},
+                onChannelLongClick = {},
+            )
         }
     }
 }

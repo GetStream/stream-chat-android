@@ -41,6 +41,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollResultsBindi
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
 import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedName
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollResultsViewModel
 
@@ -56,6 +58,9 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         get() = requireArguments().getString(ARG_POLL)
             ?: throw IllegalStateException("Poll ID not found in arguments")
 
+    private val showOriginalText: Boolean
+        get() = requireArguments().getBoolean(ARG_SHOW_ORIGINAL_TEXT)
+
     private val poll: Poll by lazy {
         polls[pollId] ?: throw IllegalStateException("Poll not found for ID: $pollId")
     }
@@ -64,7 +69,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         PollResultsViewModel.Factory(poll)
     }
 
-    private val resultsAdapter = ResultsAdapter(::onShowAllVotesClick)
+    private val resultsAdapter by lazy { ResultsAdapter(showOriginalText, ::onShowAllVotesClick) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,14 +104,14 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.question.text = state.pollName
+            binding.question.text = poll.getTranslatedName(showOriginalText)
             resultsAdapter.submitList(state.results)
             binding.loadingContainer.isVisible = false
         }
     }
 
     private fun onShowAllVotesClick(option: Option) {
-        PollOptionVotesDialogFragment.newInstance(poll = poll, option = option)
+        PollOptionVotesDialogFragment.newInstance(poll = poll, option = option, showOriginalText = showOriginalText)
             .show(parentFragmentManager, PollOptionVotesDialogFragment.TAG)
     }
 
@@ -125,6 +130,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
     public companion object {
         public const val TAG: String = "PollResultsDialogFragment"
         private const val ARG_POLL: String = "arg_poll"
+        private const val ARG_SHOW_ORIGINAL_TEXT: String = "arg_show_original_text"
 
         // Store polls temporarily to handle configuration changes
         private val polls = mutableMapOf<String, Poll>()
@@ -135,14 +141,17 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
          * @param poll The poll to display results for.
          * @return A new instance of [PollResultsDialogFragment].
          */
-        public fun newInstance(poll: Poll): PollResultsDialogFragment =
+        public fun newInstance(poll: Poll): PollResultsDialogFragment = newInstance(poll, showOriginalText = false)
+
+        internal fun newInstance(poll: Poll, showOriginalText: Boolean): PollResultsDialogFragment =
             PollResultsDialogFragment().apply {
                 polls[poll.id] = poll
-                arguments = bundleOf(ARG_POLL to poll.id)
+                arguments = bundleOf(ARG_POLL to poll.id, ARG_SHOW_ORIGINAL_TEXT to showOriginalText)
             }
     }
 
     private class ResultsAdapter(
+        private val showOriginalText: Boolean,
         private val onShowAllVotesClick: (Option) -> Unit,
     ) : ListAdapter<PollResultsViewState.ResultItem, ResultsAdapter.ResultViewHolder>(
         object : DiffUtil.ItemCallback<PollResultsViewState.ResultItem>() {
@@ -164,6 +173,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
                     .inflate(LayoutInflater.from(parent.context), parent, false).apply {
                         optionList.adapter = UserVoteAdapter()
                     },
+                showOriginalText,
                 onShowAllVotesClick,
             )
 
@@ -173,11 +183,12 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
         private class ResultViewHolder(
             private val binding: StreamUiItemResultBinding,
+            private val showOriginalText: Boolean,
             private val onShowAllVotesClick: (Option) -> Unit,
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(result: PollResultsViewState.ResultItem) {
-                binding.option.text = result.option.text
+                binding.option.text = result.option.getTranslatedText(showOriginalText)
                 binding.votes.text = binding.root.resources.getString(
                     R.string.stream_ui_poll_vote_counts,
                     result.voteCount,

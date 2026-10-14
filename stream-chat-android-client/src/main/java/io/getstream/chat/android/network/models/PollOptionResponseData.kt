@@ -38,4 +38,7 @@ internal data class PollOptionResponseData(
 
     @Json(name = "custom")
     internal val custom: Map<String, Any?> = emptyMap(),
+
+    @Json(name = "text_i18n")
+    internal val textI18n: Map<String, String>? = null,
 )

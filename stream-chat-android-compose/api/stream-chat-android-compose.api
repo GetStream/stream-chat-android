@@ -1709,7 +1709,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollAnswersKt;
 	public fun <init> ()V
 	public final fun getLambda$-1133444523$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-1805570669$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1150111706$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$-1980307438$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-49181804$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-805927004$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -1743,8 +1743,8 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionVotesDialogKt;
 	public fun <init> ()V
 	public final fun getLambda$-1263249834$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-2004235384$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$715521557$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-1954506968$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$663977109$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$891723806$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda$978636641$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
@@ -1773,7 +1773,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/PollOpti
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollViewResultDialogKt {
-	public static final fun PollViewResultDialog (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PollViewResultDialog (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ExtendedReactionsOptionsKt {

@@ -29,7 +29,7 @@ internal object PollTestData {
 
     @Language("JSON")
     val jsonAllFields =
-        """{"id":"poll1","name":"Favorite color","description":"Choose your favorite color","options":[{"id":"option1","text":"Red","shade":"crimson"},{"id":"option2","text":"Blue"}],"voting_visibility":"public","enforce_unique_vote":true,"max_votes_allowed":1,"allow_user_suggested_options":false,"allow_answers":true,"vote_count":2,"vote_counts_by_option":{"option1":1,"option2":1},"latest_votes_by_option":{"option1":[{"id":"vote1","poll_id":"poll1","option_id":"option1","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":false}],"option2":[{"id":"vote2","poll_id":"poll1","option_id":"option2","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user2","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":false}]},"own_votes":[{"id":"vote1","poll_id":"poll1","option_id":"option1","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":false}],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","is_closed":false,"answers_count":1,"latest_answers":[{"id":"answer1","poll_id":"poll1","option_id":"","answer_text":"Purple","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user3","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":true}],"created_by":{"id":"admin","role":"admin","banned":false,"online":true,"language":"en","created_at":"2024-01-01T07:00:00.000Z","updated_at":"2024-01-01T07:30:00.000Z"},"created_by_id":"admin"}"""
+        """{"id":"poll1","name":"Favorite color","name_i18n":{"language":"en","it_text":"Colore preferito"},"description":"Choose your favorite color","description_i18n":{"language":"en","it_text":"Scegli il tuo colore preferito"},"options":[{"id":"option1","text":"Red","text_i18n":{"language":"en","it_text":"Rosso"},"shade":"crimson"},{"id":"option2","text":"Blue"}],"voting_visibility":"public","enforce_unique_vote":true,"max_votes_allowed":1,"allow_user_suggested_options":false,"allow_answers":true,"vote_count":2,"vote_counts_by_option":{"option1":1,"option2":1},"latest_votes_by_option":{"option1":[{"id":"vote1","poll_id":"poll1","option_id":"option1","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":false}],"option2":[{"id":"vote2","poll_id":"poll1","option_id":"option2","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user2","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":false}]},"own_votes":[{"id":"vote1","poll_id":"poll1","option_id":"option1","created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user1","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":false}],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","is_closed":false,"answers_count":1,"latest_answers":[{"id":"answer1","poll_id":"poll1","option_id":"","answer_text":"Purple","answer_text_i18n":{"language":"en","it_text":"Viola"},"created_at":"2024-01-01T10:00:00.000Z","updated_at":"2024-01-01T11:00:00.000Z","user":{"id":"user3","role":"user","banned":false,"online":true,"language":"en","created_at":"2024-01-01T08:00:00.000Z","updated_at":"2024-01-01T08:30:00.000Z"},"is_answer":true}],"created_by":{"id":"admin","role":"admin","banned":false,"online":true,"language":"en","created_at":"2024-01-01T07:00:00.000Z","updated_at":"2024-01-01T07:30:00.000Z"},"created_by_id":"admin"}"""
 
     @Language("JSON")
     val jsonOptionalFieldsMissing =
@@ -73,7 +73,12 @@ internal object PollTestData {
         name = "Favorite color",
         description = "Choose your favorite color",
         options = listOf(
-            Option(id = "option1", text = "Red", extraData = mapOf("shade" to "crimson")),
+            Option(
+                id = "option1",
+                text = "Red",
+                extraData = mapOf("shade" to "crimson"),
+                textI18n = mapOf("language" to "en", "it_text" to "Rosso"),
+            ),
             Option(id = "option2", text = "Blue"),
         ),
         votingVisibility = VotingVisibility.PUBLIC,
@@ -159,6 +164,7 @@ internal object PollTestData {
                     createdAt = Date(1704096000000L),
                     updatedAt = Date(1704097800000L),
                 ),
+                textI18n = mapOf("language" to "en", "it_text" to "Viola"),
             ),
         ),
         createdBy = User(
@@ -172,6 +178,8 @@ internal object PollTestData {
             updatedAt = Date(1704094200000L),
         ),
         extraData = emptyMap(),
+        nameI18n = mapOf("language" to "en", "it_text" to "Colore preferito"),
+        descriptionI18n = mapOf("language" to "en", "it_text" to "Scegli il tuo colore preferito"),
     )
 
     val expectedOptionalFieldsMissing = Poll(
@@ -333,7 +341,7 @@ internal object PollTestData {
 
     @Language("JSON")
     val jsonWithExplicitNulls =
-        """{"id":"poll1","name":"Favorite color","description":"Choose your favorite color","options":[{"id":"option1","text":"Red"}],"enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":0,"own_votes":[],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin","voting_visibility":"public","max_votes_allowed":null,"is_closed":null}"""
+        """{"id":"poll1","name":"Favorite color","description":"Choose your favorite color","options":[{"id":"option1","text":"Red"}],"enforce_unique_vote":true,"allow_user_suggested_options":false,"allow_answers":false,"vote_count":0,"own_votes":[],"created_at":"2024-01-01T09:00:00.000Z","updated_at":"2024-01-01T12:00:00.000Z","answers_count":0,"created_by_id":"admin","voting_visibility":"public","max_votes_allowed":null,"is_closed":null,"name_i18n":null,"description_i18n":null}"""
 
     val expectedWithExplicitNulls = Poll(
         id = "poll1",

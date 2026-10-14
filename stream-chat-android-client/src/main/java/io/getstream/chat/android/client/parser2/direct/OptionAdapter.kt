@@ -30,12 +30,14 @@ internal class OptionAdapter : JsonAdapter<Option>() {
         var id: String? = null
         var text: String? = null
         var extraData: MutableMap<String, Any>? = null
+        var textI18n: Map<String, String>? = null
 
         while (reader.hasNext()) {
             val key = reader.nextName()
             when (key) {
                 "id" -> id = reader.nextString()
                 "text" -> text = reader.nextString()
+                "text_i18n" -> textI18n = JsonParsingUtils.parseStringMap(reader)
                 else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
             }
         }
@@ -48,6 +50,7 @@ internal class OptionAdapter : JsonAdapter<Option>() {
             id = id,
             text = text,
             extraData = extraData?.toMap() ?: emptyMap(),
+            textI18n = textI18n.orEmpty(),
         )
     }
 

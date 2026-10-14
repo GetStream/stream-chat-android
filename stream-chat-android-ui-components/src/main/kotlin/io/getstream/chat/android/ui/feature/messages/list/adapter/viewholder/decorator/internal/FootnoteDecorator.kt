@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.utils.extensions.hasTranslation
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageStatusIndicator
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
@@ -363,7 +364,10 @@ internal class FootnoteDecorator(
         val isGiphy = data.message.isGiphy()
         val isDeleted = data.message.isDeleted()
         val translatedText = data.message.getTranslation(userLanguage).ifEmpty { data.message.text }
-        if (!isGiphy && !isDeleted && userLanguage != i18nLanguage && translatedText != data.message.text) {
+        val isTextTranslated = userLanguage != i18nLanguage && translatedText != data.message.text
+        val isPollTranslated = data.message.poll?.hasTranslation(ChatUI.currentUserProvider.getCurrentUser()) == true
+        val isTranslated = isTextTranslated || isPollTranslated
+        if (!isGiphy && !isDeleted && isTranslated) {
             val languageDisplayName = getLanguageDisplayName(userLanguage)
             footnoteView.showTranslatedLabel(
                 languageName = languageDisplayName,
