@@ -65,7 +65,8 @@ internal class GroupedUnreadChannelsUpdater(
 
     /**
      * Backend-pushed authoritative map (from any [HasGroupedUnreadChannels] event). The event's
-     * map REPLACES the current one (or returns it unchanged if the event carries no map). The
+     * map is MERGED into the current one, so groups the event does not carry keep their counts
+     * (it returns the current map unchanged if the event carries no map). The
      * event subtype is then inspected to flip the per-batch overrides for its cid so subsequent
      * `channel.updated` deltas in the same batch see the post-event state.
      */
@@ -75,9 +76,10 @@ internal class GroupedUnreadChannelsUpdater(
         event: HasGroupedUnreadChannels,
     ): Map<String, Int> {
         rotateBatchIfNeeded(batchId)
-        val next = event.groupedUnreadChannels ?: current
-        if (next !== current) {
-            // The map was replaced, so the per-batch dedup no longer applies to later events.
+        val eventCounts = event.groupedUnreadChannels
+        val next = if (eventCounts == null) current else current + eventCounts
+        if (eventCounts != null) {
+            // The server's counts were applied, so the per-batch dedup no longer applies to later events.
             processedCids.clear()
         }
         recordOverridesFrom(event)

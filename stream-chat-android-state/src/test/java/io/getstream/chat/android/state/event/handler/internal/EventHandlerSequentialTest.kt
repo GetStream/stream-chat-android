@@ -732,7 +732,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 prepareFixtureWithReadCapability,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationMarkReadEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -743,7 +743,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationMarkUnreadEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -754,7 +754,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationMessageNewEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -766,7 +766,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationChannelDeletedEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -778,7 +778,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationChannelTruncatedEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -790,7 +790,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 prepareFixtureWithReadCapability,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // Event with null grouped unreads preserves previous value
             Arguments.of(
