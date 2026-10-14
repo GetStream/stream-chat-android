@@ -326,6 +326,7 @@ internal class EventHandlerSequential(
         val hasMarkAllReadEvent = batchEvent.sortedEvents.lastOrNull { it is MarkAllReadEvent } != null
         if (hasMarkAllReadEvent) {
             queryChannelsLogic.refreshAllChannelsState()
+            queryChannelsLogic.handleMarkAllRead()
         }
 
         val cids = batchEvent.sortedEvents

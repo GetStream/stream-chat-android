@@ -575,7 +575,7 @@ internal class LogicRegistryTest {
     @Test
     fun `grouped query with a filter publishes the base plus the unread channels it shows`() {
         val user = randomUser()
-        whenever(clientState.user) doReturn MutableStateFlow(user)
+        whenever(client.getCurrentUser()) doReturn user
         val identifier = QueryChannelsIdentifier.Grouped("expired")
         logicRegistry.queryChannels(identifier)
         val state = queryChannelsStateCache.getValue(identifier)

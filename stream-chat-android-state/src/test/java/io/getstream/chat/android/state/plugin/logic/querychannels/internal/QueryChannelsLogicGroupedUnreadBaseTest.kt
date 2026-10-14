@@ -27,14 +27,26 @@ import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -67,11 +79,9 @@ internal class QueryChannelsLogicGroupedUnreadBaseTest {
     @Test
     fun `applyGroupedResult on a filtered first page keeps the unread channels not loaded as the badge base`() = runTest {
         // Given - the server counts 5 unread channels, 2 of them are on the page
-        val user = randomUser()
-        whenever(client.getCurrentUser()) doReturn user
-        whenever(queryChannelsStateLogic.getFilter()) doReturn Filters.greaterThanEquals("query_timestamp", "now-14d")
-        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        val user = givenFilteredGroupFor()
         val page = listOf(channelWithUnread(user, 2), channelWithUnread(user, 2), channelWithUnread(user, 0))
+        whenever(queryChannelsStateLogic.getLoadedChannelsShownNow()) doReturn page
 
         // When
         logic.applyGroupedResult(groupOf(page, unreadChannels = 5), isFirstPage = true)
@@ -81,15 +91,29 @@ internal class QueryChannelsLogicGroupedUnreadBaseTest {
     }
 
     @Test
-    fun `applyGroupedResult on a filtered next page takes its unread channels out of the badge base`() = runTest {
-        val user = randomUser()
-        whenever(client.getCurrentUser()) doReturn user
-        whenever(queryChannelsStateLogic.getFilter()) doReturn Filters.greaterThanEquals("query_timestamp", "now-14d")
-        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doReturn 3
+    fun `applyGroupedResult on a filtered next page takes the loaded unread channels out of the fresh count`() = runTest {
+        // Given - an earlier base of 10, but the server now counts 4, and 2 unread channels are loaded
+        val user = givenFilteredGroupFor()
+        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doReturn 10
+        val page = listOf(channelWithUnread(user, 2), channelWithUnread(user, 0))
+        whenever(queryChannelsStateLogic.getLoadedChannelsShownNow()) doReturn page + channelWithUnread(user, 1)
 
-        logic.applyGroupedResult(groupOf(listOf(channelWithUnread(user, 2), channelWithUnread(user, 0))), isFirstPage = false)
+        // When
+        logic.applyGroupedResult(groupOf(page, unreadChannels = 4), isFirstPage = false)
 
+        // Then
         verify(queryChannelsStateLogic).setGroupedUnreadBase(2)
+    }
+
+    @Test
+    fun `applyGroupedResult does not let the badge base go below zero`() = runTest {
+        val user = givenFilteredGroupFor()
+        val page = listOf(channelWithUnread(user, 2), channelWithUnread(user, 2))
+        whenever(queryChannelsStateLogic.getLoadedChannelsShownNow()) doReturn page
+
+        logic.applyGroupedResult(groupOf(page, unreadChannels = 1), isFirstPage = true)
+
+        verify(queryChannelsStateLogic).setGroupedUnreadBase(0)
     }
 
     @Test
@@ -101,6 +125,84 @@ internal class QueryChannelsLogicGroupedUnreadBaseTest {
         logic.applyGroupedResult(groupOf(emptyList(), unreadChannels = 5), isFirstPage = true)
 
         verify(queryChannelsStateLogic).setGroupedUnreadBase(null)
+    }
+
+    @Test
+    fun `filteredGroupUnreadCount adds the loaded unread channels to the badge base`() = runTest {
+        val user = givenFilteredGroupFor()
+        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doReturn 3
+        whenever(queryChannelsStateLogic.getLoadedChannelsShownNow()) doReturn listOf(
+            channelWithUnread(user, 1),
+            channelWithUnread(user, 0),
+            channelWithUnread(user, 1).copy(hidden = true),
+        )
+
+        assertEquals(4, logic.filteredGroupUnreadCount())
+    }
+
+    @Test
+    fun `filteredGroupUnreadCount is null without a badge base`() = runTest {
+        givenFilteredGroupFor()
+        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doReturn null
+
+        assertNull(logic.filteredGroupUnreadCount())
+    }
+
+    @Test
+    fun `filteredGroupUnreadCount waits until a page is fully applied`() = runTest {
+        // Given - a badge of 3 unread channels, none loaded yet
+        val user = givenFilteredGroupFor()
+        var base: Int? = 3
+        var loaded = emptyList<Channel>()
+        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doAnswer { base }
+        whenever(queryChannelsStateLogic.setGroupedUnreadBase(anyOrNull())) doAnswer { base = it.getArgument(0) }
+        whenever(queryChannelsStateLogic.getLoadedChannelsShownNow()) doAnswer { loaded }
+        val pageAdded = CompletableDeferred<Unit>()
+        queryChannelsStateLogic.stub {
+            onBlocking { addChannelsState(any()) } doSuspendableAnswer {
+                loaded = loaded + it.getArgument<List<Channel>>(0)
+                pageAdded.await()
+            }
+        }
+        val page = listOf(channelWithUnread(user, 1), channelWithUnread(user, 1))
+
+        // When - the count is read after the page's channels are added but before its base is set
+        val applying = launch { logic.applyGroupedResult(groupOf(page, unreadChannels = 3), isFirstPage = true) }
+        runCurrent()
+        val count = async { logic.filteredGroupUnreadCount() }
+        runCurrent()
+        assertFalse(count.isCompleted)
+        pageAdded.complete(Unit)
+        applying.join()
+
+        // Then - the read waits for the page, so it never adds the page's channels to the old base
+        assertEquals(3, count.await())
+    }
+
+    @Test
+    fun `handleMarkAllRead sets the badge base of a filtered group to zero`() = runTest {
+        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doReturn 4
+
+        logic.handleMarkAllRead()
+
+        verify(queryChannelsStateLogic).setGroupedUnreadBase(0)
+    }
+
+    @Test
+    fun `handleMarkAllRead leaves a group without a badge base unchanged`() = runTest {
+        whenever(queryChannelsStateLogic.getGroupedUnreadBase()) doReturn null
+
+        logic.handleMarkAllRead()
+
+        verify(queryChannelsStateLogic, never()).setGroupedUnreadBase(anyOrNull())
+    }
+
+    private fun givenFilteredGroupFor(): User {
+        val user = randomUser()
+        whenever(client.getCurrentUser()) doReturn user
+        whenever(queryChannelsStateLogic.getFilter()) doReturn Filters.greaterThanEquals("query_timestamp", "now-14d")
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        return user
     }
 
     private fun groupOf(channels: List<Channel>, unreadChannels: Int = 0) = GroupedChannelsGroup(

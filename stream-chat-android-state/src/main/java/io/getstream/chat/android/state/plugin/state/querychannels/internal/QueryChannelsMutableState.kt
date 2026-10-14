@@ -327,6 +327,18 @@ internal class QueryChannelsMutableState(
     }
 
     /**
+     * The loaded channels that [filter] shows at this moment. Unlike [channels], it is read straight from the loaded
+     * channels, so it already includes the latest update.
+     */
+    fun loadedChannelsShownNow(): List<Channel> {
+        val filter = _filter.value
+        val checkedAt = now()
+        return rawChannels?.values.orEmpty().filter { channel ->
+            filter.matchesGroupedChannel(channel.group, channel.queryTimestamp, checkedAt)
+        }
+    }
+
+    /**
      * Restores the filter and sort saved with the group by an earlier session, so the cached list is
      * filtered before the first request. No-op when a request has already set the configuration, or
      * when the group was saved without a filter or sort.

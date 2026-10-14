@@ -351,7 +351,7 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setNextCursor(group.next)
             queryChannelsStateLogic.setEndOfChannels(group.next == null)
             queryChannelsStateLogic.addChannelsState(channels)
-            updateGroupedUnreadBase(group, isFirstPage)
+            updateGroupedUnreadBase(group)
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
             queryChannelsStateLogic.setRecoveryNeeded(false)
@@ -367,18 +367,41 @@ internal class QueryChannelsLogic(
 
     /**
      * A filtered group's badge is the unread channels not loaded yet plus the loaded ones that are unread now.
-     * The server's count covers both, so the unread channels of each loaded page are taken out of it.
+     * The server counts the whole group again on every page, so the loaded unread channels are taken out of that count.
      */
-    private fun updateGroupedUnreadBase(group: GroupedChannelsGroup, isFirstPage: Boolean) {
+    private fun updateGroupedUnreadBase(group: GroupedChannelsGroup) {
         val userId = client.getCurrentUser()?.id
         if (queryChannelsStateLogic.getFilter() == Filters.neutral() || userId == null) {
             queryChannelsStateLogic.setGroupedUnreadBase(null)
             return
         }
-        val pageUnread = group.channels.count { it.isUnreadInGroupFor(userId) }
-        val notLoaded = if (isFirstPage) group.unreadChannels else queryChannelsStateLogic.getGroupedUnreadBase()
-        queryChannelsStateLogic.setGroupedUnreadBase(notLoaded?.let { (it - pageUnread).coerceAtLeast(0) })
+        val notLoaded = group.unreadChannels - countLoadedUnreadChannels(userId)
+        queryChannelsStateLogic.setGroupedUnreadBase(notLoaded.coerceAtLeast(0))
     }
+
+    /**
+     * The badge of a filtered group, or `null` when the group has no filter. Shares [groupedResultMutex], so it never
+     * combines the channels of a page with the count from before that page.
+     */
+    internal suspend fun filteredGroupUnreadCount(): Int? = groupedResultMutex.withLock {
+        val base = queryChannelsStateLogic.getGroupedUnreadBase()
+        val userId = client.getCurrentUser()?.id
+        if (base == null || userId == null) null else base + countLoadedUnreadChannels(userId)
+    }
+
+    /**
+     * Mark-all-read also reads the channels of a filtered group that are not loaded, so none of them count any more.
+     */
+    internal suspend fun handleMarkAllRead() {
+        groupedResultMutex.withLock {
+            if (queryChannelsStateLogic.getGroupedUnreadBase() != null) {
+                queryChannelsStateLogic.setGroupedUnreadBase(0)
+            }
+        }
+    }
+
+    private fun countLoadedUnreadChannels(userId: String): Int =
+        queryChannelsStateLogic.getLoadedChannelsShownNow().count { it.isUnreadInGroupFor(userId) }
 
     private suspend fun Channel.withLocalOnlyMessages(): Channel {
         val serverIds: Set<String> = messages.mapTo(mutableSetOf()) { it.id }

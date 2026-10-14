@@ -157,6 +157,8 @@ internal class QueryChannelsStateLogic(
 
     internal fun getFilter(): FilterObject = mutableState.filter
 
+    internal fun getLoadedChannelsShownNow(): List<Channel> = mutableState.loadedChannelsShownNow()
+
     internal fun restoreGroupedQueryConfig(filter: FilterObject, sort: QuerySorter<Channel>) {
         mutableState.restoreGroupedQueryConfig(filter, sort)
     }
