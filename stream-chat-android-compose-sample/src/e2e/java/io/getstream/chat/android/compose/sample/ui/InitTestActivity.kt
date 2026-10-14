@@ -30,6 +30,12 @@ sealed class InitTestActivity : Serializable {
             UserLoginActivity.createIntent(context)
     }
 
+    data object GroupedChannels : InitTestActivity() {
+        private fun readResolve(): Any = GroupedChannels
+        override fun createIntent(context: Context): Intent =
+            GroupedChannelsActivity.createIntent(context)
+    }
+
     data class Jwt(val baseUrl: String) : InitTestActivity() {
         override fun createIntent(context: Context): Intent =
             JwtTestActivity.createIntent(context, baseUrl)

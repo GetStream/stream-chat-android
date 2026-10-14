@@ -21,6 +21,7 @@ import io.getstream.chat.android.compose.pages.ChannelInfoPage
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelMenu
+import io.getstream.chat.android.compose.pages.ChannelListPage.GroupTabs
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.uiautomator.appContext
 import io.getstream.chat.android.e2e.test.uiautomator.isDisplayed
@@ -105,6 +106,17 @@ fun UserRobot.assertChannelWithName(name: String, isDisplayed: Boolean = true): 
         assertTrue(Channel.name(name).waitDisplayed())
     } else {
         assertFalse(Channel.name(name).waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+/** Asserts the unread channel count on a group tab. A count of 0 means the tab shows no badge. */
+fun UserRobot.assertGroupUnreadBadge(group: String, count: Int): UserRobot {
+    val badge = GroupTabs.unreadBadge(group)
+    if (count > 0) {
+        assertEquals(count.toString(), badge.waitForText(count.toString()))
+    } else {
+        assertFalse(badge.waitToDisappear().isDisplayed())
     }
     return this
 }
