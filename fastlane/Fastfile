@@ -75,7 +75,8 @@ lane :build_and_run_e2e_test do |options|
     local_server: options[:local_server],
     mock_server_branch: options[:mock_server_branch],
     apk_folder_path: "../#{test_flavor}/build/outputs/apk",
-    use_backend: options[:use_backend]
+    use_backend: options[:use_backend],
+    api_version: options[:api_version]
   )
 end
 
@@ -206,9 +207,14 @@ lane :run_e2e_test do |options|
     test_filter = "#{test_filter} -e coverage true -e coverageFilePath coverage/ -e useTestStorageService true"
   end
 
+  # The API version the mock serves and the app connects with.
+  api_version = options[:api_version].to_s.empty? ? 'v1' : options[:api_version].to_s
+  UI.user_error!("Invalid api_version: #{api_version}") unless %w[v1 v2].include?(api_version)
+
   result = sh(
     "adb shell 'CLASSPATH=#{androidx_test_services_path}' " \
     'app_process / androidx.test.services.shellexecutor.ShellMain am instrument -w -e clearPackageData true ' \
+    "-e api_version #{api_version} " \
     "-e targetInstrumentation #{test_package_name}/#{runner_package_name} #{test_filter} #{orchestrator_package_name}"
   )
 

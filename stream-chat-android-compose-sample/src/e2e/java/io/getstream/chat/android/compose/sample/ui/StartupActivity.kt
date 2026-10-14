@@ -45,7 +45,12 @@ class StartupActivity : AppCompatActivity() {
                 // The process survives across retry attempts, so disconnect the client left by
                 // the previous attempt before building a new one.
                 ChatClient.instance().disconnect(flushPersistence = true).await()
-                ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, baseUrl)
+                ChatHelper.initializeSdk(
+                    context = applicationContext,
+                    apiKey = PredefinedUserCredentials.API_KEY,
+                    baseUrl = baseUrl,
+                    useV2WebSocket = intent.getBooleanExtra("USE_V2_WEBSOCKET", false),
+                )
                 customSettings().isComposerLinkPreviewEnabled = true
             }
 
