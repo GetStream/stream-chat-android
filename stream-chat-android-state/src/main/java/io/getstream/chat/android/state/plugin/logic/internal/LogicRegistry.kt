@@ -79,7 +79,6 @@ internal class LogicRegistry internal constructor(
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
     /**
      * Keeps the badge of a filtered group in [MutableGlobalState]: the unread channels not loaded yet plus the
      * shown channels that are unread now, so it follows reads, new messages and cutoffs between queries.
@@ -99,6 +98,7 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
         return queryChannels.getOrPut(identifier) {
             val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
