@@ -1314,10 +1314,21 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `The hidden user custom names are the declared fields the mapping doesn't fill in`() {
+    fun `FullUserResponse fills its declared extraData keys from the fields, not a stored copy`() {
+        val response = randomFullUserResponse(custom = mapOf("shadow_banned" to false, "flair" to "gold"))
+            .copy(shadowBanned = true)
+        val sut = Fixture().get()
+
+        val user = with(sut) { response.toDomain() }
+
+        user.extraData["shadow_banned"] shouldBeEqualTo true
+        user.extraData["flair"] shouldBeEqualTo "gold"
+    }
+
+    @Test
+    fun `The hidden user custom names are the declared fields, except those UserResponse fills in`() {
         USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponse>() - "custom" - GENERATED_USER_EXTRA_DATA_KEYS
-        FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo
-            jsonNames<FullUserResponse>() - "custom" - GENERATED_FULL_USER_EXTRA_DATA_KEYS
+        FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom"
     }
 
     private inline fun <reified T> jsonNames(): Set<String> = T::class.java.declaredConstructors

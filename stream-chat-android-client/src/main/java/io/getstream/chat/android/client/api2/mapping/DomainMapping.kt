@@ -196,14 +196,19 @@ internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
     "updated_at",
 )
 
-/** The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
+/**
+ * The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS], with every declared name: only v2 returns this
+ * model, so the fields the mapping fills in come from the typed values rather than a stored copy.
+ */
 internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "avg_response_time",
+    "ban_expires",
     "banned",
     "blocked_user_ids",
     "channel_mutes",
     "created_at",
     "deactivated_at",
+    "deleted_at",
     "devices",
     "id",
     "image",
@@ -215,7 +220,9 @@ internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "name",
     "online",
     "privacy_settings",
+    "revoke_tokens_issued_before",
     "role",
+    "shadow_banned",
     "teams",
     "teams_role",
     "total_unread_count",
