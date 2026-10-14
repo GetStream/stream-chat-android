@@ -28,8 +28,10 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
@@ -83,8 +85,8 @@ internal class GroupAwareChatEventHandler(
     ): EventHandlingResult {
         val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
         // The cached channel can predate the new message, which may bring it back within a cutoff.
-        val latestActivity = (event as? NewMessageEvent)?.let { it.message.createdAt ?: it.createdAt }
-        return filterResultByGroup(defaultResult, cachedChannel, filter, latestActivity)
+        val newMessage = (event as? NewMessageEvent)?.message
+        return filterResultByGroup(defaultResult, cachedChannel, filter, newMessage)
     }
 
     /**
@@ -113,13 +115,17 @@ internal class GroupAwareChatEventHandler(
         resolver.resolve(channel).contains(groupKey) &&
             filter.matchesGroupedChannel(group = channel.group, queryTimestamp = channel.queryTimestamp, now = now())
 
-    /** The channel with [latestActivity] as its last message time, when that is more recent. */
-    private fun Channel.withActivity(latestActivity: Date?): Channel =
-        if (latestActivity != null && latestActivity.after(lastMessageAt ?: Date(0))) {
-            copy(lastMessageAt = latestActivity)
-        } else {
-            this
-        }
+    /** The channel with [newMessage] counted in its last message time, as the channel state counts it. */
+    private fun Channel.withNewMessage(newMessage: Message?): Channel = when (newMessage) {
+        null -> this
+        else -> copy(
+            lastMessageAt = calculateNewLastMessageAt(
+                message = newMessage,
+                currentLastMessageAt = lastMessageAt,
+                skipLastMsgUpdateForSystemMsgs = false,
+            ),
+        )
+    }
 
     /**
      * Reads `cachedChannel.membership`: the SDK maintains this field via member events and does
@@ -143,10 +149,10 @@ internal class GroupAwareChatEventHandler(
         result: EventHandlingResult,
         cachedChannel: Channel?,
         filter: FilterObject,
-        latestActivity: Date?,
+        newMessage: Message?,
     ): EventHandlingResult = when (result) {
         // The stored copy carries the new activity, so it still matches when the list is checked again.
-        is EventHandlingResult.Add -> result.channel.withActivity(latestActivity).let { channel ->
+        is EventHandlingResult.Add -> result.channel.withNewMessage(newMessage).let { channel ->
             if (channelBelongsHere(channel, filter)) EventHandlingResult.Add(channel) else EventHandlingResult.Skip
         }
 
@@ -154,7 +160,7 @@ internal class GroupAwareChatEventHandler(
             // No channel data on the event; use cachedChannel if available. If we have nothing
             // to resolve against, trust the default and rely on the subsequent channel.updated
             // (which carries full channel data) to clean up.
-            if (cachedChannel != null && !channelBelongsHere(cachedChannel.withActivity(latestActivity), filter)) {
+            if (cachedChannel != null && !channelBelongsHere(cachedChannel.withNewMessage(newMessage), filter)) {
                 EventHandlingResult.Skip
             } else {
                 result

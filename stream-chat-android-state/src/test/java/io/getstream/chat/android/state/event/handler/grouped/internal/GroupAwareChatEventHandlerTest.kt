@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -426,7 +427,7 @@ internal class GroupAwareChatEventHandlerTest {
         val event = randomNewMessageEvent(
             cid = cachedChannel.cid,
             createdAt = now,
-            message = randomMessage(type = "regular", createdAt = now),
+            message = channelMessage(createdAt = now),
         )
 
         val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
@@ -434,6 +435,34 @@ internal class GroupAwareChatEventHandlerTest {
         // The stored copy carries the new message time, so the next cutoff check keeps it.
         assertEquals(EventHandlingResult.Add(cachedChannel.copy(lastMessageAt = now)), result)
     }
+
+    @Test
+    fun `Given a cached channel past the cutoff When a thread reply not shown in the channel arrives Should skip`() {
+        val cachedChannel = randomChannel(
+            extraData = mapOf("group" to "expired"),
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+        )
+        val handler = handlerFor(groupKey = "expired", cachedChannels = emptyMap())
+        val event = randomNewMessageEvent(
+            cid = cachedChannel.cid,
+            createdAt = now,
+            message = channelMessage(createdAt = now).copy(parentId = randomString(), showInChannel = false),
+        )
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    private fun channelMessage(createdAt: Date) = randomMessage(
+        type = "regular",
+        createdAt = createdAt,
+        createdLocallyAt = null,
+        parentId = null,
+        showInChannel = false,
+        shadowed = false,
+    )
 
     private fun daysAgo(days: Long): Date = Date(now.time - TimeUnit.DAYS.toMillis(days))
 
