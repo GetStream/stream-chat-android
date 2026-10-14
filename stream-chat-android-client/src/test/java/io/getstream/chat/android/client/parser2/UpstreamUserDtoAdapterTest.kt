@@ -16,8 +16,15 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.User
 import io.kotest.assertions.json.shouldEqualJson
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldThrow
@@ -36,6 +43,28 @@ internal class UpstreamUserDtoAdapterTest {
     fun `Serialize JSON user without custom fields`() {
         val jsonString = parser.toJson(UserDtoTestData.upstreamUserWithoutExtraData)
         jsonString.shouldEqualJson(UserDtoTestData.upstreamJsonWithoutExtraData)
+    }
+
+    @Test
+    fun `A user upsert leaves out the user's devices`() {
+        val user = User(
+            id = "userId",
+            role = "user",
+            name = "username",
+            image = "image",
+            language = "en",
+            teams = listOf("team1"),
+            devices = listOf(Device(token = "token", pushProvider = PushProvider.FIREBASE, providerName = "firebase")),
+            extraData = mapOf("flair" to "gold", "devices" to listOf("stored")),
+        )
+        val mapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)
+
+        val json = parser.toJson(UpdateUsersRequest(mapOf(user.id to with(mapping) { user.toDto() })))
+
+        json.shouldEqualJson(
+            """{"users":{"userId":{"banned":false,"id":"userId","name":"username","image":"image","invisible":false,
+            "language":"en","role":"user","teams":["team1"],"teams_role":{},"flair":"gold"}}}""",
+        )
     }
 
     @Test
