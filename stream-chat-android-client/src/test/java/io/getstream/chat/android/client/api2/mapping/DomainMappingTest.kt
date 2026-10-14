@@ -132,6 +132,7 @@ import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.ImageData
 import io.getstream.chat.android.network.models.Images
+import io.getstream.chat.android.network.models.OwnUserResponse
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
@@ -808,6 +809,9 @@ internal class DomainMappingTest {
         FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
         CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelResponse>() - "custom"
         MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelMemberResponse>() - "custom"
+        OWN_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<OwnUserResponse>() - "custom"
+        EVENT_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponsePrivacyFields>() - "custom"
+        EVENT_USER_HIDDEN_CUSTOM_KEYS.containsAll(jsonNames<UserResponseCommonFields>() - "custom") shouldBeEqualTo true
     }
 
     private inline fun <reified T> jsonNames(): Set<String> = T::class.java.declaredConstructors
