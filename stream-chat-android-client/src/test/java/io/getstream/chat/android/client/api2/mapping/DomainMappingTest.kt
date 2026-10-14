@@ -755,14 +755,11 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `The hidden custom names are the user fields and the kept channel and member extraData keys`() {
-        val channelKeys = GENERATED_CHANNEL_EXTRA_DATA_KEYS + LEGACY_CHANNEL_EXTRA_DATA_KEYS
-
+    fun `The hidden custom names are the fields each response model declares`() {
         USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
         FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
-        CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo channelKeys.intersect(jsonNames<ChannelResponse>())
-        MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo
-            GENERATED_MEMBER_EXTRA_DATA_KEYS.intersect(jsonNames<ChannelMemberResponse>())
+        CHANNEL_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelResponse>() - "custom"
+        MEMBER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<ChannelMemberResponse>() - "custom"
     }
 
     private inline fun <reified T> jsonNames(): Set<String> = T::class.java.declaredConstructors
@@ -792,6 +789,8 @@ internal class DomainMappingTest {
             "shadow_banned" to false,
             "ban_expires" to "2030-01-01T00:00:00Z",
             "deleted_at" to "2030-01-01T00:00:00Z",
+            // A copy older clients stored by sending the whole user back as custom data.
+            "banned" to true,
             "color" to "teal",
         )
         val sut = Fixture().hidingStoredDeclaredCustom().get()
@@ -807,7 +806,9 @@ internal class DomainMappingTest {
         fullUser.extraData.containsKey("ban_expires") shouldBeEqualTo false
         fullUser.extraData.containsKey("deleted_at") shouldBeEqualTo false
         fullUser.extraData["color"] shouldBeEqualTo "teal"
+        fullUser.extraData.containsKey("banned") shouldBeEqualTo false
         user.extraData.containsKey("deleted_at") shouldBeEqualTo false
+        user.extraData.containsKey("banned") shouldBeEqualTo false
         user.extraData["color"] shouldBeEqualTo "teal"
     }
 
