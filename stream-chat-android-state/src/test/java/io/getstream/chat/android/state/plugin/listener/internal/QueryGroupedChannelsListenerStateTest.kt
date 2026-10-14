@@ -33,7 +33,6 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -121,7 +120,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `successful result ends the load for a requested group the response left out`() = runTest {
         // given — two groups requested, only one echoed back.
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val result = Result.Success(
             GroupedChannels(
@@ -168,9 +167,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `successful first-page result merges returned unread counts into existing global state`() = runTest {
         // given
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
-            mapOf("direct" to 4, "support" to 1),
-        )
+        whenever(globalState.rawGroupedUnreadChannels) doReturn mapOf("direct" to 4, "support" to 1)
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val result = Result.Success(
             value = GroupedChannels(
@@ -203,9 +200,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `successful pagination result with next cursor does not update grouped unread counts`() = runTest {
         // given
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
-            mapOf("direct" to 4, "support" to 1),
-        )
+        whenever(globalState.rawGroupedUnreadChannels) doReturn mapOf("direct" to 4, "support" to 1)
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
@@ -264,9 +259,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `successful pagination result with prev cursor does not update grouped unread counts`() = runTest {
         // given
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
-            mapOf("direct" to 4, "support" to 1),
-        )
+        whenever(globalState.rawGroupedUnreadChannels) doReturn mapOf("direct" to 4, "support" to 1)
         val result = Result.Success(
             value = GroupedChannels(
                 groups = mapOf(
@@ -296,9 +289,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `successful result with groups null merges into existing state`() = runTest {
         // given
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(
-            mapOf("direct" to 4),
-        )
+        whenever(globalState.rawGroupedUnreadChannels) doReturn mapOf("direct" to 4)
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val result = Result.Success(
             value = GroupedChannels(
@@ -356,7 +347,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     fun `success routes each returned group to the matching Grouped identifier as first page when no cursor was requested`() =
         runTest {
             // given
-            whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+            whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
             doNothing().`when`(globalState).setGroupedUnreadChannels(any())
             val groupDirect = GroupedChannelsGroup(
                 groupKey = "direct",
@@ -440,7 +431,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     fun `success writes captured config with per-group override to matching group and general limit to others`() =
         runTest {
             // given
-            whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+            whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
             doNothing().`when`(globalState).setGroupedUnreadChannels(any())
             val groupA = GroupedChannelsGroup(groupKey = "a", channels = emptyList())
             val groupB = GroupedChannelsGroup(groupKey = "b", channels = emptyList())
@@ -477,7 +468,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `success with all-null request still captures watch and presence flags`() = runTest {
         // given - recovery-shaped call where the SDK relies solely on server defaults
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val group = GroupedChannelsGroup(groupKey = "direct", channels = emptyList())
         val result = Result.Success(GroupedChannels(groups = mapOf("direct" to group)))
@@ -499,7 +490,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `success treats keys with requested next cursor as paginated`() = runTest {
         // given
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val groupSupport = GroupedChannelsGroup(
             groupKey = "support",
@@ -527,7 +518,7 @@ internal class QueryGroupedChannelsListenerStateTest {
     @Test
     fun `success treats keys with requested prev cursor as paginated`() = runTest {
         // given
-        whenever(globalState.groupedUnreadChannels) doReturn MutableStateFlow(emptyMap())
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
         doNothing().`when`(globalState).setGroupedUnreadChannels(any())
         val groupSupport = GroupedChannelsGroup(
             groupKey = "support",

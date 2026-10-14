@@ -28,9 +28,13 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.grouped.internal.GroupAwareChatEventHandlerFactory
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -42,9 +46,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 
 internal class LogicRegistryTest {
 
@@ -562,5 +570,39 @@ internal class LogicRegistryTest {
 
         // Then
         Assertions.assertEquals(0, logicRegistry.getActiveQueryChannelsLogic().size)
+    }
+
+    @Test
+    fun `grouped query with a filter publishes the base plus the unread channels it shows`() {
+        val user = randomUser()
+        whenever(client.getCurrentUser()) doReturn user
+        val identifier = QueryChannelsIdentifier.Grouped("expired")
+        logicRegistry.queryChannels(identifier)
+        val state = queryChannelsStateCache.getValue(identifier)
+        val recent = Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))
+        val unread = randomChannel(
+            createdAt = recent,
+            lastMessageAt = recent,
+            hidden = false,
+            extraData = emptyMap(),
+            read = listOf(randomChannelUserRead(user = user, unreadMessages = 1)),
+        )
+        val read = unread.copy(id = "other", read = listOf(randomChannelUserRead(user = user, unreadMessages = 0)))
+        state.setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = Filters.greaterThanEquals("query_timestamp", "now-14d"),
+            ),
+        )
+        state.setChannels(mapOf(unread.cid to unread, read.cid to read))
+
+        state.setGroupedUnreadBase(3)
+        verify(mutableGlobalState).setFilteredGroupedUnreadChannels("expired", 4)
+
+        state.setChannels(mapOf(unread.cid to unread.copy(read = read.read), read.cid to read))
+        verify(mutableGlobalState).setFilteredGroupedUnreadChannels("expired", 3)
     }
 }

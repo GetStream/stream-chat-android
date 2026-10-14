@@ -61,6 +61,7 @@ import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageBufferConfig
 import io.getstream.chat.android.state.plugin.config.MessageBufferOverflow
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import kotlinx.coroutines.CompletableDeferred
@@ -83,6 +84,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeast
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -410,6 +412,30 @@ internal class EventHandlerSequentialTest {
         mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 1, "b" to 0)
     }
 
+    @Test
+    fun `MarkAllReadEvent clears the unread channels not loaded of active queries`() = runTest {
+        val queryChannelsLogic = queryChannelsLogicHandlingNoEvents()
+        val handler = Fixture()
+            .withActiveQueryChannelsLogic(queryChannelsLogic)
+            .get(this)
+
+        handler.handleEvents(randomMarkAllReadEvent(user = currentUser))
+
+        verify(queryChannelsLogic).handleMarkAllRead()
+    }
+
+    @Test
+    fun `NotificationMarkReadEvent keeps the unread channels not loaded of active queries`() = runTest {
+        val queryChannelsLogic = queryChannelsLogicHandlingNoEvents()
+        val handler = Fixture()
+            .withActiveQueryChannelsLogic(queryChannelsLogic)
+            .get(this)
+
+        handler.handleEvents(randomNotificationMarkReadEvent(user = currentUser))
+
+        verify(queryChannelsLogic, never()).handleMarkAllRead()
+    }
+
     @ParameterizedTest
     @MethodSource("sharedLocationArguments")
     fun `GlobalState should be updated with shared locations`(
@@ -583,6 +609,10 @@ internal class EventHandlerSequentialTest {
         }
     }
 
+    private fun queryChannelsLogicHandlingNoEvents(): QueryChannelsLogic = mock {
+        onBlocking { parseChatEventResults(any()) } doReturn emptyList()
+    }
+
     private fun capturedBatchEvents(fixture: Fixture): List<BatchEvent> {
         val captor = argumentCaptor<BatchEvent>()
         verify(fixture.stateRegistry, atLeast(0)).handleBatchEvent(captor.capture())
@@ -639,6 +669,10 @@ internal class EventHandlerSequentialTest {
 
         fun withRepositoryFacade(repos: RepositoryFacade) = apply {
             this.repos = repos
+        }
+
+        fun withActiveQueryChannelsLogic(queryChannelsLogic: QueryChannelsLogic) = apply {
+            whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryChannelsLogic)
         }
 
         fun withBufferConfig(config: MessageBufferConfig) = apply {
@@ -732,7 +766,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 prepareFixtureWithReadCapability,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationMarkReadEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -743,7 +777,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationMarkUnreadEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -754,7 +788,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationMessageNewEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -766,7 +800,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationChannelDeletedEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -778,7 +812,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 neutralPrepareFixture,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // NotificationChannelTruncatedEvent with grouped unreads updates GlobalState
             Arguments.of(
@@ -790,7 +824,7 @@ internal class EventHandlerSequentialTest {
                 ),
                 initialGroupedUnreadChannels,
                 prepareFixtureWithReadCapability,
-                groupedUnreadChannels,
+                initialGroupedUnreadChannels + groupedUnreadChannels,
             ),
             // Event with null grouped unreads preserves previous value
             Arguments.of(

@@ -497,6 +497,30 @@ internal class QueryChannelsMutableStateTest {
     }
 
     @Test
+    fun `loadedChannelsShownNow checks the group's cutoff at the time it is called`() {
+        var now = Date(1_800_000_000_000)
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"), now = { now })
+        val createdAt = Date(now.time - TimeUnit.DAYS.toMillis(30))
+        val recent = randomChannel(createdAt = createdAt, lastMessageAt = Date(now.time - TimeUnit.DAYS.toMillis(13)))
+        val old = randomChannel(createdAt = createdAt, lastMessageAt = Date(now.time - TimeUnit.DAYS.toMillis(15)))
+        groupedState.setChannels(mapOf(recent.cid to recent, old.cid to old))
+        groupedState.setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = Filters.greaterThanEquals("query_timestamp", "now-14d"),
+            ),
+        )
+        assertEquals(listOf(recent.cid), groupedState.loadedChannelsShownNow().map(Channel::cid))
+
+        // Without waiting for the next periodic check of the shown list.
+        now = Date(now.time + TimeUnit.DAYS.toMillis(2))
+        assertEquals(emptyList<String>(), groupedState.loadedChannelsShownNow().map(Channel::cid))
+    }
+
+    @Test
     fun `grouped state sorted by query_timestamp orders and keeps channels by their touched_at date`() {
         val now = Date(1_800_000_000_000)
         val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"), now = { now })

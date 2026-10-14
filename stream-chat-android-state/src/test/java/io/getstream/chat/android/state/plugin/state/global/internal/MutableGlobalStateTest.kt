@@ -161,4 +161,25 @@ internal class MutableGlobalStateTest {
         val result = sut.activeLiveLocations.first()
         assertTrue(result.isEmpty())
     }
+
+    @Test
+    fun `a filtered group count replaces the server count for that group only`() {
+        sut.setGroupedUnreadChannels(mapOf("expired" to 9, "new" to 2))
+
+        sut.setFilteredGroupedUnreadChannels("expired", 3)
+
+        assertEquals(mapOf("expired" to 3, "new" to 2), sut.groupedUnreadChannels.value)
+        assertEquals(mapOf("expired" to 9, "new" to 2), sut.rawGroupedUnreadChannels)
+    }
+
+    @Test
+    fun `server counts keep the filtered group count until it is removed`() {
+        sut.setFilteredGroupedUnreadChannels("expired", 3)
+
+        sut.setGroupedUnreadChannels(mapOf("expired" to 9, "new" to 4))
+        assertEquals(mapOf("expired" to 3, "new" to 4), sut.groupedUnreadChannels.value)
+
+        sut.setFilteredGroupedUnreadChannels("expired", null)
+        assertEquals(mapOf("expired" to 9, "new" to 4), sut.groupedUnreadChannels.value)
+    }
 }

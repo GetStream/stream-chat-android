@@ -59,13 +59,13 @@ internal class GroupedUnreadChannelsUpdaterTest {
     // region HasGroupedUnreadChannels overload
 
     @Test
-    fun `HasGroupedUnreadChannels event with non-null map replaces current map`() {
+    fun `HasGroupedUnreadChannels event with non-null map merges into current map`() {
         val current = mapOf("a" to 1, "b" to 2)
         val event = hasGroupedUnreadChannels(mapOf("a" to 5, "c" to 3))
 
         val result = updater.calculateUpdatedCounts(current, BATCH_ID, event)
 
-        assertEquals(mapOf("a" to 5, "c" to 3), result)
+        assertEquals(mapOf("a" to 5, "b" to 2, "c" to 3), result)
     }
 
     @Test

@@ -326,6 +326,7 @@ internal class EventHandlerSequential(
         val hasMarkAllReadEvent = batchEvent.sortedEvents.lastOrNull { it is MarkAllReadEvent } != null
         if (hasMarkAllReadEvent) {
             queryChannelsLogic.refreshAllChannelsState()
+            queryChannelsLogic.handleMarkAllRead()
         }
 
         val cids = batchEvent.sortedEvents
@@ -379,7 +380,7 @@ internal class EventHandlerSequential(
         var me = clientState.user.value
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
-        var groupedUnreadChannels = mutableGlobalState.groupedUnreadChannels.value
+        var groupedUnreadChannels = mutableGlobalState.rawGroupedUnreadChannels
         var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
         var blockedUserIds = mutableGlobalState.blockedUserIds.value
 
