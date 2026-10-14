@@ -398,6 +398,25 @@ internal class QueryChannelsMutableStateTest {
     }
 
     @Test
+    fun `setGroupedQueryConfig keeps the cids of the pages already loaded`() {
+        val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
+        val cids = setOf(randomCID(), randomCID())
+        groupedState.setCids(cids)
+
+        groupedState.setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = Filters.greaterThanEquals("query_timestamp", "now-14d"),
+            ),
+        )
+
+        assertEquals(cids, groupedState.queryChannelsSpec.cids)
+    }
+
+    @Test
     fun `restoreGroupedQueryConfig restores a saved filter and sort with default request options`() {
         val groupedState = newState(QueryChannelsIdentifier.Grouped(groupKey = "expired"))
         val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")

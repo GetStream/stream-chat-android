@@ -305,7 +305,10 @@ internal class QueryChannelsMutableState(
         val filter = config.filter ?: Filters.neutral()
         _filter.value = filter
         _sort.value = groupedLocalSort(config.sort, DEFAULT_GROUPED_SORT)
+        // The 2-arg copy drops cids; keep them, since a paginated result appends to them.
+        val cids = _querySpec.cids
         _querySpec = _querySpec.copy(filter = filter, querySort = config.sort ?: DEFAULT_GROUPED_SORT)
+            .also { it.cids = cids }
     }
 
     /**
