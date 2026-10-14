@@ -172,6 +172,59 @@ internal const val EVENT_USER_DEVICES_KEY = "devices"
  */
 internal const val USER_DEVICES_CUSTOM_KEY = "devices"
 
+/**
+ * The fields [UserResponse] declares, except those the mapping fills in from the typed fields. A v1 response leaves a
+ * custom value stored under a declared name out of `custom` (its encoder skips custom keys that collide with a declared
+ * field), so the mapping drops them too. Apps have stored such copies by sending the whole user back as custom data,
+ * e.g. `banned`.
+ */
+internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
+    "avg_response_time",
+    "banned",
+    "blocked_user_ids",
+    "created_at",
+    "deactivated_at",
+    "id",
+    "image",
+    "language",
+    "last_active",
+    "name",
+    "online",
+    "role",
+    "teams",
+    "teams_role",
+    "updated_at",
+)
+
+/** The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
+internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
+    "avg_response_time",
+    "banned",
+    "blocked_user_ids",
+    "channel_mutes",
+    "created_at",
+    "deactivated_at",
+    "devices",
+    "id",
+    "image",
+    "invisible",
+    "language",
+    "last_active",
+    "latest_hidden_channels",
+    "mutes",
+    "name",
+    "online",
+    "privacy_settings",
+    "role",
+    "teams",
+    "teams_role",
+    "total_unread_count",
+    "unread_channels",
+    "unread_count",
+    "unread_threads",
+    "updated_at",
+)
+
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
@@ -704,7 +757,7 @@ internal class DomainMapping(
             channelMutes = channelMutes.map { it.toDomain() },
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
+            extraData = custom.minus(FULL_USER_HIDDEN_CUSTOM_KEYS).withDeclared(
                 "ban_expires" to banExpires,
                 "deleted_at" to deletedAt,
                 "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
@@ -805,7 +858,7 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
+            extraData = custom.minus(USER_HIDDEN_CUSTOM_KEYS).minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
                 "deleted_at" to deletedAt,
                 "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
             ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),

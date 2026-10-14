@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import com.squareup.moshi.Json
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.Mother
@@ -60,6 +61,7 @@ import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
@@ -1298,6 +1300,32 @@ internal class DomainMappingTest {
 
         (user.extraData - GENERATED_FULL_USER_EXTRA_DATA_KEYS) shouldBeEqualTo mapOf("flair" to "gold")
     }
+
+    @Test
+    fun `User mappings drop custom values stored under a declared name`() {
+        val stored = mapOf("banned" to true, "name" to "Stored", "flair" to "gold")
+        val sut = Fixture().get()
+
+        val user = with(sut) { randomUserResponse().copy(custom = stored).toDomain() }
+        val fullUser = with(sut) { randomFullUserResponse(custom = stored).toDomain() }
+
+        user.extraData shouldBeEqualTo mapOf("flair" to "gold")
+        (fullUser.extraData - GENERATED_FULL_USER_EXTRA_DATA_KEYS) shouldBeEqualTo mapOf("flair" to "gold")
+    }
+
+    @Test
+    fun `The hidden user custom names are the declared fields the mapping doesn't fill in`() {
+        USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponse>() - "custom" - GENERATED_USER_EXTRA_DATA_KEYS
+        FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo
+            jsonNames<FullUserResponse>() - "custom" - GENERATED_FULL_USER_EXTRA_DATA_KEYS
+    }
+
+    private inline fun <reified T> jsonNames(): Set<String> = T::class.java.declaredConstructors
+        .filterNot { it.isSynthetic }
+        .maxBy { it.parameterCount }
+        .parameterAnnotations
+        .flatMap { annotations -> annotations.filterIsInstance<Json>().map { it.name } }
+        .toSet()
 
     @Test
     fun `OwnUserResponse drops the devices copy stored in custom data`() {
