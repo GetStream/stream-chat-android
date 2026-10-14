@@ -21,7 +21,9 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomUser
+import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -897,4 +899,113 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
     }
 
     // endregion
+
+    @Nested
+    inner class GetOldestMessage {
+
+        @Test
+        fun `getOldestMessage should return the oldest message in the list when nothing was fetched`() = runTest {
+            channelState.setMessages(createMessages(3))
+
+            assertEquals("message_1", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should move past an older page that is entirely ignored`() = runTest {
+            channelState.setMessages(createMessages(count = 10, startIndex = 41))
+            val olderPage = (11..40).map { createMessage(it, user = randomUser(), shadowed = true) }
+            val query = QueryChannelRequest().withMessages(Pagination.LESS_THAN, "message_41", 30)
+            channelState.paginationManager.begin(query)
+
+            channelState.upsertMessages(olderPage)
+            channelState.paginationManager.end(query, Result.Success(randomChannel(messages = olderPage)))
+
+            assertEquals("message_41", channelState.messages.value.first().id)
+            assertEquals("message_11", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should return the oldest fetched message when the list is empty`() = runTest {
+            val page = (1..30).map { createMessage(it, user = randomUser(), shadowed = true) }
+            val query = QueryChannelRequest().withMessages(30)
+            channelState.paginationManager.begin(query)
+
+            channelState.setMessages(page)
+            channelState.paginationManager.end(query, Result.Success(randomChannel(messages = page)))
+
+            assertTrue(channelState.messages.value.isEmpty())
+            assertEquals("message_1", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should prefer the fetched message when it was created at the same time`() = runTest {
+            val messages = createMessages(3)
+            channelState.setMessages(messages)
+            channelState.paginationManager.setOldestMessage(
+                createMessage(0, timestamp = messages.first().createdAt!!.time, user = randomUser(), shadowed = true),
+            )
+
+            assertEquals("message_0", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should fall back to the list while a watch has reset the pagination state`() = runTest {
+            channelState.setMessages(createMessages(3))
+            channelState.paginationManager.setOldestMessage(createMessage(0))
+            channelState.paginationManager.begin(QueryChannelRequest().withMessages(30))
+
+            assertEquals("message_1", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should prefer the list when it holds an older message than the fetched one`() = runTest {
+            channelState.setMessages(createMessages(3))
+            channelState.paginationManager.setOldestMessage(createMessage(2))
+
+            assertEquals("message_1", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should not return a hard deleted message`() = runTest {
+            channelState.setMessages(createMessages(3))
+            channelState.paginationManager.setOldestMessage(createMessage(1))
+
+            channelState.deleteMessage("message_1")
+
+            assertEquals("message_2", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should not return a message of a user whose messages were hard deleted`() = runTest {
+            val shadowBannedUser = randomUser()
+            channelState.setMessages(createMessages(count = 3, startIndex = 41))
+            channelState.paginationManager.setOldestMessage(createMessage(11, user = shadowBannedUser, shadowed = true))
+
+            channelState.deleteMessagesFromUser(shadowBannedUser.id, hard = true, deletedAt = Date())
+
+            assertEquals("message_41", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should keep a message of a user whose messages were soft deleted`() = runTest {
+            val shadowBannedUser = randomUser()
+            channelState.setMessages(createMessages(count = 3, startIndex = 41))
+            channelState.paginationManager.setOldestMessage(createMessage(11, user = shadowBannedUser, shadowed = true))
+
+            channelState.deleteMessagesFromUser(shadowBannedUser.id, hard = false, deletedAt = Date())
+
+            assertEquals("message_11", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
+        fun `getOldestMessage should not return a message removed by a truncation`() = runTest {
+            val messages = createMessages(5)
+            channelState.setMessages(messages)
+            channelState.paginationManager.setOldestMessage(createMessage(0))
+
+            channelState.removeMessagesBefore(Date(messages[2].createdAt!!.time - 1))
+
+            assertEquals("message_3", channelState.getOldestMessage()?.id)
+        }
+    }
 }

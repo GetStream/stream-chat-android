@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
 import io.getstream.chat.android.client.extensions.internal.toMemberInfo
 import io.getstream.chat.android.client.extensions.internal.updateUsers
@@ -507,6 +508,7 @@ internal class ChannelStateImpl(
         _messages.update { current ->
             current.filterNot { id == it.id }
         }
+        moveOldestFetchedMessageIf { it.id == id }
         _cachedLatestMessages.update { current ->
             current.filterNot { id == it.id }
         }
@@ -532,6 +534,7 @@ internal class ChannelStateImpl(
                 current.filter { it.wasCreatedAfter(date) }
             }
         }
+        moveOldestFetchedMessageIf { !it.wasCreatedAfter(date) }
         _cachedLatestMessages.update { current ->
             current.filter { message -> message.wasCreatedAfter(date) }
         }
@@ -569,6 +572,7 @@ internal class ChannelStateImpl(
                     current.filterNot { it.user.id == userId }
                 }
             }
+            moveOldestFetchedMessageIf { it.user.id == userId }
             _cachedLatestMessages.update { current ->
                 current.filterNot { it.user.id == userId }
             }
@@ -599,10 +603,23 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Retrieves the oldest (non-pending, non-local-only) message.
+     * Retrieves the message to load older messages before: the oldest message in the list, or the oldest
+     * fetched message when that is older.
      */
     fun getOldestMessage(): Message? {
-        return _messages.value.firstOrNull()
+        // A fetched page never reaches the list when all of it is ignored (e.g. shadowed), so the list's
+        // oldest message alone would request the same page again. On a date tie, the fetched one wins for
+        // the same reason.
+        return listOfNotNull(paginationManager.state.value.oldestMessage, _messages.value.firstOrNull())
+            .minByOrNull { it.getCreatedAtOrDefault(NEVER) }
+    }
+
+    // The server rejects a pagination cursor it no longer has, so a removed oldest fetched message is replaced
+    private fun moveOldestFetchedMessageIf(isRemoved: (Message) -> Boolean) {
+        val oldestFetched = paginationManager.state.value.oldestMessage ?: return
+        if (isRemoved(oldestFetched)) {
+            paginationManager.setOldestMessage(_messages.value.firstOrNull())
+        }
     }
 
     /**
