@@ -18,6 +18,8 @@ package io.getstream.chat.android.state.event.handler.grouped.internal
 
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
+import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -109,6 +111,24 @@ internal class GroupedChannelFilterTest {
         lastMessageAt = lastMessageAt,
         extraData = mapOf("touched_at" to touchedAt),
     )
+
+    @Test
+    fun `isUnreadInGroupFor counts unread channels that are not hidden or disabled`() {
+        val user = randomUser()
+        val unread = randomChannel(
+            hidden = false,
+            extraData = mapOf("disabled" to false),
+            read = listOf(randomChannelUserRead(user = user, unreadMessages = 2)),
+        )
+
+        assertTrue(unread.isUnreadInGroupFor(user.id))
+        assertTrue(unread.copy(extraData = emptyMap()).isUnreadInGroupFor(user.id))
+        assertFalse(unread.copy(hidden = true).isUnreadInGroupFor(user.id))
+        assertFalse(unread.copy(extraData = mapOf("disabled" to true)).isUnreadInGroupFor(user.id))
+        assertFalse(
+            unread.copy(read = listOf(randomChannelUserRead(user = user, unreadMessages = 0))).isUnreadInGroupFor(user.id),
+        )
+    }
 
     private fun daysAgo(days: Long): Date = Date(now.time - TimeUnit.DAYS.toMillis(days))
 }
