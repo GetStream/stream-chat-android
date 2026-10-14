@@ -608,8 +608,9 @@ internal class ChannelStateImpl(
      */
     fun getOldestMessage(): Message? {
         // A fetched page never reaches the list when all of it is ignored (e.g. shadowed), so the list's
-        // oldest message alone would request the same page again.
-        return listOfNotNull(_messages.value.firstOrNull(), paginationManager.state.value.oldestMessage)
+        // oldest message alone would request the same page again. On a date tie, the fetched one wins for
+        // the same reason.
+        return listOfNotNull(paginationManager.state.value.oldestMessage, _messages.value.firstOrNull())
             .minByOrNull { it.getCreatedAtOrDefault(NEVER) }
     }
 

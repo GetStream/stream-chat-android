@@ -938,6 +938,17 @@ internal class ChannelStateImplMessagesTest : ChannelStateImplTestBase() {
         }
 
         @Test
+        fun `getOldestMessage should prefer the fetched message when it was created at the same time`() = runTest {
+            val messages = createMessages(3)
+            channelState.setMessages(messages)
+            channelState.paginationManager.setOldestMessage(
+                createMessage(0, timestamp = messages.first().createdAt!!.time, user = randomUser(), shadowed = true),
+            )
+
+            assertEquals("message_0", channelState.getOldestMessage()?.id)
+        }
+
+        @Test
         fun `getOldestMessage should fall back to the list while a watch has reset the pagination state`() = runTest {
             channelState.setMessages(createMessages(3))
             channelState.paginationManager.setOldestMessage(createMessage(0))
