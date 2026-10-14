@@ -489,8 +489,8 @@ internal class DistinctChatApiTest {
         // given
         val distinctChatApi = DistinctChatApi(TestScope(), mock())
         // when
-        val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
-        val call2 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
+        val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, sort = null, watch = true, presence = false)
+        val call2 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, sort = null, watch = true, presence = false)
         // then
         // verify the override wraps the call and reuses the same instance
         Assert.assertTrue(call1 is DistinctCall)
@@ -502,12 +502,12 @@ internal class DistinctChatApiTest {
         runTest {
             // given
             val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.queryGroupedChannels(any(), anyOrNull(), any(), any())).thenReturn(mock())
+            whenever(delegateApi.queryGroupedChannels(any(), anyOrNull(), anyOrNull(), any(), any())).thenReturn(mock())
             val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
             // when
-            val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
+            val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, sort = null, watch = true, presence = false)
             call1.await()
-            val call2 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
+            val call2 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, sort = null, watch = true, presence = false)
             // then
             // verify different instance of call is returned
             Assert.assertFalse(call1 === call2)
@@ -518,10 +518,27 @@ internal class DistinctChatApiTest {
         // given
         val distinctChatApi = DistinctChatApi(TestScope(), mock())
         // when
-        val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, watch = true, presence = false)
-        val call2 = distinctChatApi.queryGroupedChannels(limit = 60, groups = null, watch = true, presence = false)
+        val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, sort = null, watch = true, presence = false)
+        val call2 = distinctChatApi.queryGroupedChannels(limit = 60, groups = null, sort = null, watch = true, presence = false)
         // then
         // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
+
+    @Test
+    fun `When calling queryGroupedChannels with a different sort, Then different instance of Call is returned`() {
+        // given
+        val distinctChatApi = DistinctChatApi(TestScope(), mock())
+        // when
+        val call1 = distinctChatApi.queryGroupedChannels(limit = 30, groups = null, sort = null, watch = true, presence = false)
+        val call2 = distinctChatApi.queryGroupedChannels(
+            limit = 30,
+            groups = null,
+            sort = QuerySortByField.descByName("query_timestamp"),
+            watch = true,
+            presence = false,
+        )
+        // then
         Assert.assertFalse(call1 === call2)
     }
 

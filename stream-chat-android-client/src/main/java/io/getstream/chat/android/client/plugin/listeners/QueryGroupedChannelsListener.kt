@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Result
 
 /**
@@ -44,6 +46,27 @@ public interface QueryGroupedChannelsListener {
     ) { /* No-Op */ }
 
     /**
+     * Called before the query grouped channels request is dispatched to the API, with the requested sort.
+     * By default, calls the overload without the sort.
+     *
+     * @param limit The request-level default per-group limit, or `null` for the server default.
+     * @param groups The per-group request options being sent, or `null` when the request asks for
+     * the server-defined default set of groups.
+     * @param watch Whether watching was requested.
+     * @param presence Whether presence was requested.
+     * @param sort The order requested for the channels in every group, or `null` for the server default.
+     */
+    public suspend fun onQueryGroupedChannelsRequest(
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+        sort: QuerySorter<Channel>?,
+    ) {
+        onQueryGroupedChannelsRequest(limit, groups, watch, presence)
+    }
+
+    /**
      * Called when the query grouped channels request completes.
      *
      * @param result The result of the query grouped channels request.
@@ -60,4 +83,28 @@ public interface QueryGroupedChannelsListener {
         watch: Boolean,
         presence: Boolean,
     )
+
+    /**
+     * Called when the query grouped channels request completes, with the requested sort.
+     * By default, calls the overload without the sort.
+     *
+     * @param result The result of the query grouped channels request.
+     * @param limit The request-level default per-group limit, or `null` for the server default.
+     * @param groups The per-group request options that were sent, or `null` when the request
+     * asked for the server-defined default set of groups.
+     * @param watch Whether watching was requested.
+     * @param presence Whether presence was requested.
+     * @param sort The order requested for the channels in every group, or `null` for the server default.
+     */
+    @Suppress("LongParameterList")
+    public suspend fun onQueryGroupedChannelsResult(
+        result: Result<GroupedChannels>,
+        limit: Int?,
+        groups: Map<String, GroupedChannelsGroupQuery>?,
+        watch: Boolean,
+        presence: Boolean,
+        sort: QuerySorter<Channel>?,
+    ) {
+        onQueryGroupedChannelsResult(result, limit, groups, watch, presence)
+    }
 }

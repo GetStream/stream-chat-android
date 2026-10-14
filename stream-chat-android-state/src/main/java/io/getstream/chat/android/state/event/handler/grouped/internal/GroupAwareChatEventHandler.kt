@@ -22,18 +22,22 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Date
 
 /**
  * [DefaultChatEventHandler] that routes channels in and out of a grouped channel list based on the
- * channel's resolved group(s). Paired with `QueryChannelsIdentifier.Grouped(groupKey)` — one
+ * channel's resolved group(s) and the group's filter. Paired with `QueryChannelsIdentifier.Grouped(groupKey)` — one
  * handler instance per grouped query.
  *
  * For `cid`-only events the handler delegates to [DefaultChatEventHandler] and filters any
@@ -48,6 +52,7 @@ internal class GroupAwareChatEventHandler(
     private val resolver: ChannelGroupResolver,
     channels: StateFlow<Map<String, Channel>?>,
     clientState: ClientState,
+    private val now: () -> Date = ::Date,
 ) : DefaultChatEventHandler(channels, clientState) {
 
     override fun handleChatEvent(
@@ -58,12 +63,12 @@ internal class GroupAwareChatEventHandler(
         return when (event) {
             is ChannelUpdatedEvent,
             is ChannelUpdatedByUserEvent,
-            -> routeByGroup((event as HasChannel).channel, cachedChannel)
+            -> routeByGroup((event as HasChannel).channel, cachedChannel, filter)
 
             is NotificationAddedToChannelEvent,
             is NotificationMessageNewEvent,
             is ChannelVisibleEvent,
-            -> if (channelBelongsHere(event.channel)) {
+            -> if (channelBelongsHere(event.channel, filter)) {
                 EventHandlingResult.WatchAndAdd(event.cid)
             } else {
                 EventHandlingResult.Skip
@@ -79,7 +84,9 @@ internal class GroupAwareChatEventHandler(
         cachedChannel: Channel?,
     ): EventHandlingResult {
         val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
-        return filterResultByGroup(defaultResult, cachedChannel)
+        // The cached channel can predate the new message, which may bring it back within a cutoff.
+        val newMessage = (event as? NewMessageEvent)?.message
+        return filterResultByGroup(defaultResult, cachedChannel, filter, newMessage)
     }
 
     /**
@@ -92,8 +99,8 @@ internal class GroupAwareChatEventHandler(
      * absorbed a preceding `channel.hidden` in the same batch. A hidden channel stays out of the
      * list until a new message or `channel.visible` clears the flag.
      */
-    private fun routeByGroup(channel: Channel, cachedChannel: Channel?): EventHandlingResult {
-        val belongsHere = channelBelongsHere(channel) &&
+    private fun routeByGroup(channel: Channel, cachedChannel: Channel?, filter: FilterObject): EventHandlingResult {
+        val belongsHere = channelBelongsHere(channel, filter) &&
             isCurrentUserMember(cachedChannel) &&
             cachedChannel?.hidden != true
         val isInList = channels.value?.containsKey(channel.cid) == true
@@ -104,8 +111,21 @@ internal class GroupAwareChatEventHandler(
         }
     }
 
-    private fun channelBelongsHere(channel: Channel): Boolean =
-        resolver.resolve(channel).contains(groupKey)
+    private fun channelBelongsHere(channel: Channel, filter: FilterObject): Boolean =
+        resolver.resolve(channel).contains(groupKey) &&
+            filter.matchesGroupedChannel(group = channel.group, queryTimestamp = channel.queryTimestamp, now = now())
+
+    /** The channel with [newMessage] counted in its last message time, as the channel state counts it. */
+    private fun Channel.withNewMessage(newMessage: Message?): Channel = when (newMessage) {
+        null -> this
+        else -> copy(
+            lastMessageAt = calculateNewLastMessageAt(
+                message = newMessage,
+                currentLastMessageAt = lastMessageAt,
+                skipLastMsgUpdateForSystemMsgs = false,
+            ),
+        )
+    }
 
     /**
      * Reads `cachedChannel.membership`: the SDK maintains this field via member events and does
@@ -122,21 +142,25 @@ internal class GroupAwareChatEventHandler(
     }
 
     /**
-     * Downgrades an `Add`/`WatchAndAdd` from the default handler to `Skip` if the resolver says
-     * the channel does not belong in this group. `Remove`/`Skip` pass through unchanged.
+     * Downgrades an `Add`/`WatchAndAdd` from the default handler to `Skip` if the channel does not
+     * belong in this group or does not match its filter. `Remove`/`Skip` pass through unchanged.
      */
     private fun filterResultByGroup(
         result: EventHandlingResult,
         cachedChannel: Channel?,
+        filter: FilterObject,
+        newMessage: Message?,
     ): EventHandlingResult = when (result) {
-        is EventHandlingResult.Add ->
-            if (channelBelongsHere(result.channel)) result else EventHandlingResult.Skip
+        // The stored copy carries the new activity, so it still matches when the list is checked again.
+        is EventHandlingResult.Add -> result.channel.withNewMessage(newMessage).let { channel ->
+            if (channelBelongsHere(channel, filter)) EventHandlingResult.Add(channel) else EventHandlingResult.Skip
+        }
 
         is EventHandlingResult.WatchAndAdd ->
             // No channel data on the event; use cachedChannel if available. If we have nothing
             // to resolve against, trust the default and rely on the subsequent channel.updated
             // (which carries full channel data) to clean up.
-            if (cachedChannel != null && !channelBelongsHere(cachedChannel)) {
+            if (cachedChannel != null && !channelBelongsHere(cachedChannel.withNewMessage(newMessage), filter)) {
                 EventHandlingResult.Skip
             } else {
                 result

@@ -147,6 +147,12 @@ internal class QueryChannelsStateLogic(
 
     internal fun getGroupedQueryConfig(): GroupedQueryConfig? = mutableState.groupedQueryConfig.value
 
+    internal fun isGroupedQueryConfigRestored(): Boolean = mutableState.isGroupedQueryConfigRestored
+
+    internal fun restoreGroupedQueryConfig(filter: FilterObject, sort: QuerySorter<Channel>) {
+        mutableState.restoreGroupedQueryConfig(filter, sort)
+    }
+
     internal fun setCids(cids: Set<String>) {
         mutableState.setCids(cids)
     }

@@ -26,21 +26,33 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.event.handler.grouped.internal.group
+import io.getstream.chat.android.state.event.handler.grouped.internal.groupedLocalSort
+import io.getstream.chat.android.state.event.handler.grouped.internal.matchesGroupedChannel
+import io.getstream.chat.android.state.event.handler.grouped.internal.queryTimestamp
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import java.util.Date
 
 /**
  * Mutable backing state for a query channels operation. Each instance corresponds to a unique
@@ -56,15 +68,17 @@ import kotlinx.coroutines.flow.stateIn
  * internal `_sort` flow drives the sorted channel list, so re-sorting happens automatically once
  * the resolved sort is applied.
  *
- * For [QueryChannelsIdentifier.Grouped], `filter` is neutral and `sort` defaults to
- * `last_updated` descending. Channels are populated via the listener-driven grouped-channels
- * endpoint, and the cursor lives on [_nextCursor].
+ * For [QueryChannelsIdentifier.Grouped], `filter` starts neutral and `sort` starts as
+ * `last_updated` descending; both follow the group's latest request through [setGroupedQueryConfig].
+ * Channels are populated via the listener-driven grouped-channels endpoint, and the cursor lives on
+ * [_nextCursor].
  */
 internal class QueryChannelsMutableState(
     val identifier: QueryChannelsIdentifier,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
+    private val now: () -> Date = ::Date,
 ) : QueryChannelsState {
 
     /**
@@ -86,7 +100,7 @@ internal class QueryChannelsMutableState(
         )
         is QueryChannelsIdentifier.Grouped -> QueryChannelsSpec(
             filter = Filters.neutral(),
-            querySort = QuerySortByField.descByName("last_updated"),
+            querySort = DEFAULT_GROUPED_SORT,
             groupKey = identifier.groupKey,
         )
     }
@@ -127,9 +141,38 @@ internal class QueryChannelsMutableState(
         get() = if (channels.value.isNullOrEmpty()) loading else loadingMore
 
     private var _endOfChannels: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+
+    /**
+     * Which channels of a filtered group are shown. Re-checked every [GROUPED_FILTER_CHECK_INTERVAL_MS], because a
+     * channel can pass its `query_timestamp` cutoff without any event.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val isShown: Flow<(Channel) -> Boolean> = _filter.flatMapLatest { filter ->
+        if (identifier !is QueryChannelsIdentifier.Grouped || filter is NeutralFilterObject) {
+            flowOf { true }
+        } else {
+            flow {
+                while (true) {
+                    val checkedAt = now()
+                    emit { channel: Channel ->
+                        filter.matchesGroupedChannel(channel.group, channel.queryTimestamp, checkedAt)
+                    }
+                    delay(GROUPED_FILTER_CHECK_INTERVAL_MS)
+                }
+            }
+        }
+    }
+
     private val sortedChannels: StateFlow<List<Channel>?> =
-        combine(mapChannels, latestUsers, activeLiveLocations, _sort) { channelMap, userMap, activeLocations, sort ->
+        combine(
+            mapChannels,
+            latestUsers,
+            activeLiveLocations,
+            _sort,
+            isShown,
+        ) { channelMap, userMap, activeLocations, sort, isShown ->
             channelMap?.values
+                ?.filter(isShown)
                 ?.updateUsers(userMap)
                 ?.updateLiveLocations(activeLocations)
                 ?.sortedWith(sort.comparator)
@@ -254,11 +297,52 @@ internal class QueryChannelsMutableState(
     /**
      * Store the configuration that produced the current page of grouped results. Read back by
      * [io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel] for paginated
-     * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery.
+     * calls and by [io.getstream.chat.android.state.sync.internal.SyncManager] for recovery. The
+     * group's filter becomes this state's [filter], which event handling checks channels against.
+     * The filter and sort are also kept in [queryChannelsSpec], so they are saved with the group.
      */
     fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        isGroupedQueryConfigRestored = false
         _groupedQueryConfig?.value = config
+        val filter = config.filter ?: Filters.neutral()
+        _filter.value = filter
+        _sort.value = groupedLocalSort(config.sort, DEFAULT_GROUPED_SORT)
+        // The 2-arg copy drops cids; keep them, since a paginated result appends to them.
+        val cids = _querySpec.cids
+        _querySpec = _querySpec.copy(filter = filter, querySort = config.sort ?: DEFAULT_GROUPED_SORT)
+            .also { it.cids = cids }
     }
+
+    /**
+     * Restores the filter and sort saved with the group by an earlier session, so the cached list is
+     * filtered before the first request. No-op when a request has already set the configuration, or
+     * when the group was saved without a filter or sort.
+     */
+    fun restoreGroupedQueryConfig(filter: FilterObject, sort: QuerySorter<Channel>) {
+        if (_groupedQueryConfig?.value != null) return
+        val hasFilter = filter != Filters.neutral()
+        val hasSort = sort != DEFAULT_GROUPED_SORT
+        if (!hasFilter && !hasSort) return
+        setGroupedQueryConfig(
+            GroupedQueryConfig(
+                limit = null,
+                pageSize = null,
+                watch = true,
+                presence = false,
+                filter = filter.takeIf { hasFilter },
+                sort = sort.takeIf { hasSort },
+            ),
+        )
+        isGroupedQueryConfigRestored = true
+    }
+
+    /**
+     * Whether [groupedQueryConfig] was restored from the cache rather than set by a request. A restored
+     * configuration only has defaults for its request-level fields (`limit`, `watch`, `presence`).
+     */
+    @Volatile
+    var isGroupedQueryConfigRestored: Boolean = false
+        private set
 
     /**
      * Applies the resolved filter/sort to the state. Only relevant for predefined-filter queries,
@@ -266,8 +350,9 @@ internal class QueryChannelsMutableState(
      *  - The server response arrives carrying `QueryChannelsResult.predefinedFilter`, or
      *  - The offline DB rehydrates a previously persisted resolved spec for the same identifier.
      *
-     * No-op for [QueryChannelsIdentifier.Standard] and [QueryChannelsIdentifier.Grouped] queries —
-     * their filter/sort are fixed at construction time and must not be replaced.
+     * No-op for [QueryChannelsIdentifier.Standard] queries, whose filter/sort are fixed at construction
+     * time, and for [QueryChannelsIdentifier.Grouped] queries, whose filter/sort come from
+     * [setGroupedQueryConfig].
      *
      * The 2-arg [QueryChannelsSpec.copy] preserves variant-specific identity fields (predefined
      * name/values, groupKey) and `cids` from the previous spec instance.
@@ -298,3 +383,7 @@ internal class QueryChannelsMutableState(
 }
 
 internal fun QueryChannelsState.toMutableState(): QueryChannelsMutableState = this as QueryChannelsMutableState
+
+private const val GROUPED_FILTER_CHECK_INTERVAL_MS = 60_000L
+
+private val DEFAULT_GROUPED_SORT = QuerySortByField.descByName<Channel>("last_updated")

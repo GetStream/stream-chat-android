@@ -47,9 +47,16 @@ public data class GroupedChannelsGroup(
  * (which, in turn, falls back to the server default when also `null`).
  * @param next Cursor for the next page of this group. Mutually exclusive with [prev].
  * @param prev Cursor for the previous page of this group. Mutually exclusive with [next].
+ * @param filter Conditions the group's channels must match, or `null` to return the group as stored.
+ * For a named group, only a `query_timestamp` `greaterThanEquals` cutoff is accepted, given as a date, a full
+ * timestamp or a relative `now-7d` / `7d` value. For the `all` group, `or` branches each combine a `group`
+ * condition (`eq` or `in`) with an optional cutoff using `and`, or a single standalone `ne` excludes one group.
+ * [Filters.neutral] matches every channel of the stored group. A non-null filter requires the request
+ * to sort by `query_timestamp` descending.
  */
 public data class GroupedChannelsGroupQuery(
     public val limit: Int? = null,
     public val next: String? = null,
     public val prev: String? = null,
+    public val filter: FilterObject? = null,
 )

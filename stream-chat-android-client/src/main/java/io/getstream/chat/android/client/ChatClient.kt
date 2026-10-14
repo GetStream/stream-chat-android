@@ -3283,6 +3283,40 @@ internal constructor(
     )
 
     /**
+     * Queries channels grouped into the specified groups, with per-group options, and returns the first page of
+     * each.
+     *
+     * **IMPORTANT: This is an enterprise feature and is disabled by default. For more info, reach out to our
+     * Contact & Support.**
+     *
+     * @param groups The per-group options keyed by group name. Required; must contain at least one group. Use
+     * [GroupedChannelsGroupQuery.filter] to narrow a group by `query_timestamp`, or the `all` group by `group`
+     * and `query_timestamp`.
+     * @param sort The order of the channels in every group. Required as `query_timestamp` descending when any group
+     * has a filter. `null` uses the server default.
+     * @param limit Default max channels per group. Accepted range is `1..10`. `null` uses the
+     * server default.
+     * @param watch Whether to start watching the returned channels for real-time events.
+     * @param presence Whether to receive presence events for the members of the returned channels.
+     *
+     * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
+     */
+    @CheckResult
+    public fun queryGroupedChannels(
+        groups: Map<String, GroupedChannelsGroupQuery>,
+        sort: QuerySorter<Channel>? = null,
+        limit: Int? = null,
+        watch: Boolean = true,
+        presence: Boolean = false,
+    ): Call<GroupedChannels> = queryGroupedChannelsInternal(
+        limit = limit,
+        groups = groups,
+        sort = sort,
+        watch = watch,
+        presence = presence,
+    )
+
+    /**
      * Internal variant of [queryGroupedChannels] that accepts a per-group configuration map.
      *
      * Supports per-group request options (`limit`, `next`/`prev` cursors) and returns per-group
@@ -3298,6 +3332,7 @@ internal constructor(
      * first pages of the server-defined default set.
      * @param watch Whether to start watching the returned channels for real-time events.
      * @param presence Whether to receive presence events for the members of the returned channels.
+     * @param sort The order of the channels in every group, or `null` for the server default.
      *
      * @return A [Call] containing a [GroupedChannels] with per-group channels and cursors.
      */
@@ -3308,16 +3343,23 @@ internal constructor(
         groups: Map<String, GroupedChannelsGroupQuery>? = null,
         watch: Boolean = true,
         presence: Boolean = false,
+        sort: QuerySorter<Channel>? = null,
     ): Call<GroupedChannels> {
-        return api.queryGroupedChannels(limit = limit, groups = groups, watch = watch, presence = presence)
+        return api.queryGroupedChannels(
+            limit = limit,
+            groups = groups,
+            sort = sort,
+            watch = watch,
+            presence = presence,
+        )
             .doOnStart(userScope) {
                 plugins.forEach { plugin ->
-                    plugin.onQueryGroupedChannelsRequest(limit, groups, watch, presence)
+                    plugin.onQueryGroupedChannelsRequest(limit, groups, watch, presence, sort)
                 }
             }
             .doOnResult(userScope) { result ->
                 plugins.forEach { plugin ->
-                    plugin.onQueryGroupedChannelsResult(result, limit, groups, watch, presence)
+                    plugin.onQueryGroupedChannelsResult(result, limit, groups, watch, presence, sort)
                 }
             }
     }

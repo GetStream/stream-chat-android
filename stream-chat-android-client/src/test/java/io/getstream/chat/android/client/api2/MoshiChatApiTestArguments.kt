@@ -551,7 +551,7 @@ internal object MoshiChatApiTestArguments {
                 )
             },
             { sut: MoshiChatApi ->
-                sut.queryGroupedChannels(limit = null, groups = null, watch = false, presence = false)
+                sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = false, presence = false)
                     .map { grouped -> grouped.groups.values.flatMap { it.channels } }
             },
         ),
