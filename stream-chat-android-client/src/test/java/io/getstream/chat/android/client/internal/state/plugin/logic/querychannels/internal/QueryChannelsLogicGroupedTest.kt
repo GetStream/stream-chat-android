@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.querychanne
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.ChannelsStateData
 import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
@@ -33,7 +34,10 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestCoroutineRule
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -42,6 +46,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -88,6 +93,28 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     // region applyGroupedResult
+
+    @Test
+    fun `setGroupedQueryConfig waits until a result being applied is saved`() = runTest {
+        // Given - applying a result is paused while it saves the group
+        val saving = CompletableDeferred<Unit>()
+        whenever(queryChannelsDatabaseLogic.insertQueryChannels(any())) doSuspendableAnswer { saving.await() }
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        val group = GroupedChannelsGroup(groupKey = GROUP_KEY, channels = emptyList(), next = null, prev = null)
+        val config = GroupedQueryConfig(limit = null, pageSize = null, watch = true, presence = false)
+        launch { logic.applyGroupedResult(group, isFirstPage = true) }
+        runCurrent()
+
+        // When
+        val setConfig = launch { logic.setGroupedQueryConfig(config) }
+        runCurrent()
+
+        // Then - the configuration is stored only after the result is saved
+        verify(queryChannelsStateLogic, never()).setGroupedQueryConfig(any())
+        saving.complete(Unit)
+        setConfig.join()
+        verify(queryChannelsStateLogic).setGroupedQueryConfig(config)
+    }
 
     @Test
     fun `applyGroupedResult on first page when state is empty adds channels without removing`() = runTest {
@@ -492,6 +519,29 @@ internal class QueryChannelsLogicGroupedTest {
         verify(queryChannelsStateLogic).addChannelsState(cachedChannels)
         verify(queryChannelsStateLogic).initializeChannelsIfNeeded()
         verify(queryChannelsStateLogic).setLoadingFirstPage(false)
+    }
+
+    @Test
+    fun `loadOfflineGroupedChannels restores the filter and sort saved with the group`() = runTest {
+        // Given
+        val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+        val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+        whenever(queryChannelsStateLogic.getChannels()) doReturn null
+        whenever(
+            queryChannelsDatabaseLogic.fetchChannelsFromCache(
+                any<AnyChannelPaginationRequest>(),
+                any<QueryChannelsIdentifier>(),
+            ),
+        ) doReturn CachedQueryChannels(
+            spec = queryChannelsSpec.copy(filter = filter, querySort = sort),
+            channels = listOf(randomChannel()),
+        )
+
+        // When
+        logic.loadOfflineGroupedChannels()
+
+        // Then
+        verify(queryChannelsStateLogic).restoreGroupedQueryConfig(filter, sort)
     }
 
     @Test

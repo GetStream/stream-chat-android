@@ -899,14 +899,18 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given grouped ViewModel with captured config When loading more Should reuse limit pageSize watch and presence`() =
+    fun `Given grouped ViewModel with captured config When loading more Should reuse the captured request options`() =
         runTest {
             val chatClient: ChatClient = mock()
+            val filter = Filters.greaterThanEquals("query_timestamp", "now-14d")
+            val sort = QuerySortByField.descByName<Channel>("query_timestamp")
             val capturedConfig = GroupedQueryConfig(
                 limit = 20,
                 pageSize = 5,
                 watch = true,
                 presence = false,
+                filter = filter,
+                sort = sort,
             )
             val viewModel = Fixture(chatClient)
                 .givenCurrentUser()
@@ -927,10 +931,11 @@ internal class ChannelListViewModelTest {
             verify(chatClient).queryGroupedChannelsInternal(
                 limit = 20,
                 groups = mapOf(
-                    "team-a" to GroupedChannelsGroupQuery(limit = 5, next = "cursor-1"),
+                    "team-a" to GroupedChannelsGroupQuery(limit = 5, next = "cursor-1", filter = filter),
                 ),
                 watch = true,
                 presence = false,
+                sort = sort,
             )
         }
 
@@ -1438,6 +1443,7 @@ internal class ChannelListViewModelTest {
                     groups = anyOrNull(),
                     watch = any(),
                     presence = any(),
+                    sort = anyOrNull(),
                 ),
             ) doReturn result.asCall()
         }

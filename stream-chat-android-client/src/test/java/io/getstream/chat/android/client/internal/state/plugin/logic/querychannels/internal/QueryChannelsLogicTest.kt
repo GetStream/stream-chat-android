@@ -576,7 +576,7 @@ internal class QueryChannelsLogicTest {
     }
 
     @Test
-    fun `setGroupedQueryConfig forwards to the state logic`() {
+    fun `setGroupedQueryConfig forwards to the state logic`() = runTest {
         val config = GroupedQueryConfig(limit = 30, pageSize = 10, watch = false, presence = false)
 
         logic.setGroupedQueryConfig(config)

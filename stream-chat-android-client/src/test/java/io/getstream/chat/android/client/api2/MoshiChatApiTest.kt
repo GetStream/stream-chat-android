@@ -2133,13 +2133,14 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val limit = randomInt()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.queryGroupedChannels(limit = limit, groups = null, watch = false, presence = false).await()
+        val result = sut.queryGroupedChannels(limit = limit, groups = null, sort = null, watch = false, presence = false).await()
         // then
         val expectedPayload = GroupedQueryChannelsRequest(
             limit = limit,
             groups = null,
             watch = false,
             presence = false,
+            sort = null,
         )
         result `should be instance of` expected
         verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
@@ -2162,6 +2163,7 @@ internal class MoshiChatApiTest {
                 "direct" to GroupedChannelsGroupQuery(limit = 10, next = "cursor-next", prev = null),
                 "support" to GroupedChannelsGroupQuery(limit = null, next = null, prev = "cursor-prev"),
             ),
+            sort = null,
             watch = false,
             presence = false,
         ).await()
@@ -2169,11 +2171,82 @@ internal class MoshiChatApiTest {
         val expectedPayload = GroupedQueryChannelsRequest(
             limit = 30,
             groups = mapOf(
-                "direct" to GroupedChannelsGroupRequest(limit = 10, next = "cursor-next", prev = null),
-                "support" to GroupedChannelsGroupRequest(limit = null, next = null, prev = "cursor-prev"),
+                "direct" to GroupedChannelsGroupRequest(
+                    limit = 10,
+                    next = "cursor-next",
+                    prev = null,
+                    filterConditions = null,
+                ),
+                "support" to GroupedChannelsGroupRequest(
+                    limit = null,
+                    next = null,
+                    prev = "cursor-prev",
+                    filterConditions = null,
+                ),
             ),
             watch = false,
             presence = false,
+            sort = null,
+        )
+        verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
+    }
+
+    @Test
+    fun `queryGroupedChannels maps the sort and per-group filters into the request body`() = runTest {
+        val response = GroupedQueryChannelsResponse(groups = emptyMap(), duration = "0ms")
+        val api = mock<ChannelApi>()
+        whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        val connectionId = randomString()
+        sut.setConnection(userId = randomString(), connectionId = connectionId)
+
+        sut.queryGroupedChannels(
+            limit = 10,
+            groups = mapOf(
+                "all" to GroupedChannelsGroupQuery(
+                    filter = Filters.or(
+                        Filters.and(
+                            Filters.eq("group", "ended"),
+                            Filters.greaterThanEquals("query_timestamp", "now-7d"),
+                        ),
+                        Filters.`in`("group", listOf("campaign", "new")),
+                    ),
+                ),
+                "new" to GroupedChannelsGroupQuery(filter = Filters.neutral()),
+                "current" to GroupedChannelsGroupQuery(),
+            ),
+            sort = QuerySortByField.descByName("query_timestamp"),
+            watch = false,
+            presence = false,
+        ).await()
+
+        val expectedPayload = GroupedQueryChannelsRequest(
+            limit = 10,
+            groups = mapOf(
+                "all" to GroupedChannelsGroupRequest(
+                    limit = null,
+                    next = null,
+                    prev = null,
+                    filterConditions = mapOf(
+                        "\$or" to listOf(
+                            mapOf(
+                                "\$and" to listOf(
+                                    mapOf("group" to "ended"),
+                                    mapOf("query_timestamp" to mapOf("\$gte" to "now-7d")),
+                                ),
+                            ),
+                            mapOf("group" to mapOf("\$in" to setOf("campaign", "new"))),
+                        ),
+                    ),
+                ),
+                "new" to GroupedChannelsGroupRequest(limit = null, next = null, prev = null, filterConditions = emptyMap()),
+                "current" to GroupedChannelsGroupRequest(limit = null, next = null, prev = null, filterConditions = null),
+            ),
+            watch = false,
+            presence = false,
+            sort = listOf(SortParamRequest(field = "query_timestamp", direction = -1)),
         )
         verify(api, times(1)).queryGroupedChannels(connectionId, expectedPayload)
     }
@@ -2191,7 +2264,7 @@ internal class MoshiChatApiTest {
             .get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
-        val result = sut.queryGroupedChannels(limit = null, groups = null, watch = false, presence = false).await()
+        val result = sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = false, presence = false).await()
 
         result `should be instance of` Result.Success::class
         val grouped = (result as Result.Success).value
@@ -2206,7 +2279,7 @@ internal class MoshiChatApiTest {
             .get()
         // Intentionally not calling setConnection — connectionId stays blank.
 
-        sut.queryGroupedChannels(limit = null, groups = null, watch = true, presence = false)
+        sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = true, presence = false)
 
         // Postponed calls do not invoke the API eagerly; they wait for a connection.
         verify(api, never()).queryGroupedChannels(any(), any())

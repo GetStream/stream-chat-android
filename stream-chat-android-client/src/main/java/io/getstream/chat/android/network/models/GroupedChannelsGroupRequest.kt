@@ -38,4 +38,7 @@ internal data class GroupedChannelsGroupRequest(
 
     @Json(name = "prev")
     internal val prev: String? = null,
+
+    @Json(name = "filter_conditions")
+    internal val filterConditions: Map<String, Any?>? = emptyMap(),
 )

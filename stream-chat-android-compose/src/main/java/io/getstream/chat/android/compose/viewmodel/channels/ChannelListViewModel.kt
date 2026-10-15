@@ -1153,10 +1153,12 @@ public class ChannelListViewModel internal constructor(
                 groupKey to io.getstream.chat.android.models.GroupedChannelsGroupQuery(
                     limit = config?.pageSize,
                     next = cursor,
+                    filter = config?.filter,
                 ),
             ),
             watch = config?.watch ?: true,
             presence = config?.presence ?: false,
+            sort = config?.sort,
         ).await()
         if (result.isSuccess) {
             logger.v { "[loadMoreGroupedChannels] completed (listener applied)" }
