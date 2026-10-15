@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
@@ -36,7 +35,6 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
@@ -78,15 +76,6 @@ internal class DtoMapping(
         original_height = originalHeight,
         original_width = originalWidth,
         extraData = extraData,
-    )
-
-    /**
-     * Converts [Device] to [DeviceDto].
-     */
-    internal fun Device.toDto(): DeviceDto = DeviceDto(
-        id = token,
-        push_provider = pushProvider.key,
-        push_provider_name = providerName,
     )
 
     /**
@@ -238,7 +227,9 @@ internal class DtoMapping(
     )
 
     /**
-     * Maps the domain [User] model to a network [UpstreamUserDto] model.
+     * Maps the domain [User] model to a network [UpstreamUserDto] model. The user's devices are left out: they are
+     * registered through the device endpoints, and a user upsert would store them as custom data, which other users
+     * can read.
      *
      * Additionally, applies transformation using the provided [UserTransformer] before mapping.
      */
@@ -254,10 +245,9 @@ internal class DtoMapping(
                     privacy_settings = privacySettings?.toDto(),
                     language = language,
                     role = role,
-                    devices = devices.map { it.toDto() },
                     teams = teams,
                     teams_role = teamsRole,
-                    extraData = extraData,
+                    extraData = extraData - "devices",
                 )
             }
 

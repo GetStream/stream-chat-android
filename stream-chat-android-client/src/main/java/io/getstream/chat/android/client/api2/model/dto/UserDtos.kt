@@ -38,7 +38,6 @@ internal data class UpstreamUserDto(
     val privacy_settings: PrivacySettingsDto?,
     val language: String,
     val role: String,
-    val devices: List<DeviceDto>,
     val teams: List<String>,
     val teams_role: Map<String, String>?,
 

@@ -256,7 +256,6 @@ internal object UserDtoTestData {
             "invisible": false,
             "language": "language",
             "role": "owner",
-            "devices": [],
             "teams": []
          }""".withoutWhitespace()
 
@@ -269,7 +268,6 @@ internal object UserDtoTestData {
         invisible = false,
         privacy_settings = null,
         banned = true,
-        devices = emptyList(),
         teams = emptyList(),
         teams_role = null,
         extraData = emptyMap(),
@@ -296,13 +294,6 @@ internal object UserDtoTestData {
             },
             "language": "language",
             "role": "owner",
-            "devices": [
-             {
-              "id": "deviceId",
-              "push_provider": "provider",
-              "push_provider_name": "provider_name"
-             }
-            ],
             "teams": [ "team1", "team2"],
             "teams_role": {
                 "team1": "owner",
@@ -326,7 +317,6 @@ internal object UserDtoTestData {
             ),
         ),
         banned = false,
-        devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", push_provider_name = "provider_name")),
         teams = listOf("team1", "team2"),
         teams_role = mapOf(
             "team1" to "owner",

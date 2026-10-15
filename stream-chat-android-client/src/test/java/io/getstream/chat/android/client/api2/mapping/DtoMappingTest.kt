@@ -22,7 +22,6 @@ import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
@@ -40,7 +39,6 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.randomAttachment
-import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMemberData
@@ -83,19 +81,6 @@ internal class DtoMappingTest {
             original_height = attachment.originalHeight,
             original_width = attachment.originalWidth,
             extraData = attachment.extraData,
-        )
-        dto shouldBeEqualTo expected
-    }
-
-    @Test
-    fun `Device is correctly mapped to Dto`() {
-        val device = randomDevice()
-        val mapping = Fixture().get()
-        val dto = with(mapping) { device.toDto() }
-        val expected = DeviceDto(
-            id = device.token,
-            push_provider = device.pushProvider.key,
-            push_provider_name = device.providerName,
         )
         dto shouldBeEqualTo expected
     }
@@ -301,7 +286,6 @@ internal class DtoMappingTest {
             privacy_settings = user.privacySettings?.let { with(mapping) { it.toDto() } },
             language = user.language,
             banned = user.isBanned,
-            devices = user.devices.map { with(mapping) { it.toDto() } },
             teams = user.teams,
             teams_role = user.teamsRole,
             extraData = user.extraData,
