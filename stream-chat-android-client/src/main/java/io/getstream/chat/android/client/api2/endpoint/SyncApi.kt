@@ -28,8 +28,9 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 /**
- * Endpoints tied to the websocket connection, which stay on v1. `/sync` returns events in the socket's encoding, so it
- * moves together with the socket; the `/connect` warm-up has no v2 route (the v2 socket is `/api/v2/connect`).
+ * Endpoints tied to the websocket connection that are still on v1. `/sync` replays events in the v1 encoding the v1
+ * parser reads, whichever socket is connected; the `/connect` warm-up has no v2 route (the v2 socket is
+ * `/api/v2/connect`).
  */
 @AuthenticatedApi
 internal interface SyncApi {
