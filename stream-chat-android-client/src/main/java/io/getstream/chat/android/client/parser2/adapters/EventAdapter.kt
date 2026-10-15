@@ -25,7 +25,6 @@ import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
@@ -83,6 +82,7 @@ import io.getstream.chat.android.network.models.UserBannedEvent
 import io.getstream.chat.android.network.models.UserDeletedEvent
 import io.getstream.chat.android.network.models.UserMessagesDeletedEvent
 import io.getstream.chat.android.network.models.UserPresenceChangedEvent
+import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserUnbannedEvent
 import io.getstream.chat.android.network.models.UserUpdatedEvent
 import io.getstream.chat.android.network.models.UserWatchingStartEvent
@@ -301,7 +301,7 @@ internal class EventDtoAdapter(
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,
                     created_at = moshi.adapter(ExactDate::class.java).fromJsonValue(map["created_at"])!!,
-                    user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
+                    user = moshi.adapter(UserResponseCommonFields::class.java).fromJsonValue(map["user"]),
                     rawData = map,
                 )
         }

@@ -20,9 +20,7 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -711,38 +709,6 @@ internal class DomainMapping(
     )
 
     /**
-     * Transforms [DownstreamUserDto] to [User].
-     */
-    internal fun DownstreamUserDto.toDomain(): User =
-        User(
-            id = id,
-            name = name ?: "",
-            image = image ?: "",
-            role = role,
-            invisible = invisible,
-            privacySettings = privacy_settings?.toDomain(),
-            language = language ?: "",
-            banned = banned,
-            devices = devices.orEmpty().map { it.toDomain() },
-            online = online,
-            createdAt = created_at,
-            deactivatedAt = deactivated_at,
-            updatedAt = updated_at,
-            lastActive = last_active,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            unreadThreads = unread_threads,
-            mutes = mutes.orEmpty().map { it.toDomain() },
-            teams = teams,
-            teamsRole = teams_role.orEmpty(),
-            channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
-            blockedUserIds = blocked_user_ids.orEmpty(),
-            avgResponseTime = avg_response_time,
-            pushPreference = push_preferences?.toDomain(),
-            extraData = extraData.toMutableMap(),
-        ).let(userTransformer::transform)
-
-    /**
      * Transforms [FullUserResponse] to [User].
      */
     internal fun FullUserResponse.toDomain(): User =
@@ -1237,12 +1203,6 @@ internal class DomainMapping(
                 providerName = device["push_provider_name"] as? String,
             )
         }
-
-    internal fun DeviceDto.toDomain(): Device = Device(
-        token = id,
-        pushProvider = PushProvider.fromKey(push_provider),
-        providerName = push_provider_name,
-    )
 
     /**
      * Transforms [DownstreamFlagDto] to [Flag].

@@ -24,9 +24,8 @@ import com.squareup.moshi.ToJson
 import io.getstream.chat.android.network.models.OwnUserResponse
 
 /**
- * Keys `OwnUserResponse` declares that `DownstreamUserDto` did not, so they used to reach
- * `User.extraData` and would otherwise stop doing so. The domain has no property for any of them, so they
- * are kept in the overflow map rather than mapped. Drop with AND-1398.
+ * Keys `OwnUserResponse` declares that the domain `User` has no property for: they are kept in the overflow map,
+ * so `User.extraData` still exposes them. Drop with AND-1398.
  */
 internal val GENERATED_OWN_USER_EXTRA_DATA_KEYS = setOf(
     "deleted_at",
