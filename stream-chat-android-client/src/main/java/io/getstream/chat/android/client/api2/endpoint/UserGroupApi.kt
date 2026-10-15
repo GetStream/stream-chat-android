@@ -41,10 +41,10 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface UserGroupApi {
 
-    @POST("/usergroups")
+    @POST("/api/v2/usergroups")
     fun createUserGroup(@Body body: CreateUserGroupRequest): RetrofitCall<CreateUserGroupResponse>
 
-    @GET("/usergroups")
+    @GET("/api/v2/usergroups")
     fun queryUserGroups(
         @Query("limit") limit: Int? = null,
         @Query("id_gt") idGt: String? = null,
@@ -52,7 +52,7 @@ internal interface UserGroupApi {
         @Query("team_id") teamId: String? = null,
     ): RetrofitCall<ListUserGroupsResponse>
 
-    @GET("/usergroups/search")
+    @GET("/api/v2/usergroups/search")
     fun searchUserGroups(
         @Query("query") query: String,
         @Query("limit") limit: Int? = null,
@@ -61,31 +61,31 @@ internal interface UserGroupApi {
         @Query("id_gt") idGt: String? = null,
     ): RetrofitCall<SearchUserGroupsResponse>
 
-    @GET("/usergroups/{id}")
+    @GET("/api/v2/usergroups/{id}")
     fun getUserGroup(
         @Path("id") id: String,
         @Query("team_id") teamId: String? = null,
     ): RetrofitCall<GetUserGroupResponse>
 
-    @PUT("/usergroups/{id}")
+    @PUT("/api/v2/usergroups/{id}")
     fun updateUserGroup(
         @Path("id") id: String,
         @Body body: UpdateUserGroupRequest,
     ): RetrofitCall<UpdateUserGroupResponse>
 
-    @DELETE("/usergroups/{id}")
+    @DELETE("/api/v2/usergroups/{id}")
     fun deleteUserGroup(
         @Path("id") id: String,
         @Query("team_id") teamId: String? = null,
     ): RetrofitCall<Response>
 
-    @POST("/usergroups/{id}/members")
+    @POST("/api/v2/usergroups/{id}/members")
     fun addUserGroupMembers(
         @Path("id") id: String,
         @Body body: AddUserGroupMembersRequest,
     ): RetrofitCall<AddUserGroupMembersResponse>
 
-    @POST("/usergroups/{id}/members/delete")
+    @POST("/api/v2/usergroups/{id}/members/delete")
     fun removeUserGroupMembers(
         @Path("id") id: String,
         @Body body: RemoveUserGroupMembersRequest,

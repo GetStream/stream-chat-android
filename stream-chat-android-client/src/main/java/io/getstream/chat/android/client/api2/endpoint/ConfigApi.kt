@@ -27,6 +27,6 @@ import retrofit2.http.GET
 @AuthenticatedApi
 internal interface ConfigApi {
 
-    @GET("/app")
+    @GET("/api/v2/app")
     fun getAppSettings(): RetrofitCall<GetApplicationResponse>
 }

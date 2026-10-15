@@ -166,6 +166,78 @@ internal const val DRAFT_ARGS_KEY = "args"
  */
 internal const val EVENT_USER_DEVICES_KEY = "devices"
 
+/**
+ * Older clients sent the user's own devices back as custom data. v1 responses leave that copy out of `custom` and v2
+ * responses don't, so the user mappings drop it in both directions: it holds push tokens.
+ */
+internal const val USER_DEVICES_CUSTOM_KEY = "devices"
+
+/**
+ * Fields of the backend's user record that the generated user models leave out. v1 hides a custom value stored under
+ * any field of that record, so the user hidden sets include these too.
+ */
+internal val USER_RECORD_ONLY_KEYS = setOf("ban_expires", "invisible", "last_engaged_at", "privacy_settings")
+
+/**
+ * The fields [UserResponse] declares, except those the mapping fills in from the typed fields. A v1 response leaves a
+ * custom value stored under a declared name out of `custom` (its encoder skips custom keys that collide with a declared
+ * field), so the mapping drops them too. Apps have stored such copies by sending the whole user back as custom data,
+ * e.g. `banned`.
+ */
+internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
+    "avg_response_time",
+    "banned",
+    "blocked_user_ids",
+    "created_at",
+    "deactivated_at",
+    "id",
+    "image",
+    "language",
+    "last_active",
+    "name",
+    "online",
+    "role",
+    "teams",
+    "teams_role",
+    "updated_at",
+) + USER_RECORD_ONLY_KEYS
+
+/**
+ * The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS], with every declared name: only v2 returns this
+ * model, so the fields the mapping fills in come from the typed values rather than a stored copy.
+ */
+internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
+    "avg_response_time",
+    "ban_expires",
+    "banned",
+    "blocked_user_ids",
+    "channel_mutes",
+    "created_at",
+    "deactivated_at",
+    "deleted_at",
+    "devices",
+    "id",
+    "image",
+    "invisible",
+    "language",
+    "last_active",
+    "latest_hidden_channels",
+    "mutes",
+    "name",
+    "online",
+    "privacy_settings",
+    "revoke_tokens_issued_before",
+    "role",
+    "shadow_banned",
+    "teams",
+    "teams_role",
+    "total_unread_count",
+    "unread_channels",
+    "unread_count",
+    "unread_threads",
+    "updated_at",
+) + USER_RECORD_ONLY_KEYS
+
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
@@ -585,7 +657,9 @@ internal class DomainMapping(
             blockedUserIds = blockedUserIds.orEmpty(),
             avgResponseTime = avgResponseTime?.toLong(),
             pushPreference = pushPreferences?.toDomain(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+                .minus(USER_DEVICES_CUSTOM_KEY)
+                .toMutableMap(),
         ).let(userTransformer::transform)
 
     /** Transforms the user shape most user events carry: common fields only, no own-user state. */
@@ -696,7 +770,12 @@ internal class DomainMapping(
             channelMutes = channelMutes.map { it.toDomain() },
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
+            extraData = custom.minus(FULL_USER_HIDDEN_CUSTOM_KEYS).withDeclared(
+                "ban_expires" to banExpires,
+                "deleted_at" to deletedAt,
+                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+                "shadow_banned" to shadowBanned,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
         ).let(userTransformer::transform)
 
     /**
@@ -792,8 +871,33 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            extraData = custom.minus(USER_HIDDEN_CUSTOM_KEYS).minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
+                "deleted_at" to deletedAt,
+                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
         ).let(userTransformer::transform)
+
+    /**
+     * The v1 adapters also keep some declared fields in `custom`, so the domain has always carried them in `extraData`,
+     * in their wire shape. v2 sends them only as typed fields: each present one is added here where `custom` lacks it,
+     * so both lanes map to the same domain object.
+     */
+    private fun Map<String, Any?>.withDeclared(vararg fields: Pair<String, Any?>): Map<String, Any?> {
+        val missing = fields.filter { (key, value) -> key !in this && value.isPresent() }
+        if (missing.isEmpty()) return this
+        return this + missing.map { (key, value) -> key to wireValueAdapter.toJsonValue(value) }
+    }
+
+    private fun Any?.isPresent(): Boolean = when (this) {
+        null -> false
+        is Collection<*> -> isNotEmpty()
+        is Map<*, *> -> isNotEmpty()
+        else -> true
+    }
+
+    private val wireValueAdapter by lazy {
+        io.getstream.chat.android.network.infrastructure.Serializer.moshi.adapter(Any::class.java)
+    }
 
     /**
      * Transforms [ChannelMemberPartialResponse] to [MemberInfo].
