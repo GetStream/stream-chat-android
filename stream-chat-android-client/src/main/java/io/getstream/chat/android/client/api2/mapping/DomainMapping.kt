@@ -196,7 +196,8 @@ internal class DomainMapping(
 
     /**
      * Transforms [DownstreamChannelPartialUpdateDto] into a [Channel] holding only the fields the DTO carries.
-     * Like for a full channel, the server's `disabled` flag is kept in [Channel.extraData].
+     * Like for a full channel, the server's `disabled` flag is kept in [Channel.extraData] and the channel
+     * transformer is applied, so the fields it carries replace local values that were transformed too.
      */
     internal fun DownstreamChannelPartialUpdateDto.toDomain(): Channel =
         Channel(
@@ -209,7 +210,7 @@ internal class DomainMapping(
             updatedAt = updated_at,
             team = team,
             extraData = (extraData + (CHANNEL_DISABLED_FIELD to disabled)).toMutableMap(),
-        )
+        ).let(channelTransformer::transform)
 
     internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo =
         ChannelInfo(
