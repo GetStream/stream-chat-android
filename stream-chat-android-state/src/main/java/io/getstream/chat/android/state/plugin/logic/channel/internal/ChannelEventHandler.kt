@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -72,6 +73,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 
 /**
  * Class responsible for updating the local database based on channel-related events.
@@ -217,6 +219,9 @@ internal class ChannelEventHandler(
             // Channel update events
             is ChannelUpdatedEvent -> stateLogic.updateChannelData(event)
             is ChannelUpdatedByUserEvent -> stateLogic.updateChannelData(event)
+            is NotificationChannelPartialUpdatedEvent -> stateLogic.updateChannelData { data ->
+                data?.mergePartialUpdate(event.channel)
+            }
             is ChannelHiddenEvent -> {
                 stateLogic.setHidden(true)
                 if (event.clearHistory) {

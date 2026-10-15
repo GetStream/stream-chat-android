@@ -50,6 +50,22 @@ internal data class DownstreamChannelDto(
 ) : ExtraDataDto
 
 /**
+ * Model holding the channel fields delivered with `notification.channel_partial_updated` events. Unlike
+ * [DownstreamChannelDto], the custom fields (including `name` and `image`) are nested in [custom].
+ */
+@JsonClass(generateAdapter = true)
+internal data class DownstreamChannelPartialUpdateDto(
+    val id: String,
+    val type: String,
+    val created_at: Date?,
+    val updated_at: Date?,
+    val frozen: Boolean,
+    val disabled: Boolean,
+    val team: String = "",
+    val custom: Map<String, Any> = emptyMap(),
+)
+
+/**
  * Model holding custom channel fields delivered with `message.new` events.
  *
  * Note: It is currently relevant only for the [name] and [image] fields. If in the future we need to support more or

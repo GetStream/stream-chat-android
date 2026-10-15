@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
@@ -32,6 +33,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
+import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
@@ -64,6 +66,8 @@ internal class GroupAwareChatEventHandler(
             is ChannelUpdatedEvent,
             is ChannelUpdatedByUserEvent,
             -> routeByGroup((event as HasChannel).channel, cachedChannel, filter)
+
+            is NotificationChannelPartialUpdatedEvent -> routePartialUpdate(event, cachedChannel, filter)
 
             is NotificationAddedToChannelEvent,
             is NotificationMessageNewEvent,
@@ -107,6 +111,30 @@ internal class GroupAwareChatEventHandler(
         return when {
             belongsHere && !isInList -> EventHandlingResult.Add(channel)
             !belongsHere && isInList -> EventHandlingResult.Remove(channel.cid)
+            else -> EventHandlingResult.Skip
+        }
+    }
+
+    /**
+     * Same checks as [routeByGroup], against [cachedChannel] with the partial update applied. The event's channel
+     * lacks data such as members and the last message time, so a channel that is not in the list yet is watched to
+     * get its full data instead of being added from the event. The membership and hidden guards apply only when
+     * [cachedChannel] exists: the event is only sent to members, and without a cached channel there is nothing that
+     * says the user left or hid it.
+     */
+    private fun routePartialUpdate(
+        event: NotificationChannelPartialUpdatedEvent,
+        cachedChannel: Channel?,
+        filter: FilterObject,
+    ): EventHandlingResult {
+        val channel = cachedChannel?.mergePartialUpdate(event.channel) ?: event.channel
+        val belongsHere = channelBelongsHere(channel, filter) &&
+            (cachedChannel == null || isCurrentUserMember(cachedChannel)) &&
+            cachedChannel?.hidden != true
+        val isInList = channels.value?.containsKey(event.cid) == true
+        return when {
+            belongsHere && !isInList -> EventHandlingResult.WatchAndAdd(event.cid)
+            !belongsHere && isInList -> EventHandlingResult.Remove(event.cid)
             else -> EventHandlingResult.Skip
         }
     }

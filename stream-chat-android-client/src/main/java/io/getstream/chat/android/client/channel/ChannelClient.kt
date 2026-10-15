@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -277,6 +278,7 @@ public class ChannelClient internal constructor(
             is NewMessageEvent -> event.cid == cid
             is NotificationAddedToChannelEvent -> event.cid == cid
             is NotificationChannelDeletedEvent -> event.cid == cid
+            is NotificationChannelPartialUpdatedEvent -> event.cid == cid
             is NotificationChannelTruncatedEvent -> event.cid == cid
             is NotificationInviteAcceptedEvent -> event.cid == cid
             is NotificationInviteRejectedEvent -> event.cid == cid

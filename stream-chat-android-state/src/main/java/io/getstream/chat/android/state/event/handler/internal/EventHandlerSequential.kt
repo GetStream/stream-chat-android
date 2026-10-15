@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -123,6 +124,7 @@ import io.getstream.chat.android.state.plugin.logic.querychannels.internal.Query
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
+import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -448,6 +450,10 @@ internal class EventHandlerSequential(
                     .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
             }
             (event as? ChannelUpdatedByUserEvent)?.let { e ->
+                groupedUnreadChannels = groupedUnreadChannelsUpdater
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+            }
+            (event as? NotificationChannelPartialUpdatedEvent)?.let { e ->
                 groupedUnreadChannels = groupedUnreadChannelsUpdater
                     .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
             }
@@ -805,6 +811,12 @@ internal class EventHandlerSequential(
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeChannelFromEvent(event.channel) ?: event.channel
                     batch.addChannel(channel)
+                }
+                is NotificationChannelPartialUpdatedEvent -> {
+                    // The event's channel is incomplete, so it is never stored on its own.
+                    batch.getCurrentChannel(event.cid)
+                        ?.mergePartialUpdate(event.channel)
+                        ?.let(batch::addChannel)
                 }
                 is ChannelDeletedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)

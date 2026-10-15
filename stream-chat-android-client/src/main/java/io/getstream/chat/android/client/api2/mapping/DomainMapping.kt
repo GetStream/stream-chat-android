@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelPartialUpdateDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
@@ -192,6 +193,24 @@ internal class DomainMapping(
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
+
+    /**
+     * Transforms [DownstreamChannelPartialUpdateDto] into a [Channel] holding only the fields the DTO carries.
+     * The `name` and `image` custom fields fill [Channel.name] and [Channel.image], like they do for a full channel.
+     */
+    internal fun DownstreamChannelPartialUpdateDto.toDomain(): Channel =
+        Channel(
+            id = id,
+            type = type,
+            name = custom[CHANNEL_NAME_FIELD] as? String ?: "",
+            image = custom[CHANNEL_IMAGE_FIELD] as? String ?: "",
+            frozen = frozen,
+            createdAt = created_at,
+            updatedAt = updated_at,
+            team = team,
+            extraData = (custom - CHANNEL_NAME_FIELD - CHANNEL_IMAGE_FIELD + (CHANNEL_DISABLED_FIELD to disabled))
+                .toMutableMap(),
+        )
 
     internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo =
         ChannelInfo(
@@ -923,5 +942,8 @@ internal class DomainMapping(
     private companion object {
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
         private const val FIELD_LAST_UPDATED = "last_updated"
+        private const val CHANNEL_NAME_FIELD = "name"
+        private const val CHANNEL_IMAGE_FIELD = "image"
+        private const val CHANNEL_DISABLED_FIELD = "disabled"
     }
 }

@@ -261,6 +261,16 @@ internal data class NotificationChannelTruncatedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class NotificationChannelPartialUpdatedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val cid: String,
+    val channel_type: String,
+    val channel_id: String,
+    val channel: DownstreamChannelPartialUpdateDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class NotificationInviteAcceptedEventDto(
     val type: String,
     val created_at: ExactDate,

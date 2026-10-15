@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
@@ -598,6 +599,22 @@ public fun randomNewMessageEvent(
         groupedUnreadChannels = groupedUnreadChannels,
     )
 }
+
+public fun randomNotificationChannelPartialUpdatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+): NotificationChannelPartialUpdatedEvent = NotificationChannelPartialUpdatedEvent(
+    type = EventType.NOTIFICATION_CHANNEL_PARTIAL_UPDATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    channel = channel,
+)
 
 public fun randomNotificationChannelTruncatedEvent(
     createdAt: Date = randomDate(),
