@@ -1,15 +1,15 @@
 {
   "debug": {
-    "stream-chat-android-client": 8384,
-    "stream-chat-android-ui-components": 14864,
-    "stream-chat-android-compose": 17212,
+    "stream-chat-android-client": 8400,
+    "stream-chat-android-ui-components": 14880,
+    "stream-chat-android-compose": 17228,
     "stream-chat-android-ai-compose": 2784,
     "stream-chat-android-ai-ondevice": 2116
   },
   "release": {
-    "stream-chat-android-client": 6356,
-    "stream-chat-android-ui-components": 11792,
-    "stream-chat-android-compose": 13504,
+    "stream-chat-android-client": 6368,
+    "stream-chat-android-ui-components": 11804,
+    "stream-chat-android-compose": 13520,
     "stream-chat-android-ai-compose": 2088,
     "stream-chat-android-ai-ondevice": 1708
   }
