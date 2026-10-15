@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelCount
 import io.getstream.chat.android.compose.robots.assertChannelWithName
+import io.getstream.chat.android.compose.robots.assertFirstChannelWithName
 import io.getstream.chat.android.compose.robots.assertGroupUnreadBadge
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
@@ -69,16 +70,20 @@ class FilteredGroupedChannelListTests : StreamTestCase() {
         step("GIVEN backend has channels in the new, current and old groups") {
             seedGroupedChannels()
         }
+        step("AND user opens the old tab") {
+            userRobot.login().waitForChannelListToLoad().openGroupTab("old")
+            userRobot.assertChannelWithName("old-1")
+        }
         step("AND participant moves the older old channel to the current group") {
-            moveOlderChannelToCurrentGroup()
+            moveOldChannelToCurrentGroup()
         }
-        step("THEN the current tab does not show it, because it is older than the cutoff") {
-            userRobot
-                .openGroupTab("current")
-                .assertChannelWithName("old-1", isDisplayed = false)
-                .assertChannelCount(1)
+        step("WHEN user opens the current tab") {
+            userRobot.openGroupTab("current")
         }
-        step("WHEN participant sends a message to the channel") {
+        step("THEN the moved channel is not shown, because it is older than the cutoff") {
+            userRobot.assertChannelCount(1)
+        }
+        step("WHEN participant sends a message to the moved channel") {
             participantRobot.sendMessage(sampleText, channelName = "old-1")
         }
         step("THEN the channel is shown in the current tab") {
@@ -95,26 +100,30 @@ class FilteredGroupedChannelListTests : StreamTestCase() {
 
     @AllureId("12317")
     @Test
-    fun test_olderChannelMovedToFilteredGroup_entersTab_whenParticipantTouchesIt() {
+    fun test_olderChannelMovedToFilteredGroup_entersTabFirst_whenParticipantTouchesIt() {
         step("GIVEN backend has channels in the new, current and old groups") {
             seedGroupedChannels()
         }
+        step("AND user opens the old tab") {
+            userRobot.login().waitForChannelListToLoad().openGroupTab("old")
+            userRobot.assertChannelWithName("old-1")
+        }
         step("AND participant moves the older old channel to the current group") {
-            moveOlderChannelToCurrentGroup()
+            moveOldChannelToCurrentGroup()
         }
-        step("THEN the current tab does not show it, because it is older than the cutoff") {
-            userRobot
-                .openGroupTab("current")
-                .assertChannelWithName("old-1", isDisplayed = false)
-                .assertChannelCount(1)
+        step("WHEN user opens the current tab") {
+            userRobot.openGroupTab("current")
         }
-        step("WHEN participant sets the touched_at date of the channel") {
+        step("THEN the moved channel is not shown, because it is older than the cutoff") {
+            userRobot.assertChannelCount(1)
+        }
+        step("WHEN participant sets the touched_at date of the moved channel") {
             participantRobot.touchChannel("old-1")
         }
-        step("THEN the channel is shown in the current tab") {
+        step("THEN the channel is shown first in the current tab, ordered by its touched_at date") {
             userRobot
-                .assertChannelWithName("old-1")
                 .assertChannelCount(2)
+                .assertFirstChannelWithName("old-1")
         }
     }
 
@@ -140,26 +149,49 @@ class FilteredGroupedChannelListTests : StreamTestCase() {
 
     @AllureId("12319")
     @Test
-    fun test_filteredBadgesClear_whenUserMarksAllRead() {
-        step("GIVEN backend has channels in the new, current and old groups") {
-            seedGroupedChannels()
+    fun test_filteredBadgesCountChannelsNotLoadedYet_andClear_whenUserMarksAllRead() {
+        val currentChannelsCount = 12
+        val currentChannelNames = List(currentChannelsCount) { "current-${it + 1}" }
+        step("GIVEN backend has more recent current channels than one page, and an old channel") {
+            backendRobot.generateChannels(
+                channelsCount = currentChannelsCount + 1,
+                channelNames = currentChannelNames + "old-1",
+                channelGroups = List(currentChannelsCount) { "current" } + "old",
+                channelDaysAgo = List(currentChannelsCount + 1) { 1 },
+            )
         }
-        step("AND user opens the grouped channel list") {
+        step("AND participant sends a message to every channel before user opens the app") {
+            (currentChannelNames + "old-1").forEach { name -> participantRobot.sendMessage(sampleText, channelName = name) }
+        }
+        step("WHEN user opens the grouped channel list") {
             userRobot.login().waitForChannelListToLoad()
         }
-        step("AND participant sends a message to the recent current channel") {
-            participantRobot.sendMessage(sampleText, channelName = "current-1")
+        step("THEN the filtered tabs count the unread channels of the next page too") {
+            // GroupedChannelsActivity asks for pages of 10, so 2 unread current channels are not loaded yet.
             userRobot
-                .assertGroupUnreadBadge("current", 1)
-                .assertGroupUnreadBadge("all", 1)
+                .assertGroupUnreadBadge("all", currentChannelsCount)
+                .assertGroupUnreadBadge("current", currentChannelsCount)
+                .assertGroupUnreadBadge("old", 1)
+        }
+        step("WHEN user reads the newest current channel") {
+            userRobot
+                .openChannel("current-$currentChannelsCount")
+                .waitForMessageListToLoad()
+                .tapOnBackButton()
+        }
+        step("THEN the filtered tabs count one unread channel less, and the all tab still leaves out the old channel") {
+            userRobot
+                .assertGroupUnreadBadge("all", currentChannelsCount - 1)
+                .assertGroupUnreadBadge("current", currentChannelsCount - 1)
         }
         step("WHEN user marks all channels read") {
             userRobot.tapOnMarkAllRead()
         }
-        step("THEN the filtered tabs show no badge") {
+        step("THEN no tab shows a badge, including for the channels that are not loaded") {
             userRobot
-                .assertGroupUnreadBadge("current", 0)
                 .assertGroupUnreadBadge("all", 0)
+                .assertGroupUnreadBadge("current", 0)
+                .assertGroupUnreadBadge("old", 0)
         }
     }
 
@@ -177,12 +209,10 @@ class FilteredGroupedChannelListTests : StreamTestCase() {
     }
 
     /**
-     * Opens the old tab and moves its older channel to the current group. Waiting for the channel to leave the old
+     * Moves the old channel to the current group while the old tab is open. Waiting for the channel to leave the old
      * tab makes sure the client has handled the move.
      */
-    private fun moveOlderChannelToCurrentGroup() {
-        userRobot.login().waitForChannelListToLoad().openGroupTab("old")
-        userRobot.assertChannelWithName("old-1")
+    private fun moveOldChannelToCurrentGroup() {
         participantRobot.moveChannelToGroup(channelName = "old-1", group = "current")
         userRobot.assertChannelWithName("old-1", isDisplayed = false)
     }

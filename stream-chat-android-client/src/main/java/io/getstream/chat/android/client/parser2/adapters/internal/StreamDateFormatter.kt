@@ -67,7 +67,7 @@ public class StreamDateFormatter(
     /**
      * Parses the [String] to [Date] in the standard way to Stream's API
      */
-    public fun parse(rawValue: String): Date? {
+    internal fun parse(rawValue: String): Date? {
         logCacheHitStats()
         return parseInternal(rawValue)
     }
