@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.socket.experimental.ws
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
@@ -157,6 +158,54 @@ internal class StreamWebSocketTest {
                     chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
                     cause = cause,
                 ),
+            ),
+        )
+        job.cancel()
+    }
+
+    @Test
+    fun `Once connected, an event that fails to parse is dropped and the next one is delivered`() = runTest {
+        val connected = mock<ConnectedEvent>()
+        val next = mock<ChatEvent>()
+        whenever(parser.fromJsonOrError("connected", ChatEvent::class.java)) doReturn Result.Success(connected)
+        whenever(parser.fromJsonOrError("malformed", ChatEvent::class.java))
+            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = mock())))
+        whenever(parser.fromJsonOrError("malformed", SocketErrorMessage::class.java))
+            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = mock())))
+        whenever(parser.fromJsonOrError("next", ChatEvent::class.java)) doReturn Result.Success(next)
+        val listResult = mutableListOf<StreamWebSocketEvent>()
+        val job = launch { streamWebSocket.listen().collect { listResult.add(it) } }
+        runCurrent()
+
+        listOf("connected", "malformed", "next").forEach { webSocketListener.onMessage(webSocket, it) }
+        runCurrent()
+
+        listResult `should be equal to` listOf(StreamWebSocketEvent.Message(connected), StreamWebSocketEvent.Message(next))
+        job.cancel()
+    }
+
+    @Test
+    fun `Once connected, a known error is still added to eventFlow`() = runTest {
+        val connected = mock<ConnectedEvent>()
+        val code = randomInt()
+        val message = randomString()
+        val statusCode = randomInt()
+        whenever(parser.fromJsonOrError("connected", ChatEvent::class.java)) doReturn Result.Success(connected)
+        whenever(parser.fromJsonOrError("error", ChatEvent::class.java))
+            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = mock())))
+        whenever(parser.fromJsonOrError("error", SocketErrorMessage::class.java))
+            .doReturn(Result.Success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
+        val listResult = mutableListOf<StreamWebSocketEvent>()
+        val job = launch { streamWebSocket.listen().collect { listResult.add(it) } }
+        runCurrent()
+
+        listOf("connected", "error").forEach { webSocketListener.onMessage(webSocket, it) }
+        runCurrent()
+
+        listResult `should be equal to` listOf(
+            StreamWebSocketEvent.Message(connected),
+            StreamWebSocketEvent.Error(
+                Error.NetworkError(message = message, serverErrorCode = code, statusCode = statusCode),
             ),
         )
         job.cancel()
