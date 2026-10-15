@@ -45,7 +45,10 @@ import okio.Buffer
  * so they are read straight into the generated models with [Serializer.moshi]: a generic map would turn the dates into
  * doubles. [domainMapping] is the v2 mapping, which gives every object the `extraData` the v1 parser gives it.
  */
-internal class V2EventParser(private val domainMapping: DomainMapping) {
+internal class V2EventParser(
+    private val domainMapping: DomainMapping,
+    private val directEventParser: DirectEventParser? = null,
+) {
 
     private val logger by taggedLogger("Chat:V2EventParser")
 
@@ -81,6 +84,8 @@ internal class V2EventParser(private val domainMapping: DomainMapping) {
             logger.v { "[parse] ignored: $type" }
             return null
         }
+        // The fast path, when enabled; it returns null for a frame it can't read, which the generated path then reads.
+        if (type == EventType.MESSAGE_NEW) directEventParser?.parse(raw, type)?.let { return it.enrichIfNeeded() }
         val adapter = when (type) {
             CONNECTION_OK -> connectedEventAdapter
             EventType.HEALTH_CHECK -> healthEventAdapter

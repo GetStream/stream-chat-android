@@ -88,6 +88,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.models.querysort.SortDirection
 import io.getstream.chat.android.network.infrastructure.Serializer
+import io.getstream.chat.android.network.models.Action
 import io.getstream.chat.android.network.models.AppResponseFields
 import io.getstream.chat.android.network.models.BanResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
@@ -105,10 +106,12 @@ import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeviceResponse
 import io.getstream.chat.android.network.models.DraftResponse
+import io.getstream.chat.android.network.models.Field
 import io.getstream.chat.android.network.models.FullUserResponse
 import io.getstream.chat.android.network.models.GetApplicationResponse
 import io.getstream.chat.android.network.models.GetMessageResponse
 import io.getstream.chat.android.network.models.GetOGResponse
+import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.MessageResponse
 import io.getstream.chat.android.network.models.MessageWithChannelResponse
 import io.getstream.chat.android.network.models.ModerationV2Response
@@ -735,7 +738,11 @@ internal class DomainMapping(
 
     // V1 moderation is injected into the message custom data by the auto-mod bounce path rather than
     // declared on the payload, so it arrives flattened at the root and has to be read back out.
-    private fun MessageResponse.moderationDetailsFromCustom(): MessageModerationDetails? {
+    private fun MessageResponse.moderationDetailsFromCustom(): MessageModerationDetails? =
+        messageModerationDetails(custom)
+
+    /** The [Message.moderationDetails] a v2 message carries in its [custom] data. */
+    internal fun messageModerationDetails(custom: Map<String, Any?>): MessageModerationDetails? {
         val raw = custom[MODERATION_DETAILS_KEY] as? Map<*, *> ?: return null
         return MessageModerationDetails(
             originalText = raw["original_text"] as? String ?: "",
@@ -745,6 +752,19 @@ internal class DomainMapping(
     }
 
     private fun MessageResponse.messageExtraData(): MutableMap<String, Any> =
+        messageExtraData(custom, draft, imageLabels, mentionedGroupIds, mml, pollId, restrictedVisibility)
+
+    /** The [Message.extraData] of a v2 message: its [custom] data with the declared fields v1 also kept there. */
+    @Suppress("LongParameterList")
+    internal fun messageExtraData(
+        custom: Map<String, Any?>,
+        draft: DraftResponse?,
+        imageLabels: Map<String, List<String>>?,
+        mentionedGroupIds: List<String>?,
+        mml: String?,
+        pollId: String?,
+        restrictedVisibility: List<String>,
+    ): MutableMap<String, Any> =
         custom.withDeclared(
             "draft" to draft,
             "image_labels" to imageLabels,
@@ -862,12 +882,34 @@ internal class DomainMapping(
         teamsRole = teamsRole.orEmpty(),
         blockedUserIds = blockedUserIds,
         avgResponseTime = avgResponseTime?.toLong(),
-        extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+        extraData = eventUserCustom.extraData(custom, deletedAt, revokeTokensIssuedBefore).toMutableMap(),
+    )
+
+    /** The custom data mapping of the users events carry ([UserResponseCommonFields], [UserResponsePrivacyFields]). */
+    internal val eventUserCustom: V2UserCustom = object : V2UserCustom {
+        override fun extraData(
+            custom: Map<String, Any?>,
+            deletedAt: Date?,
+            revokeTokensIssuedBefore: Date?,
+        ): Map<String, Any> = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
             EVENT_USER_HIDDEN_CUSTOM_KEYS,
             "deleted_at" to deletedAt,
             "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
-        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap(),
-    )
+        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+    }
+
+    /** The custom data mapping of [UserResponse], the user messages and reactions carry. */
+    internal val userCustom: V2UserCustom = object : V2UserCustom {
+        override fun extraData(
+            custom: Map<String, Any?>,
+            deletedAt: Date?,
+            revokeTokensIssuedBefore: Date?,
+        ): Map<String, Any> = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+            USER_HIDDEN_CUSTOM_KEYS,
+            "deleted_at" to deletedAt,
+            "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
+        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+    }
 
     /**
      * Transforms [FullUserResponse] to [User].
@@ -944,12 +986,18 @@ internal class DomainMapping(
         updatedAt = updatedAt,
         user = user.toDomain(),
         userId = userId,
-        emojiCode = custom[EMOJI_CODE_KEY] as? String,
-        extraData = custom
-            .filterKeys { it != EMOJI_CODE_KEY }
-            .mapNotNull { (key, value) -> value?.let { key to it } }
-            .toMap(),
+        emojiCode = reactionEmojiCode(custom),
+        extraData = reactionExtraData(custom),
     )
+
+    /** The [Reaction.emojiCode] a v2 reaction carries in its [custom] data. */
+    internal fun reactionEmojiCode(custom: Map<String, Any?>): String? = custom[EMOJI_CODE_KEY] as? String
+
+    /** The [Reaction.extraData] of a v2 reaction: its [custom] data without the emoji code. */
+    internal fun reactionExtraData(custom: Map<String, Any?>): Map<String, Any> = custom
+        .filterKeys { it != EMOJI_CODE_KEY }
+        .mapNotNull { (key, value) -> value?.let { key to it } }
+        .toMap()
 
     /**
      * Transforms [ReactionGroupResponse] to [ReactionGroup].
@@ -1006,11 +1054,7 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
-                USER_HIDDEN_CUSTOM_KEYS,
-                "deleted_at" to deletedAt,
-                "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
-            ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
+            extraData = userCustom.extraData(custom, deletedAt, revokeTokensIssuedBefore),
         ).let(userTransformer::transform)
 
     /**
@@ -1237,7 +1281,60 @@ internal class DomainMapping(
      * removed, otherwise an attachment loses its size, name and mime type and carries them under their
      * wire names in `extraData` instead.
      */
-    internal fun io.getstream.chat.android.network.models.Attachment.toDomain(): Attachment {
+    internal fun io.getstream.chat.android.network.models.Attachment.toDomain(): Attachment = v2Attachment(
+        assetUrl = assetUrl,
+        authorName = authorName,
+        authorLink = authorLink,
+        fallback = fallback,
+        imageUrl = imageUrl,
+        ogScrapeUrl = ogScrapeUrl,
+        text = text,
+        thumbUrl = thumbUrl,
+        title = title,
+        titleLink = titleLink,
+        type = type,
+        originalHeight = originalHeight,
+        originalWidth = originalWidth,
+        custom = custom,
+        actions = actions,
+        authorIcon = authorIcon,
+        color = color,
+        fields = fields,
+        footer = footer,
+        footerIcon = footerIcon,
+        giphy = giphy,
+        pretext = pretext,
+    )
+
+    /**
+     * Builds the domain [Attachment] from a v2 attachment's fields. The direct parser builds v2 attachments through it
+     * too, so both paths agree.
+     */
+    @Suppress("LongParameterList")
+    internal fun v2Attachment(
+        assetUrl: String?,
+        authorName: String?,
+        authorLink: String?,
+        fallback: String?,
+        imageUrl: String?,
+        ogScrapeUrl: String?,
+        text: String?,
+        thumbUrl: String?,
+        title: String?,
+        titleLink: String?,
+        type: String?,
+        originalHeight: Int?,
+        originalWidth: Int?,
+        custom: Map<String, Any?>,
+        actions: List<Action>?,
+        authorIcon: String?,
+        color: String?,
+        fields: List<Field>?,
+        footer: String?,
+        footerIcon: String?,
+        giphy: Images?,
+        pretext: String?,
+    ): Attachment {
         val undeclared = custom.takeUndeclaredAttachmentFields()
         return Attachment(
             assetUrl = assetUrl,

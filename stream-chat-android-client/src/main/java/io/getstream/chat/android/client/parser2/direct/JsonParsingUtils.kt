@@ -61,6 +61,10 @@ internal object JsonParsingUtils {
         return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextLong()
     }
 
+    /** Reads a JSON object as a map, or null for a JSON null or a non-object value. */
+    @Suppress("UNCHECKED_CAST")
+    fun readJsonObject(reader: JsonReader): Map<String, Any?>? = reader.readJsonValue() as? Map<String, Any?>
+
     /** Accumulates a key-value pair into an extra data map, lazily creating it if needed. */
     fun accumulateExtraData(
         key: String,
