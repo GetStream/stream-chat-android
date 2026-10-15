@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.log.StreamLog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
@@ -94,6 +95,7 @@ class GroupedChannelsActivity : AppCompatActivity() {
             ChatHelper.connectUser(
                 userCredentials = PredefinedUserCredentials.availableUsers.first(),
                 onSuccess = onSuccess,
+                onError = { error -> logger.e { "[connectUser] failed: $error" } },
             )
         }
     }
@@ -107,6 +109,11 @@ class GroupedChannelsActivity : AppCompatActivity() {
 }
 
 private val GroupKeys = listOf("all", "new", "current", "old")
+
+// Sent explicitly, so the page size the e2e tests depend on doesn't follow the server default.
+private const val GroupPageSize = 10
+
+private val logger = StreamLog.getLogger("Chat:GroupedChannels")
 
 @Composable
 private fun LoginButton(onClick: () -> Unit) {
@@ -131,7 +138,9 @@ private fun GroupedChannelsScreen(onChannelClick: (Channel) -> Unit) {
     }
     // The grouped view models only observe their state, so one grouped query fills every tab.
     LaunchedEffect(Unit) {
-        ChatClient.instance().queryGroupedChannels(groups = GroupKeys).enqueue()
+        ChatClient.instance().queryGroupedChannels(groups = GroupKeys, limit = GroupPageSize).enqueue { result ->
+            result.onError { error -> logger.e { "[queryGroupedChannels] failed: $error" } }
+        }
     }
     val unreadByGroup by remember {
         ChatClient.instance().globalStateFlow.flatMapLatest { it.groupedUnreadChannels }
