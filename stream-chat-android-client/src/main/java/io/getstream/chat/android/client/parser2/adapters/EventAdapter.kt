@@ -100,26 +100,23 @@ internal class EventAdapterFactory : JsonAdapter.Factory {
     }
 }
 
-internal class EventDtoAdapter(
-    private val moshi: Moshi,
-) : JsonAdapter<ChatEventDto>() {
-
-    private val mapAdapter: JsonAdapter<MutableMap<String, Any?>> =
-        moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
-
-    private val connectedEventAdapter = generatedEventAdapter<ConnectedEvent> { emptyMap() }
-    private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
-    private val healthEventAdapter = generatedEventAdapter<HealthCheckEvent> { emptyMap() }
-    private val draftMessageUpdatedEventAdapter = generatedEventAdapter<DraftUpdatedEvent> { mapOf("draft" to draft) }
-    private val draftMessageDeletedEventAdapter = generatedEventAdapter<DraftDeletedEvent> { mapOf("draft" to draft) }
-    private val newMessageEventAdapter = generatedEventAdapter<MessageNewEvent> { mapOf("cid" to cid, "user" to user) }
-    private val messageDeletedEventAdapter = generatedEventAdapter<MessageDeletedEvent> { mapOf("cid" to cid) }
-    private val messageUpdatedEventAdapter =
-        generatedEventAdapter<MessageUpdatedEvent> { mapOf("cid" to cid, "user" to user) }
-    private val messageReadEventAdapter = generatedEventAdapter<MessageReadEvent> {
+/**
+ * The generated adapter of every event type that always maps to one model, shared by the v1 and v2 socket parsers.
+ * Types whose model depends on the payload, connection errors and unknown types are left to each parser.
+ */
+@Suppress("LongMethod")
+internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<ChatEventDto>> = mapOf(
+    EventType.DRAFT_MESSAGE_UPDATED to generatedEventAdapter<DraftUpdatedEvent>(moshi) { mapOf("draft" to draft) },
+    EventType.DRAFT_MESSAGE_DELETED to generatedEventAdapter<DraftDeletedEvent>(moshi) { mapOf("draft" to draft) },
+    EventType.MESSAGE_NEW to generatedEventAdapter<MessageNewEvent>(moshi) { mapOf("cid" to cid, "user" to user) },
+    EventType.MESSAGE_DELETED to generatedEventAdapter<MessageDeletedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.MESSAGE_UPDATED to generatedEventAdapter<MessageUpdatedEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.MESSAGE_READ to generatedEventAdapter<MessageReadEvent>(moshi) {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
-    }
-    private val messageDeliveredEventAdapter = generatedEventAdapter<MessageDeliveredEvent> {
+    },
+    EventType.MESSAGE_DELIVERED to generatedEventAdapter<MessageDeliveredEvent>(moshi) {
         mapOf(
             "cid" to cid,
             "channel_type" to channelType,
@@ -129,41 +126,40 @@ internal class EventDtoAdapter(
             "last_delivered_at" to lastDeliveredAt?.let(GeneratedExactDate::parseOrNull),
             "last_delivered_message_id" to lastDeliveredMessageId,
         )
-    }
-    private val typingStartEventAdapter =
-        generatedEventAdapter<TypingStartEvent> { mapOf("cid" to cid, "user" to user) }
-    private val typingStopEventAdapter =
-        generatedEventAdapter<TypingStopEvent> { mapOf("cid" to cid, "user" to user) }
-    private val reactionNewEventAdapter = generatedEventAdapter<ReactionNewEvent> {
+    },
+    EventType.TYPING_START to generatedEventAdapter<TypingStartEvent>(moshi) { mapOf("cid" to cid, "user" to user) },
+    EventType.TYPING_STOP to generatedEventAdapter<TypingStopEvent>(moshi) { mapOf("cid" to cid, "user" to user) },
+    EventType.REACTION_NEW to generatedEventAdapter<ReactionNewEvent>(moshi) {
         mapOf("cid" to cid, "user" to user, "message" to message, "reaction" to reaction)
-    }
-    private val reactionUpdatedEventAdapter = generatedEventAdapter<ReactionUpdatedEvent> {
+    },
+    EventType.REACTION_UPDATED to generatedEventAdapter<ReactionUpdatedEvent>(moshi) {
         mapOf("cid" to cid, "user" to user, "reaction" to reaction)
-    }
-    private val reactionDeletedEventAdapter = generatedEventAdapter<ReactionDeletedEvent> {
+    },
+    EventType.REACTION_DELETED to generatedEventAdapter<ReactionDeletedEvent>(moshi) {
         mapOf("cid" to cid, "user" to user, "message" to message, "reaction" to reaction)
-    }
-    private val memberAddedEventAdapter =
-        generatedEventAdapter<MemberAddedEvent> { mapOf("cid" to cid, "user" to user) }
-    private val memberRemovedEventAdapter =
-        generatedEventAdapter<MemberRemovedEvent> { mapOf("cid" to cid, "user" to user) }
-    private val memberUpdatedEventAdapter =
-        generatedEventAdapter<MemberUpdatedEvent> { mapOf("cid" to cid, "user" to user) }
-    private val channelUpdatedEventAdapter = generatedEventAdapter<ChannelUpdatedEvent> { mapOf("cid" to cid) }
-    private val channelHiddenEventAdapter =
-        generatedEventAdapter<ChannelHiddenEvent> { mapOf("cid" to cid, "user" to user) }
-    private val channelDeletedEventAdapter = generatedEventAdapter<ChannelDeletedEvent> { mapOf("cid" to cid) }
-    private val channelVisibleEventAdapter =
-        generatedEventAdapter<ChannelVisibleEvent> { mapOf("cid" to cid, "user" to user) }
-    private val channelTruncatedEventAdapter = generatedEventAdapter<ChannelTruncatedEvent> { mapOf("cid" to cid) }
-    private val userStartWatchingEventAdapter = generatedEventAdapter<UserWatchingStartEvent> { mapOf("cid" to cid) }
-    private val userStopWatchingEventAdapter = generatedEventAdapter<UserWatchingStopEvent> { mapOf("cid" to cid) }
-    private val notificationAddedToChannelEventAdapter =
-        generatedEventAdapter<NotificationAddedToChannelEvent> { mapOf("cid" to cid) }
-    private val notificationMarkReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent> {
-        mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
-    }
-    private val notificationMarkUnreadEventAdapter = generatedEventAdapter<NotificationMarkUnreadEvent> {
+    },
+    EventType.MEMBER_ADDED to generatedEventAdapter<MemberAddedEvent>(moshi) { mapOf("cid" to cid, "user" to user) },
+    EventType.MEMBER_REMOVED to generatedEventAdapter<MemberRemovedEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.MEMBER_UPDATED to generatedEventAdapter<MemberUpdatedEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.CHANNEL_UPDATED to generatedEventAdapter<ChannelUpdatedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.CHANNEL_HIDDEN to generatedEventAdapter<ChannelHiddenEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.CHANNEL_DELETED to generatedEventAdapter<ChannelDeletedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.CHANNEL_VISIBLE to generatedEventAdapter<ChannelVisibleEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.CHANNEL_TRUNCATED to generatedEventAdapter<ChannelTruncatedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.USER_WATCHING_START to generatedEventAdapter<UserWatchingStartEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.USER_WATCHING_STOP to generatedEventAdapter<UserWatchingStopEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.NOTIFICATION_ADDED_TO_CHANNEL to generatedEventAdapter<NotificationAddedToChannelEvent>(moshi) {
+        mapOf("cid" to cid)
+    },
+    EventType.NOTIFICATION_MARK_UNREAD to generatedEventAdapter<NotificationMarkUnreadEvent>(moshi) {
         mapOf(
             "cid" to cid,
             "user" to user,
@@ -171,60 +167,107 @@ internal class EventDtoAdapter(
             "last_read_at" to lastReadAt,
             "unread_messages" to unreadMessages,
         )
-    }
-    private val markAllReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent> { mapOf("user" to user) }
-    private val notificationMessageNewEventAdapter = generatedEventAdapter<NotificationNewMessageEvent> {
+    },
+    EventType.NOTIFICATION_MESSAGE_NEW to generatedEventAdapter<NotificationNewMessageEvent>(moshi) {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId)
-    }
-    private val notificationThreadMessageNewEventAdapter = generatedEventAdapter<NotificationThreadMessageNewEvent> {
+    },
+    EventType.NOTIFICATION_THREAD_MESSAGE_NEW to generatedEventAdapter<NotificationThreadMessageNewEvent>(moshi) {
         mapOf("cid" to cid, "unread_threads" to unreadThreads, "unread_thread_messages" to unreadThreadMessages)
-    }
-    private val threadUpdatedEventAdapter = generatedEventAdapter<ThreadUpdatedEvent> {
+    },
+    EventType.THREAD_UPDATED to generatedEventAdapter<ThreadUpdatedEvent>(moshi) {
         mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "thread" to thread)
-    }
-    private val notificationInvitedEventAdapter = generatedEventAdapter<NotificationInvitedEvent> {
+    },
+    EventType.NOTIFICATION_INVITED to generatedEventAdapter<NotificationInvitedEvent>(moshi) {
         mapOf("cid" to cid, "user" to user)
-    }
-    private val notificationInviteAcceptedEventAdapter = generatedEventAdapter<NotificationInviteAcceptedEvent> {
+    },
+    EventType.NOTIFICATION_INVITE_ACCEPTED to generatedEventAdapter<NotificationInviteAcceptedEvent>(moshi) {
         mapOf("cid" to cid, "user" to user)
-    }
-    private val notificationInviteRejectedEventAdapter = generatedEventAdapter<NotificationInviteRejectedEvent> {
+    },
+    EventType.NOTIFICATION_INVITE_REJECTED to generatedEventAdapter<NotificationInviteRejectedEvent>(moshi) {
         mapOf("cid" to cid, "user" to user)
-    }
-    private val notificationRemovedFromChannelEventAdapter =
-        generatedEventAdapter<NotificationRemovedFromChannelEvent> { mapOf("cid" to cid) }
-    private val notificationMutesUpdatedEventAdapter =
-        generatedEventAdapter<NotificationMutesUpdatedEvent> { emptyMap() }
-    private val notificationChannelMutesUpdatedEventAdapter =
-        generatedEventAdapter<NotificationChannelMutesUpdatedEvent> { emptyMap() }
-    private val notificationChannelDeletedEventAdapter =
-        generatedEventAdapter<NotificationChannelDeletedEvent> { mapOf("cid" to cid) }
-    private val notificationChannelTruncatedEventAdapter =
-        generatedEventAdapter<NotificationChannelTruncatedEvent> { mapOf("cid" to cid) }
-    private val userPresenceChangedEventAdapter = generatedEventAdapter<UserPresenceChangedEvent> { emptyMap() }
-    private val userUpdatedEventAdapter = generatedEventAdapter<UserUpdatedEvent> { emptyMap() }
-    private val userDeletedEventAdapter = generatedEventAdapter<UserDeletedEvent> { emptyMap() }
-    private val userBannedEventAdapter = generatedEventAdapter<UserBannedEvent> { emptyMap() }
-    private val userUnbannedEventAdapter = generatedEventAdapter<UserUnbannedEvent> { emptyMap() }
-    private val pollUpdatedEventAdapter = generatedEventAdapter<PollUpdatedEvent> { mapOf("cid" to cid) }
-    private val pollDeletedEventAdapter = generatedEventAdapter<PollDeletedEvent> { mapOf("cid" to cid) }
-    private val pollClosedEventAdapter = generatedEventAdapter<PollClosedEvent> { mapOf("cid" to cid) }
-    private val pollVoteCastedEventAdapter = generatedEventAdapter<PollVoteCastedEvent> { mapOf("cid" to cid) }
-    private val pollVoteChangedEventAdapter = generatedEventAdapter<PollVoteChangedEvent> { mapOf("cid" to cid) }
-    private val pollVoteRemovedEventAdapter = generatedEventAdapter<PollVoteRemovedEvent> { mapOf("cid" to cid) }
-    private val reminderCreatedEventAdapter = generatedEventAdapter<ReminderCreatedEvent> { emptyMap() }
-    private val reminderUpdatedEventAdapter = generatedEventAdapter<ReminderUpdatedEvent> { emptyMap() }
-    private val reminderDeletedEventAdapter = generatedEventAdapter<ReminderDeletedEvent> { emptyMap() }
-    private val notificationReminderDueEventAdapter = generatedEventAdapter<ReminderNotificationEvent> { emptyMap() }
-    private val userMessagesDeletedEventAdapter = generatedEventAdapter<UserMessagesDeletedEvent> { emptyMap() }
-    private val aiTypingIndicatorUpdatedEventAdapter =
-        generatedEventAdapter<AIIndicatorUpdateEvent> { mapOf("cid" to cid, "user" to user) }
-    private val aiTypingIndicatorClearEventAdapter =
-        generatedEventAdapter<AIIndicatorClearEvent> { mapOf("cid" to cid, "user" to user) }
-    private val aiTypingIndicatorStopEventAdapter =
-        generatedEventAdapter<AIIndicatorStopEvent> { mapOf("cid" to cid, "user" to user) }
+    },
+    EventType.NOTIFICATION_REMOVED_FROM_CHANNEL to generatedEventAdapter<NotificationRemovedFromChannelEvent>(moshi) {
+        mapOf("cid" to cid)
+    },
+    EventType.NOTIFICATION_MUTES_UPDATED to generatedEventAdapter<NotificationMutesUpdatedEvent>(moshi) { emptyMap() },
+    EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED to generatedEventAdapter<NotificationChannelMutesUpdatedEvent>(moshi) {
+        emptyMap()
+    },
+    EventType.NOTIFICATION_CHANNEL_DELETED to generatedEventAdapter<NotificationChannelDeletedEvent>(moshi) {
+        mapOf("cid" to cid)
+    },
+    EventType.NOTIFICATION_CHANNEL_TRUNCATED to generatedEventAdapter<NotificationChannelTruncatedEvent>(moshi) {
+        mapOf("cid" to cid)
+    },
+    EventType.USER_PRESENCE_CHANGED to generatedEventAdapter<UserPresenceChangedEvent>(moshi) { emptyMap() },
+    EventType.USER_UPDATED to generatedEventAdapter<UserUpdatedEvent>(moshi) { emptyMap() },
+    EventType.USER_DELETED to generatedEventAdapter<UserDeletedEvent>(moshi) { emptyMap() },
+    EventType.USER_BANNED to generatedEventAdapter<UserBannedEvent>(moshi) { emptyMap() },
+    EventType.USER_UNBANNED to generatedEventAdapter<UserUnbannedEvent>(moshi) { emptyMap() },
+    EventType.POLL_UPDATED to generatedEventAdapter<PollUpdatedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.POLL_DELETED to generatedEventAdapter<PollDeletedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.POLL_CLOSED to generatedEventAdapter<PollClosedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.POLL_VOTE_CASTED to generatedEventAdapter<PollVoteCastedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.POLL_VOTE_CHANGED to generatedEventAdapter<PollVoteChangedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.POLL_VOTE_REMOVED to generatedEventAdapter<PollVoteRemovedEvent>(moshi) { mapOf("cid" to cid) },
+    EventType.REMINDER_CREATED to generatedEventAdapter<ReminderCreatedEvent>(moshi) { emptyMap() },
+    EventType.REMINDER_UPDATED to generatedEventAdapter<ReminderUpdatedEvent>(moshi) { emptyMap() },
+    EventType.REMINDER_DELETED to generatedEventAdapter<ReminderDeletedEvent>(moshi) { emptyMap() },
+    EventType.NOTIFICATION_REMINDER_DUE to generatedEventAdapter<ReminderNotificationEvent>(moshi) { emptyMap() },
+    EventType.USER_MESSAGES_DELETED to generatedEventAdapter<UserMessagesDeletedEvent>(moshi) { emptyMap() },
+    EventType.AI_TYPING_INDICATOR_UPDATED to generatedEventAdapter<AIIndicatorUpdateEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.AI_TYPING_INDICATOR_CLEAR to generatedEventAdapter<AIIndicatorClearEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+    EventType.AI_TYPING_INDICATOR_STOP to generatedEventAdapter<AIIndicatorStopEvent>(moshi) {
+        mapOf("cid" to cid, "user" to user)
+    },
+)
 
-    @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
+internal inline fun <reified T : WSEvent> generatedEventAdapter(
+    moshi: Moshi,
+    noinline required: T.() -> Map<String, Any?>,
+): JsonAdapter<ChatEventDto> = GeneratedEventAdapter(moshi.adapter(T::class.java), required)
+
+/**
+ * Parses an event with its generated model. The spec makes some fields optional that the domain event
+ * requires (e.g. the cid, since feeds shares these events without one); an event missing any of the
+ * [required] fields is rejected.
+ */
+internal class GeneratedEventAdapter<T : WSEvent>(
+    private val delegate: JsonAdapter<T>,
+    private val required: T.() -> Map<String, Any?>,
+) : JsonAdapter<ChatEventDto>() {
+    override fun fromJson(reader: JsonReader): ChatEventDto? = delegate.fromJson(reader)?.let { event ->
+        event.required().entries.firstOrNull { it.value == null }?.let { (name, _) ->
+            throw JsonDataException("Required value '$name' missing for ${event.getWSEventType()}")
+        }
+        GeneratedEventDto(event)
+    }
+
+    override fun toJson(writer: JsonWriter, value: ChatEventDto?): Unit = error("Can't convert this event to Json")
+}
+
+internal class EventDtoAdapter(
+    private val moshi: Moshi,
+) : JsonAdapter<ChatEventDto>() {
+
+    private val mapAdapter: JsonAdapter<MutableMap<String, Any?>> =
+        moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
+
+    private val generatedAdapters = generatedEventAdapters(moshi)
+    private val connectedEventAdapter = generatedEventAdapter<ConnectedEvent>(moshi) { emptyMap() }
+    private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
+    private val healthEventAdapter = generatedEventAdapter<HealthCheckEvent>(moshi) { emptyMap() }
+    private val notificationMarkReadEventAdapter = generatedEventAdapter<NotificationMarkReadEvent>(moshi) {
+        mapOf("cid" to cid, "channel_type" to channelType, "channel_id" to channelId, "user" to user)
+    }
+    private val markAllReadEventAdapter =
+        generatedEventAdapter<NotificationMarkReadEvent>(moshi) { mapOf("user" to user) }
+
+    @Suppress("ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
         if (reader.peek() == JsonReader.Token.NULL) {
             reader.nextNull<Nothing?>()
@@ -239,65 +282,11 @@ internal class EventDtoAdapter(
                 else -> healthEventAdapter
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
-            EventType.DRAFT_MESSAGE_UPDATED -> draftMessageUpdatedEventAdapter
-            EventType.DRAFT_MESSAGE_DELETED -> draftMessageDeletedEventAdapter
-            EventType.MESSAGE_NEW -> newMessageEventAdapter
-            EventType.MESSAGE_DELETED -> messageDeletedEventAdapter
-            EventType.MESSAGE_UPDATED -> messageUpdatedEventAdapter
-            EventType.MESSAGE_READ -> messageReadEventAdapter
-            EventType.MESSAGE_DELIVERED -> messageDeliveredEventAdapter
-            EventType.TYPING_START -> typingStartEventAdapter
-            EventType.TYPING_STOP -> typingStopEventAdapter
-            EventType.REACTION_NEW -> reactionNewEventAdapter
-            EventType.REACTION_UPDATED -> reactionUpdatedEventAdapter
-            EventType.REACTION_DELETED -> reactionDeletedEventAdapter
-            EventType.MEMBER_ADDED -> memberAddedEventAdapter
-            EventType.MEMBER_REMOVED -> memberRemovedEventAdapter
-            EventType.MEMBER_UPDATED -> memberUpdatedEventAdapter
-            EventType.CHANNEL_UPDATED -> channelUpdatedEventAdapter
-            EventType.CHANNEL_HIDDEN -> channelHiddenEventAdapter
-            EventType.CHANNEL_DELETED -> channelDeletedEventAdapter
-            EventType.CHANNEL_VISIBLE -> channelVisibleEventAdapter
-            EventType.CHANNEL_TRUNCATED -> channelTruncatedEventAdapter
-            EventType.USER_WATCHING_START -> userStartWatchingEventAdapter
-            EventType.USER_WATCHING_STOP -> userStopWatchingEventAdapter
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL -> notificationAddedToChannelEventAdapter
             EventType.NOTIFICATION_MARK_READ -> when {
                 map.containsKey("cid") -> notificationMarkReadEventAdapter
                 else -> markAllReadEventAdapter
             }
-            EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
-            EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
-            EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter
-            EventType.THREAD_UPDATED -> threadUpdatedEventAdapter
-            EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
-            EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter
-            EventType.NOTIFICATION_INVITE_REJECTED -> notificationInviteRejectedEventAdapter
-            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> notificationRemovedFromChannelEventAdapter
-            EventType.NOTIFICATION_MUTES_UPDATED -> notificationMutesUpdatedEventAdapter
-            EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> notificationChannelMutesUpdatedEventAdapter
-            EventType.NOTIFICATION_CHANNEL_DELETED -> notificationChannelDeletedEventAdapter
-            EventType.NOTIFICATION_CHANNEL_TRUNCATED -> notificationChannelTruncatedEventAdapter
-            EventType.USER_PRESENCE_CHANGED -> userPresenceChangedEventAdapter
-            EventType.USER_UPDATED -> userUpdatedEventAdapter
-            EventType.USER_DELETED -> userDeletedEventAdapter
-            EventType.USER_BANNED -> userBannedEventAdapter
-            EventType.USER_UNBANNED -> userUnbannedEventAdapter
-            EventType.USER_MESSAGES_DELETED -> userMessagesDeletedEventAdapter
-            EventType.POLL_UPDATED -> pollUpdatedEventAdapter
-            EventType.POLL_DELETED -> pollDeletedEventAdapter
-            EventType.POLL_CLOSED -> pollClosedEventAdapter
-            EventType.POLL_VOTE_CASTED -> pollVoteCastedEventAdapter
-            EventType.POLL_VOTE_CHANGED -> pollVoteChangedEventAdapter
-            EventType.POLL_VOTE_REMOVED -> pollVoteRemovedEventAdapter
-            EventType.REMINDER_CREATED -> reminderCreatedEventAdapter
-            EventType.REMINDER_UPDATED -> reminderUpdatedEventAdapter
-            EventType.REMINDER_DELETED -> reminderDeletedEventAdapter
-            EventType.NOTIFICATION_REMINDER_DUE -> notificationReminderDueEventAdapter
-            EventType.AI_TYPING_INDICATOR_UPDATED -> aiTypingIndicatorUpdatedEventAdapter
-            EventType.AI_TYPING_INDICATOR_CLEAR -> aiTypingIndicatorClearEventAdapter
-            EventType.AI_TYPING_INDICATOR_STOP -> aiTypingIndicatorStopEventAdapter
-            else -> // Custom case, early return
+            else -> generatedAdapters[type] ?: // Custom case, early return
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,
                     created_at = moshi.adapter(ExactDate::class.java).fromJsonValue(map["created_at"])!!,
@@ -307,29 +296,6 @@ internal class EventDtoAdapter(
         }
 
         return adapter.fromJsonValue(map)
-    }
-
-    private inline fun <reified T : WSEvent> generatedEventAdapter(
-        noinline required: T.() -> Map<String, Any?>,
-    ): JsonAdapter<ChatEventDto> = GeneratedEventAdapter(moshi.adapter(T::class.java), required)
-
-    /**
-     * Parses an event with its generated model. The spec makes some fields optional that the domain event
-     * requires (e.g. the cid, since feeds shares these events without one); an event missing any of the
-     * [required] fields is rejected.
-     */
-    private class GeneratedEventAdapter<T : WSEvent>(
-        private val delegate: JsonAdapter<T>,
-        private val required: T.() -> Map<String, Any?>,
-    ) : JsonAdapter<ChatEventDto>() {
-        override fun fromJson(reader: JsonReader): ChatEventDto? = delegate.fromJson(reader)?.let { event ->
-            event.required().entries.firstOrNull { it.value == null }?.let { (name, _) ->
-                throw JsonDataException("Required value '$name' missing for ${event.getWSEventType()}")
-            }
-            GeneratedEventDto(event)
-        }
-
-        override fun toJson(writer: JsonWriter, value: ChatEventDto?): Unit = error("Can't convert this event to Json")
     }
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
