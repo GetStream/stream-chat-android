@@ -63,10 +63,10 @@ object ChatHelper {
     }
 
     /**
-     * Initializes the SDK with the given API key. [useV2WebSocket] connects the websocket through the v2 endpoint.
+     * Initializes the SDK with the given API key. [useV2WebSocket] false connects the websocket through v1.
      */
     @OptIn(InternalStreamChatApi::class)
-    fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null, useV2WebSocket: Boolean = false) {
+    fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null, useV2WebSocket: Boolean = true) {
         this.apiKey = apiKey
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(

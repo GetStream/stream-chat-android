@@ -131,7 +131,7 @@ lane :run_e2e_test do |options|
   end
 
   # The API version the mock serves and the app connects with.
-  api_version = options[:api_version].to_s.empty? ? 'v1' : options[:api_version].to_s
+  api_version = options[:api_version].to_s.empty? ? 'v2' : options[:api_version].to_s
   UI.user_error!("Invalid api_version: #{api_version}") unless %w[v1 v2].include?(api_version)
 
   result = sh(

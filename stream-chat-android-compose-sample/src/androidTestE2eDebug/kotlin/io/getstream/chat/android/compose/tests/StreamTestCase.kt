@@ -58,8 +58,8 @@ abstract class StreamTestCase {
 
     /** The API version to test against, from the `api_version` instrumentation argument: the mock's and the app's. */
     private val apiVersion: String = when (val requested = InstrumentationRegistry.getArguments().getString("api_version")) {
-        null, "v1" -> "v1"
-        "v2" -> "v2"
+        "v1" -> "v1"
+        null, "v2" -> "v2"
         else -> throw IllegalArgumentException("Invalid api_version: $requested")
     }
 
