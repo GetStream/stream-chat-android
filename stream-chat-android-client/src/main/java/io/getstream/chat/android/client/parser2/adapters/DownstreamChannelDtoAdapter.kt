@@ -22,6 +22,7 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelPartialUpdateDto
 
 internal object DownstreamChannelDtoAdapter :
     CustomObjectDtoAdapter<DownstreamChannelDto>(DownstreamChannelDto::class) {
@@ -36,4 +37,20 @@ internal object DownstreamChannelDtoAdapter :
     @ToJson
     @Suppress("UNUSED_PARAMETER")
     fun toJson(jsonWriter: JsonWriter, value: DownstreamChannelDto): Unit = error("Can't convert this to Json")
+}
+
+internal object DownstreamChannelPartialUpdateDtoAdapter :
+    CustomObjectDtoAdapter<DownstreamChannelPartialUpdateDto>(DownstreamChannelPartialUpdateDto::class) {
+
+    @FromJson
+    fun fromJson(
+        jsonReader: JsonReader,
+        mapAdapter: JsonAdapter<MutableMap<String, Any>>,
+        channelAdapter: JsonAdapter<DownstreamChannelPartialUpdateDto>,
+    ): DownstreamChannelPartialUpdateDto? = parseWithExtraData(jsonReader, mapAdapter, channelAdapter)
+
+    @ToJson
+    @Suppress("UNUSED_PARAMETER")
+    fun toJson(jsonWriter: JsonWriter, value: DownstreamChannelPartialUpdateDto): Unit =
+        error("Can't convert this to Json")
 }

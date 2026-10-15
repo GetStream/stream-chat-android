@@ -118,19 +118,24 @@ internal class GroupAwareChatEventHandler(
     /**
      * Same checks as [routeByGroup], against [cachedChannel] with the partial update applied. The event's channel
      * lacks data such as members and the last message time, so a channel that is not in the list yet is watched to
-     * get its full data instead of being added from the event. The membership and hidden guards apply only when
-     * [cachedChannel] exists: the event is only sent to members, and without a cached channel there is nothing that
-     * says the user left or hid it.
+     * get its full data instead of being added from the event.
+     *
+     * Without [cachedChannel], only the group is checked: the last activity is unknown, so the cutoff is left to the
+     * list, which checks the watched channel before showing it. The event is only sent to members, and a hidden
+     * channel is dropped after the watch.
      */
     private fun routePartialUpdate(
         event: NotificationChannelPartialUpdatedEvent,
         cachedChannel: Channel?,
         filter: FilterObject,
     ): EventHandlingResult {
-        val channel = cachedChannel?.mergePartialUpdate(event.channel) ?: event.channel
-        val belongsHere = channelBelongsHere(channel, filter) &&
-            (cachedChannel == null || isCurrentUserMember(cachedChannel)) &&
-            cachedChannel?.hidden != true
+        val belongsHere = if (cachedChannel == null) {
+            groupMatches(event.channel, filter)
+        } else {
+            channelBelongsHere(cachedChannel.mergePartialUpdate(event.channel), filter) &&
+                isCurrentUserMember(cachedChannel) &&
+                cachedChannel.hidden != true
+        }
         val isInList = channels.value?.containsKey(event.cid) == true
         return when {
             belongsHere && !isInList -> EventHandlingResult.WatchAndAdd(event.cid)
@@ -142,6 +147,13 @@ internal class GroupAwareChatEventHandler(
     private fun channelBelongsHere(channel: Channel, filter: FilterObject): Boolean =
         resolver.resolve(channel).contains(groupKey) &&
             filter.matchesGroupedChannel(group = channel.group, queryTimestamp = channel.queryTimestamp, now = now())
+
+    /** [channelBelongsHere] with the cutoff passed, for a channel whose last activity is unknown. */
+    private fun groupMatches(channel: Channel, filter: FilterObject): Boolean {
+        val checkedAt = now()
+        return resolver.resolve(channel).contains(groupKey) &&
+            filter.matchesGroupedChannel(group = channel.group, queryTimestamp = checkedAt, now = checkedAt)
+    }
 
     /** The channel with [newMessage] counted in its last message time, as the channel state counts it. */
     private fun Channel.withNewMessage(newMessage: Message?): Channel = when (newMessage) {

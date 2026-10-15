@@ -494,14 +494,17 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel = DownstreamChannelPartialUpdateDto(
+            cid = CID,
             id = CHANNEL_ID,
             type = CHANNEL_TYPE,
+            name = "Channel name",
+            image = "image.png",
             created_at = DATE,
             updated_at = DATE,
             frozen = true,
             disabled = true,
             team = "team1",
-            custom = mapOf("name" to "Channel name", "image" to "image.png", "group" to "current"),
+            extraData = mapOf("group" to "current"),
         ),
     )
 

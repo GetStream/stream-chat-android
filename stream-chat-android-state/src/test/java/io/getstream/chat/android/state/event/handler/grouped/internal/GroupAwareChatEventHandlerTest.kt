@@ -620,6 +620,30 @@ internal class GroupAwareChatEventHandlerTest {
         assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
     }
 
+    @Test
+    fun `Given a channel not in local state When a partial update moves it into a filtered group Should watch and add`() {
+        // The last message time is unknown without local data, so the list checks the cutoff after the watch.
+        val channel = randomChannel(createdAt = daysAgo(30), extraData = mapOf("group" to "other"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = null)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel not in local state When a partial update moves it into a group the filter excludes Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "archived"))
+        val filter = Filters.and(Filters.ne("group", "archived"), cutoff14Days)
+
+        val result = handler.handleChatEvent(event, filter, cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
     /** The event as the backend sends it: only the channel's basic fields and its custom data. */
     private fun partialUpdateOf(channel: Channel, custom: Map<String, Any>) =
         randomNotificationChannelPartialUpdatedEvent(

@@ -196,20 +196,19 @@ internal class DomainMapping(
 
     /**
      * Transforms [DownstreamChannelPartialUpdateDto] into a [Channel] holding only the fields the DTO carries.
-     * The `name` and `image` custom fields fill [Channel.name] and [Channel.image], like they do for a full channel.
+     * Like for a full channel, the server's `disabled` flag is kept in [Channel.extraData].
      */
     internal fun DownstreamChannelPartialUpdateDto.toDomain(): Channel =
         Channel(
             id = id,
             type = type,
-            name = custom[CHANNEL_NAME_FIELD] as? String ?: "",
-            image = custom[CHANNEL_IMAGE_FIELD] as? String ?: "",
+            name = name ?: "",
+            image = image ?: "",
             frozen = frozen,
             createdAt = created_at,
             updatedAt = updated_at,
             team = team,
-            extraData = (custom - CHANNEL_NAME_FIELD - CHANNEL_IMAGE_FIELD + (CHANNEL_DISABLED_FIELD to disabled))
-                .toMutableMap(),
+            extraData = (extraData + (CHANNEL_DISABLED_FIELD to disabled)).toMutableMap(),
         )
 
     internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo =
@@ -942,8 +941,6 @@ internal class DomainMapping(
     private companion object {
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
         private const val FIELD_LAST_UPDATED = "last_updated"
-        private const val CHANNEL_NAME_FIELD = "name"
-        private const val CHANNEL_IMAGE_FIELD = "image"
         private const val CHANNEL_DISABLED_FIELD = "disabled"
     }
 }

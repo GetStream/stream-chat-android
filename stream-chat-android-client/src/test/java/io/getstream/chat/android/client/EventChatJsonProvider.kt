@@ -254,11 +254,9 @@ internal fun createNotificationChannelPartialUpdatedEventStringJson() =
                 "frozen": true,
                 "disabled": false,
                 "team": "team1",
-                "custom": {
-                    "name": "Channel name",
-                    "image": "https://example.com/channel.png",
-                    "group": "current"
-                }
+                "name": "Channel name",
+                "image": "https://example.com/channel.png",
+                "group": "current"
             }
         """.trimIndent(),
     )
