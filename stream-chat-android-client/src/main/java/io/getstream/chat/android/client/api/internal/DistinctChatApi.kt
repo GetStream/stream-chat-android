@@ -159,16 +159,17 @@ internal class DistinctChatApi(
     override fun queryGroupedChannels(
         limit: Int?,
         groups: Map<String, GroupedChannelsGroupQuery>?,
+        sort: QuerySorter<Channel>?,
         watch: Boolean,
         presence: Boolean,
     ): Call<GroupedChannels> {
-        val uniqueKey = QueryGroupedChannelsHash(limit, groups, watch, presence).hashCode()
+        val uniqueKey = QueryGroupedChannelsHash(limit, groups, sort, watch, presence).hashCode()
         StreamLog.d(TAG) {
-            "[queryGroupedChannels] limit: $limit, groups: $groups, watch: $watch, " +
+            "[queryGroupedChannels] limit: $limit, groups: $groups, sort: $sort, watch: $watch, " +
                 "presence: $presence, uniqueKey: $uniqueKey"
         }
         return getOrCreate(uniqueKey) {
-            delegate.queryGroupedChannels(limit, groups, watch, presence)
+            delegate.queryGroupedChannels(limit, groups, sort, watch, presence)
         }
     }
 

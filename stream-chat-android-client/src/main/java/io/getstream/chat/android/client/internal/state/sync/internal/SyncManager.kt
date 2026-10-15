@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.CreateChannelParams
@@ -560,12 +561,13 @@ internal class SyncManager(
 
     /**
      * Drives the recovery flow for grouped channel queries: when at least one active grouped
-     * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once. The
+     * logic needs recovery, calls [ChatClient.queryGroupedChannelsInternal] once per requested sort,
+     * so groups requested with different sorts keep their own order. The
      * [io.getstream.chat.android.client.internal.state.plugin.listener.internal.QueryGroupedChannelsListenerState]
      * routes the response into the corresponding per-group state and persists it.
      *
-     * Assumes all active grouped queries share the same request-level `limit`, `watch`, and
-     * `presence` flags — the first captured config wins.
+     * Assumes the grouped queries that share a sort also share the same request-level `limit`,
+     * `watch`, and `presence` flags — the first captured config wins.
      */
     private suspend fun updateGroupedQueryChannels(recoverAll: Boolean): Set<String> {
         val activeGroupedLogics = logicRegistry.getActiveQueryChannelsLogic()
@@ -576,19 +578,32 @@ internal class SyncManager(
             return emptySet()
         }
 
-        // Shared fields (limit, watch, presence) are identical across groups from the same
-        // original session — take the first captured config. Per-group page sizes are merged in
+        return activeGroupedLogics
+            .groupBy { it.groupedQueryConfig()?.sort }
+            .values
+            .flatMapTo(mutableSetOf()) { logics -> recoverGroupedQueryChannels(logics) }
+    }
+
+    private suspend fun recoverGroupedQueryChannels(activeGroupedLogics: List<QueryChannelsLogic>): Set<String> {
+        // Shared fields (limit, watch, presence, sort) are identical across groups from the same
+        // original session — take the first captured config. Per-group page sizes and filters are merged in
         // the `groups` map below so the server returns the same page sizes the caller chose.
         //
         // Always include every active group's key, even when the captured per-group `pageSize` is
         // null. An empty `{}` per-group entry is meaningful: it tells the server "refresh this
         // group too". Filtering it out would cause re-sync to skip that group entirely.
-        val shared = activeGroupedLogics.firstNotNullOfOrNull { it.groupedQueryConfig() }
+        // A configuration restored from the cache only has defaults for the shared fields,
+        // so prefer one a request set.
+        val shared = activeGroupedLogics
+            .firstNotNullOfOrNull { logic ->
+                logic.groupedQueryConfig()?.takeUnless { logic.isGroupedQueryConfigRestored() }
+            }
+            ?: activeGroupedLogics.firstNotNullOfOrNull { it.groupedQueryConfig() }
         val groupsParam = activeGroupedLogics
             .mapNotNull { logic ->
                 val key = logic.groupKey() ?: return@mapNotNull null
                 val cfg = logic.groupedQueryConfig()
-                key to GroupedChannelsGroupQuery(limit = cfg?.pageSize)
+                key to GroupedChannelsGroupQuery(limit = cfg?.pageSize, filter = cfg?.filter)
             }
             .toMap()
             .takeIf { it.isNotEmpty() }
@@ -598,6 +613,7 @@ internal class SyncManager(
             groups = groupsParam,
             watch = shared?.watch ?: true,
             presence = shared?.presence ?: false,
+            sort = shared?.sort,
         ).await()
 
         return when (result) {

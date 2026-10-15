@@ -1535,6 +1535,7 @@ constructor(
     override fun queryGroupedChannels(
         limit: Int?,
         groups: Map<String, GroupedChannelsGroupQuery>?,
+        sort: QuerySorter<Channel>?,
         watch: Boolean,
         presence: Boolean,
     ): Call<GroupedChannels> {
@@ -1545,10 +1546,12 @@ constructor(
                     limit = query.limit,
                     next = query.next,
                     prev = query.prev,
+                    filterConditions = query.filter?.toMap(),
                 )
             },
             watch = watch,
             presence = presence,
+            sort = sort?.toSortParams(),
         )
         val lazyCall = {
             channelApi.queryGroupedChannels(

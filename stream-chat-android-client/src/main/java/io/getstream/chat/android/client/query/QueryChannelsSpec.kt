@@ -30,7 +30,8 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  *    that predefined query (captured by replacing the held spec instance — see
  *    `QueryChannelsMutableState.applyResolvedSpec`).
  *  - Grouped queries: identity is [groupKey], the stable key returned by the server's grouped
- *    channels endpoint. [filter] and [querySort] hold neutral placeholders for these queries.
+ *    channels endpoint. [filter] and [querySort] hold the group's filter and sort from its latest
+ *    request, or a neutral filter and `last_updated` descending when it had none.
  *
  * The 2-arg [constructor] and 2-arg [copy] are kept for binary compatibility with callers that
  * predate the predefined-filter fields. They delegate to the primary constructor with the

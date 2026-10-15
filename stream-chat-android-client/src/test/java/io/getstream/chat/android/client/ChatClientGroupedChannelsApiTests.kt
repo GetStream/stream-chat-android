@@ -23,9 +23,12 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannels
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomInt
@@ -36,6 +39,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -116,6 +120,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(groupsParam),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
             verify(plugin).onQueryGroupedChannelsResult(
                 result = any(),
@@ -123,6 +128,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(groupsParam),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
         }
     }
@@ -151,6 +157,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             groups = eq(groupsParam),
             watch = eq(true),
             presence = eq(false),
+            sort = isNull(),
         )
     }
 
@@ -188,6 +195,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             groups = eq(groupsParam),
             watch = eq(true),
             presence = eq(false),
+            sort = isNull(),
         )
     }
 
@@ -223,6 +231,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(expectedGroups),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
             verify(plugin, times(1)).onQueryGroupedChannelsResult(
                 result = any(),
@@ -230,8 +239,34 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
                 groups = eq(expectedGroups),
                 watch = eq(true),
                 presence = eq(false),
+                sort = isNull(),
             )
         }
+    }
+
+    @Test
+    fun `public queryGroupedChannels with per-group queries forwards the groups and sort to the api`() = runTest {
+        // given
+        val groupedChannels = GroupedChannels(groups = emptyMap())
+        val sut = Fixture()
+            .givenQueryGroupedChannelsResult(RetroSuccess(groupedChannels).toRetrofitCall())
+            .get()
+        val groups = mapOf(
+            "current" to GroupedChannelsGroupQuery(filter = Filters.greaterThanEquals("query_timestamp", "now-14d")),
+            "new" to GroupedChannelsGroupQuery(filter = Filters.neutral()),
+        )
+        val sort = QuerySortByField.descByName<Channel>("query_timestamp")
+        // when
+        val result = sut.queryGroupedChannels(groups = groups, sort = sort, limit = 10).await()
+        // then
+        verifySuccess(result, groupedChannels)
+        verify(api).queryGroupedChannels(
+            limit = eq(10),
+            groups = eq(groups),
+            sort = eq(sort),
+            watch = eq(true),
+            presence = eq(false),
+        )
     }
 
     internal inner class Fixture {
@@ -239,7 +274,7 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
         fun givenQueryGroupedChannelsResult(
             result: io.getstream.result.call.Call<GroupedChannels>,
         ) = apply {
-            whenever(api.queryGroupedChannels(anyOrNull(), anyOrNull(), any(), any())).thenReturn(result)
+            whenever(api.queryGroupedChannels(anyOrNull(), anyOrNull(), anyOrNull(), any(), any())).thenReturn(result)
         }
 
         fun get(): ChatClient = chatClient

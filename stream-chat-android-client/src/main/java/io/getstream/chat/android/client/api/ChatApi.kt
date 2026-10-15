@@ -394,6 +394,7 @@ internal interface ChatApi {
      * `null` uses the server default.
      * @param groups Optional per-group configuration keyed by group name. `null` returns the
      * server-defined default set.
+     * @param sort The order of the channels in every group, or `null` for the server default.
      * @param watch Whether to start watching the returned channels for real-time events.
      * @param presence Whether to receive presence events for the members of the returned channels.
      *
@@ -403,6 +404,7 @@ internal interface ChatApi {
     fun queryGroupedChannels(
         limit: Int?,
         groups: Map<String, GroupedChannelsGroupQuery>?,
+        sort: QuerySorter<Channel>?,
         watch: Boolean,
         presence: Boolean,
     ): Call<GroupedChannels>

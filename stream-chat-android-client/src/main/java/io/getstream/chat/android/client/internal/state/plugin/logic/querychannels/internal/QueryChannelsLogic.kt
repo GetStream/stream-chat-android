@@ -26,12 +26,14 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.internal.state.event.handler.grouped.internal.isUnreadInGroupFor
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -115,8 +117,10 @@ internal class QueryChannelsLogic(
             channelOffset = 0
             channelLimit = CHANNEL_LIMIT
         }
-        val cachedChannels = fetchChannelsFromCache(pagination)
+        val cached = queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, identifier)
+        val cachedChannels = cached?.channels
         groupedResultMutex.withLock {
+            cached?.spec?.let { spec -> queryChannelsStateLogic.restoreGroupedQueryConfig(spec.filter, spec.querySort) }
             val existing = queryChannelsStateLogic.getChannels()
             val hasCachedChannels = !cachedChannels.isNullOrEmpty()
             if (existing.isNullOrEmpty() && hasCachedChannels) {
@@ -221,8 +225,16 @@ internal class QueryChannelsLogic(
 
     internal fun groupedQueryConfig(): GroupedQueryConfig? = queryChannelsStateLogic.getGroupedQueryConfig()
 
-    internal fun setGroupedQueryConfig(config: GroupedQueryConfig) {
-        queryChannelsStateLogic.setGroupedQueryConfig(config)
+    internal fun isGroupedQueryConfigRestored(): Boolean = queryChannelsStateLogic.isGroupedQueryConfigRestored()
+
+    /**
+     * Shares [groupedResultMutex], so storing a request's configuration cannot interleave with a result
+     * being applied or with the cache restore.
+     */
+    internal suspend fun setGroupedQueryConfig(config: GroupedQueryConfig) {
+        groupedResultMutex.withLock {
+            queryChannelsStateLogic.setGroupedQueryConfig(config)
+        }
     }
 
     internal fun currentRequest(): QueryChannelsRequest? = queryChannelsStateLogic.getState().currentRequest.value
@@ -339,6 +351,7 @@ internal class QueryChannelsLogic(
             queryChannelsStateLogic.setNextCursor(group.next)
             queryChannelsStateLogic.setEndOfChannels(group.next == null)
             queryChannelsStateLogic.addChannelsState(channels)
+            updateGroupedUnreadBase(group)
             queryChannelsStateLogic.setLoadingFirstPage(false)
             queryChannelsStateLogic.setLoadingMore(false)
             queryChannelsStateLogic.setRecoveryNeeded(false)
@@ -351,6 +364,44 @@ internal class QueryChannelsLogic(
             queryChannelsDatabaseLogic.storeStateForChannels(group.channels.toSet())
         }
     }
+
+    /**
+     * A filtered group's badge is the unread channels not loaded yet plus the loaded ones that are unread now.
+     * The server counts the whole group again on every page, so the loaded unread channels are taken out of that count.
+     */
+    private fun updateGroupedUnreadBase(group: GroupedChannelsGroup) {
+        val userId = client.getCurrentUser()?.id
+        if (queryChannelsStateLogic.getFilter() == Filters.neutral() || userId == null) {
+            queryChannelsStateLogic.setGroupedUnreadBase(null)
+            return
+        }
+        val notLoaded = group.unreadChannels - countLoadedUnreadChannels(userId)
+        queryChannelsStateLogic.setGroupedUnreadBase(notLoaded.coerceAtLeast(0))
+    }
+
+    /**
+     * The badge of a filtered group, or `null` when the group has no filter. Shares [groupedResultMutex], so it never
+     * combines the channels of a page with the count from before that page.
+     */
+    internal suspend fun filteredGroupUnreadCount(): Int? = groupedResultMutex.withLock {
+        val base = queryChannelsStateLogic.getGroupedUnreadBase()
+        val userId = client.getCurrentUser()?.id
+        if (base == null || userId == null) null else base + countLoadedUnreadChannels(userId)
+    }
+
+    /**
+     * Mark-all-read also reads the channels of a filtered group that are not loaded, so none of them count any more.
+     */
+    internal suspend fun handleMarkAllRead() {
+        groupedResultMutex.withLock {
+            if (queryChannelsStateLogic.getGroupedUnreadBase() != null) {
+                queryChannelsStateLogic.setGroupedUnreadBase(0)
+            }
+        }
+    }
+
+    private fun countLoadedUnreadChannels(userId: String): Int =
+        queryChannelsStateLogic.getLoadedChannelsShownNow().count { it.isUnreadInGroupFor(userId) }
 
     private suspend fun Channel.withLocalOnlyMessages(): Channel {
         val serverIds: Set<String> = messages.mapTo(mutableSetOf()) { it.id }

@@ -26,9 +26,11 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import java.util.Date
 
 internal class FilterObjectConverterTest {
 
@@ -50,6 +52,28 @@ internal class FilterObjectConverterTest {
         val result = filterObjectConverter.stringToObject(json)
 
         result shouldBeEqualTo expectedFilterObject
+    }
+
+    @Test
+    fun `grouped channel filter keeps its conditions, with a date cutoff read back as a full timestamp`() {
+        val filter = Filters.or(
+            Filters.and(Filters.eq("group", "ended"), Filters.greaterThanEquals("query_timestamp", Date(1_800_000_000_000))),
+            Filters.and(Filters.eq("group", "current"), Filters.greaterThanEquals("query_timestamp", "now-365d")),
+            Filters.`in`("group", listOf("campaign", "new")),
+            Filters.ne("group", "bee"),
+        )
+
+        val result = filterObjectConverter.stringToObject(filterObjectConverter.objectToString(filter))
+
+        result shouldBeEqualTo Filters.or(
+            Filters.and(
+                Filters.eq("group", "ended"),
+                Filters.greaterThanEquals("query_timestamp", "2027-01-15T08:00:00.000Z"),
+            ),
+            Filters.and(Filters.eq("group", "current"), Filters.greaterThanEquals("query_timestamp", "now-365d")),
+            Filters.`in`("group", listOf("campaign", "new")),
+            Filters.ne("group", "bee"),
+        )
     }
 
     companion object {

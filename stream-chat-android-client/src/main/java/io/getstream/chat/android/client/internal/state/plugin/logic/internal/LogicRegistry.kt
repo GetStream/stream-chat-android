@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.client.internal.state.plugin.state.querychannels.internal.toMutableState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -50,6 +51,9 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
@@ -83,42 +87,72 @@ internal class LogicRegistry internal constructor(
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
+    /**
+     * Keeps the badge of a filtered group in [MutableGlobalState]: the unread channels not loaded yet plus the
+     * shown channels that are unread now, so it follows reads, new messages and cutoffs between queries.
+     */
+    private fun publishFilteredGroupUnreadCount(
+        groupKey: String,
+        state: QueryChannelsMutableState,
+        logic: QueryChannelsLogic,
+    ) {
+        coroutineScope.launch {
+            // The flows only signal a change. The logic reads the count itself, so it never sees half a page.
+            combine(state.groupedUnreadBase, state.channels) { _, _ -> }
+                .map { logic.filteredGroupUnreadCount() }
+                .distinctUntilChanged()
+                .collect { count -> mutableGlobalState.setFilteredGroupedUnreadChannels(groupKey, count) }
+        }
+    }
+
     /** Returns [QueryChannelsLogic] for the given [identifier], creating it on first access. */
     internal fun queryChannels(identifier: QueryChannelsIdentifier): QueryChannelsLogic {
-        return queryChannels.getOrPut(identifier) {
-            val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
-            // Idempotent default install: if a caller (e.g. ChatClientStateCalls) has already set a
-            // custom factory on the state, do not clobber it here.
-            if (identifier is QueryChannelsIdentifier.Grouped &&
-                mutableState.chatEventHandlerFactory == null
-            ) {
-                mutableState.chatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
-                    groupKey = identifier.groupKey,
-                    clientState = clientState,
-                )
+        queryChannels[identifier]?.let { return it }
+        val mutableState = stateRegistry.queryChannels(identifier).toMutableState()
+        val logic = createQueryChannelsLogic(identifier, mutableState)
+        // Only the stored logic publishes, since the count is read under its lock.
+        return queryChannels.putIfAbsent(identifier, logic) ?: logic.also {
+            if (identifier is QueryChannelsIdentifier.Grouped) {
+                publishFilteredGroupUnreadCount(identifier.groupKey, mutableState, logic)
             }
-            val queryChannelsStateLogic = QueryChannelsStateLogic(
-                mutableState = mutableState,
-                stateRegistry = stateRegistry,
-                logicRegistry = this,
-                coroutineScope = coroutineScope,
-                isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
-            )
+        }
+    }
 
-            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
-                queryChannelsRepository = repos,
-                channelConfigRepository = repos,
-                channelRepository = repos,
-                repositoryFacade = repos,
-            )
-
-            QueryChannelsLogic(
-                identifier,
-                client,
-                queryChannelsStateLogic,
-                queryChannelsDatabaseLogic,
+    private fun createQueryChannelsLogic(
+        identifier: QueryChannelsIdentifier,
+        mutableState: QueryChannelsMutableState,
+    ): QueryChannelsLogic {
+        // Idempotent default install: if a caller (e.g. ChatClientStateCalls) has already set a
+        // custom factory on the state, do not clobber it here.
+        if (identifier is QueryChannelsIdentifier.Grouped &&
+            mutableState.chatEventHandlerFactory == null
+        ) {
+            mutableState.chatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
+                groupKey = identifier.groupKey,
+                clientState = clientState,
             )
         }
+        val queryChannelsStateLogic = QueryChannelsStateLogic(
+            mutableState = mutableState,
+            stateRegistry = stateRegistry,
+            logicRegistry = this,
+            coroutineScope = coroutineScope,
+            isLocalUnreadCountEnabled = isLocalUnreadCountEnabled,
+        )
+
+        val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
+            queryChannelsRepository = repos,
+            channelConfigRepository = repos,
+            channelRepository = repos,
+            repositoryFacade = repos,
+        )
+
+        return QueryChannelsLogic(
+            identifier,
+            client,
+            queryChannelsStateLogic,
+            queryChannelsDatabaseLogic,
+        )
     }
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */

@@ -91,10 +91,11 @@ internal class DistinctChatApiEnabler(
     override fun queryGroupedChannels(
         limit: Int?,
         groups: Map<String, GroupedChannelsGroupQuery>?,
+        sort: QuerySorter<Channel>?,
         watch: Boolean,
         presence: Boolean,
     ): Call<GroupedChannels> {
-        return getApi().queryGroupedChannels(limit, groups, watch, presence)
+        return getApi().queryGroupedChannels(limit, groups, sort, watch, presence)
     }
 
     override fun queryBannedUsers(

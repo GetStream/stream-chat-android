@@ -16,11 +16,14 @@
 
 package io.getstream.chat.android.client.api2.optimisation.hash
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 internal data class QueryGroupedChannelsHash(
     val limit: Int?,
     val groups: Map<String, GroupedChannelsGroupQuery>?,
+    val sort: QuerySorter<Channel>?,
     val watch: Boolean,
     val presence: Boolean,
 )

@@ -17,7 +17,10 @@
 package io.getstream.chat.android.client.api.state.querychannels
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Configuration captured from the most recent [ChatClient.queryGroupedChannels] request that
@@ -30,10 +33,15 @@ import io.getstream.chat.android.models.GroupedChannelsGroupQuery
  * when only the request-level [limit] was specified.
  * @property watch Whether the request asked to subscribe to channel events.
  * @property presence Whether the request asked to subscribe to presence events.
+ * @property filter This group's filter ([GroupedChannelsGroupQuery.filter]), or `null` when the group was
+ * requested without one.
+ * @property sort The order the request asked for, or `null` for the server default.
  */
 public data class GroupedQueryConfig(
     public val limit: Int?,
     public val pageSize: Int?,
     public val watch: Boolean,
     public val presence: Boolean,
+    public val filter: FilterObject? = null,
+    public val sort: QuerySorter<Channel>? = null,
 )

@@ -110,6 +110,12 @@ fun UserRobot.assertChannelWithName(name: String, isDisplayed: Boolean = true): 
     return this
 }
 
+/** Asserts the name of the channel at the top of the list. */
+fun UserRobot.assertFirstChannelWithName(name: String): UserRobot {
+    assertEquals(name, Channel.name.waitForText(name))
+    return this
+}
+
 /** Asserts the unread channel count on a group tab. A count of 0 means the tab shows no badge. */
 fun UserRobot.assertGroupUnreadBadge(group: String, count: Int): UserRobot {
     val badge = GroupTabs.unreadBadge(group)
