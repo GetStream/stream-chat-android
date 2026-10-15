@@ -94,6 +94,16 @@ class UserRobot {
         return this
     }
 
+    fun openGroupTab(group: String): UserRobot {
+        ChannelListPage.GroupTabs.tab(group).waitToAppearAndClick()
+        return this
+    }
+
+    fun tapOnMarkAllRead(): UserRobot {
+        ChannelListPage.GroupTabs.markAllReadButton.waitToAppearAndClick()
+        return this
+    }
+
     fun openContextMenu(messageCellIndex: Int = 0): UserRobot {
         val messages = MessageList.messages.waitToAppearBottomUp()
         val message = if (messages.size < messageCellIndex + 1) messages.last() else messages[messageCellIndex]

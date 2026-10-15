@@ -79,6 +79,17 @@ class ChannelListPage {
         }
     }
 
+    /** The tabs of the grouped channel list in `GroupedChannelsActivity`. */
+    class GroupTabs {
+
+        companion object {
+            val markAllReadButton = By.res("Stream_MarkAllReadButton")
+
+            fun tab(group: String): BySelector = By.res("Stream_GroupTab_$group")
+            fun unreadBadge(group: String): BySelector = By.res("Stream_GroupTabBadge_$group")
+        }
+    }
+
     class ChannelMenu {
 
         companion object {

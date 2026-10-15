@@ -72,12 +72,30 @@ public class ParticipantRobot(
         return this
     }
 
-    public fun sendMessage(text: String, delay: Int = 0): ParticipantRobot {
-        var endpoint = "participant/message"
-        if (delay > 0) {
-            endpoint += "?delay=$delay"
-        }
+    /**
+     * Sends a message to the current channel, or to the channel named [channelName].
+     */
+    public fun sendMessage(text: String, delay: Int = 0, channelName: String? = null): ParticipantRobot {
+        val query = listOfNotNull(
+            "delay=$delay".takeIf { delay > 0 },
+            channelName?.let { "channel_name=${it.urlEncoded()}" },
+        ).joinToString("&")
+        val endpoint = if (query.isEmpty()) "participant/message" else "participant/message?$query"
         mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
+        return this
+    }
+
+    /**
+     * Moves the channel named [channelName] to [group], as an update of its custom `group` field.
+     * The app under test receives the `channel.updated` websocket event, [delay] seconds later
+     * when [delay] is positive. The move itself happens right away.
+     */
+    public fun moveChannelToGroup(channelName: String, group: String, delay: Int = 0): ParticipantRobot {
+        var endpoint = "participant/channel_group?channel_name=${channelName.urlEncoded()}&group=${group.urlEncoded()}"
+        if (delay > 0) {
+            endpoint += "&delay=$delay"
+        }
+        mockServer.postRequest(endpoint)
         return this
     }
 
