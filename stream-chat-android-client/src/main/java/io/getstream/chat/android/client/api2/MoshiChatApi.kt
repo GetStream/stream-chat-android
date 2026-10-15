@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.DraftApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
@@ -121,6 +122,7 @@ import io.getstream.chat.android.network.models.ChannelInputRequest
 import io.getstream.chat.android.network.models.ChannelMemberRequest
 import io.getstream.chat.android.network.models.ChannelStateResponseFields
 import io.getstream.chat.android.network.models.CreateDeviceRequest
+import io.getstream.chat.android.network.models.CreateDraftRequest
 import io.getstream.chat.android.network.models.CreateGuestRequest
 import io.getstream.chat.android.network.models.CreatePollOptionRequest
 import io.getstream.chat.android.network.models.CreatePollRequest
@@ -212,6 +214,7 @@ constructor(
     private val userApi: UserApi,
     private val guestApi: GuestApi,
     private val messageApi: MessageApi,
+    private val draftApi: DraftApi,
     private val channelApi: ChannelApi,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
@@ -293,10 +296,10 @@ constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<DraftMessage> = messageApi.createDraftMessage(
+    ): Call<DraftMessage> = draftApi.createDraftMessage(
         channelType = channelType,
         channelId = channelId,
-        message = SendMessageRequest(
+        request = CreateDraftRequest(
             message = with(dtoMapping) { message.toMessageRequest() },
         ),
     ).mapDomain { response ->
@@ -307,7 +310,7 @@ constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<Unit> = messageApi.deleteDraftMessage(
+    ): Call<Unit> = draftApi.deleteDraftMessage(
         channelType = channelType,
         channelId = channelId,
         parentId = message.parentId,
@@ -319,7 +322,7 @@ constructor(
         next: String?,
         sort: QuerySorter<DraftsSort>,
     ): Call<QueryDraftsResult> =
-        messageApi.queryDrafts(
+        draftApi.queryDrafts(
             body = QueryDraftsRequest(
                 filter = filter.toMap(),
                 limit = limit,

@@ -59,8 +59,11 @@ import io.getstream.chat.android.client.Mother.randomUserGroupResponse
 import io.getstream.chat.android.client.Mother.randomUserResponse
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
 import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
@@ -117,6 +120,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.models.Action
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
@@ -126,6 +130,8 @@ import io.getstream.chat.android.network.models.ChatPreferencesResponse
 import io.getstream.chat.android.network.models.DeleteChannelResponse
 import io.getstream.chat.android.network.models.DeliveryReceiptsResponse
 import io.getstream.chat.android.network.models.FullUserResponse
+import io.getstream.chat.android.network.models.ImageData
+import io.getstream.chat.android.network.models.Images
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
 import io.getstream.chat.android.network.models.PushPreferencesResponse
 import io.getstream.chat.android.network.models.ReadReceiptsResponse
@@ -501,7 +507,7 @@ internal class DomainMappingTest {
                 member = response.member?.toDomain(),
                 mentionedChannelMembers = response.mentionedChannelMembers.orEmpty()
                     .mapValues { (_, member) -> member.toDomain() },
-                extraData = mutableMapOf("flair" to "gold"),
+                extraData = mutableMapOf("flair" to "gold", "restricted_visibility" to listOf("jaewoong")),
             )
         }
 
@@ -694,7 +700,10 @@ internal class DomainMappingTest {
 
         assertEquals("channelName", channel.name)
         assertEquals("channelImage", channel.image)
-        assertEquals(mapOf<String, Any>("customKey" to "customValue"), channel.extraData)
+        assertEquals(
+            mapOf<String, Any>("customKey" to "customValue"),
+            channel.extraData - GENERATED_CHANNEL_EXTRA_DATA_KEYS - LEGACY_CHANNEL_EXTRA_DATA_KEYS,
+        )
     }
 
     @Test
@@ -714,6 +723,36 @@ internal class DomainMappingTest {
         assertEquals(channelResponse.hidden, channel.hidden)
         assertEquals(channelResponse.hideMessagesBefore, channel.hiddenMessagesBefore)
         assertEquals(with(sut) { channelResponse.config?.toDomain() }, channel.config)
+    }
+
+    @Test
+    fun `ChannelResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val channelResponse = Mother.randomChannelResponse(custom = mapOf("color" to "teal")).copy(
+            disabled = true,
+            hidden = false,
+            truncatedAt = Date(4_000),
+            muted = null,
+            truncatedBy = null,
+        )
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        channel.extraData["color"] shouldBeEqualTo "teal"
+        channel.extraData["disabled"] shouldBeEqualTo true
+        channel.extraData["hidden"] shouldBeEqualTo false
+        channel.extraData["truncated_at"] shouldBeEqualTo "1970-01-01T00:00:04.000Z"
+        channel.extraData.containsKey("muted") shouldBeEqualTo false
+    }
+
+    @Test
+    fun `ChannelResponse keeps the custom value of a declared field over the typed one`() {
+        val channelResponse = Mother.randomChannelResponse(custom = mapOf("hidden" to "from-custom")).copy(hidden = true)
+        val sut = Fixture().get()
+
+        val channel = with(sut) { channelResponse.toDomain() }
+
+        channel.extraData["hidden"] shouldBeEqualTo "from-custom"
     }
 
     @Test
@@ -772,7 +811,10 @@ internal class DomainMappingTest {
         assertEquals(setOf("send-message"), channel.ownCapabilities)
         assertEquals(with(sut) { response.config?.toDomain() }, channel.config)
         assertEquals(creator.id, channel.createdBy.id)
-        assertEquals(mapOf<String, Any>("color" to "teal"), channel.extraData)
+        assertEquals(
+            mapOf<String, Any>("color" to "teal"),
+            channel.extraData - GENERATED_CHANNEL_EXTRA_DATA_KEYS - LEGACY_CHANNEL_EXTRA_DATA_KEYS,
+        )
     }
 
     @Test
@@ -1054,6 +1096,44 @@ internal class DomainMappingTest {
         val domain = with(sut) { attachment.toDomain() }
 
         domain.extraData["giphy"] shouldBeEqualTo giphy
+    }
+
+    @Test
+    fun `Attachment reads the typed fields into extraData when custom data lacks them`() {
+        // v2 sends these only as typed fields; the domain holds them in extraData, in their wire shape.
+        val url = "https://giphy.com/h.gif"
+        val image = ImageData(frames = "1", height = "200", size = "100", url = url, width = "320")
+        val attachment = Mother.randomAttachment(type = "giphy", custom = emptyMap()).copy(
+            authorIcon = null,
+            color = "red",
+            footer = null,
+            footerIcon = null,
+            pretext = null,
+            actions = listOf(Action(name = "image_action", text = "Send", type = "button", value = "send")),
+            fields = emptyList(),
+            giphy = Images(image, image, image, image, image, image, image),
+        )
+        val sut = Fixture().get()
+
+        val domain = with(sut) { attachment.toDomain() }
+
+        val imageMap = mapOf("frames" to "1", "height" to "200", "size" to "100", "url" to url, "width" to "320")
+        domain.extraData["color"] shouldBeEqualTo "red"
+        domain.extraData["actions"] shouldBeEqualTo listOf(
+            mapOf("name" to "image_action", "text" to "Send", "type" to "button", "value" to "send"),
+        )
+        (domain.extraData["giphy"] as Map<*, *>)["fixed_height"] shouldBeEqualTo imageMap
+        domain.extraData.containsKey("fields") shouldBeEqualTo false
+    }
+
+    @Test
+    fun `Attachment prefers the custom data over the typed fields`() {
+        val attachment = Mother.randomAttachment(type = "file", custom = mapOf("color" to "blue")).copy(color = "red")
+        val sut = Fixture().get()
+
+        val domain = with(sut) { attachment.toDomain() }
+
+        domain.extraData["color"] shouldBeEqualTo "blue"
     }
 
     @Test
@@ -1393,7 +1473,7 @@ internal class DomainMappingTest {
             banExpires = memberResponse.banExpires,
             pinnedAt = memberResponse.pinnedAt,
             archivedAt = memberResponse.archivedAt,
-            extraData = emptyMap(),
+            extraData = mapOf("user_id" to memberResponse.userId!!),
         )
         assertEquals(expected, member)
     }
@@ -1416,7 +1496,7 @@ internal class DomainMappingTest {
 
         val member = with(sut) { memberResponse.toDomain() }
 
-        assertEquals(mapOf<String, Any>("customKey" to "customValue"), member.extraData)
+        assertEquals(mapOf<String, Any>("customKey" to "customValue"), member.extraData - GENERATED_MEMBER_EXTRA_DATA_KEYS)
     }
 
     @Test

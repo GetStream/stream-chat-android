@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
+import io.getstream.chat.android.client.api2.endpoint.DraftApi
 import io.getstream.chat.android.client.api2.endpoint.FileDownloadApi
 import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
@@ -349,6 +350,7 @@ constructor(
             buildV2RetrofitApi<UserApi>(),
             buildV2RetrofitApi<GuestApi>(),
             buildRetrofitApi<MessageApi>(),
+            buildV2RetrofitApi<DraftApi>(),
             buildRetrofitApi<ChannelApi>(),
             buildV2RetrofitApi<DeviceApi>(),
             buildRetrofitApi<ModerationApi>(),
@@ -357,9 +359,9 @@ constructor(
             buildV2RetrofitApi<ConfigApi>(),
             buildFileDownloadApi(),
             buildV2RetrofitApi<OpenGraphApi>(),
-            buildRetrofitApi<ThreadsApi>(),
+            buildV2RetrofitApi<ThreadsApi>(),
             buildV2RetrofitApi<PollsApi>(),
-            buildRetrofitApi<RemindersApi>(),
+            buildV2RetrofitApi<RemindersApi>(),
             buildV2RetrofitApi<PushPreferencesApi>(),
             buildV2RetrofitApi<UserGroupApi>(),
             buildV2RetrofitApi<RoleApi>(),

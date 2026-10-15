@@ -38,7 +38,7 @@ internal interface ThreadsApi {
     /**
      * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-querythreads)
      */
-    @POST("/threads")
+    @POST("/api/v2/chat/threads")
     fun queryThreads(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: QueryThreadsRequest,
@@ -47,7 +47,7 @@ internal interface ThreadsApi {
     /**
      * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-getthread)
      */
-    @GET("/threads/{message_id}")
+    @GET("/api/v2/chat/threads/{message_id}")
     fun getThread(
         @Path("message_id") messageId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
@@ -57,7 +57,7 @@ internal interface ThreadsApi {
     /**
      * [REST documentation](https://getstream.github.io/protocol/#/product%3Achat/UpdateThreadPartial)
      */
-    @PATCH("/threads/{message_id}")
+    @PATCH("/api/v2/chat/threads/{message_id}")
     fun partialUpdateThread(
         @Path("message_id") messageId: String,
         @Body body: UpdateThreadPartialRequest,
