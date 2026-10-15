@@ -17,44 +17,28 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.MembersResponse
 import io.getstream.chat.android.network.models.QueryMembersPayload
 import io.getstream.chat.android.network.models.SearchPayload
 import io.getstream.chat.android.network.models.SearchResponse
 import io.getstream.chat.android.network.models.WrappedUnreadCountsResponse
-import okhttp3.ResponseBody
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.OPTIONS
-import retrofit2.http.POST
 import retrofit2.http.Query
 
 @AuthenticatedApi
 internal interface GeneralApi {
-    @OPTIONS("/connect")
-    fun warmUp(): RetrofitCall<ResponseBody>
-
-    @POST("/sync")
-    fun getSyncHistory(
-        @Body body: SyncHistoryRequest,
-        @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<SyncHistoryResponse>
-
-    @GET("/search")
+    @GET("/api/v2/chat/search")
     fun searchMessages(
         @UrlQueryPayload @Query("payload") payload: SearchPayload,
     ): RetrofitCall<SearchResponse>
 
-    @GET("/members")
+    @GET("/api/v2/chat/members")
     fun queryMembers(
         @UrlQueryPayload @Query("payload") payload: QueryMembersPayload,
     ): RetrofitCall<MembersResponse>
 
-    @GET("/unread")
+    @GET("/api/v2/chat/unread")
     fun getUnreadCounts(): RetrofitCall<WrappedUnreadCountsResponse>
 }
