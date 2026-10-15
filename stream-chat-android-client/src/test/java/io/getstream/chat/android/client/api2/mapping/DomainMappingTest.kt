@@ -1303,7 +1303,7 @@ internal class DomainMappingTest {
 
     @Test
     fun `User mappings drop custom values stored under a declared name`() {
-        val stored = mapOf("banned" to true, "name" to "Stored", "flair" to "gold")
+        val stored = mapOf("banned" to true, "name" to "Stored", "invisible" to true, "flair" to "gold")
         val sut = Fixture().get()
 
         val user = with(sut) { randomUserResponse().copy(custom = stored).toDomain() }
@@ -1326,9 +1326,10 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `The hidden user custom names are the declared fields, except those UserResponse fills in`() {
-        USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<UserResponse>() - "custom" - GENERATED_USER_EXTRA_DATA_KEYS
-        FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom"
+    fun `The hidden user custom names are the declared and backend record fields, except those UserResponse fills in`() {
+        USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo
+            jsonNames<UserResponse>() - "custom" - GENERATED_USER_EXTRA_DATA_KEYS + USER_RECORD_ONLY_KEYS
+        FULL_USER_HIDDEN_CUSTOM_KEYS shouldBeEqualTo jsonNames<FullUserResponse>() - "custom" + USER_RECORD_ONLY_KEYS
     }
 
     private inline fun <reified T> jsonNames(): Set<String> = T::class.java.declaredConstructors

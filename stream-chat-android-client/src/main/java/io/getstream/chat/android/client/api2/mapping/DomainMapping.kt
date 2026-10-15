@@ -173,6 +173,12 @@ internal const val EVENT_USER_DEVICES_KEY = "devices"
 internal const val USER_DEVICES_CUSTOM_KEY = "devices"
 
 /**
+ * Fields of the backend's user record that the generated user models leave out. v1 hides a custom value stored under
+ * any field of that record, so the user hidden sets include these too.
+ */
+internal val USER_RECORD_ONLY_KEYS = setOf("ban_expires", "invisible", "last_engaged_at", "privacy_settings")
+
+/**
  * The fields [UserResponse] declares, except those the mapping fills in from the typed fields. A v1 response leaves a
  * custom value stored under a declared name out of `custom` (its encoder skips custom keys that collide with a declared
  * field), so the mapping drops them too. Apps have stored such copies by sending the whole user back as custom data,
@@ -194,7 +200,7 @@ internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
     "teams",
     "teams_role",
     "updated_at",
-)
+) + USER_RECORD_ONLY_KEYS
 
 /**
  * The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS], with every declared name: only v2 returns this
@@ -230,7 +236,7 @@ internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "unread_count",
     "unread_threads",
     "updated_at",
-)
+) + USER_RECORD_ONLY_KEYS
 
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
