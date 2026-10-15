@@ -362,22 +362,36 @@ internal class MessageAdapter(
 
         while (reader.hasNext()) {
             when (reader.selectName(V2_KEYS)) {
-                0 -> attachments = JsonParsingUtils.parseList(reader, attachmentAdapter)
+                0 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    attachments = JsonParsingUtils.parseList(reader, attachmentAdapter)
+                }
                 1 -> cid = reader.nextString()
                 2 -> command = JsonParsingUtils.readNullableString(reader)
                 3 -> createdAt = dateAdapter.fromJson(reader)
                 4 -> deletedAt = dateAdapter.fromJson(reader)
                 5 -> html = reader.nextString()
-                6 -> i18n = JsonParsingUtils.parseStringMap(reader)
+                6 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    i18n = JsonParsingUtils.parseStringMap(reader)
+                }
                 7 -> id = reader.nextString()
-                8 -> latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
-                9 -> mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
+                8 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    latestReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
+                }
+                9 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    mentionedUsers = JsonParsingUtils.parseList(reader, userAdapter)
+                }
                 10 -> mentionedHere = reader.nextBoolean()
                 11 -> mentionedChannel = reader.nextBoolean()
                 12 -> mentionedGroups = mentionedGroupsAdapter.fromJson(reader)
-                13 -> mentionedGroupIds = JsonParsingUtils.parseStringList(reader)
-                14 -> mentionedRoles = JsonParsingUtils.parseStringList(reader)
-                15 -> ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
+                13 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    mentionedGroupIds = JsonParsingUtils.parseStringList(reader)
+                }
+                14 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    mentionedRoles = JsonParsingUtils.parseStringList(reader)
+                }
+                15 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    ownReactions = JsonParsingUtils.parseList(reader, reactionAdapter)
+                }
                 16 -> parentId = JsonParsingUtils.readNullableString(reader)
                 17 -> pinExpires = dateAdapter.fromJson(reader)
                 18 -> pinned = reader.nextBoolean()
@@ -386,16 +400,24 @@ internal class MessageAdapter(
                 21 -> pinnedBy = userAdapter.fromJson(reader)
                 22 -> quotedMessage = fromJson(reader, fallbackChannelInfo)
                 23 -> quotedMessageId = JsonParsingUtils.readNullableString(reader)
-                24 -> reactionCounts = JsonParsingUtils.parseIntMap(reader)
-                25 -> reactionScores = JsonParsingUtils.parseIntMap(reader)
-                26 -> reactionGroups = reactionGroupAdapter.parseReactionGroupsMap(reader)
+                24 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    reactionCounts = JsonParsingUtils.parseIntMap(reader)
+                }
+                25 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    reactionScores = JsonParsingUtils.parseIntMap(reader)
+                }
+                26 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    reactionGroups = reactionGroupAdapter.parseReactionGroupsMap(reader)
+                }
                 27 -> replyCount = reader.nextInt()
                 28 -> deletedReplyCount = reader.nextInt()
                 29 -> shadowed = reader.nextBoolean()
                 30 -> showInChannel = JsonParsingUtils.readNullableBoolean(reader)
                 31 -> silent = reader.nextBoolean()
                 32 -> text = reader.nextString()
-                33 -> threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
+                33 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    threadParticipants = JsonParsingUtils.parseList(reader, userAdapter)
+                }
                 34 -> type = reader.nextString()
                 35 -> updatedAt = dateAdapter.fromJson(reader)
                 36 -> user = userAdapter.fromJson(reader)
@@ -410,8 +432,12 @@ internal class MessageAdapter(
                 45 -> imageLabels = imageLabelsAdapter.fromJson(reader)
                 46 -> mml = JsonParsingUtils.readNullableString(reader)
                 47 -> pollId = JsonParsingUtils.readNullableString(reader)
-                48 -> restrictedVisibility = JsonParsingUtils.parseStringList(reader)
-                49 -> custom = JsonParsingUtils.readJsonObject(reader)
+                48 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    restrictedVisibility = JsonParsingUtils.parseStringList(reader)
+                }
+                49 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    custom = JsonParsingUtils.readJsonObject(reader)
+                }
                 else -> {
                     reader.skipName()
                     reader.skipValue()
@@ -448,20 +474,20 @@ internal class MessageAdapter(
                 html = html,
                 i18n = i18n.orEmpty(),
                 id = id,
-                latestReactions = latestReactions.orEmpty().filter { it.messageId == id },
+                latestReactions = latestReactions.orEmpty().ofMessage(id),
                 mentionedUsers = mentionedUsers.orEmpty(),
                 mentionedHere = mentionedHere,
                 mentionedChannel = mentionedChannel,
                 mentionedGroups = mentionedGroups.orEmpty().map { it.toDomain() },
                 mentionedRoles = mentionedRoles.orEmpty(),
-                ownReactions = ownReactions.orEmpty().filter { it.messageId == id },
+                ownReactions = ownReactions.orEmpty().ofMessage(id),
                 parentId = parentId,
                 pinExpires = pinExpires,
                 pinned = pinned,
                 pinnedAt = pinnedAt,
                 pinnedBy = pinnedBy,
-                reactionCounts = reactionCounts.orEmpty().toMutableMap(),
-                reactionScores = reactionScores.orEmpty().toMutableMap(),
+                reactionCounts = reactionCounts.toMutable(),
+                reactionScores = reactionScores.toMutable(),
                 reactionGroups = reactionGroups.orEmpty(),
                 replyCount = replyCount,
                 deletedReplyCount = deletedReplyCount,
@@ -473,7 +499,7 @@ internal class MessageAdapter(
                 text = text,
                 threadParticipants = threadParticipants.orEmpty(),
                 type = type,
-                updatedAt = listOfNotNull(updatedAt, poll?.updatedAt).maxBy { it.time },
+                updatedAt = poll?.updatedAt?.takeIf { it.time > updatedAt.time } ?: updatedAt,
                 user = user,
                 moderationDetails = messageModerationDetails(customData),
                 moderation = moderation?.toDomain(),
@@ -500,6 +526,13 @@ internal class MessageAdapter(
             )
         }.let(messageTransformer::transform)
     }
+
+    // The backend can send reactions of other messages; the list is only copied when it does.
+    private fun List<Reaction>.ofMessage(messageId: String): List<Reaction> =
+        if (all { it.messageId == messageId }) this else filter { it.messageId == messageId }
+
+    private fun Map<String, Int>?.toMutable(): MutableMap<String, Int> =
+        this as? MutableMap ?: this.orEmpty().toMutableMap()
 
     private fun parseMentionedChannelMembers(reader: JsonReader): Map<String, MemberInfo>? {
         if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {

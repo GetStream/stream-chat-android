@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
@@ -43,6 +44,7 @@ import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.log.taggedLogger
 import okio.Buffer
+import java.io.IOException
 import java.util.Date
 
 /**
@@ -122,6 +124,19 @@ internal class DirectEventParser(
     /** [parse] for a frame whose [type] the caller has already read, so the frame isn't scanned for it again. */
     fun parse(raw: String, type: String?): ChatEvent? {
         val adapter = adapterMap[type] ?: return null
+        if (v2Mapping != null) {
+            // Only a frame it can't read is left to the generated path. Anything else, such as an app transformer
+            // throwing, fails as it would there, rather than running the transformers a second time.
+            return try {
+                adapter.fromJson(raw)
+            } catch (e: JsonDataException) {
+                logger.w { "Direct parse failed for '$type'; falling back to the generated path: ${e.message}" }
+                null
+            } catch (e: IOException) {
+                logger.w { "Direct parse failed for '$type'; falling back to the generated path: ${e.message}" }
+                null
+            }
+        }
         return runCatching { adapter.fromJson(raw) }
             .onFailure { e ->
                 logger.v { "Direct parse failed for '$type'; falling back to DTO path: ${e.message}" }

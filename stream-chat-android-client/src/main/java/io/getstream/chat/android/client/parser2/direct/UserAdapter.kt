@@ -134,9 +134,11 @@ internal class UserAdapter(
 
         while (reader.hasNext()) {
             when (reader.selectName(V2_KEYS)) {
-                0 -> avgResponseTime = JsonParsingUtils.readNullableLong(reader)
+                0 -> avgResponseTime = JsonParsingUtils.readNullableInt(reader)?.toLong()
                 1 -> banned = reader.nextBoolean()
-                2 -> blockedUserIds = JsonParsingUtils.parseStringList(reader)
+                2 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    blockedUserIds = JsonParsingUtils.parseStringList(reader)
+                }
                 3 -> createdAt = dateAdapter.fromJson(reader)
                 4 -> deactivatedAt = dateAdapter.fromJson(reader)
                 5 -> id = reader.nextString()
@@ -146,10 +148,16 @@ internal class UserAdapter(
                 9 -> name = JsonParsingUtils.readNullableString(reader)
                 10 -> online = reader.nextBoolean()
                 11 -> role = reader.nextString()
-                12 -> teams = JsonParsingUtils.parseStringList(reader)
-                13 -> teamsRole = JsonParsingUtils.parseStringMap(reader)
+                12 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = true)) {
+                    teams = JsonParsingUtils.parseStringList(reader)
+                }
+                13 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    teamsRole = JsonParsingUtils.parseStringMap(reader)
+                }
                 14 -> updatedAt = dateAdapter.fromJson(reader)
-                15 -> customData = JsonParsingUtils.readJsonObject(reader)
+                15 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    customData = JsonParsingUtils.readJsonObject(reader)
+                }
                 16 -> deletedAt = dateAdapter.fromJson(reader)
                 17 -> revokeTokensIssuedBefore = dateAdapter.fromJson(reader)
                 else -> {

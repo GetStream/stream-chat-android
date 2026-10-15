@@ -35,7 +35,7 @@ import java.util.Date
  * and [messageAdapter] must read the same shape.
  */
 internal class NewMessageEventAdapter(
-    private val messageAdapter: JsonAdapter<Message>,
+    private val messageAdapter: MessageAdapter,
     private val userAdapter: JsonAdapter<User>,
     private val v2: Boolean = false,
 ) : JsonAdapter<NewMessageEvent>() {
@@ -187,7 +187,7 @@ internal class NewMessageEventAdapter(
                 2 -> user = userAdapter.fromJson(reader)
                 3 -> cid = JsonParsingUtils.readNullableString(reader)
                 4 -> channelMemberCount = JsonParsingUtils.readNullableInt(reader)
-                5 -> {
+                5 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
                     val channelCustom = JsonParsingUtils.readJsonObject(reader)
                     channelCustomName = channelCustom?.get("name") as? String
                     channelCustomImage = channelCustom?.get("image") as? String
@@ -198,14 +198,19 @@ internal class NewMessageEventAdapter(
                     messageChannelInfo = cid?.let {
                         channelInfo(it, channelMemberCount, channelCustomName, channelCustomImage)
                     }
-                    message = (messageAdapter as? MessageAdapter)?.fromJson(reader, messageChannelInfo)
-                        ?: messageAdapter.fromJson(reader)
+                    message = messageAdapter.fromJson(reader, messageChannelInfo)
                 }
                 7 -> watcherCount = JsonParsingUtils.readNullableInt(reader)
                 8 -> totalUnreadCount = JsonParsingUtils.readNullableInt(reader)
                 9 -> unreadChannels = JsonParsingUtils.readNullableInt(reader)
                 10 -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
-                11 -> groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
+                11 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
+                }
+                // Not mapped, but the generated model rejects a non-object.
+                12 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    reader.skipValue()
+                }
                 else -> {
                     reader.skipName()
                     reader.skipValue()
@@ -219,12 +224,13 @@ internal class NewMessageEventAdapter(
         JsonParsingUtils.requireField(type, "type", reader)
         JsonParsingUtils.requireField(cid, "cid", reader)
         JsonParsingUtils.requireField(user, "user", reader)
-        // The message carries no channel, so it and its quoted message take the event's channel info: the one it was
-        // read with, unless a channel field came after it.
+        // The message carries no channel, so it and its quoted messages took the event's channel info as they were
+        // read. A channel field after the message would change it once the message transformer has run, so such a
+        // frame, which the backend doesn't send, is left to the generated path.
         val channelInfo = messageChannelInfo?.takeIf {
             it.cid == cid && it.memberCount == (channelMemberCount ?: 0) &&
                 it.name == channelCustomName && it.image == channelCustomImage
-        } ?: channelInfo(cid, channelMemberCount, channelCustomName, channelCustomImage)
+        } ?: throw JsonDataException("A channel field follows the message at ${reader.path}")
         val channelType = requireNotNull(channelInfo.type)
         val channelId = requireNotNull(channelInfo.id)
 
@@ -236,7 +242,7 @@ internal class NewMessageEventAdapter(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            message = if (messageChannelInfo === channelInfo) message else message.withChannelInfo(channelInfo),
+            message = message,
             watcherCount = watcherCount ?: 0,
             totalUnreadCount = totalUnreadCount ?: 0,
             unreadChannels = unreadChannels ?: 0,
@@ -256,9 +262,6 @@ internal class NewMessageEventAdapter(
             image = image,
         )
     }
-
-    private fun Message.withChannelInfo(channelInfo: ChannelInfo): Message =
-        copy(channelInfo = channelInfo, replyTo = replyTo?.withChannelInfo(channelInfo))
 
     private fun parseChannelCustom(reader: JsonReader): Pair<String?, String?> {
         if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
@@ -305,6 +308,7 @@ internal class NewMessageEventAdapter(
             "unread_channels",
             "channel_message_count",
             "grouped_unread_channels",
+            "custom",
         )
     }
 
