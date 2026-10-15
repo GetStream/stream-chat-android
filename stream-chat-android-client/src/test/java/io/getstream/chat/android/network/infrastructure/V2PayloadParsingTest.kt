@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.models.MessageNewEvent
+import io.getstream.chat.android.network.models.TypingStartEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.Date
@@ -55,7 +56,27 @@ internal class V2PayloadParsingTest {
         assertEquals(mapOf("title" to "droid"), message.user.extraData)
     }
 
+    @Test
+    fun `A v2 event user drops the devices copy stored in its custom data`() {
+        val event = Serializer.moshi.adapter(TypingStartEvent::class.java).fromJson(TYPING_START)!!
+
+        val user = with(mapping) { event.user!!.toDomain() }
+
+        assertEquals(emptyList<Any>(), user.devices)
+        assertEquals(mapOf("title" to "droid"), user.extraData)
+    }
+
     private companion object {
+        /** A `typing.start` whose user carries a devices copy in its custom data, as v2 sends it. */
+        private val TYPING_START = """
+            {
+              "type": "typing.start", "cid": "messaging:v2cap", "created_at": 1791538230621340904, "custom": {},
+              "user": {"id": "jaewoong", "role": "user", "language": "en", "banned": false, "online": true,
+                "created_at": 1634853490425000000, "updated_at": 1791538230613833000,
+                "custom": {"title": "droid", "devices": [{"id": "tok", "push_provider": "firebase"}]}}
+            }
+        """.trimIndent()
+
         /** A `message.new` replayed by `/api/v2/chat/sync`, with the user trimmed to the fields it always carries. */
         private val MESSAGE_NEW = """
             {

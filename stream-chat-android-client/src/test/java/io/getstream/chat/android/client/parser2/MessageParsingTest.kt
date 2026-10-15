@@ -21,7 +21,6 @@ import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
-import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageModerationDetailsAdapter
@@ -65,9 +64,7 @@ internal class MessageParsingTest {
     private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
 
-    private val deviceAdapter = DeviceAdapter()
     private val userAdapter = UserAdapter(
-        deviceAdapter = deviceAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -312,7 +309,6 @@ internal class MessageParsingTest {
             userTransformer = customUserTransformer,
         )
         val transformedUserAdapter = UserAdapter(
-            deviceAdapter = deviceAdapter,
             dateAdapter = dateAdapter,
             userTransformer = customUserTransformer,
         )

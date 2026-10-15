@@ -159,12 +159,6 @@ internal const val DRAFT_COMMAND_KEY = "command"
 internal const val DRAFT_ARGS_KEY = "args"
 
 /**
- * Event users carry devices only as custom data, in the request shape clients send. The hand-written DTO
- * declared the key, so it has always been read as typed devices rather than surfacing in extraData.
- */
-internal const val EVENT_USER_DEVICES_KEY = "devices"
-
-/**
  * Older clients sent the user's own devices back as custom data. v1 responses leave that copy out of `custom` and v2
  * responses don't, so the user mappings drop it in both directions: it holds push tokens.
  */
@@ -698,13 +692,12 @@ internal class DomainMapping(
         deactivatedAt = deactivatedAt,
         updatedAt = updatedAt,
         lastActive = lastActive,
-        devices = custom.eventUserDevices(),
         teams = teams,
         teamsRole = teamsRole.orEmpty(),
         blockedUserIds = blockedUserIds,
         avgResponseTime = avgResponseTime?.toLong(),
         extraData = custom.mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
-            .minus(EVENT_USER_DEVICES_KEY)
+            .minus(USER_DEVICES_CUSTOM_KEY)
             .toMutableMap(),
     )
 
@@ -1192,17 +1185,6 @@ internal class DomainMapping(
         pushProvider = PushProvider.fromKey(pushProvider),
         providerName = pushProviderName,
     )
-
-    private fun Map<String, Any?>.eventUserDevices(): List<Device> =
-        (this[EVENT_USER_DEVICES_KEY] as? List<*>).orEmpty().mapNotNull { raw ->
-            val device = raw as? Map<*, *> ?: return@mapNotNull null
-            val token = device["id"] as? String ?: return@mapNotNull null
-            Device(
-                token = token,
-                pushProvider = PushProvider.fromKey(device["push_provider"] as? String ?: ""),
-                providerName = device["push_provider_name"] as? String,
-            )
-        }
 
     /**
      * Transforms [DownstreamFlagDto] to [Flag].

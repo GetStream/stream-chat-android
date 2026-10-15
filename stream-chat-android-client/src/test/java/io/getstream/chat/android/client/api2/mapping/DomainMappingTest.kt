@@ -333,7 +333,7 @@ internal class DomainMappingTest {
         teamsRole = mapOf("red" to "admin"),
         blockedUserIds = listOf("blocked-1"),
         avgResponseTime = 42,
-        // Devices arrive as custom data on event users, in the request shape.
+        // The devices copy older clients stored in custom data, which v2 payloads carry.
         custom = mapOf(
             "probe_flair" to "gold",
             "devices" to listOf(
@@ -369,10 +369,8 @@ internal class DomainMappingTest {
         result.teamsRole shouldBeEqualTo mapOf("red" to "admin")
         result.blockedUserIds shouldBeEqualTo listOf("blocked-1")
         result.avgResponseTime shouldBeEqualTo 42L
-        result.devices shouldBeEqualTo listOf(
-            Device(token = "token-1", pushProvider = PushProvider.FIREBASE, providerName = "chat-android-firebase"),
-        )
-        // Promoted to the typed field, so it must not also surface as custom data.
+        // The stored devices copy holds push tokens: dropped from both the typed field and the custom data.
+        result.devices shouldBeEqualTo emptyList()
         result.extraData shouldBeEqualTo mapOf("probe_flair" to "gold")
     }
 

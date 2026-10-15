@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
-import io.getstream.chat.android.models.Device
-import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.User
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -121,13 +119,7 @@ internal object UserTestData {
         role = "user",
         language = "en",
         banned = false,
-        devices = listOf(
-            Device(
-                token = "device1",
-                pushProvider = PushProvider.FIREBASE,
-                providerName = "Firebase",
-            ),
-        ),
+        devices = emptyList(),
         online = true,
         createdAt = Date(1577836800000L),
         deactivatedAt = null,

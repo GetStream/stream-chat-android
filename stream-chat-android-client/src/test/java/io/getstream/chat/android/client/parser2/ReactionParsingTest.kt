@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.ReactionTestData
@@ -46,9 +45,7 @@ internal class ReactionParsingTest {
 
     private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
-    private val deviceAdapter = DeviceAdapter()
     private val userAdapter = UserAdapter(
-        deviceAdapter = deviceAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )

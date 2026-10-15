@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.UserTestData
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -33,9 +32,7 @@ internal class UserParsingTest {
 
     private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
-    private val deviceAdapter = DeviceAdapter()
     private val userAdapter = UserAdapter(
-        deviceAdapter = deviceAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -104,7 +101,6 @@ internal class UserParsingTest {
     fun `Direct path - applies a custom UserTransformer`() {
         val customTransformer = UserTransformer { it.copy(name = it.name + " [transformed]") }
         val transformedUserAdapter = UserAdapter(
-            deviceAdapter = deviceAdapter,
             dateAdapter = dateAdapter,
             userTransformer = customTransformer,
         )

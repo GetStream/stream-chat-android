@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
-import io.getstream.chat.android.client.parser2.direct.DeviceAdapter
 import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageModerationDetailsAdapter
@@ -45,7 +44,6 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -69,9 +67,7 @@ internal class NewMessageEventParsingTest {
     private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
     private val dateAdapter = moshi.adapter(Date::class.java)
 
-    private val deviceAdapter = DeviceAdapter()
     private val userAdapter = UserAdapter(
-        deviceAdapter = deviceAdapter,
         dateAdapter = dateAdapter,
         userTransformer = NoOpUserTransformer,
     )
@@ -164,18 +160,12 @@ internal class NewMessageEventParsingTest {
     }
 
     @Test
-    fun `Both paths - read event user devices leniently and keep undeclared user fields as extra data`() {
+    fun `Both paths - drop the devices copy of event users and keep undeclared user fields as extra data`() {
         val json = NewMessageEventTestData.jsonUserWithDevicesAndOwnUserFields
         val direct = adapter.fromJson(json)!!
 
         assertEquals(generated(json), direct)
-        assertEquals(
-            listOf(
-                Device(token = "device-1", pushProvider = PushProvider.FIREBASE, providerName = "Firebase"),
-                Device(token = "device-2", pushProvider = PushProvider.fromKey(""), providerName = null),
-            ),
-            direct.user.devices,
-        )
+        assertEquals(emptyList<Device>(), direct.user.devices)
         assertEquals(
             setOf("invisible", "privacy_settings", "total_unread_count"),
             direct.user.extraData.keys,
