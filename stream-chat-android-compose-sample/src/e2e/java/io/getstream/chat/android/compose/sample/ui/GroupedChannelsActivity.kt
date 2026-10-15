@@ -58,6 +58,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.GroupedChannelsGroupQuery
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.log.StreamLog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
@@ -79,6 +83,7 @@ class GroupedChannelsActivity : AppCompatActivity() {
                 var isConnected by rememberSaveable { mutableStateOf(false) }
                 if (isConnected) {
                     GroupedChannelsScreen(
+                        isFiltered = intent.getBooleanExtra(KEY_IS_FILTERED, false),
                         onChannelClick = { channel ->
                             startActivity(ChannelActivity.createIntent(this, channelId = channel.cid))
                         },
@@ -101,9 +106,15 @@ class GroupedChannelsActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context): Intent =
+        private const val KEY_IS_FILTERED = "isFiltered"
+
+        /**
+         * @param isFiltered Whether the groups are queried with [GroupFilters] and the `query_timestamp` sort.
+         */
+        fun createIntent(context: Context, isFiltered: Boolean): Intent =
             Intent(context, GroupedChannelsActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra(KEY_IS_FILTERED, isFiltered)
             }
     }
 }
@@ -112,6 +123,20 @@ private val GroupKeys = listOf("all", "new", "current", "old")
 
 // Sent explicitly, so the page size the e2e tests depend on doesn't follow the server default.
 private const val GroupPageSize = 10
+
+private const val RecentCutoff = "now-7d"
+
+// The all group shows the new channels and the recent current ones, the current group only its recent channels,
+// the new group its whole stored group and the old group has no filter.
+private val GroupFilters: Map<String, FilterObject?> = mapOf(
+    "all" to Filters.or(
+        Filters.and(Filters.eq("group", "current"), Filters.greaterThanEquals("query_timestamp", RecentCutoff)),
+        Filters.`in`("group", listOf("new")),
+    ),
+    "new" to Filters.neutral(),
+    "current" to Filters.greaterThanEquals("query_timestamp", RecentCutoff),
+    "old" to null,
+)
 
 private val logger = StreamLog.getLogger("Chat:GroupedChannels")
 
@@ -132,13 +157,22 @@ private fun LoginButton(onClick: () -> Unit) {
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-private fun GroupedChannelsScreen(onChannelClick: (Channel) -> Unit) {
+private fun GroupedChannelsScreen(isFiltered: Boolean, onChannelClick: (Channel) -> Unit) {
     val viewModels = GroupKeys.associateWith { group ->
         viewModel<ChannelListViewModel>(key = group, factory = ChannelListViewModelFactory(groupKey = group))
     }
     // The grouped view models only observe their state, so one grouped query fills every tab.
     LaunchedEffect(Unit) {
-        ChatClient.instance().queryGroupedChannels(groups = GroupKeys, limit = GroupPageSize).enqueue { result ->
+        val call = if (isFiltered) {
+            ChatClient.instance().queryGroupedChannels(
+                groups = GroupKeys.associateWith { group -> GroupedChannelsGroupQuery(filter = GroupFilters[group]) },
+                sort = QuerySortByField.descByName("query_timestamp"),
+                limit = GroupPageSize,
+            )
+        } else {
+            ChatClient.instance().queryGroupedChannels(groups = GroupKeys, limit = GroupPageSize)
+        }
+        call.enqueue { result ->
             result.onError { error -> logger.e { "[queryGroupedChannels] failed: $error" } }
         }
     }

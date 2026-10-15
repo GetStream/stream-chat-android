@@ -35,6 +35,7 @@ public class BackendRobot(
         repliesText: String? = null,
         channelNames: List<String> = emptyList(),
         channelGroups: List<String> = emptyList(),
+        channelDaysAgo: List<Int> = emptyList(),
         withDirectMessageChannel: Boolean = false,
     ): BackendRobot {
         waitForMockServerToStart()
@@ -50,6 +51,11 @@ public class BackendRobot(
         } else {
             ""
         }
+        val channelDaysAgoQueryParam = if (channelDaysAgo.isNotEmpty()) {
+            "channel_days_ago=${URLEncoder.encode(channelDaysAgo.joinToString(","), "UTF-8")}&"
+        } else {
+            ""
+        }
         val dmQueryParam = if (withDirectMessageChannel) "dm=true&" else ""
         mockServer.postRequest(
             "mock?" +
@@ -57,6 +63,7 @@ public class BackendRobot(
                 repliesTextQueryParam +
                 channelNamesQueryParam +
                 channelGroupsQueryParam +
+                channelDaysAgoQueryParam +
                 dmQueryParam +
                 "channels=$channelsCount&" +
                 "messages=$messagesCount&" +

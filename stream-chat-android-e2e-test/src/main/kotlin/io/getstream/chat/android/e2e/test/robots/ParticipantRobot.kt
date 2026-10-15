@@ -100,6 +100,16 @@ public class ParticipantRobot(
     }
 
     /**
+     * Sets the custom `touched_at` date of the channel named [channelName] to now, which counts
+     * towards its grouped `query_timestamp`. The app under test receives the `channel.updated`
+     * websocket event.
+     */
+    public fun touchChannel(channelName: String): ParticipantRobot {
+        mockServer.postRequest("participant/channel_touch?channel_name=${channelName.urlEncoded()}")
+        return this
+    }
+
+    /**
      * Sends [count] messages named `"$text-1"` through `"$text-$count"`, spaced 300ms apart.
      *
      * @param text The base text of every message; the one-based index is appended after a dash.

@@ -33,7 +33,13 @@ sealed class InitTestActivity : Serializable {
     data object GroupedChannels : InitTestActivity() {
         private fun readResolve(): Any = GroupedChannels
         override fun createIntent(context: Context): Intent =
-            GroupedChannelsActivity.createIntent(context)
+            GroupedChannelsActivity.createIntent(context, isFiltered = false)
+    }
+
+    data object FilteredGroupedChannels : InitTestActivity() {
+        private fun readResolve(): Any = FilteredGroupedChannels
+        override fun createIntent(context: Context): Intent =
+            GroupedChannelsActivity.createIntent(context, isFiltered = true)
     }
 
     data class Jwt(val baseUrl: String) : InitTestActivity() {
