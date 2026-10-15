@@ -128,6 +128,18 @@ internal class SocketFactoryTest {
                     "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$loadSyncToken&stream-auth-type=jwt",
                 )
             },
+            randomUser(
+                image = randomString(),
+                name = randomString(),
+                language = randomString(),
+                extraData = mutableMapOf("flair" to "gold", "devices" to listOf(mapOf("id" to "token"))),
+            ).let {
+                Arguments.of(
+                    false,
+                    SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
+                    "${endpoint}connect?json=${buildFullUserJson(it.copy(extraData = mutableMapOf("flair" to "gold")), it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
+                )
+            },
             User("anon").let {
                 Arguments.of(
                     randomBoolean(),

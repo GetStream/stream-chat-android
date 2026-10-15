@@ -86,7 +86,8 @@ internal class SocketFactory(
 
     /**
      * Converts the [User] object to a map of properties updated while connecting the user.
-     * [User.name] and [User.image] will only be included if they are not blank.
+     * [User.name] and [User.image] will only be included if they are not blank. A `devices` key in [User.extraData] is
+     * left out: connect stores the user's custom data, which other users can read, and devices hold push tokens.
      *
      * @return A map of User's properties to update.
      */
@@ -101,7 +102,7 @@ internal class SocketFactory(
                 if (user.language.isNotBlank()) put("language", user.language)
                 if (user.image.isNotBlank()) put("image", user.image)
                 if (user.name.isNotBlank()) put("name", user.name)
-                putAll(user.extraData)
+                putAll(user.extraData - "devices")
             }
         }
 
