@@ -187,7 +187,7 @@ class GroupedChannelListTests : StreamTestCase() {
             userRobot.scrollChannelListDown()
         }
         step("THEN the first channel of the next page is shown") {
-            // Channels are named by position, newest first, and the grouped page size is 10.
+            // Channels are named by position, newest first, and GroupedChannelsActivity asks for pages of 10.
             userRobot.assertChannelWithName("11")
         }
     }
@@ -203,12 +203,14 @@ class GroupedChannelListTests : StreamTestCase() {
             userRobot.login().waitForChannelListToLoad().openGroupTab("new")
         }
         step("AND user goes offline") {
-            participantRobot.sendMessage(sampleText, delay = delay, channelName = "new-1")
+            participantRobot
+                .sendMessage(sampleText, delay = delay, channelName = "new-1")
+                .moveChannelToGroup(channelName = "current-1", group = "new", delay = delay)
             device.disableInternetConnection()
             userRobot.sleep((delay + 1).seconds)
         }
-        step("WHEN participant sends a message to a new channel") {
-            // This action has been completed above with a delay,
+        step("WHEN participant sends a message to a new channel and moves the current channel to the new group") {
+            // These actions have been completed above with a delay,
             // because the mock server can't be reached while offline.
         }
         step("AND user goes back online") {
@@ -219,11 +221,10 @@ class GroupedChannelListTests : StreamTestCase() {
                 .assertGroupUnreadBadge("new", 1)
                 .assertGroupUnreadBadge("all", 1)
         }
-        step("AND the new tab still shows only the new channels") {
+        step("AND the new tab shows the moved channel") {
             userRobot
-                .assertChannelCount(2)
-                .assertChannelWithName("new-1")
-                .assertChannelWithName("new-2")
+                .assertChannelCount(3)
+                .assertChannelWithName("current-1")
         }
     }
 

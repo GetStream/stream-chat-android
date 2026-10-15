@@ -87,12 +87,15 @@ public class ParticipantRobot(
 
     /**
      * Moves the channel named [channelName] to [group], as an update of its custom `group` field.
-     * The app under test receives the `channel.updated` websocket event.
+     * The app under test receives the `channel.updated` websocket event, [delay] seconds later
+     * when [delay] is positive. The move itself happens right away.
      */
-    public fun moveChannelToGroup(channelName: String, group: String): ParticipantRobot {
-        mockServer.postRequest(
-            "participant/channel_group?channel_name=${channelName.urlEncoded()}&group=${group.urlEncoded()}",
-        )
+    public fun moveChannelToGroup(channelName: String, group: String, delay: Int = 0): ParticipantRobot {
+        var endpoint = "participant/channel_group?channel_name=${channelName.urlEncoded()}&group=${group.urlEncoded()}"
+        if (delay > 0) {
+            endpoint += "&delay=$delay"
+        }
+        mockServer.postRequest(endpoint)
         return this
     }
 
