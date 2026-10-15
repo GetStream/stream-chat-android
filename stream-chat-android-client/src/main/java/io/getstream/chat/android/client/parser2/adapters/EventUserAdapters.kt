@@ -25,9 +25,8 @@ import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.chat.android.network.models.UserResponsePrivacyFields
 
 /**
- * Keys the generated user models declare that `DownstreamUserDto` did not, so they used to reach
- * `User.extraData` and would otherwise stop doing so. The domain has no property for either, so they are
- * kept in the overflow map. Drop with AND-1398.
+ * Keys the generated user models declare that the domain `User` has no property for: they are kept in the overflow
+ * map, so `User.extraData` still exposes them. Drop with AND-1398.
  */
 internal val GENERATED_USER_EXTRA_DATA_KEYS = setOf(
     "deleted_at",

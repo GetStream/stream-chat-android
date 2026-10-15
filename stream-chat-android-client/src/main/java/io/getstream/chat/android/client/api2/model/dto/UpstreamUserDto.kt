@@ -19,10 +19,6 @@ package io.getstream.chat.android.client.api2.model.dto
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.network.models.PrivacySettingsResponse
-import io.getstream.chat.android.network.models.PushPreferencesResponse
-import io.getstream.chat.android.network.models.UserMuteResponse
-import java.util.Date
-import io.getstream.chat.android.network.models.ChannelMute as ChannelMuteResponse
 
 /**
  * See [io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter] for
@@ -46,43 +42,5 @@ internal data class UpstreamUserDto(
     val teams: List<String>,
     val teams_role: Map<String, String>?,
 
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
-/**
- * See [io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter] for
- * special [extraData] handling.
- */
-@StreamHandsOff(
-    reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map",
-)
-@JsonClass(generateAdapter = true)
-internal data class DownstreamUserDto(
-    val id: String,
-    val name: String?,
-    val image: String?,
-    val role: String,
-    val invisible: Boolean? = null,
-    val privacy_settings: PrivacySettingsResponse?,
-    val language: String?,
-    val banned: Boolean,
-    val devices: List<DeviceDto>?,
-    val online: Boolean,
-    val created_at: Date?,
-    val deactivated_at: Date?,
-    val updated_at: Date?,
-    val last_active: Date?,
-    val total_unread_count: Int = 0,
-    val unread_channels: Int = 0,
-    val unread_count: Int = 0,
-    val unread_threads: Int = 0,
-    val mutes: List<UserMuteResponse>?,
-    val teams: List<String> = emptyList(),
-    val teams_role: Map<String, String>?,
-    val channel_mutes: List<ChannelMuteResponse>?,
-    val blocked_user_ids: List<String>?,
-    val avg_response_time: Long?,
-    val push_preferences: PushPreferencesResponse?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

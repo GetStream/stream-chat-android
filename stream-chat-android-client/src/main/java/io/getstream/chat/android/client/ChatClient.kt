@@ -65,7 +65,6 @@ import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdent
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getRepliesAroundIdentifier
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.attachment.MessagePreparer
 import io.getstream.chat.android.client.attachment.prepareForUpload
@@ -5550,7 +5549,6 @@ internal constructor(
          * the reflection delay later.
          */
         private fun warmUpReflection() {
-            DownstreamUserDto::class.members
             io.getstream.chat.android.network.models.MessageResponse::class.members
             io.getstream.chat.android.network.models.UserResponse::class.members
             io.getstream.chat.android.network.models.UserResponseCommonFields::class.members

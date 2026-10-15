@@ -179,7 +179,6 @@ internal object EventMappingTestArguments {
     private const val DATE_STRING = "2020-06-29T06:14:28.000Z"
     private val EXACT_DATE = ExactDate(DATE, DATE_STRING)
     private val GENERATED_EXACT_DATE = GeneratedExactDate.parseOrNull(DATE_STRING)!!
-    private val USER = Mother.randomDownstreamUserDto()
     private val OWN_USER = Mother.randomOwnUserResponse()
     private val COMMON_USER = Mother.randomUserResponseCommonFields()
     private val PRIVACY_USER = Mother.randomUserResponsePrivacyFields()
@@ -769,7 +768,7 @@ internal object EventMappingTestArguments {
     private val unknownDto = UnknownEventDto(
         type = EventType.UNKNOWN,
         created_at = EXACT_DATE,
-        user = USER,
+        user = COMMON_USER,
         rawData = emptyMap<String, String>(),
     )
 
@@ -902,7 +901,7 @@ internal object EventMappingTestArguments {
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
-        userId = USER.id,
+        userId = COMMON_USER.id,
         reminder = REMINDER,
     )
 
@@ -913,7 +912,7 @@ internal object EventMappingTestArguments {
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
-        userId = USER.id,
+        userId = COMMON_USER.id,
         reminder = REMINDER,
     )
 
@@ -924,7 +923,7 @@ internal object EventMappingTestArguments {
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
-        userId = USER.id,
+        userId = COMMON_USER.id,
         reminder = REMINDER,
     )
 
@@ -935,7 +934,7 @@ internal object EventMappingTestArguments {
         createdAt = GENERATED_EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
-        userId = USER.id,
+        userId = COMMON_USER.id,
         reminder = REMINDER,
     )
 

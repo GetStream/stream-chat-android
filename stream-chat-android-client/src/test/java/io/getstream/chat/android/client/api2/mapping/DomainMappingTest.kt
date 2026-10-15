@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.Mother.randomChannelResponse
 import io.getstream.chat.android.client.Mother.randomCommandDto
 import io.getstream.chat.android.client.Mother.randomDeviceResponse
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
-import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDraftPayloadResponse
 import io.getstream.chat.android.client.Mother.randomDraftResponse
 import io.getstream.chat.android.client.Mother.randomFileUploadConfig
@@ -659,7 +658,7 @@ internal class DomainMappingTest {
             .get()
 
         val result = with(sut) {
-            randomDownstreamUserDto().toDomain()
+            Mother.randomUserResponseCommonFields().toDomain()
         }
 
         assertEquals(transformedUser, result)
