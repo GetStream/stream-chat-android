@@ -26,18 +26,27 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.network.infrastructure.ExactDate
+import io.getstream.chat.android.network.infrastructure.Serializer
 import java.util.Date
 
+/**
+ * Reads a `message.new` event straight into its domain model, in the v1 shape or, with [v2], the v2 one. [userAdapter]
+ * and [messageAdapter] must read the same shape.
+ */
 internal class NewMessageEventAdapter(
     private val messageAdapter: JsonAdapter<Message>,
     private val userAdapter: JsonAdapter<User>,
+    private val v2: Boolean = false,
 ) : JsonAdapter<NewMessageEvent>() {
 
     private val streamDateFormatter = StreamDateFormatter("NewMessageEventAdapter")
+    private val exactDateAdapter by lazy { Serializer.moshi.adapter(ExactDate::class.java) }
 
     @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): NewMessageEvent? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
+        if (v2) return readV2(reader)
 
         reader.beginObject()
 
@@ -151,6 +160,106 @@ internal class NewMessageEventAdapter(
         )
     }
 
+    /** Mirrors the generated path's `MessageNewEvent.toDomain`, so both build the same [NewMessageEvent]. */
+    @Suppress("LongMethod", "MagicNumber")
+    private fun readV2(reader: JsonReader): NewMessageEvent {
+        reader.beginObject()
+
+        var type: String? = null
+        var createdAt: ExactDate? = null
+        var user: User? = null
+        var cid: String? = null
+        var channelMemberCount: Int? = null
+        var channelCustomName: String? = null
+        var channelCustomImage: String? = null
+        var message: Message? = null
+        var watcherCount: Int? = null
+        var totalUnreadCount: Int? = null
+        var unreadChannels: Int? = null
+        var channelMessageCount: Int? = null
+        var groupedUnreadChannels: Map<String, Int>? = null
+        var messageChannelInfo: ChannelInfo? = null
+
+        while (reader.hasNext()) {
+            when (reader.selectName(V2_KEYS)) {
+                0 -> type = reader.nextString()
+                1 -> createdAt = exactDateAdapter.fromJson(reader)
+                2 -> user = userAdapter.fromJson(reader)
+                3 -> cid = JsonParsingUtils.readNullableString(reader)
+                4 -> channelMemberCount = JsonParsingUtils.readNullableInt(reader)
+                5 -> {
+                    val channelCustom = JsonParsingUtils.readJsonObject(reader)
+                    channelCustomName = channelCustom?.get("name") as? String
+                    channelCustomImage = channelCustom?.get("image") as? String
+                }
+                6 -> {
+                    // The backend sends the channel fields first, so the message usually takes its channel info as
+                    // it is read, saving a copy of it afterwards.
+                    messageChannelInfo = cid?.let {
+                        channelInfo(it, channelMemberCount, channelCustomName, channelCustomImage)
+                    }
+                    message = (messageAdapter as? MessageAdapter)?.fromJson(reader, messageChannelInfo)
+                        ?: messageAdapter.fromJson(reader)
+                }
+                7 -> watcherCount = JsonParsingUtils.readNullableInt(reader)
+                8 -> totalUnreadCount = JsonParsingUtils.readNullableInt(reader)
+                9 -> unreadChannels = JsonParsingUtils.readNullableInt(reader)
+                10 -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
+                11 -> groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
+                else -> {
+                    reader.skipName()
+                    reader.skipValue()
+                }
+            }
+        }
+        reader.endObject()
+
+        JsonParsingUtils.requireField(createdAt, "createdAt", reader)
+        JsonParsingUtils.requireField(message, "message", reader)
+        JsonParsingUtils.requireField(type, "type", reader)
+        JsonParsingUtils.requireField(cid, "cid", reader)
+        JsonParsingUtils.requireField(user, "user", reader)
+        // The message carries no channel, so it and its quoted message take the event's channel info: the one it was
+        // read with, unless a channel field came after it.
+        val channelInfo = messageChannelInfo?.takeIf {
+            it.cid == cid && it.memberCount == (channelMemberCount ?: 0) &&
+                it.name == channelCustomName && it.image == channelCustomImage
+        } ?: channelInfo(cid, channelMemberCount, channelCustomName, channelCustomImage)
+        val channelType = requireNotNull(channelInfo.type)
+        val channelId = requireNotNull(channelInfo.id)
+
+        return NewMessageEvent(
+            type = type,
+            createdAt = createdAt.date,
+            rawCreatedAt = createdAt.raw,
+            user = user,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            message = if (messageChannelInfo === channelInfo) message else message.withChannelInfo(channelInfo),
+            watcherCount = watcherCount ?: 0,
+            totalUnreadCount = totalUnreadCount ?: 0,
+            unreadChannels = unreadChannels ?: 0,
+            channelMessageCount = channelMessageCount,
+            groupedUnreadChannels = groupedUnreadChannels,
+        )
+    }
+
+    private fun channelInfo(cid: String, memberCount: Int?, name: String?, image: String?): ChannelInfo {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ChannelInfo(
+            cid = cid,
+            id = channelId,
+            type = channelType,
+            memberCount = memberCount ?: 0,
+            name = name,
+            image = image,
+        )
+    }
+
+    private fun Message.withChannelInfo(channelInfo: ChannelInfo): Message =
+        copy(channelInfo = channelInfo, replyTo = replyTo?.withChannelInfo(channelInfo))
+
     private fun parseChannelCustom(reader: JsonReader): Pair<String?, String?> {
         if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
             reader.skipValue()
@@ -179,6 +288,24 @@ internal class NewMessageEventAdapter(
         reader.endObject()
 
         return name to image
+    }
+
+    private companion object {
+        /** The v2 keys, matched without allocating a key string, as the generated adapters match them. */
+        private val V2_KEYS = JsonReader.Options.of(
+            "type",
+            "created_at",
+            "user",
+            "cid",
+            "channel_member_count",
+            "channel_custom",
+            "message",
+            "watcher_count",
+            "total_unread_count",
+            "unread_channels",
+            "channel_message_count",
+            "grouped_unread_channels",
+        )
     }
 
     override fun toJson(p0: JsonWriter, p1: NewMessageEvent?) {

@@ -194,6 +194,19 @@ constructor(
         }
     }
 
+    private val v2DirectEventParser: DirectEventParser? by lazy {
+        if (config.fastEventParsing) {
+            DirectEventParser(
+                currentUserIdProvider = currentUserIdProvider,
+                messageTransformer = apiModelTransformers.incomingMessageTransformer,
+                userTransformer = apiModelTransformers.incomingUserTransformer,
+                v2Mapping = v2DomainMapping,
+            )
+        } else {
+            null
+        }
+    }
+
     private val moshiParser: ChatParser by lazy {
         MoshiChatParser(
             eventMapping = eventMapping,
@@ -206,7 +219,7 @@ constructor(
             parser = moshiParser,
             tokenManager = tokenManager,
             headersUtil = headersUtil,
-            v2EventParser = if (config.useV2WebSocket) V2EventParser(v2DomainMapping) else null,
+            v2EventParser = if (config.useV2WebSocket) V2EventParser(v2DomainMapping, v2DirectEventParser) else null,
         )
     }
 

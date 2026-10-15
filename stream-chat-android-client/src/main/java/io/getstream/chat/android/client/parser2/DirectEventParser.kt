@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
 import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
@@ -47,19 +48,21 @@ import java.util.Date
 /**
  * Routes incoming JSON events to hand-written [JsonAdapter]s that parse directly into domain models,
  * bypassing the DTO intermediate layer. Returns `null` for unsupported event types so the caller
- * can fall back to the existing DTO path.
+ * can fall back to the existing DTO path. Without [v2Mapping] it reads v1 frames; with it, v2 frames, mapped as the
+ * generated v2 path maps them.
  */
 internal class DirectEventParser(
     private val currentUserIdProvider: () -> UserId?,
     private val messageTransformer: MessageTransformer,
     private val userTransformer: UserTransformer,
+    private val v2Mapping: DomainMapping? = null,
 ) {
 
     // region Leaf adapters
 
     private val moshi by lazy { Moshi.Builder().add(IsoDateAdapter()).build() }
     private val dateAdapter by lazy { moshi.adapter(Date::class.java) }
-    private val attachmentAdapter by lazy { AttachmentAdapter() }
+    private val attachmentAdapter by lazy { AttachmentAdapter(v2Mapping) }
     private val channelInfoAdapter by lazy { ChannelInfoAdapter() }
     private val moderationDetailsAdapter by lazy { MessageModerationDetailsAdapter() }
     private val moderationAdapter by lazy { ModerationAdapter() }
@@ -72,11 +75,16 @@ internal class DirectEventParser(
     // region Composed adapters
 
     private val userAdapter by lazy {
-        UserAdapter(dateAdapter, userTransformer)
+        UserAdapter(dateAdapter, userTransformer, v2Mapping?.userCustom)
+    }
+
+    // v2 maps the custom data of the user an event carries differently from the users of its message.
+    private val eventUserAdapter by lazy {
+        v2Mapping?.let { UserAdapter(dateAdapter, userTransformer, it.eventUserCustom) } ?: userAdapter
     }
     private val userGroupMemberAdapter by lazy { UserGroupMemberAdapter(dateAdapter) }
     private val userGroupAdapter by lazy { UserGroupAdapter(userGroupMemberAdapter, dateAdapter) }
-    private val reactionAdapter by lazy { ReactionAdapter(userAdapter, dateAdapter) }
+    private val reactionAdapter by lazy { ReactionAdapter(userAdapter, dateAdapter, v2Mapping) }
     private val pollAdapter by lazy {
         PollAdapter(userAdapter, optionAdapter, dateAdapter, currentUserIdProvider)
     }
@@ -85,7 +93,7 @@ internal class DirectEventParser(
         MessageAdapter(
             attachmentAdapter, channelInfoAdapter, reactionAdapter,
             reactionGroupAdapter, userAdapter, userGroupAdapter, moderationDetailsAdapter, moderationAdapter,
-            pollAdapter, reminderAdapter, locationAdapter, dateAdapter, messageTransformer,
+            pollAdapter, reminderAdapter, locationAdapter, dateAdapter, messageTransformer, v2Mapping,
         )
     }
 
@@ -94,7 +102,7 @@ internal class DirectEventParser(
     // region Event adapters
 
     private val newMessageEventAdapter by lazy {
-        NewMessageEventAdapter(messageAdapter, userAdapter)
+        NewMessageEventAdapter(messageAdapter, eventUserAdapter, v2 = v2Mapping != null)
     }
 
     // endregion
@@ -109,8 +117,10 @@ internal class DirectEventParser(
      * Returns `null` if the event type is not supported by any direct adapter,
      * or if the matching adapter throws — allowing the caller to fall back to the DTO path.
      */
-    fun parse(raw: String): ChatEvent? {
-        val type = extractType(raw) ?: return null
+    fun parse(raw: String): ChatEvent? = parse(raw, extractType(raw))
+
+    /** [parse] for a frame whose [type] the caller has already read, so the frame isn't scanned for it again. */
+    fun parse(raw: String, type: String?): ChatEvent? {
         val adapter = adapterMap[type] ?: return null
         return runCatching { adapter.fromJson(raw) }
             .onFailure { e ->
