@@ -19,9 +19,11 @@ package io.getstream.chat.android.client.parser2
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -65,6 +67,26 @@ internal class V2DirectEventParserParityTest {
     }
 
     @ParameterizedTest(name = "{0}")
+    @MethodSource("frames")
+    fun `App transformers see and produce the same models on both paths`(name: String, frame: String) {
+        val messageTransformer = MessageTransformer {
+            it.copy(text = "${it.text}|${it.channelInfo?.memberCount}|${it.replyTo?.channelInfo?.name}")
+        }
+        val userTransformer = UserTransformer { it.copy(name = "${it.name}|${it.extraData.size}") }
+        val transforming = DomainMapping({ ME }, NoOpChannelTransformer, messageTransformer, userTransformer, true)
+        val fast = DirectEventParser({ ME }, messageTransformer, userTransformer, transforming)
+
+        fast.parse(frame).shouldNotBeNull().enrichIfNeeded() shouldBeEqualTo V2EventParser(transforming).parse(frame)
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("fallbackFrames")
+    fun `A v2 message_new the fast path can't read is parsed by the generated path`(name: String, frame: String) {
+        direct.parse(frame).shouldBeNull()
+        V2EventParser(mapping, direct).parse(frame) shouldBeEqualTo generated.parse(frame).shouldNotBeNull()
+    }
+
+    @ParameterizedTest(name = "{0}")
     @MethodSource("rejectedFrames")
     fun `A v2 message_new the generated path rejects is left to it`(name: String, frame: String) {
         assertThrows<Exception> { generated.parse(frame) }
@@ -105,16 +127,16 @@ internal class V2DirectEventParserParityTest {
             "mentioned_users" to emptyList<Any>(), "custom" to mapOf("probe" to "message"),
         )
 
-        private fun event(message: Map<String, Any?> = message(), user: Map<String, Any?> = user(ME)) = mapOf(
-            "type" to "message.new",
-            "created_at" to EVENT_AT,
-            "cid" to CID,
-            "channel_type" to "messaging",
-            "channel_id" to "general",
-            "message" to message,
-            "user" to user,
-            "custom" to emptyMap<String, Any>(),
-        )
+        /** A frame in the backend's key order: the channel fields come before the message. */
+        private fun event(
+            message: Map<String, Any?> = message(),
+            user: Map<String, Any?> = user(ME),
+            channel: Map<String, Any?> = emptyMap(),
+            extra: Map<String, Any?> = emptyMap(),
+        ) = mapOf(
+            "type" to "message.new", "created_at" to EVENT_AT, "custom" to emptyMap<String, Any>(), "cid" to CID,
+            "channel_type" to "messaging", "channel_id" to "general",
+        ) + channel + mapOf("message" to message, "user" to user) + extra
 
         private val imageData = mapOf(
             "frames" to "1",
@@ -242,28 +264,33 @@ internal class V2DirectEventParserParityTest {
             arrayOf("minimal", event().toJson()),
             arrayOf(
                 "every message field",
-                (
-                    event(message = richMessage, user = richEventUser) + mapOf(
-                        "channel_member_count" to 3, "channel_message_count" to 9, "watcher_count" to 2,
-                        "total_unread_count" to 4, "unread_channels" to 1,
-                        "grouped_unread_channels" to mapOf("all" to 1),
+                event(
+                    message = richMessage,
+                    user = richEventUser,
+                    channel = mapOf(
+                        "channel_member_count" to 3,
                         "channel_custom" to mapOf("name" to "General", "image" to "https://example.com/c.png"),
-                        "thread_participants" to emptyList<Any>(), "unknown" to mapOf("a" to 1),
-                    )
-                    ).toJson(),
-            ),
-            arrayOf(
-                "channel custom before the message, member count after it",
-                mapOf(
-                    "type" to "message.new",
-                    "created_at" to EVENT_AT,
-                    "cid" to CID,
-                    "channel_custom" to mapOf("name" to "General", "image" to "https://example.com/c.png"),
-                    "message" to message(),
-                    "user" to user(ME),
-                    "channel_member_count" to 3,
+                    ),
+                    extra = mapOf(
+                        "channel_message_count" to 9,
+                        "watcher_count" to 2,
+                        "total_unread_count" to 4,
+                        "unread_channels" to 1,
+                        "grouped_unread_channels" to mapOf("all" to 1),
+                        "thread_participants" to emptyList<Any>(),
+                        "unknown" to mapOf("a" to 1),
+                    ),
                 ).toJson(),
             ),
+            // The generated models read a null collection or map as empty.
+            arrayOf("message custom null", event(message = message() + ("custom" to null)).toJson()),
+            arrayOf("message attachments null", event(message = message() + ("attachments" to null)).toJson()),
+            arrayOf(
+                "message user teams null",
+                event(message = message() + ("user" to user("luke") + ("teams" to null))).toJson(),
+            ),
+            arrayOf("event user custom null", event(user = user(ME) + ("custom" to null)).toJson()),
+            arrayOf("event custom null", (event() + ("custom" to null)).toJson()),
             arrayOf(
                 "message user with stored declared values",
                 event(
@@ -277,6 +304,19 @@ internal class V2DirectEventParserParityTest {
             ),
         )
 
+        /** Frames the backend doesn't send, whose channel fields come after the message. */
+        @JvmStatic
+        fun fallbackFrames() = listOf(
+            arrayOf(
+                "member count after the message",
+                event(
+                    channel = mapOf("channel_custom" to mapOf("name" to "General")),
+                    extra = mapOf("channel_member_count" to 3),
+                ).toJson(),
+            ),
+            arrayOf("cid after the message", (event() - "cid" + ("cid" to CID)).toJson()),
+        )
+
         @JvmStatic
         fun rejectedFrames() = listOf(
             arrayOf("message without pinned", event(message = message() - "pinned").toJson()),
@@ -285,6 +325,15 @@ internal class V2DirectEventParserParityTest {
                 event(message = message() + mapOf("user" to user("luke") - "language")).toJson(),
             ),
             arrayOf("event user without created_at", event(user = user(ME) - "created_at").toJson()),
+            arrayOf(
+                "message reaction counts as a list",
+                event(message = message() + ("reaction_counts" to listOf(1))).toJson(),
+            ),
+            arrayOf("channel custom as a string", event(channel = mapOf("channel_custom" to "x")).toJson()),
+            arrayOf(
+                "average response time beyond an Int",
+                event(user = user(ME) + ("avg_response_time" to 3_000_000_000L)).toJson(),
+            ),
         )
     }
 }

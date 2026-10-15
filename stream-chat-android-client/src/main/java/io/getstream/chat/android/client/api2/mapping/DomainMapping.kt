@@ -882,7 +882,7 @@ internal class DomainMapping(
         teamsRole = teamsRole.orEmpty(),
         blockedUserIds = blockedUserIds,
         avgResponseTime = avgResponseTime?.toLong(),
-        extraData = eventUserCustom.extraData(custom, deletedAt, revokeTokensIssuedBefore).toMutableMap(),
+        extraData = eventUserCustom.extraData(custom, deletedAt, revokeTokensIssuedBefore),
     )
 
     /** The custom data mapping of the users events carry ([UserResponseCommonFields], [UserResponsePrivacyFields]). */
@@ -895,7 +895,7 @@ internal class DomainMapping(
             EVENT_USER_HIDDEN_CUSTOM_KEYS,
             "deleted_at" to deletedAt,
             "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
-        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap()
+        ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap().toMutableMap()
     }
 
     /** The custom data mapping of [UserResponse], the user messages and reactions carry. */

@@ -157,7 +157,9 @@ internal class AttachmentAdapter(
                 10 -> type = JsonParsingUtils.readNullableString(reader)
                 11 -> originalHeight = JsonParsingUtils.readNullableInt(reader)
                 12 -> originalWidth = JsonParsingUtils.readNullableInt(reader)
-                13 -> custom = JsonParsingUtils.readJsonObject(reader)
+                13 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_OBJECT, nullable = true)) {
+                    custom = JsonParsingUtils.readJsonObject(reader)
+                }
                 14 -> actions = actionsAdapter.fromJson(reader)
                 15 -> authorIcon = JsonParsingUtils.readNullableString(reader)
                 16 -> color = JsonParsingUtils.readNullableString(reader)
