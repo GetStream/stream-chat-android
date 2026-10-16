@@ -111,6 +111,14 @@ internal class ThreadQueryListenerStateTest {
     }
 
     @Test
+    fun `given the newest page is smaller than the limit, the older end is reached`() = runTest {
+        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, messageList.size + 1)
+
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).setReplies(messageList, isJumpPage = false)
+    }
+
+    @Test
     fun `given response it failure, the state should NOT be updated in the SDK`() = runTest {
         threadQueryListenerState.onGetRepliesResult(Result.Failure(Error.GenericError("")), message.id, 30)
 

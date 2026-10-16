@@ -1693,6 +1693,21 @@ internal class MessageListControllerTests {
         }
 
     @Test
+    fun `Given the newest channel page is loaded When scrolling to the bottom Should scroll without loading`() =
+        runTest {
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+            var scrolled = false
+
+            controller.scrollToBottom { scrolled = true }
+
+            scrolled.shouldBeTrue()
+        }
+
+    @Test
     fun `Given the newest thread page is not loaded When scrolling to the bottom Should load it before scrolling`() =
         runTest {
             val chatClient = mock<ChatClient>()
