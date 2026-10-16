@@ -30,8 +30,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.parser2.adapters.ChannelInputAdapter
-import io.getstream.chat.android.client.parser2.adapters.ChannelInputRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberPartialResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.ChannelMemberResponseAdapter
@@ -98,8 +96,6 @@ internal class MoshiChatParser(
             .add(SearchResultMessageAdapter)
             .add(MessageWithChannelResponseAdapter)
             .add(ChannelMemberRequestAdapter)
-            .add(ChannelInputAdapter)
-            .add(ChannelInputRequestAdapter)
             .add(ChannelResponseAdapter)
             .add(ChannelMemberResponseAdapter)
             .add(ChannelMemberPartialResponseAdapter)

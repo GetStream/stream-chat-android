@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonAdapter
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.kotest.assertions.json.shouldEqualJson
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -30,11 +32,14 @@ import java.util.Date
 
 internal class QueryChannelRequestSerializationTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    // The v2 channel endpoints serialize their bodies with the generated Serializer.
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> toJson(value: T): String =
+        (Serializer.moshi.adapter(value.javaClass) as JsonAdapter<T>).toJson(value)
 
     private val dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)
 
-    private fun QueryChannelRequest.toJson() = parser.toJson(with(dtoMapping) { toChannelGetOrCreateRequest() })
+    private fun QueryChannelRequest.toJson() = toJson(with(dtoMapping) { toChannelGetOrCreateRequest() })
 
     @Test
     fun `Serialize an empty request with every nested object present`() {
@@ -47,7 +52,7 @@ internal class QueryChannelRequestSerializationTest {
               "messages": {},
               "watchers": {},
               "members": {},
-              "data": {}
+              "data": { "custom": {} }
             }
             """,
         )
@@ -74,14 +79,14 @@ internal class QueryChannelRequestSerializationTest {
               "messages": { "limit": 30, "id_around": "message-id", "created_at_before": "2023-11-14T22:13:20.123Z" },
               "watchers": { "limit": 20, "offset": 2 },
               "members": { "limit": 10, "offset": 5 },
-              "data": {}
+              "data": { "custom": {} }
             }
             """,
         )
     }
 
     @Test
-    fun `Serialize the channel data flat, with no custom object`() {
+    fun `Serialize the channel data with the declared keys typed and the rest under custom`() {
         val query = QueryChannelRequest().withData(
             mapOf(
                 "name" to "Team",
@@ -99,7 +104,7 @@ internal class QueryChannelRequestSerializationTest {
               "messages": {},
               "watchers": {},
               "members": {},
-              "data": { "name": "Team", "frozen": true, "color": { "primary": "red" } }
+              "data": { "frozen": true, "custom": { "name": "Team", "color": { "primary": "red" } } }
             }
             """,
         )
@@ -126,7 +131,7 @@ internal class QueryChannelRequestSerializationTest {
               "messages": ${empty["messages"]},
               "watchers": ${empty["watchers"]},
               "members": ${empty["members"]},
-              "data": {}
+              "data": { "custom": {} }
             }
             """,
         )
@@ -149,7 +154,7 @@ internal class QueryChannelRequestSerializationTest {
               "messages": { "limit": 30 },
               "watchers": {},
               "members": {},
-              "data": {}
+              "data": { "custom": {} }
             }
             """,
         )

@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
+import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -1745,10 +1746,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateMemberInput")
     fun testPartialUpdateMember(call: RetrofitCall<UpdateMemberPartialResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         whenever(api.partialUpdateMember(any(), any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         // when
         val channelType = randomString()
@@ -1766,11 +1767,11 @@ internal class MoshiChatApiTest {
     @Test
     fun `partialUpdateMember reports a missing member as an error rather than crashing`() = runTest {
         // given
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         val response = UpdateMemberPartialResponse(duration = randomString(), channelMember = null)
         whenever(api.partialUpdateMember(any(), any(), any(), any()))
             .doReturn(RetroSuccess(response).toRetrofitCall())
-        val sut = Fixture().withChannelApi(api).get()
+        val sut = Fixture().withChannelV1Api(api).get()
 
         // when
         val result = sut.partialUpdateMember(randomString(), randomString(), randomString(), emptyMap(), emptyList())
@@ -2126,10 +2127,10 @@ internal class MoshiChatApiTest {
         expected: KClass<*>,
     ) = runTest {
         // given
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         whenever(api.queryGroupedChannels(any(), any())).doReturn(call)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         // when
         val userId = randomString()
@@ -2152,10 +2153,10 @@ internal class MoshiChatApiTest {
     @Test
     fun `queryGroupedChannels maps per-group GroupedChannelsGroupQuery into the request body`() = runTest {
         val response = GroupedQueryChannelsResponse(groups = emptyMap(), duration = "0ms")
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         val connectionId = randomString()
         sut.setConnection(userId = randomString(), connectionId = connectionId)
@@ -2197,10 +2198,10 @@ internal class MoshiChatApiTest {
     @Test
     fun `queryGroupedChannels maps the sort and per-group filters into the request body`() = runTest {
         val response = GroupedQueryChannelsResponse(groups = emptyMap(), duration = "0ms")
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         val connectionId = randomString()
         sut.setConnection(userId = randomString(), connectionId = connectionId)
@@ -2260,10 +2261,10 @@ internal class MoshiChatApiTest {
             groups = mapOf("direct" to GroupedChannelsBucket(channels = emptyList(), unreadChannels = null)),
             duration = "0ms",
         )
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         whenever(api.queryGroupedChannels(any(), any())).doReturn(RetroSuccess(response).toRetrofitCall())
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
@@ -2276,9 +2277,9 @@ internal class MoshiChatApiTest {
 
     @Test
     fun `queryGroupedChannels postpones the call when watch is true and connectionId is blank`() = runTest {
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         // Intentionally not calling setConnection — connectionId stays blank.
 
@@ -2460,7 +2461,7 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
     fun `channel state maps active live locations onto the channel`(
         @Suppress("UNUSED_PARAMETER") path: String,
-        stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
+        stub: (ChannelApi, ChannelV1Api, ChannelStateResponseFields) -> Unit,
         query: (MoshiChatApi) -> Call<List<Channel>>,
     ) = runTest {
         val endAt = randomDate()
@@ -2481,8 +2482,9 @@ internal class MoshiChatApiTest {
             ),
         )
         val api = mock<ChannelApi>()
-        stub(api, response)
-        val sut = Fixture().withChannelApi(api).get()
+        val v1Api = mock<ChannelV1Api>()
+        stub(api, v1Api, response)
+        val sut = Fixture().withChannelApi(api).withChannelV1Api(v1Api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
         val channels = query(sut).await().getOrNull()
@@ -2545,12 +2547,13 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#channelStateInput")
     fun `A channel state without a channel fails the call`(
         @Suppress("UNUSED_PARAMETER") path: String,
-        stub: (ChannelApi, ChannelStateResponseFields) -> Unit,
+        stub: (ChannelApi, ChannelV1Api, ChannelStateResponseFields) -> Unit,
         query: (MoshiChatApi) -> Call<List<Channel>>,
     ) = runTest {
         val api = mock<ChannelApi>()
-        stub(api, ChannelStateResponseFields(channel = null))
-        val sut = Fixture().withChannelApi(api).get()
+        val v1Api = mock<ChannelV1Api>()
+        stub(api, v1Api, ChannelStateResponseFields(channel = null))
+        val sut = Fixture().withChannelApi(api).withChannelV1Api(v1Api).get()
         sut.setConnection(userId = randomString(), connectionId = randomString())
 
         val result = query(sut).await()
@@ -2703,10 +2706,10 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendEventInput")
     fun testSendEvent(call: RetrofitCall<EventResponse>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelApi>()
+        val api = mock<ChannelV1Api>()
         whenever(api.sendEvent(any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withChannelApi(api)
+            .withChannelV1Api(api)
             .get()
         // when
         val eventType = randomString()
@@ -3836,6 +3839,7 @@ internal class MoshiChatApiTest {
         private var messageApi: MessageApi = mock()
         private var draftApi: DraftApi = mock()
         private var channelApi: ChannelApi = mock()
+        private var channelV1Api: ChannelV1Api = mock()
         private var deviceApi: DeviceApi = mock()
         private var moderationApi: ModerationApi = mock()
         private var moderationV1Api: ModerationV1Api = mock()
@@ -3876,6 +3880,10 @@ internal class MoshiChatApiTest {
 
         fun withChannelApi(channelApi: ChannelApi) = apply {
             this.channelApi = channelApi
+        }
+
+        fun withChannelV1Api(channelV1Api: ChannelV1Api) = apply {
+            this.channelV1Api = channelV1Api
         }
 
         fun withDeviceApi(deviceApi: DeviceApi) = apply {
@@ -3960,6 +3968,7 @@ internal class MoshiChatApiTest {
                 messageApi = messageApi,
                 draftApi = draftApi,
                 channelApi = channelApi,
+                channelV1Api = channelV1Api,
                 deviceApi = deviceApi,
                 moderationApi = moderationApi,
                 moderationV1Api = moderationV1Api,

@@ -88,6 +88,8 @@ internal class CustomAdapterCoverageTest {
         /** Models whose `custom` is a nested object on the wire, so no collecting adapter applies. */
         private val NESTED_CUSTOM = mapOf(
             "ThreadParticipant" to "Go declares a plain map, not jsonextra.ExtraFields, so custom stays nested",
+            "ChannelInput" to "Only sent to the v2 endpoints, which read custom data nested",
+            "ChannelInputRequest" to "Only sent to the v2 endpoints, which read custom data nested",
         )
     }
 }

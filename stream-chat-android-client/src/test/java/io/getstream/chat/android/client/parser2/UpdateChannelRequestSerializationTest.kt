@@ -16,46 +16,51 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonAdapter
 import io.getstream.chat.android.client.parser2.testdata.UpdateChannelRequestTestData
+import io.getstream.chat.android.network.infrastructure.Serializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-internal class UpdateChannelRequestAdapterTest {
-    private val parser = ParserFactory.createMoshiChatParser()
+internal class UpdateChannelRequestSerializationTest {
+    // The v2 channel endpoints serialize their bodies with the generated Serializer.
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> toJson(value: T): String =
+        (Serializer.moshi.adapter(value.javaClass) as JsonAdapter<T>).toJson(value)
 
     @Test
     fun `Serialize UpdateChannelRequest for rejectInvite`() {
-        val json = parser.toJson(UpdateChannelRequestTestData.rejectInviteRequest)
+        val json = toJson(UpdateChannelRequestTestData.rejectInviteRequest)
         Assertions.assertEquals(UpdateChannelRequestTestData.rejectInviteJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelRequest for addMembers with nested member and message`() {
-        val json = parser.toJson(UpdateChannelRequestTestData.addMembersRequest)
+        val json = toJson(UpdateChannelRequestTestData.addMembersRequest)
         Assertions.assertEquals(UpdateChannelRequestTestData.addMembersJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelRequest for updateChannel with channel data`() {
-        val json = parser.toJson(UpdateChannelRequestTestData.updateChannelRequest)
+        val json = toJson(UpdateChannelRequestTestData.updateChannelRequest)
         Assertions.assertEquals(UpdateChannelRequestTestData.updateChannelJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelRequest for acceptInvite`() {
-        val json = parser.toJson(UpdateChannelRequestTestData.acceptInviteRequest)
+        val json = toJson(UpdateChannelRequestTestData.acceptInviteRequest)
         Assertions.assertEquals(UpdateChannelRequestTestData.acceptInviteJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelRequest for removeMembers`() {
-        val json = parser.toJson(UpdateChannelRequestTestData.removeMembersRequest)
+        val json = toJson(UpdateChannelRequestTestData.removeMembersRequest)
         Assertions.assertEquals(UpdateChannelRequestTestData.removeMembersJson, json)
     }
 
     @Test
     fun `Serialize UpdateChannelRequest for inviteMembers`() {
-        val json = parser.toJson(UpdateChannelRequestTestData.inviteMembersRequest)
+        val json = toJson(UpdateChannelRequestTestData.inviteMembersRequest)
         Assertions.assertEquals(UpdateChannelRequestTestData.inviteMembersJson, json)
     }
 }

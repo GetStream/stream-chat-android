@@ -17,9 +17,11 @@
           "online": true,
           "name": "Count Dooku",
           "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
-          "birthland": "Serenno",
-          "extraData": {},
-          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg"
+          "custom": {
+            "birthland": "Serenno",
+            "extraData": {},
+            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg"
+          }
         },
         "frozen": false,
         "disabled": false,
@@ -107,7 +109,9 @@
           "send-message"
         ],
         "hidden": false,
-        "name": "The water cooler"
+        "custom": {
+          "name": "The water cooler"
+        }
       },
       "messages": [],
       "pinned_messages": [],
@@ -125,11 +129,13 @@
             "banned": false,
             "online": true,
             "language": "en",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
             "name": "Count Dooku",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
-            "birthland": "Serenno",
-            "extraData": {}
+            "custom": {
+              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
+              "birthland": "Serenno",
+              "extraData": {}
+            }
           },
           "created_at": "2022-03-28T18:09:34.877085Z",
           "updated_at": "2022-03-28T18:09:34.877085Z",
@@ -152,9 +158,11 @@
             "language": "en",
             "name": "Han Solo",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-            "birthland": "Corellia",
-            "extraData": {},
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            "custom": {
+              "birthland": "Corellia",
+              "extraData": {},
+              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            }
           },
           "created_at": "2022-03-28T18:09:34.877085Z",
           "updated_at": "2022-03-28T18:09:34.877085Z",
@@ -175,15 +183,17 @@
             "banned": false,
             "online": true,
             "language": "en",
-            "yetAnotherField": "40",
             "name": "Luke Skywalker",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "testing": false,
-            "birthland": "Tatooine",
-            "extraData": {},
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "extra_data": {},
-            "testing-this": 3.14
+            "custom": {
+              "yetAnotherField": "40",
+              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+              "testing": false,
+              "birthland": "Tatooine",
+              "extraData": {},
+              "extra_data": {},
+              "testing-this": 3.14
+            }
           },
           "created_at": "2022-03-28T18:09:34.877085Z",
           "updated_at": "2022-03-28T18:09:34.877085Z",
@@ -204,11 +214,13 @@
           "banned": false,
           "online": true,
           "language": "en",
-          "birthland": "Serenno",
-          "extraData": {},
-          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
           "name": "Count Dooku",
-          "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg"
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
+          "custom": {
+            "birthland": "Serenno",
+            "extraData": {},
+            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg"
+          }
         },
         "created_at": "2022-03-28T18:09:34.877085Z",
         "updated_at": "2022-03-28T18:09:34.877085Z",
