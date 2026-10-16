@@ -710,6 +710,17 @@ internal class DomainMappingTest {
         assertEquals(mapOf("group" to "current", "disabled" to true), result.extraData)
     }
 
+    @Test
+    fun `ChannelPartialUpdateResponse without name, image or team maps them to empty values`() {
+        val sut = Fixture().get()
+
+        val result = with(sut) { channelPartialUpdateResponse().copy(custom = emptyMap(), team = null).toDomain() }
+
+        assertEquals("", result.name)
+        assertEquals("", result.image)
+        assertEquals("", result.team)
+    }
+
     private fun channelPartialUpdateResponse() = ChannelPartialUpdateResponse(
         cid = "messaging:123",
         createdAt = Date(),
