@@ -1,0 +1,224 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>AIClientToolRunner</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.15.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ai-compose/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ai-compose/main" data-filter=":stream-chat-android-ai-compose/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ai-compose::io.getstream.chat.android.ai.compose.parts/AIClientToolRunner///PointingToDeclaration//-1081916106">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ai-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ai.compose.parts</a><span class="delimiter">/</span><span class="current">AIClientToolRunner</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>AIClient</span><wbr><span>Tool</span><wbr><span><span>Runner</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">AIClientToolRunner</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>clientId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">tools<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../-a-i-client-tool/index.html">AIClientTool</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Runs the client tool calls addressed to this device, each once.</p><p class="paragraph">Give it each AI reply's steps as they update. It runs a call when the call has its own id, awaits this person and this install, the runner has a tool of that name and the call has not run here before, then hands the result to <code class="lang-kotlin">send</code>. A result that could not be sent is sent again on a later update, without running the tool again.</p><p class="paragraph">The runner is confined to the main thread: call <a href="run.html">run</a> from it, and pass a <a href="../../../stream-chat-android-ai-compose/io.getstream.chat.android.ai.compose.parts/-a-i-client-tool-runner/--root--.html">scope</a> that runs on it, such as a <code class="lang-kotlin">viewModelScope</code> or <code class="lang-kotlin">rememberCoroutineScope()</code>.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val runner = AIClientToolRunner(userId, AIClientIdentity.installId(context), listOf(LocationTool()), scope)<br>runner.run(parts) { call, result -&gt; backend.send(result, call, message) }</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>user</span><wbr><span><span>Id</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The person signed in on this device.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>client</span><wbr><span><span>Id</span></span></u></div></span></div><div><div class="title"><p class="paragraph">This install, from <a href="../-a-i-client-identity/install-id.html">AIClientIdentity.installId</a>.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>tools</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The tools this device can run. When two share a name, the first is used.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>scope</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Where tools run and results are sent.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-2053579683%2FConstructors%2F-1081916106" anchor-label="AIClientToolRunner" id="-2053579683%2FConstructors%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-client-tool-runner.html"><span>AIClient</span><wbr><span>Tool</span><wbr><span><span>Runner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2053579683%2FConstructors%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">clientId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">tools<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../-a-i-client-tool/index.html">AIClientTool</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="906958783%2FProperties%2F-1081916106" anchor-label="clientId" id="906958783%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="client-id.html"><span>client</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="906958783%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="client-id.html">clientId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="625807787%2FProperties%2F-1081916106" anchor-label="maxAttempts" id="625807787%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="max-attempts.html"><span>max</span><wbr><span><span>Attempts</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="625807787%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">var </span><a href="max-attempts.html">maxAttempts</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">How many times a result is offered to <code class="lang-kotlin">send</code> before the runner gives up on it. At least 1.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="629402277%2FProperties%2F-1081916106" anchor-label="toolNames" id="629402277%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="tool-names.html"><span>tool</span><wbr><span><span>Names</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="629402277%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="tool-names.html">toolNames</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The names of the tools this device can run.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="667312575%2FProperties%2F-1081916106" anchor-label="userId" id="667312575%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-id.html"><span>user</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="667312575%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="user-id.html">userId</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="448584160%2FFunctions%2F-1081916106" anchor-label="run" id="448584160%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run.html"><span><span>run</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="448584160%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parts<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../-a-i-message-part/index.html">AIMessagePart</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">send<span class="token operator">: </span><span class="token keyword">suspend </span><span class="token punctuation">(</span>call<span class="token operator">: </span><a href="../-a-i-tool-call-part/index.html">AIToolCallPart</a><span class="token punctuation">, </span>result<span class="token operator">: </span><a href="../-a-i-client-tool-result/index.html">AIClientToolResult</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Runs the calls among <a href="run.html">parts</a> that await this device, and sends their results.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

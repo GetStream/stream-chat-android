@@ -1,0 +1,663 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>io.getstream.chat.android.ai.compose.ui.component</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script></head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+<a class="library-name--link" href="../../index.html" tabindex="1">
+                    stream-chat-android
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">7.15.0
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true" data-filter=":stream-chat-android-ai-compose/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":stream-chat-android-ai-compose/main" data-filter=":stream-chat-android-ai-compose/main">
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config="{&quot;defaultSize&quot;: 280, &quot;minSize&quot;: 200, &quot;maxSize&quot;: 400}">
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    stream-chat-android
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageids="stream-chat-android-ai-compose::io.getstream.chat.android.ai.compose.ui.component////PointingToDeclaration//-1081916106">
+  <div class="breadcrumbs"><a href="../index.html">stream-chat-android-ai-compose</a><span class="delimiter">/</span><span class="current">io.getstream.chat.android.ai.compose.ui.component</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="-1169629641%2FClasslikes%2F-1081916106" anchor-label="AISuggestionsChipParams" id="-1169629641%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-suggestions-chip-params/index.html"><span>AISuggestions</span><wbr><span>Chip</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1169629641%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-a-i-suggestions-chip-params/index.html">AISuggestionsChipParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-a-i-suggestions-chip.html">ChatAiComponentFactory.AISuggestionsChip</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="731097727%2FClasslikes%2F-1081916106" anchor-label="AIToolApprovalColors" id="731097727%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-approval-colors/index.html"><span>AITool</span><wbr><span>Approval</span><wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="731097727%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="-a-i-tool-approval-colors/index.html">AIToolApprovalColors</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>title<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>message<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>background<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>border<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>accent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>failure<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The palette of <a href="-a-i-tool-approval-card.html">AIToolApprovalCard</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1087152035%2FClasslikes%2F-1081916106" anchor-label="AIToolApprovalDefaults" id="-1087152035%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-approval-defaults/index.html"><span>AITool</span><wbr><span>Approval</span><wbr><span><span>Defaults</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1087152035%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-a-i-tool-approval-defaults/index.html">AIToolApprovalDefaults</a></div><div class="brief "><p class="paragraph">Defaults of <a href="-a-i-tool-approval-card.html">AIToolApprovalCard</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2012652354%2FClasslikes%2F-1081916106" anchor-label="AIToolApprovalState" id="2012652354%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-approval-state/index.html"><span>AITool</span><wbr><span>Approval</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2012652354%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-a-i-tool-approval-state/index.html">AIToolApprovalState</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>isSending<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>failed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Where the person's answer to a question is.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1901487693%2FClasslikes%2F-1081916106" anchor-label="AIToolApprover" id="1901487693%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-approver/index.html"><span>AITool</span><wbr><span><span>Approver</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1901487693%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-a-i-tool-approver/index.html">AIToolApprover</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>clientId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token punctuation">, </span></span><span class="parameter ">decide<span class="token operator">: </span><span class="token keyword">suspend </span><span class="token punctuation">(</span>call<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-tool-call-part/index.html">AIToolCallPart</a><span class="token punctuation">, </span>allowed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The person answering tool calls' questions on this device, and how their answer reaches your backend, which holds each call until it gets one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1671576452%2FClasslikes%2F-1081916106" anchor-label="AIToolCallColors" id="1671576452%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-call-colors/index.html"><span>AITool</span><wbr><span>Call</span><wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1671576452%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="-a-i-tool-call-colors/index.html">AIToolCallColors</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>title<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>detail<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>accent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>success<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>failure<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The palette of <a href="-a-i-tool-call.html">AIToolCall</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="769770530%2FClasslikes%2F-1081916106" anchor-label="AIToolCallDefaults" id="769770530%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-call-defaults/index.html"><span>AITool</span><wbr><span>Call</span><wbr><span><span>Defaults</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="769770530%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-a-i-tool-call-defaults/index.html">AIToolCallDefaults</a></div><div class="brief "><p class="paragraph">Defaults of <a href="-a-i-tool-call.html">AIToolCall</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1997530227%2FClasslikes%2F-1081916106" anchor-label="AITypingIndicatorIndicatorParams" id="-1997530227%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-typing-indicator-indicator-params/index.html"><span>AITyping</span><wbr><span>Indicator</span><wbr><span>Indicator</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1997530227%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-a-i-typing-indicator-indicator-params/index.html">AITypingIndicatorIndicatorParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-a-i-typing-indicator-indicator.html">ChatAiComponentFactory.AITypingIndicatorIndicator</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1799700104%2FClasslikes%2F-1081916106" anchor-label="AITypingIndicatorLabelParams" id="1799700104%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-typing-indicator-label-params/index.html"><span>AITyping</span><wbr><span>Indicator</span><wbr><span>Label</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1799700104%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-a-i-typing-indicator-label-params/index.html">AITypingIndicatorLabelParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-a-i-typing-indicator-label.html">ChatAiComponentFactory.AITypingIndicatorLabel</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1919075355%2FClasslikes%2F-1081916106" anchor-label="ChatAiComponentFactory" id="-1919075355%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-chat-ai-component-factory/index.html"><span>Chat</span><wbr><span>Ai</span><wbr><span>Component</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1919075355%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-chat-ai-component-factory/index.html">ChatAiComponentFactory</a></div><div class="brief "><p class="paragraph">Factory that creates the components rendered inside the AI chat UI.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1720023427%2FClasslikes%2F-1081916106" anchor-label="ComposerInputContentParams" id="-1720023427%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-composer-input-content-params/index.html"><span>Composer</span><wbr><span>Input</span><wbr><span>Content</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1720023427%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-composer-input-content-params/index.html">ComposerInputContentParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>messageData<span class="token operator">: </span><a href="-message-data/index.html">MessageData</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isGenerating<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onTextChange<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onRemoveAttachment<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onSendClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onStopClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>focusRequester<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/focus/FocusRequester.html">FocusRequester</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-composer-input-content.html">ChatAiComponentFactory.ComposerInputContent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-318037319%2FClasslikes%2F-1081916106" anchor-label="ComposerInputTrailingContentParams" id="-318037319%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-composer-input-trailing-content-params/index.html"><span>Composer</span><wbr><span>Input</span><wbr><span>Trailing</span><wbr><span>Content</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-318037319%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-composer-input-trailing-content-params/index.html">ComposerInputTrailingContentParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>isGenerating<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>speechToTextState<span class="token operator">: </span><a href="-speech-to-text-button-state/index.html">SpeechToTextButtonState</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onPermissionDenied<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-composer-input-trailing-content.html">ChatAiComponentFactory.ComposerInputTrailingContent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1383122823%2FClasslikes%2F-1081916106" anchor-label="ComposerLeadingContentParams" id="-1383122823%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-composer-leading-content-params/index.html"><span>Composer</span><wbr><span>Leading</span><wbr><span>Content</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1383122823%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-composer-leading-content-params/index.html">ComposerLeadingContentParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>isGenerating<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>onAttachmentsClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-composer-leading-content.html">ChatAiComponentFactory.ComposerLeadingContent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2125130989%2FClasslikes%2F-1081916106" anchor-label="ComposerTrailingContentParams" id="2125130989%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-composer-trailing-content-params/index.html"><span>Composer</span><wbr><span>Trailing</span><wbr><span>Content</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2125130989%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-composer-trailing-content-params/index.html">ComposerTrailingContentParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>isGenerating<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-composer-trailing-content.html">ChatAiComponentFactory.ComposerTrailingContent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="292776319%2FClasslikes%2F-1081916106" anchor-label="MessageData" id="292776319%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-message-data/index.html"><span>Message</span><wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="292776319%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-message-data/index.html">MessageData</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">""</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>attachments<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/net/Uri.html">Uri</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptySet()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Data class representing a message composed by the user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1978882847%2FClasslikes%2F-1081916106" anchor-label="SpeechToTextButtonIdleContentParams" id="-1978882847%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-speech-to-text-button-idle-content-params/index.html"><span>Speech</span><wbr><span>To</span><wbr><span>Text</span><wbr><span>Button</span><wbr><span>Idle</span><wbr><span>Content</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1978882847%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-speech-to-text-button-idle-content-params/index.html">SpeechToTextButtonIdleContentParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>onClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-speech-to-text-button-idle-content.html">ChatAiComponentFactory.SpeechToTextButtonIdleContent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1259588008%2FClasslikes%2F-1081916106" anchor-label="SpeechToTextButtonRecordingContentParams" id="1259588008%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-speech-to-text-button-recording-content-params/index.html"><span>Speech</span><wbr><span>To</span><wbr><span>Text</span><wbr><span>Button</span><wbr><span>Recording</span><wbr><span>Content</span><wbr><span><span>Params</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1259588008%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-speech-to-text-button-recording-content-params/index.html">SpeechToTextButtonRecordingContentParams</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>onClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>rmsdB<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Parameters for <a href="-chat-ai-component-factory/-speech-to-text-button-recording-content.html">ChatAiComponentFactory.SpeechToTextButtonRecordingContent</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-612144261%2FClasslikes%2F-1081916106" anchor-label="SpeechToTextButtonState" id="-612144261%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-speech-to-text-button-state/index.html"><span>Speech</span><wbr><span>To</span><wbr><span>Text</span><wbr><span>Button</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-612144261%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="-speech-to-text-button-state/index.html">SpeechToTextButtonState</a></div><div class="brief "><p class="paragraph">State holder for <a href="-speech-to-text-button.html">SpeechToTextButton</a> that tracks the recording status.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="366143014%2FClasslikes%2F-1081916106" anchor-label="StreamingReasoningColors" id="366143014%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-streaming-reasoning-colors/index.html"><span>Streaming</span><wbr><span>Reasoning</span><wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="366143014%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="-streaming-reasoning-colors/index.html">StreamingReasoningColors</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>title<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>text<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>footnote<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>shimmer<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>rule<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The palette of <a href="-streaming-reasoning.html">StreamingReasoning</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="378687044%2FClasslikes%2F-1081916106" anchor-label="StreamingReasoningDefaults" id="378687044%2FClasslikes%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-streaming-reasoning-defaults/index.html"><span>Streaming</span><wbr><span>Reasoning</span><wbr><span><span>Defaults</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="378687044%2FClasslikes%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-streaming-reasoning-defaults/index.html">StreamingReasoningDefaults</a></div><div class="brief "><p class="paragraph">Defaults of <a href="-streaming-reasoning.html">StreamingReasoning</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-237123403%2FProperties%2F-1081916106" anchor-label="LocalChatAiComponentFactory" id="-237123403%2FProperties%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-local-chat-ai-component-factory.html"><span>Local</span><wbr><span>Chat</span><wbr><span>Ai</span><wbr><span>Component</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-237123403%2FProperties%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="-local-chat-ai-component-factory.html">LocalChatAiComponentFactory</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ProvidableCompositionLocal.html">ProvidableCompositionLocal</a><span class="token operator">&lt;</span><a href="-chat-ai-component-factory/index.html">ChatAiComponentFactory</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The composition local that provides the current <a href="-chat-ai-component-factory/index.html">ChatAiComponentFactory</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1775499602%2FFunctions%2F-1081916106" anchor-label="AIMessagePartItem" id="1775499602%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-message-part-item.html"><span>AIMessage</span><wbr><span>Part</span><wbr><span><span>Item</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1775499602%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-message-part-item.html"><span class="token function">AIMessagePartItem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">part<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-message-part/index.html">AIMessagePart</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">approver<span class="token operator">: </span><a href="-a-i-tool-approver/index.html">AIToolApprover</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">textStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token operator"> = </span>MaterialTheme.typography.bodyMedium<span class="token punctuation">, </span></span><span class="parameter ">reasoningColors<span class="token operator">: </span><a href="-streaming-reasoning-colors/index.html">StreamingReasoningColors</a><span class="token operator"> = </span>StreamingReasoningDefaults.colors()<span class="token punctuation">, </span></span><span class="parameter ">toolCallColors<span class="token operator">: </span><a href="-a-i-tool-call-colors/index.html">AIToolCallColors</a><span class="token operator"> = </span>AIToolCallDefaults.colors()<span class="token punctuation">, </span></span><span class="parameter ">toolApprovalColors<span class="token operator">: </span><a href="-a-i-tool-approval-colors/index.html">AIToolApprovalColors</a><span class="token operator"> = </span>AIToolApprovalDefaults.colors()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">One step of a reply: a round of reasoning with its preview, a tool call (with its question, when it waits for the approver), or a neutral placeholder for a step this SDK doesn't know.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1159630773%2FFunctions%2F-1081916106" anchor-label="AIMessageParts" id="1159630773%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-message-parts.html"><span>AIMessage</span><wbr><span><span>Parts</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1159630773%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-message-parts.html"><span class="token function">AIMessageParts</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parts<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-message-part/index.html">AIMessagePart</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span>part<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-message-part/index.html">AIMessagePart</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The steps an AI agent took while replying, in order, each shown by <a href="-a-i-message-parts.html">content</a>.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-message-parts.html"><span class="token function">AIMessageParts</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parts<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-message-part/index.html">AIMessagePart</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">approver<span class="token operator">: </span><a href="-a-i-tool-approver/index.html">AIToolApprover</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">textStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token operator"> = </span>MaterialTheme.typography.bodyMedium<span class="token punctuation">, </span></span><span class="parameter ">reasoningColors<span class="token operator">: </span><a href="-streaming-reasoning-colors/index.html">StreamingReasoningColors</a><span class="token operator"> = </span>StreamingReasoningDefaults.colors()<span class="token punctuation">, </span></span><span class="parameter ">toolCallColors<span class="token operator">: </span><a href="-a-i-tool-call-colors/index.html">AIToolCallColors</a><span class="token operator"> = </span>AIToolCallDefaults.colors()<span class="token punctuation">, </span></span><span class="parameter ">toolApprovalColors<span class="token operator">: </span><a href="-a-i-tool-approval-colors/index.html">AIToolApprovalColors</a><span class="token operator"> = </span>AIToolApprovalDefaults.colors()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The steps an AI agent took while replying, in order. Show it before the reply's text.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="599813419%2FFunctions%2F-1081916106" anchor-label="AISuggestions" id="599813419%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-suggestions.html"><span><span>AISuggestions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="599813419%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-suggestions.html"><span class="token function">AISuggestions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">suggestions<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">onSuggestionClick<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">itemMaxWidth<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a><span class="token operator"> = </span>160.dp<span class="token punctuation">, </span></span><span class="parameter ">contentPadding<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/PaddingValues.html">PaddingValues</a><span class="token operator"> = </span>PaddingValues(horizontal = 16.dp, vertical = 8.dp)</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A horizontally scrolling row of suggestion chips, usually placed above <a href="-chat-composer.html">ChatComposer</a> on a new chat.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1797631014%2FFunctions%2F-1081916106" anchor-label="AIToolApprovalCard" id="1797631014%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-approval-card.html"><span>AITool</span><wbr><span>Approval</span><wbr><span><span>Card</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1797631014%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-tool-approval-card.html"><span class="token function">AIToolApprovalCard</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">approval<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-tool-approval/index.html">AIToolApproval</a><span class="token punctuation">, </span></span><span class="parameter ">state<span class="token operator">: </span><a href="-a-i-tool-approval-state/index.html">AIToolApprovalState</a><span class="token punctuation">, </span></span><span class="parameter ">decide<span class="token operator">: </span><span class="token punctuation">(</span>allowed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">textStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token operator"> = </span>MaterialTheme.typography.bodyMedium<span class="token punctuation">, </span></span><span class="parameter ">colors<span class="token operator">: </span><a href="-a-i-tool-approval-colors/index.html">AIToolApprovalColors</a><span class="token operator"> = </span>AIToolApprovalDefaults.colors()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A tool call's question: what it asks, the agent's reason and what allowing it shares, and buttons to allow or decline it.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="605300713%2FFunctions%2F-1081916106" anchor-label="AIToolApprovalPrompt" id="605300713%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-approval-prompt.html"><span>AITool</span><wbr><span>Approval</span><wbr><span><span>Prompt</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="605300713%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-tool-approval-prompt.html"><span class="token function">AIToolApprovalPrompt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">call<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-tool-call-part/index.html">AIToolCallPart</a><span class="token punctuation">, </span></span><span class="parameter ">approver<span class="token operator">: </span><a href="-a-i-tool-approver/index.html">AIToolApprover</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span>approval<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-tool-approval/index.html">AIToolApproval</a><span class="token punctuation">, </span>state<span class="token operator">: </span><a href="-a-i-tool-approval-state/index.html">AIToolApprovalState</a><span class="token punctuation">, </span>decide<span class="token operator">: </span><span class="token punctuation">(</span>allowed<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ approval, state, decide -&gt; AIToolApprovalCard(approval = approval, state = state, decide = decide) }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Asks the person a tool call waits for whether it may run: the question its <code class="lang-kotlin">ai_tool_call</code> step carries (status <code class="lang-kotlin">awaiting_approval</code>, with <code class="lang-kotlin">approval</code>). It shows only to that person, on the device the call names, and only while the call waits, so it can sit under every tool call:</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-254461992%2FFunctions%2F-1081916106" anchor-label="AIToolCall" id="-254461992%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-tool-call.html"><span>AITool</span><wbr><span><span>Call</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-254461992%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-tool-call.html"><span class="token function">AIToolCall</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">part<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-tool-call-part/index.html">AIToolCallPart</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">textStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token operator"> = </span>MaterialTheme.typography.bodyMedium<span class="token punctuation">, </span></span><span class="parameter ">colors<span class="token operator">: </span><a href="-a-i-tool-call-colors/index.html">AIToolCallColors</a><span class="token operator"> = </span>AIToolCallDefaults.colors()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">One tool call: what it is doing, where it runs, and how it went.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1777418949%2FFunctions%2F-1081916106" anchor-label="AITypingIndicator" id="-1777418949%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-i-typing-indicator.html"><span>AITyping</span><wbr><span><span>Indicator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1777418949%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-a-i-typing-indicator.html"><span class="token function">AITypingIndicator</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">label<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
+        with(LocalChatAiComponentFactory.current) {
+            AITypingIndicatorLabel(AITypingIndicatorLabelParams())
+        }
+    }<span class="token punctuation">, </span></span><span class="parameter ">indicator<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
+        with(LocalChatAiComponentFactory.current) {
+            AITypingIndicatorIndicator(AITypingIndicatorIndicatorParams())
+        }
+    }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A typing indicator composable that displays an optional label and an animated indicator.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="123140317%2FFunctions%2F-1081916106" anchor-label="ChatComposer" id="123140317%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-chat-composer.html"><span>Chat</span><wbr><span><span>Composer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="123140317%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-chat-composer.html"><span class="token function">ChatComposer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onSendClick<span class="token operator">: </span><span class="token punctuation">(</span>data<span class="token operator">: </span><a href="-message-data/index.html">MessageData</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">onStopClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">isGenerating<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">messageData<span class="token operator">: </span><a href="-message-data/index.html">MessageData</a><span class="token operator"> = </span>MessageData()<span class="token punctuation">, </span></span><span class="parameter ">focusRequester<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/focus/FocusRequester.html">FocusRequester</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Chat composer with attach, voice, and send buttons.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-chat-composer.html"><span class="token function">ChatComposer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageData<span class="token operator">: </span><a href="-message-data/index.html">MessageData</a><span class="token punctuation">, </span></span><span class="parameter ">onMessageDataChange<span class="token operator">: </span><span class="token punctuation">(</span><a href="-message-data/index.html">MessageData</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">onSendClick<span class="token operator">: </span><span class="token punctuation">(</span>data<span class="token operator">: </span><a href="-message-data/index.html">MessageData</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">onStopClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span></span><span class="parameter ">isGenerating<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">focusRequester<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/focus/FocusRequester.html">FocusRequester</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Chat composer with attach, voice, and send buttons, whose message the caller owns.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1749563115%2FFunctions%2F-1081916106" anchor-label="CompoundChatAiComponentFactory" id="-1749563115%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-compound-chat-ai-component-factory.html"><span>Compound</span><wbr><span>Chat</span><wbr><span>Ai</span><wbr><span>Component</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1749563115%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-compound-chat-ai-component-factory.html"><span class="token function">CompoundChatAiComponentFactory</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>keys<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">factory<span class="token operator">: </span><span class="token punctuation">(</span>current<span class="token operator">: </span><a href="-chat-ai-component-factory/index.html">ChatAiComponentFactory</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="-chat-ai-component-factory/index.html">ChatAiComponentFactory</a><span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Builds a compound <a href="-chat-ai-component-factory/index.html">ChatAiComponentFactory</a> by wrapping the current factory and provides it to <a href="-compound-chat-ai-component-factory.html">content</a> through <a href="-local-chat-ai-component-factory.html">LocalChatAiComponentFactory</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-409165815%2FFunctions%2F-1081916106" anchor-label="rememberSpeechToTextButtonState" id="-409165815%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remember-speech-to-text-button-state.html"><span>remember</span><wbr><span>Speech</span><wbr><span>To</span><wbr><span>Text</span><wbr><span>Button</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-409165815%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="remember-speech-to-text-button-state.html"><span class="token function">rememberSpeechToTextButtonState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onPartialResult<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onFinalResult<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-speech-to-text-button-state/index.html">SpeechToTextButtonState</a></div><div class="brief "><p class="paragraph">Creates and remembers a <a href="-speech-to-text-button-state/index.html">SpeechToTextButtonState</a> instance.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1795347488%2FFunctions%2F-1081916106" anchor-label="SpeechToTextButton" id="1795347488%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-speech-to-text-button.html"><span>Speech</span><wbr><span>To</span><wbr><span>Text</span><wbr><span><span>Button</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1795347488%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-speech-to-text-button.html"><span class="token function">SpeechToTextButton</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">state<span class="token operator">: </span><a href="-speech-to-text-button-state/index.html">SpeechToTextButtonState</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">onPermissionDenied<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ }<span class="token punctuation">, </span></span><span class="parameter ">idleContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span>onClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ onClick -&gt;
+        with(LocalChatAiComponentFactory.current) {
+            SpeechToTextButtonIdleContent(SpeechToTextButtonIdleContentParams(onClick = onClick))
+        }
+    }<span class="token punctuation">, </span></span><span class="parameter ">recordingContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span>onClick<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token punctuation">, </span>rmsdB<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ onClick, rmsdB -&gt;
+        with(LocalChatAiComponentFactory.current) {
+            SpeechToTextButtonRecordingContent(
+                SpeechToTextButtonRecordingContentParams(onClick = onClick, rmsdB = rmsdB),
+            )
+        }
+    }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A composable button that provides speech-to-text functionality.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="597423562%2FFunctions%2F-1081916106" anchor-label="StreamingReasoning" id="597423562%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-streaming-reasoning.html"><span>Streaming</span><wbr><span><span>Reasoning</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="597423562%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-streaming-reasoning.html"><span class="token function">StreamingReasoning</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">part<span class="token operator">: </span><a href="../io.getstream.chat.android.ai.compose.parts/-a-i-reasoning-part/index.html">AIReasoningPart</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">footnote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">textStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token operator"> = </span>MaterialTheme.typography.bodyMedium<span class="token punctuation">, </span></span><span class="parameter ">colors<span class="token operator">: </span><a href="-streaming-reasoning-colors/index.html">StreamingReasoningColors</a><span class="token operator"> = </span>StreamingReasoningDefaults.colors()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Shows a reasoning step: its live <a href="-streaming-reasoning.html">text</a> when the app has it, otherwise the step's preview, with its summary beside "Thought for 12s" once it is done.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-streaming-reasoning.html"><span class="token function">StreamingReasoning</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">isThinking<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">modifier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/Modifier.html">Modifier</a><span class="token operator"> = </span>Modifier<span class="token punctuation">, </span></span><span class="parameter ">durationSeconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">summary<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">footnote<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">initiallyExpanded<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">showsLiveReasoning<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">maxExpandedHeight<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a><span class="token operator"> = </span>260.dp<span class="token punctuation">, </span></span><span class="parameter ">textStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token operator"> = </span>MaterialTheme.typography.bodyMedium<span class="token punctuation">, </span></span><span class="parameter ">colors<span class="token operator">: </span><a href="-streaming-reasoning-colors/index.html">StreamingReasoningColors</a><span class="token operator"> = </span>StreamingReasoningDefaults.colors()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A model's reasoning (its "thinking"), shown alongside its reply.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1928244882%2FFunctions%2F-1081916106" anchor-label="StreamingText" id="1928244882%2FFunctions%2F-1081916106" data-filterable-set=":stream-chat-android-ai-compose/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":stream-chat-android-ai-compose/main" data-filterable-set=":stream-chat-android-ai-compose/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-streaming-text.html"><span>Streaming</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1928244882%2FFunctions%2F-1081916106"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ai-compose/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">fun </span><a href="-streaming-text.html"><span class="token function">StreamingText</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">text<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">animate<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">chunkDelayMs<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">30</span><span class="token punctuation">, </span></span><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span>displayedText<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{ displayedText -&gt;
+        RichText(text = displayedText)
+    }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A composable that wraps content and provides streaming animation. Progressively reveals text content word-by-word and whitespace chunk-by-chunk.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

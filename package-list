@@ -1,6 +1,11 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 
+module:stream-chat-android-ai-compose
+io.getstream.chat.android.ai.compose.parts
+io.getstream.chat.android.ai.compose.ui.component
+module:stream-chat-android-ai-ondevice
+io.getstream.chat.android.ai.ondevice
 module:stream-chat-android-client
 io.getstream.chat.android.client
 io.getstream.chat.android.client.api
