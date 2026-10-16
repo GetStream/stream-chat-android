@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.EVENT_PARENT_ID_KEY
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
@@ -172,7 +173,7 @@ internal class TypingEventListenerState(private val logic: LogicRegistry) : Typi
 
             when (eventType) {
                 EventType.TYPING_START ->
-                    channelLogic.setKeystrokeParentMessageId(extraData[ARG_TYPING_PARENT_ID] as? String)
+                    channelLogic.setKeystrokeParentMessageId(extraData[EVENT_PARENT_ID_KEY] as? String)
 
                 EventType.TYPING_STOP ->
                     channelLogic.setKeystrokeParentMessageId(null)
@@ -181,7 +182,6 @@ internal class TypingEventListenerState(private val logic: LogicRegistry) : Typi
     }
 
     private companion object {
-        private const val ARG_TYPING_PARENT_ID = "parent_id"
         private const val MILLI_SEC = 1000
         private const val TYPING_DELAY_SECS = 3
         private const val TYPING_DELAY = TYPING_DELAY_SECS * MILLI_SEC

@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser.toMap
@@ -2811,6 +2812,42 @@ internal class MoshiChatApiTest {
 
         event `should be instance of` TypingStartEvent::class
         event.rawCreatedAt `should be equal to` "2026-10-14T11:13:25.614650759Z"
+    }
+
+    @Test
+    fun `A sent AI indicator update is read with the fields the response keeps in its custom data`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.sendEvent(any(), any(), any()))
+            .doReturn(RetroSuccess(SENT_AI_INDICATOR_EVENT.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        val result = sut.sendEvent(
+            "ai_indicator.update",
+            "messaging",
+            "general",
+            mapOf("ai_state" to "AI_STATE_THINKING", "message_id" to "m1"),
+        ).await()
+
+        val event = (result as Result.Success).value as AIIndicatorUpdatedEvent
+        event.aiState `should be equal to` "AI_STATE_THINKING"
+        event.messageId `should be equal to` "m1"
+        event.rawCreatedAt `should be equal to` "2026-10-14T11:13:25.614650759Z"
+    }
+
+    @Test
+    fun `A parent id that isn't a string stays in the custom data`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.sendEvent(any(), any(), any()))
+            .doReturn(RetroSuccess(SENT_TYPING_EVENT.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.sendEvent("custom_event", "messaging", "general", mapOf("parent_id" to 42)).await()
+
+        verify(api).sendEvent(
+            "messaging",
+            "general",
+            SendEventRequest(event = EventRequest(type = "custom_event", custom = mapOf("parent_id" to 42))),
+        )
     }
 
     @Test

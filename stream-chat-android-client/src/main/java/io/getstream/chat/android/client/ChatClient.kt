@@ -266,6 +266,9 @@ import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.days
 
+/** The `extraData` key of the parent message a thread's typing events carry. */
+internal const val EVENT_PARENT_ID_KEY: String = "parent_id"
+
 /**
  * The ChatClient is the main entry point for all low-level operations on chat
  */
@@ -4873,7 +4876,7 @@ internal constructor(
             )
         }
         val extraData: Map<Any, Any> = parentId?.let {
-            mapOf(ARG_TYPING_PARENT_ID to parentId)
+            mapOf(EVENT_PARENT_ID_KEY to parentId)
         } ?: emptyMap()
         val eventTime = now()
         val eventType = EventType.TYPING_START
@@ -4922,7 +4925,7 @@ internal constructor(
             )
         }
         val extraData: Map<Any, Any> = parentId?.let {
-            mapOf(ARG_TYPING_PARENT_ID to parentId)
+            mapOf(EVENT_PARENT_ID_KEY to parentId)
         } ?: emptyMap()
         val eventTime = now()
         val eventType = EventType.TYPING_STOP
@@ -5670,8 +5673,6 @@ internal constructor(
         private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
         private const val INITIALIZATION_DELAY = 100L
         public const val RESOLVE_DEPENDENCY_TIMEOUT: Long = 10_000L
-
-        private const val ARG_TYPING_PARENT_ID = "parent_id"
 
         private var instance: ChatClient? = null
 

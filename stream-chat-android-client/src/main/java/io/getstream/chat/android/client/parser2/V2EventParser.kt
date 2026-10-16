@@ -73,6 +73,7 @@ internal class V2EventParser(
     private val exactDateAdapter by lazy { moshi.adapter(ExactDate::class.java) }
     private val userAdapter by lazy { moshi.adapter(UserResponseCommonFields::class.java) }
     private val valueAdapter by lazy { moshi.adapter(Any::class.java) }
+    private val keyAdapter by lazy { moshi.adapter(String::class.java) }
 
     /**
      * Parses [raw] into its domain event, or returns null for a frame the SDK ignores.
@@ -111,19 +112,34 @@ internal class V2EventParser(
         this.cid == cid && (replyTo?.hasCidThroughout(cid) ?: true)
 
     /**
-     * Parses the event a REST response carries under [key], such as the one sending an event returns. The event's
-     * JSON is handed over as sent, so its dates keep their exact value.
+     * Parses the event a send-event response carries. The response holds the event as sent, its custom data under
+     * `custom`, while the copy the socket delivers has the backend's fields at the root (an AI indicator's `ai_state`,
+     * say), so the `custom` entries the root lacks are lifted to it first. Values are copied as raw JSON, so dates
+     * keep their exact value.
      */
-    fun parseEnvelope(body: String, key: String = "event"): ChatEvent? {
-        reader(body).use { reader ->
-            reader.beginObject()
-            while (reader.hasNext()) {
-                if (reader.nextName() == key) return parse(reader.nextSource().use { it.readUtf8() })
-                reader.skipValue()
-            }
-        }
-        throw JsonDataException("Required value '$key' missing at $")
+    fun parseSentEvent(body: String): ChatEvent? {
+        val event = rawFields(body)["event"] ?: throw JsonDataException("Required value 'event' missing at $")
+        return parse(withCustomAtRoot(event))
     }
+
+    private fun withCustomAtRoot(event: String): String {
+        val fields = rawFields(event)
+        val custom = fields["custom"]?.takeIf { it.trimStart().startsWith("{") }?.let(::rawFields).orEmpty()
+        return jsonObject(fields + custom.filterKeys { it !in fields })
+    }
+
+    /** The fields of a JSON object, each value as its raw JSON. */
+    private fun rawFields(json: String): Map<String, String> {
+        val fields = linkedMapOf<String, String>()
+        reader(json).use { reader ->
+            reader.beginObject()
+            while (reader.hasNext()) fields[reader.nextName()] = reader.nextSource().use { it.readUtf8() }
+        }
+        return fields
+    }
+
+    private fun jsonObject(rawFields: Map<String, String>): String =
+        rawFields.entries.joinToString(prefix = "{", postfix = "}") { (name, raw) -> "${keyAdapter.toJson(name)}:$raw" }
 
     private fun readHead(raw: String): Head {
         var type: String? = null
