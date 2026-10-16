@@ -379,7 +379,6 @@ constructor(
         delegate = MoshiChatApi(
             domainMapping = v2DomainMapping,
             v1DomainMapping = domainMapping,
-            eventMapping = eventMapping,
             dtoMapping = dtoMapping,
             fileUploader = fileUploader ?: defaultFileUploader,
             fileTransformer = fileTransformer,
@@ -393,7 +392,7 @@ constructor(
             buildV2RetrofitApi<ModerationApi>(),
             buildRetrofitApi<ModerationV1Api>(),
             buildV2RetrofitApi<GeneralApi>(),
-            buildRetrofitApi<SyncApi>(),
+            buildV2RetrofitApi<SyncApi>(),
             buildV2RetrofitApi<ConfigApi>(),
             buildFileDownloadApi(),
             buildV2RetrofitApi<OpenGraphApi>(),

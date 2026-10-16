@@ -18,9 +18,8 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
-import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.network.models.SyncRequest
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.OPTIONS
@@ -28,9 +27,8 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 /**
- * Endpoints tied to the websocket connection that are still on v1. `/sync` replays events in the v1 encoding the v1
- * parser reads, whichever socket is connected; the `/connect` warm-up has no v2 route (the v2 socket is
- * `/api/v2/connect`).
+ * Endpoints tied to the websocket connection. The `/connect` warm-up stays on v1, which has no v2 route (the v2 socket
+ * is `/api/v2/connect`).
  */
 @AuthenticatedApi
 internal interface SyncApi {
@@ -38,9 +36,14 @@ internal interface SyncApi {
     @OPTIONS("/connect")
     fun warmUp(): RetrofitCall<ResponseBody>
 
-    @POST("/sync")
-    fun getSyncHistory(
-        @Body body: SyncHistoryRequest,
+    /**
+     * Replays the events since the request's cursor. The body is returned raw: its events are read by the v2 event
+     * parser, so their unix-nanosecond dates aren't read as numbers on the way.
+     */
+    @POST("/api/v2/chat/sync")
+    fun sync(
+        @Body request: SyncRequest,
+        @Query("watch") watch: Boolean,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
-    ): RetrofitCall<SyncHistoryResponse>
+    ): RetrofitCall<ResponseBody>
 }

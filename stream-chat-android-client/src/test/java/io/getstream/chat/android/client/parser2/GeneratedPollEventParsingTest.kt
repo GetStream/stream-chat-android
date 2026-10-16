@@ -17,9 +17,6 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.createPollAnswerVoteJsonString
 import io.getstream.chat.android.client.createPollJsonString
 import io.getstream.chat.android.client.createPollVoteJsonString
@@ -32,9 +29,6 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
-import io.getstream.chat.android.models.NoOpUserTransformer
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -44,18 +38,10 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.reflect.KClass
 
-/** Poll events parsed through their generated models, on both the WebSocket and the `/sync` path. */
+/** Poll events parsed through their generated models. */
 internal class GeneratedPollEventParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
-    private val eventMapping = EventMapping(
-        DomainMapping(
-            currentUserIdProvider = { "" },
-            channelTransformer = NoOpChannelTransformer,
-            messageTransformer = NoOpMessageTransformer,
-            userTransformer = NoOpUserTransformer,
-        ),
-    )
 
     @ParameterizedTest
     @MethodSource("events")
@@ -91,18 +77,6 @@ internal class GeneratedPollEventParsingTest {
             .shouldBeInstanceOf<AnswerCastedEvent>().newAnswer.text shouldBeEqualTo "My answer"
         parser.fromJson(pollEventJson("poll.vote_removed", createPollVoteJsonString()), ChatEvent::class.java)
             .shouldBeInstanceOf<VoteRemovedEvent>().removedVote.id shouldBeEqualTo "vote-id"
-    }
-
-    @Test
-    fun `A synced poll event keeps the created_at string as sent`() {
-        val response = parser.fromJson(
-            """{ "events": [${pollEventJson("poll.closed")}] }""",
-            SyncHistoryResponse::class.java,
-        )
-
-        val event = with(eventMapping) { response.events.single().toDomain() }
-
-        event.rawCreatedAt shouldBeEqualTo NANOSECOND_CREATED_AT
     }
 
     @Test
