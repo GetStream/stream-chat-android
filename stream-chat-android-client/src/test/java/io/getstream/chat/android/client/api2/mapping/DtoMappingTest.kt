@@ -23,6 +23,7 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MESSAGE_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
@@ -545,5 +546,10 @@ internal class DtoMappingTest {
             messageTransformer = messageTransformer,
             userTransformer = userTransformer,
         )
+    }
+
+    @Test
+    fun `The fields a message request sends back typed are among the declared fields responses copy to extraData`() {
+        (SENT_BACK_MESSAGE_KEYS - GENERATED_MESSAGE_EXTRA_DATA_KEYS) shouldBeEqualTo emptySet()
     }
 }
