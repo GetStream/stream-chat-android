@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
+import okio.Buffer
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
@@ -60,6 +61,10 @@ internal class V2EventParserTest {
         v1Parser.fromJson(Frame(Wire.V1).frame().toJson(), ChatEvent::class.java)
 
     private fun v2(frame: Frame.() -> Map<String, Any?>): ChatEvent? = v2Parser.parse(Frame(Wire.V2).frame().toJson())
+
+    private fun sync(body: String): List<ChatEvent> = v2Parser.parseSyncEvents(Buffer().writeUtf8(body))
+
+    private fun synced(event: Map<String, Any?>): List<ChatEvent> = sync(mapOf("events" to listOf(event)).toJson())
 
     private fun assertParity(frame: Frame.() -> Map<String, Any?>) {
         v2(frame) shouldBeEqualTo v1(frame)
@@ -267,7 +272,7 @@ internal class V2EventParserTest {
             "duration" to "1.20ms",
         ).toJson()
 
-        v2Parser.parseSyncEvents(body) shouldBeEqualTo listOf(v2(updated), v2(typing))
+        sync(body) shouldBeEqualTo listOf(v2(updated), v2(typing))
     }
 
     @Test
@@ -290,22 +295,54 @@ internal class V2EventParserTest {
             )
         }
         val full = Frame(Wire.V2).reaction() + mapOf("channel" to Frame(Wire.V2).channel(), "message_id" to "m1")
-        fun synced(event: Map<String, Any?>) = v2Parser.parseSyncEvents(mapOf("events" to listOf(event)).toJson())
-
         synced(Frame(Wire.V2).reaction()) shouldBeEqualTo synced(full)
+    }
+
+    @Test
+    fun `A message deletion replayed without message_id and hard_delete parses as a soft one`() {
+        val deleted: Frame.() -> Map<String, Any?> = {
+            event(
+                "message.deleted",
+                "cid" to CID,
+                "channel_type" to "messaging",
+                "channel_id" to "general",
+                "message" to message(),
+                "user" to user(),
+            )
+        }
+        val full = Frame(Wire.V2).deleted() + mapOf("message_id" to "m1", "hard_delete" to false)
+
+        synced(Frame(Wire.V2).deleted()) shouldBeEqualTo synced(full)
+    }
+
+    @Test
+    fun `A message update replayed without message_id parses as the full one`() {
+        val updated: Frame.() -> Map<String, Any?> = {
+            event(
+                "message.updated",
+                "cid" to CID,
+                "channel_type" to "messaging",
+                "channel_id" to "general",
+                "message" to message(),
+                "user" to user(),
+            )
+        }
+        val full = Frame(Wire.V2).updated() + mapOf("message_id" to "m1")
+
+        synced(Frame(Wire.V2).updated()) shouldBeEqualTo synced(full)
     }
 
     @Test
     fun `A synced event that fails to parse fails the whole response`() {
         val body = mapOf("events" to listOf(Frame(Wire.V2).event("channel.hidden", "cid" to CID))).toJson()
 
-        assertThrows<JsonDataException> { v2Parser.parseSyncEvents(body) }
+        assertThrows<JsonDataException> { sync(body) }
     }
 
     @Test
     fun `A sync response without events replays none`() {
-        v2Parser.parseSyncEvents("""{"duration": "1.20ms"}""").shouldBeEmpty()
-        v2Parser.parseSyncEvents("""{"events": null, "duration": "1.20ms"}""").shouldBeEmpty()
+        sync("""{"duration": "1.20ms"}""").shouldBeEmpty()
+        sync("""{"events": null, "duration": "1.20ms"}""").shouldBeEmpty()
     }
 
     @Test
