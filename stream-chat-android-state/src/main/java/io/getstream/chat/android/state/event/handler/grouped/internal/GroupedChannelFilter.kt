@@ -118,4 +118,5 @@ private fun relativeCutoffOrNull(value: String, now: Date): Date? = value.remove
     .takeIf { it.endsWith(RELATIVE_DATE_DAYS_SUFFIX) }
     ?.removeSuffix(RELATIVE_DATE_DAYS_SUFFIX)
     ?.toLongOrNull()
+    ?.takeIf { days -> days > 0 }
     ?.let { days -> Date(now.time - TimeUnit.DAYS.toMillis(days)) }

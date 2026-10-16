@@ -64,6 +64,13 @@ internal class GroupedChannelFilterTest {
     }
 
     @Test
+    fun `relative cutoff that is not a positive number of days matches`() {
+        listOf("-7d", "now--7d", "0d", "now-0d").forEach { cutoff ->
+            assertTrue(Filters.greaterThanEquals("query_timestamp", cutoff).matchesGroupedChannel("ended", daysAgo(8), now))
+        }
+    }
+
+    @Test
     fun `full timestamp cutoff is supported`() {
         val filter = Filters.greaterThanEquals("query_timestamp", "2027-01-08T08:00:00.000Z")
 
