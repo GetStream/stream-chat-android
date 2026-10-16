@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsResult
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
@@ -39,7 +38,6 @@ import io.getstream.chat.android.state.event.handler.grouped.internal.isUnreadIn
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toOfflinePaginationRequest
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
-import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.async
@@ -670,25 +668,12 @@ internal class QueryChannelsLogic(
         return chatEvents.map { event ->
             val channel = (event as? CidEvent)?.let { resolvedChannels[it.cid] }
             val result = queryChannelsStateLogic.handleChatEvent(event, channel)
-            val isPartialUpdateBelowLoadedChannels = event is NotificationChannelPartialUpdatedEvent &&
-                result is EventHandlingResult.WatchAndAdd &&
-                !isWithinLoadedChannels(channel?.mergePartialUpdate(event.channel) ?: event.channel)
-            if (isPartialUpdateBelowLoadedChannels) EventHandlingResult.Skip else result
+            when (identifier) {
+                is QueryChannelsIdentifier.Grouped ->
+                    result.skipWatchBelowLoadedChannels(event, channel, queryChannelsStateLogic.getState())
+                else -> result
+            }
         }
-    }
-
-    /**
-     * Whether [channel] can be shown in a grouped list without the pages before it: the group has no more pages, or
-     * the channel sorts at or above the last loaded channel. A channel below them is shown when its page loads, so a
-     * partial update on an old channel does not watch it. Without local data the channel has no last message time,
-     * so its position is a lower bound.
-     */
-    private fun isWithinLoadedChannels(channel: Channel): Boolean {
-        if (identifier !is QueryChannelsIdentifier.Grouped) return true
-        val state = queryChannelsStateLogic.getState()
-        if (state.endOfChannels.value) return true
-        val lastLoaded = state.channels.value?.lastOrNull() ?: return true
-        return state.sort.comparator.compare(channel, lastLoaded) <= 0
     }
 
     /**

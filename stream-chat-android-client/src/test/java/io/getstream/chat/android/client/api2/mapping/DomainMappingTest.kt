@@ -285,6 +285,27 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `Partially updated channel without name or image maps them to empty values`() {
+        val dto = DownstreamChannelPartialUpdateDto(
+            cid = "messaging:123",
+            id = "123",
+            type = "messaging",
+            name = null,
+            image = null,
+            created_at = null,
+            updated_at = null,
+            frozen = false,
+            disabled = false,
+            extraData = emptyMap(),
+        )
+
+        val result = with(Fixture().get()) { dto.toDomain() }
+
+        assertEquals("", result.name)
+        assertEquals("", result.image)
+    }
+
+    @Test
     fun `DownstreamChannelDto is correctly mapped to Channel`() {
         val downstreamChannelDto = randomDownstreamChannelDto()
         val sut = Fixture().get()
