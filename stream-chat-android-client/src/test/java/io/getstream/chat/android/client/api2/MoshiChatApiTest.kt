@@ -2319,7 +2319,7 @@ internal class MoshiChatApiTest {
             val sut = Fixture().withChannelApi(api).get()
             sut.setConnection(userId = randomString(), connectionId = randomString())
 
-            val result = sut.queryGroupedChannels(limit = null, groups = null, watch = false, presence = false).await()
+            val result = sut.queryGroupedChannels(limit = null, groups = null, sort = null, watch = false, presence = false).await()
 
             (result as Result.Failure).value.message shouldBeEqualTo
                 "A channel state in the response carried no channel"
