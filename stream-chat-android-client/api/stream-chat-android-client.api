@@ -2227,6 +2227,29 @@ public final class io/getstream/chat/android/client/events/NotificationChannelMu
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/events/NotificationChannelPartialUpdatedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasChannel {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/client/events/NotificationChannelPartialUpdatedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/NotificationChannelPartialUpdatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/NotificationChannelPartialUpdatedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/events/NotificationChannelTruncatedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasChannel, io/getstream/chat/android/client/events/HasGroupedUnreadChannels, io/getstream/chat/android/client/events/HasUnreadCounts {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;IILjava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;IILjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

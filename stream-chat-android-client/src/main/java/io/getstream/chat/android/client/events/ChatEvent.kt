@@ -422,6 +422,25 @@ public data class NotificationChannelMutesUpdatedEvent(
 ) : ChatEvent(), HasOwnUser
 
 /**
+ * Triggered when a channel is partially updated, for members of the channel who are not watching it. Members who
+ * are watching it receive [ChannelUpdatedEvent] instead.
+ *
+ * The [channel] carries only part of the channel data: [Channel.id], [Channel.type], [Channel.name], [Channel.image],
+ * [Channel.frozen], [Channel.disabled], [Channel.team], [Channel.createdAt], [Channel.updatedAt] and
+ * [Channel.extraData] (the complete custom data, plus the `disabled` flag). Other fields, such as members,
+ * messages, reads, config and [Channel.lastMessageAt], keep their default values.
+ */
+public data class NotificationChannelPartialUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val channel: Channel,
+) : CidEvent(), HasChannel
+
+/**
  * Triggered when a channels' history is truncated
  */
 public data class NotificationChannelTruncatedEvent(

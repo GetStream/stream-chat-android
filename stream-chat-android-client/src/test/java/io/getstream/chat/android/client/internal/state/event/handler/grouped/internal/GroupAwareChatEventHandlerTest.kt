@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
+import io.getstream.chat.android.client.test.randomNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
@@ -506,6 +507,209 @@ internal class GroupAwareChatEventHandlerTest {
 
         assertEquals(EventHandlingResult.Skip, result)
     }
+
+    @Test
+    fun `Given a channel in the list When a partial update moves it to another group Should remove`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = mapOf(channel.cid to channel),
+            currentUser = currentUser,
+        )
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "other"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Remove(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel in the list When a partial update removes its group Should remove`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = mapOf(channel.cid to channel),
+            currentUser = currentUser,
+        )
+        val event = partialUpdateOf(channel, custom = emptyMap())
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Remove(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel in the list When a partial update keeps it in the group Should skip`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = mapOf(channel.cid to channel),
+            currentUser = currentUser,
+        )
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a channel not in local state When a partial update moves it into the group Should watch and add`() {
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a cached channel not in the list When a partial update moves it into the group Should watch and add`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel not in local state When a partial update keeps it in another group Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "other"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given the user hid the channel When a partial update moves it into the group Should skip`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = true)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a cached channel the user left When a partial update moves it into the group Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "other"))
+        val cachedChannel = channel.copy(membership = null, hidden = false)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a recent last message in local state When a partial update sets an old touched_at Should keep it`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(1),
+            extraData = mapOf("group" to "vip"),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = mapOf(channel.cid to channel),
+            currentUser = currentUser,
+        )
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip", "touched_at" to daysAgo(20)))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a channel in a filtered group When a partial update leaves it past the cutoff Should remove`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+            extraData = mapOf("group" to "vip", "touched_at" to daysAgo(1)),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(
+            groupKey = "vip",
+            cachedChannels = mapOf(channel.cid to channel),
+            currentUser = currentUser,
+        )
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip", "touched_at" to daysAgo(20)))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Remove(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel not in local state When a partial update touches it within the cutoff Should watch and add`() {
+        val channel = randomChannel(createdAt = daysAgo(30), extraData = mapOf("group" to "vip"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip", "touched_at" to daysAgo(1)))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = null)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel not in local state When a partial update moves it into a filtered group Should watch and add`() {
+        // The last message time is unknown without local data, so the list checks the cutoff after the watch.
+        val channel = randomChannel(createdAt = daysAgo(30), extraData = mapOf("group" to "other"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = null)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a channel not in local state When a partial update moves it into a group the filter excludes Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val handler = handlerFor(groupKey = "all", cachedChannels = emptyMap(), currentUser = randomUser())
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "archived"))
+        val filter = Filters.and(Filters.ne("group", "archived"), cutoff14Days)
+
+        val result = handler.handleChatEvent(event, filter, cachedChannel = null)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    /** The event as the backend sends it: only the channel's basic fields and its custom data. */
+    private fun partialUpdateOf(channel: Channel, custom: Map<String, Any>) =
+        randomNotificationChannelPartialUpdatedEvent(
+            cid = channel.cid,
+            channelType = channel.type,
+            channelId = channel.id,
+            channel = Channel(
+                id = channel.id,
+                type = channel.type,
+                createdAt = channel.createdAt,
+                updatedAt = channel.updatedAt,
+                extraData = custom + ("disabled" to false),
+            ),
+        )
 
     private fun channelMessage(createdAt: Date) = randomMessage(
         type = "regular",

@@ -96,6 +96,7 @@ import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberPartialResponse
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
+import io.getstream.chat.android.network.models.ChannelPartialUpdateResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
@@ -308,6 +309,29 @@ internal class DomainMapping(
                 .toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
+
+    /**
+     * Transforms [ChannelPartialUpdateResponse] into a [Channel] holding only the fields it carries. Like for a full
+     * channel, `name` and `image` come from the custom data, `disabled` is also kept in [Channel.extraData] and the
+     * channel transformer is applied, so the fields it carries replace local values that were transformed too.
+     */
+    internal fun ChannelPartialUpdateResponse.toDomain(): Channel =
+        Channel(
+            id = id,
+            type = type,
+            name = custom["name"] as? String ?: "",
+            image = custom["image"] as? String ?: "",
+            frozen = frozen,
+            disabled = disabled,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            team = team.orEmpty(),
+            extraData = custom.withDeclared("disabled" to disabled)
+                .mapNotNull { (key, value) -> value?.let { key to it } }
+                .toMap()
+                .minus(listOf("name", "image"))
+                .toMutableMap(),
+        ).let(channelTransformer::transform)
 
     internal fun ChannelResponse.toChannelInfo(): ChannelInfo =
         ChannelInfo(

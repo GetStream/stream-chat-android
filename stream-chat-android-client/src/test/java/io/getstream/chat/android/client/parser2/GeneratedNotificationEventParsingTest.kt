@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.parser2
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.createNotificationAddedToChannelEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelDeletedEventStringJson
+import io.getstream.chat.android.client.createNotificationChannelPartialUpdatedEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createNotificationInviteAcceptedEventStringJson
 import io.getstream.chat.android.client.createNotificationInviteRejectedEventStringJson
@@ -26,6 +27,7 @@ import io.getstream.chat.android.client.createNotificationInvitedEventStringJson
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -91,6 +93,7 @@ internal class GeneratedNotificationEventParsingTest {
         private val channelEvents = listOf(
             createNotificationChannelDeletedEventStringJson() to NotificationChannelDeletedEvent::class,
             createNotificationChannelTruncatedEventStringJson() to NotificationChannelTruncatedEvent::class,
+            createNotificationChannelPartialUpdatedEventStringJson() to NotificationChannelPartialUpdatedEvent::class,
         )
 
         private val addedToChannelEvent =

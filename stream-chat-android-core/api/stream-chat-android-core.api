@@ -1021,6 +1021,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field NOTIFICATION_ADDED_TO_CHANNEL Ljava/lang/String;
 	public static final field NOTIFICATION_CHANNEL_DELETED Ljava/lang/String;
 	public static final field NOTIFICATION_CHANNEL_MUTES_UPDATED Ljava/lang/String;
+	public static final field NOTIFICATION_CHANNEL_PARTIAL_UPDATED Ljava/lang/String;
 	public static final field NOTIFICATION_CHANNEL_TRUNCATED Ljava/lang/String;
 	public static final field NOTIFICATION_INVITED Ljava/lang/String;
 	public static final field NOTIFICATION_INVITE_ACCEPTED Ljava/lang/String;

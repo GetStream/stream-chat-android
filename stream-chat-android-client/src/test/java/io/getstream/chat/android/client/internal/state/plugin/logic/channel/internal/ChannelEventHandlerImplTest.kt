@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.extensions.internal.toMessageReminderInf
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.client.test.randomAnswerCastedEvent
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelHiddenEvent
@@ -53,6 +54,7 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.test.randomNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
@@ -72,10 +74,13 @@ import io.getstream.chat.android.client.test.randomUserStartWatchingEvent
 import io.getstream.chat.android.client.test.randomVoteCastedEvent
 import io.getstream.chat.android.client.test.randomVoteChangedEvent
 import io.getstream.chat.android.client.test.randomVoteRemovedEvent
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.TypingUser
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -850,6 +855,20 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).updateChannelData(event)
+    }
+
+    @Test
+    fun `When NotificationChannelPartialUpdatedEvent is handled, Then the partial update is merged into channel data`() {
+        val currentData = randomChannel().toChannelData()
+        val partial = Channel(name = randomString(), extraData = mapOf("group" to randomString()))
+        val event = randomNotificationChannelPartialUpdatedEvent(cid = cid, channel = partial)
+
+        handler.handle(event)
+
+        val update = argumentCaptor<(ChannelData?) -> ChannelData?>()
+        verify(state).updateChannelData(update.capture())
+        assertEquals(currentData.mergePartialUpdate(partial), update.firstValue(currentData))
+        assertNull(update.firstValue(null))
     }
 
     @Test
