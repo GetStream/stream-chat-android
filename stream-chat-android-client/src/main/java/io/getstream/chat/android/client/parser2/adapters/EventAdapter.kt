@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationChannelPartialUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
@@ -151,6 +152,8 @@ internal class EventDtoAdapter(
     private val notificationChannelDeletedEventAdapter = moshi.adapter(NotificationChannelDeletedEventDto::class.java)
     private val notificationChannelTruncatedEventAdapter =
         moshi.adapter(NotificationChannelTruncatedEventDto::class.java)
+    private val notificationChannelPartialUpdatedEventAdapter =
+        moshi.adapter(NotificationChannelPartialUpdatedEventDto::class.java)
     private val userPresenceChangedEventAdapter = moshi.adapter(UserPresenceChangedEventDto::class.java)
     private val userUpdatedEventAdapter = moshi.adapter(UserUpdatedEventDto::class.java)
     private val userDeletedEventAdapter = moshi.adapter(UserDeletedEventDto::class.java)
@@ -233,6 +236,7 @@ internal class EventDtoAdapter(
             EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> notificationChannelMutesUpdatedEventAdapter
             EventType.NOTIFICATION_CHANNEL_DELETED -> notificationChannelDeletedEventAdapter
             EventType.NOTIFICATION_CHANNEL_TRUNCATED -> notificationChannelTruncatedEventAdapter
+            EventType.NOTIFICATION_CHANNEL_PARTIAL_UPDATED -> notificationChannelPartialUpdatedEventAdapter
             EventType.USER_PRESENCE_CHANGED -> userPresenceChangedEventAdapter
             EventType.USER_UPDATED -> userUpdatedEventAdapter
             EventType.USER_DELETED -> userDeletedEventAdapter

@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.test.randomNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
@@ -68,7 +69,10 @@ import io.getstream.chat.android.client.test.randomUserStartWatchingEvent
 import io.getstream.chat.android.client.test.randomVoteCastedEvent
 import io.getstream.chat.android.client.test.randomVoteChangedEvent
 import io.getstream.chat.android.client.test.randomVoteRemovedEvent
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -85,11 +89,15 @@ import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -535,6 +543,20 @@ internal class ChannelEventHandlerTest {
         handler.handle(event)
 
         verify(stateLogic).updateChannelData(event)
+    }
+
+    @Test
+    fun `When NotificationChannelPartialUpdatedEvent is handled, Then the partial update is merged into channel data`() {
+        val currentData = randomChannel().toChannelData()
+        val partial = Channel(name = randomString(), extraData = mapOf("group" to randomString()))
+        val event = randomNotificationChannelPartialUpdatedEvent(cid = cid, channel = partial)
+
+        handler.handle(event)
+
+        val update = argumentCaptor<(ChannelData?) -> ChannelData?>()
+        verify(stateLogic).updateChannelData(update.capture())
+        assertEquals(currentData.mergePartialUpdate(partial), update.firstValue(currentData))
+        assertNull(update.firstValue(null))
     }
 
     @Test

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelPartialUpdateDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
@@ -192,6 +193,24 @@ internal class DomainMapping(
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
+
+    /**
+     * Transforms [DownstreamChannelPartialUpdateDto] into a [Channel] holding only the fields the DTO carries.
+     * Like for a full channel, the server's `disabled` flag is kept in [Channel.extraData] and the channel
+     * transformer is applied, so the fields it carries replace local values that were transformed too.
+     */
+    internal fun DownstreamChannelPartialUpdateDto.toDomain(): Channel =
+        Channel(
+            id = id,
+            type = type,
+            name = name ?: "",
+            image = image ?: "",
+            frozen = frozen,
+            createdAt = created_at,
+            updatedAt = updated_at,
+            team = team,
+            extraData = (extraData + (CHANNEL_DISABLED_FIELD to disabled)).toMutableMap(),
+        ).let(channelTransformer::transform)
 
     internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo =
         ChannelInfo(
@@ -923,5 +942,6 @@ internal class DomainMapping(
     private companion object {
         private const val FIELD_LAST_MESSAGE_AT = "last_message_at"
         private const val FIELD_LAST_UPDATED = "last_updated"
+        private const val CHANNEL_DISABLED_FIELD = "disabled"
     }
 }

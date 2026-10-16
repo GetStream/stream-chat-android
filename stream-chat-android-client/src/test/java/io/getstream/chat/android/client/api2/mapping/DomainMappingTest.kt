@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.mapping.DomainMappingTest.Companion.toSortDomainArguments
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelPartialUpdateDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.models.Answer
@@ -256,6 +257,52 @@ internal class DomainMappingTest {
         }
 
         assertEquals(transformedChannel, result)
+    }
+
+    @Test
+    fun `Partially updated channel should be transformed after it is mapped`() {
+        val channelTransformer = ChannelTransformer { it.copy(name = "${it.name} (transformed)") }
+        val dto = DownstreamChannelPartialUpdateDto(
+            cid = "messaging:123",
+            id = "123",
+            type = "messaging",
+            name = "Channel name",
+            image = null,
+            created_at = null,
+            updated_at = null,
+            frozen = false,
+            disabled = false,
+            extraData = emptyMap(),
+        )
+
+        val sut = Fixture()
+            .withChannelTransformer(channelTransformer)
+            .get()
+
+        val result = with(sut) { dto.toDomain() }
+
+        assertEquals("Channel name (transformed)", result.name)
+    }
+
+    @Test
+    fun `Partially updated channel without name or image maps them to empty values`() {
+        val dto = DownstreamChannelPartialUpdateDto(
+            cid = "messaging:123",
+            id = "123",
+            type = "messaging",
+            name = null,
+            image = null,
+            created_at = null,
+            updated_at = null,
+            frozen = false,
+            disabled = false,
+            extraData = emptyMap(),
+        )
+
+        val result = with(Fixture().get()) { dto.toDomain() }
+
+        assertEquals("", result.name)
+        assertEquals("", result.image)
     }
 
     @Test

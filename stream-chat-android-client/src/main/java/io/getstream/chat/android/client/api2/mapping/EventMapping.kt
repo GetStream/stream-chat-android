@@ -53,6 +53,7 @@ import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationAddedToChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelMutesUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationChannelPartialUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAcceptedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
@@ -120,6 +121,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -197,6 +199,7 @@ internal class EventMapping(
             is NotificationAddedToChannelEventDto -> toDomain()
             is NotificationChannelDeletedEventDto -> toDomain()
             is NotificationChannelMutesUpdatedEventDto -> toDomain()
+            is NotificationChannelPartialUpdatedEventDto -> toDomain()
             is NotificationChannelTruncatedEventDto -> toDomain()
             is NotificationInviteAcceptedEventDto -> toDomain()
             is NotificationInviteRejectedEventDto -> toDomain()
@@ -537,6 +540,22 @@ internal class EventMapping(
                 createdAt = created_at.date,
                 rawCreatedAt = created_at.rawDate,
                 me = me.toDomain(),
+            )
+        }
+
+    /**
+     * Transforms [NotificationChannelPartialUpdatedEventDto] to [NotificationChannelPartialUpdatedEvent].
+     */
+    private fun NotificationChannelPartialUpdatedEventDto.toDomain(): NotificationChannelPartialUpdatedEvent =
+        with(domainMapping) {
+            NotificationChannelPartialUpdatedEvent(
+                type = type,
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                cid = cid,
+                channelType = channel_type,
+                channelId = channel_id,
+                channel = channel.toDomain(),
             )
         }
 

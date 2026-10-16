@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.test.randomNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
@@ -39,6 +40,7 @@ import io.getstream.chat.android.client.test.randomNotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.test.randomPollDeletedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Location
@@ -281,6 +283,74 @@ internal class EventHandlerSequentialTest {
 
         mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
     }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent migrates grouped unread count when group field changes`() = runTest {
+        val cid = "messaging:channel-id"
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+            setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+        }
+        val partialChannel = Channel(id = "channel-id", type = "messaging", extraData = mapOf("group" to "b"))
+        val handler = Fixture()
+            .withCurrentUser(currentUser)
+            .withMutableGlobalState(mutableGlobalState)
+            .withActiveChannel(
+                channelType = "messaging",
+                channelId = "channel-id",
+                extraData = mapOf("group" to "a"),
+                unreadMessages = 1,
+            )
+            .get(this)
+
+        handler.handleEvents(randomNotificationChannelPartialUpdatedEvent(cid = cid, channel = partialChannel))
+
+        mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
+    }
+
+    @Test
+    fun `When handling NotificationChannelPartialUpdatedEvent, The stored channel should get the partial update`() =
+        runTest {
+            val storedChannel = randomChannel(members = listOf(randomMember()), extraData = mapOf("group" to "a"))
+            val partialChannel = Channel(
+                id = storedChannel.id,
+                type = storedChannel.type,
+                extraData = mapOf("group" to "b"),
+            )
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            val handler = Fixture()
+                .withRepositoryFacade(repos)
+                .get(this)
+
+            handler.handleEvents(
+                randomNotificationChannelPartialUpdatedEvent(cid = storedChannel.cid, channel = partialChannel),
+            )
+
+            val inserted = argumentCaptor<Collection<Channel>>()
+            verify(repos).insertChannels(inserted.capture())
+            val storedResult = inserted.firstValue.single()
+            storedResult.members `should be equal to` storedChannel.members
+            storedResult.extraData `should be equal to` mapOf("group" to "b")
+        }
+
+    @Test
+    fun `When handling NotificationChannelPartialUpdatedEvent, A channel that is not stored should not be inserted`() =
+        runTest {
+            val event = randomNotificationChannelPartialUpdatedEvent()
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn emptyList()
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            val handler = Fixture()
+                .withRepositoryFacade(repos)
+                .get(this)
+
+            handler.handleEvents(event)
+
+            verify(repos).insertChannels(emptyList())
+        }
 
     @Test
     fun `Two ChannelUpdatedEvents for same cid in one batch apply the migration only once`() = runTest {

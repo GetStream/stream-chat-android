@@ -237,6 +237,30 @@ internal fun createNotificationChannelDeletedEventStringJson() =
         """.trimIndent(),
     )
 
+internal fun createNotificationChannelPartialUpdatedEventStringJson() =
+    createChatEventStringJson(
+        "notification.channel_partial_updated",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
+            "team": "team1",
+            "channel": {
+                "id": "channelId",
+                "type": "channelType",
+                "cid": "channelType:channelId",
+                "created_at": "2020-06-29T06:14:28.000Z",
+                "updated_at": "2020-06-29T06:14:28.000Z",
+                "frozen": true,
+                "disabled": false,
+                "team": "team1",
+                "name": "Channel name",
+                "image": "https://example.com/channel.png",
+                "group": "current"
+            }
+        """.trimIndent(),
+    )
+
 internal fun createNotificationChannelTruncatedEventStringJson() =
     createChatEventStringJson(
         "notification.channel_truncated",
