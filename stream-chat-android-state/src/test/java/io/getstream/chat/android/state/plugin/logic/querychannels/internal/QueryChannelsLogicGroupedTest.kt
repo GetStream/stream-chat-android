@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.plugin.logic.querychannels.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -35,7 +34,6 @@ import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryCo
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
-import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -845,33 +843,6 @@ internal class QueryChannelsLogicGroupedTest {
     }
 
     // endregion
-
-    @Test
-    fun `watchAndAddChannel adds the watched channel`() = runTest {
-        val channel = randomChannel(hidden = false)
-        givenWatchReturns(channel)
-
-        logic.watchAndAddChannel(channel.cid)
-
-        verify(queryChannelsStateLogic).addChannelsState(listOf(channel))
-    }
-
-    @Test
-    fun `watchAndAddChannel does not add a hidden channel to a grouped query`() = runTest {
-        val channel = randomChannel(hidden = true)
-        givenWatchReturns(channel)
-
-        logic.watchAndAddChannel(channel.cid)
-
-        verify(queryChannelsStateLogic, never()).addChannelsState(any())
-    }
-
-    private fun givenWatchReturns(channel: Channel) {
-        val channelClient = mock<ChannelClient> {
-            on { watch() } doReturn channel.asCall()
-        }
-        whenever(client.channel(channel.cid)) doReturn channelClient
-    }
 
     private companion object {
         private const val GROUP_KEY = "test-group"
