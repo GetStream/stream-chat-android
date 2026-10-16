@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -72,6 +73,7 @@ import io.getstream.chat.android.client.extensions.internal.toMessageReminderInf
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
@@ -297,6 +299,9 @@ internal class ChannelEventHandlerImpl(
             // Channel update events
             is ChannelUpdatedEvent -> state.updateChannelData(event)
             is ChannelUpdatedByUserEvent -> state.updateChannelData(event)
+            is NotificationChannelPartialUpdatedEvent -> state.updateChannelData { data ->
+                data?.mergePartialUpdate(event.channel)
+            }
             is ChannelHiddenEvent -> {
                 state.setHidden(true)
                 if (event.clearHistory) {

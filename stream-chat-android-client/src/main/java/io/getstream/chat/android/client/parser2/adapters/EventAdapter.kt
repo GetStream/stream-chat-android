@@ -52,6 +52,7 @@ import io.getstream.chat.android.network.models.MessageUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent
@@ -199,6 +200,8 @@ internal fun generatedEventAdapters(moshi: Moshi): Map<String, JsonAdapter<ChatE
     EventType.NOTIFICATION_CHANNEL_TRUNCATED to generatedEventAdapter<NotificationChannelTruncatedEvent>(moshi) {
         mapOf("cid" to cid)
     },
+    EventType.NOTIFICATION_CHANNEL_PARTIAL_UPDATED to
+        generatedEventAdapter<NotificationChannelPartialUpdatedEvent>(moshi) { mapOf("cid" to cid) },
     EventType.USER_PRESENCE_CHANGED to generatedEventAdapter<UserPresenceChangedEvent>(moshi) { emptyMap() },
     EventType.USER_UPDATED to generatedEventAdapter<UserUpdatedEvent>(moshi) { emptyMap() },
     EventType.USER_DELETED to generatedEventAdapter<UserDeletedEvent>(moshi) { emptyMap() },

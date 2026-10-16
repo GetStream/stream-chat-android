@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.HasGroupedUnreadChannels
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
@@ -103,6 +104,16 @@ internal class GroupedUnreadChannelsUpdater(
         current: Map<String, Int>,
         batchId: Int,
         event: ChannelUpdatedByUserEvent,
+    ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel)
+
+    /**
+     * `notification.channel_partial_updated` delta. Same semantics as the [ChannelUpdatedEvent] overload. The
+     * event's channel carries the custom data, so it holds the new group.
+     */
+    fun calculateUpdatedCounts(
+        current: Map<String, Int>,
+        batchId: Int,
+        event: NotificationChannelPartialUpdatedEvent,
     ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel)
 
     /**
