@@ -122,6 +122,21 @@ internal class V2EventParser(
         return parse(withCustomAtRoot(event))
     }
 
+    /**
+     * Parses the events a `/sync` response replays, each as the socket delivers it, leaving out those the SDK
+     * ignores. An event that fails to parse fails the whole response.
+     */
+    fun parseSyncEvents(body: String): List<ChatEvent> {
+        val events = rawFields(body)["events"] ?: return emptyList()
+        val parsed = mutableListOf<ChatEvent>()
+        reader(events).use { reader ->
+            if (reader.peek() == JsonReader.Token.NULL) return emptyList()
+            reader.beginArray()
+            while (reader.hasNext()) parse(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
+        }
+        return parsed
+    }
+
     private fun withCustomAtRoot(event: String): String {
         val fields = rawFields(event)
         val custom = fields["custom"]?.takeIf { it.trimStart().startsWith("{") }?.let(::rawFields).orEmpty()

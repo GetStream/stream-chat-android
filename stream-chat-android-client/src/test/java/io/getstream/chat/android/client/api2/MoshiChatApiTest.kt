@@ -43,7 +43,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -51,7 +50,6 @@ import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
@@ -95,6 +93,8 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.network.infrastructure.ExactDate
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
@@ -185,6 +185,7 @@ import io.getstream.chat.android.network.models.SendReactionResponse
 import io.getstream.chat.android.network.models.SharedLocationResponse
 import io.getstream.chat.android.network.models.SharedLocationResponseData
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.SyncRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TranslateMessageResponse
 import io.getstream.chat.android.network.models.TruncateChannelResponse
@@ -2865,10 +2866,10 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getSyncHistoryInput")
-    fun testGetSyncHistory(call: RetrofitCall<SyncHistoryResponse>, expected: KClass<*>) = runTest {
+    fun testGetSyncHistory(call: RetrofitCall<ResponseBody>, expected: KClass<*>) = runTest {
         // given
         val api = mock<SyncApi>()
-        whenever(api.getSyncHistory(any(), any())).doReturn(call)
+        whenever(api.sync(any(), any())).doReturn(call)
         val sut = Fixture()
             .withSyncApi(api)
             .get()
@@ -2876,14 +2877,51 @@ internal class MoshiChatApiTest {
         val userId = randomString()
         val connectionId = randomString()
         val channelIds = listOf(randomString())
-        val lastSyncAt = randomString()
+        val lastSyncAt = "2026-10-14T11:13:25.614650759Z"
         sut.setConnection(userId = userId, connectionId = connectionId)
         val result = sut.getSyncHistory(channelIds, lastSyncAt).await()
         // then
-        val expectedPayload =
-            io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest(channelIds, lastSyncAt)
+        val expectedPayload = SyncRequest(lastSyncAt = ExactDate.parseOrNull(lastSyncAt)!!, channelCids = channelIds)
         result `should be instance of` expected
-        verify(api, times(1)).getSyncHistory(expectedPayload, connectionId)
+        verify(api, times(1)).sync(expectedPayload, connectionId)
+    }
+
+    @Test
+    fun `The sync cursor is sent with its exact value`() = runTest {
+        val api = mock<SyncApi>()
+        whenever(api.sync(any(), any())).doReturn(RetroSuccess(SYNCED_EVENTS.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withSyncApi(api).get()
+
+        sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z").await()
+
+        val request = argumentCaptor<SyncRequest>().apply { verify(api).sync(capture(), any()) }.firstValue
+        Serializer.moshi.adapter(SyncRequest::class.java).toJson(request) `should be equal to`
+            """{"last_sync_at":"2026-10-14T11:13:25.614650759Z","channel_cids":["messaging:general"]}"""
+    }
+
+    @Test
+    fun `Synced events are read as the socket delivers them, leaving out those the SDK ignores`() = runTest {
+        val api = mock<SyncApi>()
+        whenever(api.sync(any(), any())).doReturn(RetroSuccess(SYNCED_EVENTS.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withSyncApi(api).get()
+
+        val result = sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z").await()
+
+        val event = (result as Result.Success).value.single() as UnknownEvent
+        event.type `should be equal to` "friendship_request"
+        event.rawData["text"] `should be equal to` "hi"
+        event.rawCreatedAt `should be equal to` "2026-10-14T11:13:25.614650759Z"
+    }
+
+    @Test
+    fun `An unreadable sync cursor fails without calling the endpoint`() = runTest {
+        val api = mock<SyncApi>()
+        val sut = Fixture().withSyncApi(api).get()
+
+        val result = sut.getSyncHistory(listOf("messaging:general"), "yesterday").await()
+
+        result `should be instance of` Result.Failure::class
+        verify(api, never()).sync(any(), any())
     }
 
     @ParameterizedTest
@@ -4099,7 +4137,6 @@ internal class MoshiChatApiTest {
                     hidesStoredDeclaredCustom = true,
                 ),
                 v1DomainMapping = domainMapping,
-                eventMapping = EventMapping(domainMapping),
                 dtoMapping = dtoMapping,
                 fileUploader = fileUploader,
                 fileTransformer = fileTransformer,

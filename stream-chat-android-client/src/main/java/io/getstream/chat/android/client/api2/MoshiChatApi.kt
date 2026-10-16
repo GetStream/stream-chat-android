@@ -49,7 +49,6 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.UserGroupApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toFilterDomainWithFields
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
@@ -57,7 +56,6 @@ import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -118,6 +116,7 @@ import io.getstream.chat.android.models.UserGroup
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.AddUserGroupMembersRequest
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersRequest
@@ -163,6 +162,7 @@ import io.getstream.chat.android.network.models.SendEventRequest
 import io.getstream.chat.android.network.models.SendMessageRequest
 import io.getstream.chat.android.network.models.SendReactionRequest
 import io.getstream.chat.android.network.models.SortParamRequest
+import io.getstream.chat.android.network.models.SyncRequest
 import io.getstream.chat.android.network.models.TranslateMessageRequest
 import io.getstream.chat.android.network.models.TruncateChannelRequest
 import io.getstream.chat.android.network.models.UnblockUsersRequest
@@ -212,7 +212,6 @@ internal class MoshiChatApi
 constructor(
     private val domainMapping: DomainMapping,
     private val v1DomainMapping: DomainMapping,
-    private val eventMapping: EventMapping,
     private val dtoMapping: DtoMapping,
     private val fileUploader: FileUploader,
     private val fileTransformer: FileTransformer,
@@ -1681,7 +1680,7 @@ constructor(
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any>,
-    ): Call<ChatEvent> = with(eventMapping) {
+    ): Call<ChatEvent> {
         val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
         // The endpoint reads a thread's parent, which typing events carry, only from the declared field.
@@ -1702,17 +1701,17 @@ constructor(
         }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> =
-        with(eventMapping) {
-            return syncApi.getSyncHistory(
-                body = SyncHistoryRequest(channelIds, lastSyncAt),
-                connectionId = connectionId,
-            ).map { response ->
-                response.events.map {
-                    it.toDomain()
-                }
-            }
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
+        val cursor = ExactDate.parseOrNull(lastSyncAt)
+            ?: return ErrorCall(coroutineScope, Error.GenericError("Unreadable last_sync_at: $lastSyncAt"))
+        return syncApi.sync(
+            request = SyncRequest(lastSyncAt = cursor, channelCids = channelIds),
+            connectionId = connectionId,
+        ).flatMap { body ->
+            // Off the main thread the response callback runs on.
+            CoroutineCall(coroutineScope) { withContext(DispatcherProvider.IO) { body.toSyncEvents() } }
         }
+    }
 
     override fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return fileDownloadApi.downloadFile(fileUrl)
@@ -2104,6 +2103,13 @@ constructor(
         }
     }
 
+    private fun ResponseBody.toSyncEvents(): Result<List<ChatEvent>> =
+        runCatching { v2EventParser.parseSyncEvents(string()) }
+            .fold(
+                onSuccess = { Result.Success(it) },
+                onFailure = { Result.Failure(Error.ThrowableError(UNREADABLE_SYNC_EVENTS, it)) },
+            )
+
     private fun ResponseBody.toSentEvent(): Result<ChatEvent> = runCatching { v2EventParser.parseSentEvent(string()) }
         .fold(
             onSuccess = { event ->
@@ -2134,5 +2140,6 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
 private const val MISSING_MESSAGE = "The response carried no message"
 private const val UNREADABLE_SENT_EVENT = "The sent event's response couldn't be read"
+private const val UNREADABLE_SYNC_EVENTS = "The synced events couldn't be read"
 
 private const val MISSING_CHANNEL_IN_STATE = "A channel state in the response carried no channel"
