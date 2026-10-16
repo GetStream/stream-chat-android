@@ -110,6 +110,21 @@ internal class V2EventParser(
     private fun Message.hasCidThroughout(cid: String): Boolean =
         this.cid == cid && (replyTo?.hasCidThroughout(cid) ?: true)
 
+    /**
+     * Parses the event a REST response carries under [key], such as the one sending an event returns. The event's
+     * JSON is handed over as sent, so its dates keep their exact value.
+     */
+    fun parseEnvelope(body: String, key: String = "event"): ChatEvent? {
+        reader(body).use { reader ->
+            reader.beginObject()
+            while (reader.hasNext()) {
+                if (reader.nextName() == key) return parse(reader.nextSource().use { it.readUtf8() })
+                reader.skipValue()
+            }
+        }
+        throw JsonDataException("Required value '$key' missing at $")
+    }
+
     private fun readHead(raw: String): Head {
         var type: String? = null
         var hasCid = false

@@ -25,8 +25,6 @@ import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.Mother.toChannelStateResponse
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.model.dto.GeneratedEventDto
-import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -39,7 +37,6 @@ import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.AddUserGroupMembersResponse
 import io.getstream.chat.android.network.models.BlockUsersResponse
 import io.getstream.chat.android.network.models.ChannelStateResponse
@@ -61,7 +58,6 @@ import io.getstream.chat.android.network.models.GetThreadResponse
 import io.getstream.chat.android.network.models.GetUserGroupResponse
 import io.getstream.chat.android.network.models.GroupedChannelsBucket
 import io.getstream.chat.android.network.models.GroupedQueryChannelsResponse
-import io.getstream.chat.android.network.models.HealthCheckEvent
 import io.getstream.chat.android.network.models.ListDevicesResponse
 import io.getstream.chat.android.network.models.ListUserGroupsResponse
 import io.getstream.chat.android.network.models.MembersResponse
@@ -110,6 +106,7 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.map
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.params.provider.Arguments
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -646,21 +643,10 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun sendEventInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                EventResponse(
-                    event = GeneratedEventDto(
-                        HealthCheckEvent(
-                            connectionId = randomString(),
-                            createdAt = ExactDate.parseOrNull("2026-10-05T10:00:00.000Z")!!,
-                        ),
-                    ),
-                    duration = randomString(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<EventResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(SENT_TYPING_EVENT.toResponseBody()).toRetrofitCall(), Result.Success::class),
+        // A body without the event the SDK reads fails rather than crashing.
+        Arguments.of(RetroSuccess("{}".toResponseBody()).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<ResponseBody>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

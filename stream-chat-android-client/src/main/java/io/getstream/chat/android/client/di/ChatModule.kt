@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.api.internal.ExtraDataValidator
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -194,6 +193,9 @@ constructor(
         }
     }
 
+    // Shared by the v2 socket and the REST calls that return an event, such as sending one.
+    private val v2EventParser by lazy { V2EventParser(v2DomainMapping, v2DirectEventParser) }
+
     private val v2DirectEventParser: DirectEventParser? by lazy {
         if (config.fastEventParsing) {
             DirectEventParser(
@@ -219,7 +221,7 @@ constructor(
             parser = moshiParser,
             tokenManager = tokenManager,
             headersUtil = headersUtil,
-            v2EventParser = if (config.useV2WebSocket) V2EventParser(v2DomainMapping, v2DirectEventParser) else null,
+            v2EventParser = v2EventParser.takeIf { config.useV2WebSocket },
         )
     }
 
@@ -386,7 +388,7 @@ constructor(
             buildV2RetrofitApi<MessageApi>(),
             buildV2RetrofitApi<DraftApi>(),
             buildV2RetrofitApi<ChannelApi>(),
-            buildRetrofitApi<ChannelV1Api>(),
+            v2EventParser,
             buildV2RetrofitApi<DeviceApi>(),
             buildV2RetrofitApi<ModerationApi>(),
             buildRetrofitApi<ModerationV1Api>(),
