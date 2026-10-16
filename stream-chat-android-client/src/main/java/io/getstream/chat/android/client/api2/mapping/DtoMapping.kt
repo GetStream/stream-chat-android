@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MESSAGE_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChatPreferences
@@ -135,6 +136,9 @@ internal class DtoMapping(
 
     private fun MutableMap<String, Any>.takeString(key: String): String? = takeTyped(key) { it as? String }
 
+    private fun MutableMap<String, Any>.takeStrings(key: String): List<String>? =
+        takeTyped(key) { list -> (list as List<*>).map { it as String } }
+
     private fun <T> MutableMap<String, Any>.takeList(key: String, adapter: JsonAdapter<T>): List<T>? =
         takeTyped(key) { list -> (list as List<*>).map { adapter.fromJsonValue(it)!! } }
 
@@ -230,6 +234,12 @@ internal class DtoMapping(
         messageTransformer.transform(this)
             .run {
                 val upstreamType = if (type in supportedUpstreamMessageTypes) type else ""
+                // Responses also copy these declared fields into extraData (see DomainMapping.withDeclared), so a
+                // message sent back carries them. They go back to their typed fields, taking precedence as they did
+                // when v1 flattened extraData over the root. The response-only ones are dropped, since the backend
+                // would store them as custom data on either version.
+                val custom = extraData.toMutableMap()
+                custom.keys.removeAll(RESPONSE_ONLY_MESSAGE_KEYS)
                 MessageRequest(
                     id = id,
                     text = text,
@@ -238,8 +248,11 @@ internal class DtoMapping(
                     mentionedUsers = mentionedUsersIds,
                     mentionedHere = mentionedHere,
                     mentionedChannel = mentionedChannel,
-                    mentionedGroupIds = mentionedGroups.map(UserGroup::id),
+                    mentionedGroupIds = custom.takeStrings(MENTIONED_GROUP_IDS_KEY)
+                        ?: mentionedGroups.map(UserGroup::id),
                     mentionedRoles = mentionedRoles,
+                    mml = custom.takeString(MML_KEY),
+                    pollId = custom.takeString(POLL_ID_KEY),
                     parentId = parentId,
                     pinExpires = pinExpires,
                     pinned = pinned,
@@ -247,9 +260,9 @@ internal class DtoMapping(
                     quotedMessageId = replyMessageId,
                     showInChannel = showInChannel,
                     silent = silent,
-                    restrictedVisibility = restrictedVisibility,
+                    restrictedVisibility = custom.takeStrings(RESTRICTED_VISIBILITY_KEY) ?: restrictedVisibility,
                     sharedLocation = sharedLocation?.toSharedLocation(),
-                    custom = extraData,
+                    custom = custom,
                 )
             }
 
@@ -360,3 +373,18 @@ internal class DtoMapping(
         defaultPreference = defaultPreference?.value?.let(ChatPreferencesInput.DefaultPreference::fromString),
     )
 }
+
+private const val MENTIONED_GROUP_IDS_KEY = "mentioned_group_ids"
+private const val MML_KEY = "mml"
+private const val POLL_ID_KEY = "poll_id"
+private const val RESTRICTED_VISIBILITY_KEY = "restricted_visibility"
+
+/** The declared message fields responses copy into extraData that a message request sends back as typed fields. */
+internal val SENT_BACK_MESSAGE_KEYS = setOf(MENTIONED_GROUP_IDS_KEY, MML_KEY, POLL_ID_KEY, RESTRICTED_VISIBILITY_KEY)
+
+/**
+ * Declared message fields that responses also copy into extraData but a message request doesn't carry. Sent back, the
+ * backend stores them as custom data: hidden from v1 readers, where the name clashes with the field, and shown to v2
+ * readers under `custom`. Derived, so a field added to the copied ones is dropped until a request carries it.
+ */
+private val RESPONSE_ONLY_MESSAGE_KEYS = GENERATED_MESSAGE_EXTRA_DATA_KEYS - SENT_BACK_MESSAGE_KEYS

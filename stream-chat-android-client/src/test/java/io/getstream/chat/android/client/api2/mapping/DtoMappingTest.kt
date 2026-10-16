@@ -23,6 +23,7 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MESSAGE_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
@@ -282,6 +283,35 @@ internal class DtoMappingTest {
         verify(messageTransformer, times(1)).transform(message)
     }
 
+    @Test
+    fun `Message sends the declared fields it carries in extraData as typed fields`() {
+        // Responses keep these in extraData, and sendPoll passes the poll id there.
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            extraData = mutableMapOf(
+                "poll_id" to "poll",
+                "mml" to "<mml/>",
+                "restricted_visibility" to listOf("amit"),
+                "mentioned_group_ids" to listOf("group"),
+                "draft" to mapOf("channel_cid" to "messaging:a"),
+                "image_labels" to mapOf("i" to listOf("cat")),
+                "messageKey" to "messageValue",
+            ),
+            restrictedVisibility = emptyList(),
+            mentionedGroups = emptyList(),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { message.toMessageRequest() }
+
+        request.pollId shouldBeEqualTo "poll"
+        request.mml shouldBeEqualTo "<mml/>"
+        request.restrictedVisibility shouldBeEqualTo listOf("amit")
+        request.mentionedGroupIds shouldBeEqualTo listOf("group")
+        // The response-only ones are not sent, so they are not stored as custom data.
+        request.custom shouldBeEqualTo mapOf("messageKey" to "messageValue")
+    }
+
     @ParameterizedTest
     @MethodSource("messageTypeCoercionInput")
     fun `Message toMessageRequest coerces type to allowed upstream values`(
@@ -516,5 +546,10 @@ internal class DtoMappingTest {
             messageTransformer = messageTransformer,
             userTransformer = userTransformer,
         )
+    }
+
+    @Test
+    fun `The fields a message request sends back typed are among the declared fields responses copy to extraData`() {
+        (SENT_BACK_MESSAGE_KEYS - GENERATED_MESSAGE_EXTRA_DATA_KEYS) shouldBeEqualTo emptySet()
     }
 }
