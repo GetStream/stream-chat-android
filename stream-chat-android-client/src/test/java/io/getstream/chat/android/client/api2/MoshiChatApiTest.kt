@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.PredefinedFilter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -50,12 +49,14 @@ import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
@@ -2762,12 +2763,12 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendEventInput")
-    fun testSendEvent(call: RetrofitCall<EventResponse>, expected: KClass<*>) = runTest {
+    fun testSendEvent(call: RetrofitCall<ResponseBody>, expected: KClass<*>) = runTest {
         // given
-        val api = mock<ChannelV1Api>()
+        val api = mock<ChannelApi>()
         whenever(api.sendEvent(any(), any(), any())).doReturn(call)
         val sut = Fixture()
-            .withChannelV1Api(api)
+            .withChannelApi(api)
             .get()
         // when
         val eventType = randomString()
@@ -2781,6 +2782,48 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).sendEvent(channelType, channelId, expectedRequest)
+    }
+
+    @Test
+    fun `A thread's typing event sends its parent id as the declared field`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.sendEvent(any(), any(), any()))
+            .doReturn(RetroSuccess(SENT_TYPING_EVENT.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        sut.sendEvent("typing.start", "messaging", "general", mapOf("parent_id" to "p1")).await()
+
+        verify(api).sendEvent(
+            "messaging",
+            "general",
+            SendEventRequest(event = EventRequest(type = "typing.start", parentId = "p1", custom = emptyMap())),
+        )
+    }
+
+    @Test
+    fun `A sent event is read from its v2 response with its exact date`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.sendEvent(any(), any(), any()))
+            .doReturn(RetroSuccess(SENT_TYPING_EVENT.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        val event = (sut.sendEvent("typing.start", "messaging", "general", emptyMap()).await() as Result.Success).value
+
+        event `should be instance of` TypingStartEvent::class
+        event.rawCreatedAt `should be equal to` "2026-10-14T11:13:25.614650759Z"
+    }
+
+    @Test
+    fun `A sent custom event comes back with its custom fields at the root, as the socket delivers it`() = runTest {
+        val api = mock<ChannelApi>()
+        whenever(api.sendEvent(any(), any(), any()))
+            .doReturn(RetroSuccess(SENT_CUSTOM_EVENT.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withChannelApi(api).get()
+
+        val result = sut.sendEvent("friendship_request", "messaging", "general", mapOf("text" to "hi")).await()
+
+        val event = (result as Result.Success).value as UnknownEvent
+        event.rawData["text"] `should be equal to` "hi"
     }
 
     @ParameterizedTest
@@ -3897,7 +3940,6 @@ internal class MoshiChatApiTest {
         private var messageApi: MessageApi = mock()
         private var draftApi: DraftApi = mock()
         private var channelApi: ChannelApi = mock()
-        private var channelV1Api: ChannelV1Api = mock()
         private var deviceApi: DeviceApi = mock()
         private var moderationApi: ModerationApi = mock()
         private var moderationV1Api: ModerationV1Api = mock()
@@ -3938,10 +3980,6 @@ internal class MoshiChatApiTest {
 
         fun withChannelApi(channelApi: ChannelApi) = apply {
             this.channelApi = channelApi
-        }
-
-        fun withChannelV1Api(channelV1Api: ChannelV1Api) = apply {
-            this.channelV1Api = channelV1Api
         }
 
         fun withDeviceApi(deviceApi: DeviceApi) = apply {
@@ -4033,7 +4071,7 @@ internal class MoshiChatApiTest {
                 messageApi = messageApi,
                 draftApi = draftApi,
                 channelApi = channelApi,
-                channelV1Api = channelV1Api,
+                v2EventParser = V2EventParser(domainMapping),
                 deviceApi = deviceApi,
                 moderationApi = moderationApi,
                 moderationV1Api = moderationV1Api,

@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
-import io.getstream.chat.android.client.api2.endpoint.ChannelV1Api
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
 import io.getstream.chat.android.client.api2.endpoint.DraftApi
@@ -64,6 +63,7 @@ import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
@@ -218,7 +218,7 @@ constructor(
     private val messageApi: MessageApi,
     private val draftApi: DraftApi,
     private val channelApi: ChannelApi,
-    private val channelV1Api: ChannelV1Api,
+    private val v2EventParser: V2EventParser,
     private val deviceApi: DeviceApi,
     private val moderationApi: ModerationApi,
     private val moderationV1Api: ModerationV1Api,
@@ -1681,14 +1681,27 @@ constructor(
     ): Call<ChatEvent> = with(eventMapping) {
         val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
-        return channelV1Api.sendEvent(
+        // v1 read a root `parent_id`, such as a thread's typing events carry, as the event's parent; v2 reads only
+        // the declared field.
+        return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
             request = SendEventRequest(
-                event = EventRequest(type = eventType, custom = custom),
+                event = EventRequest(
+                    type = eventType,
+                    parentId = custom[EVENT_PARENT_ID_KEY] as? String,
+                    custom = custom - EVENT_PARENT_ID_KEY,
+                ),
             ),
-        ).map { response ->
-            response.event.toDomain()
+        ).flatMapDomain { body ->
+            val event = runCatching { v2EventParser.parseEnvelope(body.string()) }
+            event.getOrNull()
+                ?.let { CoroutineCall(coroutineScope) { Result.Success(it) } }
+                ?: ErrorCall(
+                    coroutineScope,
+                    event.exceptionOrNull()?.let { Error.ThrowableError(UNREADABLE_SENT_EVENT, it) }
+                        ?: Error.GenericError(UNREADABLE_SENT_EVENT),
+                )
         }
     }
 
@@ -2115,5 +2128,7 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
 private const val MISSING_MESSAGE = "The response carried no message"
+private const val UNREADABLE_SENT_EVENT = "The response carried no event the SDK reads"
+private const val EVENT_PARENT_ID_KEY = "parent_id"
 
 private const val MISSING_CHANNEL_IN_STATE = "A channel state in the response carried no channel"
