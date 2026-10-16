@@ -140,6 +140,7 @@ internal class V2EventParser(
                 while (reader.hasNext()) parse(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
                 reader.endArray()
             }
+            reader.endObject()
         }
         return parsed
     }
