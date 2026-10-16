@@ -58,6 +58,7 @@ public object EventType {
     public const val THREAD_UPDATED: String = "thread.updated"
     public const val NOTIFICATION_CHANNEL_TRUNCATED: String = "notification.channel_truncated"
     public const val NOTIFICATION_CHANNEL_DELETED: String = "notification.channel_deleted"
+    public const val NOTIFICATION_CHANNEL_PARTIAL_UPDATED: String = "notification.channel_partial_updated"
     public const val NOTIFICATION_MARK_READ: String = "notification.mark_read"
     public const val NOTIFICATION_MARK_UNREAD: String = "notification.mark_unread"
     public const val NOTIFICATION_INVITED: String = "notification.invited"

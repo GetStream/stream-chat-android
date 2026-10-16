@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.events.HasGroupedUnreadChannels
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
@@ -198,6 +199,17 @@ internal class GroupedUnreadChannelsUpdaterTest {
         val newChannel = channel(group = "b")
 
         val next = updater.calculateUpdatedCounts(current, BATCH_ID, channelUpdatedByUserEvent(newChannel))
+
+        assertEquals(mapOf("a" to 2, "b" to 2), next)
+    }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent applies the same migration semantics`() {
+        seedActiveChannel(oldGroup = "a", unreadMessages = 2)
+        val current = mapOf("a" to 3, "b" to 1)
+        val partialChannel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE, extraData = mapOf("group" to "b"))
+
+        val next = updater.calculateUpdatedCounts(current, BATCH_ID, partialUpdatedEvent(partialChannel))
 
         assertEquals(mapOf("a" to 2, "b" to 2), next)
     }
@@ -507,6 +519,17 @@ internal class GroupedUnreadChannelsUpdaterTest {
             user = randomUser(),
             channel = newChannel,
             message = null,
+        )
+
+    private fun partialUpdatedEvent(partialChannel: Channel): NotificationChannelPartialUpdatedEvent =
+        NotificationChannelPartialUpdatedEvent(
+            type = "notification.channel_partial_updated",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            cid = CID,
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            channel = partialChannel,
         )
 
     private fun hasGroupedUnreadChannels(map: Map<String, Int>?): HasGroupedUnreadChannels =

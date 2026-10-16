@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.createNewMessageWithoutUnreadCountsEvent
 import io.getstream.chat.android.client.createNotificationAddedToChannelEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelDeletedEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelMutesUpdatedEventStringJson
+import io.getstream.chat.android.client.createNotificationChannelPartialUpdatedEventStringJson
 import io.getstream.chat.android.client.createNotificationChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createNotificationInviteAcceptedEventStringJson
 import io.getstream.chat.android.client.createNotificationInviteRejectedEventStringJson
@@ -117,6 +118,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -604,6 +606,25 @@ internal object EventArguments {
         channelId = channelId,
         channel = wireChannel,
         groupedUnreadChannels = groupedUnreadChannels,
+    )
+    private val notificationChannelPartialUpdatedEvent = NotificationChannelPartialUpdatedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_PARTIAL_UPDATED,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channel = Channel(
+            id = channelId,
+            type = channelType,
+            name = "Channel name",
+            image = "https://example.com/channel.png",
+            frozen = true,
+            createdAt = date,
+            updatedAt = date,
+            team = "team1",
+            extraData = mutableMapOf("group" to "current", "disabled" to false),
+        ),
     )
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
@@ -1135,6 +1156,7 @@ internal object EventArguments {
         messageUpdatedEvent,
         notificationAddedToChannelEvent,
         notificationChannelDeletedEvent,
+        notificationChannelPartialUpdatedEvent,
         notificationChannelTruncatedEvent,
         notificationInviteAcceptedEvent,
         notificationInviteRejectedEvent,
@@ -1206,6 +1228,7 @@ internal object EventArguments {
         Arguments.of(createMessageUpdatedEventStringJson(), messageUpdatedEvent),
         Arguments.of(createNotificationAddedToChannelEventStringJson(), notificationAddedToChannelEvent),
         Arguments.of(createNotificationChannelDeletedEventStringJson(), notificationChannelDeletedEvent),
+        Arguments.of(createNotificationChannelPartialUpdatedEventStringJson(), notificationChannelPartialUpdatedEvent),
         Arguments.of(createNotificationChannelTruncatedEventStringJson(), notificationChannelTruncatedEvent),
         Arguments.of(createNotificationInviteAcceptedEventStringJson(), notificationInviteAcceptedEvent),
         Arguments.of(createNotificationInviteRejectedEventStringJson(), notificationInviteRejectedEvent),
