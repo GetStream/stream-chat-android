@@ -28,11 +28,9 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -47,9 +45,6 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 internal class QueryChannelsLogicGroupedWatchTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private val client: ChatClient = mock()
     private val queryChannelsStateLogic: QueryChannelsStateLogic = mock()
