@@ -1703,10 +1703,7 @@ constructor(
                     custom = if (parentId != null) custom - EVENT_PARENT_ID_KEY else custom,
                 ),
             ),
-        ).flatMap { body ->
-            // Off the main thread the response callback runs on.
-            CoroutineCall(coroutineScope) { withContext(DispatcherProvider.IO) { body.toSentEvent() } }
-        }
+        ).readOffMain(UNREADABLE_SENT_EVENT) { v2EventParser.parseSentEvent(it.string()) }
     }
 
     override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<List<ChatEvent>> {
@@ -1717,10 +1714,7 @@ constructor(
                 request = SyncRequest(lastSyncAt = cursor, channelCids = channelIds),
                 watch = watch,
                 connectionId = connectionId,
-            ).flatMap { body ->
-                // Off the main thread the response callback runs on.
-                CoroutineCall(coroutineScope) { withContext(DispatcherProvider.IO) { body.toSyncEvents() } }
-            }
+            ).readOffMain(UNREADABLE_SYNC_EVENTS) { v2EventParser.parseSyncEvents(it.source()) }
         }
         return if (watch && connectionId.isBlank()) {
             logger.i { "[getSyncHistory] postponing because an active connection is required" }
@@ -2120,20 +2114,23 @@ constructor(
         }
     }
 
-    private fun ResponseBody.toSyncEvents(): Result<List<ChatEvent>> =
-        runCatching { v2EventParser.parseSyncEvents(string()) }
-            .fold(
-                onSuccess = { Result.Success(it) },
-                onFailure = { Result.Failure(Error.ThrowableError(UNREADABLE_SYNC_EVENTS, it)) },
-            )
-
-    private fun ResponseBody.toSentEvent(): Result<ChatEvent> = runCatching { v2EventParser.parseSentEvent(string()) }
-        .fold(
-            onSuccess = { event ->
-                event?.let { Result.Success(it) } ?: Result.Failure(Error.GenericError(UNREADABLE_SENT_EVENT))
-            },
-            onFailure = { Result.Failure(Error.ThrowableError(UNREADABLE_SENT_EVENT, it)) },
-        )
+    /**
+     * Reads a raw v2 body with [read] off the main thread the response callback runs on. A body [read] can't make sense
+     * of, or returns null for, fails with [error].
+     */
+    private fun <R : Any> RetrofitCall<ResponseBody>.readOffMain(error: String, read: (ResponseBody) -> R?): Call<R> =
+        flatMap { body ->
+            CoroutineCall(coroutineScope) {
+                withContext(DispatcherProvider.IO) {
+                    runCatching { body.use(read) }.fold(
+                        onSuccess = { value ->
+                            value?.let { Result.Success(it) } ?: Result.Failure(Error.GenericError(error))
+                        },
+                        onFailure = { Result.Failure(Error.ThrowableError(error, it)) },
+                    )
+                }
+            }
+        }
 
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }

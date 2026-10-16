@@ -41,6 +41,7 @@ import io.getstream.chat.android.network.models.NotificationMarkReadEvent
 import io.getstream.chat.android.network.models.UserResponseCommonFields
 import io.getstream.log.taggedLogger
 import okio.Buffer
+import okio.BufferedSource
 
 /**
  * Parses the frames of the v2 websocket. Their dates are unix nanoseconds and their custom data sits under `custom`,
@@ -126,13 +127,19 @@ internal class V2EventParser(
      * Parses the events a `/sync` response replays, each as the socket delivers it, leaving out those the SDK
      * ignores. An event that fails to parse fails the whole response.
      */
-    fun parseSyncEvents(body: String): List<ChatEvent> {
-        val events = rawFields(body)["events"] ?: return emptyList()
+    fun parseSyncEvents(body: BufferedSource): List<ChatEvent> {
         val parsed = mutableListOf<ChatEvent>()
-        reader(events).use { reader ->
-            if (reader.peek() == JsonReader.Token.NULL) return emptyList()
-            reader.beginArray()
-            while (reader.hasNext()) parse(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
+        JsonReader.of(body).use { reader ->
+            reader.beginObject()
+            while (reader.hasNext()) {
+                if (reader.nextName() != "events" || reader.peek() == JsonReader.Token.NULL) {
+                    reader.skipValue()
+                    continue
+                }
+                reader.beginArray()
+                while (reader.hasNext()) parse(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
+                reader.endArray()
+            }
         }
         return parsed
     }
