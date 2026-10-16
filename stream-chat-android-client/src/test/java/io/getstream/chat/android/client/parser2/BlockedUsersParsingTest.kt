@@ -79,8 +79,17 @@ internal class BlockedUsersParsingTest {
         val blocks = with(domainMapping) { dto.blocks.toDomain() }
 
         assertEquals(
-            listOf(UserBlock(blockedBy = "blocker-1", userId = "blocked-1", blockedAt = Date(1000))),
+            listOf(
+                UserBlock(
+                    blockedBy = "blocker-1",
+                    userId = "blocked-1",
+                    blockedAt = Date(1000),
+                    blockedUser = with(domainMapping) { block.blockedUser.toDomain() },
+                ),
+            ),
             blocks,
         )
+        assertEquals("blocked-1", blocks.single().blockedUser?.id)
+        assertEquals(true, blocks.single().blockedUser?.banned)
     }
 }
