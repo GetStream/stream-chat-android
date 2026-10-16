@@ -520,6 +520,23 @@ class UserRobot {
     }
 
     /**
+     * Scrolls the message list down until the message with [messageText] is displayed. Does not fail
+     * on its own: the assertion that follows reports the missing message.
+     */
+    fun scrollMessageListDownToMessage(messageText: String, maxScrolls: Int = 10): UserRobot {
+        val message = Message.text
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+        repeat(maxScrolls) {
+            if (message.waitDisplayed(timeOutMillis = 1_000)) {
+                return this
+            }
+            scrollMessageListDown(times = 1)
+        }
+        return this
+    }
+
+    /**
      * Scrolls the message list up one page at a time until the message with [messageText] is
      * displayed and clear of the top edge of the list, giving up after [maxScrolls] pages. The
      * first sighting is not enough: a message still clipped by the top edge after the scroll

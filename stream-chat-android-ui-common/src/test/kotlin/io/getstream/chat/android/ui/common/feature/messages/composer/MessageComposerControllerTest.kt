@@ -20,9 +20,12 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.api.state.ThreadState
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -32,6 +35,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
@@ -2796,6 +2800,56 @@ internal class MessageComposerControllerTest {
     }
 
     @Test
+    fun `Given thread mode and the newest replies are not loaded When sendMessage called Then the newest replies are loaded`() =
+        runTest {
+            // Given
+            val parentMessage = randomMessage(id = "parent-id", cid = CID)
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(User("uid1"))
+                .givenGlobalState()
+                .givenChannelState()
+                .givenThreadState(endOfNewerMessages = false)
+                .givenGetReplies()
+                .givenSendMessage(randomMessage(cid = CID, text = "Thread reply"))
+            val controller = fixture.get()
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+
+            // When
+            controller.sendMessage(Message(cid = CID, text = "Thread reply", parentId = "parent-id"), mock())
+            advanceUntilIdle()
+
+            // Then
+            verify(fixture.chatClient).getReplies("parent-id", 30)
+        }
+
+    @Test
+    fun `Given thread mode and the newest replies are loaded When sendMessage called Then no replies are loaded`() =
+        runTest {
+            // Given
+            val parentMessage = randomMessage(id = "parent-id", cid = CID)
+            val fixture = Fixture()
+                .givenAppSettings()
+                .givenAudioPlayer(mock())
+                .givenClientState(User("uid1"))
+                .givenGlobalState()
+                .givenChannelState()
+                .givenThreadState(endOfNewerMessages = true)
+                .givenGetReplies()
+                .givenSendMessage(randomMessage(cid = CID, text = "Thread reply"))
+            val controller = fixture.get()
+            controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+
+            // When
+            controller.sendMessage(Message(cid = CID, text = "Thread reply", parentId = "parent-id"), mock())
+            advanceUntilIdle()
+
+            // Then
+            verify(fixture.chatClient, never()).getReplies(any(), any())
+        }
+
+    @Test
     fun `Given endOfNewerMessages is false When sendMessage called Then loadNewestMessages is called`() = runTest {
         // Given
         val currentUser = User("uid1")
@@ -3176,11 +3230,33 @@ internal class MessageComposerControllerTest {
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
         private val globalState: GlobalState = mock()
+        private val threadState: ThreadState = mock {
+            on { endOfNewerMessages } doReturn MutableStateFlow(true)
+        }
         private var inheritedScope: CoroutineScope = TestScope()
         val mediaRecorder: StreamMediaRecorder = mock()
         private var config = MessageComposerController.Config()
         private var userLookupHandler: UserLookupHandler = mock {
             onBlocking { handleUserLookup(any()) } doReturn emptyList()
+        }
+
+        init {
+            val stateRegistry: StateRegistry = mock {
+                on { thread(any()) } doReturn threadState
+            }
+            val statePlugin: StatePlugin = mock {
+                on { resolveDependency(eq(StateRegistry::class)) } doReturn stateRegistry
+            }
+            whenever(chatClient.plugins) doReturn listOf(statePlugin)
+            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
+        }
+
+        fun givenThreadState(endOfNewerMessages: Boolean) = apply {
+            whenever(threadState.endOfNewerMessages) doReturn MutableStateFlow(endOfNewerMessages)
+        }
+
+        fun givenGetReplies() = apply {
+            whenever(chatClient.getReplies(any(), any())) doReturn emptyList<Message>().asCall()
         }
 
         fun givenInheritedScope(scope: CoroutineScope) = apply {

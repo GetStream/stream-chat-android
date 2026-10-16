@@ -101,6 +101,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -1689,6 +1690,75 @@ internal class MessageListControllerTests {
             controller.loadNewerMessages(baseMessageId = randomString())
 
             verify(chatClient, never()).getNewerReplies(any(), any(), anyOrNull())
+        }
+
+    @Test
+    fun `Given the newest channel page is loaded When scrolling to the bottom Should scroll without loading`() =
+        runTest {
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .get()
+            var scrolled = false
+
+            controller.scrollToBottom { scrolled = true }
+
+            scrolled.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given the newest thread page is not loaded When scrolling to the bottom Should load it before scrolling`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                endOfNewerMessages = MutableStateFlow(false),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+            clearInvocations(chatClient)
+            var scrolled = false
+
+            controller.scrollToBottom { scrolled = true }
+
+            verify(chatClient).getReplies(parentMessage.id, MessageListController.DEFAULT_MESSAGES_LIMIT)
+            scrolled.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given the newest thread page is loaded When scrolling to the bottom Should scroll without loading`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                endOfNewerMessages = MutableStateFlow(true),
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+            clearInvocations(chatClient)
+            var scrolled = false
+
+            controller.scrollToBottom { scrolled = true }
+
+            verify(chatClient, never()).getReplies(any(), any())
+            scrolled.shouldBeTrue()
         }
 
     @Test

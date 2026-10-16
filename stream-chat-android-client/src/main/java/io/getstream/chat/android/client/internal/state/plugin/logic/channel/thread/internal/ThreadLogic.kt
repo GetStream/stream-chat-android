@@ -22,6 +22,9 @@ import io.getstream.chat.android.client.events.HasPoll
 import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -75,6 +78,17 @@ internal class ThreadLogic(
 
     internal fun upsertMessages(messages: List<Message>) = threadStateLogic.upsertMessages(messages)
 
+    /**
+     * Replaces the loaded replies with a newly loaded page.
+     *
+     * @param messages The replies of the page.
+     * @param isJumpPage Whether the page was loaded around a jumped-to reply.
+     */
+    internal fun setReplies(messages: List<Message>, isJumpPage: Boolean) {
+        mutableState.isJumpPage = isJumpPage
+        mutableState.setReplies(messages)
+    }
+
     internal fun updateMessagesMemberInfo(cid: String, userId: String, memberInfo: MemberInfo) =
         threadStateLogic.updateMessagesMemberInfo(cid, userId, memberInfo)
 
@@ -107,7 +121,8 @@ internal class ThreadLogic(
     }
 
     internal fun handleMessageEvents(events: List<HasMessage>) {
-        val messages = events
+        val shownEvents = events.filter(::isShownInThread)
+        val messages = shownEvents
             .map { event ->
                 val originalMessage = getMessage(event.message.id)
                 val ownReactions = originalMessage?.ownReactions ?: event.message.ownReactions
@@ -128,7 +143,7 @@ internal class ThreadLogic(
                 }
             }
         upsertMessages(messages)
-        events.zip(messages).forEach { (event, message) ->
+        shownEvents.zip(messages).forEach { (event, message) ->
             when (event) {
                 is MessageUpdatedEvent -> threadStateLogic.updateQuotedMessageReferences(message)
                 is MessageDeletedEvent -> if (event.hardDelete) {
@@ -139,6 +154,22 @@ internal class ThreadLogic(
                 else -> Unit
             }
         }
+    }
+
+    /**
+     * Keeps the loaded replies one contiguous page: events for replies that are not loaded are ignored,
+     * except new replies while the newest page is loaded. While a jumped-to page is shown, new replies
+     * are left out and arrive with the newest page instead.
+     */
+    private fun isShownInThread(event: HasMessage): Boolean {
+        val messageId = event.message.id
+        if (messageId == mutableState.parentId || mutableState.rawMessage.value.containsKey(messageId)) return true
+        val isNewReply = when (event) {
+            is NewMessageEvent, is NotificationMessageNewEvent, is NotificationThreadMessageNewEvent -> true
+            else -> false
+        }
+        val isNewestPageLoaded = !mutableState.isJumpPage || mutableState.endOfNewerMessages.value
+        return isNewReply && isNewestPageLoaded
     }
 
     internal fun handleReminderEvents(events: List<HasReminder>) {
