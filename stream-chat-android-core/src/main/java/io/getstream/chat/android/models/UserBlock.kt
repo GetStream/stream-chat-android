@@ -24,9 +24,11 @@ import java.util.Date
  * @param blockedBy who is the initiator of the block (usually will contain the ID of the current user)
  * @param userId the ID of the blocked user.
  * @param blockedAt when the action happened
+ * @param blockedUser the blocked user. Set in the results of `queryBlockedUsers`, `null` in the result of `blockUser`.
  */
 public data class UserBlock(
     val blockedBy: String,
     val userId: String,
     val blockedAt: Date,
+    val blockedUser: User? = null,
 )

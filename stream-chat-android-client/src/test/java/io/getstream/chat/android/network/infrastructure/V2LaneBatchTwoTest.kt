@@ -71,9 +71,20 @@ internal class V2LaneBatchTwoTest {
 
     @Test
     fun `Blocked users parse from v2`() {
-        val blocks = with(mapping) { parse<GetBlockedUsersResponse>(BLOCKED_USERS).blocks.toDomain() }
+        val block = with(mapping) { parse<GetBlockedUsersResponse>(BLOCKED_USERS).blocks.toDomain() }.single()
 
-        assertEquals(listOf(UserBlock(blockedBy = "filip", userId = "jaewoong", blockedAt = Date(1791790728736))), blocks)
+        assertEquals(
+            UserBlock(
+                blockedBy = "filip",
+                userId = "jaewoong",
+                blockedAt = Date(1791790728736),
+                blockedUser = block.blockedUser,
+            ),
+            block,
+        )
+        assertEquals("jaewoong", block.blockedUser?.id)
+        assertEquals("C-3PO", block.blockedUser?.name)
+        assertEquals("ko", block.blockedUser?.language)
     }
 
     @Test
