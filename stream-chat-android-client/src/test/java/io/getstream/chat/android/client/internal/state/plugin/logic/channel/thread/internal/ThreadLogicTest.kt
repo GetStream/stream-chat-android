@@ -507,6 +507,16 @@ internal class ThreadLogicTest {
     }
 
     @Test
+    fun `Given a jump page When setReplies is called Should mark it and replace the replies`() {
+        val replies = listOf(randomMessage())
+
+        threadLogic.setReplies(replies, isJumpPage = true)
+
+        verify(threadMutableState).isJumpPage = true
+        verify(threadMutableState).setReplies(replies)
+    }
+
+    @Test
     fun `Given the newest page is loaded When a new reply arrives Should add it`() {
         // given
         val reply = randomMessage(ownReactions = emptyList())
