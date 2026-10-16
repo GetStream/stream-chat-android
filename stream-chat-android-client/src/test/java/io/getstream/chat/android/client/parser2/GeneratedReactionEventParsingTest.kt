@@ -17,9 +17,6 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
-import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.createReactionDeletedEventStringJson
 import io.getstream.chat.android.client.createReactionNewEventStringJson
 import io.getstream.chat.android.client.createReactionUpdateEventStringJson
@@ -27,9 +24,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
-import io.getstream.chat.android.models.NoOpUserTransformer
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -37,18 +31,10 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.reflect.KClass
 
-/** Reaction events parsed through their generated models, on both the WebSocket and the `/sync` path. */
+/** Reaction events parsed through their generated models. */
 internal class GeneratedReactionEventParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
-    private val eventMapping = EventMapping(
-        DomainMapping(
-            currentUserIdProvider = { "" },
-            channelTransformer = NoOpChannelTransformer,
-            messageTransformer = NoOpMessageTransformer,
-            userTransformer = NoOpUserTransformer,
-        ),
-    )
 
     @ParameterizedTest
     @MethodSource("events")
@@ -65,36 +51,19 @@ internal class GeneratedReactionEventParsingTest {
 
     @ParameterizedTest
     @MethodSource("events")
-    fun `A synced reaction event keeps the created_at string as sent`(json: String, expected: KClass<out ChatEvent>) {
-        val response = parser.fromJson(
-            """{ "events": [${json.withNanosecondCreatedAt()}] }""",
-            SyncHistoryResponse::class.java,
-        )
-
-        val event = with(eventMapping) { response.events.single().toDomain() }
-
-        event::class shouldBeEqualTo expected
-        event.rawCreatedAt shouldBeEqualTo NANOSECOND_CREATED_AT
-    }
-
-    @ParameterizedTest
-    @MethodSource("events")
     fun `A reaction event replayed without channel and message_id maps to the same domain event`(
         json: String,
         expected: KClass<out ChatEvent>,
     ) {
-        val full = synced(json)
+        val full = parsed(json)
 
-        val event = synced(json.without("channel").without("message_id"))
+        val event = parsed(json.without("channel").without("message_id"))
 
         event::class shouldBeEqualTo expected
         event shouldBeEqualTo full
     }
 
-    private fun synced(json: String): ChatEvent {
-        val response = parser.fromJson("""{ "events": [$json] }""", SyncHistoryResponse::class.java)
-        return with(eventMapping) { response.events.single().toDomain() }
-    }
+    private fun parsed(json: String): ChatEvent = parser.fromJson(json, ChatEvent::class.java)
 
     @ParameterizedTest
     @MethodSource("missingRequiredFields")

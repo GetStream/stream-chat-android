@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -27,9 +28,11 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.network.infrastructure.Serializer
+import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -252,6 +255,57 @@ internal class V2EventParserTest {
     @Test
     fun `Feeds events are ignored`() {
         v2 { event("feeds.feed.created", "fid" to "user:filip", "user" to user()) }.shouldBeNull()
+    }
+
+    @Test
+    fun `Synced events parse in order as the socket delivers them, without those the SDK ignores`() {
+        val typing: Frame.() -> Map<String, Any?> = { event("typing.start", "cid" to CID, "user" to user()) }
+        val updated: Frame.() -> Map<String, Any?> = { event("channel.updated", "cid" to CID, "channel" to channel()) }
+        val feeds: Frame.() -> Map<String, Any?> = { event("feeds.feed.created", "fid" to "user:filip") }
+        val body = mapOf(
+            "events" to listOf(Frame(Wire.V2).updated(), Frame(Wire.V2).feeds(), Frame(Wire.V2).typing()),
+            "duration" to "1.20ms",
+        ).toJson()
+
+        v2Parser.parseSyncEvents(body) shouldBeEqualTo listOf(v2(updated), v2(typing))
+    }
+
+    @Test
+    fun `A reaction replayed without the channel and message_id parses as the full one`() {
+        val reaction: Frame.() -> Map<String, Any?> = {
+            event(
+                "reaction.new",
+                "cid" to CID,
+                "message" to message(),
+                "reaction" to obj(
+                    "message_id" to "m1",
+                    "user_id" to OTHER,
+                    "user" to user(OTHER),
+                    "type" to "like",
+                    "score" to 1,
+                    "created_at" to date(MESSAGE_AT),
+                    "updated_at" to date(MESSAGE_AT),
+                ),
+                "user" to user(OTHER),
+            )
+        }
+        val full = Frame(Wire.V2).reaction() + mapOf("channel" to Frame(Wire.V2).channel(), "message_id" to "m1")
+        fun synced(event: Map<String, Any?>) = v2Parser.parseSyncEvents(mapOf("events" to listOf(event)).toJson())
+
+        synced(Frame(Wire.V2).reaction()) shouldBeEqualTo synced(full)
+    }
+
+    @Test
+    fun `A synced event that fails to parse fails the whole response`() {
+        val body = mapOf("events" to listOf(Frame(Wire.V2).event("channel.hidden", "cid" to CID))).toJson()
+
+        assertThrows<JsonDataException> { v2Parser.parseSyncEvents(body) }
+    }
+
+    @Test
+    fun `A sync response without events replays none`() {
+        v2Parser.parseSyncEvents("""{"duration": "1.20ms"}""").shouldBeEmpty()
+        v2Parser.parseSyncEvents("""{"events": null, "duration": "1.20ms"}""").shouldBeEmpty()
     }
 
     @Test
