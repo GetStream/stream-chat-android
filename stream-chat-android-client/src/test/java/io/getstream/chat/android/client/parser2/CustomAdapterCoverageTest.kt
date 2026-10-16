@@ -90,6 +90,7 @@ internal class CustomAdapterCoverageTest {
             "ThreadParticipant" to "Go declares a plain map, not jsonextra.ExtraFields, so custom stays nested",
             "ChannelInput" to "Only sent to the v2 endpoints, which read custom data nested",
             "ChannelInputRequest" to "Only sent to the v2 endpoints, which read custom data nested",
+            "EventRequest" to "Only sent to the v2 endpoint, which reads custom data nested",
         )
     }
 }

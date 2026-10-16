@@ -37,3 +37,20 @@ internal const val SENT_CUSTOM_EVENT = """{
   },
   "duration": "1.20ms"
 }"""
+
+/**
+ * What the v2 send-event endpoint returns for an AI indicator update: the event as sent, so the backend's fields are
+ * still under `custom` (the socket's copy has them at the root).
+ */
+internal const val SENT_AI_INDICATOR_EVENT = """{
+  "event": {
+    "type": "ai_indicator.update", "created_at": 1791976405614650759, "cid": "messaging:general",
+    "channel_type": "messaging", "channel_id": "general",
+    "custom": {"ai_state": "AI_STATE_THINKING", "message_id": "m1", "probe": "kept"},
+    "user": {
+      "id": "luke", "role": "user", "language": "en", "banned": false, "online": true,
+      "created_at": 1791976405614650759, "updated_at": 1791976405614650759, "custom": {}
+    }
+  },
+  "duration": "1.20ms"
+}"""

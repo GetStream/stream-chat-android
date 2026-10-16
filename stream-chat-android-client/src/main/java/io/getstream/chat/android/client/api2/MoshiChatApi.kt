@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2
 
+import io.getstream.chat.android.client.EVENT_PARENT_ID_KEY
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
@@ -69,6 +70,7 @@ import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploadContext
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -197,6 +199,7 @@ import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.Date
@@ -1689,27 +1692,21 @@ constructor(
     ): Call<ChatEvent> = with(eventMapping) {
         val custom = extraData.entries.associate { (key, value) -> key.toString() to value }
 
-        // v1 read a root `parent_id`, such as a thread's typing events carry, as the event's parent; v2 reads only
-        // the declared field.
+        // The endpoint reads a thread's parent, which typing events carry, only from the declared field.
+        val parentId = custom[EVENT_PARENT_ID_KEY] as? String
         return channelApi.sendEvent(
             channelType = channelType,
             channelId = channelId,
             request = SendEventRequest(
                 event = EventRequest(
                     type = eventType,
-                    parentId = custom[EVENT_PARENT_ID_KEY] as? String,
-                    custom = custom - EVENT_PARENT_ID_KEY,
+                    parentId = parentId,
+                    custom = if (parentId != null) custom - EVENT_PARENT_ID_KEY else custom,
                 ),
             ),
-        ).flatMapDomain { body ->
-            val event = runCatching { v2EventParser.parseEnvelope(body.string()) }
-            event.getOrNull()
-                ?.let { CoroutineCall(coroutineScope) { Result.Success(it) } }
-                ?: ErrorCall(
-                    coroutineScope,
-                    event.exceptionOrNull()?.let { Error.ThrowableError(UNREADABLE_SENT_EVENT, it) }
-                        ?: Error.GenericError(UNREADABLE_SENT_EVENT),
-                )
+        ).flatMap { body ->
+            // Off the main thread the response callback runs on.
+            CoroutineCall(coroutineScope) { withContext(DispatcherProvider.IO) { body.toSentEvent() } }
         }
     }
 
@@ -2124,6 +2121,14 @@ constructor(
         }
     }
 
+    private fun ResponseBody.toSentEvent(): Result<ChatEvent> = runCatching { v2EventParser.parseSentEvent(string()) }
+        .fold(
+            onSuccess = { event ->
+                event?.let { Result.Success(it) } ?: Result.Failure(Error.GenericError(UNREADABLE_SENT_EVENT))
+            },
+            onFailure = { Result.Failure(Error.ThrowableError(UNREADABLE_SENT_EVENT, it)) },
+        )
+
     private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
         flatMap { domainMapping.transform(it) }
 
@@ -2145,7 +2150,6 @@ internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =
 // A thread always has a parent message and a last message date, so a thread missing either cannot be mapped.
 private const val MISSING_THREAD_FIELDS = "A thread in the response carried no parent message or last message date"
 private const val MISSING_MESSAGE = "The response carried no message"
-private const val UNREADABLE_SENT_EVENT = "The response carried no event the SDK reads"
-private const val EVENT_PARENT_ID_KEY = "parent_id"
+private const val UNREADABLE_SENT_EVENT = "The sent event's response couldn't be read"
 
 private const val MISSING_CHANNEL_IN_STATE = "A channel state in the response carried no channel"
