@@ -18,18 +18,12 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.UrlQueryPayload
-import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
-import io.getstream.chat.android.client.api2.model.requests.FlagRequest
-import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
-import io.getstream.chat.android.client.api2.model.response.FlagResponse
-import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.MuteChannelRequest
 import io.getstream.chat.android.network.models.QueryBannedUsersPayload
 import io.getstream.chat.android.network.models.QueryBannedUsersResponse
 import io.getstream.chat.android.network.models.Response
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -37,36 +31,13 @@ import retrofit2.http.Query
 @AuthenticatedApi
 internal interface ModerationApi {
 
-    @POST("/moderation/mute")
-    fun muteUser(@Body body: MuteUserRequest): RetrofitCall<MuteUserResponse>
-
-    @POST("/moderation/unmute")
-    fun unmuteUser(@Body body: MuteUserRequest): RetrofitCall<Response>
-
-    @POST("/moderation/mute/channel")
+    @POST("/api/v2/chat/moderation/mute/channel")
     fun muteChannel(@Body body: MuteChannelRequest): RetrofitCall<Response>
 
-    @POST("/moderation/unmute/channel")
+    @POST("/api/v2/chat/moderation/unmute/channel")
     fun unmuteChannel(@Body body: MuteChannelRequest): RetrofitCall<Response>
 
-    @POST("/moderation/flag")
-    fun flag(@Body body: FlagRequest): RetrofitCall<FlagResponse>
-
-    @POST("/moderation/unflag")
-    fun unflag(@Body body: Map<String, String>): RetrofitCall<FlagResponse>
-
-    @POST("/moderation/ban")
-    fun banUser(@Body body: BanUserRequest): RetrofitCall<Response>
-
-    @DELETE("/moderation/ban")
-    fun unbanUser(
-        @Query("target_user_id") targetUserId: String,
-        @Query("type") channelType: String,
-        @Query("id") channelId: String,
-        @Query("shadow") shadow: Boolean,
-    ): RetrofitCall<Response>
-
-    @GET("/query_banned_users")
+    @GET("/api/v2/chat/query_banned_users")
     fun queryBannedUsers(
         @UrlQueryPayload @Query("payload") payload: QueryBannedUsersPayload,
     ): RetrofitCall<QueryBannedUsersResponse>
