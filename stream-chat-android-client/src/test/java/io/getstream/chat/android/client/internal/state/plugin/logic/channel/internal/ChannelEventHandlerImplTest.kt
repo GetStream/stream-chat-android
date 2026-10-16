@@ -868,6 +868,7 @@ internal class ChannelEventHandlerImplTest {
         val update = argumentCaptor<(ChannelData?) -> ChannelData?>()
         verify(state).updateChannelData(update.capture())
         assertEquals(currentData.mergePartialUpdate(partial), update.firstValue(currentData))
+        assertNull(update.firstValue(null))
     }
 
     @Test

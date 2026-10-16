@@ -92,6 +92,7 @@ import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -577,6 +578,7 @@ internal class ChannelEventHandlerLegacyImplTest {
         val update = argumentCaptor<(ChannelData?) -> ChannelData?>()
         verify(stateLogic).updateChannelData(update.capture())
         assertEquals(currentData.mergePartialUpdate(partial), update.firstValue(currentData))
+        assertNull(update.firstValue(null))
     }
 
     @Test
