@@ -32,9 +32,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
- * Channel endpoints that stay on v1. Sending an event returns a hand-written v1 model. The v2 member update can only
- * change the current user's membership, while this one takes any user. Grouped queries are enabled only for some apps,
- * so their v2 response can't be verified yet.
+ * Channel endpoints that stay on v1. Sending an event returns a hand-written v1 model. The member update keeps the
+ * user id path parameter its public API takes, which the v2 route doesn't have. Grouped queries are enabled only for
+ * some apps, so their v2 response can't be verified yet.
  */
 @AuthenticatedApi
 internal interface ChannelV1Api {

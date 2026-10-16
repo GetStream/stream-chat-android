@@ -16,22 +16,27 @@
 
 package io.getstream.chat.android.client.parser2
 
+import com.squareup.moshi.JsonAdapter
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.kotest.assertions.json.shouldEqualJson
 import org.junit.jupiter.api.Test
 
 internal class CreateChannelMembersSerializationTest {
 
-    private val parser = ParserFactory.createMoshiChatParser()
+    // The v2 channel endpoints serialize their bodies with the generated Serializer.
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> toJson(value: T): String =
+        (Serializer.moshi.adapter(value.javaClass) as JsonAdapter<T>).toJson(value)
 
     private val dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer)
 
     @Test
-    fun `Serialize the channel data members with their extra data flattened to the root`() {
+    fun `Serialize the channel data members with their extra data under custom`() {
         val members = listOf(
             MemberData(userId = "alice", extraData = mapOf("nickname" to "Al")),
             MemberData(userId = "bob"),
@@ -40,7 +45,7 @@ internal class CreateChannelMembersSerializationTest {
             .withData(mapOf("name" to "Team", "members" to members))
             .apply { state = true }
 
-        val json = parser.toJson(with(dtoMapping) { query.toChannelGetOrCreateRequest() })
+        val json = toJson(with(dtoMapping) { query.toChannelGetOrCreateRequest() })
 
         json.shouldEqualJson(
             """
@@ -52,11 +57,11 @@ internal class CreateChannelMembersSerializationTest {
               "watchers": {},
               "members": {},
               "data": {
-                "name": "Team",
                 "members": [
-                  { "user_id": "alice", "nickname": "Al" },
-                  { "user_id": "bob" }
-                ]
+                  { "user_id": "alice", "custom": { "nickname": "Al" } },
+                  { "user_id": "bob", "custom": {} }
+                ],
+                "custom": { "name": "Team" }
               }
             }
             """,

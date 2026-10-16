@@ -91,12 +91,6 @@ internal class V2LaneBatchSevenTest {
                 """"watchers":{}}""",
             v2Body(request),
         )
-        // v1 flattens custom data into `data`, where the backend matches the declared keys first.
-        assertEquals(
-            """{"presence":false,"state":false,"watch":false,"data":{"team":"red","members":[{"user_id":"filip"},""" +
-                """{"user_id":"jaewoong"}],"name":"Channel","k":"v"},"members":{},"messages":{},"watchers":{}}""",
-            v1Parser.toJson(request),
-        )
     }
 
     @Test
@@ -109,10 +103,6 @@ internal class V2LaneBatchSevenTest {
         assertEquals(
             """{$lists,"data":{"frozen":true,"invites":[],"members":[],"custom":{"name":"Channel","k":"v"}}}""",
             v2Body(request),
-        )
-        assertEquals(
-            """{$lists,"data":{"frozen":true,"invites":[],"members":[],"name":"Channel","k":"v"}}""",
-            v1Parser.toJson(request),
         )
     }
 
