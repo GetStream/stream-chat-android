@@ -420,6 +420,48 @@ class QuotedReplyTests : StreamTestCase() {
         }
     }
 
+    @AllureId("12352")
+    @Test
+    fun test_threadShowsOnlyThePageAroundTheQuote_whenUserJumpsToQuotedReplyNotInList() {
+        val newReply = "New reply"
+        val nextReply = "Next reply"
+        step("GIVEN a thread with more replies than two pages") {
+            backendRobot.generateChannels(
+                channelsCount = 1,
+                messagesCount = 1,
+                messagesText = sampleText,
+                repliesCount = 90,
+            )
+            userRobot.login().openChannel()
+        }
+        step("AND participant adds a quoted reply to the first reply in thread") {
+            participantRobot.quoteMessageInThread(quoteReply, last = false)
+        }
+        step("WHEN user opens the thread and taps on the quoted message") {
+            userRobot
+                .openThread(usingContextMenu = false)
+                .tapOnQuotedMessage()
+        }
+        step("THEN the replies after the quote follow without a gap") {
+            userRobot
+                .scrollMessageListDownToMessage("31")
+                .assertMessage("32")
+        }
+        step("WHEN participant sends a new reply and user taps on the scroll to bottom button") {
+            participantRobot.sendMessageInThread(newReply)
+            userRobot.tapOnScrollToBottomButton()
+        }
+        step("THEN user observes the new reply") {
+            userRobot.assertMessage(newReply)
+        }
+        step("WHEN participant sends another reply") {
+            participantRobot.sendMessageInThread(nextReply)
+        }
+        step("THEN user observes the other reply at the bottom") {
+            userRobot.assertMessage(nextReply)
+        }
+    }
+
     @AllureId("5894")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_File_InThread() {

@@ -126,6 +126,7 @@ import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1145,18 +1146,29 @@ public class MessageListController(
      * @param scrollToBottom Handler that notifies when the message has been loaded.
      */
     public fun scrollToBottom(messageLimit: Int = this.messageLimit, scrollToBottom: () -> Unit) {
-        if (isInThread || channelState.value?.endOfNewerMessages?.value == true) {
-            scrollToBottom()
-        } else {
-            chatClient.loadNewestMessages(cid, messageLimit).enqueue { result ->
-                when (result) {
-                    is Result.Success -> scrollToBottom()
-                    is Result.Failure ->
-                        logger.e {
-                            "Could not load newest messages. Message: ${result.value.message}. " +
-                                "Cause: ${result.value.extractCause()}"
-                        }
-                }
+        when (val mode = _mode.value) {
+            is MessageMode.Normal -> if (channelState.value?.endOfNewerMessages?.value == true) {
+                scrollToBottom()
+            } else {
+                chatClient.loadNewestMessages(cid, messageLimit).enqueueThenScrollToBottom(scrollToBottom)
+            }
+            is MessageMode.MessageThread -> if (mode.threadState?.endOfNewerMessages?.value == false) {
+                chatClient.getReplies(mode.parentMessage.id, messageLimit).enqueueThenScrollToBottom(scrollToBottom)
+            } else {
+                scrollToBottom()
+            }
+        }
+    }
+
+    private fun <T : Any> Call<T>.enqueueThenScrollToBottom(scrollToBottom: () -> Unit) {
+        enqueue { result ->
+            when (result) {
+                is Result.Success -> scrollToBottom()
+                is Result.Failure ->
+                    logger.e {
+                        "Could not load newest messages. Message: ${result.value.message}. " +
+                            "Cause: ${result.value.extractCause()}"
+                    }
             }
         }
     }

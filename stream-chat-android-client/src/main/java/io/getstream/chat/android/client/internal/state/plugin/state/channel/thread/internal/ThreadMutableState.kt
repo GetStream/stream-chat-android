@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.thr
 import io.getstream.chat.android.client.api.state.ThreadState
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import kotlinx.coroutines.CoroutineScope
@@ -59,6 +60,12 @@ internal class ThreadMutableState(
     override val newestInThread: StateFlow<Message?> = _newestInThread!!
 
     /**
+     * Whether the loaded replies come from a jump to a reply, rather than from loading the newest page.
+     */
+    @Volatile
+    var isJumpPage: Boolean = false
+
+    /**
      * Retrieves the parent message of the thread.
      */
     val parentMessage: Message?
@@ -90,6 +97,18 @@ internal class ThreadMutableState(
 
     fun upsertMessages(messages: List<Message>) {
         _messages?.apply { value += (messages.associateBy(Message::id) - deletedMessagesIds) }
+    }
+
+    /**
+     * Replaces the loaded replies with [replies]. The parent message and the local-only replies
+     * (not yet on the server) are kept, so a new page does not hide replies the user is still sending.
+     *
+     * @param replies The replies of the newly loaded page.
+     */
+    fun setReplies(replies: List<Message>) {
+        _messages?.apply {
+            value = value.filterValues { it.id == parentId || it.isLocalOnly() } + replies.associateBy(Message::id)
+        }
     }
 
     /**

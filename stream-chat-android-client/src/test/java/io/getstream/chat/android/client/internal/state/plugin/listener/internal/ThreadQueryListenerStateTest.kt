@@ -26,6 +26,7 @@ import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -103,9 +104,10 @@ internal class ThreadQueryListenerStateTest {
         verify(threadLogic).run {
             setLoading(false)
             setEndOfNewerMessages(true)
-            upsertMessages(messageList)
             setEndOfOlderMessages(false)
         }
+        verify(threadLogic).setReplies(messageList, isJumpPage = false)
+        verify(threadLogic, never()).upsertMessages(any())
     }
 
     @Test
@@ -114,10 +116,8 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).setLoading(false)
 
-        verify(threadLogic, never()).run {
-            upsertMessages(messageList)
-            setEndOfOlderMessages(false)
-        }
+        verify(threadLogic, never()).setReplies(any(), any())
+        verify(threadLogic, never()).setEndOfOlderMessages(any())
     }
 
     @Test
@@ -141,8 +141,9 @@ internal class ThreadQueryListenerStateTest {
             updateNewestMessageInThread(messages)
             setEndOfOlderMessages(false)
             setEndOfNewerMessages(false)
-            upsertMessages(messages)
         }
+        verify(threadLogic).setReplies(messages, isJumpPage = true)
+        verify(threadLogic, never()).upsertMessages(any())
         verify(threadLogic, never()).setEndOfOlderMessages(true)
         verify(threadLogic, never()).setEndOfNewerMessages(true)
     }
@@ -200,7 +201,7 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).setEndOfOlderMessages(true)
         verify(threadLogic).setEndOfNewerMessages(true)
-        verify(threadLogic).upsertMessages(emptyList())
+        verify(threadLogic).setReplies(emptyList(), isJumpPage = true)
     }
 
     @Test
@@ -216,8 +217,8 @@ internal class ThreadQueryListenerStateTest {
             setLoading(false)
             setEndOfOlderMessages(true)
             setEndOfNewerMessages(true)
-            upsertMessages(messageList)
         }
+        verify(threadLogic).setReplies(messageList, isJumpPage = true)
     }
 
     @Test
@@ -232,9 +233,7 @@ internal class ThreadQueryListenerStateTest {
 
             verify(threadLogic).setLoading(false)
 
-            verify(threadLogic, never()).run {
-                upsertMessages(messageList)
-                setEndOfOlderMessages(true)
-            }
+            verify(threadLogic, never()).setReplies(any(), any())
+            verify(threadLogic, never()).setEndOfOlderMessages(any())
         }
 }
