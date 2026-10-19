@@ -169,6 +169,19 @@ internal class ThreadLogicJumpPageTest {
         verify(threadStateLogic, never()).releaseHeldReplies()
     }
 
+    @Test
+    fun `Given the newest replies are reached while a new reply is held Should release it`() {
+        val reply = randomMessage(ownReactions = emptyList())
+        whenever(threadMutableState.isJumpPage).doReturn(true)
+        whenever(threadMutableState.endOfNewerMessages).doReturn(MutableStateFlow(false), MutableStateFlow(true))
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+
+        threadLogic.handleMessageEvents(listOf(randomNewMessageEvent(message = reply)))
+
+        verify(threadMutableState).holdReply(reply)
+        verify(threadStateLogic).releaseHeldReplies()
+    }
+
     private fun givenJumpPage(endOfNewerMessages: Boolean) {
         whenever(threadMutableState.isJumpPage).doReturn(true)
         whenever(threadMutableState.endOfNewerMessages).doReturn(MutableStateFlow(endOfNewerMessages))

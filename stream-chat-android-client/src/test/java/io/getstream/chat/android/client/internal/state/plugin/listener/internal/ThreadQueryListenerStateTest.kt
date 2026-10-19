@@ -157,6 +157,65 @@ internal class ThreadQueryListenerStateTest {
     }
 
     @Test
+    fun `given the replies were replaced while an older page was loading, the older page is dropped`() = runTest {
+        val firstId = randomString()
+        whenever(threadLogic.replaceCount) doReturn 0
+        threadQueryListenerState.onGetRepliesMoreRequest(message.id, firstId, 30)
+        whenever(threadLogic.replaceCount) doReturn 1
+
+        threadQueryListenerState.onGetRepliesMoreResult(Result.Success(messageList), message.id, firstId, 30)
+
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic, never()).upsertMessages(any())
+    }
+
+    @Test
+    fun `given the replies were not replaced while an older page was loading, the older page is added`() = runTest {
+        val firstId = randomString()
+        threadQueryListenerState.onGetRepliesMoreRequest(message.id, firstId, 30)
+
+        threadQueryListenerState.onGetRepliesMoreResult(Result.Success(messageList), message.id, firstId, 30)
+
+        verify(threadLogic).upsertMessages(messageList)
+    }
+
+    @Test
+    fun `given the replies were replaced while a newer page was loading, the newer page is dropped`() = runTest {
+        val lastId = randomString()
+        whenever(threadLogic.replaceCount) doReturn 0
+        threadQueryListenerState.onGetNewerRepliesRequest(message.id, 30, lastId)
+        whenever(threadLogic.replaceCount) doReturn 1
+
+        threadQueryListenerState.onGetNewerRepliesResult(Result.Success(messageList), message.id, 30, lastId)
+
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic, never()).upsertMessages(any())
+        verify(threadLogic, never()).setEndOfNewerMessages(any())
+    }
+
+    @Test
+    fun `given a first page from the oldest replies, the jump page is left`() = runTest {
+        val stateLogic: ThreadStateLogic = mock()
+        whenever(threadLogic.stateLogic()) doReturn stateLogic
+
+        threadQueryListenerState.onGetNewerRepliesResult(Result.Success(messageList), message.id, 30, null)
+
+        verify(stateLogic).leaveJumpPage()
+        verify(threadLogic).upsertMessages(messageList)
+    }
+
+    @Test
+    fun `given a newer page after a loaded reply, the jump page is kept`() = runTest {
+        val stateLogic: ThreadStateLogic = mock()
+        whenever(threadLogic.stateLogic()) doReturn stateLogic
+
+        threadQueryListenerState.onGetNewerRepliesResult(Result.Success(messageList), message.id, 30, randomString())
+
+        verify(stateLogic, never()).leaveJumpPage()
+        verify(threadLogic).upsertMessages(messageList)
+    }
+
+    @Test
     fun `given response it failure, the state should NOT be updated in the SDK`() = runTest {
         threadQueryListenerState.onGetRepliesResult(Result.Failure(Error.GenericError("")), message.id, 30)
 

@@ -26,9 +26,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.util.concurrent.atomic.AtomicInteger
 
 internal class ThreadMutableState(
     override val parentId: String,
@@ -40,14 +42,6 @@ internal class ThreadMutableState(
     private var _endOfNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _oldestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
     private var _newestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
-
-    private val deletedMessagesIds: Set<String>
-        get() = _messages
-            ?.value
-            ?.values
-            ?.mapNotNull { it.takeIf { it.isDeleted() }?.id }
-            ?.toSet()
-            ?: emptySet()
 
     val rawMessage: StateFlow<Map<String, Message>> = _messages!!
     override val messages: StateFlow<List<Message>> = rawMessage
@@ -64,6 +58,11 @@ internal class ThreadMutableState(
     override var isJumpPage: Boolean = false
 
     private val _heldReplies = MutableStateFlow<Map<String, Message>>(emptyMap())
+    private val _replaceCount = AtomicInteger()
+
+    /** How many times the loaded replies were replaced by a new page. */
+    val replaceCount: Int
+        get() = _replaceCount.get()
 
     /** New replies that arrived while a jumped-to page without the newest replies was shown. */
     val heldReplies: Map<String, Message>
@@ -96,23 +95,24 @@ internal class ThreadMutableState(
     }
 
     fun deleteMessage(message: Message) {
-        _messages?.apply { value -= message.id }
+        _messages?.update { it - message.id }
     }
 
     fun upsertMessages(messages: List<Message>) {
-        _messages?.apply { value += (messages.associateBy(Message::id) - deletedMessagesIds) }
+        _messages?.update { loaded -> loaded + (messages.associateBy(Message::id) - loaded.deletedIds()) }
     }
 
     /**
-     * Replaces the loaded replies with [replies]. The parent message and the local-only replies
-     * (not yet on the server) are kept, so a new page does not hide replies the user is still sending.
+     * Replaces the loaded replies in one atomic step. The parent message and the local-only replies
+     * (not yet on the server) are always kept.
      *
-     * @param replies The replies of the newly loaded page.
+     * @param replies Computes the new replies from the loaded messages. It can run more than once.
      */
-    fun setReplies(replies: List<Message>) {
-        _messages?.apply {
-            value = value.filterValues { it.id == parentId || it.isLocalOnly() } + replies.associateBy(Message::id)
+    fun setReplies(replies: (loaded: Map<String, Message>) -> List<Message>) {
+        _messages?.update { loaded ->
+            loaded.filterValues { it.id == parentId || it.isLocalOnly() } + replies(loaded).associateBy(Message::id)
         }
+        _replaceCount.incrementAndGet()
     }
 
     fun holdReply(message: Message) {
@@ -123,9 +123,8 @@ internal class ThreadMutableState(
         _heldReplies.update { it - messageId }
     }
 
-    fun clearHeldReplies() {
-        _heldReplies.value = emptyMap()
-    }
+    /** Returns the held replies and clears them in one atomic step. */
+    fun takeHeldReplies(): List<Message> = _heldReplies.getAndUpdate { emptyMap() }.values.toList()
 
     /**
      * Updates the poll object related to the parent message of the thread.
@@ -150,3 +149,6 @@ internal class ThreadMutableState(
         _oldestInThread = null
     }
 }
+
+private fun Map<String, Message>.deletedIds(): Set<String> =
+    values.filter { it.isDeleted() }.mapTo(mutableSetOf(), Message::id)

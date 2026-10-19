@@ -90,6 +90,9 @@ internal class ThreadLogic(
     internal val isJumpPage: Boolean
         get() = mutableState.isJumpPage
 
+    internal val replaceCount: Int
+        get() = mutableState.replaceCount
+
     internal fun updateMessagesMemberInfo(cid: String, userId: String, memberInfo: MemberInfo) =
         threadStateLogic.updateMessagesMemberInfo(cid, userId, memberInfo)
 
@@ -185,7 +188,13 @@ internal class ThreadLogic(
     private fun holdIfNewReply(event: HasMessage, message: Message) {
         when {
             event is MessageDeletedEvent && event.hardDelete -> mutableState.removeHeldReply(message.id)
-            event.isNewReply() || message.id in mutableState.heldReplies -> mutableState.holdReply(message)
+            event.isNewReply() || message.id in mutableState.heldReplies -> {
+                mutableState.holdReply(message)
+                // The newest replies can be reached while this event is handled, after the held ones were released.
+                if (!mutableState.isJumpPage || mutableState.endOfNewerMessages.value) {
+                    threadStateLogic.releaseHeldReplies()
+                }
+            }
         }
     }
 

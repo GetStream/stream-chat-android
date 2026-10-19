@@ -231,6 +231,23 @@ internal class ThreadStateLogicTest {
         assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
     }
 
+    @Test
+    fun `Given a jump page with held replies When it is left Should add the held replies and keep the loaded ones`() =
+        runTest {
+            val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+            val loaded = reply(createdAt = 10)
+            val held = reply(createdAt = 50)
+            threadStateLogic.upsertMessages(listOf(loaded))
+            mutableState.isJumpPage = true
+            mutableState.holdReply(held)
+
+            threadStateLogic.leaveJumpPage()
+
+            assertEquals(listOf(loaded, held), mutableState.rawMessage.value.values.sortedBy { it.createdAt })
+            assertFalse(mutableState.isJumpPage)
+            assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
+        }
+
     private fun reply(
         id: String = randomString(),
         createdAt: Long,

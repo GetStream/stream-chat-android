@@ -35,7 +35,7 @@ internal class ThreadMutableStateTest {
         val newReply = randomMessage(parentId = parentId, syncStatus = SyncStatus.COMPLETED)
         state.upsertMessages(listOf(parent, loadedReply))
 
-        state.setReplies(listOf(newReply))
+        state.setReplies { listOf(newReply) }
 
         state.rawMessage.value shouldBeEqualTo mapOf(parent.id to parent, newReply.id to newReply)
     }
@@ -46,8 +46,24 @@ internal class ThreadMutableStateTest {
         val newReply = randomMessage(parentId = parentId, syncStatus = SyncStatus.COMPLETED)
         state.upsertMessages(listOf(pendingReply))
 
-        state.setReplies(listOf(newReply))
+        state.setReplies { listOf(newReply) }
 
         state.rawMessage.value shouldBeEqualTo mapOf(pendingReply.id to pendingReply, newReply.id to newReply)
+    }
+
+    @Test
+    fun `Given held replies When they are taken Should return them and clear them`() {
+        val held = randomMessage(parentId = parentId)
+        state.holdReply(held)
+
+        state.takeHeldReplies() shouldBeEqualTo listOf(held)
+        state.heldReplies shouldBeEqualTo emptyMap()
+    }
+
+    @Test
+    fun `Given replies When they are replaced Should count the replace`() {
+        state.setReplies { emptyList() }
+
+        state.replaceCount shouldBeEqualTo 1
     }
 }

@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.model.MessageListItemWrapper
 import io.getstream.chat.android.ui.utils.extensions.toMessageListItemWrapper
@@ -166,11 +167,15 @@ public class MessageListViewModel(
     public val shouldRequestMessagesAtBottom: LiveData<Boolean> = combine(
         messageListController.isInsideSearch,
         messageListController.mode,
+        messageListController.threadListState,
     ) { data ->
-        val isInsideSearch: Boolean = (data[0] as Boolean)
-        val isInThread: Boolean = (data[1] as MessageMode) is MessageMode.MessageThread
-        (isInsideSearch || (isInThread && messageListController.threadLoadOrderOlderToNewer))
-    }.asLiveData()
+        shouldRequestMessagesAtBottom(
+            isInsideSearch = data[0] as Boolean,
+            mode = data[1] as MessageMode,
+            threadListState = data[2] as MessageListState,
+            threadLoadOrderOlderToNewer = messageListController.threadLoadOrderOlderToNewer,
+        )
+    }.distinctUntilChanged().asLiveData()
 
     /**
      * Emits the current unread label state.
@@ -850,4 +855,19 @@ public class MessageListViewModel(
             val answer: String,
         ) : Event()
     }
+}
+
+/**
+ * Whether the list loads newer messages when scrolled to the bottom: inside a channel search, in a thread loaded
+ * from the oldest replies, and on a jumped-to thread page that does not reach the newest replies.
+ */
+internal fun shouldRequestMessagesAtBottom(
+    isInsideSearch: Boolean,
+    mode: MessageMode,
+    threadListState: MessageListState,
+    threadLoadOrderOlderToNewer: Boolean,
+): Boolean {
+    if (mode !is MessageMode.MessageThread) return isInsideSearch
+    val isJumpPageWithoutNewest = mode.threadState?.isJumpPage == true && !threadListState.endOfNewMessagesReached
+    return isInsideSearch || threadLoadOrderOlderToNewer || isJumpPageWithoutNewest
 }

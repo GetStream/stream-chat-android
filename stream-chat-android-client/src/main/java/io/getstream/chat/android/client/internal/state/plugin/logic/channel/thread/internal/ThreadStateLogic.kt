@@ -95,24 +95,28 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
      * @param isJumpPage Whether the page was loaded around a jumped-to reply.
      */
     fun setReplies(messages: List<Message>, isJumpPage: Boolean) {
-        val loaded = mutableState.rawMessage.value
-        val page = messages.map { pageMessage ->
-            loaded[pageMessage.id]
-                ?.takeIf { it.isDeleted() || !isMessageNewerThanCurrent(it, pageMessage) }
-                ?: pageMessage
-        }
         val reachesNewest = !isJumpPage || mutableState.endOfNewerMessages.value
-        val newerThanPage = if (reachesNewest) repliesNewerThan(page, loaded.values) else emptyList()
         mutableState.isJumpPage = isJumpPage
-        mutableState.setReplies(page + newerThanPage)
+        mutableState.setReplies { loaded ->
+            val page = messages.map { pageMessage ->
+                loaded[pageMessage.id]
+                    ?.takeIf { it.isDeleted() || !isMessageNewerThanCurrent(it, pageMessage) }
+                    ?: pageMessage
+            }
+            if (reachesNewest) page + repliesNewerThan(page, loaded.values) else page
+        }
     }
 
     /** Adds the replies held back while a jumped-to page without the newest replies was shown. */
     fun releaseHeldReplies() {
-        val held = mutableState.heldReplies.values.toList()
-        if (held.isEmpty()) return
-        mutableState.clearHeldReplies()
-        upsertMessages(held)
+        val held = mutableState.takeHeldReplies()
+        if (held.isNotEmpty()) upsertMessages(held)
+    }
+
+    /** Leaves a jumped-to page without replacing the loaded replies, and adds the replies held back. */
+    fun leaveJumpPage() {
+        mutableState.isJumpPage = false
+        releaseHeldReplies()
     }
 
     private fun repliesNewerThan(page: List<Message>, candidates: Collection<Message>): List<Message> {
