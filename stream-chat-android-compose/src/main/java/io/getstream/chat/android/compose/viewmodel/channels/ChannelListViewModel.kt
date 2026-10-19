@@ -959,7 +959,7 @@ public class ChannelListViewModel internal constructor(
         val config = state.groupedQueryConfig.value
         channelsState = channelsState.copy(isLoadingMore = true)
         do {
-            val loadedCids = state.channels.value.orEmpty().mapTo(mutableSetOf(), Channel::cid)
+            val loadedCids = state.channels.value.orEmpty().map(Channel::cid).toSet()
             val result = chatClient.queryGroupedChannelsInternal(
                 limit = config?.limit,
                 groups = mapOf(
