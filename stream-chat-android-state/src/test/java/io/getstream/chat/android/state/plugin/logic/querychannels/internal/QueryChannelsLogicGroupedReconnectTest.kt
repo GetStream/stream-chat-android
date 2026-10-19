@@ -152,7 +152,7 @@ internal class QueryChannelsLogicGroupedReconnectTest {
 
         // Then
         assertEquals(setOf("new", "a", "b", "c", "d"), stateLogic.getChannels()!!.values.map { it.id }.toSet())
-        assertEquals(setOf("new", "a", "b", "c", "d"), stateLogic.getQuerySpecs().cids.map { it.substringAfter(':') }.toSet())
+        assertEquals(setOf("new", "a", "b", "c", "d"), realLogic.cids().map { it.substringAfter(':') }.toSet())
         assertEquals("cursor-2b", mutableState.nextCursor.value)
         assertEquals(false, mutableState.endOfChannels.value)
     }
