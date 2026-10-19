@@ -126,7 +126,6 @@ import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.call.Call
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1146,30 +1145,41 @@ public class MessageListController(
      * @param scrollToBottom Handler that notifies when the message has been loaded.
      */
     public fun scrollToBottom(messageLimit: Int = this.messageLimit, scrollToBottom: () -> Unit) {
-        when (val mode = _mode.value) {
-            is MessageMode.Normal -> if (channelState.value?.endOfNewerMessages?.value == true) {
-                scrollToBottom()
-            } else {
-                chatClient.loadNewestMessages(cid, messageLimit).enqueueThenScrollToBottom(scrollToBottom)
-            }
-            is MessageMode.MessageThread -> if (mode.threadState?.endOfNewerMessages?.value == false) {
-                chatClient.getReplies(mode.parentMessage.id, messageLimit).enqueueThenScrollToBottom(scrollToBottom)
-            } else {
-                scrollToBottom()
+        val mode = _mode.value
+        if (mode is MessageMode.MessageThread) {
+            scrollToBottomOfThread(mode, messageLimit, scrollToBottom)
+        } else if (channelState.value?.endOfNewerMessages?.value == true) {
+            scrollToBottom()
+        } else {
+            chatClient.loadNewestMessages(cid, messageLimit).enqueue { result ->
+                when (result) {
+                    is Result.Success -> scrollToBottom()
+                    is Result.Failure ->
+                        logger.e {
+                            "Could not load newest messages. Message: ${result.value.message}. " +
+                                "Cause: ${result.value.extractCause()}"
+                        }
+                }
             }
         }
     }
 
-    private fun <T : Any> Call<T>.enqueueThenScrollToBottom(scrollToBottom: () -> Unit) {
-        enqueue { result ->
-            when (result) {
-                is Result.Success -> scrollToBottom()
-                is Result.Failure ->
-                    logger.e {
-                        "Could not load newest messages. Message: ${result.value.message}. " +
-                            "Cause: ${result.value.extractCause()}"
-                    }
+    private fun scrollToBottomOfThread(
+        threadMode: MessageMode.MessageThread,
+        messageLimit: Int,
+        scrollToBottom: () -> Unit,
+    ) {
+        val threadState = threadMode.threadState
+        if (threadState == null || !threadState.isJumpPage || threadState.endOfNewerMessages.value) {
+            scrollToBottom()
+            return
+        }
+        chatClient.getReplies(threadMode.parentMessage.id, messageLimit).enqueue { result ->
+            if (result is Result.Failure) {
+                logger.e { "[scrollToBottomOfThread] could not load the newest replies: ${result.value.message}" }
             }
+            // A failed load, for example while another page is loading, still scrolls to the newest loaded reply.
+            scrollToBottom()
         }
     }
 
@@ -1259,9 +1269,10 @@ public class MessageListController(
      */
     @Suppress("ComplexCondition")
     private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
+        // In the older-to-newer order, the oldest reply is only known after a jump, which can leave older replies
+        // to load.
         if (_threadListState.value.endOfOldMessagesReached ||
             _threadListState.value.isLoadingOlderMessages ||
-            threadLoadOrderOlderToNewer ||
             threadMode.threadState?.oldestInThread?.value == null
         ) {
             return

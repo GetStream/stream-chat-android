@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.loadNewestMessages
-import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.message.isLocalOnly
@@ -1440,9 +1439,9 @@ public class MessageComposerController(
     }
 
     private fun loadLatestMessagesIfNeeded() {
-        val parentId = parentMessageId
-        if (parentId != null) {
-            loadLatestRepliesIfNeeded(parentId)
+        val threadMode = _state.value.messageMode as? MessageMode.MessageThread
+        if (threadMode != null) {
+            loadLatestRepliesIfNeeded(threadMode)
             return
         }
         val endReached = channelState.value?.endOfNewerMessages?.value ?: true
@@ -1451,10 +1450,11 @@ public class MessageComposerController(
         chatClient.loadNewestMessages(channelCid, messageLimit = 30).enqueue()
     }
 
-    private fun loadLatestRepliesIfNeeded(parentId: String) {
-        if (chatClient.state.thread(parentId).endOfNewerMessages.value) return
+    private fun loadLatestRepliesIfNeeded(threadMode: MessageMode.MessageThread) {
+        val threadState = threadMode.threadState ?: return
+        if (!threadState.isJumpPage || threadState.endOfNewerMessages.value) return
         logger.d { "[loadLatestRepliesIfNeeded] loading latest replies" }
-        chatClient.getReplies(parentId, limit = 30).enqueue()
+        chatClient.getReplies(threadMode.parentMessage.id, limit = 30).enqueue()
     }
 
     /**

@@ -84,10 +84,11 @@ internal class ThreadLogic(
      * @param messages The replies of the page.
      * @param isJumpPage Whether the page was loaded around a jumped-to reply.
      */
-    internal fun setReplies(messages: List<Message>, isJumpPage: Boolean) {
-        mutableState.isJumpPage = isJumpPage
-        mutableState.setReplies(messages)
-    }
+    internal fun setReplies(messages: List<Message>, isJumpPage: Boolean) =
+        threadStateLogic.setReplies(messages, isJumpPage)
+
+    internal val isJumpPage: Boolean
+        get() = mutableState.isJumpPage
 
     internal fun updateMessagesMemberInfo(cid: String, userId: String, memberInfo: MemberInfo) =
         threadStateLogic.updateMessagesMemberInfo(cid, userId, memberInfo)
@@ -110,6 +111,8 @@ internal class ThreadLogic(
 
     internal fun setEndOfNewerMessages(isEnd: Boolean) {
         mutableState.setEndOfNewerMessages(isEnd)
+        // A jumped-to page that reaches the newest replies shows the replies held back until then.
+        if (isEnd && mutableState.isJumpPage) threadStateLogic.releaseHeldReplies()
     }
 
     internal fun updateNewestMessageInThread(messages: List<Message>) {
@@ -121,8 +124,7 @@ internal class ThreadLogic(
     }
 
     internal fun handleMessageEvents(events: List<HasMessage>) {
-        val shownEvents = events.filter(::isShownInThread)
-        val messages = shownEvents
+        val messages = events
             .map { event ->
                 val originalMessage = getMessage(event.message.id)
                 val ownReactions = originalMessage?.ownReactions ?: event.message.ownReactions
@@ -142,8 +144,19 @@ internal class ThreadLogic(
                     )
                 }
             }
-        upsertMessages(messages)
-        shownEvents.zip(messages).forEach { (event, message) ->
+        val shownIds = mutableSetOf<String>()
+        val shownMessages = events.zip(messages).mapNotNull { (event, message) ->
+            if (message.id in shownIds || isShownInThread(event)) {
+                shownIds += message.id
+                message
+            } else {
+                holdIfNewReply(event, message)
+                null
+            }
+        }
+        upsertMessages(shownMessages)
+        // Quoting replies are loaded even when the quoted one is not, so every update reaches them.
+        events.zip(messages).forEach { (event, message) ->
             when (event) {
                 is MessageUpdatedEvent -> threadStateLogic.updateQuotedMessageReferences(message)
                 is MessageDeletedEvent -> if (event.hardDelete) {
@@ -157,19 +170,23 @@ internal class ThreadLogic(
     }
 
     /**
-     * Keeps the loaded replies one contiguous page: events for replies that are not loaded are ignored,
-     * except new replies while the newest page is loaded. While a jumped-to page is shown, new replies
-     * are left out and arrive with the newest page instead.
+     * While a jumped-to page is shown, keeps the loaded replies one contiguous page: events for replies that are
+     * not loaded are ignored, except new replies once the newest replies are loaded. Outside a jumped-to page,
+     * every event applies.
      */
     private fun isShownInThread(event: HasMessage): Boolean {
+        if (!mutableState.isJumpPage) return true
         val messageId = event.message.id
         if (messageId == mutableState.parentId || mutableState.rawMessage.value.containsKey(messageId)) return true
-        val isNewReply = when (event) {
-            is NewMessageEvent, is NotificationMessageNewEvent, is NotificationThreadMessageNewEvent -> true
-            else -> false
+        return event.isNewReply() && mutableState.endOfNewerMessages.value
+    }
+
+    /** Keeps new replies left out of a jumped-to page, and their updates, for when the newest page is loaded. */
+    private fun holdIfNewReply(event: HasMessage, message: Message) {
+        when {
+            event is MessageDeletedEvent && event.hardDelete -> mutableState.removeHeldReply(message.id)
+            event.isNewReply() || message.id in mutableState.heldReplies -> mutableState.holdReply(message)
         }
-        val isNewestPageLoaded = !mutableState.isJumpPage || mutableState.endOfNewerMessages.value
-        return isNewReply && isNewestPageLoaded
     }
 
     internal fun handleReminderEvents(events: List<HasReminder>) {
@@ -216,4 +233,9 @@ internal class ThreadLogic(
             mutableState.updateParentMessagePoll(processedPoll)
         }
     }
+}
+
+private fun HasMessage.isNewReply(): Boolean = when (this) {
+    is NewMessageEvent, is NotificationMessageNewEvent, is NotificationThreadMessageNewEvent -> true
+    else -> false
 }

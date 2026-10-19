@@ -425,23 +425,7 @@ class QuotedReplyTests : StreamTestCase() {
     fun test_threadShowsOnlyThePageAroundTheQuote_whenUserJumpsToQuotedReplyNotInList() {
         val newReply = "New reply"
         val nextReply = "Next reply"
-        step("GIVEN a thread with more replies than two pages") {
-            backendRobot.generateChannels(
-                channelsCount = 1,
-                messagesCount = 1,
-                messagesText = sampleText,
-                repliesCount = 90,
-            )
-            userRobot.login().openChannel()
-        }
-        step("AND participant adds a quoted reply to the first reply in thread") {
-            participantRobot.quoteMessageInThread(quoteReply, last = false)
-        }
-        step("WHEN user opens the thread and taps on the quoted message") {
-            userRobot
-                .openThread(usingContextMenu = false)
-                .tapOnQuotedMessage()
-        }
+        jumpToTheFirstReplyInLongThread()
         step("THEN the replies after the quote follow without a gap") {
             userRobot
                 .scrollMessageListDownToMessage("31")
@@ -459,6 +443,59 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user observes the other reply at the bottom") {
             userRobot.assertMessage(nextReply)
+        }
+    }
+
+    @AllureId("12385")
+    @Test
+    fun test_ownReplyIsShownWithTheNewestReplies_whenUserRepliesFromJumpedToPageInThread() {
+        val ownReply = "Own reply"
+        jumpToTheFirstReplyInLongThread()
+        step("WHEN user sends a reply") {
+            userRobot.sendMessageInThread(ownReply)
+        }
+        step("THEN user observes the reply right after the newest replies") {
+            userRobot
+                .assertMessage(ownReply)
+                .assertMessage("90")
+        }
+    }
+
+    @AllureId("12386")
+    @Test
+    fun test_replySentWhileOnJumpedToPage_isShown_whenUserScrollsDownToNewestReplies() {
+        val newReply = "New reply"
+        jumpToTheFirstReplyInLongThread()
+        step("WHEN participant sends a reply") {
+            participantRobot.sendMessageInThread(newReply)
+        }
+        step("AND user scrolls down to the newest replies") {
+            userRobot.scrollMessageListDownToMessage(newReply, maxScrolls = 30)
+        }
+        step("THEN user observes the reply after the newest replies") {
+            userRobot
+                .assertMessage(newReply)
+                .assertMessage(quoteReply)
+        }
+    }
+
+    private fun jumpToTheFirstReplyInLongThread() {
+        step("GIVEN a thread with more replies than two pages") {
+            backendRobot.generateChannels(
+                channelsCount = 1,
+                messagesCount = 1,
+                messagesText = sampleText,
+                repliesCount = 90,
+            )
+            userRobot.login().openChannel()
+        }
+        step("AND participant adds a quoted reply to the first reply in thread") {
+            participantRobot.quoteMessageInThread(quoteReply, last = false)
+        }
+        step("AND user opens the thread and taps on the quoted message") {
+            userRobot
+                .openThread(usingContextMenu = false)
+                .tapOnQuotedMessage()
         }
     }
 

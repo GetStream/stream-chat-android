@@ -64,6 +64,7 @@ internal class ThreadLogicTest {
         threadMutableState = mock()
         threadStateLogic = mock()
         whenever(threadStateLogic.writeThreadState()).doReturn(threadMutableState)
+        whenever(threadMutableState.heldReplies).doReturn(emptyMap())
         threadLogic = ThreadLogic(threadStateLogic)
     }
 
@@ -315,32 +316,39 @@ internal class ThreadLogicTest {
     }
 
     @Test
-    fun `Given MessageUpdatedEvent for a reply that is not loaded When handleMessageEvents is called Should not add it`() {
-        // given
-        val event = randomMessageUpdateEvent(message = randomMessage())
+    fun `Given no jump page When a reply that is not loaded is updated Should add it`() {
+        val reply = randomMessage(replyMessageId = null, poll = null, ownReactions = emptyList())
         whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.messages).doReturn(MutableStateFlow(emptyList()))
+
+        threadLogic.handleMessageEvents(listOf(randomMessageUpdateEvent(message = reply)))
+
+        verify(threadStateLogic).upsertMessages(listOf(reply.copy(replyTo = null)))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent with no existing message When handleMessageEvents is called Should use event ownReactions`() {
+        // given
+        val messageId = randomString()
+        val eventReactions = listOf(randomReaction())
+        val updatedMessage = randomMessage(id = messageId, ownReactions = eventReactions)
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(emptyList()))
 
         // when
         threadLogic.handleMessageEvents(listOf(event))
 
         // then
-        verify(threadStateLogic, times(1)).upsertMessages(emptyList())
-    }
-
-    @Test
-    fun `Given MessageUpdatedEvent for the parent that is not loaded When handleMessageEvents is called Should add it`() {
-        // given
-        val parentId = randomString()
-        val parent = randomMessage(id = parentId, replyMessageId = null, poll = null, ownReactions = emptyList())
-        whenever(threadMutableState.parentId).doReturn(parentId)
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
-        whenever(threadMutableState.messages).doReturn(MutableStateFlow(emptyList()))
-
-        // when
-        threadLogic.handleMessageEvents(listOf(randomMessageUpdateEvent(message = parent)))
-
-        // then
-        verify(threadStateLogic, times(1)).upsertMessages(listOf(parent.copy(replyTo = null)))
+        val expectedMessage = updatedMessage.copy(
+            replyTo = null,
+            ownReactions = eventReactions,
+            poll = null,
+        )
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
     }
 
     @Test
@@ -507,71 +515,29 @@ internal class ThreadLogicTest {
     }
 
     @Test
-    fun `Given a jump page When setReplies is called Should mark it and replace the replies`() {
+    fun `Given a page When setReplies is called Should pass it to the state logic`() {
         val replies = listOf(randomMessage())
 
         threadLogic.setReplies(replies, isJumpPage = true)
 
-        verify(threadMutableState).isJumpPage = true
-        verify(threadMutableState).setReplies(replies)
+        verify(threadStateLogic).setReplies(replies, isJumpPage = true)
     }
 
     @Test
-    fun `Given the newest page is loaded When a new reply arrives Should add it`() {
-        // given
+    fun `Given no jump page When the newest replies are reached Should not release held replies`() {
+        threadLogic.setEndOfNewerMessages(true)
+
+        verify(threadStateLogic, never()).releaseHeldReplies()
+    }
+
+    @Test
+    fun `Given no jump page When a new reply arrives Should add it`() {
         val reply = randomMessage(ownReactions = emptyList())
         whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
 
-        // when
         threadLogic.handleMessageEvents(listOf(randomNewMessageEvent(message = reply)))
 
-        // then
-        verify(threadStateLogic, times(1)).upsertMessages(listOf(reply))
-    }
-
-    @Test
-    fun `Given a jumped-to page without the newest replies When a new reply arrives Should not add it`() {
-        // given
-        whenever(threadMutableState.isJumpPage).doReturn(true)
-        whenever(threadMutableState.endOfNewerMessages).doReturn(MutableStateFlow(false))
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
-
-        // when
-        threadLogic.handleMessageEvents(listOf(randomNewMessageEvent(message = randomMessage())))
-
-        // then
-        verify(threadStateLogic, times(1)).upsertMessages(emptyList())
-    }
-
-    @Test
-    fun `Given a jumped-to page that reaches the newest replies When a new reply arrives Should add it`() {
-        // given
-        val reply = randomMessage(ownReactions = emptyList())
-        whenever(threadMutableState.isJumpPage).doReturn(true)
-        whenever(threadMutableState.endOfNewerMessages).doReturn(MutableStateFlow(true))
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
-
-        // when
-        threadLogic.handleMessageEvents(listOf(randomNewMessageEvent(message = reply)))
-
-        // then
-        verify(threadStateLogic, times(1)).upsertMessages(listOf(reply))
-    }
-
-    @Test
-    fun `Given a jumped-to page without the newest replies When a loaded reply is updated Should update it`() {
-        // given
-        val reply = randomMessage(replyMessageId = null, poll = null, ownReactions = emptyList())
-        whenever(threadMutableState.isJumpPage).doReturn(true)
-        whenever(threadMutableState.endOfNewerMessages).doReturn(MutableStateFlow(false))
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(mapOf(reply.id to reply)))
-        whenever(threadMutableState.messages).doReturn(MutableStateFlow(listOf(reply)))
-
-        // when
-        threadLogic.handleMessageEvents(listOf(randomMessageUpdateEvent(message = reply)))
-
-        // then
-        verify(threadStateLogic, times(1)).upsertMessages(listOf(reply.copy(replyTo = null)))
+        verify(threadStateLogic).upsertMessages(listOf(reply))
     }
 
     @Test

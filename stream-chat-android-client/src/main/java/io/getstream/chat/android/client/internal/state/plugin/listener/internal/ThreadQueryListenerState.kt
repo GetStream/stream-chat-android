@@ -57,12 +57,17 @@ internal class ThreadQueryListenerState(
     override suspend fun onGetRepliesResult(result: Result<List<Message>>, parentId: String, limit: Int) {
         val threadLogic = logic.thread(parentId)
         threadLogic.setLoading(false)
-        result.onSuccess { messages ->
-            // The page contains the newest replies, so the newer end is already loaded.
-            threadLogic.setEndOfNewerMessages(true)
+        // The initial page contains the newest replies, so the newer end is already loaded.
+        result.onSuccess { threadLogic.setEndOfNewerMessages(true) }
+        if (result is Result.Success && threadLogic.isJumpPage) {
+            // Leaving a jumped-to page: the newest page replaces it instead of being added next to it.
+            val messages = result.value
             threadLogic.updateOldestMessageInThread(messages)
+            threadLogic.updateNewestMessageInThread(messages)
             threadLogic.setEndOfOlderMessages(messages.size < limit)
             threadLogic.setReplies(messages, isJumpPage = false)
+        } else {
+            onResult(threadLogic, result, limit)
         }
     }
 

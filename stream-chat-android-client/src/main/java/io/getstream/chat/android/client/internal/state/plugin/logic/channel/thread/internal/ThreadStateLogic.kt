@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.hasOutdatedMemberInfo
 import io.getstream.chat.android.client.extensions.internal.withRefreshedMemberInfo
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -81,6 +83,48 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
         mutableState.upsertMessages(
             messages.filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) },
         )
+    }
+
+    /**
+     * Replaces the loaded replies with a newly loaded page. The parent and the local-only replies are kept.
+     * For a reply already loaded, the loaded copy wins when it is deleted or newer than the page copy, as in
+     * [upsertMessages]. When the page reaches the newest replies, the loaded and held replies newer than the
+     * page are kept too, so replies that arrived while the page was loading are not lost.
+     *
+     * @param messages The replies of the page.
+     * @param isJumpPage Whether the page was loaded around a jumped-to reply.
+     */
+    fun setReplies(messages: List<Message>, isJumpPage: Boolean) {
+        val loaded = mutableState.rawMessage.value
+        val page = messages.map { pageMessage ->
+            loaded[pageMessage.id]
+                ?.takeIf { it.isDeleted() || !isMessageNewerThanCurrent(it, pageMessage) }
+                ?: pageMessage
+        }
+        val reachesNewest = !isJumpPage || mutableState.endOfNewerMessages.value
+        val newerThanPage = if (reachesNewest) {
+            repliesNewerThan(page, loaded.values + mutableState.heldReplies.values)
+        } else {
+            emptyList()
+        }
+        mutableState.isJumpPage = isJumpPage
+        if (reachesNewest) mutableState.clearHeldReplies()
+        mutableState.setReplies(page + newerThanPage)
+    }
+
+    /** Adds the replies held back while a jumped-to page without the newest replies was shown. */
+    fun releaseHeldReplies() {
+        val held = mutableState.heldReplies.values.toList()
+        if (held.isEmpty()) return
+        mutableState.clearHeldReplies()
+        upsertMessages(held)
+    }
+
+    private fun repliesNewerThan(page: List<Message>, candidates: Collection<Message>): List<Message> {
+        val pageNewest = page.mapNotNull { it.getCreatedAtOrNull() }.maxOrNull() ?: return emptyList()
+        return candidates.filter { candidate ->
+            candidate.id != mutableState.parentId && candidate.getCreatedAtOrNull()?.after(pageNewest) == true
+        }
     }
 
     /**

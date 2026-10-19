@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 internal class ThreadMutableState(
     override val parentId: String,
@@ -59,11 +60,14 @@ internal class ThreadMutableState(
     override val oldestInThread: StateFlow<Message?> = _oldestInThread!!
     override val newestInThread: StateFlow<Message?> = _newestInThread!!
 
-    /**
-     * Whether the loaded replies come from a jump to a reply, rather than from loading the newest page.
-     */
     @Volatile
-    var isJumpPage: Boolean = false
+    override var isJumpPage: Boolean = false
+
+    private val _heldReplies = MutableStateFlow<Map<String, Message>>(emptyMap())
+
+    /** New replies that arrived while a jumped-to page without the newest replies was shown. */
+    val heldReplies: Map<String, Message>
+        get() = _heldReplies.value
 
     /**
      * Retrieves the parent message of the thread.
@@ -109,6 +113,18 @@ internal class ThreadMutableState(
         _messages?.apply {
             value = value.filterValues { it.id == parentId || it.isLocalOnly() } + replies.associateBy(Message::id)
         }
+    }
+
+    fun holdReply(message: Message) {
+        _heldReplies.update { it + (message.id to message) }
+    }
+
+    fun removeHeldReply(messageId: String) {
+        _heldReplies.update { it - messageId }
+    }
+
+    fun clearHeldReplies() {
+        _heldReplies.value = emptyMap()
     }
 
     /**

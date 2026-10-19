@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.channel.thr
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.models.MemberInfo
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
@@ -27,7 +28,9 @@ import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -128,6 +131,127 @@ internal class ThreadStateLogicTest {
         poll = null,
         deletedAt = null,
         deletedForMe = false,
+    )
+
+    @Test
+    fun `Given loaded replies When a jump page is set Should keep only the parent, the local-only replies and the page`() =
+        runTest {
+            val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+            val parent = reply(id = parentId, createdAt = 1)
+            val loaded = reply(createdAt = 50)
+            val pending = reply(createdAt = 60, syncStatus = SyncStatus.SYNC_NEEDED)
+            val page = listOf(reply(createdAt = 10), reply(createdAt = 11))
+            threadStateLogic.upsertMessages(listOf(parent, loaded, pending))
+
+            threadStateLogic.setReplies(page, isJumpPage = true)
+
+            assertEquals((listOf(parent, pending) + page).toSet(), mutableState.rawMessage.value.values.toSet())
+            assertTrue(mutableState.isJumpPage)
+        }
+
+    @Test
+    fun `Given a reply deleted offline When a page with its server copy is set Should keep it deleted`() = runTest {
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val serverCopy = reply(createdAt = 10)
+        val deletedOffline = serverCopy.copy(deletedAt = Date(20), syncStatus = SyncStatus.SYNC_NEEDED)
+        threadStateLogic.upsertMessages(listOf(deletedOffline))
+
+        threadStateLogic.setReplies(listOf(serverCopy), isJumpPage = true)
+
+        assertEquals(deletedOffline, mutableState.rawMessage.value[serverCopy.id])
+    }
+
+    @Test
+    fun `Given a loaded reply newer than the page copy When the page is set Should keep the loaded copy`() = runTest {
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val pageCopy = reply(createdAt = 10)
+        val edited = pageCopy.copy(text = "Edited", updatedAt = Date(30))
+        threadStateLogic.upsertMessages(listOf(edited))
+
+        threadStateLogic.setReplies(listOf(pageCopy), isJumpPage = true)
+
+        assertEquals(edited, mutableState.rawMessage.value[pageCopy.id])
+    }
+
+    @Test
+    fun `Given replies newer than the newest page When the newest page is set Should keep them`() = runTest {
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val olderLoaded = reply(createdAt = 5)
+        val sentDuringLoad = reply(createdAt = 40)
+        val held = reply(createdAt = 50)
+        val page = listOf(reply(createdAt = 20), reply(createdAt = 30))
+        threadStateLogic.upsertMessages(listOf(olderLoaded, sentDuringLoad))
+        mutableState.isJumpPage = true
+        mutableState.holdReply(held)
+
+        threadStateLogic.setReplies(page, isJumpPage = false)
+
+        assertEquals(page + sentDuringLoad + held, mutableState.rawMessage.value.values.sortedBy { it.createdAt })
+        assertFalse(mutableState.isJumpPage)
+        assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
+    }
+
+    @Test
+    fun `Given replies newer than a jump page When the jump page is set Should not keep them`() = runTest {
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val newer = reply(createdAt = 40)
+        val held = reply(createdAt = 50)
+        val page = listOf(reply(createdAt = 20))
+        threadStateLogic.upsertMessages(listOf(newer))
+        mutableState.holdReply(held)
+
+        threadStateLogic.setReplies(page, isJumpPage = true)
+
+        assertEquals(page, mutableState.rawMessage.value.values.toList())
+        assertEquals(mapOf(held.id to held), mutableState.heldReplies)
+    }
+
+    @Test
+    fun `Given a jump page that reaches the newest replies When it is set Should keep the newer and held replies`() =
+        runTest {
+            val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+            val newer = reply(createdAt = 40)
+            val held = reply(createdAt = 50)
+            val page = listOf(reply(createdAt = 20))
+            threadStateLogic.upsertMessages(listOf(newer))
+            mutableState.holdReply(held)
+            mutableState.setEndOfNewerMessages(true)
+
+            threadStateLogic.setReplies(page, isJumpPage = true)
+
+            assertEquals(page + newer + held, mutableState.rawMessage.value.values.sortedBy { it.createdAt })
+            assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
+        }
+
+    @Test
+    fun `Given held replies When they are released Should add them and clear the held ones`() = runTest {
+        val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
+        val loaded = reply(createdAt = 10)
+        val held = reply(createdAt = 50)
+        threadStateLogic.upsertMessages(listOf(loaded))
+        mutableState.holdReply(held)
+
+        threadStateLogic.releaseHeldReplies()
+
+        assertEquals(listOf(loaded, held), mutableState.rawMessage.value.values.sortedBy { it.createdAt })
+        assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
+    }
+
+    private fun reply(
+        id: String = randomString(),
+        createdAt: Long,
+        syncStatus: SyncStatus = SyncStatus.COMPLETED,
+    ): Message = randomMessage(
+        id = id,
+        parentId = parentId.takeUnless { id == parentId },
+        type = "regular",
+        createdAt = Date(createdAt),
+        createdLocallyAt = null,
+        updatedAt = null,
+        updatedLocallyAt = null,
+        deletedAt = null,
+        deletedForMe = false,
+        syncStatus = syncStatus,
     )
 
     private fun threadStateLogic(scope: CoroutineScope): Pair<ThreadMutableState, ThreadStateLogic> {

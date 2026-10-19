@@ -1708,7 +1708,35 @@ internal class MessageListControllerTests {
         }
 
     @Test
-    fun `Given the newest thread page is not loaded When scrolling to the bottom Should load it before scrolling`() =
+    fun `Given a jump page without the newest replies When scrolling to the bottom Should load them before scrolling`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                endOfNewerMessages = MutableStateFlow(false),
+                isJumpPage = true,
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+            clearInvocations(chatClient)
+            var scrolled = false
+
+            controller.scrollToBottom { scrolled = true }
+
+            verify(chatClient).getReplies(parentMessage.id, MessageListController.DEFAULT_MESSAGES_LIMIT)
+            scrolled.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given no jump page and replies left to load When scrolling to the bottom Should scroll without loading`() =
         runTest {
             val chatClient = mock<ChatClient>()
             val parentMessage = randomMessage()
@@ -1730,8 +1758,90 @@ internal class MessageListControllerTests {
 
             controller.scrollToBottom { scrolled = true }
 
-            verify(chatClient).getReplies(parentMessage.id, MessageListController.DEFAULT_MESSAGES_LIMIT)
+            verify(chatClient, never()).getReplies(any(), any())
             scrolled.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given a jump page When loading the newest replies fails on scroll to the bottom Should still scroll`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                endOfNewerMessages = MutableStateFlow(false),
+                isJumpPage = true,
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetReplies()
+                .get()
+            controller.enterThreadMode(parentMessage)
+            whenever(chatClient.getReplies(any(), any())) doReturn Error.GenericError("").asCall<List<Message>>()
+            var scrolled = false
+
+            controller.scrollToBottom { scrolled = true }
+
+            scrolled.shouldBeTrue()
+        }
+
+    @Test
+    fun `Given the older-to-newer order after a jump When the top is reached Should load older replies`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val replies = randomMessageList(3)
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = replies,
+                isJumpPage = true,
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetNewerReplies()
+                .givenGetRepliesMore()
+                .get(threadLoadOrderOlderToNewer = true)
+            controller.enterThreadMode(parentMessage)
+
+            controller.loadOlderMessages()
+
+            verify(chatClient).getRepliesMore(
+                messageId = parentMessage.id,
+                firstId = replies.first().id,
+                limit = MessageListController.DEFAULT_MESSAGES_LIMIT,
+            )
+        }
+
+    @Test
+    fun `Given the older-to-newer order without a jump When the top is reached Should not load older replies`() =
+        runTest {
+            val chatClient = mock<ChatClient>()
+            val parentMessage = randomMessage()
+            val threadState = mockThreadState(
+                parentMessage = parentMessage,
+                messages = randomMessageList(3),
+                oldestInThread = null,
+            )
+            val controller = Fixture(chatClient = chatClient)
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState()
+                .givenThreadState(threadState)
+                .givenGetNewerReplies()
+                .givenGetRepliesMore()
+                .get(threadLoadOrderOlderToNewer = true)
+            controller.enterThreadMode(parentMessage)
+
+            controller.loadOlderMessages()
+
+            verify(chatClient, never()).getRepliesMore(any(), any(), any())
         }
 
     @Test
@@ -1860,13 +1970,16 @@ internal class MessageListControllerTests {
         parentMessage: Message,
         messages: List<Message>,
         endOfNewerMessages: MutableStateFlow<Boolean> = MutableStateFlow(false),
+        isJumpPage: Boolean = false,
+        oldestInThread: Message? = messages.firstOrNull(),
     ): ThreadState = mock {
         on { it.parentId } doReturn parentMessage.id
         on { it.messages } doReturn MutableStateFlow(messages)
         on { it.loading } doReturn MutableStateFlow(false)
         on { it.endOfOlderMessages } doReturn MutableStateFlow(false)
         on { it.endOfNewerMessages } doReturn endOfNewerMessages
-        on { it.oldestInThread } doReturn MutableStateFlow(messages.firstOrNull())
+        on { it.oldestInThread } doReturn MutableStateFlow(oldestInThread)
+        on { it.isJumpPage } doReturn isJumpPage
         on { it.newestInThread } doReturn MutableStateFlow(messages.lastOrNull())
     }
 
@@ -1975,6 +2088,10 @@ internal class MessageListControllerTests {
             whenever(chatClient.getNewerReplies(any(), any(), anyOrNull())) doReturn replies.asCall()
         }
 
+        fun givenGetRepliesMore(replies: List<Message> = emptyList()) = apply {
+            whenever(chatClient.getRepliesMore(any(), any(), any())) doReturn replies.asCall()
+        }
+
         fun givenGetRepliesAround(replies: List<Message> = emptyList()) = apply {
             whenever(chatClient.getRepliesAround(any(), any(), any())) doReturn replies.asCall()
         }
@@ -2006,6 +2123,7 @@ internal class MessageListControllerTests {
         fun get(
             dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
             showSystemMessages: Boolean = true,
+            threadLoadOrderOlderToNewer: Boolean = false,
         ): MessageListController {
             return MessageListController(
                 cid = cid,
@@ -2013,7 +2131,7 @@ internal class MessageListControllerTests {
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
                 showSystemMessages = showSystemMessages,
-                threadLoadOrderOlderToNewer = false,
+                threadLoadOrderOlderToNewer = threadLoadOrderOlderToNewer,
                 channelState = MutableStateFlow(channelState),
             )
         }

@@ -101,20 +101,35 @@ internal class ThreadQueryListenerStateTest {
     fun `given response it successful, the state should be updated in the SDK`() = runTest {
         threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, 30)
 
-        verify(threadLogic).run {
-            setLoading(false)
-            setEndOfNewerMessages(true)
-            setEndOfOlderMessages(false)
-        }
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).updateOldestMessageInThread(messageList)
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).upsertMessages(messageList)
+        verify(threadLogic, never()).setReplies(any(), any())
+    }
+
+    @Test
+    fun `given a jump page, the newest page replaces it`() = runTest {
+        whenever(threadLogic.isJumpPage) doReturn true
+
+        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, 30)
+
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).updateOldestMessageInThread(messageList)
+        verify(threadLogic).updateNewestMessageInThread(messageList)
+        verify(threadLogic).setEndOfOlderMessages(true)
         verify(threadLogic).setReplies(messageList, isJumpPage = false)
         verify(threadLogic, never()).upsertMessages(any())
     }
 
     @Test
-    fun `given the newest page is smaller than the limit, the older end is reached`() = runTest {
-        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, messageList.size + 1)
+    fun `given a jump page and a newest page as big as the limit, the older end is not reached`() = runTest {
+        whenever(threadLogic.isJumpPage) doReturn true
 
-        verify(threadLogic).setEndOfOlderMessages(true)
+        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, messageList.size)
+
+        verify(threadLogic).setEndOfOlderMessages(false)
         verify(threadLogic).setReplies(messageList, isJumpPage = false)
     }
 
@@ -143,13 +158,11 @@ internal class ThreadQueryListenerStateTest {
 
         threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[2].id, 5)
 
-        verify(threadLogic).run {
-            setLoading(false)
-            updateOldestMessageInThread(messages)
-            updateNewestMessageInThread(messages)
-            setEndOfOlderMessages(false)
-            setEndOfNewerMessages(false)
-        }
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic).updateOldestMessageInThread(messages)
+        verify(threadLogic).updateNewestMessageInThread(messages)
+        verify(threadLogic).setEndOfOlderMessages(false)
+        verify(threadLogic).setEndOfNewerMessages(false)
         verify(threadLogic).setReplies(messages, isJumpPage = true)
         verify(threadLogic, never()).upsertMessages(any())
         verify(threadLogic, never()).setEndOfOlderMessages(true)
@@ -221,11 +234,9 @@ internal class ThreadQueryListenerStateTest {
             30,
         )
 
-        verify(threadLogic).run {
-            setLoading(false)
-            setEndOfOlderMessages(true)
-            setEndOfNewerMessages(true)
-        }
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).setEndOfNewerMessages(true)
         verify(threadLogic).setReplies(messageList, isJumpPage = true)
     }
 
