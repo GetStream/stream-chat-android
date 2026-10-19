@@ -25,72 +25,23 @@ import io.getstream.chat.android.models.User
 import java.util.Date
 
 /**
- * Reads a reaction straight into its domain model. Without [v2Mapping] it reads the v1 shape, custom data at the root.
- * With it, the v2 shape: custom data under `custom`, mapped by [v2Mapping] as the generated v2 path maps it.
+ * Reads a reaction straight into its domain model: custom data under `custom`, mapped by [mapping] as the generated
+ * path maps it.
  */
 internal class ReactionAdapter(
     private val userAdapter: JsonAdapter<User>,
     private val dateAdapter: JsonAdapter<Date>,
-    private val v2Mapping: DomainMapping? = null,
+    private val mapping: DomainMapping,
 ) : JsonAdapter<Reaction>() {
 
-    @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): Reaction? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (v2Mapping != null) return readV2(reader, v2Mapping)
-
-        reader.beginObject()
-
-        var messageId: String? = null
-        var type: String? = null
-        var score: Int? = null
-        var userId: String? = null
-        var createdAt: Date? = null
-        var updatedAt: Date? = null
-        var user: User? = null
-        var emojiCode: String? = null
-        var extraData: MutableMap<String, Any>? = null
-
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            when (key) {
-                "message_id" -> messageId = reader.nextString()
-                "type" -> type = reader.nextString()
-                "score" -> score = reader.nextInt()
-                "user_id" -> userId = reader.nextString()
-                "created_at" -> createdAt = dateAdapter.fromJson(reader)
-                "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
-                "user" -> user = userAdapter.fromJson(reader)
-                "emoji_code" -> emojiCode = JsonParsingUtils.readNullableString(reader)
-                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
-            }
-        }
-        reader.endObject()
-
-        JsonParsingUtils.requireField(messageId, "message_id", reader)
-        JsonParsingUtils.requireField(type, "type", reader)
-        JsonParsingUtils.requireField(score, "score", reader)
-        JsonParsingUtils.requireField(userId, "user_id", reader)
-        JsonParsingUtils.requireField(createdAt, "created_at", reader)
-        JsonParsingUtils.requireField(updatedAt, "updated_at", reader)
-        JsonParsingUtils.requireField(user, "user", reader)
-
-        return Reaction(
-            messageId = messageId,
-            type = type,
-            score = score,
-            userId = userId,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            user = user,
-            emojiCode = emojiCode,
-            extraData = extraData?.toMap().orEmpty(),
-        )
+        return read(reader)
     }
 
-    /** Reads the v2 shape, matching keys with [V2_KEYS] so no key string is allocated, as the generated adapters do. */
+    /** Matches keys with [KEYS] so no key string is allocated, as the generated adapters do. */
     @Suppress("MagicNumber")
-    private fun readV2(reader: JsonReader, mapping: DomainMapping): Reaction {
+    private fun read(reader: JsonReader): Reaction {
         reader.beginObject()
         var messageId: String? = null
         var type: String? = null
@@ -102,7 +53,7 @@ internal class ReactionAdapter(
         var custom: Map<String, Any?>? = null
 
         while (reader.hasNext()) {
-            when (reader.selectName(V2_KEYS)) {
+            when (reader.selectName(KEYS)) {
                 0 -> messageId = reader.nextString()
                 1 -> type = reader.nextString()
                 2 -> score = reader.nextInt()
@@ -144,7 +95,7 @@ internal class ReactionAdapter(
     }
 
     private companion object {
-        private val V2_KEYS = JsonReader.Options.of(
+        private val KEYS = JsonReader.Options.of(
             "message_id",
             "type",
             "score",

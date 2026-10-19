@@ -17,24 +17,17 @@
 package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.OptionAdapter
-import io.getstream.chat.android.client.parser2.direct.PollAdapter
-import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.client.parser2.testdata.PollTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.models.VotingVisibility
-import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.chat.android.network.models.PollResponseData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.Date
 
 internal class PollParsingTest {
 
@@ -45,20 +38,6 @@ internal class PollParsingTest {
         channelTransformer = NoOpChannelTransformer,
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
-    )
-
-    private val moshi = Moshi.Builder().add(IsoDateAdapter()).build()
-    private val dateAdapter = moshi.adapter(Date::class.java)
-    private val userAdapter = UserAdapter(
-        dateAdapter = dateAdapter,
-        userTransformer = NoOpUserTransformer,
-    )
-    private val optionAdapter = OptionAdapter()
-    private val adapter = PollAdapter(
-        userAdapter = userAdapter,
-        optionAdapter = optionAdapter,
-        dateAdapter = dateAdapter,
-        currentUserIdProvider = { null },
     )
 
     // region Response path (JSON → PollResponseData → Poll)
@@ -79,22 +58,6 @@ internal class PollParsingTest {
 
     // endregion
 
-    // region Direct path (JSON → Poll via PollAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val domain = adapter.fromJson(PollTestData.jsonAllFields)
-        assertEquals(PollTestData.expectedAllFields, domain)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val domain = adapter.fromJson(PollTestData.jsonOptionalFieldsMissing)
-        assertEquals(PollTestData.expectedOptionalFieldsMissing, domain)
-    }
-
-    // endregion
-
     // region Explicit nulls (JSON with explicit null values)
 
     @Test
@@ -104,27 +67,14 @@ internal class PollParsingTest {
         assertEquals(PollTestData.expectedWithExplicitNulls, domain)
     }
 
-    @Test
-    fun `Direct path - deserializes with explicit nulls`() {
-        val domain = adapter.fromJson(PollTestData.jsonWithExplicitNulls)
-        assertEquals(PollTestData.expectedWithExplicitNulls, domain)
-    }
-
     // endregion
 
-    // region Error message parity
+    // region Errors
 
     @Test
     fun `Response path - throws on missing id`() {
         assertThrows<JsonDataException> {
             parser.fromJson(PollTestData.jsonMissingId, PollResponseData::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(PollTestData.jsonMissingId)
         }
     }
 
@@ -136,13 +86,6 @@ internal class PollParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing name`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(PollTestData.jsonMissingName)
-        }
-    }
-
-    @Test
     fun `Response path - throws on missing description`() {
         assertThrows<JsonDataException> {
             parser.fromJson(PollTestData.jsonMissingDescription, PollResponseData::class.java)
@@ -150,39 +93,17 @@ internal class PollParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing description`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(PollTestData.jsonMissingDescription)
-        }
-    }
-
-    @Test
-    fun `Both paths - missing options is empty`() {
+    fun `Response path - missing options is empty`() {
         val dto = parser.fromJson(PollTestData.jsonMissingOptions, PollResponseData::class.java)
 
         assertEquals(emptyList<Option>(), with(domainMapping) { dto.toDomain() }.options)
-        assertEquals(emptyList<Option>(), adapter.fromJson(PollTestData.jsonMissingOptions)?.options)
     }
 
     @Test
-    fun `Both paths - missing own_votes is empty`() {
+    fun `Response path - missing own_votes is empty`() {
         val dto = parser.fromJson(PollTestData.jsonMissingOwnVotes, PollResponseData::class.java)
 
         assertEquals(emptyList<Vote>(), with(domainMapping) { dto.toDomain() }.ownVotes)
-        assertEquals(emptyList<Vote>(), adapter.fromJson(PollTestData.jsonMissingOwnVotes)?.ownVotes)
-    }
-
-    /**
-     * The generated model requires `voting_visibility` where `PollAdapter` defaults it
-     * to [VotingVisibility.PUBLIC].
-     */
-    @Test
-    fun `A null voting_visibility throws on the response path and defaults on the direct path`() {
-        val json = PollTestData.jsonWithExplicitNulls
-            .replace("\"voting_visibility\":\"public\"", "\"voting_visibility\":null")
-
-        assertThrows<JsonDataException> { parser.fromJson(json, PollResponseData::class.java) }
-        assertEquals(VotingVisibility.PUBLIC, adapter.fromJson(json)?.votingVisibility)
     }
 
     @Test
@@ -192,28 +113,14 @@ internal class PollParsingTest {
         }
     }
 
-    @Test
-    fun `Direct path - throws on missing enforce_unique_vote`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(PollTestData.jsonMissingEnforceUniqueVote)
-        }
-    }
-
     // endregion
 
-    // region Malformed vote parity
+    // region Malformed votes
 
     @Test
     fun `Response path - throws on malformed vote missing id`() {
         assertThrows<JsonDataException> {
             parser.fromJson(PollTestData.jsonWithMalformedVoteMissingId, PollResponseData::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on malformed vote missing id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(PollTestData.jsonWithMalformedVoteMissingId)
         }
     }
 
@@ -243,37 +150,6 @@ internal class PollParsingTest {
         assertEquals("vote1", domain.ownVotes[0].id)
     }
 
-    @Test
-    fun `Direct path - filters votes with is_answer=true and keeps only actual votes`() {
-        val domain = adapter.fromJson(PollTestData.jsonWithMixedVotesAndAnswers)
-
-        // Verify only votes (is_answer != true) are in votes list
-        assertEquals(2, domain!!.votes.size)
-        assertEquals("vote1", domain.votes[0].id)
-        assertEquals("vote2", domain.votes[1].id)
-
-        // Verify answers are parsed separately
-        assertEquals(2, domain.answers.size)
-        assertEquals("answer1", domain.answers[0].id)
-        assertEquals("Purple", domain.answers[0].text)
-        assertEquals("answer2", domain.answers[1].id)
-        assertEquals("Green", domain.answers[1].text)
-
-        // Verify own_votes only contains votes (not answers)
-        assertEquals(1, domain.ownVotes.size)
-        assertEquals("vote1", domain.ownVotes[0].id)
-    }
-
-    @Test
-    fun `Both paths - produce identical results with mixed votes and answers`() {
-        val dto = parser.fromJson(PollTestData.jsonWithMixedVotesAndAnswers, PollResponseData::class.java)
-        val domainFromDto = with(domainMapping) { dto.toDomain() }
-        val domainFromDirect = adapter.fromJson(PollTestData.jsonWithMixedVotesAndAnswers)
-
-        assertEquals(PollTestData.expectedMixedVotesAndAnswers, domainFromDto)
-        assertEquals(PollTestData.expectedMixedVotesAndAnswers, domainFromDirect)
-    }
-
     // endregion
 
     // region extraData tests
@@ -283,22 +159,6 @@ internal class PollParsingTest {
         val dto = parser.fromJson(PollTestData.jsonWithExtraData, PollResponseData::class.java)
         val domain = with(domainMapping) { dto.toDomain() }
         assertEquals(PollTestData.expectedWithExtraData, domain)
-    }
-
-    @Test
-    fun `Direct path - deserializes with extraData`() {
-        val domain = adapter.fromJson(PollTestData.jsonWithExtraData)
-        assertEquals(PollTestData.expectedWithExtraData, domain)
-    }
-
-    @Test
-    fun `Both paths - produce identical results with extraData`() {
-        val dto = parser.fromJson(PollTestData.jsonWithExtraData, PollResponseData::class.java)
-        val domainFromDto = with(domainMapping) { dto.toDomain() }
-        val domainFromDirect = adapter.fromJson(PollTestData.jsonWithExtraData)
-
-        assertEquals(PollTestData.expectedWithExtraData, domainFromDto)
-        assertEquals(PollTestData.expectedWithExtraData, domainFromDirect)
     }
 
     // endregion

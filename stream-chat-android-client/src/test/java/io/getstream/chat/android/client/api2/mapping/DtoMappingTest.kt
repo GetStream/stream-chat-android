@@ -20,9 +20,6 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
@@ -31,7 +28,6 @@ import io.getstream.chat.android.client.parser2.adapters.GENERATED_MESSAGE_EXTRA
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_OWN_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DATA_KEYS
-import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.MessageType
@@ -49,7 +45,6 @@ import io.getstream.chat.android.network.models.ReadReceiptsResponse
 import io.getstream.chat.android.network.models.TypingIndicatorsResponse
 import io.getstream.chat.android.network.models.UserRequest
 import io.getstream.chat.android.randomAttachment
-import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMemberData
@@ -68,19 +63,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 
 internal class DtoMappingTest {
-
-    @Test
-    fun `Device is correctly mapped to Dto`() {
-        val device = randomDevice()
-        val mapping = Fixture().get()
-        val dto = with(mapping) { device.toDto() }
-        val expected = DeviceDto(
-            id = device.token,
-            push_provider = device.pushProvider.key,
-            push_provider_name = device.providerName,
-        )
-        dto shouldBeEqualTo expected
-    }
 
     @Test
     fun `DraftMessage is correctly mapped to the generated request model`() {
@@ -509,34 +491,6 @@ internal class DtoMappingTest {
     }
 
     @Test
-    fun `User is correctly mapped to Dto`() {
-        val userTransformer = spy(NoOpUserTransformer)
-        val user = randomUser()
-        val mapping = Fixture()
-            .withUserTransformer(userTransformer)
-            .get()
-        val dto = with(mapping) { user.toDto() }
-        val expected = UpstreamUserDto(
-            id = user.id,
-            role = user.role,
-            name = user.name,
-            image = user.image,
-            invisible = user.isInvisible,
-            privacy_settings = user.privacySettings?.let { with(mapping) { it.toDto() } },
-            language = user.language,
-            banned = user.isBanned,
-            devices = user.devices.map { with(mapping) { it.toDto() } },
-            teams = user.teams,
-            teams_role = user.teamsRole,
-            extraData = user.extraData,
-        )
-
-        dto shouldBeEqualTo expected
-        // Verify the transformer is called
-        verify(userTransformer, times(1)).transform(user)
-    }
-
-    @Test
     fun `User with privacy settings is correctly mapped to UserRequest`() {
         val userTransformer = spy(NoOpUserTransformer)
         val user = randomUser(
@@ -629,20 +583,6 @@ internal class DtoMappingTest {
         val request = with(mapping) { user.toUserRequest() }
 
         request.custom shouldBeEqualTo mapOf("flair" to "gold")
-    }
-
-    @Test
-    fun `ConnectedEvent is correctly mapped to Dto`() {
-        val connectedEvent = randomConnectedEvent()
-        val mapping = Fixture().get()
-        val dto = with(mapping) { connectedEvent.toDto() }
-        val expected = UpstreamConnectedEventDto(
-            type = connectedEvent.type,
-            created_at = connectedEvent.createdAt,
-            me = with(mapping) { connectedEvent.me.toDto() },
-            connection_id = connectedEvent.connectionId,
-        )
-        dto shouldBeEqualTo expected
     }
 
     companion object {

@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonDataException
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.direct.OptionAdapter
 import io.getstream.chat.android.client.parser2.testdata.OptionTestData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -39,8 +38,6 @@ internal class OptionParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    private val adapter = OptionAdapter()
-
     // region Response-model path (JSON → PollOptionResponseData → Option)
 
     @Test
@@ -59,23 +56,7 @@ internal class OptionParsingTest {
 
     // endregion
 
-    // region Direct path (JSON → Option via OptionAdapter)
-
-    @Test
-    fun `Direct path - deserializes all fields`() {
-        val domain = adapter.fromJson(OptionTestData.jsonAllFields)
-        assertEquals(OptionTestData.expectedAllFields, domain)
-    }
-
-    @Test
-    fun `Direct path - deserializes with optional fields missing`() {
-        val domain = adapter.fromJson(OptionTestData.jsonOptionalFieldsMissing)
-        assertEquals(OptionTestData.expectedOptionalFieldsMissing, domain)
-    }
-
-    // endregion
-
-    // region Error message parity
+    // region Errors
 
     @Test
     fun `Response path - throws on missing id`() {
@@ -85,23 +66,9 @@ internal class OptionParsingTest {
     }
 
     @Test
-    fun `Direct path - throws on missing id`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(OptionTestData.jsonMissingId)
-        }
-    }
-
-    @Test
     fun `Response path - throws on missing text`() {
         assertThrows<JsonDataException> {
             parser.fromJson(OptionTestData.jsonMissingText, PollOptionResponseData::class.java)
-        }
-    }
-
-    @Test
-    fun `Direct path - throws on missing text`() {
-        assertThrows<JsonDataException> {
-            adapter.fromJson(OptionTestData.jsonMissingText)
         }
     }
 

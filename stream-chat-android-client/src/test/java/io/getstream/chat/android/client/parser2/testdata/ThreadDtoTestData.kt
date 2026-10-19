@@ -86,7 +86,7 @@ internal object ThreadDtoTestData {
               "user_id": "user1",
               "user": ${UserDtoTestData.userResponseJson},
               "last_thread_message_at": null,
-              "custom": null
+              "custom": {}
             }
           ],
           "title": "Thread Title",
@@ -222,7 +222,7 @@ internal object ThreadDtoTestData {
               "user_id": "user1",
               "user": ${UserDtoTestData.userResponseJson},
               "last_thread_message_at": null,
-              "custom": null
+              "custom": {}
             }
           ],
           "last_message_at": "2020-06-10T11:04:31.588Z",

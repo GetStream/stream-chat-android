@@ -22,147 +22,30 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.infrastructure.Serializer
-import java.util.Date
 
 /**
- * Reads a `message.new` event straight into its domain model, in the v1 shape or, with [v2], the v2 one. [userAdapter]
- * and [messageAdapter] must read the same shape.
+ * Reads a `message.new` event straight into its domain model.
  */
 internal class NewMessageEventAdapter(
     private val messageAdapter: MessageAdapter,
     private val userAdapter: JsonAdapter<User>,
-    private val v2: Boolean = false,
 ) : JsonAdapter<NewMessageEvent>() {
 
-    private val streamDateFormatter = StreamDateFormatter("NewMessageEventAdapter")
     private val exactDateAdapter by lazy { Serializer.moshi.adapter(ExactDate::class.java) }
 
-    @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): NewMessageEvent? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (v2) return readV2(reader)
-
-        reader.beginObject()
-
-        var type: String? = null
-        var createdAt: Date? = null
-        var rawCreatedAt: String? = null
-        var user: User? = null
-        var cid: String? = null
-        var channelMemberCount: Int? = null
-        var channelCustomName: String? = null
-        var channelCustomImage: String? = null
-        var message: Message? = null
-        var watcherCount: Int = 0
-        var totalUnreadCount: Int = 0
-        var unreadChannels: Int = 0
-        var channelMessageCount: Int? = null
-        var groupedUnreadChannels: Map<String, Int>? = null
-
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "type" -> type = reader.nextString()
-                "created_at" -> {
-                    if (reader.peek() != JsonReader.Token.NULL) {
-                        val rawValue = reader.nextString()
-                        rawCreatedAt = rawValue
-                        createdAt = streamDateFormatter.parse(rawValue)
-                    } else {
-                        reader.skipValue()
-                    }
-                }
-                "user" -> user = userAdapter.fromJson(reader)
-                "cid" -> cid = reader.nextString()
-                "channel_member_count" -> channelMemberCount = JsonParsingUtils.readNullableInt(reader)
-                "channel_custom" -> {
-                    val (name, image) = parseChannelCustom(reader)
-                    channelCustomName = name
-                    channelCustomImage = image
-                }
-                "message" -> message = messageAdapter.fromJson(reader)
-                "watcher_count" -> watcherCount = JsonParsingUtils.readNullableInt(reader) ?: 0
-                "total_unread_count" -> totalUnreadCount = JsonParsingUtils.readNullableInt(reader) ?: 0
-                "unread_channels" -> unreadChannels = JsonParsingUtils.readNullableInt(reader) ?: 0
-                "channel_message_count" -> channelMessageCount = JsonParsingUtils.readNullableInt(reader)
-                "grouped_unread_channels" -> groupedUnreadChannels = JsonParsingUtils.parseIntMap(reader)
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        JsonParsingUtils.requireField(type, "type", reader)
-        JsonParsingUtils.requireField(rawCreatedAt, "created_at", reader)
-        if (createdAt == null) {
-            // rawCreatedAt was present but unparseable; mirror DTO path which throws via ExactDateAdapter.
-            throw JsonDataException("Unparseable 'created_at' value '$rawCreatedAt' at ${reader.path}")
-        }
-        JsonParsingUtils.requireField(user, "user", reader)
-        JsonParsingUtils.requireField(cid, "cid", reader)
-        JsonParsingUtils.requireField(message, "message", reader)
-        val (channelType, channelId) = cid.cidToTypeAndId()
-
-        // Enrich inline: set channelInfo + cid so parseAndProcessEvent can skip enrichIfNeeded().
-        // Only copy if something actually needs to change.
-        val needsChannelInfo = message.channelInfo == null
-        val needsCid = message.cid != cid
-        val replyTo = message.replyTo
-        val needsReplyToCid = replyTo != null && replyTo.cid != cid
-        val needsReplyToChannelInfo = replyTo != null && replyTo.channelInfo == null
-        val needsReplyToEnrichment = needsReplyToCid || needsReplyToChannelInfo
-
-        val enrichedMessage = if (needsChannelInfo || needsCid || needsReplyToEnrichment) {
-            val fallbackChannelInfo = ChannelInfo(
-                cid = cid,
-                id = channelId,
-                type = channelType,
-                memberCount = channelMemberCount ?: 0,
-                name = channelCustomName,
-                image = channelCustomImage,
-            )
-            message.copy(
-                channelInfo = message.channelInfo ?: fallbackChannelInfo,
-                cid = if (needsCid) cid else message.cid,
-                replyTo = replyTo?.let { rt ->
-                    if (needsReplyToEnrichment) {
-                        rt.copy(
-                            cid = if (needsReplyToCid) cid else rt.cid,
-                            channelInfo = rt.channelInfo ?: fallbackChannelInfo,
-                        )
-                    } else {
-                        rt
-                    }
-                },
-            )
-        } else {
-            message
-        }
-
-        return NewMessageEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt,
-            user = user,
-            cid = cid,
-            channelType = channelType,
-            channelId = channelId,
-            message = enrichedMessage,
-            watcherCount = watcherCount,
-            totalUnreadCount = totalUnreadCount,
-            unreadChannels = unreadChannels,
-            channelMessageCount = channelMessageCount,
-            groupedUnreadChannels = groupedUnreadChannels,
-        )
+        return read(reader)
     }
 
     /** Mirrors the generated path's `MessageNewEvent.toDomain`, so both build the same [NewMessageEvent]. */
     @Suppress("LongMethod", "MagicNumber")
-    private fun readV2(reader: JsonReader): NewMessageEvent {
+    private fun read(reader: JsonReader): NewMessageEvent {
         reader.beginObject()
 
         var type: String? = null
@@ -181,7 +64,7 @@ internal class NewMessageEventAdapter(
         var messageChannelInfo: ChannelInfo? = null
 
         while (reader.hasNext()) {
-            when (reader.selectName(V2_KEYS)) {
+            when (reader.selectName(KEYS)) {
                 0 -> type = reader.nextString()
                 1 -> createdAt = exactDateAdapter.fromJson(reader)
                 2 -> user = userAdapter.fromJson(reader)
@@ -263,39 +146,9 @@ internal class NewMessageEventAdapter(
         )
     }
 
-    private fun parseChannelCustom(reader: JsonReader): Pair<String?, String?> {
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
-            reader.skipValue()
-            return null to null
-        }
-
-        reader.beginObject()
-        var name: String? = null
-        var image: String? = null
-
-        while (reader.hasNext()) {
-            when (reader.nextName()) {
-                "name" -> name = if (reader.peek() == JsonReader.Token.NULL) {
-                    reader.nextNull()
-                } else {
-                    reader.nextString()
-                }
-                "image" -> image = if (reader.peek() == JsonReader.Token.NULL) {
-                    reader.nextNull()
-                } else {
-                    reader.nextString()
-                }
-                else -> reader.skipValue()
-            }
-        }
-        reader.endObject()
-
-        return name to image
-    }
-
     private companion object {
-        /** The v2 keys, matched without allocating a key string, as the generated adapters match them. */
-        private val V2_KEYS = JsonReader.Options.of(
+        /** The keys, matched without allocating a key string, as the generated adapters match them. */
+        private val KEYS = JsonReader.Options.of(
             "type",
             "created_at",
             "user",
