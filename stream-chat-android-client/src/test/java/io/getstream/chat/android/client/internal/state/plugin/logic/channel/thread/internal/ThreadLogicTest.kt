@@ -64,6 +64,7 @@ internal class ThreadLogicTest {
         threadMutableState = mock()
         threadStateLogic = mock()
         whenever(threadStateLogic.writeThreadState()).doReturn(threadMutableState)
+        whenever(threadMutableState.heldReplies).doReturn(emptyMap())
         threadLogic = ThreadLogic(threadStateLogic)
     }
 
@@ -315,6 +316,17 @@ internal class ThreadLogicTest {
     }
 
     @Test
+    fun `Given no jump page When a reply that is not loaded is updated Should add it`() {
+        val reply = randomMessage(replyMessageId = null, poll = null, ownReactions = emptyList())
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.messages).doReturn(MutableStateFlow(emptyList()))
+
+        threadLogic.handleMessageEvents(listOf(randomMessageUpdateEvent(message = reply)))
+
+        verify(threadStateLogic).upsertMessages(listOf(reply.copy(replyTo = null)))
+    }
+
+    @Test
     fun `Given MessageUpdatedEvent with no existing message When handleMessageEvents is called Should use event ownReactions`() {
         // given
         val messageId = randomString()
@@ -442,7 +454,7 @@ internal class ThreadLogicTest {
         val updatedMessage = randomMessage(replyMessageId = null, poll = null, ownReactions = emptyList())
         val event = randomMessageUpdateEvent(message = updatedMessage)
 
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(mapOf(updatedMessage.id to updatedMessage)))
         whenever(threadMutableState.messages).doReturn(MutableStateFlow(emptyList()))
 
         // when
@@ -460,7 +472,7 @@ internal class ThreadLogicTest {
         val deletedMessage = randomMessage(ownReactions = emptyList())
         val event = randomMessageDeletedEvent(message = deletedMessage, hardDelete = false)
 
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(mapOf(deletedMessage.id to deletedMessage)))
 
         // when
         threadLogic.handleMessageEvents(listOf(event))
@@ -476,7 +488,7 @@ internal class ThreadLogicTest {
         val deletedMessage = randomMessage(ownReactions = emptyList())
         val event = randomMessageDeletedEvent(message = deletedMessage, hardDelete = true)
 
-        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(mapOf(deletedMessage.id to deletedMessage)))
 
         // when
         threadLogic.handleMessageEvents(listOf(event))
@@ -500,6 +512,32 @@ internal class ThreadLogicTest {
         // then
         verify(threadStateLogic, never()).updateQuotedMessageReferences(any())
         verify(threadStateLogic, never()).deleteQuotedMessageReferences(any())
+    }
+
+    @Test
+    fun `Given a page When setReplies is called Should pass it to the state logic`() {
+        val replies = listOf(randomMessage())
+
+        threadLogic.setReplies(replies, isJumpPage = true)
+
+        verify(threadStateLogic).setReplies(replies, isJumpPage = true)
+    }
+
+    @Test
+    fun `Given no jump page When the newest replies are reached Should not release held replies`() {
+        threadLogic.setEndOfNewerMessages(true)
+
+        verify(threadStateLogic, never()).releaseHeldReplies()
+    }
+
+    @Test
+    fun `Given no jump page When a new reply arrives Should add it`() {
+        val reply = randomMessage(ownReactions = emptyList())
+        whenever(threadMutableState.rawMessage).doReturn(MutableStateFlow(emptyMap()))
+
+        threadLogic.handleMessageEvents(listOf(randomNewMessageEvent(message = reply)))
+
+        verify(threadStateLogic).upsertMessages(listOf(reply))
     }
 
     @Test

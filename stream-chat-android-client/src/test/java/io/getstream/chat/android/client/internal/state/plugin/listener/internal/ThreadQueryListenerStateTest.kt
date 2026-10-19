@@ -17,20 +17,26 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class ThreadQueryListenerStateTest {
 
@@ -100,12 +106,113 @@ internal class ThreadQueryListenerStateTest {
     fun `given response it successful, the state should be updated in the SDK`() = runTest {
         threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, 30)
 
-        verify(threadLogic).run {
-            setLoading(false)
-            setEndOfNewerMessages(true)
-            upsertMessages(messageList)
-            setEndOfOlderMessages(false)
-        }
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).updateOldestMessageInThread(messageList)
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).upsertMessages(messageList)
+        verify(threadLogic, never()).setReplies(any(), any())
+    }
+
+    @Test
+    fun `given a jump page, the newest page replaces it`() = runTest {
+        whenever(threadLogic.isJumpPage) doReturn true
+
+        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, 30)
+
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).updateOldestMessageInThread(messageList)
+        verify(threadLogic).updateNewestMessageInThread(messageList)
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).setReplies(messageList, isJumpPage = false)
+        verify(threadLogic, never()).upsertMessages(any())
+    }
+
+    @Test
+    fun `given a jump page and a newest page as big as the limit, the older end is not reached`() = runTest {
+        whenever(threadLogic.isJumpPage) doReturn true
+
+        threadQueryListenerState.onGetRepliesResult(Result.Success(messageList), message.id, messageList.size)
+
+        verify(threadLogic).setEndOfOlderMessages(false)
+        verify(threadLogic).setReplies(messageList, isJumpPage = false)
+    }
+
+    @Test
+    fun `given a reply held on a jump page, it is kept when the newest page replaces the jump page`() = runTest {
+        val parentId = randomString()
+        val state = ThreadMutableState(parentId, backgroundScope)
+        val realThreadLogic = ThreadLogic(ThreadStateLogic(state))
+        val registry: LogicRegistry = mock { on(it.thread(parentId)) doReturn realThreadLogic }
+        val listener = ThreadQueryListenerState(registry)
+        val newestPage = listOf(reply(parentId, createdAt = 20))
+        val held = reply(parentId, createdAt = 30)
+        state.isJumpPage = true
+        state.holdReply(held)
+
+        listener.onGetRepliesResult(Result.Success(newestPage), parentId, 30)
+
+        state.rawMessage.value.keys shouldBeEqualTo (newestPage.map { it.id } + held.id).toSet()
+        state.heldReplies shouldBeEqualTo emptyMap()
+    }
+
+    @Test
+    fun `given the replies were replaced while an older page was loading, the older page is dropped`() = runTest {
+        val firstId = randomString()
+        whenever(threadLogic.replaceCount) doReturn 0
+        threadQueryListenerState.onGetRepliesMoreRequest(message.id, firstId, 30)
+        whenever(threadLogic.replaceCount) doReturn 1
+
+        threadQueryListenerState.onGetRepliesMoreResult(Result.Success(messageList), message.id, firstId, 30)
+
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic, never()).upsertMessages(any())
+    }
+
+    @Test
+    fun `given the replies were not replaced while an older page was loading, the older page is added`() = runTest {
+        val firstId = randomString()
+        threadQueryListenerState.onGetRepliesMoreRequest(message.id, firstId, 30)
+
+        threadQueryListenerState.onGetRepliesMoreResult(Result.Success(messageList), message.id, firstId, 30)
+
+        verify(threadLogic).upsertMessages(messageList)
+    }
+
+    @Test
+    fun `given the replies were replaced while a newer page was loading, the newer page is dropped`() = runTest {
+        val lastId = randomString()
+        whenever(threadLogic.replaceCount) doReturn 0
+        threadQueryListenerState.onGetNewerRepliesRequest(message.id, 30, lastId)
+        whenever(threadLogic.replaceCount) doReturn 1
+
+        threadQueryListenerState.onGetNewerRepliesResult(Result.Success(messageList), message.id, 30, lastId)
+
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic, never()).upsertMessages(any())
+        verify(threadLogic, never()).setEndOfNewerMessages(any())
+    }
+
+    @Test
+    fun `given a first page from the oldest replies, the jump page is left`() = runTest {
+        val stateLogic: ThreadStateLogic = mock()
+        whenever(threadLogic.stateLogic()) doReturn stateLogic
+
+        threadQueryListenerState.onGetNewerRepliesResult(Result.Success(messageList), message.id, 30, null)
+
+        verify(stateLogic).leaveJumpPage()
+        verify(threadLogic).upsertMessages(messageList)
+    }
+
+    @Test
+    fun `given a newer page after a loaded reply, the jump page is kept`() = runTest {
+        val stateLogic: ThreadStateLogic = mock()
+        whenever(threadLogic.stateLogic()) doReturn stateLogic
+
+        threadQueryListenerState.onGetNewerRepliesResult(Result.Success(messageList), message.id, 30, randomString())
+
+        verify(stateLogic, never()).leaveJumpPage()
+        verify(threadLogic).upsertMessages(messageList)
     }
 
     @Test
@@ -114,10 +221,8 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).setLoading(false)
 
-        verify(threadLogic, never()).run {
-            upsertMessages(messageList)
-            setEndOfOlderMessages(false)
-        }
+        verify(threadLogic, never()).setReplies(any(), any())
+        verify(threadLogic, never()).setEndOfOlderMessages(any())
     }
 
     @Test
@@ -135,14 +240,13 @@ internal class ThreadQueryListenerStateTest {
 
         threadQueryListenerState.onGetRepliesAroundResult(Result.Success(messages), message.id, messages[2].id, 5)
 
-        verify(threadLogic).run {
-            setLoading(false)
-            updateOldestMessageInThread(messages)
-            updateNewestMessageInThread(messages)
-            setEndOfOlderMessages(false)
-            setEndOfNewerMessages(false)
-            upsertMessages(messages)
-        }
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic).updateOldestMessageInThread(messages)
+        verify(threadLogic).updateNewestMessageInThread(messages)
+        verify(threadLogic).setEndOfOlderMessages(false)
+        verify(threadLogic).setEndOfNewerMessages(false)
+        verify(threadLogic).setReplies(messages, isJumpPage = true)
+        verify(threadLogic, never()).upsertMessages(any())
         verify(threadLogic, never()).setEndOfOlderMessages(true)
         verify(threadLogic, never()).setEndOfNewerMessages(true)
     }
@@ -200,7 +304,7 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).setEndOfOlderMessages(true)
         verify(threadLogic).setEndOfNewerMessages(true)
-        verify(threadLogic).upsertMessages(emptyList())
+        verify(threadLogic).setReplies(emptyList(), isJumpPage = true)
     }
 
     @Test
@@ -212,12 +316,10 @@ internal class ThreadQueryListenerStateTest {
             30,
         )
 
-        verify(threadLogic).run {
-            setLoading(false)
-            setEndOfOlderMessages(true)
-            setEndOfNewerMessages(true)
-            upsertMessages(messageList)
-        }
+        verify(threadLogic).setLoading(false)
+        verify(threadLogic).setEndOfOlderMessages(true)
+        verify(threadLogic).setEndOfNewerMessages(true)
+        verify(threadLogic).setReplies(messageList, isJumpPage = true)
     }
 
     @Test
@@ -232,9 +334,14 @@ internal class ThreadQueryListenerStateTest {
 
             verify(threadLogic).setLoading(false)
 
-            verify(threadLogic, never()).run {
-                upsertMessages(messageList)
-                setEndOfOlderMessages(true)
-            }
+            verify(threadLogic, never()).setReplies(any(), any())
+            verify(threadLogic, never()).setEndOfOlderMessages(any())
         }
+
+    private fun reply(parentId: String, createdAt: Long) = randomMessage(
+        parentId = parentId,
+        createdAt = Date(createdAt),
+        createdLocallyAt = null,
+        syncStatus = SyncStatus.COMPLETED,
+    )
 }

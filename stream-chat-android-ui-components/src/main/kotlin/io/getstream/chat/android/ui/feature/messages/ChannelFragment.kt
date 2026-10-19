@@ -203,7 +203,7 @@ public open class ChannelFragment : Fragment() {
             when (mode) {
                 is MessageMode.MessageThread -> {
                     channelHeaderViewModel.setActiveThread(mode.parentMessage)
-                    messageComposerViewModel.setMessageMode(MessageMode.MessageThread(mode.parentMessage))
+                    messageComposerViewModel.setMessageMode(mode)
                 }
                 is MessageMode.Normal -> {
                     channelHeaderViewModel.resetThread()

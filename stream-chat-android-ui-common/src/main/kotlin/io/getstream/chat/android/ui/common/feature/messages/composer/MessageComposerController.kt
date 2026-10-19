@@ -1439,11 +1439,22 @@ public class MessageComposerController(
     }
 
     private fun loadLatestMessagesIfNeeded() {
-        if (isInThread) return
+        val threadMode = _state.value.messageMode as? MessageMode.MessageThread
+        if (threadMode != null) {
+            loadLatestRepliesIfNeeded(threadMode)
+            return
+        }
         val endReached = channelState.value?.endOfNewerMessages?.value ?: true
         if (endReached) return
         logger.d { "[loadLatestMessagesIfNeeded] loading latest messages" }
         chatClient.loadNewestMessages(channelCid, messageLimit = 30).enqueue()
+    }
+
+    private fun loadLatestRepliesIfNeeded(threadMode: MessageMode.MessageThread) {
+        val threadState = threadMode.threadState ?: return
+        if (!threadState.isJumpPage || threadState.endOfNewerMessages.value) return
+        logger.d { "[loadLatestRepliesIfNeeded] loading latest replies" }
+        chatClient.getReplies(threadMode.parentMessage.id, limit = 30).enqueue()
     }
 
     /**

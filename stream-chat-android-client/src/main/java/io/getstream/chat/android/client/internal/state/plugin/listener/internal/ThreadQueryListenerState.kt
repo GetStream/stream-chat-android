@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 /**
@@ -35,6 +36,9 @@ internal class ThreadQueryListenerState(
 ) : ThreadQueryListener {
 
     private val logger by taggedLogger("Chat:ThreadQueryListener")
+
+    /** The replace count of the thread when each older or newer page was requested. */
+    private val pageRequests = ConcurrentHashMap<String, Int>()
 
     override suspend fun onGetRepliesPrecondition(parentId: String): Result<Unit> {
         val loadingMoreMessage = logic.thread(parentId).isLoadingMessages()
@@ -59,15 +63,28 @@ internal class ThreadQueryListenerState(
         threadLogic.setLoading(false)
         // The initial page contains the newest replies, so the newer end is already loaded.
         result.onSuccess { threadLogic.setEndOfNewerMessages(true) }
-        onResult(threadLogic, result, limit)
+        if (result is Result.Success && threadLogic.isJumpPage) {
+            // Leaving a jumped-to page: the newest page replaces it instead of being added next to it.
+            val messages = result.value
+            threadLogic.updateOldestMessageInThread(messages)
+            threadLogic.updateNewestMessageInThread(messages)
+            threadLogic.setEndOfOlderMessages(messages.size < limit)
+            threadLogic.setReplies(messages, isJumpPage = false)
+        } else {
+            onResult(threadLogic, result, limit)
+        }
     }
 
     override suspend fun onGetRepliesMoreRequest(parentId: String, firstId: String, limit: Int) {
-        logic.thread(parentId).setLoading(true)
+        val threadLogic = logic.thread(parentId)
+        threadLogic.setLoading(true)
+        pageRequests[olderPageKey(parentId, firstId)] = threadLogic.replaceCount
     }
 
     override suspend fun onGetNewerRepliesRequest(parentId: String, limit: Int, lastId: String?) {
-        logic.thread(parentId).setLoading(true)
+        val threadLogic = logic.thread(parentId)
+        threadLogic.setLoading(true)
+        pageRequests[newerPageKey(parentId, lastId)] = threadLogic.replaceCount
     }
 
     override suspend fun onGetRepliesMoreResult(
@@ -79,6 +96,7 @@ internal class ThreadQueryListenerState(
         val threadLogic = logic.thread(parentId)
 
         threadLogic.setLoading(false)
+        if (isStalePage(olderPageKey(parentId, firstId), threadLogic)) return
         onResult(threadLogic, result, limit)
     }
 
@@ -89,7 +107,13 @@ internal class ThreadQueryListenerState(
         lastId: String?,
     ) {
         val threadLogic = logic.thread(parentId)
+        if (isStalePage(newerPageKey(parentId, lastId), threadLogic)) {
+            threadLogic.setLoading(false)
+            return
+        }
         result.onSuccess { messages ->
+            // A first page from the oldest replies opens the thread again, so it leaves a jumped-to page.
+            if (lastId == null) threadLogic.stateLogic().leaveJumpPage()
             threadLogic.updateNewestMessageInThread(messages)
             threadLogic.setEndOfNewerMessages(messages.size < limit)
             threadLogic.upsertMessages(messages)
@@ -120,7 +144,7 @@ internal class ThreadQueryListenerState(
                 threadLogic.setEndOfOlderMessages(true)
                 threadLogic.setEndOfNewerMessages(true)
             }
-            threadLogic.upsertMessages(messages)
+            threadLogic.setReplies(messages, isJumpPage = true)
         }
     }
 
@@ -148,6 +172,17 @@ internal class ThreadQueryListenerState(
             else -> threadLogic.setEndOfOlderMessages(true)
         }
     }
+
+    /**
+     * An older or newer page requested before the loaded replies were replaced belongs to the replaced replies,
+     * so adding it would leave a gap.
+     */
+    private fun isStalePage(key: String, threadLogic: ThreadLogic): Boolean =
+        pageRequests.remove(key)?.let { it != threadLogic.replaceCount } == true
+
+    private fun olderPageKey(parentId: String, firstId: String) = "$parentId:older:$firstId"
+
+    private fun newerPageKey(parentId: String, lastId: String?) = "$parentId:newer:$lastId"
 
     private fun onResult(threadLogic: ThreadLogic, result: Result<List<Message>>, limit: Int) {
         if (result is Result.Success) {

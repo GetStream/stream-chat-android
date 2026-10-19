@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.state
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import kotlinx.coroutines.flow.StateFlow
 
@@ -44,4 +45,13 @@ public interface ThreadState {
     /** The newest message available in this thread state.
      * It's null when we haven't loaded any messages in thread yet. */
     public val newestInThread: StateFlow<Message?>
+
+    /**
+     * Whether the loaded replies come from a jump to a reply (and the pages loaded from it), rather than from
+     * loading the newest replies. While it is `true` and [endOfNewerMessages] is `false`, new replies are held
+     * back until the newest replies are loaded again.
+     */
+    @InternalStreamChatApi
+    public val isJumpPage: Boolean
+        get() = false
 }
