@@ -1793,6 +1793,21 @@ internal class MoshiChatApiTest {
     }
 
     @Test
+    fun `A mute response, from an endpoint still on v1, keeps the declared user fields its custom data carries`() =
+        runTest {
+            val target = Mother.randomUserResponse().copy(banned = false, custom = mapOf("banned" to true))
+            val response = MuteUserResponse(Mother.randomUserMuteResponse(target = target))
+            val api = mock<ModerationV1Api>()
+            whenever(api.muteUser(any())).doReturn(RetroSuccess(response).toRetrofitCall())
+            val sut = Fixture().withModerationV1Api(api).get()
+            sut.setConnection(userId = randomString(), connectionId = randomString())
+
+            val result = sut.muteUser(randomString(), null).await()
+
+            (result as Result.Success).value.target!!.extraData["banned"] shouldBeEqualTo true
+        }
+
+    @Test
     fun `partialUpdateMember reports a missing member as an error rather than crashing`() = runTest {
         // given
         val api = mock<ChannelV1Api>()

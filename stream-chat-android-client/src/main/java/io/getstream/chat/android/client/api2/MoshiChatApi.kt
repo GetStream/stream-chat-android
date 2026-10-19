@@ -736,7 +736,7 @@ constructor(
                 user_id = this.userId,
                 timeout = timeout,
             ),
-        ).mapDomain { response ->
+        ).mapV1Domain { response ->
             response.mute.toDomain()
         }
     }
