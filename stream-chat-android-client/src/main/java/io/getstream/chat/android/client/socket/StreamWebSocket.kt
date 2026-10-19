@@ -100,8 +100,8 @@ internal class StreamWebSocket(
 
     /**
      * Parses [text] into its event. Once connected, a frame that fails to parse and isn't an error is dropped and
-     * logged: its update is lost until the next sync, instead of reconnecting on every such frame. Before that, it
-     * fails the connection.
+     * logged, instead of reconnecting on every such frame: its update is lost until the channel is queried again, as
+     * `/sync` skips the same event. Before that, it fails the connection.
      */
     private fun parseMessage(text: String): StreamWebSocketEvent? =
         when (val result = parser.fromJsonOrError(text, ChatEvent::class.java)) {

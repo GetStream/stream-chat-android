@@ -31,12 +31,16 @@ internal const val SYNCED_EVENTS = """{
   "duration": "1.20ms"
 }"""
 
-/** A v2 sync response replaying a `channel.hidden` without the channel it requires. */
+/** A v2 sync response replaying a `channel.hidden` without the channel it requires, then an app's custom event. */
 internal const val SYNCED_UNREADABLE_EVENT = """{
   "events": [
     {
       "type": "channel.hidden", "created_at": 1791976405614650759, "cid": "messaging:general",
       "channel_type": "messaging", "channel_id": "general", "custom": {}
+    },
+    {
+      "type": "friendship_request", "created_at": 1791976405614650760, "cid": "messaging:general",
+      "channel_type": "messaging", "channel_id": "general", "custom": {"text": "hi"}
     }
   ],
   "duration": "1.20ms"

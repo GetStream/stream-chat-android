@@ -125,7 +125,9 @@ internal class V2EventParser(
 
     /**
      * Parses the events a `/sync` response replays, each as the socket delivers it, leaving out those the SDK
-     * ignores. An event that fails to parse fails the whole response.
+     * ignores. An event that fails to parse is skipped and the rest are replayed: failing the response would keep the
+     * sync cursor where it is, so every later sync would ask for the same events and fail on the same one. A response
+     * whose envelope can't be read still fails.
      */
     fun parseSyncEvents(body: BufferedSource): List<ChatEvent> {
         val parsed = mutableListOf<ChatEvent>()
@@ -137,12 +139,22 @@ internal class V2EventParser(
                     continue
                 }
                 reader.beginArray()
-                while (reader.hasNext()) parse(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
+                while (reader.hasNext()) parseSyncEvent(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
                 reader.endArray()
             }
             reader.endObject()
         }
         return parsed
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun parseSyncEvent(raw: String): ChatEvent? = try {
+        parse(raw)
+    } catch (e: Exception) {
+        // Any failure to read one event skips it; an Error, such as running out of memory, still fails the sync.
+        val type = runCatching { readHead(raw).type }.getOrNull() ?: "unknown"
+        logger.e(e) { "[parseSyncEvents] skipped a '$type' event" }
+        null
     }
 
     private fun withCustomAtRoot(event: String): String {
