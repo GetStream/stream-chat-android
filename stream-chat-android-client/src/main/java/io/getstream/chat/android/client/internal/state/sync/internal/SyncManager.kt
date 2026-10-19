@@ -80,6 +80,8 @@ import kotlinx.coroutines.sync.withLock
 import java.util.Date
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 private const val QUERIES_TO_RETRY = 3
 private const val SYNC_MAX_CIDS = 100
@@ -407,7 +409,7 @@ internal class SyncManager(
             logger.w { "[performSync] rejected (no events to emit)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
-        if (rawLastSyncAt == rawLatestEventDate) {
+        if (rawLastSyncAt != null && rawLatestEventDate != null && sameInstant(rawLastSyncAt, rawLatestEventDate)) {
             logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
@@ -1180,4 +1182,16 @@ internal class SyncManager(
     ) {
         val isSuccess: Boolean get() = error == null
     }
+}
+
+/**
+ * Whether two raw ISO dates name the same instant. The fraction can be written with its trailing zeros trimmed, as the
+ * v1 encoding does, or with all nine digits, as the v2 one does, so they are compared as parsed instants. Dates that
+ * don't parse are compared as written.
+ */
+@OptIn(ExperimentalTime::class)
+internal fun sameInstant(raw: String, other: String): Boolean {
+    val instant = Instant.parseOrNull(raw)
+    val otherInstant = Instant.parseOrNull(other)
+    return if (instant != null && otherInstant != null) instant == otherInstant else raw == other
 }
