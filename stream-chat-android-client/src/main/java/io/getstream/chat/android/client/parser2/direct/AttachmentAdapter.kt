@@ -28,14 +28,14 @@ import io.getstream.chat.android.network.models.Field
 import io.getstream.chat.android.network.models.Images
 
 /**
- * Reads an attachment straight into its domain model. Without [v2Mapping] it reads the v1 shape, custom data at the
- * root. With it, the v2 shape: custom data under `custom`, built by [v2Mapping] as the generated v2 path builds it.
+ * Reads an attachment straight into its domain model: custom data under `custom`, built by [mapping] as the
+ * generated path builds it.
  */
 internal class AttachmentAdapter(
-    private val v2Mapping: DomainMapping? = null,
+    private val mapping: DomainMapping,
 ) : JsonAdapter<Attachment>() {
 
-    // The typed v2 fields apps rarely send: read through their generated models, as the generated path reads them.
+    // The typed fields apps rarely send: read through their generated models, as the generated path reads them.
     private val actionsAdapter by lazy {
         Serializer.moshi.adapter<List<Action>>(Types.newParameterizedType(List::class.java, Action::class.java))
     }
@@ -44,80 +44,13 @@ internal class AttachmentAdapter(
     }
     private val giphyAdapter by lazy { Serializer.moshi.adapter(Images::class.java) }
 
-    @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): Attachment? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (v2Mapping != null) return readV2(reader, v2Mapping)
-
-        reader.beginObject()
-        var assetUrl: String? = null
-        var authorName: String? = null
-        var authorLink: String? = null
-        var fallback: String? = null
-        var fileSize: Int = 0
-        var image: String? = null
-        var imageUrl: String? = null
-        var mimeType: String? = null
-        var name: String? = null
-        var ogScrapeUrl: String? = null
-        var text: String? = null
-        var thumbUrl: String? = null
-        var title: String? = null
-        var titleLink: String? = null
-        var type: String? = null
-        var originalHeight: Int? = null
-        var originalWidth: Int? = null
-        var extraData: MutableMap<String, Any>? = null
-
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            when (key) {
-                "asset_url" -> assetUrl = JsonParsingUtils.readNullableString(reader)
-                "author_name" -> authorName = JsonParsingUtils.readNullableString(reader)
-                "author_link" -> authorLink = JsonParsingUtils.readNullableString(reader)
-                "fallback" -> fallback = JsonParsingUtils.readNullableString(reader)
-                "file_size" -> fileSize = JsonParsingUtils.readNullableInt(reader) ?: 0
-                "image" -> image = JsonParsingUtils.readNullableString(reader)
-                "image_url" -> imageUrl = JsonParsingUtils.readNullableString(reader)
-                "mime_type" -> mimeType = JsonParsingUtils.readNullableString(reader)
-                "name" -> name = JsonParsingUtils.readNullableString(reader)
-                "og_scrape_url" -> ogScrapeUrl = JsonParsingUtils.readNullableString(reader)
-                "text" -> text = JsonParsingUtils.readNullableString(reader)
-                "thumb_url" -> thumbUrl = JsonParsingUtils.readNullableString(reader)
-                "title" -> title = JsonParsingUtils.readNullableString(reader)
-                "title_link" -> titleLink = JsonParsingUtils.readNullableString(reader)
-                "type" -> type = JsonParsingUtils.readNullableString(reader)
-                "original_height" -> originalHeight = JsonParsingUtils.readNullableInt(reader)
-                "original_width" -> originalWidth = JsonParsingUtils.readNullableInt(reader)
-                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
-            }
-        }
-        reader.endObject()
-
-        return Attachment(
-            assetUrl = assetUrl,
-            authorName = authorName,
-            authorLink = authorLink,
-            fallback = fallback,
-            fileSize = fileSize,
-            image = image,
-            imageUrl = imageUrl,
-            mimeType = mimeType,
-            name = name,
-            ogUrl = ogScrapeUrl,
-            text = text,
-            thumbUrl = thumbUrl,
-            title = title,
-            titleLink = titleLink,
-            type = type,
-            originalHeight = originalHeight,
-            originalWidth = originalWidth,
-            extraData = extraData?.toMutableMap() ?: mutableMapOf(),
-        )
+        return read(reader)
     }
 
     @Suppress("LongMethod", "CyclomaticComplexMethod", "MagicNumber")
-    private fun readV2(reader: JsonReader, mapping: DomainMapping): Attachment {
+    private fun read(reader: JsonReader): Attachment {
         reader.beginObject()
         var assetUrl: String? = null
         var authorName: String? = null
@@ -143,7 +76,7 @@ internal class AttachmentAdapter(
         var pretext: String? = null
 
         while (reader.hasNext()) {
-            when (reader.selectName(V2_KEYS)) {
+            when (reader.selectName(KEYS)) {
                 0 -> assetUrl = JsonParsingUtils.readNullableString(reader)
                 1 -> authorName = JsonParsingUtils.readNullableString(reader)
                 2 -> authorLink = JsonParsingUtils.readNullableString(reader)
@@ -203,8 +136,8 @@ internal class AttachmentAdapter(
     }
 
     private companion object {
-        /** The v2 keys, matched without allocating a key string, as the generated adapters match them. */
-        private val V2_KEYS = JsonReader.Options.of(
+        /** The keys, matched without allocating a key string, as the generated adapters match them. */
+        private val KEYS = JsonReader.Options.of(
             "asset_url",
             "author_name",
             "author_link",

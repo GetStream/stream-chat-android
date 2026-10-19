@@ -27,7 +27,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-/** The socket hello and keep-alive, both `health.check` on the v1 socket, parsed through their generated models. */
+/** The socket hello (`connection.ok`) and keep-alive (`health.check`), parsed through their generated models. */
 internal class GeneratedSocketEventParsingTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
@@ -36,6 +36,7 @@ internal class GeneratedSocketEventParsingTest {
     fun `The hello maps to a ConnectedEvent with the connection id and the current user`() {
         val event = parser.fromJson(HELLO, ChatEvent::class.java).shouldBeInstanceOf<ConnectedEvent>()
 
+        // The domain event keeps the type the v1 hello had, which apps may compare against.
         event.type shouldBeEqualTo "health.check"
         event.connectionId shouldBeEqualTo "hello-connection-id"
         event.rawCreatedAt shouldBeEqualTo "2026-10-05T10:33:20.347926022Z"
@@ -76,10 +77,10 @@ internal class GeneratedSocketEventParsingTest {
         parser.toJson(parser.fromJson(this, Map::class.java).minus(field))
 
     private companion object {
-        /** The first frame of a v1 socket, recorded from the backend (devices dropped). */
+        /** The first frame of the socket (devices dropped). */
         private const val HELLO = """
             {
-              "type": "health.check", "cid": "*", "connection_id": "hello-connection-id",
+              "type": "connection.ok", "connection_id": "hello-connection-id",
               "created_at": "2026-10-05T10:33:20.347926022Z",
               "me": {
                 "id": "jaewoong", "name": "C-3PO", "language": "ko", "role": "user", "teams": [],

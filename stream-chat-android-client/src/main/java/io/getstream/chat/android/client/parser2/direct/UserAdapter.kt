@@ -20,101 +20,29 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.USER_DEVICES_CUSTOM_KEY
-import io.getstream.chat.android.client.api2.mapping.USER_HIDDEN_CUSTOM_KEYS
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserTransformer
 import java.util.Date
 
 /**
- * Reads a user straight into its domain model. Without [v2Mapping] it reads the v1 shape, custom data at the root. With
- * it, the v2 shape: custom data under `custom`, mapped by [v2Mapping] as the generated v2 path maps it, with
- * [v2HiddenKeys] the declared fields of the kind of user read.
+ * Reads a user straight into its domain model: custom data under `custom`, mapped by [mapping] as the generated path
+ * maps it, with [hiddenKeys] the declared fields of the kind of user read.
  */
 internal class UserAdapter(
     private val dateAdapter: JsonAdapter<Date>,
     private val userTransformer: UserTransformer,
-    private val v2Mapping: DomainMapping? = null,
-    private val v2HiddenKeys: Set<String> = USER_HIDDEN_CUSTOM_KEYS,
+    private val mapping: DomainMapping,
+    private val hiddenKeys: Set<String>,
 ) : JsonAdapter<User>() {
 
-    @Suppress("LongMethod")
     override fun fromJson(reader: JsonReader): User? {
         if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (v2Mapping != null) return readV2(reader, v2Mapping)
-
-        reader.beginObject()
-
-        var id: String? = null
-        var name: String? = null
-        var image: String? = null
-        var role: String? = null
-        var language: String? = null
-        var banned: Boolean? = null
-        var online: Boolean? = null
-        var createdAt: Date? = null
-        var deactivatedAt: Date? = null
-        var updatedAt: Date? = null
-        var lastActive: Date? = null
-        var teams: List<String>? = null
-        var teamsRole: Map<String, String>? = null
-        var blockedUserIds: List<String>? = null
-        var avgResponseTime: Long? = null
-        var extraData: MutableMap<String, Any>? = null
-
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            when (key) {
-                "avg_response_time" -> avgResponseTime = JsonParsingUtils.readNullableLong(reader)
-                "banned" -> banned = reader.nextBoolean()
-                "blocked_user_ids" -> blockedUserIds = JsonParsingUtils.parseStringList(reader)
-                "created_at" -> createdAt = dateAdapter.fromJson(reader)
-                "deactivated_at" -> deactivatedAt = dateAdapter.fromJson(reader)
-                // Not sent on other users' objects; skipped so a stray device list never surfaces as their devices.
-                USER_DEVICES_CUSTOM_KEY -> reader.skipValue()
-                "id" -> id = reader.nextString()
-                "image" -> image = JsonParsingUtils.readNullableString(reader)
-                "language" -> language = JsonParsingUtils.readNullableString(reader)
-                "last_active" -> lastActive = dateAdapter.fromJson(reader)
-                "name" -> name = JsonParsingUtils.readNullableString(reader)
-                "online" -> online = reader.nextBoolean()
-                "role" -> role = reader.nextString()
-                "teams" -> teams = JsonParsingUtils.parseStringList(reader)
-                "teams_role" -> teamsRole = JsonParsingUtils.parseStringMap(reader)
-                "updated_at" -> updatedAt = dateAdapter.fromJson(reader)
-                else -> extraData = JsonParsingUtils.accumulateExtraData(key, reader, extraData)
-            }
-        }
-        reader.endObject()
-
-        JsonParsingUtils.requireField(id, "id", reader)
-        JsonParsingUtils.requireField(role, "role", reader)
-        JsonParsingUtils.requireField(banned, "banned", reader)
-        JsonParsingUtils.requireField(online, "online", reader)
-
-        return User(
-            id = id,
-            name = name ?: "",
-            image = image ?: "",
-            role = role,
-            language = language ?: "",
-            banned = banned,
-            online = online,
-            createdAt = createdAt,
-            deactivatedAt = deactivatedAt,
-            updatedAt = updatedAt,
-            lastActive = lastActive,
-            teams = teams ?: emptyList(),
-            teamsRole = teamsRole ?: emptyMap(),
-            blockedUserIds = blockedUserIds ?: emptyList(),
-            avgResponseTime = avgResponseTime,
-            extraData = extraData?.toMap().orEmpty(),
-        ).let(userTransformer::transform)
+        return read(reader)
     }
 
-    /** Reads the v2 shape, matching keys with [V2_KEYS] so no key string is allocated, as the generated adapters do. */
+    /** Matches keys with [KEYS] so no key string is allocated, as the generated adapters do. */
     @Suppress("LongMethod", "CyclomaticComplexMethod", "MagicNumber")
-    private fun readV2(reader: JsonReader, mapping: DomainMapping): User {
+    private fun read(reader: JsonReader): User {
         reader.beginObject()
         var id: String? = null
         var name: String? = null
@@ -136,7 +64,7 @@ internal class UserAdapter(
         var revokeTokensIssuedBefore: Date? = null
 
         while (reader.hasNext()) {
-            when (reader.selectName(V2_KEYS)) {
+            when (reader.selectName(KEYS)) {
                 0 -> avgResponseTime = JsonParsingUtils.readNullableInt(reader)?.toLong()
                 1 -> banned = reader.nextBoolean()
                 2 -> if (JsonParsingUtils.expectV2(reader, JsonReader.Token.BEGIN_ARRAY, nullable = false)) {
@@ -197,12 +125,12 @@ internal class UserAdapter(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds.orEmpty(),
             avgResponseTime = avgResponseTime,
-            extraData = mapping.userExtraData(stored, v2HiddenKeys, deletedAt, revokeTokensIssuedBefore),
+            extraData = mapping.userExtraData(stored, hiddenKeys, deletedAt, revokeTokensIssuedBefore),
         ).let(userTransformer::transform)
     }
 
     private companion object {
-        private val V2_KEYS = JsonReader.Options.of(
+        private val KEYS = JsonReader.Options.of(
             "avg_response_time", "banned", "blocked_user_ids", "created_at", "deactivated_at", "id", "image",
             "language", "last_active", "name", "online", "role", "teams", "teams_role", "updated_at", "custom",
             "deleted_at", "revoke_tokens_issued_before",

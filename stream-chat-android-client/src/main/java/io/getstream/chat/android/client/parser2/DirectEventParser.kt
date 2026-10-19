@@ -25,20 +25,11 @@ import io.getstream.chat.android.client.api2.mapping.EVENT_USER_HIDDEN_CUSTOM_KE
 import io.getstream.chat.android.client.api2.mapping.USER_HIDDEN_CUSTOM_KEYS
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser2.direct.AttachmentAdapter
-import io.getstream.chat.android.client.parser2.direct.ChannelInfoAdapter
-import io.getstream.chat.android.client.parser2.direct.LocationAdapter
 import io.getstream.chat.android.client.parser2.direct.MessageAdapter
-import io.getstream.chat.android.client.parser2.direct.MessageModerationDetailsAdapter
-import io.getstream.chat.android.client.parser2.direct.MessageReminderInfoAdapter
-import io.getstream.chat.android.client.parser2.direct.ModerationAdapter
 import io.getstream.chat.android.client.parser2.direct.NewMessageEventAdapter
-import io.getstream.chat.android.client.parser2.direct.OptionAdapter
-import io.getstream.chat.android.client.parser2.direct.PollAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionAdapter
 import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
-import io.getstream.chat.android.client.parser2.direct.UserGroupAdapter
-import io.getstream.chat.android.client.parser2.direct.UserGroupMemberAdapter
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
@@ -50,54 +41,44 @@ import java.io.IOException
 import java.util.Date
 
 /**
- * Routes incoming JSON events to hand-written [JsonAdapter]s that parse directly into domain models,
- * bypassing the DTO intermediate layer. Returns `null` for unsupported event types so the caller
- * can fall back to the existing DTO path. Without [v2Mapping] it reads v1 frames; with it, v2 frames, mapped as the
- * generated v2 path maps them.
+ * Routes incoming JSON events to hand-written [JsonAdapter]s that parse directly into domain models, bypassing the
+ * generated models. Returns `null` for unsupported event types, and for frames it can't read, so the caller can fall
+ * back to the generated path. [mapping] maps them as the generated path does.
  */
 internal class DirectEventParser(
     private val currentUserIdProvider: () -> UserId?,
     private val messageTransformer: MessageTransformer,
     private val userTransformer: UserTransformer,
-    private val v2Mapping: DomainMapping? = null,
+    private val mapping: DomainMapping,
 ) {
 
     // region Leaf adapters
 
     private val moshi by lazy { Moshi.Builder().add(IsoDateAdapter()).build() }
     private val dateAdapter by lazy { moshi.adapter(Date::class.java) }
-    private val attachmentAdapter by lazy { AttachmentAdapter(v2Mapping) }
-    private val channelInfoAdapter by lazy { ChannelInfoAdapter() }
-    private val moderationDetailsAdapter by lazy { MessageModerationDetailsAdapter() }
-    private val moderationAdapter by lazy { ModerationAdapter() }
-    private val optionAdapter by lazy { OptionAdapter() }
-    private val locationAdapter by lazy { LocationAdapter(dateAdapter) }
+    private val attachmentAdapter by lazy { AttachmentAdapter(mapping) }
     private val reactionGroupAdapter by lazy { ReactionGroupAdapter(dateAdapter) }
 
     // endregion
 
     // region Composed adapters
 
-    private val userAdapter by lazy {
-        UserAdapter(dateAdapter, userTransformer, v2Mapping, USER_HIDDEN_CUSTOM_KEYS)
-    }
+    private val userAdapter by lazy { UserAdapter(dateAdapter, userTransformer, mapping, USER_HIDDEN_CUSTOM_KEYS) }
 
-    // v2 maps the custom data of the user an event carries differently from the users of its message.
+    // The user an event carries maps its custom data differently from the users of its message.
     private val eventUserAdapter by lazy {
-        v2Mapping?.let { UserAdapter(dateAdapter, userTransformer, it, EVENT_USER_HIDDEN_CUSTOM_KEYS) } ?: userAdapter
+        UserAdapter(dateAdapter, userTransformer, mapping, EVENT_USER_HIDDEN_CUSTOM_KEYS)
     }
-    private val userGroupMemberAdapter by lazy { UserGroupMemberAdapter(dateAdapter) }
-    private val userGroupAdapter by lazy { UserGroupAdapter(userGroupMemberAdapter, dateAdapter) }
-    private val reactionAdapter by lazy { ReactionAdapter(userAdapter, dateAdapter, v2Mapping) }
-    private val pollAdapter by lazy {
-        PollAdapter(userAdapter, optionAdapter, dateAdapter, currentUserIdProvider)
-    }
-    private val reminderAdapter by lazy { MessageReminderInfoAdapter(dateAdapter) }
+    private val reactionAdapter by lazy { ReactionAdapter(userAdapter, dateAdapter, mapping) }
     private val messageAdapter by lazy {
         MessageAdapter(
-            attachmentAdapter, channelInfoAdapter, reactionAdapter,
-            reactionGroupAdapter, userAdapter, userGroupAdapter, moderationDetailsAdapter, moderationAdapter,
-            pollAdapter, reminderAdapter, locationAdapter, dateAdapter, messageTransformer, v2Mapping,
+            attachmentAdapter,
+            reactionAdapter,
+            reactionGroupAdapter,
+            userAdapter,
+            dateAdapter,
+            messageTransformer,
+            mapping,
         )
     }
 
@@ -105,9 +86,7 @@ internal class DirectEventParser(
 
     // region Event adapters
 
-    private val newMessageEventAdapter by lazy {
-        NewMessageEventAdapter(messageAdapter, eventUserAdapter, v2 = v2Mapping != null)
-    }
+    private val newMessageEventAdapter by lazy { NewMessageEventAdapter(messageAdapter, eventUserAdapter) }
 
     // endregion
 
@@ -118,32 +97,24 @@ internal class DirectEventParser(
 
     /**
      * Attempts to parse [raw] JSON into a [ChatEvent] using a direct adapter.
-     * Returns `null` if the event type is not supported by any direct adapter,
-     * or if the matching adapter throws — allowing the caller to fall back to the DTO path.
+     * Returns `null` if the event type is not supported by any direct adapter, or if the frame can't be read.
      */
     fun parse(raw: String): ChatEvent? = parse(raw, extractType(raw))
 
     /** [parse] for a frame whose [type] the caller has already read, so the frame isn't scanned for it again. */
     fun parse(raw: String, type: String?): ChatEvent? {
         val adapter = adapterMap[type] ?: return null
-        if (v2Mapping != null) {
-            // Only a frame it can't read is left to the generated path. Anything else, such as an app transformer
-            // throwing, fails as it would there, rather than running the transformers a second time.
-            return try {
-                adapter.fromJson(raw)
-            } catch (e: JsonDataException) {
-                logger.w { "Direct parse failed for '$type'; falling back to the generated path: ${e.message}" }
-                null
-            } catch (e: IOException) {
-                logger.w { "Direct parse failed for '$type'; falling back to the generated path: ${e.message}" }
-                null
-            }
+        // Only a frame it can't read is left to the generated path. Anything else, such as an app transformer
+        // throwing, fails as it would there, rather than running the transformers a second time.
+        return try {
+            adapter.fromJson(raw)
+        } catch (e: JsonDataException) {
+            logger.w { "Direct parse failed for '$type'; falling back to the generated path: ${e.message}" }
+            null
+        } catch (e: IOException) {
+            logger.w { "Direct parse failed for '$type'; falling back to the generated path: ${e.message}" }
+            null
         }
-        return runCatching { adapter.fromJson(raw) }
-            .onFailure { e ->
-                logger.v { "Direct parse failed for '$type'; falling back to DTO path: ${e.message}" }
-            }
-            .getOrNull()
     }
 
     companion object {
@@ -176,7 +147,7 @@ internal class DirectEventParser(
                     null
                 }
             } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
-                logger.v { "extractType failed; falling back to DTO path: ${e.message}" }
+                logger.v { "extractType failed; falling back to the generated path: ${e.message}" }
                 null
             }
         }
