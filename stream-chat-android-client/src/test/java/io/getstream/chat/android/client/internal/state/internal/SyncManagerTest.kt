@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.internal.Log
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.internal.state.sync.internal.SyncManager
+import io.getstream.chat.android.client.internal.state.sync.internal.sameInstant
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -87,6 +88,8 @@ import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
@@ -176,6 +179,66 @@ internal class SyncManagerTest {
             verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
             verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
         }
+
+    @ParameterizedTest
+    @CsvSource(
+        "2026-10-14T11:13:25.61465Z, 2026-10-14T11:13:25.614650000Z",
+        "2026-10-14T11:13:25Z, 2026-10-14T11:13:25.000000000Z",
+    )
+    fun `an event at the cursor's instant is not propagated when its date is written with a different precision`(
+        rawLastSyncedAt: String,
+        rawCreatedAt: String,
+    ) = runTest(testDispatcher) {
+        val createdAt = localDate()
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawLastSyncedAt,
+            markedAllReadAt = createdAt,
+        )
+        val syncManager = buildSyncManager()
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn rawCreatedAt
+        }
+        whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.Success(listOf(mockedChatEvent)),
+        )
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser(),
+        )
+
+        _syncEvents.test {
+            syncManager.onEvent(connectingEvent)
+
+            expectNoEvents()
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "2026-10-14T11:13:25.61465Z, 2026-10-14T11:13:25.614650000Z, true",
+        "2026-10-14T11:13:25Z, 2026-10-14T11:13:25.000000000Z, true",
+        "2026-10-14T11:13:25.614650759Z, 2026-10-14T11:13:25.614650759Z, true",
+        "2026-10-14T11:13:25.61465Z, 2026-10-14T11:13:25.614651000Z, false",
+        "2026-10-14T11:13:25.61465Z, 2026-10-14T11:13:26.61465Z, false",
+    )
+    fun `sameInstant compares raw dates whatever the precision of their fraction`(
+        raw: String,
+        other: String,
+        expected: Boolean,
+    ) {
+        assertEquals(expected, sameInstant(raw, other))
+        assertEquals(expected, sameInstant(other, raw))
+    }
 
     @Test
     fun `when one event of exact same raw time of last sync arrive, it should not be propagated`() =
