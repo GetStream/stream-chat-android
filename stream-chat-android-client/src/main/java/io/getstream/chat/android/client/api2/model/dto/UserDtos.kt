@@ -94,4 +94,5 @@ internal data class DownstreamUserBlockDto(
     val user_id: String,
     val blocked_user_id: String,
     val created_at: Date,
+    val blocked_user: DownstreamUserDto?,
 )

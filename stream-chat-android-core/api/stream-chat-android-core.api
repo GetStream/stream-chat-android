@@ -2542,15 +2542,18 @@ public final class io/getstream/chat/android/models/User$Builder {
 }
 
 public final class io/getstream/chat/android/models/UserBlock {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/User;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/User;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)Lio/getstream/chat/android/models/UserBlock;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/UserBlock;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/UserBlock;
+	public final fun component4 ()Lio/getstream/chat/android/models/User;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/UserBlock;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/UserBlock;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/models/UserBlock;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBlockedAt ()Ljava/util/Date;
 	public final fun getBlockedBy ()Ljava/lang/String;
+	public final fun getBlockedUser ()Lio/getstream/chat/android/models/User;
 	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
