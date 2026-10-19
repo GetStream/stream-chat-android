@@ -185,7 +185,6 @@ constructor(
     private val v2DirectEventParser: DirectEventParser? by lazy {
         if (config.fastEventParsing) {
             DirectEventParser(
-                currentUserIdProvider = currentUserIdProvider,
                 messageTransformer = apiModelTransformers.incomingMessageTransformer,
                 userTransformer = apiModelTransformers.incomingUserTransformer,
                 mapping = v2DomainMapping,

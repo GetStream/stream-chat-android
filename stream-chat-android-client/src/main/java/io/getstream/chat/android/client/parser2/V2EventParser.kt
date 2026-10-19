@@ -46,7 +46,7 @@ import okio.BufferedSource
 /**
  * Parses the frames of the v2 websocket. Their dates are unix nanoseconds and their custom data sits under `custom`,
  * so they are read straight into the generated models with [Serializer.moshi]: a generic map would turn the dates into
- * doubles. [domainMapping] is the v2 mapping, which gives every object the `extraData` the v1 parser gives it.
+ * doubles. [domainMapping] is the v2 mapping, which maps custom data to `extraData` as the v1 REST responses do.
  */
 internal class V2EventParser(
     private val domainMapping: DomainMapping,

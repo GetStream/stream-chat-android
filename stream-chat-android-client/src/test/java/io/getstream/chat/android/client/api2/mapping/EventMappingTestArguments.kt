@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.events.AIIndicatorClearEvent
 import io.getstream.chat.android.client.events.AIIndicatorStopEvent
 import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
@@ -87,14 +86,13 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.infrastructure.ExactDate
 import io.getstream.chat.android.network.models.ChannelPartialUpdateResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
-import io.getstream.result.Error
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
-import io.getstream.chat.android.network.infrastructure.ExactDate as GeneratedExactDate
 import io.getstream.chat.android.network.models.AIIndicatorClearEvent as GeneratedAIIndicatorClearEvent
 import io.getstream.chat.android.network.models.AIIndicatorStopEvent as GeneratedAIIndicatorStopEvent
 import io.getstream.chat.android.network.models.AIIndicatorUpdateEvent as GeneratedAIIndicatorUpdateEvent
@@ -155,7 +153,7 @@ import io.getstream.chat.android.network.models.UserWatchingStartEvent as Genera
 import io.getstream.chat.android.network.models.UserWatchingStopEvent as GeneratedUserWatchingStopEvent
 
 /**
- * Provides the arguments (ChatEventDto and corresponding ChatEvent) for the [EventMappingTest].
+ * Provides the arguments (generated event and corresponding ChatEvent) for the [EventMappingTest].
  */
 @Suppress("LargeClass", "UNUSED")
 internal object EventMappingTestArguments {
@@ -169,8 +167,7 @@ internal object EventMappingTestArguments {
 
     private val DATE = Date(1593411268000)
     private const val DATE_STRING = "2020-06-29T06:14:28.000Z"
-    private val EXACT_DATE = ExactDate(DATE, DATE_STRING)
-    private val GENERATED_EXACT_DATE = GeneratedExactDate.parseOrNull(DATE_STRING)!!
+    private val EXACT_DATE = ExactDate.parseOrNull(DATE_STRING)!!
     private val OWN_USER = Mother.randomOwnUserResponse()
     private val COMMON_USER = Mother.randomUserResponseCommonFields()
     private val PRIVACY_USER = Mother.randomUserResponsePrivacyFields()
@@ -186,8 +183,6 @@ internal object EventMappingTestArguments {
     private val CLEAR_HISTORY = randomBoolean()
     private val SHADOW_BAN = randomBoolean()
     private val CONNECTION_ID = randomString()
-    private val ERROR = Mother.randomErrorDto()
-    private val GENERIC_ERROR = Error.GenericError("generic error")
     private val MEMBER = Mother.randomChannelMemberResponse()
     private val HARD_DELETE = randomBoolean()
     private val FIRST_UNREAD_MESSAGE_ID = randomString()
@@ -221,7 +216,7 @@ internal object EventMappingTestArguments {
 
     private val newMessageEvent = GeneratedMessageNewEvent(
         type = EventType.MESSAGE_NEW,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
         channelType = CHANNEL_TYPE,
@@ -237,8 +232,6 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val newMessageDto = newMessageEvent
-
     // As /sync replays it: no message id, watcher count, unread counts or channel custom data.
     private val newMessageReplayDto = newMessageEvent.copy(
         messageId = null,
@@ -251,29 +244,27 @@ internal object EventMappingTestArguments {
 
     private val draftMessageUpdatedDto = GeneratedDraftUpdatedEvent(
         type = EventType.DRAFT_MESSAGE_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         draft = DRAFT,
     )
 
     private val draftMessageDeletedDto = GeneratedDraftDeletedEvent(
         type = EventType.DRAFT_MESSAGE_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         draft = DRAFT,
     )
 
     private val channelDeletedEvent = GeneratedChannelDeletedEvent(
         type = EventType.CHANNEL_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
     )
 
-    private val channelDeletedDto = channelDeletedEvent
-
     private val channelHiddenEvent = GeneratedChannelHiddenEvent(
         type = EventType.CHANNEL_HIDDEN,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -282,66 +273,54 @@ internal object EventMappingTestArguments {
         clearHistory = CLEAR_HISTORY,
     )
 
-    private val channelHiddenDto = channelHiddenEvent
-
     // As /sync replays it on backends before v239.47.0: no clear_history.
     private val channelHiddenWithoutClearHistoryDto = channelHiddenEvent.copy(clearHistory = null)
 
     private val channelTruncatedEvent = GeneratedChannelTruncatedEvent(
         type = EventType.CHANNEL_TRUNCATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         message = GENERATED_MESSAGE,
         channel = GENERATED_CHANNEL,
     )
-
-    private val channelTruncatedDto = channelTruncatedEvent
 
     private val channelUpdatedByUserEvent = GeneratedChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         message = GENERATED_MESSAGE,
         channel = GENERATED_CHANNEL,
     )
 
-    private val channelUpdatedByUserDto = channelUpdatedByUserEvent
-
     private val channelUpdatedEvent = GeneratedChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         message = GENERATED_MESSAGE,
         channel = GENERATED_CHANNEL,
     )
 
-    private val channelUpdatedDto = channelUpdatedEvent
-
     private val channelUserBannedEvent = GeneratedUserBannedEvent(
         type = EventType.USER_BANNED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         expiration = DATE,
         shadow = SHADOW_BAN,
     )
 
-    private val channelUserBannedDto = channelUserBannedEvent
-
     private val channelUserUnbannedEvent = GeneratedUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
     )
 
-    private val channelUserUnbannedDto = channelUserUnbannedEvent
-
     private val channelVisibleEvent = GeneratedChannelVisibleEvent(
         type = EventType.CHANNEL_VISIBLE,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -349,46 +328,36 @@ internal object EventMappingTestArguments {
         user = COMMON_USER,
     )
 
-    private val channelVisibleDto = channelVisibleEvent
-
     private val channelVisibleWithoutChannelDto = channelVisibleEvent.copy(channel = null)
 
     private val connectedEvent = GeneratedConnectedEvent(
         connectionId = CONNECTION_ID,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         me = OWN_USER,
         type = EventType.HEALTH_CHECK,
     )
 
-    private val connectedDto = connectedEvent
-
     private val globalUserBannedEvent = GeneratedUserBannedEvent(
         type = EventType.USER_BANNED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
     )
-
-    private val globalUserBannedDto = globalUserBannedEvent
 
     private val globalUserUnbannedEvent = GeneratedUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
     )
 
-    private val globalUserUnbannedDto = globalUserUnbannedEvent
-
     private val healthEvent = GeneratedHealthCheckEvent(
         connectionId = CONNECTION_ID,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         type = EventType.HEALTH_CHECK,
     )
 
-    private val healthDto = healthEvent
-
     private val markAllReadEvent = GeneratedNotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
         totalUnreadCount = TOTAL_UNREAD_COUNT,
         unreadChannels = UNREAD_CHANNELS,
@@ -396,44 +365,36 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val markAllReadDto = markAllReadEvent
-
     private val memberAddedEvent = GeneratedMemberAddedEvent(
         type = EventType.MEMBER_ADDED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         channel = GENERATED_CHANNEL,
         cid = CID,
         user = COMMON_USER,
         member = MEMBER,
     )
-
-    private val memberAddedDto = memberAddedEvent
 
     private val memberRemovedEvent = GeneratedMemberRemovedEvent(
         type = EventType.MEMBER_REMOVED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         channel = GENERATED_CHANNEL,
         cid = CID,
         user = COMMON_USER,
         member = MEMBER,
     )
-
-    private val memberRemovedDto = memberRemovedEvent
 
     private val memberUpdatedEvent = GeneratedMemberUpdatedEvent(
         type = EventType.MEMBER_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         channel = GENERATED_CHANNEL,
         cid = CID,
         user = COMMON_USER,
         member = MEMBER,
     )
 
-    private val memberUpdatedDto = memberUpdatedEvent
-
     private val messageDeletedEvent = GeneratedMessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -445,15 +406,13 @@ internal object EventMappingTestArguments {
         channelMessageCount = CHANNEL_MESSAGE_COUNT,
     )
 
-    private val messageDeletedDto = messageDeletedEvent
-
     // As /sync replays a server-side delete: no user, message id or hard delete flag.
     private val messageDeletedReplayDto =
         messageDeletedEvent.copy(user = null, messageId = null, hardDelete = null, deletedForMe = null)
 
     private val messageDeliveredEvent = GeneratedMessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
         channelType = CHANNEL_TYPE,
@@ -462,11 +421,9 @@ internal object EventMappingTestArguments {
         lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
     )
 
-    private val messageDeliveredDto = messageDeliveredEvent
-
     private val messageReadEvent = GeneratedMessageReadEvent(
         type = EventType.MESSAGE_READ,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -476,11 +433,9 @@ internal object EventMappingTestArguments {
         team = TEAM,
     )
 
-    private val messageReadDto = messageReadEvent
-
     private val messageUpdatedEvent = GeneratedMessageUpdatedEvent(
         type = EventType.MESSAGE_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -489,11 +444,9 @@ internal object EventMappingTestArguments {
         messageId = GENERATED_MESSAGE.id,
     )
 
-    private val messageUpdatedDto = messageUpdatedEvent
-
     private val notificationAddedToChannelEvent = GeneratedNotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         member = MEMBER,
@@ -501,11 +454,9 @@ internal object EventMappingTestArguments {
         unreadChannels = UNREAD_CHANNELS,
     )
 
-    private val notificationAddedToChannelDto = notificationAddedToChannelEvent
-
     private val notificationChannelDeletedEvent = GeneratedNotificationChannelDeletedEvent(
         type = EventType.NOTIFICATION_CHANNEL_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         totalUnreadCount = TOTAL_UNREAD_COUNT,
@@ -513,19 +464,15 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val notificationChannelDeletedDto = notificationChannelDeletedEvent
-
     private val notificationChannelMutesUpdatesEvent = GeneratedNotificationChannelMutesUpdatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         me = OWN_USER,
     )
 
-    private val notificationChannelMutesUpdatesDto = notificationChannelMutesUpdatesEvent
-
     private val notificationChannelPartialUpdatedEvent = GeneratedNotificationChannelPartialUpdatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_PARTIAL_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = ChannelPartialUpdateResponse(
             cid = CID,
@@ -541,11 +488,9 @@ internal object EventMappingTestArguments {
         ),
     )
 
-    private val notificationChannelPartialUpdatedDto = GeneratedEventDto(notificationChannelPartialUpdatedEvent)
-
     private val notificationChannelTruncatedEvent = GeneratedNotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         totalUnreadCount = TOTAL_UNREAD_COUNT,
@@ -553,44 +498,36 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val notificationChannelTruncatedDto = notificationChannelTruncatedEvent
-
     private val notificationInviteAcceptedEvent = GeneratedNotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
         member = MEMBER,
     )
-
-    private val notificationInviteAcceptedDto = notificationInviteAcceptedEvent
 
     private val notificationInviteRejectedEvent = GeneratedNotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
         member = MEMBER,
     )
-
-    private val notificationInviteRejectedDto = notificationInviteRejectedEvent
 
     private val notificationInvitedEvent = GeneratedNotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
         member = MEMBER,
     )
 
-    private val notificationInvitedDto = notificationInvitedEvent
-
     private val notificationMarkReadEvent = GeneratedNotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
         channelType = CHANNEL_TYPE,
@@ -606,11 +543,9 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val notificationMarkReadDto = notificationMarkReadEvent
-
     private val notificationMarkUnreadEvent = GeneratedNotificationMarkUnreadEvent(
         type = EventType.NOTIFICATION_MARK_UNREAD,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
         firstUnreadMessageId = FIRST_UNREAD_MESSAGE_ID,
@@ -624,11 +559,9 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val notificationMarkUnreadDto = notificationMarkUnreadEvent
-
     private val notificationMessageNewEvent = GeneratedNotificationNewMessageEvent(
         type = EventType.NOTIFICATION_MESSAGE_NEW,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -641,11 +574,9 @@ internal object EventMappingTestArguments {
         groupedUnreadChannels = GROUPED_UNREAD_CHANNELS,
     )
 
-    private val notificationMessageNewDto = notificationMessageNewEvent
-
     private val notificationThreadMessageNewEvent = GeneratedNotificationThreadMessageNewEvent(
         type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = GENERATED_MESSAGE.id,
         threadId = THREAD_ID,
@@ -656,53 +587,43 @@ internal object EventMappingTestArguments {
         unreadThreadMessages = UNREAD_THREAD_MESSAGES,
     )
 
-    private val notificationThreadMessageNewDto = notificationThreadMessageNewEvent
-
     private val threadUpdatedEvent = GeneratedThreadUpdatedEvent(
         type = EventType.THREAD_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
         thread = THREAD_INFO,
     )
 
-    private val threadUpdatedDto = threadUpdatedEvent
-
     private val notificationMutesUpdatedEvent = GeneratedNotificationMutesUpdatedEvent(
         type = EventType.NOTIFICATION_MUTES_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         me = OWN_USER,
     )
 
-    private val notificationMutesUpdatedDto = notificationMutesUpdatedEvent
-
     private val notificationRemovedFromChannelEvent = GeneratedNotificationRemovedFromChannelEvent(
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         member = MEMBER,
         user = COMMON_USER,
     )
 
-    private val notificationRemovedFromChannelDto = notificationRemovedFromChannelEvent
-
     private val reactionDeletedEvent = GeneratedReactionDeletedEvent(
         type = EventType.REACTION_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
         reaction = REACTION,
         message = GENERATED_MESSAGE,
     )
-
-    private val reactionDeletedDto = reactionDeletedEvent
 
     private val reactionNewEvent = GeneratedReactionNewEvent(
         type = EventType.REACTION_NEW,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         user = COMMON_USER,
@@ -710,11 +631,9 @@ internal object EventMappingTestArguments {
         message = GENERATED_MESSAGE,
     )
 
-    private val reactionNewDto = reactionNewEvent
-
     private val reactionUpdateEvent = GeneratedReactionUpdatedEvent(
         type = EventType.REACTION_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         channel = GENERATED_CHANNEL,
         messageId = GENERATED_MESSAGE.id,
@@ -723,33 +642,27 @@ internal object EventMappingTestArguments {
         message = GENERATED_MESSAGE,
     )
 
-    private val reactionUpdateDto = reactionUpdateEvent
-
     private val typingStartEvent = GeneratedTypingStartEvent(
         type = EventType.TYPING_START,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         parentId = PARENT_ID,
         member = PARTIAL_MEMBER,
     )
-
-    private val typingStartDto = typingStartEvent
 
     private val typingStopEvent = GeneratedTypingStopEvent(
         type = EventType.TYPING_STOP,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         parentId = PARENT_ID,
         member = PARTIAL_MEMBER,
     )
 
-    private val typingStopDto = typingStopEvent
-
     private val userDeletedEvent = GeneratedUserDeletedEvent(
         type = EventType.USER_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         deleteConversation = "",
         deleteConversationChannels = false,
         deleteMessages = "soft",
@@ -759,165 +672,133 @@ internal object EventMappingTestArguments {
         user = COMMON_USER,
     )
 
-    private val userDeletedDto = userDeletedEvent
-
     private val userPresenceChangedEvent = GeneratedUserPresenceChangedEvent(
         type = EventType.USER_PRESENCE_CHANGED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
     )
-
-    private val userPresenceChangedDto = userPresenceChangedEvent
 
     private val userStartWatchingEvent = GeneratedUserWatchingStartEvent(
         type = EventType.USER_WATCHING_START,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         watcherCount = WATCHER_COUNT,
     )
-
-    private val userStartWatchingDto = userStartWatchingEvent
 
     private val userStopWatchingEvent = GeneratedUserWatchingStopEvent(
         type = EventType.USER_WATCHING_STOP,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         watcherCount = WATCHER_COUNT,
     )
 
-    private val userStopWatchingDto = userStopWatchingEvent
-
     private val userUpdatedEvent = GeneratedUserUpdatedEvent(
         type = EventType.USER_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = PRIVACY_USER,
     )
 
-    private val userUpdatedDto = userUpdatedEvent
-
     private val pollClosedEvent = GeneratedPollClosedEvent(
         type = EventType.POLL_CLOSED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
     )
-
-    private val pollClosedDto = pollClosedEvent
 
     private val pollDeletedEvent = GeneratedPollDeletedEvent(
         type = EventType.POLL_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
     )
-
-    private val pollDeletedDto = pollDeletedEvent
 
     private val pollUpdatedEvent = GeneratedPollUpdatedEvent(
         type = EventType.POLL_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
     )
-
-    private val pollUpdatedDto = pollUpdatedEvent
 
     private val voteCastedEvent = GeneratedPollVoteCastedEvent(
         type = EventType.POLL_VOTE_CASTED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
         pollVote = POLL_VOTE,
     )
-
-    private val voteCastedDto = voteCastedEvent
 
     private val voteChangedEvent = GeneratedPollVoteChangedEvent(
         type = EventType.POLL_VOTE_CHANGED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
         pollVote = POLL_VOTE,
     )
-
-    private val voteChangedDto = voteChangedEvent
 
     private val voteRemovedEvent = GeneratedPollVoteRemovedEvent(
         type = EventType.POLL_VOTE_REMOVED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
         pollVote = POLL_VOTE,
     )
 
-    private val voteRemovedDto = voteRemovedEvent
-
     private val answerCastedEvent = GeneratedPollVoteCastedEvent(
         type = EventType.POLL_VOTE_CASTED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         poll = POLL,
         pollVote = ANSWER_VOTE,
     )
 
-    private val answerCastedDto = answerCastedEvent
-
     private val reminderCreatedGeneratedEvent = GeneratedReminderCreatedEvent(
         type = EventType.REMINDER_CREATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         userId = COMMON_USER.id,
         reminder = REMINDER,
     )
-
-    private val reminderCreatedDto = reminderCreatedGeneratedEvent
 
     private val reminderUpdatedGeneratedEvent = GeneratedReminderUpdatedEvent(
         type = EventType.REMINDER_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         userId = COMMON_USER.id,
         reminder = REMINDER,
     )
-
-    private val reminderUpdatedDto = reminderUpdatedGeneratedEvent
 
     private val reminderDeletedGeneratedEvent = GeneratedReminderDeletedEvent(
         type = EventType.REMINDER_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         userId = COMMON_USER.id,
         reminder = REMINDER,
     )
-
-    private val reminderDeletedDto = reminderDeletedGeneratedEvent
 
     private val notificationReminderDueGeneratedEvent = GeneratedReminderNotificationEvent(
         type = EventType.NOTIFICATION_REMINDER_DUE,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         messageId = MESSAGE_ID,
         userId = COMMON_USER.id,
         reminder = REMINDER,
     )
 
-    private val notificationReminderDueDto = notificationReminderDueGeneratedEvent
-
     private val userMessagesDeletedGeneratedEvent = GeneratedUserMessagesDeletedEvent(
         type = EventType.USER_MESSAGES_DELETED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         user = COMMON_USER,
         cid = CID,
         channelType = CHANNEL_TYPE,
@@ -925,11 +806,9 @@ internal object EventMappingTestArguments {
         hardDelete = true,
     )
 
-    private val userMessagesDeletedEventDto = userMessagesDeletedGeneratedEvent
-
     private val aiIndicatorUpdatedDto = GeneratedAIIndicatorUpdateEvent(
         type = EventType.AI_TYPING_INDICATOR_UPDATED,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
         messageId = AI_MESSAGE_ID,
@@ -938,14 +817,14 @@ internal object EventMappingTestArguments {
 
     private val aiIndicatorStopDto = GeneratedAIIndicatorStopEvent(
         type = EventType.AI_TYPING_INDICATOR_STOP,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
     )
 
     private val aiIndicatorClearDto = GeneratedAIIndicatorClearEvent(
         type = EventType.AI_TYPING_INDICATOR_CLEAR,
-        createdAt = GENERATED_EXACT_DATE,
+        createdAt = EXACT_DATE,
         cid = CID,
         user = COMMON_USER,
     )
@@ -991,15 +870,15 @@ internal object EventMappingTestArguments {
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
         type = EventType.DRAFT_MESSAGE_UPDATED,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         draftMessage = with(domainMapping) { DRAFT.toDomain() },
     )
 
     private val draftMessageDeletedEvent = DraftMessageDeletedEvent(
         type = EventType.DRAFT_MESSAGE_DELETED,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         draftMessage = with(domainMapping) { DRAFT.toDomain() },
     )
 
@@ -1131,8 +1010,8 @@ internal object EventMappingTestArguments {
 
     private val markAllRead = MarkAllReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         user = with(domainMapping) { COMMON_USER.toDomain() },
         totalUnreadCount = TOTAL_UNREAD_COUNT,
         unreadChannels = UNREAD_CHANNELS,
@@ -1190,20 +1069,20 @@ internal object EventMappingTestArguments {
 
     private val messageDelivered = MessageDeliveredEvent(
         type = EventType.MESSAGE_DELIVERED,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         user = with(domainMapping) { COMMON_USER.toDomain() },
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
-        lastDeliveredAt = GENERATED_EXACT_DATE.date,
+        lastDeliveredAt = EXACT_DATE.date,
         lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
     )
 
     private val messageRead = MessageReadEvent(
         type = EventType.MESSAGE_READ,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -1226,8 +1105,8 @@ internal object EventMappingTestArguments {
 
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -1329,8 +1208,8 @@ internal object EventMappingTestArguments {
 
     private val notificationMarkRead = NotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         user = with(domainMapping) { COMMON_USER.toDomain() },
         cid = CID,
         channelType = CHANNEL_TYPE,
@@ -1518,8 +1397,8 @@ internal object EventMappingTestArguments {
 
     private val userUpdated = UserUpdatedEvent(
         type = EventType.USER_UPDATED,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         user = with(domainMapping) { PRIVACY_USER.toDomain() },
     )
 
@@ -1654,8 +1533,8 @@ internal object EventMappingTestArguments {
 
     private val aiIndicatorUpdated = AIIndicatorUpdatedEvent(
         type = EventType.AI_TYPING_INDICATOR_UPDATED,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -1666,8 +1545,8 @@ internal object EventMappingTestArguments {
 
     private val aiIndicatorStop = AIIndicatorStopEvent(
         type = EventType.AI_TYPING_INDICATOR_STOP,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -1676,8 +1555,8 @@ internal object EventMappingTestArguments {
 
     private val aiIndicatorClear = AIIndicatorClearEvent(
         type = EventType.AI_TYPING_INDICATOR_CLEAR,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         cid = CID,
         channelType = CHANNEL_TYPE,
         channelId = CHANNEL_ID,
@@ -1686,8 +1565,8 @@ internal object EventMappingTestArguments {
 
     private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
         type = EventType.USER_MESSAGES_DELETED,
-        createdAt = GENERATED_EXACT_DATE.date,
-        rawCreatedAt = GENERATED_EXACT_DATE.raw,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.raw,
         user = with(domainMapping) { COMMON_USER.toDomain() },
         cid = CID,
         channelType = CHANNEL_TYPE,
@@ -1703,72 +1582,72 @@ internal object EventMappingTestArguments {
     @JvmStatic
     @Suppress("LongMethod")
     fun arguments() = listOf(
-        Arguments.of(newMessageDto, newMessage),
+        Arguments.of(newMessageEvent, newMessage),
         Arguments.of(newMessageReplayDto, newMessageReplay),
         Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
         Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
-        Arguments.of(channelDeletedDto, channelDeleted),
-        Arguments.of(channelHiddenDto, channelHidden),
+        Arguments.of(channelDeletedEvent, channelDeleted),
+        Arguments.of(channelHiddenEvent, channelHidden),
         Arguments.of(channelHiddenWithoutClearHistoryDto, channelHiddenWithoutClearHistory),
-        Arguments.of(channelTruncatedDto, channelTruncated),
-        Arguments.of(channelUpdatedByUserDto, channelUpdatedByUser),
-        Arguments.of(channelUpdatedDto, channelUpdated),
-        Arguments.of(channelUserBannedDto, channelUserBanned),
-        Arguments.of(channelUserUnbannedDto, channelUserUnbanned),
-        Arguments.of(channelVisibleDto, channelVisible),
+        Arguments.of(channelTruncatedEvent, channelTruncated),
+        Arguments.of(channelUpdatedByUserEvent, channelUpdatedByUser),
+        Arguments.of(channelUpdatedEvent, channelUpdated),
+        Arguments.of(channelUserBannedEvent, channelUserBanned),
+        Arguments.of(channelUserUnbannedEvent, channelUserUnbanned),
+        Arguments.of(channelVisibleEvent, channelVisible),
         Arguments.of(channelVisibleWithoutChannelDto, channelVisibleWithoutChannel),
-        Arguments.of(connectedDto, connected),
-        Arguments.of(globalUserBannedDto, globalUserBanned),
-        Arguments.of(globalUserUnbannedDto, globalUserUnbanned),
-        Arguments.of(healthDto, health),
-        Arguments.of(markAllReadDto, markAllRead),
-        Arguments.of(memberAddedDto, memberAdded),
-        Arguments.of(memberRemovedDto, memberRemoved),
-        Arguments.of(memberUpdatedDto, memberUpdated),
-        Arguments.of(messageDeletedDto, messageDeleted),
+        Arguments.of(connectedEvent, connected),
+        Arguments.of(globalUserBannedEvent, globalUserBanned),
+        Arguments.of(globalUserUnbannedEvent, globalUserUnbanned),
+        Arguments.of(healthEvent, health),
+        Arguments.of(markAllReadEvent, markAllRead),
+        Arguments.of(memberAddedEvent, memberAdded),
+        Arguments.of(memberRemovedEvent, memberRemoved),
+        Arguments.of(memberUpdatedEvent, memberUpdated),
+        Arguments.of(messageDeletedEvent, messageDeleted),
         Arguments.of(messageDeletedReplayDto, messageDeletedReplay),
-        Arguments.of(messageDeliveredDto, messageDelivered),
-        Arguments.of(messageReadDto, messageRead),
-        Arguments.of(messageUpdatedDto, messageUpdated),
-        Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
-        Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
-        Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
-        Arguments.of(notificationChannelPartialUpdatedDto, notificationChannelPartialUpdated),
-        Arguments.of(notificationChannelTruncatedDto, notificationChannelTruncated),
-        Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
-        Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),
-        Arguments.of(notificationInvitedDto, notificationInvited),
-        Arguments.of(notificationMarkReadDto, notificationMarkRead),
-        Arguments.of(notificationMarkUnreadDto, notificationMarkUnread),
-        Arguments.of(notificationMessageNewDto, notificationMessageNew),
-        Arguments.of(notificationThreadMessageNewDto, notificationThreadMessageNew),
-        Arguments.of(threadUpdatedDto, threadUpdated),
-        Arguments.of(notificationMutesUpdatedDto, notificationMutesUpdated),
-        Arguments.of(notificationRemovedFromChannelDto, notificationRemovedFromChannel),
-        Arguments.of(reactionDeletedDto, reactionDeleted),
-        Arguments.of(reactionNewDto, reactionNew),
-        Arguments.of(reactionUpdateDto, reactionUpdate),
-        Arguments.of(typingStartDto, typingStart),
-        Arguments.of(typingStopDto, typingStop),
-        Arguments.of(userDeletedDto, userDeleted),
-        Arguments.of(userPresenceChangedDto, userPresenceChanged),
-        Arguments.of(userStartWatchingDto, userStartWatching),
-        Arguments.of(userStopWatchingDto, userStopWatching),
-        Arguments.of(userUpdatedDto, userUpdated),
-        Arguments.of(pollClosedDto, pollClosed),
-        Arguments.of(pollDeletedDto, pollDeleted),
-        Arguments.of(pollUpdatedDto, pollUpdated),
-        Arguments.of(voteCastedDto, voteCasted),
-        Arguments.of(voteChangedDto, voteChanged),
-        Arguments.of(voteRemovedDto, voteRemoved),
-        Arguments.of(answerCastedDto, answerCasted),
-        Arguments.of(reminderCreatedDto, reminderCreatedEvent),
-        Arguments.of(reminderUpdatedDto, reminderUpdatedEvent),
-        Arguments.of(reminderDeletedDto, reminderDeletedEvent),
-        Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
+        Arguments.of(messageDeliveredEvent, messageDelivered),
+        Arguments.of(messageReadEvent, messageRead),
+        Arguments.of(messageUpdatedEvent, messageUpdated),
+        Arguments.of(notificationAddedToChannelEvent, notificationAddedToChannel),
+        Arguments.of(notificationChannelDeletedEvent, notificationChannelDeleted),
+        Arguments.of(notificationChannelMutesUpdatesEvent, notificationChannelMutesUpdates),
+        Arguments.of(notificationChannelPartialUpdatedEvent, notificationChannelPartialUpdated),
+        Arguments.of(notificationChannelTruncatedEvent, notificationChannelTruncated),
+        Arguments.of(notificationInviteAcceptedEvent, notificationInviteAccepted),
+        Arguments.of(notificationInviteRejectedEvent, notificationInviteRejected),
+        Arguments.of(notificationInvitedEvent, notificationInvited),
+        Arguments.of(notificationMarkReadEvent, notificationMarkRead),
+        Arguments.of(notificationMarkUnreadEvent, notificationMarkUnread),
+        Arguments.of(notificationMessageNewEvent, notificationMessageNew),
+        Arguments.of(notificationThreadMessageNewEvent, notificationThreadMessageNew),
+        Arguments.of(threadUpdatedEvent, threadUpdated),
+        Arguments.of(notificationMutesUpdatedEvent, notificationMutesUpdated),
+        Arguments.of(notificationRemovedFromChannelEvent, notificationRemovedFromChannel),
+        Arguments.of(reactionDeletedEvent, reactionDeleted),
+        Arguments.of(reactionNewEvent, reactionNew),
+        Arguments.of(reactionUpdateEvent, reactionUpdate),
+        Arguments.of(typingStartEvent, typingStart),
+        Arguments.of(typingStopEvent, typingStop),
+        Arguments.of(userDeletedEvent, userDeleted),
+        Arguments.of(userPresenceChangedEvent, userPresenceChanged),
+        Arguments.of(userStartWatchingEvent, userStartWatching),
+        Arguments.of(userStopWatchingEvent, userStopWatching),
+        Arguments.of(userUpdatedEvent, userUpdated),
+        Arguments.of(pollClosedEvent, pollClosed),
+        Arguments.of(pollDeletedEvent, pollDeleted),
+        Arguments.of(pollUpdatedEvent, pollUpdated),
+        Arguments.of(voteCastedEvent, voteCasted),
+        Arguments.of(voteChangedEvent, voteChanged),
+        Arguments.of(voteRemovedEvent, voteRemoved),
+        Arguments.of(answerCastedEvent, answerCasted),
+        Arguments.of(reminderCreatedGeneratedEvent, reminderCreatedEvent),
+        Arguments.of(reminderUpdatedGeneratedEvent, reminderUpdatedEvent),
+        Arguments.of(reminderDeletedGeneratedEvent, reminderDeletedEvent),
+        Arguments.of(notificationReminderDueGeneratedEvent, notificationReminderDueEvent),
         Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
         Arguments.of(aiIndicatorClearDto, aiIndicatorClear),
-        Arguments.of(userMessagesDeletedEventDto, userMessagesDeletedEvent),
+        Arguments.of(userMessagesDeletedGeneratedEvent, userMessagesDeletedEvent),
     )
 }

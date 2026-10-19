@@ -436,7 +436,6 @@ internal class EventMapping(
      * handled here, and rejects an event missing a field its domain event requires.
      */
     @Suppress("LongMethod")
-    /** Transforms a generated event to its domain event. */
     internal fun WSEvent.toDomain(): ChatEvent = when (this) {
         is GeneratedUserWatchingStartEvent -> toDomain()
         is GeneratedUserWatchingStopEvent -> toDomain()

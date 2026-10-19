@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.parser2.direct.ReactionGroupAdapter
 import io.getstream.chat.android.client.parser2.direct.UserAdapter
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.MessageTransformer
-import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.network.infrastructure.IsoDateAdapter
 import io.getstream.log.taggedLogger
@@ -46,7 +45,6 @@ import java.util.Date
  * back to the generated path. [mapping] maps them as the generated path does.
  */
 internal class DirectEventParser(
-    private val currentUserIdProvider: () -> UserId?,
     private val messageTransformer: MessageTransformer,
     private val userTransformer: UserTransformer,
     private val mapping: DomainMapping,

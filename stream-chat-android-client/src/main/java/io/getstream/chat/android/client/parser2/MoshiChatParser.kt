@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
@@ -31,7 +30,6 @@ import io.getstream.chat.android.client.parser2.adapters.ChannelResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollOptionRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DraftPayloadResponseAdapter
-import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.FullUserResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.GetOGResponseAdapter
 import io.getstream.chat.android.client.parser2.adapters.MemberUserRequestAdapter
@@ -67,7 +65,6 @@ internal class MoshiChatParser : ChatParser {
 
     private val moshi: Moshi by lazy {
         Serializer.moshi.newBuilder()
-            .addAdapter(ExactDateAdapter())
             .add(ReactionRequestAdapter)
             .add(FullUserResponseAdapter)
             .add(UserResponseAdapter)
@@ -103,10 +100,6 @@ internal class MoshiChatParser : ChatParser {
             // Registered last so the model-specific adapters above keep precedence and delegate into it.
             .add(NullCollectionsAsEmptyFactory)
             .build()
-    }
-
-    private inline fun <reified T> Moshi.Builder.addAdapter(adapter: JsonAdapter<T>) = apply {
-        this.add(T::class.java, adapter)
     }
 
     override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {

@@ -48,6 +48,16 @@ internal class UnknownEventParsingTest {
     }
 
     @Test
+    fun `Own-user fields at the root of a custom event's user are dropped, and custom data comes from custom`() {
+        val ownUserFields = ""","total_unread_count":4,"unread_channels":2}"""
+        val user = parse(customEvent(USER.removeSuffix("}") + ownUserFields)).user!!
+
+        user.totalUnreadCount shouldBeEqualTo 0
+        user.unreadChannels shouldBeEqualTo 0
+        user.extraData shouldBeEqualTo mapOf("nickname" to "Chewie")
+    }
+
+    @Test
     fun `A custom event whose user doesn't read as the generated user is rejected, as other events are`() {
         assertThrows<JsonDataException> { parse(customEvent("""{"id":"filip"}""")) }
     }

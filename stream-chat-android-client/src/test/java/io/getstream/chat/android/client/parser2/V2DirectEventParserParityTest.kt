@@ -46,7 +46,7 @@ internal class V2DirectEventParserParityTest {
         userTransformer = NoOpUserTransformer,
         hidesStoredDeclaredCustom = true,
     )
-    private val direct = DirectEventParser({ ME }, NoOpMessageTransformer, NoOpUserTransformer, mapping)
+    private val direct = DirectEventParser(NoOpMessageTransformer, NoOpUserTransformer, mapping)
     private val generated = V2EventParser(mapping)
 
     @ParameterizedTest(name = "{0}")
@@ -68,7 +68,7 @@ internal class V2DirectEventParserParityTest {
 
     @Test
     fun `With the fast path set, the v2 parser reads message_new through it`() {
-        val tagging = DirectEventParser({ ME }, { it.copy(text = "fast path") }, NoOpUserTransformer, mapping)
+        val tagging = DirectEventParser({ it.copy(text = "fast path") }, NoOpUserTransformer, mapping)
 
         val event = V2EventParser(mapping, tagging).parse(event().toJson())
 
@@ -83,7 +83,7 @@ internal class V2DirectEventParserParityTest {
         }
         val userTransformer = UserTransformer { it.copy(name = "${it.name}|${it.extraData.size}") }
         val transforming = DomainMapping({ ME }, NoOpChannelTransformer, messageTransformer, userTransformer, true)
-        val fast = DirectEventParser({ ME }, messageTransformer, userTransformer, transforming)
+        val fast = DirectEventParser(messageTransformer, userTransformer, transforming)
 
         fast.parse(frame).shouldNotBeNull().enrichIfNeeded() shouldBeEqualTo V2EventParser(transforming).parse(frame)
     }
@@ -124,6 +124,14 @@ internal class V2DirectEventParserParityTest {
             "created_at" to AT,
             "updated_at" to AT,
             "custom" to mapOf("emoji_code" to "U+1F44D", "skin" to "dark"),
+        )
+
+        private val reactionGroup = mapOf(
+            "count" to 1,
+            "sum_scores" to 2,
+            "first_reaction_at" to AT,
+            "last_reaction_at" to AT,
+            "latest_reactions_by" to emptyList<Any>(),
         )
 
         private fun message(id: String = "m1") = mapOf(
@@ -380,6 +388,21 @@ internal class V2DirectEventParserParityTest {
                 "average response time beyond an Int",
                 event(user = user(ME) + ("avg_response_time" to 3_000_000_000L)).toJson(),
             ),
-        )
+            arrayOf(
+                "attachment custom as a string",
+                event(message = message() + ("attachments" to listOf(mapOf("type" to "image", "custom" to "x"))))
+                    .toJson(),
+            ),
+        ) + listOf("message_id", "type", "score", "user_id", "created_at", "updated_at", "user").map { field ->
+            arrayOf(
+                "latest reaction without $field",
+                event(message = message() + ("latest_reactions" to listOf(reaction("m1", "like") - field))).toJson(),
+            )
+        } + listOf("count", "sum_scores", "first_reaction_at", "last_reaction_at").map { field ->
+            arrayOf(
+                "reaction group without $field",
+                event(message = message() + ("reaction_groups" to mapOf("like" to reactionGroup - field))).toJson(),
+            )
+        }
     }
 }

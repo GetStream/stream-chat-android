@@ -56,11 +56,6 @@ internal object JsonParsingUtils {
         return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextBoolean()
     }
 
-    /** Reads a nullable Long (returns null if JSON value is null). */
-    fun readNullableLong(reader: JsonReader): Long? {
-        return if (reader.peek() == JsonReader.Token.NULL) reader.nextNull() else reader.nextLong()
-    }
-
     /**
      * Checks that the next value has the [expected] kind, as the generated v2 models require. A JSON null is consumed
      * and gives false when [nullable], for a property the generated model declares nullable, and otherwise fails, as
@@ -80,18 +75,6 @@ internal object JsonParsingUtils {
     /** Reads a JSON object as a map, or null for a JSON null or a non-object value. */
     @Suppress("UNCHECKED_CAST")
     fun readJsonObject(reader: JsonReader): Map<String, Any?>? = reader.readJsonValue() as? Map<String, Any?>
-
-    /** Accumulates a key-value pair into an extra data map, lazily creating it if needed. */
-    fun accumulateExtraData(
-        key: String,
-        reader: JsonReader,
-        extraData: MutableMap<String, Any>?,
-    ): MutableMap<String, Any>? {
-        val value = reader.readJsonValue() ?: return extraData
-        val map = extraData ?: mutableMapOf()
-        map[key] = value
-        return map
-    }
 
     /**
      * Parses a JSON array of strings.
@@ -175,28 +158,6 @@ internal object JsonParsingUtils {
         while (reader.hasNext()) {
             val key = reader.nextName()
             map[key] = reader.nextInt()
-        }
-        reader.endObject()
-        return map
-    }
-
-    /**
-     * Parses a JSON object into a Map<String, Any>, keeping nested values as their natural JSON types.
-     *
-     * @param reader The JsonReader positioned at the object field.
-     * @return A map of string keys to arbitrary values, or null if the JSON value is null, missing, or not an object.
-     */
-    fun parseAnyMap(reader: JsonReader): Map<String, Any>? {
-        if (reader.peek() == JsonReader.Token.NULL) return reader.nextNull()
-        if (reader.peek() != JsonReader.Token.BEGIN_OBJECT) {
-            reader.skipValue()
-            return null
-        }
-        reader.beginObject()
-        val map = mutableMapOf<String, Any>()
-        while (reader.hasNext()) {
-            val key = reader.nextName()
-            reader.readJsonValue()?.let { map[key] = it }
         }
         reader.endObject()
         return map
