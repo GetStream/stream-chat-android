@@ -221,7 +221,7 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override fun onGiphySendResult(cid: String, result: Result<Message>) {
+    override suspend fun onGiphySendResult(cid: String, result: Result<Message>) {
         /* No-Op */
     }
 

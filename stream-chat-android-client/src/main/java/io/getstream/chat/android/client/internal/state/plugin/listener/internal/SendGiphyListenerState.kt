@@ -35,7 +35,7 @@ internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGi
      * @param cid The full channel id, i.e. "messaging:123".
      * @param result The API call result.
      */
-    override fun onGiphySendResult(cid: String, result: Result<Message>) {
+    override suspend fun onGiphySendResult(cid: String, result: Result<Message>) {
         if (result is Result.Success) {
             val message = result.value
             logic.channelFromMessage(message)?.upsertMessage(message)
