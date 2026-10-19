@@ -1907,6 +1907,19 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `BlockedUserResponse with a placeholder for a deleted user is mapped to UserBlock without a blocked user`() {
+        val response = randomBlockedUserResponse(
+            blockedUserId = "blocked-1",
+            blockedUser = randomUserResponse(id = "deleted-user"),
+        )
+        val sut = Fixture().get()
+
+        val userBlock = with(sut) { response.toDomain() }
+
+        assertNull(userBlock.blockedUser)
+    }
+
+    @Test
     fun `BlockUsersResponse is correctly mapped to UserBlock`() {
         val blockUsersResponse = randomBlockUsersResponse()
         val sut = Fixture().get()

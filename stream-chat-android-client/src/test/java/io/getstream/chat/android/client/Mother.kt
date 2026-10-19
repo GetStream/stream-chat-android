@@ -1083,11 +1083,12 @@ internal object Mother {
         userId: String = randomString(),
         blockedUserId: String = randomString(),
         createdAt: Date = randomDate(),
+        blockedUser: UserResponse = randomUserResponse(id = blockedUserId),
     ): BlockedUserResponse = BlockedUserResponse(
         userId = userId,
         blockedUserId = blockedUserId,
         createdAt = createdAt,
-        blockedUser = randomUserResponse(id = blockedUserId),
+        blockedUser = blockedUser,
         user = randomUserResponse(id = userId),
     )
 
