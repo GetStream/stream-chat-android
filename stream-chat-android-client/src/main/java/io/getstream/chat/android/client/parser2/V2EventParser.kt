@@ -127,10 +127,24 @@ internal class V2EventParser(
      * Parses the events a `/sync` response replays, each as the socket delivers it, leaving out those the SDK
      * ignores. An event that fails to parse is skipped and the rest are replayed: failing the response would keep the
      * sync cursor where it is, so every later sync would ask for the same events and fail on the same one. A response
-     * whose envelope can't be read still fails.
+     * whose envelope can't be read, or of whose events none can be read, still fails.
      */
     fun parseSyncEvents(body: BufferedSource): List<ChatEvent> {
         val parsed = mutableListOf<ChatEvent>()
+        val skipped = mutableListOf<SkippedEvent>()
+        var read = 0
+        forEachSyncEvent(body) { raw -> if (parseSyncEvent(raw, parsed, skipped)) read++ }
+        if (skipped.isNotEmpty()) {
+            val cause = skipped.first().cause
+            // With nothing read, the failure is likely not one event's, and the cursor must not move past them all.
+            if (read == 0) throw JsonDataException("None of the ${skipped.size} synced events could be read", cause)
+            logger.e(cause) { "[parseSyncEvents] skipped ${skipped.size} event(s): ${skipped.map { it.type }}" }
+        }
+        return parsed
+    }
+
+    /** Calls [action] with the raw JSON of each event in a `/sync` response's `events`. */
+    private fun forEachSyncEvent(body: BufferedSource, action: (String) -> Unit) {
         JsonReader.of(body).use { reader ->
             reader.beginObject()
             while (reader.hasNext()) {
@@ -139,23 +153,28 @@ internal class V2EventParser(
                     continue
                 }
                 reader.beginArray()
-                while (reader.hasNext()) parseSyncEvent(reader.nextSource().use { it.readUtf8() })?.let(parsed::add)
+                while (reader.hasNext()) action(reader.nextSource().use { it.readUtf8() })
                 reader.endArray()
             }
             reader.endObject()
         }
-        return parsed
     }
 
+    /**
+     * Reads [raw] into [parsed], unless the SDK ignores it, and returns true; an event that can't be read is added to
+     * [skipped] instead.
+     */
     @Suppress("TooGenericExceptionCaught")
-    private fun parseSyncEvent(raw: String): ChatEvent? = try {
-        parse(raw)
+    private fun parseSyncEvent(raw: String, parsed: MutableList<ChatEvent>, skipped: MutableList<SkippedEvent>) = try {
+        parse(raw)?.let(parsed::add)
+        true
     } catch (e: Exception) {
         // Any failure to read one event skips it; an Error, such as running out of memory, still fails the sync.
-        val type = runCatching { readHead(raw).type }.getOrNull() ?: "unknown"
-        logger.e(e) { "[parseSyncEvents] skipped a '$type' event" }
-        null
+        skipped += SkippedEvent(runCatching { readHead(raw).type }.getOrNull() ?: "unknown", e)
+        false
     }
+
+    private class SkippedEvent(val type: String, val cause: Exception)
 
     private fun withCustomAtRoot(event: String): String {
         val fields = rawFields(event)
