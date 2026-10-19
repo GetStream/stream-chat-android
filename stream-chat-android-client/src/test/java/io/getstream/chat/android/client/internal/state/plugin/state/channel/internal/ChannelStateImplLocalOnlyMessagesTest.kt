@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -156,6 +158,46 @@ internal class ChannelStateImplLocalOnlyMessagesTest : ChannelStateImplTestBase(
             val found = channelState.messages.value.find { it.id == ephemeral.id }
             assertEquals("Updated", found?.text)
             assertEquals(1, channelState.messages.value.count { it.id == ephemeral.id })
+        }
+
+        @Test
+        fun `upsertMessage with regular message replaces the ephemeral one with the same id`() = runTest {
+            val ephemeral = createLocalOnlyMessage(1, timestamp = 1000L)
+            channelState.upsertMessage(ephemeral)
+            channelState.upsertMessage(ephemeral.copy(type = MessageType.REGULAR))
+            assertEquals(MessageType.REGULAR, channelState.getMessageById(ephemeral.id)?.type)
+            assertEquals(
+                listOf(MessageType.REGULAR),
+                channelState.messages.value.filter { it.id == ephemeral.id }.map { it.type },
+            )
+        }
+
+        @Test
+        fun `ephemeral preview does not resurface after its sent copy is truncated`() = runTest {
+            val ephemeral = createLocalOnlyMessage(1, timestamp = 1000L)
+            channelState.upsertMessage(ephemeral)
+            channelState.upsertMessage(ephemeral.copy(type = MessageType.REGULAR))
+            channelState.removeMessagesBefore(Date(2000L))
+            assertFalse(channelState.messages.value.any { it.id == ephemeral.id })
+        }
+
+        @Test
+        fun `ephemeral preview does not resurface after its batch-upserted copy is truncated`() = runTest {
+            val ephemeral = createLocalOnlyMessage(1, timestamp = 1000L)
+            channelState.upsertMessage(ephemeral)
+            channelState.upsertMessages(listOf(ephemeral.copy(type = MessageType.REGULAR)))
+            channelState.removeMessagesBefore(Date(2000L))
+            assertFalse(channelState.messages.value.any { it.id == ephemeral.id })
+        }
+
+        @Test
+        fun `pending local-only message stays after a regular upsert with the same id`() = runTest {
+            val pending = createLocalOnlyMessage(1, timestamp = 1000L)
+                .copy(type = MessageType.REGULAR, syncStatus = SyncStatus.FAILED_PERMANENTLY)
+            channelState.setLocalOnlyMessages(listOf(pending))
+            channelState.upsertMessage(pending)
+            channelState.removeMessagesBefore(Date(2000L))
+            assertTrue(channelState.messages.value.any { it.id == pending.id })
         }
     }
 

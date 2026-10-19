@@ -388,6 +388,8 @@ internal class ChannelStateImpl(
                     update = { old -> preserveAttachmentUrls(message, old) },
                 )
             }
+        } else {
+            removeEphemeralCopies(listOf(message))
         }
     }
 
@@ -423,6 +425,20 @@ internal class ChannelStateImpl(
                 idSelector = Message::id,
                 comparator = MESSAGE_COMPARATOR,
             )
+        }
+        removeEphemeralCopies(messagesToUpsert.filterNot { it.isEphemeral() })
+    }
+
+    /**
+     * Drops ephemeral local-only entries superseded by [messages], such as a giphy preview once it's sent, so they
+     * can't resurface when the server copy is later removed from the message list. Pending and failed entries stay.
+     */
+    private fun removeEphemeralCopies(messages: List<Message>) {
+        if (localOnlyMessages.value.isEmpty() || messages.isEmpty()) return
+        val ids = messages.mapTo(HashSet(), Message::id)
+        val isSuperseded = { message: Message -> message.isEphemeral() && message.id in ids }
+        localOnlyMessages.update { current ->
+            if (current.none(isSuperseded)) current else current.filterNot(isSuperseded)
         }
     }
 
