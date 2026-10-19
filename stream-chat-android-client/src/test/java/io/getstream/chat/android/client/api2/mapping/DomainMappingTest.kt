@@ -124,6 +124,7 @@ import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -901,9 +902,18 @@ internal class DomainMappingTest {
                 blockedBy = downstreamUserBlockDto.user_id,
                 userId = downstreamUserBlockDto.blocked_user_id,
                 blockedAt = downstreamUserBlockDto.created_at,
+                blockedUser = with(sut) { downstreamUserBlockDto.blocked_user?.toDomain() },
             ),
         )
         assertEquals(expected, blocklist)
+    }
+
+    @Test
+    fun `DownstreamUserBlockDto without a blocked user is mapped to UserBlock without a blocked user`() {
+        val downstreamUserBlockDto = randomDownstreamUserBlockDto(blockedUser = null)
+        val sut = Fixture().get()
+        val userBlock = with(sut) { downstreamUserBlockDto.toDomain() }
+        assertNull(userBlock.blockedUser)
     }
 
     @Test
