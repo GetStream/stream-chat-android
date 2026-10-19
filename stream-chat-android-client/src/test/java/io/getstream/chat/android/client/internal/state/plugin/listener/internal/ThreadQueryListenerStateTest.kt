@@ -17,13 +17,17 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.thread.internal.ThreadMutableState
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -32,6 +36,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class ThreadQueryListenerStateTest {
 
@@ -131,6 +136,24 @@ internal class ThreadQueryListenerStateTest {
 
         verify(threadLogic).setEndOfOlderMessages(false)
         verify(threadLogic).setReplies(messageList, isJumpPage = false)
+    }
+
+    @Test
+    fun `given a reply held on a jump page, it is kept when the newest page replaces the jump page`() = runTest {
+        val parentId = randomString()
+        val state = ThreadMutableState(parentId, backgroundScope)
+        val realThreadLogic = ThreadLogic(ThreadStateLogic(state))
+        val registry: LogicRegistry = mock { on(it.thread(parentId)) doReturn realThreadLogic }
+        val listener = ThreadQueryListenerState(registry)
+        val newestPage = listOf(reply(parentId, createdAt = 20))
+        val held = reply(parentId, createdAt = 30)
+        state.isJumpPage = true
+        state.holdReply(held)
+
+        listener.onGetRepliesResult(Result.Success(newestPage), parentId, 30)
+
+        state.rawMessage.value.keys shouldBeEqualTo (newestPage.map { it.id } + held.id).toSet()
+        state.heldReplies shouldBeEqualTo emptyMap()
     }
 
     @Test
@@ -255,4 +278,11 @@ internal class ThreadQueryListenerStateTest {
             verify(threadLogic, never()).setReplies(any(), any())
             verify(threadLogic, never()).setEndOfOlderMessages(any())
         }
+
+    private fun reply(parentId: String, createdAt: Long) = randomMessage(
+        parentId = parentId,
+        createdAt = Date(createdAt),
+        createdLocallyAt = null,
+        syncStatus = SyncStatus.COMPLETED,
+    )
 }

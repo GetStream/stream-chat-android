@@ -88,8 +88,8 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
     /**
      * Replaces the loaded replies with a newly loaded page. The parent and the local-only replies are kept.
      * For a reply already loaded, the loaded copy wins when it is deleted or newer than the page copy, as in
-     * [upsertMessages]. When the page reaches the newest replies, the loaded and held replies newer than the
-     * page are kept too, so replies that arrived while the page was loading are not lost.
+     * [upsertMessages]. When the page reaches the newest replies, the loaded replies newer than the page are
+     * kept too, so replies that arrived while the page was loading are not lost.
      *
      * @param messages The replies of the page.
      * @param isJumpPage Whether the page was loaded around a jumped-to reply.
@@ -102,13 +102,8 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
                 ?: pageMessage
         }
         val reachesNewest = !isJumpPage || mutableState.endOfNewerMessages.value
-        val newerThanPage = if (reachesNewest) {
-            repliesNewerThan(page, loaded.values + mutableState.heldReplies.values)
-        } else {
-            emptyList()
-        }
+        val newerThanPage = if (reachesNewest) repliesNewerThan(page, loaded.values) else emptyList()
         mutableState.isJumpPage = isJumpPage
-        if (reachesNewest) mutableState.clearHeldReplies()
         mutableState.setReplies(page + newerThanPage)
     }
 

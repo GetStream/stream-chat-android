@@ -178,17 +178,14 @@ internal class ThreadStateLogicTest {
         val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
         val olderLoaded = reply(createdAt = 5)
         val sentDuringLoad = reply(createdAt = 40)
-        val held = reply(createdAt = 50)
         val page = listOf(reply(createdAt = 20), reply(createdAt = 30))
         threadStateLogic.upsertMessages(listOf(olderLoaded, sentDuringLoad))
         mutableState.isJumpPage = true
-        mutableState.holdReply(held)
 
         threadStateLogic.setReplies(page, isJumpPage = false)
 
-        assertEquals(page + sentDuringLoad + held, mutableState.rawMessage.value.values.sortedBy { it.createdAt })
+        assertEquals(page + sentDuringLoad, mutableState.rawMessage.value.values.sortedBy { it.createdAt })
         assertFalse(mutableState.isJumpPage)
-        assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
     }
 
     @Test
@@ -207,20 +204,17 @@ internal class ThreadStateLogicTest {
     }
 
     @Test
-    fun `Given a jump page that reaches the newest replies When it is set Should keep the newer and held replies`() =
+    fun `Given a jump page that reaches the newest replies When it is set Should keep the newer replies`() =
         runTest {
             val (mutableState, threadStateLogic) = threadStateLogic(backgroundScope)
             val newer = reply(createdAt = 40)
-            val held = reply(createdAt = 50)
             val page = listOf(reply(createdAt = 20))
             threadStateLogic.upsertMessages(listOf(newer))
-            mutableState.holdReply(held)
             mutableState.setEndOfNewerMessages(true)
 
             threadStateLogic.setReplies(page, isJumpPage = true)
 
-            assertEquals(page + newer + held, mutableState.rawMessage.value.values.sortedBy { it.createdAt })
-            assertEquals(emptyMap<String, Message>(), mutableState.heldReplies)
+            assertEquals(page + newer, mutableState.rawMessage.value.values.sortedBy { it.createdAt })
         }
 
     @Test
