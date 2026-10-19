@@ -59,8 +59,8 @@ class GroupedChannelListTests : StreamTestCase() {
                 .login()
                 .waitForChannelListToLoad()
                 .openGroupTab("new")
+                // The first scroll loads the second page, the second one reaches its end.
                 .scrollChannelListDown()
-                .assertChannelWithName("11")
                 .scrollChannelListDown()
                 .assertChannelWithName("20")
         }

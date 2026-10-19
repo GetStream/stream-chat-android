@@ -982,7 +982,7 @@ public class ChannelListViewModel internal constructor(
             cursor = state.nextCursor.value
             // After a reconnect keeps the loaded pages, the next page can hold only loaded channels. The list does not
             // grow then, so it would not ask for more again.
-        } while (pageCids != null && cursor != null && loadedCids.containsAll(pageCids))
+        } while (!pageCids.isNullOrEmpty() && cursor != null && loadedCids.containsAll(pageCids))
         channelsState = channelsState.copy(isLoadingMore = false)
     }
 
