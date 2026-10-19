@@ -41,7 +41,6 @@ internal class DirectEventParserTest {
     )
 
     private val parser = DirectEventParser(
-        currentUserIdProvider = { "" },
         messageTransformer = NoOpMessageTransformer,
         userTransformer = NoOpUserTransformer,
         mapping = mapping,
@@ -127,7 +126,6 @@ internal class DirectEventParserTest {
         @Test
         fun `custom MessageTransformer is applied to parsed NewMessageEvent`() {
             val customParser = DirectEventParser(
-                currentUserIdProvider = { "" },
                 messageTransformer = MessageTransformer { it.copy(text = it.text + " [transformed]") },
                 userTransformer = NoOpUserTransformer,
                 mapping = mapping,
@@ -139,7 +137,6 @@ internal class DirectEventParserTest {
         @Test
         fun `custom UserTransformer is applied to all nested users in parsed NewMessageEvent`() {
             val customParser = DirectEventParser(
-                currentUserIdProvider = { "" },
                 messageTransformer = NoOpMessageTransformer,
                 userTransformer = UserTransformer { it.copy(name = it.name + " [transformed]") },
                 mapping = mapping,

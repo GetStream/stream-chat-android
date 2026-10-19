@@ -54,7 +54,7 @@ import java.util.Date
 
 /**
  * Parses events as the v2 socket sends them: dates as unix nanoseconds, custom data under `custom`. The domain events
- * they map to are the ones the v1 socket produced, so apps see no difference.
+ * they map to keep the shape apps already handle.
  */
 internal class V2EventParserTest {
 
@@ -75,7 +75,7 @@ internal class V2EventParserTest {
     private fun synced(event: Map<String, Any?>): List<ChatEvent> = sync(mapOf("events" to listOf(event)).toJson())
 
     @Test
-    fun `A new message parses as on v1`() {
+    fun `A new message parses to its domain event`() {
         v2 {
             event(
                 "message.new",
@@ -106,7 +106,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A new reaction parses as on v1`() {
+    fun `A new reaction parses to its domain event`() {
         v2 {
             event(
                 "reaction.new",
@@ -150,7 +150,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `Typing parses as on v1`() {
+    fun `Typing parses to its domain event`() {
         v2 {
             event("typing.start", "cid" to CID, "channel_type" to "messaging", "channel_id" to "general", "user" to user())
         } shouldBeEqualTo TypingStartEvent(
@@ -166,7 +166,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `An added member parses as on v1`() {
+    fun `An added member parses to its domain event`() {
         v2 {
             event("member.added", "cid" to CID, "member" to member(custom = mapOf("nickname" to "Chewie")), "user" to user())
         } shouldBeEqualTo MemberAddedEvent(
@@ -177,7 +177,7 @@ internal class V2EventParserTest {
             cid = CID,
             channelType = "messaging",
             channelId = "general",
-            // v1 also kept `role` and `user_id` in a member's extraData.
+            // A member's extraData keeps `role` and `user_id`.
             member = Member(
                 user = expectedUser(),
                 createdAt = at(MESSAGE_AT),
@@ -192,7 +192,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `An updated channel parses as on v1`() {
+    fun `An updated channel parses to its domain event`() {
         v2 {
             event("channel.updated", "cid" to CID, "channel" to channel(), "user" to user())
         } shouldBeEqualTo ChannelUpdatedByUserEvent(
@@ -209,7 +209,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A read and a read of every channel parse as on v1`() {
+    fun `A read and a read of every channel parse to their domain events`() {
         val read: Frame.() -> Map<String, Any?> = {
             event(
                 "notification.mark_read",
@@ -255,7 +255,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `An updated user with privacy settings parses as on v1`() {
+    fun `An updated user with privacy settings parses to its domain event`() {
         v2 {
             event(
                 "user.updated",
@@ -276,7 +276,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `An event user deleted with revoked tokens parses as on v1`() {
+    fun `An event user deleted with revoked tokens parses to its domain event`() {
         v2 {
             event(
                 "user.updated",
@@ -289,7 +289,7 @@ internal class V2EventParserTest {
             type = "user.updated",
             createdAt = at(EVENT_AT),
             rawCreatedAt = RAW_EVENT_AT,
-            // The domain user has no property for either, so v1 kept both in extraData as ISO strings.
+            // The domain user has no property for either, so both stay in extraData as ISO strings.
             user = expectedUser(
                 extraData = mapOf(
                     "flair" to "gold",
@@ -301,7 +301,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `The connection frame parses as on v1, reporting the v1 type`() {
+    fun `The connection frame parses as a connected event of type health check`() {
         v2 {
             event("connection.ok", "connection_id" to "conn-1", "me" to ownUser())
         } shouldBeEqualTo ConnectedEvent(
@@ -321,7 +321,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `The keepalive reply parses as on v1`() {
+    fun `The keepalive reply parses to its domain event`() {
         v2 {
             event("health.check", "connection_id" to "conn-1", "cid" to "*")
         } shouldBeEqualTo HealthEvent(
@@ -333,7 +333,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A connection error parses as on v1`() {
+    fun `A connection error parses to its domain event`() {
         val error: Frame.() -> Map<String, Any?> = {
             event(
                 "connection.error",
@@ -387,14 +387,14 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A custom field named like a declared one gives way to it, as on v1`() {
+    fun `A custom field named like a declared one gives way to it`() {
         val event = v2 { event("friendship_request", "cid" to CID, custom = mapOf("cid" to "spoofed")) } as UnknownEvent
 
         event.rawData["cid"] shouldBeEqualTo CID
     }
 
     @Test
-    fun `A custom event field named custom is kept, as on v1`() {
+    fun `A custom event field named custom is kept`() {
         val event = v2 { event("friendship_request", "cid" to CID, custom = mapOf("custom" to "x")) } as UnknownEvent
 
         event.rawData["custom"] shouldBeEqualTo "x"
@@ -539,7 +539,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `Custom values stored under declared user names are hidden, as on v1`() {
+    fun `Custom values stored under declared user names are hidden`() {
         val event = v2 {
             event("user.updated", "user" to user(custom = mapOf("flair" to "gold", "banned" to true, "invisible" to true)))
         } as UserUpdatedEvent
@@ -548,7 +548,7 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `Custom values stored under declared own user names are hidden, as on v1`() {
+    fun `Custom values stored under declared own user names are hidden`() {
         val event = v2 {
             event("connection.ok", "connection_id" to "conn-1", "me" to ownUser(custom = mapOf("total_unread_count_by_team" to "stored", "banned" to true)))
         } as ConnectedEvent
@@ -693,7 +693,7 @@ internal class V2EventParserTest {
             extraData = mapOf("probe" to "message"),
         )
 
-        /** The domain channel [Frame.channel] maps to. v1 also kept `disabled` in a channel's extraData. */
+        /** The domain channel [Frame.channel] maps to. A channel's extraData keeps `disabled`. */
         private fun expectedChannel() = Channel(
             id = "general",
             type = "messaging",

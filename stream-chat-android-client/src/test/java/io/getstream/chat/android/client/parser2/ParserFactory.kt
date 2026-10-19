@@ -40,7 +40,6 @@ internal object ParserFactory {
             hidesStoredDeclaredCustom = true,
         )
         val directEventParser = DirectEventParser(
-            currentUserIdProvider = currentUserIdProvider,
             messageTransformer = apiModelTransformers.incomingMessageTransformer,
             userTransformer = apiModelTransformers.incomingUserTransformer,
             mapping = domainMapping,
