@@ -31,9 +31,6 @@ import com.squareup.moshi.Json
 
 @com.squareup.moshi.JsonClass(generateAdapter = true)
 internal data class SyncRequest(
-    // Patched: the generator types this as java.util.Date, which keeps milliseconds. The backend replays from the
-    // cursor inclusive, and the SDK recognizes the event at the cursor only by its exact date, so a rounded cursor
-    // replays it on every sync. chat#18838 types it as ExactDate, as here; regen once it is merged.
     @Json(name = "last_sync_at")
     internal val lastSyncAt: io.getstream.chat.android.network.infrastructure.ExactDate,
 
