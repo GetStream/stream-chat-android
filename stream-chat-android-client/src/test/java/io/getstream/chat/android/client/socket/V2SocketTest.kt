@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.network.infrastructure.Serializer
 import io.kotest.assertions.json.shouldEqualJson
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -45,6 +46,8 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldBeNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -135,8 +138,9 @@ internal class V2SocketTest {
         sentFrame() shouldEqualJson """{"token":"$TOKEN","products":["chat"],"user_details":{"id":"filip"}}"""
     }
 
-    @Test
-    fun `An expired token is reloaded before the auth frame is built`() {
+    @ParameterizedTest
+    @ValueSource(booleans = [false, true])
+    fun `An expired token is reloaded before the auth frame is built`(reconnection: Boolean) {
         val tokenManager = FakeTokenManager(TOKEN, loadSyncToken = "fresh").apply { expireToken() }
         val factory = SocketFactory(
             parser = ParserFactory.createMoshiChatParser(),
@@ -145,11 +149,20 @@ internal class V2SocketTest {
             eventParser = mock(),
             httpClient = httpClient,
         )
-        factory.createSocket(SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER).asReconnectionConf())
+        val conf = SocketFactory.ConnectionConf.UserConnectionConf(ENDPOINT, API_KEY, USER)
+        factory.createSocket(if (reconnection) conf.asReconnectionConf() else conf)
         val listener = argumentCaptor<WebSocketListener>().also { verify(httpClient).newWebSocket(any(), it.capture()) }
         listener.firstValue.onOpen(webSocket, mock<Response>())
 
-        sentFrame() shouldEqualJson """{"token":"fresh","products":["chat"],"user_details":{"id":"filip"}}"""
+        Serializer.moshi.adapter(Map::class.java).fromJson(sentFrame())!!["token"] shouldBeEqualTo "fresh"
+    }
+
+    @Test
+    fun `An anonymous reconnection authenticates with the anonymous id only`() {
+        val user = User(id = "!anon", name = "Anonymous")
+        open(SocketFactory.ConnectionConf.AnonymousConnectionConf(ENDPOINT, API_KEY, user).asReconnectionConf())
+
+        sentFrame() shouldEqualJson """{"token":"anon","products":["chat"],"user_details":{"id":"anon"}}"""
     }
 
     @Test

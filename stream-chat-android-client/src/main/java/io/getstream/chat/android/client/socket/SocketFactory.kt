@@ -53,21 +53,19 @@ internal class SocketFactory(
             is ConnectionConf.AnonymousConnectionConf -> "anonymous"
             is ConnectionConf.UserConnectionConf -> "jwt"
         }
+        val trackingHeaders = headersUtil.buildSdkTrackingHeaders()
         val request = Request.Builder()
             .url(
                 "${connectionConf.endpoint}api/v2/connect?api_key=${connectionConf.apiKey}" +
                     "&stream-auth-type=$authType" +
-                    "&$X_STREAM_CLIENT=${encodedSdkTrackingHeaders()}",
+                    "&$X_STREAM_CLIENT=${URLEncoder.encode(trackingHeaders, StandardCharsets.UTF_8.name())}",
             )
-            .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
+            .addHeader(X_STREAM_CLIENT, trackingHeaders)
             .build()
         logger.i { "new web socket: ${request.url}" }
         val protocol = V2SocketProtocol(buildAuthFrame(connectionConf), eventParser)
         return StreamWebSocket(parser, protocol) { httpClient.newWebSocket(request, it) }
     }
-
-    private fun encodedSdkTrackingHeaders(): String =
-        URLEncoder.encode(headersUtil.buildSdkTrackingHeaders(), StandardCharsets.UTF_8.name())
 
     private fun buildAuthFrame(connectionConf: ConnectionConf): String {
         val token = when (connectionConf) {
