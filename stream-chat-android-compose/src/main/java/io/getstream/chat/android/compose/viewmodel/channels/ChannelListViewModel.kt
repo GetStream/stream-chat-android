@@ -979,10 +979,12 @@ public class ChannelListViewModel internal constructor(
                 logger.e { "[loadMoreGroupedChannels] failed: ${result.errorOrNull()}" }
             }
             val pageCids = result.getOrNull()?.groups?.get(groupKey)?.channels?.map(Channel::cid)
+            val requestedCursor = cursor
             cursor = state.nextCursor.value
             // After a reconnect keeps the loaded pages, the next page can hold only loaded channels. The list does not
-            // grow then, so it would not ask for more again.
-        } while (!pageCids.isNullOrEmpty() && cursor != null && loadedCids.containsAll(pageCids))
+            // grow then, so it would not ask for more again. An unchanged cursor would request the same page again.
+            val hasNewCursor = cursor != null && cursor != requestedCursor
+        } while (hasNewCursor && !pageCids.isNullOrEmpty() && loadedCids.containsAll(pageCids))
         channelsState = channelsState.copy(isLoadingMore = false)
     }
 

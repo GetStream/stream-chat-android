@@ -65,7 +65,7 @@ class GroupedChannelListTests : StreamTestCase() {
                 .assertChannelWithName("20")
         }
         step("AND user goes offline") {
-            participantRobot.moveChannelToGroup(channelName = "13", group = "old", delay = delay)
+            participantRobot.moveChannelToGroup(channelName = "20", group = "old", delay = delay)
             device.disableInternetConnection()
             userRobot.sleep((delay + 1).seconds)
         }
@@ -76,8 +76,8 @@ class GroupedChannelListTests : StreamTestCase() {
         step("AND user goes back online") {
             device.enableInternetConnection()
         }
-        step("THEN the moved channel is no longer in the new tab") {
-            userRobot.assertChannelWithName("13", isDisplayed = false)
+        step("THEN the moved channel, which was on screen, is no longer in the new tab") {
+            userRobot.assertChannelWithName("20", isDisplayed = false)
         }
         step("AND the new tab still shows the end of the second page after the first page is refreshed") {
             // The first page is refreshed after the sync that moved the channel, without anything to wait for.
@@ -85,7 +85,7 @@ class GroupedChannelListTests : StreamTestCase() {
             // bring the end of the list back on screen.
             userRobot
                 .sleep(3.seconds)
-                .assertChannelWithName("20")
+                .assertChannelWithName("19")
         }
     }
 

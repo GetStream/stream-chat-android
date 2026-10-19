@@ -663,6 +663,33 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Given grouped ViewModel When a page of loaded channels keeps the same cursor Should stop loading`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            whenever(
+                chatClient.queryGroupedChannelsInternal(
+                    limit = anyOrNull(),
+                    groups = anyOrNull(),
+                    watch = any(),
+                    presence = any(),
+                    sort = anyOrNull(),
+                ),
+            ) doReturn GroupedChannels(
+                mapOf("team-a" to GroupedChannelsGroup("team-a", listOf(channel1), next = "cursor-2")),
+            ).asCall()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsState(groupedQueryChannelsState(MutableStateFlow("cursor-2")))
+                .givenChannelMutes()
+                .get(this, groupKey = "team-a")
+
+            viewModel.loadMore()
+            advanceUntilIdle()
+
+            verifyGroupedQueryCount(chatClient, times = 1)
+        }
+
+    @Test
     fun `Given grouped ViewModel When loading more fails Should stop loading`() = runTest {
         val chatClient: ChatClient = mock()
         whenever(
