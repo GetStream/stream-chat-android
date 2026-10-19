@@ -31,31 +31,24 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 /**
- * @param v2EventParser Connects through the v2 endpoint and parses its events with it, or null for v1.
+ * Opens the websocket on the v2 endpoint. [eventParser] parses its events, [parser] its error frames.
  */
 internal class SocketFactory(
     private val parser: ChatParser,
     private val tokenManager: TokenManager,
     private val headersUtil: HeadersUtil,
+    private val eventParser: V2EventParser,
     private val httpClient: OkHttpClient = OkHttpClient(),
-    private val v2EventParser: V2EventParser? = null,
 ) {
     private val logger by taggedLogger("Chat:SocketFactory")
 
+    /**
+     * The socket authenticates with a frame sent once open, which must arrive within the server's handshake deadline,
+     * so the token is resolved before the upgrade. The request carries no Authorization header: the server prefers it
+     * over the frame's token.
+     */
     @Throws(UnsupportedEncodingException::class)
     fun createSocket(connectionConf: ConnectionConf): StreamWebSocket {
-        if (v2EventParser != null) return createV2Socket(connectionConf, v2EventParser)
-        val request = buildRequest(connectionConf)
-        logger.i { "new web socket: ${request.url}" }
-        return StreamWebSocket(parser) { httpClient.newWebSocket(request, it) }
-    }
-
-    /**
-     * The v2 socket authenticates with a frame sent once open, which must arrive within the server's handshake
-     * deadline, so the token is resolved before the upgrade. The request carries no Authorization header: the server
-     * prefers it over the frame's token.
-     */
-    private fun createV2Socket(connectionConf: ConnectionConf, eventParser: V2EventParser): StreamWebSocket {
         val authType = when (connectionConf) {
             is ConnectionConf.AnonymousConnectionConf -> "anonymous"
             is ConnectionConf.UserConnectionConf -> "jwt"
@@ -68,7 +61,7 @@ internal class SocketFactory(
             )
             .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
             .build()
-        logger.i { "new v2 web socket: ${request.url}" }
+        logger.i { "new web socket: ${request.url}" }
         val protocol = V2SocketProtocol(buildAuthFrame(connectionConf), eventParser)
         return StreamWebSocket(parser, protocol) { httpClient.newWebSocket(request, it) }
     }
@@ -87,17 +80,17 @@ internal class SocketFactory(
         }
         val frame = mapOf(
             "token" to token,
-            "user_details" to connectionConf.reduceV2UserDetails(),
+            "user_details" to connectionConf.reduceUserDetails(),
             "products" to listOf("chat"),
         )
         return V2SocketProtocol.frameAdapter.toJson(frame)
     }
 
     /**
-     * The user details the v2 connect reads, with custom data nested under `custom`; it ignores any other field.
-     * Reconnections send the id only, as on v1.
+     * The user details the connect reads, with custom data nested under `custom`; it ignores any other field.
+     * Reconnections send the id only.
      */
-    private fun ConnectionConf.reduceV2UserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
+    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
         .apply {
             if (!isReconnection) {
                 if (user.name.isNotBlank()) put("name", user.name)
@@ -107,67 +100,6 @@ internal class SocketFactory(
                 user.privacySettings?.also { put("privacy_settings", it.reducePrivacySettings()) }
                 val custom = user.extraData - USER_DEVICES_CUSTOM_KEY
                 if (custom.isNotEmpty()) put("custom", custom)
-            }
-        }
-
-    @Throws(UnsupportedEncodingException::class)
-    private fun buildRequest(connectionConf: ConnectionConf): Request =
-        Request.Builder()
-            .url(buildUrl(connectionConf))
-            .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
-            .build()
-
-    @Suppress("TooGenericExceptionCaught")
-    @Throws(UnsupportedEncodingException::class)
-    private fun buildUrl(connectionConf: ConnectionConf): String {
-        var json = buildUserDetailJson(connectionConf)
-        return try {
-            json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val sdkTrackingHeaders = encodedSdkTrackingHeaders()
-            val baseWsUrl = "${connectionConf.endpoint}connect?" +
-                "json=$json" +
-                "&api_key=${connectionConf.apiKey}" +
-                "&$X_STREAM_CLIENT=$sdkTrackingHeaders"
-            when (connectionConf) {
-                is ConnectionConf.AnonymousConnectionConf -> "$baseWsUrl&stream-auth-type=anonymous"
-                is ConnectionConf.UserConnectionConf -> {
-                    tokenManager.ensureTokenLoaded()
-                    val token = tokenManager.getToken()
-                    "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
-                }
-            }
-        } catch (_: UnsupportedEncodingException) {
-            throw UnsupportedEncodingException("Unable to encode user details json: $json")
-        }
-    }
-
-    private fun buildUserDetailJson(connectionConf: ConnectionConf): String {
-        val data = mapOf(
-            "user_details" to connectionConf.reduceUserDetails(),
-            "user_id" to connectionConf.id,
-            "server_determines_connection_id" to true,
-        )
-        return parser.toJson(data)
-    }
-
-    /**
-     * Converts the [User] object to a map of properties updated while connecting the user.
-     * [User.name] and [User.image] will only be included if they are not blank.
-     *
-     * @return A map of User's properties to update.
-     */
-    private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
-        .apply {
-            if (!isReconnection) {
-                if (user.role.isNotBlank()) put("role", user.role)
-                user.banned?.also { put("banned", it) }
-                user.invisible?.also { put("invisible", it) }
-                user.privacySettings?.also { put("privacy_settings", it.reducePrivacySettings()) }
-                if (user.teams.isNotEmpty()) put("teams", user.teams)
-                if (user.language.isNotBlank()) put("language", user.language)
-                if (user.image.isNotBlank()) put("image", user.image)
-                if (user.name.isNotBlank()) put("name", user.name)
-                putAll(user.extraData - USER_DEVICES_CUSTOM_KEY)
             }
         }
 

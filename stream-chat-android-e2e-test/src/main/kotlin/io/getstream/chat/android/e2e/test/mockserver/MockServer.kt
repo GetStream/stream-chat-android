@@ -29,15 +29,15 @@ import okhttp3.ResponseBody
 public const val forbiddenWord: String = "wth"
 
 /**
- * @param apiVersion The API version the mock serves, "v1" or "v2": its fixtures and its websocket.
+ * A mock server for one test. It serves the v2 fixtures and websocket, the ones the SDK uses.
  */
-public class MockServer(testName: String, apiVersion: String = "v2") {
+public class MockServer(testName: String) {
     public val url: String
     private val driverUrl: String = "http://10.0.2.2:4567"
     private val okHttp: OkHttpClient = OkHttpClient()
 
     init {
-        val request = Request.Builder().url("$driverUrl/start/$testName?api_version=$apiVersion").build()
+        val request = Request.Builder().url("$driverUrl/start/$testName?api_version=v2").build()
         val response = execute(request)
         val mockServerPort = response.body?.string().toString()
         val driverPort = driverUrl.split(":").last()

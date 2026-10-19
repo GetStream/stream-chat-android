@@ -5165,7 +5165,6 @@ internal constructor(
         private var forceInsecureConnection = false
         private var forceHttpUrl: String? = null
         private var forceWsUrl: String? = null
-        private var useV2WebSocket: Boolean = true
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String? = null
         private var logLevel = ChatLogLevel.NOTHING
@@ -5374,18 +5373,6 @@ internal constructor(
         }
 
         /**
-         * Connects the websocket through the v2 endpoint, the default, or through v1 when disabled.
-         *
-         * This for internal use only, until the v1 websocket is removed.
-         *
-         * @param enabled Whether to use the v2 websocket.
-         */
-        @InternalStreamChatApi
-        public fun useV2WebSocket(enabled: Boolean): Builder = apply {
-            useV2WebSocket = enabled
-        }
-
-        /**
          * Sets a custom [CDN] implementation to be used by the client.
          *
          * @param cdn The custom CDN implementation.
@@ -5511,7 +5498,6 @@ internal constructor(
                 debugRequests = debugRequests,
                 notificationConfig = notificationConfig,
                 fastEventParsing = chatClientConfig.fastEventParsing,
-                useV2WebSocket = useV2WebSocket,
             )
             setupStreamLog()
 

@@ -18,12 +18,14 @@ package io.getstream.chat.android.client.socket
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.StreamLifecycleObserver
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.ParserFactory
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
@@ -34,6 +36,9 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -41,7 +46,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
@@ -53,6 +57,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -93,7 +98,9 @@ internal class ChatSocketTokenTest {
     private lateinit var fakeChatSocket: FakeChatSocket
     private var socketListener: WebSocketListener? = null
     private var socketsCreated = 0
-    private val connectUrls = mutableListOf<String>()
+
+    /** The auth frame each socket sends once open, which carries the token. */
+    private val authFrames = mutableListOf<String>()
 
     @BeforeEach
     fun setUp() {
@@ -188,19 +195,19 @@ internal class ChatSocketTokenTest {
 
         userScope.launch { chatSocket.connectUser(randomUser(), false) }
         testCoroutines.dispatcher.scheduler.runCurrent()
-        connectUrls.single() `should contain` "authorization=token1"
+        authFrames.single() `should contain` "\"token\":\"token1\""
 
         // Transport failure: the reconnect reuses the token it already has.
         checkNotNull(socketListener).onFailure(mock(), Throwable(randomString()), null)
         testCoroutines.dispatcher.scheduler.advanceTimeBy(RECONNECT_ATTEMPT_MS)
-        connectUrls.last() `should contain` "authorization=token1"
+        authFrames.last() `should contain` "\"token\":\"token1\""
 
         // The backend rejects that token as expired, so the next attempt has to carry a fresh one.
         checkNotNull(socketListener).onMessage(mock(), TOKEN_EXPIRED_JSON)
         testCoroutines.dispatcher.scheduler.advanceTimeBy(RECONNECT_ATTEMPT_MS)
 
-        connectUrls.last() `should contain` "authorization=token2"
-        connectUrls.last() `should not contain` "authorization=token1"
+        authFrames.last() `should contain` "\"token\":\"token2\""
+        authFrames.last() `should not contain` "\"token\":\"token1\""
     }
 
     private fun realSocket(tokenManager: TokenManager): ChatSocket {
@@ -210,9 +217,14 @@ internal class ChatSocketTokenTest {
         val httpClient: OkHttpClient = mock()
         whenever(httpClient.newWebSocket(any(), any())) doAnswer { invocation ->
             socketsCreated++
-            connectUrls += invocation.getArgument<Request>(0).url.toString()
-            socketListener = invocation.getArgument(1)
-            mock<WebSocket>()
+            val listener = invocation.getArgument<WebSocketListener>(1)
+            socketListener = listener
+            val webSocket = mock<WebSocket>()
+            whenever(webSocket.send(any<String>())) doReturn true
+            listener.onOpen(webSocket, mock())
+            // The first frame a socket sends is its auth frame; later ones, such as keepalives, are not recorded.
+            authFrames += argumentCaptor<String>().also { verify(webSocket).send(it.capture()) }.firstValue
+            webSocket
         }
         val networkStateProvider: NetworkStateProvider = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
@@ -221,7 +233,15 @@ internal class ChatSocketTokenTest {
             apiKey = randomString(),
             wssUrl = "https://" + randomString() + "/",
             tokenManager = tokenManager,
-            socketFactory = SocketFactory(parser, tokenManager, headersUtil, httpClient),
+            socketFactory = SocketFactory(
+                parser = parser,
+                tokenManager = tokenManager,
+                headersUtil = headersUtil,
+                eventParser = V2EventParser(
+                    DomainMapping({ "" }, NoOpChannelTransformer, NoOpMessageTransformer, NoOpUserTransformer, true),
+                ),
+                httpClient = httpClient,
+            ),
             userScope = userScope,
             lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle),
             networkStateProvider = networkStateProvider,
