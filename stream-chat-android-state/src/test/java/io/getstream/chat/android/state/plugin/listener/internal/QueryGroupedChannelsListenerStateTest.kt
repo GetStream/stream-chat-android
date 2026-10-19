@@ -542,4 +542,20 @@ internal class QueryGroupedChannelsListenerStateTest {
         // then
         verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = false)
     }
+
+    @Test
+    fun `a reconnect refresh keeps the loaded pages and an explicit query does not`() = runTest {
+        // given
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val groupSupport = GroupedChannelsGroup(groupKey = "support", channels = emptyList(), next = "cursor")
+        val result = Result.Success(GroupedChannels(groups = mapOf("support" to groupSupport)))
+        val groups = mapOf("support" to GroupedChannelsGroupQuery())
+        // when
+        listener.onQueryGroupedChannelsResult(result, null, ReconnectGroupQueries(groups), true, false, null)
+        listener.onQueryGroupedChannelsResult(result, null, groups, true, false, null)
+        // then
+        verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = true, keepsLoadedPages = true)
+        verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = true, keepsLoadedPages = false)
+    }
 }

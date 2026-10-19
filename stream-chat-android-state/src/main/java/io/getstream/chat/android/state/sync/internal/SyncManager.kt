@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.MemberData
@@ -48,6 +49,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
+import io.getstream.chat.android.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -80,6 +82,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 private const val QUERIES_TO_RETRY = 3
 private const val SYNC_MAX_CIDS = 100
+private const val QUERY_CHANNELS_MAX_LIMIT = 30
 
 /**
  * This class is responsible to sync messages, reactions and channel data. It tries to sync then, if necessary,
@@ -252,7 +255,7 @@ internal class SyncManager(
         }
         if (isAutomaticSyncOnReconnectEnabled) {
             logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
-            performSync()
+            performSync(watch = groupedListsWatch())
             restoreActiveChannels()
         } else {
             logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
@@ -283,20 +286,29 @@ internal class SyncManager(
         logger.i { "[connectionLost] failed: $e" }
     }
 
-    private suspend fun performSync() {
-        logger.i { "[performSync] no args" }
-        val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
+    private suspend fun performSync(watch: Boolean = false) {
+        logger.i { "[performSync] watch: $watch" }
+        // Listed channels go first, so the cap on the request covers the channels the lists show.
+        val listedCids = logicRegistry.getActiveQueryChannelsLogic().flatMap { it.cids() }
+        val cids = (listedCids + logicRegistry.getActiveChannelsLogic().map { it.cid }).distinct().ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
         mutex.withLock {
-            performSync(cids)
+            performSync(cids, watch)
         }
     }
 
+    /**
+     * Whether a grouped list watches its channels. The channels on its later pages are only watched again by `/sync`,
+     * since the reconnect refresh asks for the first page.
+     */
+    private fun groupedListsWatch(): Boolean = logicRegistry.getActiveQueryChannelsLogic()
+        .any { it.groupKey() != null && it.groupedQueryConfig()?.watch ?: true }
+
     @VisibleForTesting
-    internal suspend fun performSync(cids: List<String>) {
-        logger.d { "[performSync] cids.size: ${cids.size} " }
+    internal suspend fun performSync(cids: List<String>, watch: Boolean = false) {
+        logger.d { "[performSync] cids.size: ${cids.size}, watch: $watch" }
         if (cids.isEmpty()) {
             logger.w { "[performSync] rejected (cids is empty)" }
             return
@@ -307,13 +319,15 @@ internal class SyncManager(
         logger.v { "[performSync] lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
         val result = if (rawLastSyncAt != null) {
-            chatClient.getSyncHistory(cappedCids, rawLastSyncAt).await()
+            chatClient.getSyncHistoryInternal(cappedCids, rawLastSyncAt, watch).await()
         } else {
-            chatClient.getSyncHistory(cappedCids, lastSyncAt).await()
+            chatClient.getSyncHistoryInternal(cappedCids, lastSyncAt, watch).await()
         }
         if (result.isTooManyEventsToSyncError()) {
             logger.e { "[performSync] failed (too many events to sync): $result" }
             updateLastSyncedDate(latestEventDate = Date(now()), rawLatestEventDate = null)
+            // The reconnect refresh does not cover the later pages of a grouped list, so they are refreshed here.
+            if (watch) refreshChannels(cappedCids)
             return
         }
         if (result !is Result.Success) {
@@ -495,6 +509,7 @@ internal class SyncManager(
             }
             .toMap()
             .takeIf { it.isNotEmpty() }
+            ?.let(::ReconnectGroupQueries)
 
         val result = chatClient.queryGroupedChannelsInternal(
             limit = shared?.limit,
@@ -606,13 +621,7 @@ internal class SyncManager(
             .onSuccessSuspend { queryResult ->
                 val foundChannels = queryResult.channels
                 logger.v { "[updateActiveChannels] request completed; foundChannels.size: ${foundChannels.size}" }
-
-                foundChannels.forEach { channel ->
-                    val channelLogic = logicRegistry.channel(channel.type, channel.id)
-                    channelLogic.updateDataForChannel(channel, channel.messages.size)
-                }
-                mutableGlobalState.updateChannelDrafts(foundChannels)
-                repos.storeStateForChannels(foundChannels)
+                updateChannels(foundChannels)
                 val foundCids = foundChannels.map { it.cid }
                 val stillMissingCids = missingCids - foundCids.toSet()
                 logger.v { "[updateActiveChannels] stillMissingCids.size: ${stillMissingCids.size}" }
@@ -624,6 +633,30 @@ internal class SyncManager(
                     channelLogic.watch(userPresence = userPresence)
                 }
             }
+    }
+
+    /**
+     * Queries [cids] again and watches them, in requests of [QUERY_CHANNELS_MAX_LIMIT] channels.
+     */
+    private suspend fun refreshChannels(cids: List<String>) {
+        logger.d { "[refreshChannels] cids.size: ${cids.size}" }
+        cids.chunked(QUERY_CHANNELS_MAX_LIMIT).forEach { chunk ->
+            val request = QueryChannelsRequest(Filters.`in`("cid", chunk), offset = 0, limit = chunk.size)
+            chatClient.queryChannelsInternal(request)
+                .await()
+                .onError { logger.e { "[refreshChannels] request failed: $it" } }
+                .onSuccessSuspend { queryResult -> updateChannels(queryResult.channels) }
+        }
+        logicRegistry.getActiveQueryChannelsLogic().forEach { it.refreshChannelsState(cids) }
+    }
+
+    private suspend fun updateChannels(channels: List<Channel>) {
+        channels.forEach { channel ->
+            val channelLogic = logicRegistry.channel(channel.type, channel.id)
+            channelLogic.updateDataForChannel(channel, channel.messages.size)
+        }
+        mutableGlobalState.updateChannelDrafts(channels)
+        repos.storeStateForChannels(channels)
     }
 
     private suspend fun retryChannels() {

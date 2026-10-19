@@ -22,6 +22,7 @@ import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.net.URLEncoder
 
 public class ParticipantRobot(
     private val mockServer: MockServer,
@@ -67,6 +68,20 @@ public class ParticipantRobot(
             endpoint += "?delay=$delay"
         }
         mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
+        return this
+    }
+
+    /**
+     * Moves the channel named [channelName] to [group], as an update of its custom `group` field.
+     * The app under test receives the `channel.updated` websocket event, [delay] seconds later
+     * when [delay] is positive. The move itself happens right away.
+     */
+    public fun moveChannelToGroup(channelName: String, group: String, delay: Int = 0): ParticipantRobot {
+        var endpoint = "participant/channel_group?channel_name=${channelName.urlEncoded()}&group=${group.urlEncoded()}"
+        if (delay > 0) {
+            endpoint += "&delay=$delay"
+        }
+        mockServer.postRequest(endpoint)
         return this
     }
 
@@ -197,4 +212,6 @@ public class ParticipantRobot(
         mockServer.postRequest("participant/reaction?type=${type.reaction}&delete=true")
         return this
     }
+
+    private fun String.urlEncoded(): String = URLEncoder.encode(this, Charsets.UTF_8.name())
 }

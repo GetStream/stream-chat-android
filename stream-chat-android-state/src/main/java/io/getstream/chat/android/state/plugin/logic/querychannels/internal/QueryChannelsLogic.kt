@@ -221,6 +221,9 @@ internal class QueryChannelsLogic(
         queryChannelsStateLogic.setCurrentRequest(request)
     }
 
+    /** The cids of the channels this query has loaded. */
+    internal fun cids(): Set<String> = queryChannelsStateLogic.getQuerySpecs().cids
+
     internal fun groupKey(): String? = (identifier as? QueryChannelsIdentifier.Grouped)?.groupKey
 
     internal fun groupedQueryConfig(): GroupedQueryConfig? = queryChannelsStateLogic.getGroupedQueryConfig()
@@ -314,15 +317,22 @@ internal class QueryChannelsLogic(
      * Applies a [GroupedChannelsGroup] response payload to this query's state.
      * Replaces channels on the first page, appends on subsequent pages.
      * Updates the next-page cursor and persists fresh data to the local database.
+     *
+     * With [keepsLoadedPages], a first page keeps the loaded channels when the group has more of them than the page and
+     * more pages to load. The cursor still comes from the first page, so channels added since stay reachable.
      */
-    internal suspend fun applyGroupedResult(group: GroupedChannelsGroup, isFirstPage: Boolean) {
+    internal suspend fun applyGroupedResult(
+        group: GroupedChannelsGroup,
+        isFirstPage: Boolean,
+        keepsLoadedPages: Boolean = false,
+    ) {
         if (identifier !is QueryChannelsIdentifier.Grouped) {
             logger.w { "[applyGroupedResult] rejected (non-Grouped identifier: $identifier)" }
             return
         }
         logger.d {
             "[applyGroupedResult] channels.size: ${group.channels.size}, isFirstPage: $isFirstPage, " +
-                "next: ${group.next}"
+                "keepsLoadedPages: $keepsLoadedPages, next: ${group.next}"
         }
 
         groupedResultMutex.withLock {
@@ -336,15 +346,18 @@ internal class QueryChannelsLogic(
                 }.awaitAll()
             }
             if (isFirstPage) {
-                if (!existing.isNullOrEmpty()) {
-                    // Channels still in the page keep their copy, so messages only this device has survive the merge.
-                    val returnedCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
-                    val droppedCids = existing.keys - returnedCids
-                    if (droppedCids.isNotEmpty()) {
-                        queryChannelsStateLogic.removeChannels(droppedCids)
+                val keepsPages = keepsLoadedPages && group.next != null && existing.orEmpty().size > channels.size
+                if (!keepsPages) {
+                    if (!existing.isNullOrEmpty()) {
+                        // Channels still in the page keep their copy, so messages only this device has survive.
+                        val returnedCids: Set<String> = channels.mapTo(mutableSetOf()) { it.cid }
+                        val droppedCids = existing.keys - returnedCids
+                        if (droppedCids.isNotEmpty()) {
+                            queryChannelsStateLogic.removeChannels(droppedCids)
+                        }
                     }
+                    queryChannelsStateLogic.setCids(emptySet())
                 }
-                queryChannelsStateLogic.setCids(emptySet())
                 // Defensive: Grouped uses cursor pagination, not offset. Resetting guards against any
                 // future cross-path leakage from a Standard offset query mistakenly sharing this state.
                 queryChannelsStateLogic.setChannelsOffset(0)

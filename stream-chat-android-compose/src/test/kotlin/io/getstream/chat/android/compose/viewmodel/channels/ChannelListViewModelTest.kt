@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.GroupedChannels
+import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.models.GroupedChannelsGroupQuery
 import io.getstream.chat.android.models.InFilterObject
 import io.getstream.chat.android.models.InitializationState
@@ -68,6 +69,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -555,6 +557,59 @@ internal class ChannelListViewModelTest {
                 sort = sort,
             )
         }
+
+    @Test
+    fun `Given grouped ViewModel When a page holds only loaded channels Should load the next page`() = runTest {
+        val chatClient: ChatClient = mock()
+        val nextCursor = MutableStateFlow<String?>("cursor-2")
+        val queryChannelsState: QueryChannelsState = mock {
+            whenever(it.channelsStateData) doReturn MutableStateFlow(ChannelsStateData.Result(listOf(channel1)))
+            whenever(it.channels) doReturn MutableStateFlow(listOf(channel1))
+            whenever(it.loading) doReturn MutableStateFlow(false)
+            whenever(it.loadingMore) doReturn MutableStateFlow(false)
+            whenever(it.endOfChannels) doReturn MutableStateFlow(false)
+            whenever(it.nextPageRequest) doReturn MutableStateFlow(null)
+            whenever(it.nextCursor) doReturn nextCursor
+            whenever(it.groupedQueryConfig) doReturn MutableStateFlow(null)
+        }
+        // The first page after the cursor holds only a loaded channel, the next one a new channel.
+        val pages = mapOf(
+            "cursor-2" to (listOf(channel1) to "cursor-3"),
+            "cursor-3" to (listOf(channel2) to "cursor-4"),
+        )
+        whenever(
+            chatClient.queryGroupedChannelsInternal(
+                limit = anyOrNull(),
+                groups = anyOrNull(),
+                watch = any(),
+                presence = any(),
+                sort = anyOrNull(),
+            ),
+        ) doAnswer { invocation ->
+            val cursor = invocation.getArgument<Map<String, GroupedChannelsGroupQuery>>(1).getValue("team-a").next
+            val (channels, next) = pages.getValue(cursor!!)
+            nextCursor.value = next
+            GroupedChannels(mapOf("team-a" to GroupedChannelsGroup("team-a", channels, next = next))).asCall()
+        }
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsState(queryChannelsState)
+            .givenChannelMutes()
+            .get(this, groupKey = "team-a")
+
+        viewModel.loadMore()
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<Map<String, GroupedChannelsGroupQuery>>()
+        verify(chatClient, times(2)).queryGroupedChannelsInternal(
+            limit = anyOrNull(),
+            groups = captor.capture(),
+            watch = any(),
+            presence = any(),
+            sort = anyOrNull(),
+        )
+        assertEquals(listOf("cursor-2", "cursor-3"), captor.allValues.map { it.getValue("team-a").next })
+    }
 
     @Test
     fun `Given grouped ViewModel with no captured config When loading more Should fall back to method defaults`() =

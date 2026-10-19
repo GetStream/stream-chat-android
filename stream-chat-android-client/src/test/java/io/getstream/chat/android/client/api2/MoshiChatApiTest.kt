@@ -2499,11 +2499,12 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val channelIds = listOf(randomString())
         val lastSyncAt = randomString()
+        val watch = randomBoolean()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.getSyncHistory(channelIds, lastSyncAt).await()
+        val result = sut.getSyncHistory(channelIds, lastSyncAt, watch).await()
         // then
         val expectedPayload =
-            io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest(channelIds, lastSyncAt)
+            io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest(channelIds, lastSyncAt, watch)
         result `should be instance of` expected
         verify(api, times(1)).getSyncHistory(expectedPayload, connectionId)
     }

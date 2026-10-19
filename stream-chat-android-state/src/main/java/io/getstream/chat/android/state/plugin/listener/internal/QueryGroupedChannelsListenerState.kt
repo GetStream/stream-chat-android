@@ -122,6 +122,7 @@ internal class QueryGroupedChannelsListenerState(
         finishFirstPageLoads(groups.orEmpty().keys - result.value.groups.keys, groups, completed = true)
 
         result.value.groups.values.forEach { group -> globalState.updateChannelDrafts(group.channels) }
+        val keepsLoadedPages = groups is ReconnectGroupQueries
 
         // Route each returned group's channels into the per-group state. The captured config lets
         // both ChannelListViewModel.loadMoreGroupedChannels and SyncManager.updateGroupedQueryChannels
@@ -143,7 +144,7 @@ internal class QueryGroupedChannelsListenerState(
                     sort = sort,
                 ),
             )
-            queryLogic.applyGroupedResult(group, isFirstPage = isFirstPage)
+            queryLogic.applyGroupedResult(group, isFirstPage = isFirstPage, keepsLoadedPages = keepsLoadedPages)
         }
     }
 }

@@ -20,6 +20,7 @@ import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import junit.framework.TestCase.fail
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 
 public class BackendRobot(
     private val mockServer: MockServer,
@@ -31,14 +32,21 @@ public class BackendRobot(
         repliesCount: Int = 0,
         messagesText: String? = null,
         repliesText: String? = null,
+        channelGroups: List<String> = emptyList(),
     ): BackendRobot {
         waitForMockServerToStart()
         val messagesTextQueryParam = if (messagesText != null) "messages_text=$messagesText&" else ""
         val repliesTextQueryParam = if (repliesText != null) "replies_text=$repliesText&" else ""
+        val channelGroupsQueryParam = if (channelGroups.isNotEmpty()) {
+            "channel_groups=${URLEncoder.encode(channelGroups.joinToString(","), "UTF-8")}&"
+        } else {
+            ""
+        }
         mockServer.postRequest(
             "mock?" +
                 messagesTextQueryParam +
                 repliesTextQueryParam +
+                channelGroupsQueryParam +
                 "channels=$channelsCount&" +
                 "messages=$messagesCount&" +
                 "replies=$repliesCount",

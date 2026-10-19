@@ -21,5 +21,11 @@
             android:exported="true"
             >
         </activity>
+
+        <activity
+            android:name=".ui.GroupedChannelsActivity"
+            android:exported="false"
+            android:label="@string/app_bottom_bar_chats"
+            />
     </application>
 </manifest>

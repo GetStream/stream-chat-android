@@ -75,6 +75,11 @@ class UserRobot {
         return this
     }
 
+    fun openGroupTab(group: String): UserRobot {
+        ChannelListPage.GroupTabs.tab(group).waitToAppear().click()
+        return this
+    }
+
     fun openContextMenu(messageCellIndex: Int = 0): UserRobot {
         MessageList.messages.waitToAppear()
         val messages = MessageList.messages.findObjects()

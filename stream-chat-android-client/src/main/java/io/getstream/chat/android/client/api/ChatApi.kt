@@ -597,7 +597,7 @@ internal interface ChatApi {
     fun og(url: String): Call<Attachment>
 
     @CheckResult
-    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>>
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<List<ChatEvent>>
 
     @CheckResult
     fun downloadFile(fileUrl: String): Call<ResponseBody>

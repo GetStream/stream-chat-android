@@ -1519,10 +1519,10 @@ constructor(
         }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> =
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<List<ChatEvent>> =
         with(eventMapping) {
             return generalApi.getSyncHistory(
-                body = SyncHistoryRequest(channelIds, lastSyncAt),
+                body = SyncHistoryRequest(channelIds, lastSyncAt, watch),
                 connectionId = connectionId,
             ).map { response ->
                 response.events.map {
