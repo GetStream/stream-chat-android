@@ -461,7 +461,7 @@ internal class EventHandlerSequential(
             }
             (event as? NotificationChannelPartialUpdatedEvent)?.let { e ->
                 groupedUnreadChannels = groupedUnreadChannelsUpdater
-                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e) { repos.selectChannel(e.cid) }
             }
             (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
             (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }

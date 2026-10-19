@@ -571,6 +571,24 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given a stale copy past the cutoff and not in the list When a partial update moves it into the group Should watch and add`() {
+        // The copy's last activity can be stale, so the list checks the cutoff after the watch.
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+            extraData = mapOf("group" to "other"),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
     fun `Given a cached channel not in the list When a partial update moves it into the group Should watch and add`() {
         val currentUser = randomUser()
         val channel = randomChannel(extraData = mapOf("group" to "other"))

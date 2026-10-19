@@ -95,7 +95,7 @@ internal class GroupedUnreadChannelsUpdater(
         current: Map<String, Int>,
         batchId: Int,
         event: ChannelUpdatedEvent,
-    ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel)
+    ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel, cachedChannel(event.cid))
 
     /**
      * `channel.updated_by_user` delta. Same semantics as the [ChannelUpdatedEvent] overload.
@@ -104,17 +104,21 @@ internal class GroupedUnreadChannelsUpdater(
         current: Map<String, Int>,
         batchId: Int,
         event: ChannelUpdatedByUserEvent,
-    ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel)
+    ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel, cachedChannel(event.cid))
 
     /**
      * `notification.channel_partial_updated` delta. Same semantics as the [ChannelUpdatedEvent] overload. The
-     * event's channel carries the custom data, so it holds the new group.
+     * event's channel carries the custom data, so it holds the new group. The event goes to members who are not
+     * watching the channel, so it usually has no active state: its old group and unread state then come from
+     * [storedChannel], which is only read in that case.
      */
-    fun calculateUpdatedCounts(
+    suspend fun calculateUpdatedCounts(
         current: Map<String, Int>,
         batchId: Int,
         event: NotificationChannelPartialUpdatedEvent,
-    ): Map<String, Int> = applyDelta(current, batchId, event.cid, event.channel)
+        storedChannel: suspend () -> Channel?,
+    ): Map<String, Int> =
+        applyDelta(current, batchId, event.cid, event.channel, cachedChannel(event.cid) ?: storedChannel())
 
     /**
      * Records that channel [cid] has been removed within [batchId] — either deleted, or the
@@ -146,10 +150,11 @@ internal class GroupedUnreadChannelsUpdater(
         batchId: Int,
         cid: String,
         newChannel: Channel,
+        oldChannel: Channel?,
     ): Map<String, Int> {
         rotateBatchIfNeeded(batchId)
         if (cid in removedCids || cid in processedCids) return current
-        val oldChannel = cachedChannel(cid) ?: return current
+        if (oldChannel == null) return current
         val oldGroup = oldChannel.group
         val newGroup = newChannel.group
         if (oldGroup == newGroup) return current

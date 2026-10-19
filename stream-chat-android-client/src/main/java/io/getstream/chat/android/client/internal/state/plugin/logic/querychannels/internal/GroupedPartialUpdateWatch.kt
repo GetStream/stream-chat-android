@@ -45,7 +45,8 @@ internal fun EventHandlingResult.skipWatchBelowLoadedChannels(
 
 /**
  * Whether [channel] sorts within the loaded channels: the group has no more pages, or the channel sorts at or above
- * the last loaded channel. Without local data the channel has no last message time, so its position is a lower bound.
+ * the last loaded channel. Without local data the channel has no last message time, so its position is a lower bound:
+ * a channel with recent activity but no local copy can be skipped, and it then shows after the next refresh.
  */
 private fun QueryChannelsState.isWithinLoadedChannels(channel: Channel): Boolean {
     if (endOfChannels.value) return true

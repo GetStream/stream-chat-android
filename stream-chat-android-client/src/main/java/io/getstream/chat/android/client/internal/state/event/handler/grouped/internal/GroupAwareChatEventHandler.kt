@@ -129,23 +129,22 @@ internal class GroupAwareChatEventHandler(
      * lacks data such as members and the last message time, so a channel that is not in the list yet is watched to
      * get its full data instead of being added from the event.
      *
-     * Without [cachedChannel], only the group is checked: the last activity is unknown, so the cutoff is left to the
-     * list, which checks the watched channel before showing it. The event is only sent to members, and a hidden
-     * channel is dropped after the watch. The query skips the watch when the channel sorts below its loaded pages.
+     * The cutoff is checked only for a channel in the list, whose last activity is up to date. For any other
+     * channel only the group is checked: without [cachedChannel] the last activity is unknown, and a stored copy can
+     * be stale, so the cutoff is left to the list, which checks the watched channel before showing it. The event is
+     * only sent to members, and a hidden channel is dropped after the watch. The query skips the watch when the
+     * channel sorts below its loaded pages.
      */
     private fun routePartialUpdate(
         event: NotificationChannelPartialUpdatedEvent,
         cachedChannel: Channel?,
         filter: FilterObject,
     ): EventHandlingResult {
-        val belongsHere = if (cachedChannel == null) {
-            groupMatches(event.channel, filter)
-        } else {
-            channelBelongsHere(cachedChannel.mergePartialUpdate(event.channel), filter) &&
-                isCurrentUserMember(cachedChannel) &&
-                cachedChannel.hidden != true
-        }
+        val channel = cachedChannel?.mergePartialUpdate(event.channel) ?: event.channel
         val isInList = channels.value?.containsKey(event.cid) == true
+        val matches = if (isInList) channelBelongsHere(channel, filter) else groupMatches(channel, filter)
+        val belongsHere = matches &&
+            (cachedChannel == null || (isCurrentUserMember(cachedChannel) && cachedChannel.hidden != true))
         return when {
             belongsHere && !isInList -> EventHandlingResult.WatchAndAdd(event.cid)
             !belongsHere && isInList -> EventHandlingResult.Remove(event.cid)
@@ -157,7 +156,7 @@ internal class GroupAwareChatEventHandler(
         resolver.resolve(channel).contains(groupKey) &&
             filter.matchesGroupedChannel(group = channel.group, queryTimestamp = channel.queryTimestamp, now = now())
 
-    /** [channelBelongsHere] with the cutoff passed, for a channel whose last activity is unknown. */
+    /** [channelBelongsHere] with the cutoff passed, for a channel whose last activity is unknown or may be stale. */
     private fun groupMatches(channel: Channel, filter: FilterObject): Boolean {
         val checkedAt = now()
         return resolver.resolve(channel).contains(groupKey) &&
