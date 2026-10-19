@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.internal.offline.plugin.listener.interna
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.QueryMembersListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.QueryThreadsListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.SendAttachmentsListenerDatabase
+import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.SendGiphyListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.SendMessageListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
@@ -50,6 +51,7 @@ import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
+import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -175,6 +177,11 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             messageRepository = repositoryFacade,
         )
 
+        val sendGiphyListener: SendGiphyListener = SendGiphyListenerDatabase(
+            userRepository = repositoryFacade,
+            messageRepository = repositoryFacade,
+        )
+
         val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
             repositoryFacade,
             repositoryFacade,
@@ -221,6 +228,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             sendMessageListener = sendMessageListener,
             sendAttachmentListener = sendAttachmentListener,
             shuffleGiphyListener = shuffleGiphyListener,
+            sendGiphyListener = sendGiphyListener,
             queryMembersListener = queryMembersListener,
             createChannelListener = createChannelListener,
             deleteChannelListener = deleteChannelListener,

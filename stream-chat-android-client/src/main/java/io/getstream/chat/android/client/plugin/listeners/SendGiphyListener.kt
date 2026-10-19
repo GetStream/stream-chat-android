@@ -32,7 +32,7 @@ public interface SendGiphyListener {
      * @param cid The full channel id, i.e. "messaging:123".
      * @param result The API call result.
      */
-    public fun onGiphySendResult(
+    public suspend fun onGiphySendResult(
         cid: String,
         result: Result<Message>,
     )
