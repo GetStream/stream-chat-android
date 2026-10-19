@@ -22,7 +22,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.network.infrastructure.Serializer
 
 /**
- * What the v2 socket does differently from v1: it authenticates with [authFrame] once open, parses events with
+ * How the socket talks to the v2 endpoint: it authenticates with [authFrame] once open, parses events with
  * [eventParser], and keeps the connection alive with a minimal health check, which the server answers whatever the
  * frame carries.
  */

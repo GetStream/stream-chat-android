@@ -21,10 +21,12 @@ import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.StreamWebSocket
 import io.getstream.chat.android.client.socket.StreamWebSocketEvent
+import io.getstream.chat.android.client.socket.V2SocketProtocol
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomInt
@@ -39,6 +41,7 @@ import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -48,33 +51,21 @@ internal class StreamWebSocketTest {
     private val closeSocketCode = 1000
     private val closeSocketReason = "Connection close by client"
     private val parser = mock<ChatParser>()
+    private val eventParser = mock<V2EventParser>()
+    private val protocol = V2SocketProtocol(authFrame = "{}", eventParser = eventParser)
     private val webSocket = mock<WebSocket>()
     private lateinit var webSocketListener: WebSocketListener
-    private val streamWebSocket = StreamWebSocket(parser) {
+    private val streamWebSocket = StreamWebSocket(parser, protocol) {
         webSocketListener = it
         webSocket
     }
 
     @Test
     fun `Class can be created correctly with listener invoked during creation`() {
-        StreamWebSocket(parser, socketCreator = {
+        StreamWebSocket(parser, protocol, socketCreator = {
             it.onFailure(webSocket, IllegalStateException(), null)
             webSocket
         })
-    }
-
-    @Test
-    fun `When a chatEvent is sent, websocket should send a parsed event`() {
-        val chatEvent = mock<ChatEvent>()
-        val textEvent = randomString()
-        val expectedResult = randomBoolean()
-        whenever(parser.toJson(chatEvent)) doReturn textEvent
-        whenever(webSocket.send(textEvent)) doReturn expectedResult
-
-        val result = streamWebSocket.send(chatEvent)
-
-        verify(webSocket).send(textEvent)
-        result `should be equal to` expectedResult
     }
 
     @Test
@@ -92,7 +83,7 @@ internal class StreamWebSocketTest {
     fun `When messages are received by websocket, they should be added to eventFlow`() = runTest {
         val eventsMap = List(positiveRandomInt(50)) { mock<ChatEvent>() }.associateBy { randomString() }
         eventsMap.forEach { textEvent, chatEvent ->
-            whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn Result.Success(chatEvent)
+            whenever(eventParser.parse(textEvent)) doReturn chatEvent
         }
         val listener = streamWebSocket.listen()
         val listResult = mutableListOf<StreamWebSocketEvent>()
@@ -112,8 +103,7 @@ internal class StreamWebSocketTest {
         val code = randomInt()
         val message = randomString()
         val statusCode = randomInt()
-        val errorResult = Result.Failure(Error.ThrowableError(message = "", cause = mock()))
-        whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java)) doReturn errorResult
+        whenever(eventParser.parse(textEvent)) doThrow IllegalStateException()
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java))
             .doReturn(Result.Success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
         val listener = streamWebSocket.listen()
@@ -139,9 +129,8 @@ internal class StreamWebSocketTest {
     @Test
     fun `When an unknown error is received by websocket, it should be added to eventFlow`() = runTest {
         val textEvent = randomString()
-        val cause = mock<Throwable>()
-        whenever(parser.fromJsonOrError(textEvent, ChatEvent::class.java))
-            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = cause)))
+        val cause = IllegalStateException()
+        whenever(eventParser.parse(textEvent)) doThrow cause
         val errorResult = Result.Failure(Error.ThrowableError(message = "", cause = mock()))
         whenever(parser.fromJsonOrError(textEvent, SocketErrorMessage::class.java)) doReturn errorResult
         val listener = streamWebSocket.listen()
@@ -167,12 +156,11 @@ internal class StreamWebSocketTest {
     fun `Once connected, an event that fails to parse is dropped and the next one is delivered`() = runTest {
         val connected = mock<ConnectedEvent>()
         val next = mock<ChatEvent>()
-        whenever(parser.fromJsonOrError("connected", ChatEvent::class.java)) doReturn Result.Success(connected)
-        whenever(parser.fromJsonOrError("malformed", ChatEvent::class.java))
-            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = mock())))
+        whenever(eventParser.parse("connected")) doReturn connected
+        whenever(eventParser.parse("malformed")) doThrow IllegalStateException()
         whenever(parser.fromJsonOrError("malformed", SocketErrorMessage::class.java))
             .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = mock())))
-        whenever(parser.fromJsonOrError("next", ChatEvent::class.java)) doReturn Result.Success(next)
+        whenever(eventParser.parse("next")) doReturn next
         val listResult = mutableListOf<StreamWebSocketEvent>()
         val job = launch { streamWebSocket.listen().collect { listResult.add(it) } }
         runCurrent()
@@ -190,9 +178,8 @@ internal class StreamWebSocketTest {
         val code = randomInt()
         val message = randomString()
         val statusCode = randomInt()
-        whenever(parser.fromJsonOrError("connected", ChatEvent::class.java)) doReturn Result.Success(connected)
-        whenever(parser.fromJsonOrError("error", ChatEvent::class.java))
-            .doReturn(Result.Failure(Error.ThrowableError(message = "", cause = mock())))
+        whenever(eventParser.parse("connected")) doReturn connected
+        whenever(eventParser.parse("error")) doThrow IllegalStateException()
         whenever(parser.fromJsonOrError("error", SocketErrorMessage::class.java))
             .doReturn(Result.Success(SocketErrorMessage(ErrorResponse(code, message, statusCode))))
         val listResult = mutableListOf<StreamWebSocketEvent>()

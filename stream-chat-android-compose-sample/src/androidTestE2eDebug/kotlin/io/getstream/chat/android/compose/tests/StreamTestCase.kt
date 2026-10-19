@@ -23,7 +23,6 @@ import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.compose.robots.UserRobot
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MockServer
@@ -56,17 +55,10 @@ abstract class StreamTestCase {
     @get:Rule
     val retryRule = RetryRule(3)
 
-    /** The API version to test against, from the `api_version` instrumentation argument: the mock's and the app's. */
-    private val apiVersion: String = when (val requested = InstrumentationRegistry.getArguments().getString("api_version")) {
-        "v1" -> "v1"
-        null, "v2" -> "v2"
-        else -> throw IllegalArgumentException("Invalid api_version: $requested")
-    }
-
     @Before
     fun setUp() {
         if (useMockServer) {
-            mockServer = MockServer(testName.methodName, apiVersion)
+            mockServer = MockServer(testName.methodName)
             backendRobot = BackendRobot(mockServer)
             participantRobot = ParticipantRobot(mockServer)
         }
@@ -107,7 +99,6 @@ abstract class StreamTestCase {
             it.putExtra("CHANNEL_SEARCH", useChannelSearch)
             if (useMockServer) {
                 it.putExtra("BASE_URL", mockServer.url)
-                it.putExtra("USE_V2_WEBSOCKET", apiVersion == "v2")
             }
             testContext.startActivity(it)
         } ?: throw IllegalStateException("No launch intent found for package: $packageName")

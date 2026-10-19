@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser2.V2EventParser
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -29,7 +30,6 @@ import io.getstream.chat.android.client.utils.internal.ServerClockOffset
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
-import io.getstream.result.Result
 import okhttp3.WebSocketListener
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -39,7 +39,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class FakeChatSocket private constructor(
-    private val parser: ChatParser,
+    private val eventParser: V2EventParser,
     apiKey: String,
     wssUrl: String,
     tokenManager: TokenManager,
@@ -69,7 +69,7 @@ internal class FakeChatSocket private constructor(
 
     fun mockEventReceived(event: ChatEvent) {
         val randomString = randomString()
-        whenever(parser.fromJsonOrError(eq(randomString), eq(ChatEvent::class.java))) doReturn Result.Success(event)
+        whenever(eventParser.parse(eq(randomString))) doReturn event
         webSocketListener.onMessage(mock(), randomString)
     }
 
@@ -96,14 +96,16 @@ internal class FakeChatSocket private constructor(
         ): FakeChatSocket {
             var webSocketListener: WebSocketListener? = null
             val parser: ChatParser = mock()
-            val streamWebSocket = StreamWebSocket(parser) {
+            val eventParser: V2EventParser = mock()
+            val protocol = V2SocketProtocol(authFrame = "{}", eventParser = eventParser)
+            val streamWebSocket = StreamWebSocket(parser, protocol) {
                 webSocketListener = it
                 mock()
             }
             val socketFactory: SocketFactory = mock()
             whenever(socketFactory.createSocket(any())) doReturn streamWebSocket
             return FakeChatSocket(
-                parser,
+                eventParser,
                 apiKey,
                 wssUrl,
                 tokenManager,
