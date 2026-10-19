@@ -917,6 +917,17 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `DownstreamUserBlockDto with a placeholder for a deleted user is mapped to UserBlock without a blocked user`() {
+        val downstreamUserBlockDto = randomDownstreamUserBlockDto(
+            blockedUserId = "blocked-1",
+            blockedUser = randomDownstreamUserDto(id = "deleted-user"),
+        )
+        val sut = Fixture().get()
+        val userBlock = with(sut) { downstreamUserBlockDto.toDomain() }
+        assertNull(userBlock.blockedUser)
+    }
+
+    @Test
     fun `BlockUserResponse is correctly mapped to UserBlock`() {
         val blockUserResponse = randomBlockUserResponse()
         val sut = Fixture().get()

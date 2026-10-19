@@ -837,7 +837,7 @@ internal class DomainMapping(
         blockedBy = user_id,
         userId = blocked_user_id,
         blockedAt = created_at,
-        blockedUser = blocked_user?.toDomain(),
+        blockedUser = blocked_user?.takeIf { it.id == blocked_user_id }?.toDomain(),
     )
 
     /**
