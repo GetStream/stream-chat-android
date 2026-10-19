@@ -333,10 +333,17 @@ internal class V2EventParserTest {
     }
 
     @Test
-    fun `A synced event that fails to parse fails the whole response`() {
-        val body = mapOf("events" to listOf(Frame(Wire.V2).event("channel.hidden", "cid" to CID))).toJson()
+    fun `A synced event that fails to parse is skipped and the rest are replayed`() {
+        val typing: Frame.() -> Map<String, Any?> = { event("typing.start", "cid" to CID, "user" to user()) }
+        val unreadable = Frame(Wire.V2).event("channel.hidden", "cid" to CID)
+        val body = mapOf("events" to listOf(unreadable, Frame(Wire.V2).typing())).toJson()
 
-        assertThrows<JsonDataException> { sync(body) }
+        sync(body) shouldBeEqualTo listOf(v2(typing))
+    }
+
+    @Test
+    fun `A sync response whose envelope can't be read fails`() {
+        assertThrows<JsonDataException> { sync("""{"events": {}}""") }
     }
 
     @Test

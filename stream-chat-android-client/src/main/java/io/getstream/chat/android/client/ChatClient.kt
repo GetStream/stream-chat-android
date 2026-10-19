@@ -4794,7 +4794,7 @@ internal constructor(
 
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
-     * connected to the web-socket).
+     * connected to the web-socket). An event that can't be read is left out and logged.
      *
      * @param channelsIds The list of channel CIDs. Cannot be empty.
      * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
@@ -4833,7 +4833,7 @@ internal constructor(
     /**
      * Returns all events that happened for a list of channels since last sync (while the user was not
      * connected to the web socket). [lastSyncAt] is in _yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'_ format.  Use this version of
-     * getSyncHistory when high precision is necessary.
+     * getSyncHistory when high precision is necessary. An event that can't be read is left out and logged.
      *
      * @param channelsIds The list of channel CIDs. Cannot be empty.
      * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.

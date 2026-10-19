@@ -2970,6 +2970,19 @@ internal class MoshiChatApiTest {
     }
 
     @Test
+    fun `A synced event that can't be read is skipped and the rest are replayed`() = runTest {
+        val api = mock<SyncApi>()
+        whenever(api.sync(any(), any()))
+            .doReturn(RetroSuccess(SYNCED_UNREADABLE_EVENT.toResponseBody()).toRetrofitCall())
+        val sut = Fixture().withSyncApi(api).get()
+
+        val result = sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z").await()
+
+        val event = (result as Result.Success).value.single() as UnknownEvent
+        event.type `should be equal to` "friendship_request"
+    }
+
+    @Test
     fun `An unreadable sync cursor fails without calling the endpoint`() = runTest {
         val api = mock<SyncApi>()
         val sut = Fixture().withSyncApi(api).get()

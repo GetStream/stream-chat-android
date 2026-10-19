@@ -652,8 +652,9 @@ internal object MoshiChatApiTestArguments {
     fun getSyncHistoryInput() = listOf(
         Arguments.of(RetroSuccess(SYNCED_EVENTS.toResponseBody()).toRetrofitCall(), Result.Success::class),
         Arguments.of(RetroSuccess("{}".toResponseBody()).toRetrofitCall(), Result.Success::class),
-        // One event that fails to parse fails the whole sync.
-        Arguments.of(RetroSuccess(SYNCED_UNREADABLE_EVENT.toResponseBody()).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroSuccess(SYNCED_UNREADABLE_EVENT.toResponseBody()).toRetrofitCall(), Result.Success::class),
+        // A body whose envelope can't be read fails the whole sync.
+        Arguments.of(RetroSuccess("""{"events": {}}""".toResponseBody()).toRetrofitCall(), Result.Failure::class),
         Arguments.of(RetroError<ResponseBody>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
