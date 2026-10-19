@@ -58,6 +58,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -97,6 +98,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.network.models.ChannelPartialUpdateResponse
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
@@ -127,6 +129,7 @@ import io.getstream.chat.android.network.models.MessageUpdatedEvent as Generated
 import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent as GeneratedNotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelPartialUpdatedEvent as GeneratedNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
@@ -560,6 +563,25 @@ internal object EventMappingTestArguments {
     )
 
     private val notificationChannelMutesUpdatesDto = GeneratedEventDto(notificationChannelMutesUpdatesEvent)
+
+    private val notificationChannelPartialUpdatedEvent = GeneratedNotificationChannelPartialUpdatedEvent(
+        type = EventType.NOTIFICATION_CHANNEL_PARTIAL_UPDATED,
+        createdAt = GENERATED_EXACT_DATE,
+        cid = CID,
+        channel = ChannelPartialUpdateResponse(
+            cid = CID,
+            createdAt = DATE,
+            disabled = true,
+            frozen = true,
+            id = CHANNEL_ID,
+            type = CHANNEL_TYPE,
+            updatedAt = DATE,
+            custom = mapOf("name" to "Channel name", "image" to "image.png", "group" to "current"),
+            team = "team1",
+        ),
+    )
+
+    private val notificationChannelPartialUpdatedDto = GeneratedEventDto(notificationChannelPartialUpdatedEvent)
 
     private val notificationChannelTruncatedEvent = GeneratedNotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
@@ -1315,6 +1337,27 @@ internal object EventMappingTestArguments {
         me = with(domainMapping) { OWN_USER.toDomain() },
     )
 
+    private val notificationChannelPartialUpdated = NotificationChannelPartialUpdatedEvent(
+        type = notificationChannelPartialUpdatedEvent.type,
+        createdAt = notificationChannelPartialUpdatedEvent.createdAt.date,
+        rawCreatedAt = notificationChannelPartialUpdatedEvent.createdAt.raw,
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        channel = Channel(
+            id = CHANNEL_ID,
+            type = CHANNEL_TYPE,
+            name = "Channel name",
+            image = "image.png",
+            frozen = true,
+            disabled = true,
+            createdAt = DATE,
+            updatedAt = DATE,
+            team = "team1",
+            extraData = mapOf("group" to "current", "disabled" to true),
+        ),
+    )
+
     private val notificationChannelTruncated = NotificationChannelTruncatedEvent(
         type = notificationChannelTruncatedEvent.type,
         createdAt = notificationChannelTruncatedEvent.createdAt.date,
@@ -1781,6 +1824,7 @@ internal object EventMappingTestArguments {
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),
         Arguments.of(notificationChannelDeletedDto, notificationChannelDeleted),
         Arguments.of(notificationChannelMutesUpdatesDto, notificationChannelMutesUpdates),
+        Arguments.of(notificationChannelPartialUpdatedDto, notificationChannelPartialUpdated),
         Arguments.of(notificationChannelTruncatedDto, notificationChannelTruncated),
         Arguments.of(notificationInviteAcceptedDto, notificationInviteAccepted),
         Arguments.of(notificationInviteRejectedDto, notificationInviteRejected),

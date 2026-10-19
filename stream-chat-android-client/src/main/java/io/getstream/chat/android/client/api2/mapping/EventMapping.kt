@@ -60,6 +60,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
@@ -125,6 +126,7 @@ import io.getstream.chat.android.network.models.MessageUpdatedEvent as Generated
 import io.getstream.chat.android.network.models.NotificationAddedToChannelEvent as GeneratedNotificationAddedToChannelEvent
 import io.getstream.chat.android.network.models.NotificationChannelDeletedEvent as GeneratedNotificationChannelDeletedEvent
 import io.getstream.chat.android.network.models.NotificationChannelMutesUpdatedEvent as GeneratedNotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.network.models.NotificationChannelPartialUpdatedEvent as GeneratedNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.network.models.NotificationChannelTruncatedEvent as GeneratedNotificationChannelTruncatedEvent
 import io.getstream.chat.android.network.models.NotificationInviteAcceptedEvent as GeneratedNotificationInviteAcceptedEvent
 import io.getstream.chat.android.network.models.NotificationInviteRejectedEvent as GeneratedNotificationInviteRejectedEvent
@@ -469,6 +471,7 @@ internal class EventMapping(
         is GeneratedNotificationInviteAcceptedEvent -> toDomain()
         is GeneratedNotificationInviteRejectedEvent -> toDomain()
         is GeneratedNotificationChannelDeletedEvent -> toDomain()
+        is GeneratedNotificationChannelPartialUpdatedEvent -> toDomain()
         is GeneratedNotificationChannelTruncatedEvent -> toDomain()
         is GeneratedNotificationThreadMessageNewEvent -> toDomain()
         is GeneratedNotificationMarkUnreadEvent -> toDomain()
@@ -934,6 +937,25 @@ internal class EventMapping(
                 totalUnreadCount = totalUnreadCount ?: 0,
                 unreadChannels = unreadChannels ?: 0,
                 groupedUnreadChannels = groupedUnreadChannels,
+            )
+        }
+
+    /**
+     * Transforms the generated [GeneratedNotificationChannelPartialUpdatedEvent] to
+     * [NotificationChannelPartialUpdatedEvent].
+     */
+    private fun GeneratedNotificationChannelPartialUpdatedEvent.toDomain(): NotificationChannelPartialUpdatedEvent =
+        with(domainMapping) {
+            val cid = requireNotNull(cid)
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            return NotificationChannelPartialUpdatedEvent(
+                type = type,
+                createdAt = createdAt.date,
+                rawCreatedAt = createdAt.raw,
+                cid = cid,
+                channelType = channelType,
+                channelId = channelId,
+                channel = channel.toDomain(),
             )
         }
 

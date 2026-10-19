@@ -124,6 +124,7 @@ import io.getstream.chat.android.network.models.Action
 import io.getstream.chat.android.network.models.ChannelConfigWithInfo
 import io.getstream.chat.android.network.models.ChannelMemberResponse
 import io.getstream.chat.android.network.models.ChannelOwnCapability
+import io.getstream.chat.android.network.models.ChannelPartialUpdateResponse
 import io.getstream.chat.android.network.models.ChannelPushPreferencesResponse
 import io.getstream.chat.android.network.models.ChannelResponse
 import io.getstream.chat.android.network.models.ChatPreferencesResponse
@@ -683,6 +684,53 @@ internal class DomainMappingTest {
 
         assertEquals(transformedChannel, result)
     }
+
+    @Test
+    fun `Partially updated channel should be transformed after it is mapped`() {
+        val channelTransformer = ChannelTransformer { it.copy(name = "${it.name} (transformed)") }
+
+        val sut = Fixture()
+            .withChannelTransformer(channelTransformer)
+            .get()
+
+        val result = with(sut) { channelPartialUpdateResponse().toDomain() }
+
+        assertEquals("Channel name (transformed)", result.name)
+    }
+
+    @Test
+    fun `ChannelPartialUpdateResponse promotes name and image out of custom and keeps disabled in extraData`() {
+        val sut = Fixture().get()
+
+        val result = with(sut) { channelPartialUpdateResponse().toDomain() }
+
+        assertEquals("Channel name", result.name)
+        assertEquals("image.png", result.image)
+        assertEquals(true, result.disabled)
+        assertEquals(mapOf("group" to "current", "disabled" to true), result.extraData)
+    }
+
+    @Test
+    fun `ChannelPartialUpdateResponse without name, image or team maps them to empty values`() {
+        val sut = Fixture().get()
+
+        val result = with(sut) { channelPartialUpdateResponse().copy(custom = emptyMap(), team = null).toDomain() }
+
+        assertEquals("", result.name)
+        assertEquals("", result.image)
+        assertEquals("", result.team)
+    }
+
+    private fun channelPartialUpdateResponse() = ChannelPartialUpdateResponse(
+        cid = "messaging:123",
+        createdAt = Date(),
+        disabled = true,
+        frozen = false,
+        id = "123",
+        type = "messaging",
+        updatedAt = Date(),
+        custom = mapOf("name" to "Channel name", "image" to "image.png", "group" to "current"),
+    )
 
     @Test
     fun `ChannelResponse promotes name and image out of custom and keeps the rest as extraData`() {

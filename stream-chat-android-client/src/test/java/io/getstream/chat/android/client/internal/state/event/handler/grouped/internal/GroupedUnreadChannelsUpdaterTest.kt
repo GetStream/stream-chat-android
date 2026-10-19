@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.events.HasGroupedUnreadChannels
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
@@ -36,6 +37,7 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
@@ -201,6 +203,44 @@ internal class GroupedUnreadChannelsUpdaterTest {
 
         assertEquals(mapOf("a" to 2, "b" to 2), next)
     }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent applies the same migration semantics`() = runTest {
+        seedActiveChannel(oldGroup = "a", unreadMessages = 2)
+        val current = mapOf("a" to 3, "b" to 1)
+        val partialChannel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE, extraData = mapOf("group" to "b"))
+
+        val next = updater.calculateUpdatedCounts(current, BATCH_ID, partialUpdatedEvent(partialChannel)) {
+            error("The stored channel is not read for an active channel")
+        }
+
+        assertEquals(mapOf("a" to 2, "b" to 2), next)
+    }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent for an inactive channel migrates the count of its stored copy`() =
+        runTest {
+            val stored = channel(group = "a").copy(
+                read = listOf(randomChannelUserRead(user = User(id = CURRENT_USER_ID), unreadMessages = 2)),
+            )
+            val current = mapOf("a" to 3, "b" to 1)
+            val partialChannel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE, extraData = mapOf("group" to "b"))
+
+            val next = updater.calculateUpdatedCounts(current, BATCH_ID, partialUpdatedEvent(partialChannel)) { stored }
+
+            assertEquals(mapOf("a" to 2, "b" to 2), next)
+        }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent for a channel with no local copy returns current map unchanged`() =
+        runTest {
+            val current = mapOf("a" to 3, "b" to 1)
+            val partialChannel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE, extraData = mapOf("group" to "b"))
+
+            val next = updater.calculateUpdatedCounts(current, BATCH_ID, partialUpdatedEvent(partialChannel)) { null }
+
+            assertSame(current, next)
+        }
 
     // endregion
 
@@ -507,6 +547,17 @@ internal class GroupedUnreadChannelsUpdaterTest {
             user = randomUser(),
             channel = newChannel,
             message = null,
+        )
+
+    private fun partialUpdatedEvent(partialChannel: Channel): NotificationChannelPartialUpdatedEvent =
+        NotificationChannelPartialUpdatedEvent(
+            type = "notification.channel_partial_updated",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            cid = CID,
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            channel = partialChannel,
         )
 
     private fun hasGroupedUnreadChannels(map: Map<String, Int>?): HasGroupedUnreadChannels =

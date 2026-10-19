@@ -289,7 +289,7 @@ internal class QueryChannelsLogic(
     }
 
     /**
-     * Calls watch channel and adds result to the query.
+     * Calls watch channel and adds result to the query. A grouped query does not add the channel when it is hidden.
      *
      * @param cid cid of the channel.
      */
@@ -297,6 +297,8 @@ internal class QueryChannelsLogic(
         val result = client.channel(cid = cid).watch().await()
 
         if (result is Result.Success) {
+            // A partial channel update can reach a member who hid the channel.
+            if (identifier is QueryChannelsIdentifier.Grouped && result.value.hidden == true) return
             addChannel(result.value)
         }
     }
@@ -666,7 +668,12 @@ internal class QueryChannelsLogic(
 
         return chatEvents.map { event ->
             val channel = (event as? CidEvent)?.let { resolvedChannels[it.cid] }
-            queryChannelsStateLogic.handleChatEvent(event, channel)
+            val result = queryChannelsStateLogic.handleChatEvent(event, channel)
+            when (identifier) {
+                is QueryChannelsIdentifier.Grouped ->
+                    result.skipWatchBelowLoadedChannels(event, channel, queryChannelsStateLogic.getState())
+                else -> result
+            }
         }
     }
 
