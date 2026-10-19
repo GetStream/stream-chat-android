@@ -409,7 +409,7 @@ internal class SyncManager(
             logger.w { "[performSync] rejected (no events to emit)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
-        if (rawLastSyncAt != null && rawLatestEventDate != null && sameInstant(rawLastSyncAt, rawLatestEventDate)) {
+        if (sameInstant(rawLastSyncAt, rawLatestEventDate)) {
             logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
             return SyncOutcome(syncedCids = syncedCids)
         }
@@ -1190,8 +1190,8 @@ internal class SyncManager(
  * don't parse are compared as written.
  */
 @OptIn(ExperimentalTime::class)
-internal fun sameInstant(raw: String, other: String): Boolean {
-    val instant = Instant.parseOrNull(raw)
-    val otherInstant = Instant.parseOrNull(other)
+internal fun sameInstant(raw: String?, other: String?): Boolean {
+    val instant = raw?.let(Instant::parseOrNull)
+    val otherInstant = other?.let(Instant::parseOrNull)
     return if (instant != null && otherInstant != null) instant == otherInstant else raw == other
 }

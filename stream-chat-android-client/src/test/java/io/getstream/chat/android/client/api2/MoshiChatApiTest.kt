@@ -2972,11 +2972,11 @@ internal class MoshiChatApiTest {
     @Test
     fun `A synced event that can't be read is skipped and the rest are replayed`() = runTest {
         val api = mock<SyncApi>()
-        whenever(api.sync(any(), any()))
+        whenever(api.sync(any(), any(), any()))
             .doReturn(RetroSuccess(SYNCED_UNREADABLE_EVENT.toResponseBody()).toRetrofitCall())
         val sut = Fixture().withSyncApi(api).get()
 
-        val result = sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z").await()
+        val result = sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z", watch = false).await()
 
         val event = (result as Result.Success).value.single() as UnknownEvent
         event.type `should be equal to` "friendship_request"
