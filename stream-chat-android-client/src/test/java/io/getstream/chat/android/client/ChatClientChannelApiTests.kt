@@ -589,7 +589,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.pinChannel(channelType, channelId).await()
         // then
         verifySuccess(result, response)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, mapOf("pinned" to true), emptyList())
+        verify(sut).partialUpdateMember(channelType, channelId, mapOf("pinned" to true), emptyList())
     }
 
     @Test
@@ -609,7 +609,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.pinChannel(channelType, channelId).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, mapOf("pinned" to true), emptyList())
+        verify(sut).partialUpdateMember(channelType, channelId, mapOf("pinned" to true), emptyList())
     }
 
     @Test
@@ -629,7 +629,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.unpinChannel(channelType, channelId).await()
         // then
         verifySuccess(result, response)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, emptyMap(), listOf("pinned"))
+        verify(sut).partialUpdateMember(channelType, channelId, emptyMap(), listOf("pinned"))
     }
 
     @Test
@@ -649,7 +649,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.unpinChannel(channelType, channelId).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, emptyMap(), listOf("pinned"))
+        verify(sut).partialUpdateMember(channelType, channelId, emptyMap(), listOf("pinned"))
     }
 
     @Test
@@ -669,7 +669,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.archiveChannel(channelType, channelId).await()
         // then
         verifySuccess(result, response)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, mapOf("archived" to true), emptyList())
+        verify(sut).partialUpdateMember(channelType, channelId, mapOf("archived" to true), emptyList())
     }
 
     @Test
@@ -689,7 +689,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.archiveChannel(channelType, channelId).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, mapOf("archived" to true), emptyList())
+        verify(sut).partialUpdateMember(channelType, channelId, mapOf("archived" to true), emptyList())
     }
 
     @Test
@@ -709,7 +709,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.unarchiveChannel(channelType, channelId).await()
         // then
         verifySuccess(result, response)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, emptyMap(), listOf("archived"))
+        verify(sut).partialUpdateMember(channelType, channelId, emptyMap(), listOf("archived"))
     }
 
     @Test
@@ -729,7 +729,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut.unarchiveChannel(channelType, channelId).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(sut).partialUpdateMember(channelType, channelId, user.id, emptyMap(), listOf("archived"))
+        verify(sut).partialUpdateMember(channelType, channelId, emptyMap(), listOf("archived"))
     }
 
     @Test
@@ -737,7 +737,6 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         // given
         val channelType = randomString()
         val channelId = randomString()
-        val userId = randomString()
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
         val member = randomMember()
@@ -745,9 +744,45 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
             .givenPartialUpdateMemberResult(RetroSuccess(member).toRetrofitCall())
             .get()
         // when
-        val result = sut.partialUpdateMember(channelType, channelId, userId, set, unset).await()
+        val result = sut.partialUpdateMember(channelType, channelId, set, unset).await()
         // then
         verifySuccess(result, member)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `partialUpdateMember with a user id ignores it`() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val set = mapOf<String, Any>("pinned" to true)
+        val unset = listOf("archived")
+        val member = randomMember()
+        val sut = Fixture()
+            .givenPartialUpdateMemberResult(RetroSuccess(member).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.partialUpdateMember(channelType, channelId, randomString(), set, unset).await()
+        // then
+        verifySuccess(result, member)
+        verify(api).partialUpdateMember(channelType, channelId, set, unset)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `partialUpdateMember with a user id and no changes sends empty ones`() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val member = randomMember()
+        val sut = Fixture()
+            .givenPartialUpdateMemberResult(RetroSuccess(member).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.partialUpdateMember(channelType, channelId, randomString()).await()
+        // then
+        verifySuccess(result, member)
+        verify(api).partialUpdateMember(channelType, channelId, emptyMap(), emptyList())
     }
 
     @Test
@@ -755,7 +790,6 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         // given
         val channelType = randomString()
         val channelId = randomString()
-        val userId = randomString()
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
         val errorCode = positiveRandomInt()
@@ -763,7 +797,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
             .givenPartialUpdateMemberResult(RetroError<Member>(errorCode).toRetrofitCall())
             .get()
         // when
-        val result = sut.partialUpdateMember(channelType, channelId, userId, set, unset).await()
+        val result = sut.partialUpdateMember(channelType, channelId, set, unset).await()
         // then
         verifyNetworkError(result, errorCode)
     }
@@ -1672,7 +1706,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenPartialUpdateMemberResult(result: Call<Member>) = apply {
-            whenever(api.partialUpdateMember(any(), any(), any(), any(), any())).thenReturn(result)
+            whenever(api.partialUpdateMember(any(), any(), any(), any())).thenReturn(result)
         }
 
         fun givenEnableSlowModeResult(result: Call<Channel>) = apply {
