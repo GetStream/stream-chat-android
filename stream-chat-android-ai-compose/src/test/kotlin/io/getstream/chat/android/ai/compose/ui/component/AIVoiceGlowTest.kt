@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.compose.ui.component
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -65,7 +66,20 @@ internal class AIVoiceGlowTest : PaparazziTest {
         snapshot { glow(AIVoiceAgentState.Connecting, AIVoiceGlowRendering.Shader) }
     }
 
+    @Test
+    fun palette() {
+        snapshot { glow(AIVoiceAgentState.Speaking, colors = Palette) }
+    }
+
+    @Test
+    fun shaderPalette() {
+        snapshot { glow(AIVoiceAgentState.Speaking, AIVoiceGlowRendering.Shader, Palette) }
+    }
+
     @Composable
-    private fun glow(state: AIVoiceAgentState, rendering: AIVoiceGlowRendering = AIVoiceGlowRendering.Canvas) =
-        AIVoiceGlow(state, Modifier.size(240.dp), rendering = rendering)
+    private fun glow(
+        state: AIVoiceAgentState,
+        rendering: AIVoiceGlowRendering = AIVoiceGlowRendering.Canvas,
+        colors: List<Color> = AIVoiceVisualizationDefaults.colors(),
+    ) = AIVoiceGlow(state, Modifier.size(240.dp), colors = colors, rendering = rendering)
 }

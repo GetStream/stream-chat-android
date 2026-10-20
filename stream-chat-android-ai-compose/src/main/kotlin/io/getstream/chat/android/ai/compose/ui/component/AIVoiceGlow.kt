@@ -98,7 +98,7 @@ public fun AIVoiceGlow(
 
 /** Whether the device is in battery saver, following it while the glow is shown. */
 @Composable
-private fun rememberPowerSaveMode(): State<Boolean> {
+internal fun rememberPowerSaveMode(): State<Boolean> {
     val context = LocalContext.current
     val power = remember(context) { context.getSystemService<PowerManager>() }
     val saving = remember(power) { mutableStateOf(power?.isPowerSaveMode == true) }
