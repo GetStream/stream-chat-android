@@ -29,6 +29,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -137,17 +138,18 @@ internal class QueryChannelsLogicGroupedWatchTest {
     }
 
     @Test
-    fun `a partial update watches a stored channel when the list was queried without watch`() = runTest {
-        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
-        givenGroupedQueryWatch(watch = false)
-        val event = partialUpdate(createdAt = daysAgo(1))
-        val stored = randomChannel(id = event.channelId, type = event.channelType, createdAt = daysAgo(1))
-        whenever(queryChannelsDatabaseLogic.selectChannels(listOf(event.cid))) doReturn listOf(stored)
+    fun `a partial update adds a stored channel without watching it when the list was queried without watch`() =
+        runTest {
+            givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+            givenGroupedQueryWatch(watch = false)
+            val event = partialUpdate(createdAt = daysAgo(1))
+            val stored = randomChannel(id = event.channelId, type = event.channelType, createdAt = daysAgo(1))
+            whenever(queryChannelsDatabaseLogic.selectChannels(listOf(event.cid))) doReturn listOf(stored)
 
-        val results = logic.parseChatEventResults(listOf(event))
+            val results = logic.parseChatEventResults(listOf(event))
 
-        assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
-    }
+            assertEquals(listOf(EventHandlingResult.Add(stored.mergePartialUpdate(event.channel))), results)
+        }
 
     @Test
     fun `a partial update places a channel without a local copy by the last message time of the event`() = runTest {

@@ -140,7 +140,7 @@ internal class GroupAwareChatEventHandler(
      * copy and the event carries its last message time. For any other channel only the group is checked, and the
      * cutoff is left to the list, which checks the watched channel before showing it. The event is only sent to
      * members, and a hidden channel is dropped after the watch. The query skips the watch when the channel sorts below
-     * its loaded pages, or when it has no local copy and the list was not queried with `watch`.
+     * its loaded pages, and does not watch it when the list was not queried with `watch`.
      */
     private fun routePartialUpdate(
         event: NotificationChannelPartialUpdatedEvent,

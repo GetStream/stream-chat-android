@@ -44,21 +44,22 @@ internal fun EventHandlingResult.skipWatchBelowLoadedChannels(
 }
 
 /**
- * Turns a [EventHandlingResult.WatchAndAdd] for a partial channel update into [EventHandlingResult.Skip] when the
- * channel has no local copy and the grouped list was not queried with `watch`. Such a channel is shown when its page
- * loads. Other results and events are returned unchanged.
+ * Drops the watch from a [EventHandlingResult.WatchAndAdd] for a partial channel update when the grouped list was not
+ * queried with `watch`. A channel with a local copy is added from that copy with the update applied. A channel without
+ * one is skipped and shown when its page loads. Other results and events are returned unchanged.
  *
  * @param event The event that produced this result.
  * @param cachedChannel The local copy of the event's channel, or `null` when there is none.
  * @param watch Whether the grouped list was queried with `watch`.
  */
-internal fun EventHandlingResult.skipWatchWithoutLocalCopy(
+internal fun EventHandlingResult.withoutWatchUnlessListWatches(
     event: ChatEvent,
     cachedChannel: Channel?,
     watch: Boolean,
 ): EventHandlingResult {
     if (this !is EventHandlingResult.WatchAndAdd || event !is NotificationChannelPartialUpdatedEvent) return this
-    return if (cachedChannel == null && !watch) EventHandlingResult.Skip else this
+    if (watch) return this
+    return cachedChannel?.mergePartialUpdate(event.channel)?.let(EventHandlingResult::Add) ?: EventHandlingResult.Skip
 }
 
 /**

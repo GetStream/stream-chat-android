@@ -688,7 +688,7 @@ internal class QueryChannelsLogic(
                 is QueryChannelsIdentifier.Grouped ->
                     result.skipWatchBelowLoadedChannels(event, channel, queryChannelsStateLogic.getState())
                         // Without a known request, the list is treated as watching, as the reconnect sync does.
-                        .skipWatchWithoutLocalCopy(event, channel, watch = groupedQueryConfig()?.watch ?: true)
+                        .withoutWatchUnlessListWatches(event, channel, watch = groupedQueryConfig()?.watch ?: true)
                 else -> result
             }
         }
