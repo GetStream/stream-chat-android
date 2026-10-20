@@ -68,6 +68,10 @@ public interface QueryChannelsState {
     /**
      * Cursor for the next page when this state belongs to a grouped query.
      * `null` means there is no further page (or that this is a standard query that doesn't use cursors).
+     *
+     * After a reconnect, the first page is refreshed, and the pages loaded before can be kept when the sync covered
+     * their channels. The cursor then follows the refreshed first page, so the next pages can hold channels that are
+     * already loaded. Keep loading until a page brings channels that are not loaded yet, or the cursor is `null`.
      */
     public val nextCursor: StateFlow<String?>
 

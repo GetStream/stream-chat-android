@@ -192,6 +192,59 @@ class GroupedChannelListTests : StreamTestCase() {
         }
     }
 
+    @Test
+    fun test_tabKeepsLoadedPagesAndScrollPosition_afterReconnection() {
+        val delay = 3
+        val channelsCount = 20
+        step("GIVEN backend has two pages of new channels") {
+            backendRobot.generateChannels(
+                channelsCount = channelsCount,
+                channelGroups = List(channelsCount) { "new" },
+            )
+        }
+        step("AND user opens the new tab") {
+            userRobot.login().waitForChannelListToLoad().openGroupTab("new")
+        }
+        step("AND user reconnects once, so the app has a last sync date") {
+            // After a fresh login, the first sync date is stored by the first reconnection. Pages are kept only after
+            // a sync that starts from a known date.
+            device.disableInternetConnection()
+            userRobot.sleep(2.seconds)
+            device.enableInternetConnection()
+            userRobot.sleep(3.seconds)
+        }
+        step("AND user scrolls to the end of the second page of the new tab") {
+            userRobot
+                // The first scroll loads the second page, the second one reaches its end.
+                .scrollChannelListDown()
+                .scrollChannelListDown()
+                .assertChannelWithName("20")
+        }
+        step("AND user goes offline") {
+            participantRobot.moveChannelToGroup(channelName = "20", group = "old", delay = delay)
+            device.disableInternetConnection()
+            userRobot.sleep((delay + 1).seconds)
+        }
+        step("WHEN participant moves a channel of the second page to the old group") {
+            // This action has been completed above with a delay,
+            // because the mock server can't be reached while offline.
+        }
+        step("AND user goes back online") {
+            device.enableInternetConnection()
+        }
+        step("THEN the moved channel, which was on screen, is no longer in the new tab") {
+            userRobot.assertChannelWithName("20", isDisplayed = false)
+        }
+        step("AND the new tab still shows the end of the second page after the first page is refreshed") {
+            // The first page is refreshed after the sync that moved the channel, without anything to wait for.
+            // A list reset to the first page would scroll back up, and loading the second page again would not
+            // bring the end of the list back on screen.
+            userRobot
+                .sleep(3.seconds)
+                .assertChannelWithName("19")
+        }
+    }
+
     @AllureId("12282")
     @Test
     fun test_tabsAndBadgesAreCorrect_afterReconnection() {
