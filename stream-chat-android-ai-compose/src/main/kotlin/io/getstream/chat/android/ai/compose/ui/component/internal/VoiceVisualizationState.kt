@@ -29,6 +29,7 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -36,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.unit.IntSize
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.AIVoiceAgentState
 import kotlin.math.min
@@ -95,9 +97,9 @@ internal fun rememberVoiceVisualization(
 internal fun Color.isDark() = luminance() < DarkLuminance
 
 /**
- * Names the visualization and its state for accessibility, and bounces it where it is tapped
- * inside [contains], which takes the tap in the renderers' coordinates: centred, normalized to the
- * shorter side, y up.
+ * Names the visualization and its state for accessibility, bounces it where it is tapped inside
+ * [contains], and ripples it under a hovering mouse or stylus. [contains] takes the point in the
+ * renderers' coordinates: centred, normalized to the shorter side, y up.
  */
 @Composable
 internal fun Modifier.voiceVisualization(
@@ -112,13 +114,29 @@ internal fun Modifier.voiceVisualization(
         stateDescription = value
     }.pointerInput(visualization) {
         detectTapGestures { offset ->
-            val side = min(size.width, size.height).toFloat()
-            val x = (offset.x - size.width / 2f) / side
-            val y = (size.height / 2f - offset.y) / side
+            val x = normalizedX(offset.x, size)
+            val y = normalizedY(offset.y, size)
             if (contains(x, y)) visualization.driver.tap(x, y)
+        }
+    }.pointerInput(visualization) {
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent()
+                val change = event.changes.firstOrNull() ?: continue
+                val x = normalizedX(change.position.x, size)
+                val y = normalizedY(change.position.y, size)
+                // Enter and Move without a press only come from a hovering mouse or stylus.
+                val moving = event.type == PointerEventType.Enter || event.type == PointerEventType.Move
+                val hovering = moving && !change.pressed && contains(x, y)
+                if (hovering) visualization.driver.hover(x, y) else visualization.driver.hover(null, null)
+            }
         }
     }
 }
+
+private fun normalizedX(x: Float, size: IntSize) = (x - size.width / 2f) / min(size.width, size.height)
+
+private fun normalizedY(y: Float, size: IntSize) = (size.height / 2f - y) / min(size.width, size.height)
 
 private val AIVoiceAgentState.description: Int
     get() = when (this) {
