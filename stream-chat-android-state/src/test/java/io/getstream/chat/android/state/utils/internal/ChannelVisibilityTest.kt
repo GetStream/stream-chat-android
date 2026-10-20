@@ -18,9 +18,11 @@ package io.getstream.chat.android.state.utils.internal
 
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -64,6 +66,28 @@ internal class ChannelVisibilityTest {
         val message = message()
 
         assertFalse(message.unhidesChannel(emptyMap(), listOf(message.user.id)))
+    }
+
+    @Test
+    fun `A channel from an event takes the stored hidden and blocked state`() {
+        val stored = randomChannel(hidden = true, extraData = mapOf("blocked" to true))
+        val fromEvent = randomChannel(hidden = null, extraData = mapOf("group" to "vip"))
+
+        val result = fromEvent.withUserStateOf(stored)
+
+        assertEquals(true, result.hidden)
+        assertEquals(mapOf("blocked" to true, "group" to "vip"), result.extraData)
+    }
+
+    @Test
+    fun `A channel from an event keeps the hidden and blocked state it carries`() {
+        val stored = randomChannel(hidden = true, extraData = mapOf("blocked" to true))
+        val fromEvent = randomChannel(hidden = false, extraData = mapOf("blocked" to false))
+
+        val result = fromEvent.withUserStateOf(stored)
+
+        assertEquals(false, result.hidden)
+        assertEquals(mapOf("blocked" to false), result.extraData)
     }
 
     private fun message(

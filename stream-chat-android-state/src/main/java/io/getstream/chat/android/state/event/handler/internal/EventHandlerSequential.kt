@@ -127,6 +127,7 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.state.utils.internal.unhidesChannel
+import io.getstream.chat.android.state.utils.internal.withUserStateOf
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -690,8 +691,8 @@ internal class EventHandlerSequential(
                 }
                 is NotificationMessageNewEvent -> {
                     batch.addMessageData(event.createdAt, event.cid, event.message)
-                    val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    val stored = batch.getCurrentChannel(event.cid)
+                    val channel = stored?.mergeChannelFromEvent(event.channel)?.withUserStateOf(stored) ?: event.channel
                     batch.addChannel(channel.copy(hidden = channel.hiddenAfter(event.message)))
                 }
                 is NotificationAddedToChannelEvent -> {

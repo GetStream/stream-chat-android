@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.utils.internal
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 
@@ -40,3 +41,14 @@ internal fun Message.unhidesChannel(channelExtraData: Map<String, Any>, blockedU
 
         else -> false
     }
+
+/**
+ * This channel with the current user's `hidden` and `blocked` state taken from [stored] when this channel lacks it.
+ * Channels in events are shared by all members, so they carry no state of the current user.
+ *
+ * @param stored The stored copy of the channel.
+ */
+internal fun Channel.withUserStateOf(stored: Channel): Channel = copy(
+    hidden = hidden ?: stored.hidden,
+    extraData = stored.extraData.filterKeys(BLOCKED_FIELD_NAME::equals) + extraData,
+)

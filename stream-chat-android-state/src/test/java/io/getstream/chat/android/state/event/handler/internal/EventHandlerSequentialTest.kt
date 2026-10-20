@@ -386,9 +386,55 @@ internal class EventHandlerSequentialTest {
         storedHiddenChannelAfter(message).hidden `should be equal to` false
     }
 
+    @Test
+    fun `When handling NotificationMessageNewEvent with a campaign message, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(
+                type = "regular",
+                shadowed = false,
+                extraData = mapOf("created_by_campaign_id" to "campaign-id"),
+            )
+
+            storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent in a blocked channel, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+            val storedChannel = randomChannel(hidden = true, extraData = mapOf("blocked" to true))
+
+            val result = storedHiddenChannelAfter(message, ::notificationMessageNewIn, storedChannel)
+
+            result.hidden `should be equal to` true
+            result.extraData["blocked"] `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent with a regular message, The stored hidden channel should be shown`() =
+        runTest {
+            val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+
+            storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` false
+        }
+
+    /** A `notification.message_new` event whose channel, like the backend's, carries no state of the current user. */
+    private fun notificationMessageNewIn(channel: Channel, message: Message): ChatEvent =
+        randomNotificationMessageNewEvent(
+            cid = channel.cid,
+            channel = Channel(id = channel.id, type = channel.type),
+            message = message,
+        )
+
+    private fun newMessageIn(channel: Channel, message: Message): ChatEvent =
+        randomNewMessageEvent(cid = channel.cid, message = message)
+
     /** Handles a new [message] in a stored hidden channel and returns the channel as it is stored again. */
-    private suspend fun TestScope.storedHiddenChannelAfter(message: Message): Channel {
-        val storedChannel = randomChannel(hidden = true, extraData = emptyMap())
+    private suspend fun TestScope.storedHiddenChannelAfter(
+        message: Message,
+        eventIn: (Channel, Message) -> ChatEvent = ::newMessageIn,
+        storedChannel: Channel = randomChannel(hidden = true, extraData = emptyMap()),
+    ): Channel {
         val repos: RepositoryFacade = mock()
         whenever(repos.selectMessages(any())) doReturn emptyList()
         whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
@@ -398,7 +444,7 @@ internal class EventHandlerSequentialTest {
             .withRepositoryFacade(repos)
             .get(this)
 
-        handler.handleEvents(randomNewMessageEvent(cid = storedChannel.cid, message = message))
+        handler.handleEvents(eventIn(storedChannel, message))
 
         val inserted = argumentCaptor<Collection<Channel>>()
         verify(repos).insertChannels(inserted.capture())
