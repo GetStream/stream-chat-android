@@ -44,6 +44,24 @@ internal fun EventHandlingResult.skipWatchBelowLoadedChannels(
 }
 
 /**
+ * Turns a [EventHandlingResult.WatchAndAdd] for a partial channel update into [EventHandlingResult.Skip] when the
+ * channel has no local copy and the grouped list was not queried with `watch`. Such a channel is shown when its page
+ * loads. Other results and events are returned unchanged.
+ *
+ * @param event The event that produced this result.
+ * @param cachedChannel The local copy of the event's channel, or `null` when there is none.
+ * @param watch Whether the grouped list was queried with `watch`.
+ */
+internal fun EventHandlingResult.skipWatchWithoutLocalCopy(
+    event: ChatEvent,
+    cachedChannel: Channel?,
+    watch: Boolean,
+): EventHandlingResult {
+    if (this !is EventHandlingResult.WatchAndAdd || event !is NotificationChannelPartialUpdatedEvent) return this
+    return if (cachedChannel == null && !watch) EventHandlingResult.Skip else this
+}
+
+/**
  * Whether [channel] sorts within the loaded channels: the group has no more pages, or the channel sorts at or above
  * the last loaded channel. Without local data the channel has no last message time, so its position is a lower bound:
  * a channel with recent activity but no local copy can be skipped, and it then shows after the next refresh.
