@@ -54,4 +54,12 @@ internal class AIVoiceVisualizationSemanticsTest {
         compose.onNodeWithContentDescription("Voice agent")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Ready"))
     }
+
+    @Test
+    fun `the glow says it is the voice agent and what it is doing`() {
+        compose.setContent { AIVoiceGlow(AIVoiceAgentState.Speaking, rendering = AIVoiceGlowRendering.Canvas) }
+
+        compose.onNodeWithContentDescription("Voice agent")
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Speaking"))
+    }
 }
