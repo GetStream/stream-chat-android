@@ -54,11 +54,19 @@ class GroupedChannelListTests : StreamTestCase() {
         step("GIVEN backend has two pages of new channels") {
             seedNewChannels(channelsCount = 20)
         }
+        step("AND user opens the new tab") {
+            userRobot.login().waitForChannelListToLoad().openGroupTab("new")
+        }
+        step("AND user reconnects once, so the app has a last sync date") {
+            // After a fresh login, the first sync date is stored by the first reconnection. Pages are kept only after
+            // a sync that starts from a known date.
+            device.disableInternetConnection()
+            userRobot.sleep(2.seconds)
+            device.enableInternetConnection()
+            userRobot.sleep(3.seconds)
+        }
         step("AND user scrolls to the end of the second page of the new tab") {
             userRobot
-                .login()
-                .waitForChannelListToLoad()
-                .openGroupTab("new")
                 // The first scroll loads the second page, the second one reaches its end.
                 .scrollChannelListDown()
                 .scrollChannelListDown()
