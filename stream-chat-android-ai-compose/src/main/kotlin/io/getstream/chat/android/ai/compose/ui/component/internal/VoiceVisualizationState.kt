@@ -16,13 +16,23 @@
 
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
+import android.content.ContentResolver
+import android.database.ContentObserver
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.LongState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.withFrameNanos
@@ -40,6 +50,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.IntSize
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.AIVoiceAgentState
+import io.getstream.chat.android.ai.compose.ui.component.AIVoiceVisualizationDefaults
 import kotlin.math.min
 
 /**
@@ -57,16 +68,14 @@ internal fun rememberVoiceVisualization(
     expressivity: Float,
     audioLevel: (() -> Float?)?,
 ): VoiceVisualizationState {
-    val context = LocalContext.current
-    val reduceMotion = remember(context) {
-        Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
-    }
-    val palette = remember(colors) { VoiceVisualizationPalette.hsv(colors.ifEmpty { listOf(Color.Black) }) }
+    val reduceMotion by rememberAnimationsOff()
+    val fallback = AIVoiceVisualizationDefaults.colors()
+    val palette = remember(colors, fallback) { VoiceVisualizationPalette.hsv(colors.ifEmpty { fallback }) }
     fun input(level: Float?) = VoiceVisualizationDriver.Input(
         state = state,
         colors = palette,
-        expressivity = expressivity.coerceIn(0f, 2f),
-        audioLevel = level?.coerceIn(0f, 1f),
+        expressivity = expressivityInput(expressivity),
+        audioLevel = audioLevelInput(level),
         reduceMotion = reduceMotion,
     )
     val driver = remember { VoiceVisualizationDriver(input(audioLevel?.invoke())) }
@@ -81,7 +90,7 @@ internal fun rememberVoiceVisualization(
                 withFrameNanos { now ->
                     if (last != 0L) {
                         val current = driver.input
-                        driver.input = current.copy(audioLevel = level.value?.invoke()?.coerceIn(0f, 1f))
+                        driver.input = current.copy(audioLevel = audioLevelInput(level.value?.invoke()))
                         driver.advance((now - last) / NANOS)
                     }
                     last = now
@@ -93,12 +102,42 @@ internal fun rememberVoiceVisualization(
     return remember(driver) { VoiceVisualizationState(driver, frame) }
 }
 
+/** [expressivity] from 0 to 2; one that is not a number gets the default, 1. */
+internal fun expressivityInput(expressivity: Float): Float =
+    if (expressivity.isFinite()) expressivity.coerceIn(0f, 2f) else 1f
+
+/** [level] from 0 to 1; one that is not a number counts as no live audio, so it can't stall the motion. */
+internal fun audioLevelInput(level: Float?): Float? = level?.takeIf { it.isFinite() }?.coerceIn(0f, 1f)
+
+/** Whether the system's animations are off, following the setting while the screen is shown. */
+@Composable
+private fun rememberAnimationsOff(): State<Boolean> {
+    val context = LocalContext.current
+    val resolver = context.contentResolver
+    val off = remember(resolver) { mutableStateOf(animationsOff(resolver)) }
+    DisposableEffect(resolver) {
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                off.value = animationsOff(resolver)
+            }
+        }
+        val uri = Settings.Global.getUriFor(Settings.Global.ANIMATOR_DURATION_SCALE)
+        resolver.registerContentObserver(uri, false, observer)
+        onDispose { resolver.unregisterContentObserver(observer) }
+    }
+    return off
+}
+
+private fun animationsOff(resolver: ContentResolver) =
+    Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+
 /** Whether to draw for a dark background, from the surface the visualization sits on. */
 internal fun Color.isDark() = luminance() < DarkLuminance
 
 /**
  * Names the visualization and its state for accessibility, bounces it where it is tapped inside
- * [contains], and ripples it under a hovering mouse or stylus. [contains] takes the point in the
+ * [contains], and ripples it under a hovering mouse or stylus. It consumes no pointer events, so a
+ * clickable on the view or a parent works as usual. [contains] takes the point in the
  * renderers' coordinates: centred, normalized to the shorter side, y up.
  */
 @Composable
@@ -113,9 +152,12 @@ internal fun Modifier.voiceVisualization(
         contentDescription = label
         stateDescription = value
     }.pointerInput(visualization) {
-        detectTapGestures { offset ->
-            val x = normalizedX(offset.x, size)
-            val y = normalizedY(offset.y, size)
+        // Watches taps without consuming them, so a clickable on the view or a parent still gets them.
+        awaitEachGesture {
+            awaitFirstDown(requireUnconsumed = false)
+            val up = waitForUpOrCancellation() ?: return@awaitEachGesture
+            val x = normalizedX(up.position.x, size)
+            val y = normalizedY(up.position.y, size)
             if (contains(x, y)) visualization.driver.tap(x, y)
         }
     }.pointerInput(visualization) {
