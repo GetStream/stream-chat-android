@@ -34,11 +34,7 @@ env:
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 jobs:
-  # The suite runs in the merge queue and on manual dispatch, not on pull requests. The workflow
-  # still triggers on pull requests so the "E2E result" required check reports and lets the PR
-  # enter the queue.
   build-compose-apks:
-    if: ${{ github.event_name != 'pull_request' }}
     permissions:
       actions: write
       contents: read
@@ -126,7 +122,7 @@ jobs:
             fastlane/stream-chat-test-mock-server/logs/*
             fastlane/allure-results/*
   # The single required check for E2E, so the shard count can change without touching branch
-  # protection. Skipped jobs count as passed: on pull requests every job above is skipped.
+  # protection.
   e2e-result:
     name: E2E result
     runs-on: ubuntu-24.04
