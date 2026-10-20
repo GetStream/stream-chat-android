@@ -208,6 +208,7 @@ internal class DomainMapping(
             frozen = frozen,
             createdAt = created_at,
             updatedAt = updated_at,
+            lastMessageAt = last_message_at,
             team = team,
             extraData = (extraData + (CHANNEL_DISABLED_FIELD to disabled)).toMutableMap(),
         ).let(channelTransformer::transform)

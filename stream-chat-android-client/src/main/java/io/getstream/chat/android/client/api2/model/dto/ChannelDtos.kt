@@ -62,6 +62,7 @@ internal data class DownstreamChannelPartialUpdateDto(
     val image: String?,
     val created_at: Date?,
     val updated_at: Date?,
+    val last_message_at: Date? = null,
     val frozen: Boolean,
     val disabled: Boolean,
     val team: String = "",

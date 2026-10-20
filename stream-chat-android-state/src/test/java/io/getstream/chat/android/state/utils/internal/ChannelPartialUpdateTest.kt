@@ -24,6 +24,7 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.util.Date
 
 internal class ChannelPartialUpdateTest {
 
@@ -66,6 +67,24 @@ internal class ChannelPartialUpdateTest {
         assertEquals(local.config, merged.config)
         assertEquals(local.membership, merged.membership)
         assertEquals(local.lastMessageAt, merged.lastMessageAt)
+    }
+
+    @Test
+    fun `merging a partial update takes a later last message time from the event`() {
+        val local = randomChannel(lastMessageAt = Date(1_000))
+
+        val merged = local.mergePartialUpdate(partial.copy(lastMessageAt = Date(2_000)))
+
+        assertEquals(Date(2_000), merged.lastMessageAt)
+    }
+
+    @Test
+    fun `merging a partial update keeps a later local last message time`() {
+        val local = randomChannel(lastMessageAt = Date(2_000))
+
+        val merged = local.mergePartialUpdate(partial.copy(lastMessageAt = Date(1_000)))
+
+        assertEquals(Date(2_000), merged.lastMessageAt)
     }
 
     @Test
