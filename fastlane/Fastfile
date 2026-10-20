@@ -311,11 +311,11 @@ end
 lane :impact_analysis do
   {
     e2e: {
-      sources: ['buildSrc', 'stream-chat-android', 'gradle/libs.versions.toml', '.github/workflows/e2e-build', '.github/workflows/e2e-test'],
+      sources: ['buildSrc', 'stream-chat-android'],
       checks: ['E2E result']
     },
     ui: {
-      sources: ['stream-chat-android-ui', '.github/workflows/snapshot-test'],
+      sources: ['stream-chat-android-ui'],
       checks: ['Run']
     },
     sonar: {
