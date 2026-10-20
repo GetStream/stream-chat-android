@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -34,7 +33,6 @@ import java.util.Date
  */
 internal class V2LaneBatchTenTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "member_01" },
         channelTransformer = NoOpChannelTransformer,
@@ -64,7 +62,7 @@ internal class V2LaneBatchTenTest {
     }
 
     @Test
-    fun `A grouped query has the same body on v2 as on v1`() {
+    fun `A grouped query keeps its v1 body`() {
         val request = GroupedQueryChannelsRequest(
             limit = 5,
             presence = true,
@@ -72,7 +70,11 @@ internal class V2LaneBatchTenTest {
             groups = mapOf("new" to GroupedChannelsGroupRequest(limit = 2, next = "cursor")),
         )
 
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+        assertEquals(
+            """{"limit":5,"presence":true,"watch":true,"sort":[],"groups":{"new":{"limit":2,""" +
+                """"next":"cursor","filter_conditions":{}}}}""",
+            v2Body(request),
+        )
     }
 
     private companion object {

@@ -19,7 +19,6 @@ package io.getstream.chat.android.network.infrastructure
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.toSortParams
 import io.getstream.chat.android.client.parser.toMap
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NoOpChannelTransformer
@@ -41,7 +40,6 @@ import java.util.Date
  */
 internal class V2LaneBatchEightTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -74,9 +72,15 @@ internal class V2LaneBatchEightTest {
     }
 
     @Test
-    fun `A channel mute and a banned users query have the same bodies on v2 as on v1`() {
-        assertSameBody(MuteChannelRequest(channelCids = listOf("messaging:general"), expiration = 60000))
-        assertSameBody(
+    fun `A channel mute and a banned users query keep their v1 bodies`() {
+        assertBody(
+            """{"expiration":60000,"channel_cids":["messaging:general"]}""",
+            MuteChannelRequest(channelCids = listOf("messaging:general"), expiration = 60000),
+        )
+        assertBody(
+            """{"filter_conditions":{"${'$'}and":[{"channel_cid":"messaging:general"},""" +
+                """{"created_at":{"${'$'}gt":"2026-10-12T15:25:41.052Z"}}]},"limit":2,"offset":1,""" +
+                """"sort":[{"direction":-1,"field":"created_at"}]}""",
             QueryBannedUsersPayload(
                 filterConditions = Filters.and(
                     Filters.eq("channel_cid", "messaging:general"),
@@ -96,8 +100,8 @@ internal class V2LaneBatchEightTest {
         assertEquals("""{"filter_conditions":{},"created_at_after":"2026-10-12T15:25:41.052Z"}""", v2Body(payload))
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {

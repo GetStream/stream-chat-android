@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -39,7 +38,6 @@ import java.util.Date
  */
 internal class V2LaneBatchSixTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -77,10 +75,13 @@ internal class V2LaneBatchSixTest {
     }
 
     @Test
-    fun `Search and members payloads are the same on v2 as on v1`() {
+    fun `Search and members payloads keep their v1 bodies`() {
         val sort = listOf(SortParamRequest(field = "created_at", direction = -1))
         val since = mapOf("created_at" to mapOf("\$gt" to Date(1791798765916)))
-        assertSameBody(
+        assertBody(
+            """{"filter_conditions":{"cid":"messaging:sample-app-channel-8"},"limit":2,""" +
+                """"query":"zebra","sort":[{"direction":-1,"field":"created_at"}],""" +
+                """"message_filter_conditions":{"created_at":{"${'$'}gt":"2026-10-12T09:52:45.916Z"}}}""",
             SearchPayload(
                 filterConditions = mapOf("cid" to "messaging:sample-app-channel-8"),
                 messageFilterConditions = since,
@@ -89,7 +90,10 @@ internal class V2LaneBatchSixTest {
                 sort = sort,
             ),
         )
-        assertSameBody(
+        assertBody(
+            """{"type":"messaging",""" +
+                """"filter_conditions":{"created_at":{"${'$'}gt":"2026-10-12T09:52:45.916Z"}},"id":"a",""" +
+                """"limit":2,"members":[],"sort":[{"direction":-1,"field":"created_at"}]}""",
             QueryMembersPayload(type = "messaging", id = "a", filterConditions = since, limit = 2, sort = sort),
         )
     }
@@ -107,8 +111,8 @@ internal class V2LaneBatchSixTest {
         )
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {
