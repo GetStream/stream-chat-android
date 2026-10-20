@@ -400,6 +400,17 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AITypingInd
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState : java/lang/Enum {
+	public static final field Connecting Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+	public static final field Idle Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+	public static final field Listening Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+	public static final field Speaking Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+	public static final field Thinking Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+	public static fun values ()[Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
+}
+
 public abstract interface class io/getstream/chat/android/ai/compose/ui/component/ChatAiComponentFactory {
 	public fun AISuggestionsChip (Lio/getstream/chat/android/ai/compose/ui/component/AISuggestionsChipParams;Landroidx/compose/runtime/Composer;I)V
 	public fun AITypingIndicatorIndicator (Lio/getstream/chat/android/ai/compose/ui/component/AITypingIndicatorIndicatorParams;Landroidx/compose/runtime/Composer;I)V
