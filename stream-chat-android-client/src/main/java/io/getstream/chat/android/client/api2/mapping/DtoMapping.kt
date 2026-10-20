@@ -24,7 +24,13 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_MESSAGE_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_OWN_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.GENERATED_USER_EXTRA_DATA_KEYS
+import io.getstream.chat.android.client.parser2.adapters.LEGACY_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChatPreferences
@@ -156,7 +162,7 @@ internal class DtoMapping(
         userId = userId,
         channelRole = null,
         user = null,
-        custom = extraData,
+        custom = extraData - RESPONSE_ONLY_MEMBER_KEYS,
     )
 
     /**
@@ -170,7 +176,7 @@ internal class DtoMapping(
         userId = getUserId(),
         channelRole = channelRole,
         user = null,
-        custom = extraData,
+        custom = extraData - RESPONSE_ONLY_MEMBER_KEYS,
     )
 
     /**
@@ -197,6 +203,7 @@ internal class DtoMapping(
      */
     internal fun Map<String, Any>.toChannelInput(): ChannelInput {
         val custom = toMutableMap()
+        custom.keys.removeAll(RESPONSE_ONLY_CHANNEL_KEYS)
         val shared = SharedChannelData(custom)
         return ChannelInput(
             autoTranslationEnabled = shared.autoTranslationEnabled,
@@ -218,6 +225,7 @@ internal class DtoMapping(
     /** The update counterpart of [toChannelInput]. */
     internal fun Map<String, Any>.toChannelInputRequest(): ChannelInputRequest {
         val custom = toMutableMap()
+        custom.keys.removeAll(RESPONSE_ONLY_CHANNEL_KEYS)
         val shared = SharedChannelData(custom)
         return ChannelInputRequest(
             autoTranslationEnabled = shared.autoTranslationEnabled,
@@ -444,7 +452,7 @@ internal class DtoMapping(
                     invisible = isInvisible,
                     language = language,
                     privacySettings = privacySettings?.toDto(),
-                    custom = extraData - USER_DEVICES_CUSTOM_KEY,
+                    custom = extraData - RESPONSE_ONLY_USER_KEYS - USER_DEVICES_CUSTOM_KEY,
                 )
             }
 
@@ -483,6 +491,21 @@ internal val SENT_BACK_MESSAGE_KEYS = setOf(MENTIONED_GROUP_IDS_KEY, MML_KEY, PO
  * readers under `custom`. Derived, so a field added to the copied ones is dropped until a request carries it.
  */
 private val RESPONSE_ONLY_MESSAGE_KEYS = GENERATED_MESSAGE_EXTRA_DATA_KEYS - SENT_BACK_MESSAGE_KEYS
+
+/** The user counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: every declared user field the user adapters keep. */
+private val RESPONSE_ONLY_USER_KEYS =
+    GENERATED_USER_EXTRA_DATA_KEYS + GENERATED_FULL_USER_EXTRA_DATA_KEYS + GENERATED_OWN_USER_EXTRA_DATA_KEYS
+
+/**
+ * The channel counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]: the declared channel fields the channel adapters keep,
+ * except those a channel request also declares. v1 rejects `muted` and `mute_expires_at` as reserved, while v2 would
+ * store them.
+ */
+private val RESPONSE_ONLY_CHANNEL_KEYS = GENERATED_CHANNEL_EXTRA_DATA_KEYS + LEGACY_CHANNEL_EXTRA_DATA_KEYS -
+    setOf("auto_translation_enabled", "auto_translation_language", "disabled")
+
+/** The member counterpart of [RESPONSE_ONLY_MESSAGE_KEYS]. */
+private val RESPONSE_ONLY_MEMBER_KEYS = GENERATED_MEMBER_EXTRA_DATA_KEYS
 
 /** The JSON names [ChannelMemberRequest] declares. */
 private val MEMBER_REQUEST_KEYS = setOf("channel_role", "user_id", "custom", "user")

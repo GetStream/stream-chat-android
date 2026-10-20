@@ -173,10 +173,9 @@ internal const val USER_DEVICES_CUSTOM_KEY = "devices"
 internal val USER_RECORD_ONLY_KEYS = setOf("ban_expires", "invisible", "last_engaged_at", "privacy_settings")
 
 /**
- * The fields [UserResponse] declares, except those the mapping fills in from the typed fields. A v1 response leaves a
- * custom value stored under a declared name out of `custom` (its encoder skips custom keys that collide with a declared
- * field), so the mapping drops them too. Apps have stored such copies by sending the whole user back as custom data,
- * e.g. `banned`.
+ * The fields [UserResponse] declares. A v1 response leaves a custom value stored under any of these names out of
+ * `custom` (its encoder skips custom keys that collide with a declared field), so the v2 mapping hides them too. Apps
+ * have stored such copies by sending the whole user back as custom data, e.g. `banned`.
  */
 internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
     "avg_response_time",
@@ -184,22 +183,21 @@ internal val USER_HIDDEN_CUSTOM_KEYS = setOf(
     "blocked_user_ids",
     "created_at",
     "deactivated_at",
+    "deleted_at",
     "id",
     "image",
     "language",
     "last_active",
     "name",
     "online",
+    "revoke_tokens_issued_before",
     "role",
     "teams",
     "teams_role",
     "updated_at",
 ) + USER_RECORD_ONLY_KEYS
 
-/**
- * The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS], with every declared name: only v2 returns this
- * model, so the fields the mapping fills in come from the typed values rather than a stored copy.
- */
+/** The [FullUserResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
 internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "avg_response_time",
     "ban_expires",
@@ -232,6 +230,60 @@ internal val FULL_USER_HIDDEN_CUSTOM_KEYS = setOf(
     "updated_at",
 ) + USER_RECORD_ONLY_KEYS
 
+/** The [ChannelResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
+internal val CHANNEL_HIDDEN_CUSTOM_KEYS = setOf(
+    "auto_translation_enabled",
+    "auto_translation_language",
+    "blocked",
+    "cid",
+    "config",
+    "cooldown",
+    "created_at",
+    "created_by",
+    "deleted_at",
+    "disabled",
+    "filter_tags",
+    "frozen",
+    "hidden",
+    "hide_messages_before",
+    "id",
+    "last_message_at",
+    "member_count",
+    "members",
+    "message_count",
+    "mute_expires_at",
+    "muted",
+    "own_capabilities",
+    "team",
+    "truncated_at",
+    "truncated_by",
+    "type",
+    "updated_at",
+)
+
+/** The [ChannelMemberResponse] counterpart of [USER_HIDDEN_CUSTOM_KEYS]. */
+internal val MEMBER_HIDDEN_CUSTOM_KEYS = setOf(
+    "archived_at",
+    "ban_expires",
+    "banned",
+    "channel_role",
+    "created_at",
+    "deleted_at",
+    "deleted_messages",
+    "invite_accepted_at",
+    "invite_rejected_at",
+    "invited",
+    "is_moderator",
+    "notifications_muted",
+    "pinned_at",
+    "role",
+    "shadow_banned",
+    "status",
+    "updated_at",
+    "user",
+    "user_id",
+)
+
 /** V1 moderation is injected into the message custom data, not declared on the payload. */
 internal const val MODERATION_DETAILS_KEY = "moderation_details"
 
@@ -241,6 +293,7 @@ internal class DomainMapping(
     private val channelTransformer: ChannelTransformer,
     private val messageTransformer: MessageTransformer,
     private val userTransformer: UserTransformer,
+    private val hidesStoredDeclaredCustom: Boolean = false,
 ) {
 
     /**
@@ -292,7 +345,8 @@ internal class DomainMapping(
             ownCapabilities = ownCapabilities.orEmpty().mapTo(mutableSetOf(), ChannelOwnCapability::value),
             messageCount = messageCount,
             lastMessageAt = lastMessageAt,
-            extraData = custom.withDeclared(
+            extraData = custom.withDeclaredHidingStored(
+                CHANNEL_HIDDEN_CUSTOM_KEYS,
                 "auto_translation_enabled" to autoTranslationEnabled,
                 "auto_translation_language" to autoTranslationLanguage,
                 "blocked" to blocked,
@@ -772,7 +826,8 @@ internal class DomainMapping(
             channelMutes = channelMutes.map { it.toDomain() },
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.minus(FULL_USER_HIDDEN_CUSTOM_KEYS).withDeclared(
+            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+                FULL_USER_HIDDEN_CUSTOM_KEYS,
                 "ban_expires" to banExpires,
                 "deleted_at" to deletedAt,
                 "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
@@ -853,7 +908,8 @@ internal class DomainMapping(
             banExpires = banExpires,
             pinnedAt = pinnedAt,
             archivedAt = archivedAt,
-            extraData = custom.withDeclared(
+            extraData = custom.withDeclaredHidingStored(
+                MEMBER_HIDDEN_CUSTOM_KEYS,
                 "deleted_at" to deletedAt,
                 "deleted_messages" to deletedMessages,
                 "is_moderator" to isModerator,
@@ -879,7 +935,8 @@ internal class DomainMapping(
             teamsRole = teamsRole.orEmpty(),
             blockedUserIds = blockedUserIds,
             avgResponseTime = avgResponseTime?.toLong(),
-            extraData = custom.minus(USER_HIDDEN_CUSTOM_KEYS).minus(USER_DEVICES_CUSTOM_KEY).withDeclared(
+            extraData = custom.minus(USER_DEVICES_CUSTOM_KEY).withDeclaredHidingStored(
+                USER_HIDDEN_CUSTOM_KEYS,
                 "deleted_at" to deletedAt,
                 "revoke_tokens_issued_before" to revokeTokensIssuedBefore,
             ).mapNotNull { (key, value) -> value?.let { key to it } }.toMap(),
@@ -887,13 +944,28 @@ internal class DomainMapping(
 
     /**
      * The v1 adapters also keep some declared fields in `custom`, so the domain has always carried them in `extraData`,
-     * in their wire shape. v2 sends them only as typed fields: each present one is added here where `custom` lacks it,
-     * so both lanes map to the same domain object.
+     * in their wire shape. v2 sends them as typed fields: each present one is added here where `custom` lacks it, so
+     * both lanes map to the same domain object. v2 can also return a custom value stored under a declared name; see
+     * [withDeclaredHidingStored].
      */
     private fun Map<String, Any?>.withDeclared(vararg fields: Pair<String, Any?>): Map<String, Any?> {
         val missing = fields.filter { (key, value) -> key !in this && value.isPresent() }
         if (missing.isEmpty()) return this
         return this + missing.map { (key, value) -> key to wireValueAdapter.toJsonValue(value) }
+    }
+
+    /**
+     * [withDeclared] for users, channels and members, whose declared fields apps have long sent back as custom data. A
+     * v1 response leaves out a custom value stored under a declared name, while v2 returns it under `custom`: with
+     * [hidesStoredDeclaredCustom] set, the [hidden] names give way to the fields, present or not, as on v1. The v1 lane
+     * keeps the default, since its custom data carries the fields' own wire values.
+     */
+    private fun Map<String, Any?>.withDeclaredHidingStored(
+        hidden: Set<String>,
+        vararg fields: Pair<String, Any?>,
+    ): Map<String, Any?> {
+        val custom = if (hidesStoredDeclaredCustom && hidden.any { it in this }) this - hidden else this
+        return custom.withDeclared(*fields)
     }
 
     private fun Any?.isPresent(): Boolean = when (this) {
