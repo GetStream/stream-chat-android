@@ -46,8 +46,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -73,6 +75,36 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
         val result = sut.getSyncHistory(channelIds, lastSyncAt).await()
         // then
         verifySuccess(result, events)
+    }
+
+    @Test
+    fun getSyncHistoryDoesNotWatch() = runTest {
+        // given
+        val channelIds = listOf(randomCID())
+        val lastSyncAt = Date().apply { time -= 1.days.inWholeMilliseconds }
+        val sut = Fixture()
+            .givenGetSyncHistoryResult(RetroSuccess(emptyList<ChatEvent>()).toRetrofitCall())
+            .get()
+        // when
+        sut.getSyncHistory(channelIds, lastSyncAt).await()
+        sut.getSyncHistory(channelIds, StreamDateFormatter().format(lastSyncAt)).await()
+        // then
+        verify(api, times(2)).getSyncHistory(eq(channelIds), any(), eq(false))
+    }
+
+    @Test
+    fun getSyncHistoryInternalPassesWatch() = runTest {
+        // given
+        val channelIds = listOf(randomCID())
+        val lastSyncAt = Date().apply { time -= 1.days.inWholeMilliseconds }
+        val sut = Fixture()
+            .givenGetSyncHistoryResult(RetroSuccess(emptyList<ChatEvent>()).toRetrofitCall())
+            .get()
+        // when
+        sut.getSyncHistoryInternal(channelIds, lastSyncAt, watch = true).await()
+        sut.getSyncHistoryInternal(channelIds, StreamDateFormatter().format(lastSyncAt), watch = true).await()
+        // then
+        verify(api, times(2)).getSyncHistory(eq(channelIds), any(), eq(true))
     }
 
     @Test
@@ -518,7 +550,7 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
     internal inner class Fixture {
 
         fun givenGetSyncHistoryResult(result: Call<List<ChatEvent>>) = apply {
-            whenever(api.getSyncHistory(any(), any())).thenReturn(result)
+            whenever(api.getSyncHistory(any(), any(), any())).thenReturn(result)
         }
 
         fun givenSearchMessagesResult(result: Call<SearchMessagesResult>) = apply {

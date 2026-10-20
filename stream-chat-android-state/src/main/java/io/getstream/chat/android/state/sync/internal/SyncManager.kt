@@ -48,6 +48,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
+import io.getstream.chat.android.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -140,7 +141,7 @@ internal class SyncManager(
     override suspend fun sync() {
         logger.d { "[sync] no args" }
         state.value = State.Syncing
-        performSync()
+        performSync(watch = false, groupedListsFirst = false)
         state.value = State.Idle
     }
 
@@ -252,8 +253,12 @@ internal class SyncManager(
         }
         if (isAutomaticSyncOnReconnectEnabled) {
             logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
-            performSync()
-            restoreActiveChannels()
+            // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
+            val syncedCids = performSync(
+                watch = !isFirstConnect.get() && groupedListsWatch(),
+                groupedListsFirst = true,
+            )
+            restoreActiveChannels(syncedCids)
         } else {
             logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
         }
@@ -283,42 +288,65 @@ internal class SyncManager(
         logger.i { "[connectionLost] failed: $e" }
     }
 
-    private suspend fun performSync() {
-        logger.i { "[performSync] no args" }
-        val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
+    /**
+     * @param groupedListsFirst Whether the channels of grouped lists go first, so the cap on the request covers them. A
+     * grouped list keeps its loaded pages after a reconnect only when the request covered them.
+     */
+    private suspend fun performSync(watch: Boolean, groupedListsFirst: Boolean): Set<String> {
+        logger.i { "[performSync] watch: $watch, groupedListsFirst: $groupedListsFirst" }
+        val groupedCids = if (groupedListsFirst) {
+            logicRegistry.getActiveQueryChannelsLogic().filter { it.groupKey() != null }.flatMap { it.cids() }
+        } else {
+            emptyList()
+        }
+        val cids = (groupedCids + logicRegistry.getActiveChannelsLogic().map { it.cid }).distinct().ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
-        mutex.withLock {
-            performSync(cids)
+        return mutex.withLock {
+            performSync(cids, watch)
         }
     }
 
+    /**
+     * Whether a grouped list watches its channels. The channels on its later pages are only watched again by `/sync`,
+     * since the reconnect refresh asks for the first page.
+     */
+    private fun groupedListsWatch(): Boolean = logicRegistry.getActiveQueryChannelsLogic()
+        .any { it.groupKey() != null && it.groupedQueryConfig()?.watch ?: true }
+
+    /**
+     * Requests the events of [cids] since the last sync and emits them.
+     *
+     * @return The cids whose events were requested and received, or an empty set when the request failed or there was
+     * no previous sync date, since the request then starts now and misses what happened before.
+     */
     @VisibleForTesting
-    internal suspend fun performSync(cids: List<String>) {
-        logger.d { "[performSync] cids.size: ${cids.size} " }
+    internal suspend fun performSync(cids: List<String>, watch: Boolean = false): Set<String> {
+        logger.d { "[performSync] cids.size: ${cids.size}, watch: $watch" }
         if (cids.isEmpty()) {
             logger.w { "[performSync] rejected (cids is empty)" }
-            return
+            return emptySet()
         }
         val syncState = syncState.value ?: repos.selectSyncState(currentUserId)
         val lastSyncAt = syncState?.lastSyncedAt ?: Date(now())
         val rawLastSyncAt = syncState?.rawLastSyncedAt
         logger.v { "[performSync] lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
+        val syncedCids = if (syncState?.lastSyncedAt == null) emptySet() else cappedCids.toSet()
         val result = if (rawLastSyncAt != null) {
-            chatClient.getSyncHistory(cappedCids, rawLastSyncAt).await()
+            chatClient.getSyncHistoryInternal(cappedCids, rawLastSyncAt, watch).await()
         } else {
-            chatClient.getSyncHistory(cappedCids, lastSyncAt).await()
+            chatClient.getSyncHistoryInternal(cappedCids, lastSyncAt, watch).await()
         }
         if (result.isTooManyEventsToSyncError()) {
             logger.e { "[performSync] failed (too many events to sync): $result" }
             updateLastSyncedDate(latestEventDate = Date(now()), rawLatestEventDate = null)
-            return
+            return emptySet()
         }
         if (result !is Result.Success) {
             logger.e { "[performSync] failed($result)" }
-            return
+            return emptySet()
         }
         val sortedEvents = result.value.sortedBy { it.createdAt }
         logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
@@ -335,14 +363,15 @@ internal class SyncManager(
         }
         if (sortedEvents.isEmpty()) {
             logger.w { "[performSync] rejected (no events to emit)" }
-            return
+            return syncedCids
         }
         if (rawLastSyncAt == rawLatestEventDate) {
             logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
-            return
+            return syncedCids
         }
         events.emit(sortedEvents)
         logger.v { "[performSync] events emission completed" }
+        return syncedCids
     }
 
     /**
@@ -405,7 +434,11 @@ internal class SyncManager(
         logger.e(e) { "[retryFailedEntities] failed: $e" }
     }
 
-    private suspend fun restoreActiveChannels() {
+    /**
+     * @param syncedCids The cids whose events the reconnect sync received. A grouped list keeps its loaded pages only
+     * when they are all here, since no other request updates the channels beyond its first page.
+     */
+    private suspend fun restoreActiveChannels(syncedCids: Set<String>) {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
 
@@ -416,7 +449,7 @@ internal class SyncManager(
         // --- GroupedQueryChannels path ---
         val groupedHandledCids: Set<String> = if (hasGroupedQueries) {
             // Refresh first page of the queries populated via GroupedQueryChannels
-            val refreshed = updateGroupedQueryChannels(recoverAll)
+            val refreshed = updateGroupedQueryChannels(recoverAll, syncedCids)
             // Re-watch tracked channels (specific for this path, where we don't re-watch the groups, just the manually
             // opened/tracked channels)
             val rewatched = rewatchTrackedWatchedChannels()
@@ -457,7 +490,7 @@ internal class SyncManager(
      * Assumes the grouped queries that share a sort also share the same request-level `limit`,
      * `watch`, and `presence` flags — the first captured config wins.
      */
-    private suspend fun updateGroupedQueryChannels(recoverAll: Boolean): Set<String> {
+    private suspend fun updateGroupedQueryChannels(recoverAll: Boolean, syncedCids: Set<String>): Set<String> {
         val activeGroupedLogics = logicRegistry.getActiveQueryChannelsLogic()
             .filter { it.groupKey() != null && (it.recoveryNeeded().value || recoverAll) }
 
@@ -469,10 +502,13 @@ internal class SyncManager(
         return activeGroupedLogics
             .groupBy { it.groupedQueryConfig()?.sort }
             .values
-            .flatMapTo(mutableSetOf()) { logics -> recoverGroupedQueryChannels(logics) }
+            .flatMapTo(mutableSetOf()) { logics -> recoverGroupedQueryChannels(logics, syncedCids) }
     }
 
-    private suspend fun recoverGroupedQueryChannels(activeGroupedLogics: List<QueryChannelsLogic>): Set<String> {
+    private suspend fun recoverGroupedQueryChannels(
+        activeGroupedLogics: List<QueryChannelsLogic>,
+        syncedCids: Set<String>,
+    ): Set<String> {
         // Shared fields (limit, watch, presence, sort) are identical across groups from the same
         // original session — take the first captured config. Per-group page sizes and filters are merged in
         // the `groups` map below so the server returns the same page sizes the caller chose.
@@ -495,6 +531,13 @@ internal class SyncManager(
             }
             .toMap()
             .takeIf { it.isNotEmpty() }
+            ?.let { groups ->
+                val keysKeepingPages = activeGroupedLogics
+                    .filter { syncedCids.containsAll(it.cids()) }
+                    .mapNotNull { it.groupKey() }
+                    .toSet()
+                ReconnectGroupQueries(groups, keysKeepingPages)
+            }
 
         val result = chatClient.queryGroupedChannelsInternal(
             limit = shared?.limit,

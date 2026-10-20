@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.robots
 
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
+import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
@@ -32,6 +33,15 @@ fun UserRobot.assertChannelAvatar(): UserRobot {
 fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boolean? = null): UserRobot {
     val expectedPreview = if (fromCurrentUser == true) "You: $text" else text
     assertEquals(expectedPreview, Channel.messagePreview.waitToAppear().text.trimEnd())
+    return this
+}
+
+fun UserRobot.assertChannelWithName(name: String, isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Channel.name(name).wait().isDisplayed())
+    } else {
+        assertFalse(Channel.name(name).waitToDisappear().isDisplayed())
+    }
     return this
 }
 

@@ -143,7 +143,8 @@ internal class QueryGroupedChannelsListenerState(
                     sort = sort,
                 ),
             )
-            queryLogic.applyGroupedResult(group, isFirstPage = isFirstPage)
+            val keepsLoadedPages = (groups as? ReconnectGroupQueries)?.keysKeepingPages?.contains(key) == true
+            queryLogic.applyGroupedResult(group, isFirstPage = isFirstPage, keepsLoadedPages = keepsLoadedPages)
         }
     }
 }

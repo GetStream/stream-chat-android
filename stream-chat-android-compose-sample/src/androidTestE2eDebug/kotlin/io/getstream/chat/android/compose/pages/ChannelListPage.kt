@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.BySelector
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 
 class ChannelListPage {
@@ -43,6 +44,9 @@ class ChannelListPage {
                 val avatar = By.res("Stream_ChannelAvatar")
                 val initialsAvatar = By.res("Stream_InitialsAvatar")
                 val name = By.res("Stream_ChannelName")
+
+                // A new selector each time, since `BySelector.text` changes the selector it is called on.
+                fun name(text: String): BySelector = By.res("Stream_ChannelName").text(text)
                 val messagePreview = By.res("Stream_MessagePreview")
                 val deliveryStatusIsRead = Message.deliveryStatusIsRead
                 val deliveryStatusIsPending = Message.deliveryStatusIsPending
@@ -54,6 +58,14 @@ class ChannelListPage {
                 val typingIndicator = By.res("Stream_ChannelListTypingIndicator")
                 val mutedIcon = By.res("Stream_ChannelMutedIcon")
             }
+        }
+    }
+
+    /** The tabs of the grouped channel list in `GroupedChannelsActivity`. */
+    class GroupTabs {
+
+        companion object {
+            fun tab(group: String): BySelector = By.res("Stream_GroupTab_$group")
         }
     }
 }

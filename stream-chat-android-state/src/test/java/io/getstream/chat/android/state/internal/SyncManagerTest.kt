@@ -56,6 +56,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.plugin.listener.internal.ReconnectGroupQueries
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -91,6 +92,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.mockingDetails
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -120,6 +122,7 @@ internal class SyncManagerTest {
 
     @BeforeEach
     fun setUp() {
+        _syncState.value = null
         val channelLogic: ChannelLogic = mock {
             on(it.cid) doReturn randomCID()
         }
@@ -198,7 +201,7 @@ internal class SyncManagerTest {
             whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
             whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
 
-            whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(
                 Result.Success(listOf(mockedChatEvent)),
             )
             val connectingEvent = ConnectedEvent(
@@ -212,8 +215,9 @@ internal class SyncManagerTest {
             _syncEvents.test {
                 syncManager.onEvent(connectingEvent)
 
-                assertEquals(listOf(mockedChatEvent), awaitItem())
+                expectNoEvents()
             }
+            verify(chatClient).getSyncHistoryInternal(any(), eq(rawCreatedAt), any())
         }
 
     @Test
@@ -227,10 +231,10 @@ internal class SyncManagerTest {
             on(it.rawCreatedAt) doReturn rawCreatedAt
         }
 
-        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(
             Result.Success(listOf(mockedChatEvent)),
         )
-        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(
             Result.Success(listOf(mockedChatEvent)),
         )
 
@@ -253,7 +257,7 @@ internal class SyncManagerTest {
         val cids = (1..150).map { "messaging:channel-$it" }
         val expectedCids = cids.take(100)
 
-        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(
             Result.Success(emptyList()),
         )
 
@@ -263,7 +267,7 @@ internal class SyncManagerTest {
         syncManager.performSync(cids = cids)
 
         /* Then */
-        verify(chatClient).getSyncHistory(eq(expectedCids), any<Date>())
+        verify(chatClient).getSyncHistoryInternal(eq(expectedCids), any<Date>(), eq(false))
     }
 
     @Test
@@ -373,8 +377,8 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
         whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
-        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(result)
-        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(result)
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(result)
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(result)
 
         val syncManager = buildSyncManager()
 
@@ -561,7 +565,7 @@ internal class SyncManagerTest {
             }
 
             whenever(repositoryFacade.selectSyncState(user.id)) doReturn testSyncState
-            whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(
                 Result.Success(listOf(mockedChatEvent)),
             )
             whenever(clientState.isOnline) doReturn true
@@ -581,7 +585,7 @@ internal class SyncManagerTest {
             delay(100)
 
             /* Then */
-            verify(chatClient).getSyncHistory(any(), any<String>())
+            verify(chatClient).getSyncHistoryInternal(any(), any<String>(), any())
         }
 
     @Test
@@ -616,8 +620,8 @@ internal class SyncManagerTest {
             delay(100)
 
             /* Then */
-            verify(chatClient, never()).getSyncHistory(any(), any<String>())
-            verify(chatClient, never()).getSyncHistory(any(), any<Date>())
+            verify(chatClient, never()).getSyncHistoryInternal(any(), any<String>(), any())
+            verify(chatClient, never()).getSyncHistoryInternal(any(), any<Date>(), any())
         }
 
     // region Grouped Channels Sync
@@ -1358,6 +1362,227 @@ internal class SyncManagerTest {
                 presence = false,
             )
         }
+
+    @Test
+    fun `on reconnect a grouped list keeps its loaded pages when the sync covered them`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a", "messaging:b"))))
+
+        assertEquals(setOf("all"), keysKeepingPages())
+    }
+
+    @Test
+    fun `on reconnect a grouped list is reset when the sync reported too many events`() = runTest(testDispatcher) {
+        givenReconnect(
+            listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a"))),
+            syncResult = Result.Failure(tooManyEventsError()),
+        )
+
+        assertEquals(emptySet<String>(), keysKeepingPages())
+    }
+
+    @Test
+    fun `on reconnect a grouped list is reset when the sync failed`() = runTest(testDispatcher) {
+        givenReconnect(
+            listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a"))),
+            syncResult = Result.Failure(Error.NetworkError(message = randomString(), serverErrorCode = 0, statusCode = 500)),
+        )
+
+        assertEquals(emptySet<String>(), keysKeepingPages())
+    }
+
+    @Test
+    fun `on reconnect a grouped list is reset when its channels do not fit in one sync`() = runTest(testDispatcher) {
+        val cids = (1..101).mapTo(mutableSetOf()) { "messaging:$it" }
+
+        givenReconnect(listOf(groupedQueryLogic(watch = true, cids = cids)))
+
+        assertEquals(emptySet<String>(), keysKeepingPages())
+    }
+
+    @Test
+    fun `on reconnect only the grouped lists the sync covered keep their loaded pages`() = runTest(testDispatcher) {
+        val coveredLogic = groupedQueryLogic(watch = true, cids = setOf("messaging:a"))
+        val uncoveredLogic = groupedQueryLogic(
+            watch = true,
+            cids = (1..100).mapTo(mutableSetOf()) { "messaging:$it" },
+            groupKey = "new",
+        )
+
+        givenReconnect(listOf(coveredLogic, uncoveredLogic))
+
+        assertEquals(setOf("all"), keysKeepingPages())
+    }
+
+    @Test
+    fun `on reconnect sync watches the channels when a grouped list watches`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = true)))
+
+        assertEquals(true, syncHistoryCalls().last()[2])
+    }
+
+    @Test
+    fun `on first connect sync does not watch the channels`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = true)), reconnect = false)
+
+        assertEquals(listOf(false), syncHistoryCalls().map { it[2] })
+    }
+
+    @Test
+    fun `on reconnect sync does not watch the channels when no grouped list watches`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = false), standardQueryLogic()))
+
+        assertEquals(false, syncHistoryCalls().last()[2])
+    }
+
+    @Test
+    fun `sync does not watch the channels and does not put grouped lists first`() = runTest(testDispatcher) {
+        val channelLogics = (1..150).map { index -> mock<ChannelLogic> { on(it.cid) doReturn "messaging:$index" } }
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn channelLogics
+        val queryLogic = groupedQueryLogic(watch = true, cids = setOf("messaging:grouped"))
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
+        stubSyncHistory(Result.Success(emptyList()))
+
+        buildSyncManager().sync()
+
+        val call = syncHistoryCalls().single()
+        assertEquals(false, call[2])
+        assertEquals(channelLogics.take(100).map { it.cid }, call[0])
+    }
+
+    @Test
+    fun `on connect sync sends the channels of grouped lists first`() = runTest(testDispatcher) {
+        val channelLogics = (1..150).map { index -> mock<ChannelLogic> { on(it.cid) doReturn "messaging:$index" } }
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn channelLogics
+        val groupedCid = "messaging:grouped"
+        val standardLogic = standardQueryLogic(cids = setOf("messaging:standard"))
+        val groupedLogic = groupedQueryLogic(watch = true, cids = setOf(groupedCid))
+
+        givenReconnect(listOf(standardLogic, groupedLogic), reconnect = false)
+
+        val cids = syncHistoryCalls().single()[0] as List<*>
+        assertEquals(100, cids.size)
+        assertEquals(groupedCid, cids.first())
+    }
+
+    @Test
+    fun `sync without a last sync date reports no synced channels`() = runTest(testDispatcher) {
+        // The request then starts now, so it misses what happened before.
+        stubSyncHistory(Result.Success(emptyList()))
+        val syncManager = buildSyncManager()
+
+        val syncedCids = syncManager.performSync(listOf("messaging:1"), watch = true)
+
+        assertEquals(emptySet<String>(), syncedCids)
+    }
+
+    @Test
+    fun `sync with a last sync date reports the requested channels as synced`() = runTest(testDispatcher) {
+        _syncState.value = SyncState(userId = user.id, lastSyncedAt = localDate())
+        stubSyncHistory(Result.Success(emptyList()))
+        val syncManager = buildSyncManager()
+
+        val syncedCids = syncManager.performSync(listOf("messaging:1", "messaging:2"), watch = true)
+
+        assertEquals(setOf("messaging:1", "messaging:2"), syncedCids)
+    }
+
+    @Test
+    fun `too many events to sync does not query the channels`() = runTest(testDispatcher) {
+        stubSyncHistory(Result.Failure(tooManyEventsError()))
+        val syncManager = buildSyncManager()
+
+        val syncedCids = syncManager.performSync(listOf("messaging:1"), watch = true)
+
+        assertEquals(emptySet<String>(), syncedCids)
+        verify(chatClient, never()).queryChannelsInternal(any())
+    }
+
+    private fun groupedQueryLogic(
+        watch: Boolean,
+        cids: Set<String> = emptySet(),
+        groupKey: String = "all",
+    ): QueryChannelsLogic = mock {
+        on(it.groupKey()) doReturn groupKey
+        on(it.currentRequest()) doReturn mock()
+        on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+        on(it.cids()) doReturn cids
+        on(it.groupedQueryConfig()) doReturn GroupedQueryConfig(
+            limit = null,
+            pageSize = null,
+            watch = watch,
+            presence = false,
+        )
+    }
+
+    private fun standardQueryLogic(cids: Set<String> = emptySet()): QueryChannelsLogic = mock {
+        on(it.groupKey()) doReturn null
+        on(it.recoveryNeeded()) doReturn MutableStateFlow(false)
+        on(it.cids()) doReturn cids
+    }
+
+    /**
+     * Connects, and with [reconnect] connects again, which is when the grouped lists are refreshed.
+     */
+    private suspend fun TestScope.givenReconnect(
+        queryLogics: List<QueryChannelsLogic>,
+        syncResult: Result<List<ChatEvent>> = Result.Success(emptyList()),
+        reconnect: Boolean = true,
+    ) {
+        val createdAt = localDate()
+        whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn queryLogics
+        stubSyncHistory(syncResult)
+        whenever(
+            chatClient.queryGroupedChannelsInternal(
+                limit = anyOrNull(),
+                groups = anyOrNull(),
+                watch = any(),
+                presence = any(),
+                sort = anyOrNull(),
+            ),
+        ) doReturn TestCall(Result.Success(GroupedChannels(groups = emptyMap())))
+        whenever(chatClient.queryChannelsInternal(any())) doReturn TestCall(
+            Result.Success(QueryChannelsResult(channels = emptyList(), predefinedFilter = null)),
+        )
+        whenever(clientState.isOnline) doReturn true
+        val syncManager = buildSyncManager()
+        syncManager.onEvent(connectedEvent(createdAt, streamDateFormatter.format(createdAt)))
+        delay(100)
+        if (reconnect) {
+            syncManager.onEvent(connectedEvent(createdAt, streamDateFormatter.format(createdAt)))
+            delay(100)
+        }
+    }
+
+    private fun keysKeepingPages(): Set<String> =
+        (reconnectRefreshGroups() as ReconnectGroupQueries).keysKeepingPages
+
+    private fun reconnectRefreshGroups(): Map<String, GroupedChannelsGroupQuery>? {
+        val captor = argumentCaptor<Map<String, GroupedChannelsGroupQuery>>()
+        verify(chatClient).queryGroupedChannelsInternal(
+            limit = anyOrNull(),
+            groups = captor.capture(),
+            watch = any(),
+            presence = any(),
+            sort = anyOrNull(),
+        )
+        return captor.firstValue
+    }
+
+    private fun stubSyncHistory(result: Result<List<ChatEvent>>) {
+        whenever(chatClient.getSyncHistoryInternal(any(), any<Date>(), any())) doReturn TestCall(result)
+        whenever(chatClient.getSyncHistoryInternal(any(), any<String>(), any())) doReturn TestCall(result)
+    }
+
+    /** The arguments of each sync request, whichever last sync date variant it used. */
+    private fun syncHistoryCalls(): List<Array<Any?>> = mockingDetails(chatClient).invocations
+        .filter { it.method.name == "getSyncHistoryInternal" }
+        .map { it.arguments }
+
+    private fun tooManyEventsError() = Error.NetworkError(
+        serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+        message = "Too many events to sync, please use a more recent last_sync_at parameter",
+        statusCode = 400,
+    )
 
     private fun connectedEvent(createdAt: Date, rawCreatedAt: String) = ConnectedEvent(
         type = "type",

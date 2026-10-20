@@ -22,4 +22,5 @@ import com.squareup.moshi.JsonClass
 internal data class SyncHistoryRequest(
     val channel_cids: List<String>,
     val last_sync_at: String,
+    val watch: Boolean = false,
 )

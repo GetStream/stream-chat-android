@@ -1519,17 +1519,26 @@ constructor(
         }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> =
-        with(eventMapping) {
-            return generalApi.getSyncHistory(
-                body = SyncHistoryRequest(channelIds, lastSyncAt),
-                connectionId = connectionId,
-            ).map { response ->
-                response.events.map {
-                    it.toDomain()
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String, watch: Boolean): Call<List<ChatEvent>> {
+        val lazySyncHistoryCall = {
+            with(eventMapping) {
+                generalApi.getSyncHistory(
+                    body = SyncHistoryRequest(channelIds, lastSyncAt, watch),
+                    connectionId = connectionId,
+                ).map { response ->
+                    response.events.map {
+                        it.toDomain()
+                    }
                 }
             }
         }
+        return if (watch && connectionId.isBlank()) {
+            logger.i { "[getSyncHistory] postponing because an active connection is required" }
+            postponeCall(lazySyncHistoryCall)
+        } else {
+            lazySyncHistoryCall()
+        }
+    }
 
     override fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return fileDownloadApi.downloadFile(fileUrl)
