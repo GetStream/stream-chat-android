@@ -229,14 +229,13 @@ internal class ExtraDataValidatorTests {
         val member = mock<Member>()
         val channelType = "channel-type"
         val channelId = "channel-id"
-        val userId = "user-id"
         val set: MutableMap<String, Any> = mutableMapOf("created_at" to "another-date")
         val unset = emptyList<String>()
 
-        whenever(chatApi.partialUpdateMember(channelType, channelId, userId, set, unset)) doReturn member.asCall()
+        whenever(chatApi.partialUpdateMember(channelType, channelId, set, unset)) doReturn member.asCall()
 
         /* When */
-        val result: Result<Member> = validator.partialUpdateMember(channelType, channelId, userId, set, unset).await()
+        val result: Result<Member> = validator.partialUpdateMember(channelType, channelId, set, unset).await()
 
         /* Then */
         result.shouldBeInstanceOf(Result.Failure::class)
