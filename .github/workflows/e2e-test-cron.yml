@@ -58,10 +58,7 @@ jobs:
         include:
           - android_api_level: 36
             coverage: true # builds the map that selects e2e tests on pull requests
-          - android_api_level: 35
           - android_api_level: 34
-          - android_api_level: 33
-          - android_api_level: 32
           - android_api_level: 31
           - android_api_level: 28
       fail-fast: false
