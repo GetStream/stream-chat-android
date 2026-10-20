@@ -18,7 +18,6 @@ package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -50,7 +49,6 @@ import io.getstream.chat.android.models.Attachment as DomainAttachment
  */
 internal class V2LaneBatchFourTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -138,32 +136,50 @@ internal class V2LaneBatchFourTest {
             """"restricted_visibility":[]"""
 
         assertEquals("""{"message":{"text":"Draft",$lists,"custom":{"k":"v"}}}""", v2Body(request))
-        // v1 flattens custom data to the message's root, which a v2 endpoint silently drops.
-        assertEquals("""{"message":{"text":"Draft",$lists,"k":"v"}}""", v1Parser.toJson(request))
     }
 
     @Test
-    fun `Reminder requests have the same bodies on v2 as on v1`() {
-        assertSameBody(CreateReminderRequest(remindAt = Date(1798797600000)))
-        assertSameBody(UpdateReminderRequest(remindAt = Date(1798797600000)))
-        assertSameBody(QueryRemindersRequest(filter = mapOf("channel_cid" to "messaging:a"), limit = 2))
+    fun `Reminder requests keep their v1 bodies`() {
+        assertBody(
+            """{"remind_at":"2027-01-01T10:00:00.000Z"}""",
+            CreateReminderRequest(remindAt = Date(1798797600000)),
+        )
+        assertBody(
+            """{"remind_at":"2027-01-01T10:00:00.000Z"}""",
+            UpdateReminderRequest(remindAt = Date(1798797600000)),
+        )
+        assertBody(
+            """{"limit":2,"sort":[],"filter":{"channel_cid":"messaging:a"}}""",
+            QueryRemindersRequest(filter = mapOf("channel_cid" to "messaging:a"), limit = 2),
+        )
     }
 
     @Test
-    fun `Thread and draft queries have the same bodies on v2 as on v1`() {
+    fun `Thread and draft queries keep their v1 bodies`() {
         val sort = listOf(SortParamRequest(field = "created_at", direction = -1))
-        assertSameBody(QueryThreadsRequest(limit = 1, replyLimit = 1, participantLimit = 1, watch = true, sort = sort))
-        assertSameBody(QueryDraftsRequest(filter = mapOf("channel_cid" to "messaging:a"), limit = 5, sort = sort))
+        assertBody(
+            """{"limit":1,"participant_limit":1,"reply_limit":1,"watch":true,""" +
+                """"sort":[{"direction":-1,"field":"created_at"}],"filter":{}}""",
+            QueryThreadsRequest(limit = 1, replyLimit = 1, participantLimit = 1, watch = true, sort = sort),
+        )
+        assertBody(
+            """{"limit":5,"sort":[{"direction":-1,"field":"created_at"}],""" +
+                """"filter":{"channel_cid":"messaging:a"}}""",
+            QueryDraftsRequest(filter = mapOf("channel_cid" to "messaging:a"), limit = 5, sort = sort),
+        )
     }
 
     @Test
-    fun `A partial thread update has the same body on v2 as on v1`() {
+    fun `A partial thread update keeps its v1 body`() {
         // Root keys of `set` are custom data on both versions.
-        assertSameBody(UpdateThreadPartialRequest(set = mapOf("title" to "Title", "k" to "v"), unset = listOf("q")))
+        assertBody(
+            """{"unset":["q"],"set":{"title":"Title","k":"v"}}""",
+            UpdateThreadPartialRequest(set = mapOf("title" to "Title", "k" to "v"), unset = listOf("q")),
+        )
     }
 
-    private inline fun <reified T : Any> assertSameBody(request: T) {
-        assertEquals(v1Parser.toJson(request), v2Body(request))
+    private inline fun <reified T : Any> assertBody(expected: String, request: T) {
+        assertEquals(expected, v2Body(request))
     }
 
     private companion object {

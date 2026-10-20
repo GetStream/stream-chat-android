@@ -17,7 +17,6 @@
 package io.getstream.chat.android.network.infrastructure
 
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -33,7 +32,6 @@ import java.util.Date
  */
 internal class V2LaneBatchElevenTest {
 
-    private val v1Parser = ParserFactory.createMoshiChatParser()
     private val mapping = DomainMapping(
         currentUserIdProvider = { "filip" },
         channelTransformer = NoOpChannelTransformer,
@@ -54,12 +52,12 @@ internal class V2LaneBatchElevenTest {
     }
 
     @Test
-    fun `A member update sends the same body on v2 as on v1`() {
+    fun `A member update keeps its v1 body`() {
         val request = UpdateMemberPartialRequest(set = mapOf("pum_root" to "r", "pinned" to true), unset = listOf("q"))
 
         val v2Body = Serializer.moshi.adapter(UpdateMemberPartialRequest::class.java).toJson(request)
 
-        assertEquals(v1Parser.toJson(request), v2Body)
+        assertEquals("""{"unset":["q"],"set":{"pum_root":"r","pinned":true}}""", v2Body)
     }
 
     private companion object {
