@@ -81,8 +81,6 @@ import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -1369,7 +1367,7 @@ internal class SyncManagerTest {
     fun `on reconnect a grouped list keeps its loaded pages when the sync covered them`() = runTest(testDispatcher) {
         givenReconnect(listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a", "messaging:b"))))
 
-        assertTrue(reconnectRefreshGroups() is ReconnectGroupQueries)
+        assertEquals(setOf("all"), keysKeepingPages())
     }
 
     @Test
@@ -1379,7 +1377,7 @@ internal class SyncManagerTest {
             syncResult = Result.Failure(tooManyEventsError()),
         )
 
-        assertFalse(reconnectRefreshGroups() is ReconnectGroupQueries)
+        assertEquals(emptySet<String>(), keysKeepingPages())
     }
 
     @Test
@@ -1389,7 +1387,7 @@ internal class SyncManagerTest {
             syncResult = Result.Failure(Error.NetworkError(message = randomString(), serverErrorCode = 0, statusCode = 500)),
         )
 
-        assertFalse(reconnectRefreshGroups() is ReconnectGroupQueries)
+        assertEquals(emptySet<String>(), keysKeepingPages())
     }
 
     @Test
@@ -1398,11 +1396,11 @@ internal class SyncManagerTest {
 
         givenReconnect(listOf(groupedQueryLogic(watch = true, cids = cids)))
 
-        assertFalse(reconnectRefreshGroups() is ReconnectGroupQueries)
+        assertEquals(emptySet<String>(), keysKeepingPages())
     }
 
     @Test
-    fun `on reconnect every grouped list is reset when the sync did not cover one of them`() = runTest(testDispatcher) {
+    fun `on reconnect only the grouped lists the sync covered keep their loaded pages`() = runTest(testDispatcher) {
         val coveredLogic = groupedQueryLogic(watch = true, cids = setOf("messaging:a"))
         val uncoveredLogic = groupedQueryLogic(
             watch = true,
@@ -1412,61 +1410,59 @@ internal class SyncManagerTest {
 
         givenReconnect(listOf(coveredLogic, uncoveredLogic))
 
-        assertFalse(reconnectRefreshGroups() is ReconnectGroupQueries)
+        assertEquals(setOf("all"), keysKeepingPages())
     }
 
     @Test
     fun `on reconnect sync watches the channels when a grouped list watches`() = runTest(testDispatcher) {
-        givenReconnect(listOf(groupedQueryLogic(watch = true)), reconnect = false)
+        givenReconnect(listOf(groupedQueryLogic(watch = true)))
 
-        assertEquals(listOf(true), syncHistoryCalls().map { it[2] })
+        assertEquals(true, syncHistoryCalls().last()[2])
     }
 
     @Test
-    fun `on reconnect sync does not watch the channels when no grouped list watches`() = runTest(testDispatcher) {
-        givenReconnect(listOf(groupedQueryLogic(watch = false), standardQueryLogic()), reconnect = false)
+    fun `on first connect sync does not watch the channels`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = true)), reconnect = false)
 
         assertEquals(listOf(false), syncHistoryCalls().map { it[2] })
     }
 
     @Test
-    fun `sync does not watch the channels`() = runTest(testDispatcher) {
-        val queryLogic = groupedQueryLogic(watch = true, cids = setOf("messaging:a"))
+    fun `on reconnect sync does not watch the channels when no grouped list watches`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = false), standardQueryLogic()))
+
+        assertEquals(false, syncHistoryCalls().last()[2])
+    }
+
+    @Test
+    fun `sync does not watch the channels and does not put grouped lists first`() = runTest(testDispatcher) {
+        val channelLogics = (1..150).map { index -> mock<ChannelLogic> { on(it.cid) doReturn "messaging:$index" } }
+        whenever(logicRegistry.getActiveChannelsLogic()) doReturn channelLogics
+        val queryLogic = groupedQueryLogic(watch = true, cids = setOf("messaging:grouped"))
         whenever(logicRegistry.getActiveQueryChannelsLogic()) doReturn listOf(queryLogic)
         stubSyncHistory(Result.Success(emptyList()))
 
         buildSyncManager().sync()
 
-        assertEquals(listOf(false), syncHistoryCalls().map { it[2] })
+        val call = syncHistoryCalls().single()
+        assertEquals(false, call[2])
+        assertEquals(channelLogics.take(100).map { it.cid }, call[0])
     }
 
     @Test
-    fun `on reconnect sync sends the listed channels first`() = runTest(testDispatcher) {
-        val listedCid = "messaging:listed"
+    fun `on connect sync sends the channels of grouped lists first`() = runTest(testDispatcher) {
         val channelLogics = (1..150).map { index -> mock<ChannelLogic> { on(it.cid) doReturn "messaging:$index" } }
         whenever(logicRegistry.getActiveChannelsLogic()) doReturn channelLogics
+        val groupedCid = "messaging:grouped"
+        val standardLogic = standardQueryLogic(cids = setOf("messaging:standard"))
+        val groupedLogic = groupedQueryLogic(watch = true, cids = setOf(groupedCid))
 
-        givenReconnect(listOf(standardQueryLogic(cids = setOf(listedCid))), reconnect = false)
+        givenReconnect(listOf(standardLogic, groupedLogic), reconnect = false)
 
         val cids = syncHistoryCalls().single()[0] as List<*>
         assertEquals(100, cids.size)
-        assertEquals(listedCid, cids.first())
+        assertEquals(groupedCid, cids.first())
     }
-
-    @Test
-    fun `on reconnect sync sends the channels of grouped lists before those of other lists`() =
-        runTest(testDispatcher) {
-            val standardCids = (1..100).mapTo(mutableSetOf()) { "messaging:standard-$it" }
-            val groupedCid = "messaging:grouped"
-
-            givenReconnect(
-                listOf(standardQueryLogic(cids = standardCids), groupedQueryLogic(watch = true, cids = setOf(groupedCid))),
-                reconnect = false,
-            )
-
-            val cids = syncHistoryCalls().single()[0] as List<*>
-            assertEquals(groupedCid, cids.first())
-        }
 
     @Test
     fun `too many events to sync does not query the channels`() = runTest(testDispatcher) {
@@ -1534,6 +1530,9 @@ internal class SyncManagerTest {
             delay(100)
         }
     }
+
+    private fun keysKeepingPages(): Set<String> =
+        (reconnectRefreshGroups() as ReconnectGroupQueries).keysKeepingPages
 
     private fun reconnectRefreshGroups(): Map<String, GroupedChannelsGroupQuery>? {
         val captor = argumentCaptor<Map<String, GroupedChannelsGroupQuery>>()

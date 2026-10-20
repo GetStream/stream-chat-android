@@ -141,7 +141,7 @@ internal class SyncManager(
     override suspend fun sync() {
         logger.d { "[sync] no args" }
         state.value = State.Syncing
-        performSync()
+        performSync(watch = false, groupedListsFirst = false)
         state.value = State.Idle
     }
 
@@ -253,7 +253,11 @@ internal class SyncManager(
         }
         if (isAutomaticSyncOnReconnectEnabled) {
             logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
-            val syncedCids = performSync(watch = groupedListsWatch())
+            // The first connect does not refresh the grouped lists, so it has no kept pages to watch again.
+            val syncedCids = performSync(
+                watch = !isFirstConnect.get() && groupedListsWatch(),
+                groupedListsFirst = true,
+            )
             restoreActiveChannels(syncedCids)
         } else {
             logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
@@ -284,14 +288,18 @@ internal class SyncManager(
         logger.i { "[connectionLost] failed: $e" }
     }
 
-    private suspend fun performSync(watch: Boolean = false): Set<String> {
-        logger.i { "[performSync] watch: $watch" }
-        // Listed channels go first, grouped lists before the others, so the cap on the request covers the channels the
-        // lists show. A grouped list keeps its loaded pages after a reconnect only when the request covered them.
-        val listedCids = logicRegistry.getActiveQueryChannelsLogic()
-            .sortedBy { it.groupKey() == null }
-            .flatMap { it.cids() }
-        val cids = (listedCids + logicRegistry.getActiveChannelsLogic().map { it.cid }).distinct().ifEmpty {
+    /**
+     * @param groupedListsFirst Whether the channels of grouped lists go first, so the cap on the request covers them. A
+     * grouped list keeps its loaded pages after a reconnect only when the request covered them.
+     */
+    private suspend fun performSync(watch: Boolean, groupedListsFirst: Boolean): Set<String> {
+        logger.i { "[performSync] watch: $watch, groupedListsFirst: $groupedListsFirst" }
+        val groupedCids = if (groupedListsFirst) {
+            logicRegistry.getActiveQueryChannelsLogic().filter { it.groupKey() != null }.flatMap { it.cids() }
+        } else {
+            emptyList()
+        }
+        val cids = (groupedCids + logicRegistry.getActiveChannelsLogic().map { it.cid }).distinct().ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
@@ -522,8 +530,10 @@ internal class SyncManager(
             .toMap()
             .takeIf { it.isNotEmpty() }
             ?.let { groups ->
-                val keepsLoadedPages = activeGroupedLogics.all { syncedCids.containsAll(it.cids()) }
-                if (keepsLoadedPages) ReconnectGroupQueries(groups) else groups
+                val keysKeepingPages = activeGroupedLogics
+                    .filter { syncedCids.containsAll(it.cids()) }
+                    .mapNotNullTo(mutableSetOf()) { it.groupKey() }
+                ReconnectGroupQueries(groups, keysKeepingPages)
             }
 
         val result = chatClient.queryGroupedChannelsInternal(

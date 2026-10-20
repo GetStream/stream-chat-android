@@ -41,6 +41,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.same
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -195,6 +196,35 @@ internal class ChatClientGroupedChannelsApiTests : BaseChatClientTest() {
             groups = eq(groupsParam),
             watch = eq(true),
             presence = eq(false),
+            sort = isNull(),
+        )
+    }
+
+    @Test
+    fun `queryGroupedChannelsInternal passes the caller's own groups instance to plugin listeners`() = runTest {
+        // given - plugins can rely on the instance, for example its runtime type, so it must not be copied
+        val plugin: Plugin = mock()
+        plugins.add(plugin)
+        val sut = Fixture()
+            .givenQueryGroupedChannelsResult(RetroSuccess(GroupedChannels(groups = emptyMap())).toRetrofitCall())
+            .get()
+        val groupsParam = mapOf("direct" to GroupedChannelsGroupQuery())
+        // when
+        sut.queryGroupedChannelsInternal(groups = groupsParam).await()
+        // then
+        verify(plugin).onQueryGroupedChannelsRequest(
+            limit = isNull(),
+            groups = same(groupsParam),
+            watch = any(),
+            presence = any(),
+            sort = isNull(),
+        )
+        verify(plugin).onQueryGroupedChannelsResult(
+            result = any(),
+            limit = isNull(),
+            groups = same(groupsParam),
+            watch = any(),
+            presence = any(),
             sort = isNull(),
         )
     }
