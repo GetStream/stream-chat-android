@@ -751,23 +751,38 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
 
     @Test
     @Suppress("DEPRECATION")
-    fun `partialUpdateMember with a user id delegates to the overload without one`() = runTest {
+    fun `partialUpdateMember with a user id ignores it`() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
         val set = mapOf<String, Any>("pinned" to true)
         val unset = listOf("archived")
         val member = randomMember()
-        val sut = spy(
-            Fixture()
-                .givenPartialUpdateMemberResult(RetroSuccess(member).toRetrofitCall())
-                .get(),
-        )
+        val sut = Fixture()
+            .givenPartialUpdateMemberResult(RetroSuccess(member).toRetrofitCall())
+            .get()
         // when
         val result = sut.partialUpdateMember(channelType, channelId, randomString(), set, unset).await()
         // then
         verifySuccess(result, member)
-        verify(sut).partialUpdateMember(channelType, channelId, set, unset)
+        verify(api).partialUpdateMember(channelType, channelId, set, unset)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `partialUpdateMember with a user id and no changes sends empty ones`() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val member = randomMember()
+        val sut = Fixture()
+            .givenPartialUpdateMemberResult(RetroSuccess(member).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.partialUpdateMember(channelType, channelId, randomString()).await()
+        // then
+        verifySuccess(result, member)
+        verify(api).partialUpdateMember(channelType, channelId, emptyMap(), emptyList())
     }
 
     @Test

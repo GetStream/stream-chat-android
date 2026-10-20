@@ -1542,6 +1542,20 @@ internal class ChannelClientTest {
     }
 
     @Test
+    @Suppress("DEPRECATION")
+    fun `partialUpdateMember with a user id and no changes sends empty ones`() = runTest {
+        // given
+        val member = randomMember()
+        val successCall = RetroSuccess(member).toRetrofitCall()
+        whenever(chatClient.partialUpdateMember(any(), any(), any<Map<String, Any>>(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.partialUpdateMember(randomString()).await()
+        // then
+        verifySuccess(result, member)
+        verify(chatClient).partialUpdateMember(channelType, channelId, emptyMap(), emptyList())
+    }
+
+    @Test
     fun `partialUpdateMember should return error when ChatClient returns error`() = runTest {
         // given
         val set = mapOf("role" to "admin", "is_moderator" to true)
