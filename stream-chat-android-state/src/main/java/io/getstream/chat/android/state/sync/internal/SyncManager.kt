@@ -318,7 +318,8 @@ internal class SyncManager(
     /**
      * Requests the events of [cids] since the last sync and emits them.
      *
-     * @return The cids whose events were requested and received, or an empty set when the request failed.
+     * @return The cids whose events were requested and received, or an empty set when the request failed or there was
+     * no previous sync date, since the request then starts now and misses what happened before.
      */
     @VisibleForTesting
     internal suspend fun performSync(cids: List<String>, watch: Boolean = false): Set<String> {
@@ -332,6 +333,7 @@ internal class SyncManager(
         val rawLastSyncAt = syncState?.rawLastSyncedAt
         logger.v { "[performSync] lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
+        val syncedCids = if (syncState?.lastSyncedAt == null) emptySet() else cappedCids.toSet()
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistoryInternal(cappedCids, rawLastSyncAt, watch).await()
         } else {
@@ -361,15 +363,15 @@ internal class SyncManager(
         }
         if (sortedEvents.isEmpty()) {
             logger.w { "[performSync] rejected (no events to emit)" }
-            return cappedCids.toSet()
+            return syncedCids
         }
         if (rawLastSyncAt == rawLatestEventDate) {
             logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
-            return cappedCids.toSet()
+            return syncedCids
         }
         events.emit(sortedEvents)
         logger.v { "[performSync] events emission completed" }
-        return cappedCids.toSet()
+        return syncedCids
     }
 
     /**

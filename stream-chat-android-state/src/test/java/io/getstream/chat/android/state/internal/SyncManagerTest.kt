@@ -1465,6 +1465,28 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `sync without a last sync date reports no synced channels`() = runTest(testDispatcher) {
+        // The request then starts now, so it misses what happened before.
+        stubSyncHistory(Result.Success(emptyList()))
+        val syncManager = buildSyncManager()
+
+        val syncedCids = syncManager.performSync(listOf("messaging:1"), watch = true)
+
+        assertEquals(emptySet<String>(), syncedCids)
+    }
+
+    @Test
+    fun `sync with a last sync date reports the requested channels as synced`() = runTest(testDispatcher) {
+        _syncState.value = SyncState(userId = user.id, lastSyncedAt = localDate())
+        stubSyncHistory(Result.Success(emptyList()))
+        val syncManager = buildSyncManager()
+
+        val syncedCids = syncManager.performSync(listOf("messaging:1", "messaging:2"), watch = true)
+
+        assertEquals(setOf("messaging:1", "messaging:2"), syncedCids)
+    }
+
+    @Test
     fun `too many events to sync does not query the channels`() = runTest(testDispatcher) {
         stubSyncHistory(Result.Failure(tooManyEventsError()))
         val syncManager = buildSyncManager()
