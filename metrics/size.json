@@ -3,14 +3,14 @@
     "stream-chat-android-client": 8424,
     "stream-chat-android-ui-components": 14908,
     "stream-chat-android-compose": 17260,
-    "stream-chat-android-ai-compose": 2784,
+    "stream-chat-android-ai-compose": 2820,
     "stream-chat-android-ai-ondevice": 2116
   },
   "release": {
     "stream-chat-android-client": 6388,
     "stream-chat-android-ui-components": 11828,
     "stream-chat-android-compose": 13540,
-    "stream-chat-android-ai-compose": 2088,
+    "stream-chat-android-ai-compose": 2124,
     "stream-chat-android-ai-ondevice": 1708
   }
 }
