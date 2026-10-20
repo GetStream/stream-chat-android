@@ -27,6 +27,9 @@ public enum class AIVoiceGlowRendering {
     /** A shader computing every pixel: the richest look, and the most GPU. Canvas below Android 13. */
     Shader,
 
-    /** A handful of gradients: cheaper, on every API level, without the shader's marbling. */
+    /**
+     * A handful of gradients: cheaper, on every API level, without the shader's marbling or its
+     * ripples from a tap or a hovering pointer.
+     */
     Canvas,
 }

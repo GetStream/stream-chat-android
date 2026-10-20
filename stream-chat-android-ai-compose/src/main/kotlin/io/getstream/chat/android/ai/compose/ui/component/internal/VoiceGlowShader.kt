@@ -24,7 +24,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 
 /**
  * The glow drawn by a shader, every pixel computed on the GPU: color masses warped by noise,
- * concentric waves, light and a halo. It reads the same motion as the Canvas glow.
+ * concentric waves, ripples from a tap or a hovering pointer, light and a halo. It reads the same
+ * motion as the Canvas glow.
  */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 internal class VoiceGlowShader {
@@ -50,6 +51,10 @@ internal class VoiceGlowShader {
         shader.setFloatUniform("mic", d.mic)
         shader.setFloatUniform("voice", d.voice)
         shader.setFloatUniform("scale", d.scale)
+        shader.setFloatUniform("tap", d.tapX, d.tapY)
+        shader.setFloatUniform("tapTime", d.tapAge)
+        shader.setFloatUniform("hover", d.hoverX, d.hoverY)
+        shader.setFloatUniform("hoverAmt", d.hoverAmount)
         drawRect(brush)
     }
 
@@ -75,6 +80,10 @@ uniform float dark;
 uniform float mic;
 uniform float voice;
 uniform float scale;
+uniform float2 tap;
+uniform float tapTime;
+uniform float2 hover;
+uniform float hoverAmt;
 
 float sq(float x) { return x * x; }
 float ss(float e0, float e1, float x) {
@@ -100,6 +109,23 @@ float2 rot2(float2 p, float a) {
 }
 float3 vivid(float4 hsv) {
     return hsv2rgb(float3(hsv.x, clamp(hsv.y + dark * 0.06, 0.0, 1.0), hsv.z));
+}
+// Waves spreading out from the last tap, fading within a second and a half.
+float tapRipple(float2 p) {
+    float age = tapTime;
+    if (age > 1.5) return 0.0;
+    float d = distance(p, tap);
+    float front = age * 0.75;
+    float env = exp(-sq((d - front) / 0.14));
+    float decay = exp(-age * 2.6);
+    return sin(d * 34.0 - age * 24.0) * env * decay;
+}
+// A gentle ripple following a hovering pointer.
+float hoverRipple(float2 p) {
+    if (hoverAmt <= 0.001) return 0.0;
+    float d = distance(p, hover);
+    float env = exp(-sq(d / 0.22));
+    return sin(d * 30.0 - time * 7.0) * env * hoverAmt * 0.6;
 }
 float4 permute(float4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
 float4 taylorInvSqrt(float4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
@@ -181,6 +207,8 @@ half4 main(float2 fragCoord) {
     float wave = (0.018 + 0.025 * energy) * sin(pl * 5.0 - t * 2.0) * ss(0.0, 0.4, pl);
     sp += wave * float2(-sin(ang), cos(ang));
     sp = rot2(sp, flowSpin * 0.30);
+    float2 gtoP = q - (hoverAmt > 0.001 ? hover : tap);
+    sp += (gtoP / (length(gtoP) + 1e-4)) * (tapRipple(q) + hoverRipple(q)) * 0.5;
     float bt = t;
     float a0 = orbSpin * 0.42 + 2.0 * snoise(float3(bt * 0.12, 0.0, 0.0));
     float a1 = -orbSpin * 0.34 + 2.0 * snoise(float3(bt * 0.10, 5.0, 0.0)) + 2.0;

@@ -38,7 +38,7 @@ import kotlin.math.sin
 /**
  * The glow drawn with a handful of gradients: color masses orbiting inside a soft globe, a
  * highlight, a rim and a halo. Cheaper than the shader and drawn on every API level; it moves the
- * same but has none of the shader's noise-warped marbling.
+ * same but has none of the shader's noise-warped marbling or ripples.
  */
 internal class VoiceGlowCanvas {
     private val base = FloatArray(3)

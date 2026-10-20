@@ -38,7 +38,8 @@ import kotlin.math.hypot
 
 /**
  * A voice agent as a soft, airy globe: color masses orbit inside it and swell with speech, and the
- * gaps between them let the background show through.
+ * gaps between them let the background show through. Tapping the globe bounces it; drawn with the
+ * shader, it also ripples from the touch and under a hovering mouse or stylus.
  *
  * It has no size of its own and draws in the middle of the space it is given, about half as wide
  * as its shorter side, so give it a square.
