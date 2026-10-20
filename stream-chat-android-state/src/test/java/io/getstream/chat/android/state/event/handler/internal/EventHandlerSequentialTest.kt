@@ -44,6 +44,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
@@ -72,6 +73,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -364,6 +366,44 @@ internal class EventHandlerSequentialTest {
             storedResult.members `should be equal to` storedChannel.members
             storedResult.extraData `should be equal to` mapOf("group" to "b")
         }
+
+    @Test
+    fun `When handling NewMessageEvent with a campaign message, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(
+                type = "regular",
+                shadowed = false,
+                extraData = mapOf("created_by_campaign_id" to "campaign-id"),
+            )
+
+            storedHiddenChannelAfter(message).hidden `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NewMessageEvent with a regular message, The stored hidden channel should be shown`() = runTest {
+        val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+
+        storedHiddenChannelAfter(message).hidden `should be equal to` false
+    }
+
+    /** Handles a new [message] in a stored hidden channel and returns the channel as it is stored again. */
+    private suspend fun TestScope.storedHiddenChannelAfter(message: Message): Channel {
+        val storedChannel = randomChannel(hidden = true, extraData = emptyMap())
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        whenever(repos.selectChannel(storedChannel.cid)) doReturn storedChannel
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+
+        handler.handleEvents(randomNewMessageEvent(cid = storedChannel.cid, message = message))
+
+        val inserted = argumentCaptor<Collection<Channel>>()
+        verify(repos).insertChannels(inserted.capture())
+        return inserted.firstValue.single()
+    }
 
     @Test
     fun `When handling NotificationChannelPartialUpdatedEvent, A channel that is not stored should not be inserted`() =

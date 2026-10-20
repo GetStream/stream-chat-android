@@ -102,6 +102,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -125,6 +126,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
+import io.getstream.chat.android.state.utils.internal.unhidesChannel
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -649,7 +651,7 @@ internal class EventHandlerSequential(
                         skipLastMsgUpdateForSystemMsgs = channel.config.skipLastMsgUpdateForSystemMsgs,
                     )
                     val updatedChannel = channel.copy(
-                        hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
+                        hidden = channel.hiddenAfter(enrichedMessage),
                         messages = channel.messages + listOf(enrichedMessage),
                         messageCount = event.channelMessageCount ?: channel.messageCount,
                         lastMessageAt = newLastMessageAt,
@@ -690,7 +692,7 @@ internal class EventHandlerSequential(
                     batch.addMessageData(event.createdAt, event.cid, event.message)
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeChannelFromEvent(event.channel) ?: event.channel
-                    batch.addChannel(channel.copy(hidden = false))
+                    batch.addChannel(channel.copy(hidden = channel.hiddenAfter(event.message)))
                 }
                 is NotificationAddedToChannelEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
@@ -957,6 +959,10 @@ internal class EventHandlerSequential(
 
         logger.v { "[updateOfflineStorage] completed batchId: ${batchEvent.id}" }
     }
+
+    /** The hidden state of this channel after the new [message]. */
+    private fun Channel.hiddenAfter(message: Message): Boolean? =
+        if (message.unhidesChannel(extraData, mutableGlobalState.blockedUserIds.value)) false else hidden
 
     private fun List<ChatEvent>.extractMessageIds() = mapNotNull { event ->
         (event as? HasMessage)?.message?.id

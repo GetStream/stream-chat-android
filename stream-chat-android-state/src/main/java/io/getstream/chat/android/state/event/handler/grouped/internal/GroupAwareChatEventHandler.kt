@@ -34,6 +34,7 @@ import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandle
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
+import io.getstream.chat.android.state.utils.internal.unhidesChannel
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
@@ -54,6 +55,7 @@ internal class GroupAwareChatEventHandler(
     private val resolver: ChannelGroupResolver,
     channels: StateFlow<Map<String, Channel>?>,
     clientState: ClientState,
+    private val blockedUserIds: () -> Collection<String>,
     private val now: () -> Date = ::Date,
 ) : DefaultChatEventHandler(channels, clientState) {
 
@@ -69,14 +71,16 @@ internal class GroupAwareChatEventHandler(
 
             is NotificationChannelPartialUpdatedEvent -> routePartialUpdate(event, cachedChannel, filter)
 
+            is NotificationMessageNewEvent ->
+                if ((cachedChannel ?: event.channel).staysHiddenAfter(event.message)) {
+                    EventHandlingResult.Skip
+                } else {
+                    watchAndAddIfBelongsHere(event.channel, filter)
+                }
+
             is NotificationAddedToChannelEvent,
-            is NotificationMessageNewEvent,
             is ChannelVisibleEvent,
-            -> if (channelBelongsHere(event.channel, filter)) {
-                EventHandlingResult.WatchAndAdd(event.cid)
-            } else {
-                EventHandlingResult.Skip
-            }
+            -> watchAndAddIfBelongsHere(event.channel, filter)
 
             else -> super.handleChatEvent(event, filter, cachedChannel)
         }
@@ -87,11 +91,23 @@ internal class GroupAwareChatEventHandler(
         filter: FilterObject,
         cachedChannel: Channel?,
     ): EventHandlingResult {
-        val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
-        // The cached channel can predate the new message, which may bring it back within a cutoff.
+        // The cached channel can predate the new message, which may bring it back within a cutoff or un-hide it.
         val newMessage = (event as? NewMessageEvent)?.message
+        if (newMessage != null && cachedChannel?.staysHiddenAfter(newMessage) == true) return EventHandlingResult.Skip
+        val defaultResult = super.handleCidEvent(event, filter, cachedChannel)
         return filterResultByGroup(defaultResult, cachedChannel, filter, newMessage)
     }
+
+    private fun watchAndAddIfBelongsHere(channel: Channel, filter: FilterObject): EventHandlingResult =
+        if (channelBelongsHere(channel, filter)) {
+            EventHandlingResult.WatchAndAdd(channel.cid)
+        } else {
+            EventHandlingResult.Skip
+        }
+
+    /** Whether this channel is hidden and the new [message] keeps it hidden on the server. */
+    private fun Channel.staysHiddenAfter(message: Message): Boolean =
+        hidden == true && !message.unhidesChannel(extraData, blockedUserIds())
 
     /**
      * The membership guard prevents a `ChannelUpdatedEvent` from (re-)adding a channel the user

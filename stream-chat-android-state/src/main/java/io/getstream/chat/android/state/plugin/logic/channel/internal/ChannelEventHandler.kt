@@ -129,10 +129,7 @@ internal class ChannelEventHandler(
                 upsertMessage(event.message, preserveCreatedLocallyAt)
                 // Update channel read state
                 stateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                // Update hidden state if the message is not shadowed
-                if (!event.message.shadowed) {
-                    stateLogic.setHidden(false)
-                }
+                stateLogic.unhideFor(event.message)
                 // Update message count
                 event.channelMessageCount?.let(stateLogic::updateMessageCount)
                 // Update lastMessageAt
@@ -145,10 +142,7 @@ internal class ChannelEventHandler(
                 }
                 // Update channel read state
                 stateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                // Update hidden state if the message is not shadowed
-                if (!event.message.shadowed) {
-                    stateLogic.setHidden(false)
-                }
+                stateLogic.unhideFor(event.message)
                 // Update lastMessageAt
                 stateLogic.updateLastMessageAt(event.message)
             }

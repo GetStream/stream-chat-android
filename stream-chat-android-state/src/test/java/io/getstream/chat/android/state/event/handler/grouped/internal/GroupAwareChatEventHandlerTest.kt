@@ -43,6 +43,7 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
+@Suppress("LargeClass")
 internal class GroupAwareChatEventHandlerTest {
 
     private val defaultResolver = DefaultChannelGroupResolver()
@@ -487,6 +488,64 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given a hidden cached channel When a campaign message arrives Should skip`() {
+        val cachedChannel = randomChannel(extraData = mapOf("group" to "vip"), hidden = true)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
+        val message = channelMessage(createdAt = now).copy(extraData = mapOf("created_by_campaign_id" to "campaign"))
+        val event = randomNewMessageEvent(cid = cachedChannel.cid, createdAt = now, message = message)
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a hidden cached channel When a regular message arrives Should add it back`() {
+        val cachedChannel = randomChannel(extraData = mapOf("group" to "vip"), hidden = true, lastMessageAt = now)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
+        val event = randomNewMessageEvent(
+            cid = cachedChannel.cid,
+            createdAt = now,
+            message = channelMessage(createdAt = now),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Add(cachedChannel), result)
+    }
+
+    @Test
+    fun `Given a hidden cached channel When NotificationMessageNewEvent from a blocked user arrives Should skip`() {
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val sender = randomUser()
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), blockedUserIds = listOf(sender.id))
+        val event = randomNotificationMessageNewEvent(
+            cid = channel.cid,
+            channel = channel,
+            message = channelMessage(createdAt = now).copy(user = sender),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = channel.copy(hidden = true))
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
+    fun `Given a hidden cached channel When NotificationMessageNewEvent with a regular message arrives Should watch and add`() {
+        val channel = randomChannel(extraData = mapOf("group" to "vip"))
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap())
+        val event = randomNotificationMessageNewEvent(
+            cid = channel.cid,
+            channel = channel,
+            message = channelMessage(createdAt = now),
+        )
+
+        val result = handler.handleChatEvent(event, Filters.neutral(), cachedChannel = channel.copy(hidden = true))
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
     fun `Given a cached channel past the cutoff When a thread reply not shown in the channel arrives Should skip`() {
         val cachedChannel = randomChannel(
             extraData = mapOf("group" to "expired"),
@@ -770,6 +829,7 @@ internal class GroupAwareChatEventHandlerTest {
         cachedChannels: Map<String, Channel>,
         resolver: ChannelGroupResolver = defaultResolver,
         currentUser: User? = null,
+        blockedUserIds: List<String> = emptyList(),
     ): GroupAwareChatEventHandler {
         val clientState = mock<ClientState> {
             whenever(it.user) doReturn MutableStateFlow(currentUser)
@@ -779,6 +839,7 @@ internal class GroupAwareChatEventHandlerTest {
             resolver = resolver,
             channels = MutableStateFlow(cachedChannels),
             clientState = clientState,
+            blockedUserIds = { blockedUserIds },
             now = { now },
         )
     }
