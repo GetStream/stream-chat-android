@@ -571,7 +571,6 @@ internal interface ChatApi {
     fun partialUpdateMember(
         channelType: String,
         channelId: String,
-        userId: String,
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Member>

@@ -1498,48 +1498,76 @@ internal class ChannelClientTest {
     @Test
     fun `partialUpdateMember should return success when ChatClient returns success`() = runTest {
         // given
-        val userId = randomString()
         val set = mapOf("role" to "admin", "is_moderator" to true)
         val unset = listOf("custom_field")
         val member = randomMember()
         val successCall = RetroSuccess(member).toRetrofitCall()
-        whenever(chatClient.partialUpdateMember(any(), any(), any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.partialUpdateMember(any(), any(), any<Map<String, Any>>(), any())).thenReturn(successCall)
         // when
-        val result = channelClient.partialUpdateMember(userId, set, unset).await()
+        val result = channelClient.partialUpdateMember(set, unset).await()
         // then
         verifySuccess(result, member)
-        verify(chatClient).partialUpdateMember(channelType, channelId, userId, set, unset)
+        verify(chatClient).partialUpdateMember(channelType, channelId, set, unset)
     }
 
     @Test
     fun `partialUpdateMember should return success when ChatClient returns success with default parameters`() =
         runTest {
             // given
-            val userId = randomString()
             val member = randomMember()
             val successCall = RetroSuccess(member).toRetrofitCall()
-            whenever(chatClient.partialUpdateMember(any(), any(), any(), any(), any())).thenReturn(successCall)
+            whenever(chatClient.partialUpdateMember(any(), any(), any<Map<String, Any>>(), any()))
+                .thenReturn(successCall)
             // when
-            val result = channelClient.partialUpdateMember(userId).await()
+            val result = channelClient.partialUpdateMember().await()
             // then
             verifySuccess(result, member)
-            verify(chatClient).partialUpdateMember(channelType, channelId, userId, emptyMap(), emptyList())
+            verify(chatClient).partialUpdateMember(channelType, channelId, emptyMap(), emptyList())
         }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `partialUpdateMember with a user id delegates to the overload without one`() = runTest {
+        // given
+        val set = mapOf("role" to "admin", "is_moderator" to true)
+        val unset = listOf("custom_field")
+        val member = randomMember()
+        val successCall = RetroSuccess(member).toRetrofitCall()
+        whenever(chatClient.partialUpdateMember(any(), any(), any<Map<String, Any>>(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.partialUpdateMember(randomString(), set, unset).await()
+        // then
+        verifySuccess(result, member)
+        verify(chatClient).partialUpdateMember(channelType, channelId, set, unset)
+    }
+
+    @Test
+    @Suppress("DEPRECATION")
+    fun `partialUpdateMember with a user id and no changes sends empty ones`() = runTest {
+        // given
+        val member = randomMember()
+        val successCall = RetroSuccess(member).toRetrofitCall()
+        whenever(chatClient.partialUpdateMember(any(), any(), any<Map<String, Any>>(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.partialUpdateMember(randomString()).await()
+        // then
+        verifySuccess(result, member)
+        verify(chatClient).partialUpdateMember(channelType, channelId, emptyMap(), emptyList())
+    }
 
     @Test
     fun `partialUpdateMember should return error when ChatClient returns error`() = runTest {
         // given
-        val userId = randomString()
         val set = mapOf("role" to "admin", "is_moderator" to true)
         val unset = listOf("custom_field")
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Member>(errorCode).toRetrofitCall()
-        whenever(chatClient.partialUpdateMember(any(), any(), any(), any(), any())).thenReturn(errorCall)
+        whenever(chatClient.partialUpdateMember(any(), any(), any<Map<String, Any>>(), any())).thenReturn(errorCall)
         // when
-        val result = channelClient.partialUpdateMember(userId, set, unset).await()
+        val result = channelClient.partialUpdateMember(set, unset).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(chatClient).partialUpdateMember(channelType, channelId, userId, set, unset)
+        verify(chatClient).partialUpdateMember(channelType, channelId, set, unset)
     }
 
     @Test

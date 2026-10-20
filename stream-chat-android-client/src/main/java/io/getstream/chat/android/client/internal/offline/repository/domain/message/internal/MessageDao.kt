@@ -23,6 +23,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.REACTION_ENTITY_TABLE_NAME
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
@@ -36,8 +37,26 @@ internal interface MessageDao {
         upsertMessageInnerEntities(messageEntities.map(MessageEntity::messageInnerEntity))
         deleteAttachments(messageEntities.map { it.messageInnerEntity.id })
         insertAttachments(messageEntities.flatMap(MessageEntity::attachments))
-        insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
+        insertReactions(withoutPendingReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions }))
     }
+
+    /**
+     * Drops the reactions whose stored row waits for a retry, so a server copy of the message saved before the retry
+     * cannot overwrite (and lose) an offline reaction change. IN_PROGRESS rows are not retried, so the server copy
+     * still wins for them.
+     */
+    @Transaction
+    suspend fun withoutPendingReactions(reactions: List<ReactionEntity>): List<ReactionEntity> {
+        if (reactions.isEmpty()) return reactions
+        val pendingIds = reactions.map(ReactionEntity::id).distinct()
+            .chunked(SQLITE_MAX_VARIABLE_NUMBER - 1)
+            .flatMap { ids -> selectReactionIdsWithSyncStatus(ids, SyncStatus.SYNC_NEEDED.status) }
+            .toSet()
+        return reactions.filterNot { it.id in pendingIds }
+    }
+
+    @Query("SELECT id FROM $REACTION_ENTITY_TABLE_NAME WHERE id IN (:ids) AND syncStatus = :syncStatus")
+    suspend fun selectReactionIdsWithSyncStatus(ids: List<Int>, syncStatus: Int): List<Int>
 
     @Transaction
     fun deleteAttachments(messageIds: List<String>) {
