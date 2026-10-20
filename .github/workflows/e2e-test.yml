@@ -34,7 +34,11 @@ env:
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 jobs:
+  # The suite runs in the merge queue and on manual dispatch, not on pull requests. The workflow
+  # still triggers on pull requests so the "E2E result" required check reports and lets the PR
+  # enter the queue.
   build-compose-apks:
+    if: ${{ github.event_name != 'pull_request' }}
     permissions:
       actions: write
       contents: read
@@ -73,10 +77,7 @@ jobs:
       - allure_testops_launch
     strategy:
       matrix:
-        include:
-          - batch: 0
-          - batch: 1
-          - batch: 2
+        batch: [0, 1, 2, 3, 4, 5, 6, 7]
       fail-fast: false
     env:
       ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
@@ -124,3 +125,18 @@ jobs:
           path: |
             fastlane/stream-chat-test-mock-server/logs/*
             fastlane/allure-results/*
+  # The single required check for E2E, so the shard count can change without touching branch
+  # protection. Skipped jobs count as passed: on pull requests every job above is skipped.
+  e2e-result:
+    name: E2E result
+    runs-on: ubuntu-24.04
+    if: ${{ always() }}
+    needs:
+      - build-compose-apks
+      - allure_testops_launch
+      - run-compose-tests
+    permissions: {}
+    steps:
+      - name: Fail if an E2E job failed or was cancelled
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1
