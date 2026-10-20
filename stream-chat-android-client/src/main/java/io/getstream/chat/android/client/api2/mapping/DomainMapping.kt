@@ -160,6 +160,9 @@ internal const val EMOJI_CODE_KEY = "emoji_code"
 internal const val DRAFT_COMMAND_KEY = "command"
 internal const val DRAFT_ARGS_KEY = "args"
 
+/** Kept in `Message.extraData` on receipt, but never sent back: the declared field carries the ids. */
+internal const val MENTIONED_GROUP_IDS_KEY = "mentioned_group_ids"
+
 /**
  * Older clients sent the user's own devices back as custom data. v1 responses leave that copy out of `custom` and v2
  * responses don't, so the user mappings drop it in both directions: it holds push tokens.
@@ -685,7 +688,7 @@ internal class DomainMapping(
         custom.withDeclared(
             "draft" to draft,
             "image_labels" to imageLabels,
-            "mentioned_group_ids" to mentionedGroupIds,
+            MENTIONED_GROUP_IDS_KEY to mentionedGroupIds,
             "mml" to mml,
             "poll_id" to pollId,
             "restricted_visibility" to restrictedVisibility,
