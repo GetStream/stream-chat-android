@@ -3185,7 +3185,6 @@ internal constructor(
         return partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
-            userId = getCurrentUser()?.id ?: "",
             set = set,
         )
     }
@@ -3206,7 +3205,6 @@ internal constructor(
         return partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
-            userId = getCurrentUser()?.id ?: "",
             unset = listOf("pinned"),
         )
     }
@@ -3228,7 +3226,6 @@ internal constructor(
         return partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
-            userId = getCurrentUser()?.id ?: "",
             set = set,
         )
     }
@@ -3249,7 +3246,6 @@ internal constructor(
         return partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
-            userId = getCurrentUser()?.id ?: "",
             unset = listOf("archived"),
         )
     }
@@ -3846,11 +3842,11 @@ internal constructor(
     }
 
     /**
-     * Updates specific fields of member data, retaining the custom data fields which were set previously.
+     * Updates specific fields of the current user's member data, retaining the custom data fields which were set
+     * previously.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param userId The ID of the member to be updated.
      * @param set The key-value data to be updated in the member data.
      * @param unset The list of keys to be removed from the member data.
      *
@@ -3860,18 +3856,34 @@ internal constructor(
     public fun partialUpdateMember(
         channelType: String,
         channelId: String,
-        userId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
     ): Call<Member> {
         return api.partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
-            userId = userId,
             set = set,
             unset = unset,
         )
     }
+
+    /**
+     * Same as the overload without [userId], which is ignored: only the current user's member data can be updated.
+     */
+    @Deprecated(
+        message = "Only the current user's member data can be updated, so userId is ignored. Use the overload " +
+            "without userId.",
+        replaceWith = ReplaceWith("partialUpdateMember(channelType, channelId, set, unset)"),
+        level = DeprecationLevel.WARNING,
+    )
+    @CheckResult
+    public fun partialUpdateMember(
+        channelType: String,
+        channelId: String,
+        @Suppress("UNUSED_PARAMETER") userId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Member> = partialUpdateMember(channelType, channelId, set, unset)
 
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every

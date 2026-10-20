@@ -1280,16 +1280,14 @@ constructor(
     override fun partialUpdateMember(
         channelType: String,
         channelId: String,
-        userId: String,
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Member> {
-        return channelV1Api.partialUpdateMember(
+        return channelApi.partialUpdateMember(
             channelType = channelType,
             channelId = channelId,
-            userId = userId,
             body = UpdateMemberPartialRequest(set = set, unset = unset),
-        ).flatMapV1Domain { toMemberCall(it) }
+        ).flatMapDomain { toMemberCall(it) }
     }
 
     /**
@@ -2102,10 +2100,6 @@ constructor(
     /** [mapDomain] for the endpoints still on v1. */
     private fun <T : Any, R : Any> RetrofitCall<T>.mapV1Domain(transform: DomainMapping.(T) -> R): Call<R> =
         map { v1DomainMapping.transform(it) }
-
-    /** [flatMapDomain] for the endpoints still on v1. */
-    private fun <T : Any, R : Any> RetrofitCall<T>.flatMapV1Domain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
-        flatMap { v1DomainMapping.transform(it) }
 }
 
 internal fun QuerySorter<*>.toSortParams(): List<SortParamRequest> =

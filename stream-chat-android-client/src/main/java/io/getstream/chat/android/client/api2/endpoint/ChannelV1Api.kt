@@ -20,27 +20,15 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.network.models.SendEventRequest
-import io.getstream.chat.android.network.models.UpdateMemberPartialRequest
-import io.getstream.chat.android.network.models.UpdateMemberPartialResponse
 import retrofit2.http.Body
-import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
 /**
- * Channel endpoints that stay on v1. Sending an event returns a hand-written v1 model. The member update keeps the
- * user id path parameter its public API takes, which the v2 route doesn't have.
+ * Channel endpoints that stay on v1. Sending an event returns a hand-written v1 model.
  */
 @AuthenticatedApi
 internal interface ChannelV1Api {
-
-    @PATCH("/channels/{type}/{id}/member/{user_id}")
-    fun partialUpdateMember(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Path("user_id") userId: String,
-        @Body body: UpdateMemberPartialRequest,
-    ): RetrofitCall<UpdateMemberPartialResponse>
 
     @POST("/channels/{type}/{id}/event")
     fun sendEvent(
