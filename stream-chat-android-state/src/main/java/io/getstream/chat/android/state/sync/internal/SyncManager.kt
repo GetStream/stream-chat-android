@@ -532,7 +532,8 @@ internal class SyncManager(
             ?.let { groups ->
                 val keysKeepingPages = activeGroupedLogics
                     .filter { syncedCids.containsAll(it.cids()) }
-                    .mapNotNullTo(mutableSetOf()) { it.groupKey() }
+                    .mapNotNull { it.groupKey() }
+                    .toSet()
                 ReconnectGroupQueries(groups, keysKeepingPages)
             }
 
