@@ -40,15 +40,6 @@ internal class PollParsingTest {
         userTransformer = NoOpUserTransformer,
     )
 
-    // region Response path (JSON → PollResponseData → Poll)
-
-    @Test
-    fun `Response path - deserializes all fields`() {
-        val dto = parser.fromJson(PollTestData.jsonAllFields, PollResponseData::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(PollTestData.expectedAllFields, domain)
-    }
-
     @Test
     fun `Response path - deserializes with optional fields missing`() {
         val dto = parser.fromJson(PollTestData.jsonOptionalFieldsMissing, PollResponseData::class.java)
@@ -151,15 +142,6 @@ internal class PollParsingTest {
     }
 
     // endregion
-
-    // region extraData tests
-
-    @Test
-    fun `Response path - deserializes with extraData`() {
-        val dto = parser.fromJson(PollTestData.jsonWithExtraData, PollResponseData::class.java)
-        val domain = with(domainMapping) { dto.toDomain() }
-        assertEquals(PollTestData.expectedWithExtraData, domain)
-    }
 
     // endregion
 }

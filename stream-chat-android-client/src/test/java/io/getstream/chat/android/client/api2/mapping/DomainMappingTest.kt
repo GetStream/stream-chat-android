@@ -804,6 +804,50 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `MessageResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val messageResponse = Mother.randomMessageResponse().copy(
+            custom = mapOf("color" to "teal"),
+            imageLabels = mapOf("i.png" to listOf("cat")),
+            mml = "<mml/>",
+            pollId = "p1",
+            restrictedVisibility = listOf("filip"),
+            mentionedGroupIds = listOf("g1"),
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val message = with(sut) { messageResponse.toDomain() }
+
+        message.extraData["color"] shouldBeEqualTo "teal"
+        message.extraData["image_labels"] shouldBeEqualTo mapOf("i.png" to listOf("cat"))
+        message.extraData["mml"] shouldBeEqualTo "<mml/>"
+        message.extraData["poll_id"] shouldBeEqualTo "p1"
+        message.extraData["restricted_visibility"] shouldBeEqualTo listOf("filip")
+        message.extraData["mentioned_group_ids"] shouldBeEqualTo listOf("g1")
+    }
+
+    @Test
+    fun `On v2, ChannelMemberResponse adds the declared fields v1 also keeps in custom, in their wire shape`() {
+        val memberResponse = Mother.randomChannelMemberResponse().copy(
+            custom = mapOf("color" to "teal"),
+            deletedAt = Date(4_000),
+            deletedMessages = listOf("m1"),
+            isModerator = true,
+            role = "admin",
+            userId = "filip",
+        )
+        val sut = Fixture().hidingStoredDeclaredCustom().get()
+
+        val member = with(sut) { memberResponse.toDomain() }
+
+        member.extraData["color"] shouldBeEqualTo "teal"
+        member.extraData["deleted_at"] shouldBeEqualTo "1970-01-01T00:00:04.000Z"
+        member.extraData["deleted_messages"] shouldBeEqualTo listOf("m1")
+        member.extraData["is_moderator"] shouldBeEqualTo true
+        member.extraData["role"] shouldBeEqualTo "admin"
+        member.extraData["user_id"] shouldBeEqualTo "filip"
+    }
+
+    @Test
     fun `ChannelResponse keeps the custom value of a declared field over the typed one`() {
         val channelResponse = Mother.randomChannelResponse(custom = mapOf("hidden" to "from-custom")).copy(hidden = true)
         val sut = Fixture().get()
