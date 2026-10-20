@@ -232,8 +232,6 @@ class GroupedChannelListTests : StreamTestCase() {
         }
         step("AND user goes back online") {
             device.enableInternetConnection()
-            // A reconnection soon after the previous one can take longer than the default wait of the next step.
-            userRobot.sleep(3.seconds)
         }
         step("THEN the moved channel, which was on screen, is no longer in the new tab") {
             userRobot.assertChannelWithName("20", isDisplayed = false)
