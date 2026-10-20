@@ -18,6 +18,7 @@ package io.getstream.chat.android.ai.compose.ui.component
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -45,7 +46,20 @@ internal class AIVoiceWaveTest : PaparazziTest {
     }
 
     @Test
+    fun palette() {
+        snapshot { AIVoiceWave(AIVoiceAgentState.Speaking, Modifier.size(320.dp, 140.dp), colors = Palette) }
+    }
+
+    @Test
     fun idle() {
         snapshot { AIVoiceWave(AIVoiceAgentState.Idle, Modifier.size(320.dp, 140.dp)) }
     }
 }
+
+internal val Palette = listOf(
+    Color(0xFF005FFF),
+    Color(0xFF00C2A8),
+    Color(0xFFFFB800),
+    Color(0xFFFF3D71),
+    Color(0xFF8A4DFF),
+)
