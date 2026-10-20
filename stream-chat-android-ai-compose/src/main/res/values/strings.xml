@@ -47,4 +47,10 @@
     <string name="stream_ai_compose_tool_approval_allow">Allow</string>
     <string name="stream_ai_compose_tool_approval_decline">Don\'t allow</string>
     <string name="stream_ai_compose_tool_approval_not_sent">Your answer couldn\'t be sent. Try again.</string>
+    <string name="stream_ai_compose_voice_agent">Voice agent</string>
+    <string name="stream_ai_compose_voice_state_idle">Ready</string>
+    <string name="stream_ai_compose_voice_state_connecting">Connecting</string>
+    <string name="stream_ai_compose_voice_state_listening">Listening</string>
+    <string name="stream_ai_compose_voice_state_thinking">Thinking</string>
+    <string name="stream_ai_compose_voice_state_speaking">Speaking</string>
 </resources>
