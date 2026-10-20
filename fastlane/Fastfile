@@ -8,10 +8,18 @@ import 'Allurefile'
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-android'
 test_flavor = 'stream-chat-android-compose-sample'
 mock_server_driver_port = 4567
+backend_test_class = 'io.getstream.chat.android.compose.tests.BackendTests'
+e2e_tests_path = "#{test_flavor}/src/androidTestE2eDebug/kotlin/io/getstream/chat/android/compose"
+e2e_coverage_dir = File.expand_path('test_output/e2e_coverage')
+e2e_coverage_map_path = File.expand_path('test_output/e2e_coverage_map.json')
+e2e_coverage_map_artifact = 'e2e-coverage-map'
+e2e_selection_path = File.expand_path('test_output/e2e_selection.json')
 is_localhost = !is_ci
 @force_check = false
+@impact = nil
 
 before_all do |lane|
+  @impact = impact_analysis
   if is_ci
     setup_ci
     setup_git_config
@@ -41,13 +49,13 @@ lane :stop_mock_server do
 end
 
 lane :run_sonar_analysis do |options|
-  next unless is_check_required(sources: sources_matrix[:sonar], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:sonar][:sources], force_check: @force_check, required_checks: @impact[:sonar][:checks])
 
   Dir.chdir('..') { sh('./gradlew sonar') }
 end
 
 lane :run_snapshot_test do |options|
-  next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ui][:sources], force_check: @force_check, required_checks: @impact[:ui][:checks])
 
   cmd = [
     './gradlew',
@@ -71,17 +79,76 @@ lane :build_and_run_e2e_test do |options|
   )
 end
 
-lane :build_e2e_test do
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+lane :build_e2e_test do |options|
+  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
 
   gradle(
     tasks: [":#{test_flavor}:assembleE2eDebugAndroidTest", ":#{test_flavor}:assembleE2eDebug"],
-    flags: "--scan"
+    flags: options[:coverage] ? '--scan -Pe2eCoverage' : '--scan'
   )
 end
 
+desc 'Picks the e2e tests the pull request can affect and exposes how many CI batches they need'
+lane :select_e2e_tests do |options|
+  # A manual run's tip may be a "Merge develop" commit, which the selection would mistake for a pull request merge.
+  run_all_reason =
+    if is_ci && ENV['GITHUB_EVENT_NAME'] != 'pull_request'
+      'not a pull request'
+    elsif ENV['GITHUB_HEAD_REF'].to_s.start_with?('release/') || ENV['GITHUB_BASE_REF'] == 'main'
+      'release pull request'
+    end
+  # build_e2e_test skips the build under the same condition, so there is no test apk to read then.
+  required = run_all_reason || is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
+  all_tests = required ? all_e2e_tests(test_apk_path: "../#{test_flavor}/build/outputs/apk/androidTest/e2e/debug/#{test_flavor}-e2e-debug-androidTest.apk") : []
+  # The coverage map names tests Class/test, the instrumentation runs package.Class#test.
+  tests_by_id = all_tests.to_h { |test| [test.split('.').last.sub('#', '/'), test] }
+  tests = []
+  reasons = []
+  if run_all_reason
+    UI.important("Running all #{all_tests.size} tests: #{run_all_reason}")
+    tests = all_tests
+    reasons = [run_all_reason]
+  elsif required
+    modules = e2e_modules
+    selection = select_impacted_tests(
+      all_tests: tests_by_id.keys,
+      coverage_map: options[:coverage_map],
+      coverage_map_artifact: e2e_coverage_map_artifact,
+      diff_base: options[:diff_base],
+      changed_files: options[:changed_files]&.split(','),
+      source_paths: modules.map { |name| "#{name}/src/main" } + ["#{test_flavor}/src/e2e"],
+      test_paths: ["#{e2e_tests_path}/tests"],
+      ignore_paths: ['**/*.md', '**/baseline-prof.txt'],
+      run_all_paths: modules.map { |name| "#{name}/build.gradle.kts" } + [
+        "#{e2e_tests_path}/tests/StreamTestCase.kt",
+        "#{e2e_tests_path}/pages",
+        "#{e2e_tests_path}/robots",
+        "#{test_flavor}/src/androidTestE2eDebug/resources",
+        'stream-chat-android-e2e-test',
+        'buildSrc'
+      ],
+      # Changes to code nearly every test runs (launch, login, channel list) take one test per class; the nightly run covers the rest.
+      hot_test_ratio: 0.9
+    )
+    tests = selection['tests'].map { |id| tests_by_id.fetch(id) }
+    reasons = selection['reasons']
+  else
+    reasons = ['no e2e sources changed']
+  end
+  FileUtils.mkdir_p(File.dirname(e2e_selection_path))
+  File.write(e2e_selection_path, JSON.pretty_generate(tests: tests, reasons: reasons))
+
+  # Up to 8 batches, none bigger than an eighth of the suite, so a small selection takes fewer runners.
+  max_batches = 8
+  batch_size = [(all_tests.size / max_batches.to_f).ceil, 1].max
+  batches = (0...[(tests.size / batch_size.to_f).ceil, max_batches].min).to_a
+  UI.important("E2E batches: #{batches.size}")
+  File.write(ENV['GITHUB_OUTPUT'], "e2e_batches=#{batches.to_json}\n", mode: 'a') if ENV['GITHUB_OUTPUT']
+  batches
+end
+
 lane :run_e2e_test do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
 
   allure_results_path = 'allure-results'
   adb_test_results_path = '/sdcard/googletest/test_outputfiles'
@@ -105,8 +172,6 @@ lane :run_e2e_test do |options|
   orchestrator_package_name = 'androidx.test.orchestrator/.AndroidTestOrchestrator'
   androidx_test_services_path = sh('adb shell pm path androidx.test.services').strip
 
-  backend_test_class = 'io.getstream.chat.android.compose.tests.BackendTests'
-
   targeted_class = options[:test_class].to_s
   # The value is interpolated into a shell command, so only a class name is accepted,
   # optionally with a single method. A typo also fails here instead of in the shell.
@@ -123,10 +188,19 @@ lane :run_e2e_test do |options|
     run_tests_in_batches = batch_tests(
       batch: options[:batch],
       batch_count: options[:batch_count],
+      tests: File.exist?(e2e_selection_path) ? JSON.parse(File.read(e2e_selection_path))['tests'] : nil,
       test_apk_path: stream_test_path
     )
     exclude_backend = "-e notClass #{backend_test_class}"
     test_filter = run_tests_in_batches.empty? ? exclude_backend : "#{run_tests_in_batches} #{exclude_backend}"
+  end
+
+  # The orchestrator runs every test in its own process, and the runner hands each one's coverage to the test
+  # storage as coverage/<package>.<Class>#<test>.ec.
+  adb_coverage_path = '/sdcard/googletest/internal_use/coverage'
+  if options[:coverage]
+    sh("adb shell rm -rf #{adb_coverage_path}")
+    test_filter = "#{test_filter} -e coverage true -e coverageFilePath coverage/ -e useTestStorageService true"
   end
 
   result = sh(
@@ -138,7 +212,44 @@ lane :run_e2e_test do |options|
   sh("adb exec-out sh -c 'cd #{adb_test_results_path} && tar cf - #{allure_results_path}' | tar xvf - -C .") if is_ci
   stop_mock_server
 
+  if options[:coverage]
+    FileUtils.rm_rf(e2e_coverage_dir)
+    FileUtils.mkdir_p(e2e_coverage_dir)
+    sh("adb exec-out sh -c 'cd #{File.dirname(adb_coverage_path)} && tar cf - coverage' | tar xf - -C #{e2e_coverage_dir}")
+    # The retry rule reruns a failed test in the same process, so a test fails here only when its last attempt failed.
+    failed_tests = result.scan(/^\d+\) (\w+)\(([\w.$]+)\)\r?$/).map { |test, test_class| "#{test_class.split('.').last}/#{test}" }
+    build_e2e_coverage_map(failed_tests: failed_tests)
+  end
+
   UI.user_error!('Tests have failed!') if result.include?('Failures')
+end
+
+private_lane :build_e2e_coverage_map do |options|
+  next UI.important('No e2e coverage was collected') if Dir.glob("#{e2e_coverage_dir}/**/*.ec").empty?
+
+  build_test_coverage_map(
+    coverage_dir: e2e_coverage_dir,
+    class_dirs: e2e_class_dirs,
+    output_path: e2e_coverage_map_path,
+    previous_map_artifact: e2e_coverage_map_artifact,
+    failed_tests: options[:failed_tests]
+  )
+end
+
+# The compiled classes of the e2e app and the SDK modules it depends on, the modules a CI build of the app compiles.
+private_lane :e2e_class_dirs do
+  patterns = [
+    '../stream-chat-android-*/build/tmp/kotlin-classes/{debug,e2eDebug}',
+    '../stream-chat-android-*/build/intermediates/javac/{debug,e2eDebug}/*/classes',
+    '../stream-chat-android-*/build/classes/{java,kotlin}/main'
+  ]
+  Dir.glob(patterns).map { |dir| File.expand_path(dir) }
+end
+
+private_lane :e2e_modules do
+  modules = e2e_class_dirs.map { |dir| File.basename(dir.split('/build/').first) }.uniq.sort
+  UI.user_error!('Build the e2e app first, its modules are read from the build output') if modules.empty?
+  modules
 end
 
 # This lane can be used for local linting
@@ -156,11 +267,15 @@ lane :upload_attachments do
   end
 end
 
+private_lane :all_e2e_tests do |options|
+  install(tool: :test_parser)
+  sh("java -jar test-parser.jar #{options[:test_apk_path]} ./")
+  File.read('AllTests.txt').split.reject { |test| test.start_with?("#{backend_test_class}#") }
+end
+
 private_lane :batch_tests do |options|
   if options[:batch] && options[:batch_count]
-    install(tool: :test_parser)
-    sh("java -jar test-parser.jar #{options[:test_apk_path]} ./")
-    test_names = File.read('AllTests.txt').split
+    test_names = options[:tests] || all_e2e_tests(test_apk_path: options[:test_apk_path])
     batch = options[:batch].to_i
     batch_count = options[:batch_count].to_i
     # Round-robin split always yields exactly batch_count groups. Slicing by a rounded-up
@@ -188,18 +303,29 @@ end
 
 desc 'Run fastlane linting'
 lane :rubocop do
-  next unless is_check_required(sources: sources_matrix[:ruby], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:ruby][:sources], force_check: @force_check, required_checks: @impact[:ruby][:checks])
 
   sh('bundle exec rubocop')
 end
 
-private_lane :sources_matrix do
+lane :impact_analysis do
   {
-    unit: ['stream-chat-android-test', 'stream-chat-android-client', 'stream-chat-android-compose/', 'stream-chat-android-core', 'stream-chat-android-markdown-transformer', 'stream-chat-android-ui-common', 'stream-chat-android-ui-components/'],
-    ui: ['stream-chat-android-ui', '.github/workflows/snapshot-test'],
-    e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-test'],
-    sonar: ['stream-chat-android-client/', 'stream-chat-android-compose/', 'stream-chat-android-core/', 'stream-chat-android-markdown-transformer/', 'stream-chat-android-ui-common/', 'stream-chat-android-ui-components/'],
-    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
+    e2e: {
+      sources: ['buildSrc', 'stream-chat-android', 'gradle/libs.versions.toml', '.github/workflows/e2e-build', '.github/workflows/e2e-test'],
+      checks: ['E2E result']
+    },
+    ui: {
+      sources: ['stream-chat-android-ui', '.github/workflows/snapshot-test'],
+      checks: ['Run']
+    },
+    sonar: {
+      sources: ['stream-chat-android-client/', 'stream-chat-android-compose/', 'stream-chat-android-core/', 'stream-chat-android-markdown-transformer/', 'stream-chat-android-ui-common/', 'stream-chat-android-ui-components/'],
+      checks: ['Tests']
+    },
+    ruby: {
+      sources: ['fastlane', 'Gemfile', 'Gemfile.lock'],
+      checks: ['Rubocop']
+    }
   }
 end
 

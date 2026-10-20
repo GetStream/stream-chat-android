@@ -18,7 +18,7 @@ end
 
 desc 'Create launch on Allure TestOps'
 lane :allure_launch do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+  next unless is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
 
   # Only real scheduled runs are named 'Cron checks'. A manual dispatch of the nightly
   # workflow falls back to the head commit message, so it stays distinguishable in TestOps.

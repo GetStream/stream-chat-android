@@ -68,6 +68,8 @@ android {
             isDebuggable = true
             isMinifyEnabled = false
             isShrinkResources = false
+            // The nightly e2e run instruments the app and the SDK to map the code every test runs.
+            enableAndroidTestCoverage = providers.gradleProperty("e2eCoverage").isPresent
             signingConfig = signingConfigs.getByName("debug")
             buildConfigField("Boolean", "BENCHMARK", "false")
         }
