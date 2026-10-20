@@ -46,7 +46,8 @@ import kotlin.math.sin
 
 /**
  * A voice agent as a single string, flat at its ends, carrying a wave packet that erupts with
- * speech while its colors flow along it.
+ * speech while its colors flow along it. Tapping the string ripples it from the touch, and so does
+ * a hovering mouse or stylus.
  *
  * It has no size of its own and draws in the middle of the space it is given, about 80% as wide as
  * its shorter side, so give it a square or a wide box.
@@ -94,6 +95,7 @@ private class WaveDrawing {
         val drive = mix(speak * 0.26f * speechEnv(t), 0.30f * d.mic, d.voice)
         val reach = 0.018f + 0.022f * react + drive + 0.14f * d.flow + 0.10f * d.load
         val tapAlive = d.tapAge < 1.5f
+        val hovered = d.hoverAmount > 0.001f
 
         path.reset()
         for (i in 0..POINTS) {
@@ -102,6 +104,9 @@ private class WaveDrawing {
             if (tapAlive) {
                 y += exp(-sq((x - d.tapX) / 0.12f)) * sin((x - d.tapX) * 40f - d.tapAge * 24f) *
                     exp(-d.tapAge * 2.6f) * 0.05f
+            }
+            if (hovered) {
+                y += exp(-sq((x - d.hoverX) / 0.12f)) * sin((x - d.hoverX) * 40f - t * 7f) * d.hoverAmount * 0.04f
             }
             val px = size.width / 2 + x * m * d.scale
             val py = size.height / 2 - y * m * d.scale
