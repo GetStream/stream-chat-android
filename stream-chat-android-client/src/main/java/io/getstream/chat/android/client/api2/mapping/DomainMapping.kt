@@ -1434,6 +1434,7 @@ internal class DomainMapping(
         blockedBy = userId,
         userId = blockedUserId,
         blockedAt = createdAt,
+        blockedUser = blockedUser.takeIf { it.id == blockedUserId }?.toDomain(),
     )
 
     /**

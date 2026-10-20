@@ -1977,9 +1977,29 @@ internal class DomainMappingTest {
         val blocklist = with(sut) { listOf(response).toDomain() }
 
         assertEquals(
-            listOf(UserBlock(blockedBy = "blocker-1", userId = "blocked-1", blockedAt = blockedAt)),
+            listOf(
+                UserBlock(
+                    blockedBy = "blocker-1",
+                    userId = "blocked-1",
+                    blockedAt = blockedAt,
+                    blockedUser = with(sut) { response.blockedUser.toDomain() },
+                ),
+            ),
             blocklist,
         )
+    }
+
+    @Test
+    fun `BlockedUserResponse with a placeholder for a deleted user is mapped to UserBlock without a blocked user`() {
+        val response = randomBlockedUserResponse(
+            blockedUserId = "blocked-1",
+            blockedUser = randomUserResponse(id = "deleted-user"),
+        )
+        val sut = Fixture().get()
+
+        val userBlock = with(sut) { response.toDomain() }
+
+        assertNull(userBlock.blockedUser)
     }
 
     @Test
