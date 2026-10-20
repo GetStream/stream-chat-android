@@ -687,20 +687,35 @@ public class ChannelClient internal constructor(
     }
 
     /**
-     * Updates specific fields of custom data for a given member.
+     * Updates specific fields of the current user's member data, retaining the custom data fields which were set
+     * previously.
      *
-     * @param userId The user id of the member to update.
      * @param set The key-value data to be updated in the member data.
      * @param unset The list of keys to be removed from the member data.
      */
     @CheckResult
     public fun partialUpdateMember(
-        userId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
     ): Call<Member> {
-        return client.partialUpdateMember(channelType, channelId, userId, set, unset)
+        return client.partialUpdateMember(channelType, channelId, set, unset)
     }
+
+    /**
+     * Same as the overload without [userId], which is ignored: only the current user's member data can be updated.
+     */
+    @Deprecated(
+        message = "Only the current user's member data can be updated, so userId is ignored. Use the overload " +
+            "without userId.",
+        replaceWith = ReplaceWith("partialUpdateMember(set, unset)"),
+        level = DeprecationLevel.WARNING,
+    )
+    @CheckResult
+    public fun partialUpdateMember(
+        @Suppress("UNUSED_PARAMETER") userId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Member> = partialUpdateMember(set, unset)
 
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import kotlin.math.max
 import kotlin.math.min
 
@@ -34,9 +35,11 @@ internal object VoiceVisualizationPalette {
 
     @Suppress("MagicNumber")
     fun hsv(color: Color): Hsv {
-        val r = color.red
-        val g = color.green
-        val b = color.blue
+        // In sRGB first, so a Display P3 or extended color reads with its true hue.
+        val srgb = color.convert(ColorSpaces.Srgb)
+        val r = srgb.red
+        val g = srgb.green
+        val b = srgb.blue
         val high = max(r, max(g, b))
         val low = min(r, min(g, b))
         val delta = high - low

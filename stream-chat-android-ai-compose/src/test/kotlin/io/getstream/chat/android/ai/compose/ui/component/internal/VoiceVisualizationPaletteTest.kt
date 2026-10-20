@@ -17,7 +17,9 @@
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
 internal class VoiceVisualizationPaletteTest {
@@ -50,6 +52,16 @@ internal class VoiceVisualizationPaletteTest {
 
         assertEquals(0f, hsv.saturation, 1e-4f)
         assertEquals(0.5f, hsv.value, step)
+    }
+
+    @Test
+    fun `a wide-gamut color reads as its sRGB equivalent`() {
+        val p3 = Color(red = 0.5f, green = 0.25f, blue = 0f, colorSpace = ColorSpaces.DisplayP3)
+
+        val hsv = VoiceVisualizationPalette.hsv(p3)
+
+        assertEquals(VoiceVisualizationPalette.hsv(p3.convert(ColorSpaces.Srgb)), hsv)
+        assertNotEquals(30f, hsv.hue * 360f, 0.5f)
     }
 
     @Test

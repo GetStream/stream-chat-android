@@ -107,12 +107,11 @@ internal class ExtraDataValidator(
     override fun partialUpdateMember(
         channelType: String,
         channelId: String,
-        userId: String,
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Member> {
         return delegate
-            .partialUpdateMember(channelType, channelId, userId, set, unset)
+            .partialUpdateMember(channelType, channelId, set, unset)
             .withExtraDataValidation(set)
     }
 
