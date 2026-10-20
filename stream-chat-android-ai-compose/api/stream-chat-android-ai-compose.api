@@ -411,6 +411,19 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceAgen
 	public static fun values ()[Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
 }
 
+public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowKt {
+	public static final fun AIVoiceGlow (Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;Landroidx/compose/ui/Modifier;Ljava/util/List;FLkotlin/jvm/functions/Function0;Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering : java/lang/Enum {
+	public static final field Auto Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering;
+	public static final field Canvas Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering;
+	public static final field Shader Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering;
+	public static fun values ()[Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceGlowRendering;
+}
+
 public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceVisualizationDefaults {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceVisualizationDefaults;
