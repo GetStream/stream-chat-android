@@ -411,6 +411,16 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceAgen
 	public static fun values ()[Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;
 }
 
+public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceVisualizationDefaults {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceVisualizationDefaults;
+	public final fun colors (Landroidx/compose/runtime/Composer;I)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ai/compose/ui/component/AIVoiceWaveKt {
+	public static final fun AIVoiceWave (Lio/getstream/chat/android/ai/compose/ui/component/AIVoiceAgentState;Landroidx/compose/ui/Modifier;Ljava/util/List;FLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
 public abstract interface class io/getstream/chat/android/ai/compose/ui/component/ChatAiComponentFactory {
 	public fun AISuggestionsChip (Lio/getstream/chat/android/ai/compose/ui/component/AISuggestionsChipParams;Landroidx/compose/runtime/Composer;I)V
 	public fun AITypingIndicatorIndicator (Lio/getstream/chat/android/ai/compose/ui/component/AITypingIndicatorIndicatorParams;Landroidx/compose/runtime/Composer;I)V
