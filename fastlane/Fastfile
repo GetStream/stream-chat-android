@@ -90,13 +90,16 @@ end
 
 desc 'Picks the e2e tests the pull request can affect and exposes how many CI batches they need'
 lane :select_e2e_tests do |options|
+  diff_base = options[:diff_base]
+  # A merge queue entry is the queued pull requests on top of the base branch tip, so it takes the tests they affect.
   # A manual run's tip may be a "Merge develop" commit, which the selection would mistake for a pull request merge.
-  run_all_reason =
-    if is_ci && ENV['GITHUB_EVENT_NAME'] != 'pull_request'
-      'not a pull request'
-    elsif ENV['GITHUB_HEAD_REF'].to_s.start_with?('release/') || ENV['GITHUB_BASE_REF'] == 'main'
-      'release pull request'
-    end
+  run_all_reason = nil
+  if is_ci && ENV['GITHUB_EVENT_NAME'] == 'merge_group'
+    diff_base ||= JSON.parse(File.read(ENV.fetch('GITHUB_EVENT_PATH'))).dig('merge_group', 'base_sha')
+    run_all_reason = 'the merge queue base is unknown' if diff_base.to_s.empty?
+  elsif is_ci && ENV['GITHUB_EVENT_NAME'] != 'pull_request'
+    run_all_reason = 'not a pull request'
+  end
   # build_e2e_test skips the build under the same condition, so there is no test apk to read then.
   required = run_all_reason || is_check_required(sources: @impact[:e2e][:sources], force_check: @force_check, required_checks: @impact[:e2e][:checks])
   all_tests = required ? all_e2e_tests(test_apk_path: "../#{test_flavor}/build/outputs/apk/androidTest/e2e/debug/#{test_flavor}-e2e-debug-androidTest.apk") : []
@@ -114,7 +117,7 @@ lane :select_e2e_tests do |options|
       all_tests: tests_by_id.keys,
       coverage_map: options[:coverage_map],
       coverage_map_artifact: e2e_coverage_map_artifact,
-      diff_base: options[:diff_base],
+      diff_base: diff_base,
       changed_files: options[:changed_files]&.split(','),
       source_paths: modules.map { |name| "#{name}/src/main" } + ["#{test_flavor}/src/e2e"],
       test_paths: ["#{e2e_tests_path}/tests"],
