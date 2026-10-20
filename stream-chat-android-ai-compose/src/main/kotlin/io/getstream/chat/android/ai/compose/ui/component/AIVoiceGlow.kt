@@ -16,11 +16,19 @@
 
 package io.getstream.chat.android.ai.compose.ui.component
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.PowerManager
 import androidx.compose.foundation.Canvas
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +36,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import io.getstream.chat.android.ai.compose.ui.component.internal.VoiceGlowCanvas
 import io.getstream.chat.android.ai.compose.ui.component.internal.VoiceGlowShader
@@ -63,8 +72,7 @@ public fun AIVoiceGlow(
 ) {
     val visualization = rememberVoiceVisualization(state, colors, expressivity, audioLevel)
     val dark = if (MaterialTheme.colorScheme.surface.isDark()) 1f else 0f
-    val context = LocalContext.current
-    val saving = remember(context) { context.getSystemService<PowerManager>()?.isPowerSaveMode == true }
+    val saving by rememberPowerSaveMode()
     val shader = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
         usesShader(rendering, Build.VERSION.SDK_INT, saving)
     ) {
@@ -86,6 +94,25 @@ public fun AIVoiceGlow(
             canvas.draw(this, visualization.driver, dark)
         }
     }
+}
+
+/** Whether the device is in battery saver, following it while the glow is shown. */
+@Composable
+private fun rememberPowerSaveMode(): State<Boolean> {
+    val context = LocalContext.current
+    val power = remember(context) { context.getSystemService<PowerManager>() }
+    val saving = remember(power) { mutableStateOf(power?.isPowerSaveMode == true) }
+    DisposableEffect(context, power) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                saving.value = power?.isPowerSaveMode == true
+            }
+        }
+        val filter = IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)
+        ContextCompat.registerReceiver(context, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+        onDispose { context.unregisterReceiver(receiver) }
+    }
+    return saving
 }
 
 /** Whether [rendering] draws with the shader on API level [sdk], [saving] battery or not. */

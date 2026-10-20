@@ -27,7 +27,6 @@ import io.getstream.chat.android.ai.compose.ui.PaparazziTest
 import org.junit.Rule
 import org.junit.Test
 
-// The Canvas glow; the shader needs a device and is left out of snapshots.
 internal class AIVoiceGlowTest : PaparazziTest {
 
     @get:Rule
@@ -51,7 +50,22 @@ internal class AIVoiceGlowTest : PaparazziTest {
         snapshot { glow(AIVoiceAgentState.Connecting) }
     }
 
+    @Test
+    fun shaderSpeaking() {
+        snapshot { glow(AIVoiceAgentState.Speaking, AIVoiceGlowRendering.Shader) }
+    }
+
+    @Test
+    fun shaderThinking() {
+        snapshot { glow(AIVoiceAgentState.Thinking, AIVoiceGlowRendering.Shader) }
+    }
+
+    @Test
+    fun shaderConnecting() {
+        snapshot { glow(AIVoiceAgentState.Connecting, AIVoiceGlowRendering.Shader) }
+    }
+
     @Composable
-    private fun glow(state: AIVoiceAgentState) =
-        AIVoiceGlow(state, Modifier.size(240.dp), rendering = AIVoiceGlowRendering.Canvas)
+    private fun glow(state: AIVoiceAgentState, rendering: AIVoiceGlowRendering = AIVoiceGlowRendering.Canvas) =
+        AIVoiceGlow(state, Modifier.size(240.dp), rendering = rendering)
 }

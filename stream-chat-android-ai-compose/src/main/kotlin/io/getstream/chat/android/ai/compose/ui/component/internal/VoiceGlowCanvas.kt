@@ -80,19 +80,20 @@ internal class VoiceGlowCanvas {
             blob(d, 2, colD, blobAlpha * (d.count - 3f).coerceIn(0f, 1f))
             blob(d, 3, colE, blobAlpha * (d.count - 4f).coerceIn(0f, 1f))
             light(r, gain)
-            // The soft edge, over the whole area so whatever spilled past the globe goes too.
-            drawRect(
-                Brush.radialGradient(
-                    0f to Color.Black,
-                    (0.62f / 1.06f) to Color.Black,
-                    1f to Color.Transparent,
-                    center = o,
-                    radius = r * 1.06f,
-                ),
-                blendMode = BlendMode.DstIn,
-            )
-            haloBehind(r, side, react, dark, gain)
         }
+        // The soft edge, outside the bounce's scale so it covers the whole area at any scale and
+        // whatever spilled past the globe goes too.
+        drawRect(
+            Brush.radialGradient(
+                0f to Color.Black,
+                (0.62f / 1.06f) to Color.Black,
+                1f to Color.Transparent,
+                center = o,
+                radius = r * 1.06f * d.scale,
+            ),
+            blendMode = BlendMode.DstIn,
+        )
+        scale(d.scale, o) { haloBehind(r, side, react, dark, gain) }
     }
 
     private fun colors(d: VoiceVisualizationDriver, dark: Float) {
