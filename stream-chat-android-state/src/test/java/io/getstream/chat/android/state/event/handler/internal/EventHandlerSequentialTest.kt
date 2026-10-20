@@ -51,6 +51,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
@@ -306,6 +307,35 @@ internal class EventHandlerSequentialTest {
 
         mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
     }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent migrates grouped unread count of a stored channel that is not active`() =
+        runTest {
+            val stored = randomChannel(
+                id = "channel-id",
+                type = "messaging",
+                extraData = mapOf("group" to "a"),
+                read = listOf(randomChannelUserRead(user = currentUser, unreadMessages = 1)),
+            )
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn listOf(stored)
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            whenever(repos.selectChannel(stored.cid)) doReturn stored
+            val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+                setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+            }
+            val partialChannel = Channel(id = "channel-id", type = "messaging", extraData = mapOf("group" to "b"))
+            val handler = Fixture()
+                .withCurrentUser(currentUser)
+                .withRepositoryFacade(repos)
+                .withMutableGlobalState(mutableGlobalState)
+                .get(this)
+
+            handler.handleEvents(randomNotificationChannelPartialUpdatedEvent(cid = stored.cid, channel = partialChannel))
+
+            mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
+        }
 
     @Test
     fun `When handling NotificationChannelPartialUpdatedEvent, The stored channel should get the partial update`() =
