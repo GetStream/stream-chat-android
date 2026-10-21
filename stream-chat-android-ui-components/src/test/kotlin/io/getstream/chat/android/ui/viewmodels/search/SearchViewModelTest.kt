@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMessage
@@ -41,6 +44,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -154,11 +158,137 @@ internal class SearchViewModelTest {
         )
     }
 
+    @Test
+    fun `Given search results When another user connects Should clear the results`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+            .givenRepositorySelectChannels()
+        val viewModel = fixture.get()
+        val states = viewModel.state.observeAll()
+        viewModel.setQuery("hello")
+
+        fixture.startConnectingUser(User(id = "other"))
+
+        assertEquals(SearchViewModel.State(query = "hello", isLoading = true), states.last())
+    }
+
+    @Test
+    fun `Given search results When another user connects Should search again as that user`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+            .givenRepositorySelectChannels()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+        viewModel.setQuery("hello")
+
+        fixture.startConnectingUser(User(id = "other"))
+        fixture.finishConnecting()
+
+        val captor = argumentCaptor<FilterObject>()
+        verify(chatClient, times(2)).searchMessages(
+            captor.capture(),
+            any(),
+            anyOrNull(),
+            anyOrNull(),
+            anyOrNull(),
+            anyOrNull(),
+        )
+        assertEquals(Filters.`in`("members", listOf("other")), captor.lastValue)
+        assertEquals(1, viewModel.state.value!!.results.size)
+    }
+
+    @Test
+    fun `Given a user switch When a new query is typed before the user is ready Should keep the new query`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+                .givenRepositorySelectChannels()
+            val viewModel = fixture.get()
+            viewModel.state.observeAll()
+            viewModel.setQuery("hello")
+
+            fixture.startConnectingUser(User(id = "other"))
+            viewModel.setQuery("bye")
+            fixture.finishConnecting()
+
+            val captor = argumentCaptor<FilterObject>()
+            verify(chatClient, times(2)).searchMessages(
+                any(),
+                captor.capture(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+            )
+            assertEquals(Filters.autocomplete("text", "bye"), captor.lastValue)
+            assertEquals("bye", viewModel.state.value!!.query)
+        }
+
+    @Test
+    fun `Given search results When the user disconnects Should clear the results`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+            .givenRepositorySelectChannels()
+        val viewModel = fixture.get()
+        val states = viewModel.state.observeAll()
+        viewModel.setQuery("hello")
+
+        fixture.disconnectUser()
+
+        assertEquals(SearchViewModel.State(query = "hello", isLoading = true), states.last())
+    }
+
+    @Test
+    fun `Given a search waiting for the next user When loading more Should keep the search`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+            .givenRepositorySelectChannels()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+        viewModel.setQuery("hello")
+
+        fixture.startConnectingUser(User(id = "other"))
+        viewModel.loadMore()
+        fixture.finishConnecting()
+
+        verify(chatClient, times(2)).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        assertEquals(1, viewModel.state.value!!.results.size)
+        assertFalse(viewModel.state.value!!.isLoading)
+    }
+
+    @Test
+    fun `Given a user still connecting When searching Should wait until they are ready`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+            .givenRepositorySelectChannels()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+
+        fixture.startConnectingUser(User(id = "other"))
+        viewModel.setQuery("hello")
+        verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+
+        fixture.finishConnecting()
+        verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
     ) {
         private val clientState: ClientState = mock()
         private val repositoryFacade: RepositoryFacade = mock()
+        private val user = MutableStateFlow<User?>(null)
+        private val initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
 
         init {
             whenever(chatClient.clientState) doReturn clientState
@@ -166,7 +296,27 @@ internal class SearchViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            user.value = currentUser
+            initializationState.value = InitializationState.COMPLETE
+            whenever(clientState.user) doReturn user
+            whenever(clientState.initializationState) doReturn initializationState
+        }
+
+        fun disconnectUser() {
+            initializationState.value = InitializationState.NOT_INITIALIZED
+            user.value = null
+        }
+
+        fun startConnectingUser(newUser: User) {
+            // Same order as ChatClient: disconnect, then connectUser sets the user before the client is ready.
+            initializationState.value = InitializationState.NOT_INITIALIZED
+            user.value = null
+            initializationState.value = InitializationState.INITIALIZING
+            user.value = newUser
+        }
+
+        fun finishConnecting() {
+            initializationState.value = InitializationState.COMPLETE
         }
 
         fun givenSearchMessagesResult(result: SearchMessagesResult) = apply {

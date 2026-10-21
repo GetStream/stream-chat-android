@@ -38,10 +38,12 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
@@ -49,6 +51,7 @@ import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
+import io.getstream.result.call.Call
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -65,6 +68,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 /**
  * ViewModel class for [ChannelListView].
@@ -242,13 +246,23 @@ public class ChannelListViewModel internal constructor(
      */
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
+    /**
+     * Whether the filter was set through [setFilters], which a user change must not override.
+     */
+    private var isFilterSetByApp = false
+
+    /**
+     * The in-flight request for the next page, if any.
+     */
+    private var loadMoreCall: Call<List<Channel>>? = null
+
     init {
         when (mode) {
             is QueryMode.Standard -> {
                 if (mode.initialFilter == null) {
                     viewModelScope.launch {
                         val resolvedFilter = buildDefaultFilter().first()
-                        this@ChannelListViewModel.filterLiveData.value = resolvedFilter
+                        if (!isFilterSetByApp) this@ChannelListViewModel.filterLiveData.value = resolvedFilter
                     }
                 }
                 stateMerger.addSource(filterLiveData) { filter ->
@@ -259,7 +273,31 @@ public class ChannelListViewModel internal constructor(
             }
             is QueryMode.Predefined -> initData()
         }
+        viewModelScope.launch {
+            chatClient.clientState.userSessionEnds().collectLatest {
+                // Drop the previous user's channels and stop their queries.
+                queryJob?.cancel()
+                loadMoreCall?.cancel()
+                queryChannelsState = MutableStateFlow(null)
+                stateMerger.value = INITIAL_STATE
+                paginationStateMerger.value = PaginationState()
+                // Reload once the next user is ready; their query is built from scratch.
+                chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
+                if (followsDefaultFilter()) {
+                    // The default filter is built from the current user, and setting it reloads.
+                    filterLiveData.value = buildDefaultFilter().first()
+                } else {
+                    initData()
+                }
+            }
+        }
     }
+
+    /**
+     * Whether the filter is the default one, built from the current user, rather than one the app provided.
+     */
+    private fun followsDefaultFilter(): Boolean =
+        mode is QueryMode.Standard && mode.initialFilter == null && !isFilterSetByApp
 
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
@@ -285,9 +323,6 @@ public class ChannelListViewModel internal constructor(
             logger.v { "[init] rejected (filter not yet initialized)" }
             return
         }
-        queryChannelsState =
-            chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope)
-
         /**
          * We clean up any previous loads to make sure the current one is the only one running.
          */
@@ -295,6 +330,9 @@ public class ChannelListViewModel internal constructor(
         val queryJob = Job(viewModelScope.coroutineContext.job).also {
             this.queryJob = it
         }
+        // Tied to the query job, so a replaced query stops instead of re-running for later users.
+        queryChannelsState =
+            chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope + queryJob)
 
         viewModelScope.launch(queryJob) {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
@@ -424,7 +462,9 @@ public class ChannelListViewModel internal constructor(
         val queryChannelsState = queryChannelsState.value ?: return
         val nextPageRequest = queryChannelsState.nextPageRequest.value ?: return
         viewModelScope.launch {
-            chatClient.queryChannels(nextPageRequest).enqueue(
+            // Repeating the request returns the call already in flight, so this tracks it either way.
+            loadMoreCall = chatClient.queryChannels(nextPageRequest)
+            loadMoreCall?.enqueue(
                 onError = { streamError ->
                     logger.e {
                         "Could not load more channels. Error: ${streamError.message}. " +
@@ -449,6 +489,7 @@ public class ChannelListViewModel internal constructor(
             return
         }
         logger.d { "[setFilters] filterObject: $filterObject" }
+        isFilterSetByApp = true
         this.filterLiveData.value = filterObject
     }
 

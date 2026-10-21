@@ -38,7 +38,9 @@ import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
+import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
+import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -48,9 +50,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -101,6 +105,217 @@ internal class ChannelListViewModelTest {
                 isLoading = isLoading,
             )
         }
+
+    @Test
+    fun `Given channel list in content state When another user connects Should clear the channels`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+                endOfChannels = true,
+            )
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        val state = viewModel.state.observeAll()
+        val paginationState = viewModel.paginationState.observeAll()
+
+        fixture.disconnectUser()
+        fixture.startConnectingUser(User(id = "other"))
+
+        state.last() shouldBeEqualTo ChannelListViewModel.State(isLoading = true, channels = emptyList())
+        paginationState.last() shouldBeEqualTo ChannelListViewModel.PaginationState()
+    }
+
+    @Test
+    fun `Given channel list in content state When another user connects mid-disconnect Should clear the channels`() =
+        runTest {
+            val fixture = Fixture()
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+            val viewModel = fixture.get()
+            val state = viewModel.state.observeAll()
+
+            fixture.startConnectingUser(User(id = "other"))
+
+            state.last() shouldBeEqualTo ChannelListViewModel.State(isLoading = true, channels = emptyList())
+        }
+
+    @Test
+    fun `Given channel list in content state When the user disconnects Should clear the channels`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+                endOfChannels = true,
+            )
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        val state = viewModel.state.observeAll()
+        val paginationState = viewModel.paginationState.observeAll()
+
+        fixture.disconnectUser()
+
+        state.last() shouldBeEqualTo ChannelListViewModel.State(isLoading = true, channels = emptyList())
+        paginationState.last() shouldBeEqualTo ChannelListViewModel.PaginationState()
+    }
+
+    @Test
+    fun `Given no initial filter When another user connects Should not re-send the previous user's query`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient, initialFilters = null)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+
+        fixture.disconnectUser()
+        fixture.connectUser(User(id = "other"))
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+        val previousUserFilter = Filters.defaultChannelListFilter(User(id = "Jc"))
+        captor.allValues.count { it.filter == previousUserFilter } shouldBeEqualTo 1
+    }
+
+    @Test
+    fun `Given channel list in content state When the same user connects again Should keep the channels`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+                endOfChannels = true,
+            )
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        val state = viewModel.state.observeAll()
+        val emittedBefore = state.size
+
+        fixture.reconnectSameUser()
+
+        state.drop(emittedBefore).none { it.channels.isEmpty() } shouldBeEqualTo true
+        state.last().channels shouldBeEqualTo listOf(channel1, channel2)
+    }
+
+    @Test
+    fun `Given no initial filter When another user connects Should query with their default filter`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient, initialFilters = null)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+        val otherUser = User(id = "other")
+
+        fixture.disconnectUser()
+        fixture.connectUser(otherUser)
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+        captor.lastValue.filter shouldBeEqualTo Filters.defaultChannelListFilter(otherUser)
+    }
+
+    @Test
+    fun `Given filters set by the app When another user connects Should keep querying with them`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient, initialFilters = null)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+        val appFilter = Filters.eq("type", "livestream")
+        viewModel.setFilters(appFilter)
+
+        fixture.disconnectUser()
+        fixture.connectUser(User(id = "other"))
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+        captor.lastValue.filter shouldBeEqualTo appFilter
+    }
+
+    @Test
+    fun `Given filters set before the first user connects When they connect Should query with those filters`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient, initialFilters = null)
+                .givenNoUserYet()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+            val viewModel = fixture.get()
+            viewModel.state.observeAll()
+            val appFilter = Filters.eq("type", "livestream")
+            viewModel.setFilters(appFilter)
+
+            fixture.connectUser(User(id = "Jc"))
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+            captor.lastValue.filter shouldBeEqualTo appFilter
+        }
+
+    @Test
+    fun `Given a next page loading When reaching the end again Should not cancel it`() = runTest {
+        val chatClient: ChatClient = mock()
+        val nextPageRequest = QueryChannelsRequest(filter = queryFilter, querySort = querySort, offset = 30, limit = 30)
+        val nextPageCall: Call<List<Channel>> = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+            )
+            .givenChannelMutes()
+        whenever(chatClient.queryChannels(nextPageRequest)) doReturn nextPageCall
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+
+        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
+        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
+
+        verify(nextPageCall, never()).cancel()
+    }
+
+    @Test
+    fun `Given a next page loading When another user connects Should cancel it`() = runTest {
+        val chatClient: ChatClient = mock()
+        val nextPageRequest = QueryChannelsRequest(filter = queryFilter, querySort = querySort, offset = 30, limit = 30)
+        val nextPageCall: Call<List<Channel>> = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+            )
+            .givenChannelMutes()
+        whenever(chatClient.queryChannels(nextPageRequest)) doReturn nextPageCall
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
+
+        fixture.startConnectingUser(User(id = "other"))
+
+        verify(nextPageCall).cancel()
+    }
 
     @Test
     fun `Given channel list in content state When leaving a channel Should leave the channel`() = runTest {
@@ -262,6 +477,8 @@ internal class ChannelListViewModelTest {
 
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
+        private val user = MutableStateFlow<User?>(null)
+        private val initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
         private val globalState: GlobalState = mock()
         private var predefinedFilterName: String? = null
         private var predefinedFilterValues: Map<String, Any>? = null
@@ -277,11 +494,41 @@ internal class ChannelListViewModelTest {
             whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
         }
 
+        fun givenNoUserYet() = apply {
+            whenever(clientState.user) doReturn user
+            whenever(clientState.initializationState) doReturn initializationState
+            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
+        }
+
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
-            whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
+            user.value = currentUser
+            initializationState.value = InitializationState.COMPLETE
+            whenever(clientState.user) doReturn user
+            whenever(clientState.initializationState) doReturn initializationState
             whenever(chatClient.getCurrentUser()) doReturn currentUser
             whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
+        }
+
+        fun reconnectSameUser() {
+            initializationState.value = InitializationState.INITIALIZING
+            initializationState.value = InitializationState.COMPLETE
+        }
+
+        fun startConnectingUser(newUser: User) {
+            // connectUser sets the user before the client is ready.
+            initializationState.value = InitializationState.INITIALIZING
+            user.value = newUser
+        }
+
+        fun connectUser(newUser: User) {
+            user.value = newUser
+            initializationState.value = InitializationState.COMPLETE
+        }
+
+        fun disconnectUser() {
+            // Same order as ChatClient.disconnect.
+            initializationState.value = InitializationState.NOT_INITIALIZED
+            user.value = null
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
