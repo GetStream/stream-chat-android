@@ -56,7 +56,7 @@ internal fun Channel.mergePartialUpdate(partial: Channel): Channel = copy(
 
 /**
  * Applies the fields carried by [NotificationChannelPartialUpdatedEvent.channel] to this channel data and keeps
- * all the others.
+ * all the others. [ChannelData.lastMessageAt] takes the later of the local and the event value.
  */
 internal fun ChannelData.mergePartialUpdate(partial: Channel): ChannelData = copy(
     name = partial.name,
@@ -65,6 +65,7 @@ internal fun ChannelData.mergePartialUpdate(partial: Channel): ChannelData = cop
     team = partial.team,
     createdAt = partial.createdAt,
     updatedAt = partial.updatedAt,
+    lastMessageAt = max(lastMessageAt, partial.lastMessageAt),
     extraData = mergePartialExtraData(current = extraData, partial = partial.extraData),
 )
 

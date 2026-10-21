@@ -118,4 +118,15 @@ internal class ChannelPartialUpdateTest {
 
         assertEquals(local.mergePartialUpdate(partial).toChannelData(), merged)
     }
+
+    @Test
+    fun `merging a partial update with a later last message time into channel data matches the channel`() {
+        val local = randomChannel(lastMessageAt = Date(1_000))
+        val laterPartial = partial.copy(lastMessageAt = Date(2_000))
+
+        val merged = local.toChannelData().mergePartialUpdate(laterPartial)
+
+        assertEquals(Date(2_000), merged.lastMessageAt)
+        assertEquals(local.mergePartialUpdate(laterPartial).toChannelData(), merged)
+    }
 }
