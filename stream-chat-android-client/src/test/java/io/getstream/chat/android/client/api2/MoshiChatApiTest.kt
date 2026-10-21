@@ -2364,6 +2364,39 @@ internal class MoshiChatApiTest {
         verify(api, never()).queryGroupedChannels(any(), any())
     }
 
+    @Test
+    fun `getSyncHistory postpones the call when watch is true and connectionId is blank`() = runTest {
+        val api = mock<SyncApi>()
+        val sut = Fixture()
+            .withSyncApi(api)
+            .get()
+        // Intentionally not calling setConnection, so connectionId stays blank.
+
+        sut.getSyncHistory(listOf(randomString()), randomString(), watch = true)
+
+        // Postponed calls do not invoke the API eagerly; they wait for a connection.
+        verify(api, never()).getSyncHistory(any(), any())
+    }
+
+    @Test
+    fun `getSyncHistory does not wait for a connection when watch is false`() = runTest {
+        val api = mock<SyncApi>()
+        whenever(api.getSyncHistory(any(), any()))
+            .doReturn(RetroSuccess(SyncHistoryResponse(emptyList())).toRetrofitCall())
+        val sut = Fixture()
+            .withSyncApi(api)
+            .get()
+        val channelIds = listOf(randomString())
+        val lastSyncAt = randomString()
+
+        sut.getSyncHistory(channelIds, lastSyncAt, watch = false)
+
+        verify(api).getSyncHistory(
+            io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest(channelIds, lastSyncAt, false),
+            "",
+        )
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryChannelsWithPredefinedFilterInput")
     fun testQueryChannelsWithPredefinedFilter(call: RetrofitCall<QueryChannelsResponse>, expected: KClass<*>) =
@@ -2812,11 +2845,12 @@ internal class MoshiChatApiTest {
         val connectionId = randomString()
         val channelIds = listOf(randomString())
         val lastSyncAt = randomString()
+        val watch = randomBoolean()
         sut.setConnection(userId = userId, connectionId = connectionId)
-        val result = sut.getSyncHistory(channelIds, lastSyncAt).await()
+        val result = sut.getSyncHistory(channelIds, lastSyncAt, watch).await()
         // then
         val expectedPayload =
-            io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest(channelIds, lastSyncAt)
+            io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest(channelIds, lastSyncAt, watch)
         result `should be instance of` expected
         verify(api, times(1)).getSyncHistory(expectedPayload, connectionId)
     }

@@ -84,9 +84,11 @@ public fun UiDevice.goToForeground() {
 }
 
 public fun UiDevice.enableInternetConnection() {
-    executeShellCommand("svc data enable")
+    // Wi-Fi goes first. When mobile data connects first, Wi-Fi takes over the default network a few seconds later and
+    // slows down the requests the app has in flight.
     executeShellCommand("svc wifi enable")
     waitForInternetConnection()
+    executeShellCommand("svc data enable")
 }
 
 public fun UiDevice.disableInternetConnection() {
