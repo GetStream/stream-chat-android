@@ -6,22 +6,39 @@ on:
       app:
         required: true
         type: string
+      coverage:
+        description: 'Instrument the app and upload its classes, to build the coverage map that selects e2e tests on pull requests'
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      e2e_batches:
+        description: 'JSON array of the batch indices the selected e2e tests need, empty when none'
+        value: ${{ jobs.build.outputs.e2e_batches }}
 
 env:
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
   BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 jobs:
   build:
     permissions:
       actions: write
       contents: read
-    name: ${{ inputs.app }} apks
+      pull-requests: read
+    name: ${{ inputs.app }} apks${{ inputs.coverage && ' (coverage)' || '' }}
     runs-on: ubuntu-24.04
+    outputs:
+      e2e_batches: ${{ steps.select_e2e_tests.outputs.e2e_batches }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          # A PR merge commit and its base, to diff them. A merge queue entry can stack several pull requests on its base.
+          fetch-depth: ${{ github.event_name == 'merge_group' && 50 || 2 }}
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
@@ -29,12 +46,35 @@ jobs:
         with:
           cache-name: gradle-test
       - name: Build apks
-        run: bundle exec fastlane build_e2e_test
+        run: bundle exec fastlane build_e2e_test coverage:${{ inputs.coverage }}
         timeout-minutes: 30
+      - name: Select E2E Tests
+        id: select_e2e_tests
+        if: ${{ !inputs.coverage }}
+        run: bundle exec fastlane select_e2e_tests
       - name: Upload apks
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: apks
+          name: apks${{ inputs.coverage && '-coverage' || '' }}
           path: |
             stream-chat-android-${{ inputs.app }}-sample/build/outputs/apk/e2e/debug/*.apk
             stream-chat-android-${{ inputs.app }}-sample/build/outputs/apk/androidTest/e2e/debug/*.apk
+      - name: Upload e2e selection
+        if: ${{ !inputs.coverage }}
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: e2e-selection
+          path: fastlane/test_output/e2e_selection.json
+      # The coverage map links the classes the tests ran to their source files.
+      - name: Upload classes
+        if: ${{ inputs.coverage }}
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: e2e-classes
+          path: |
+            stream-chat-android-*/build/tmp/kotlin-classes/debug
+            stream-chat-android-*/build/tmp/kotlin-classes/e2eDebug
+            stream-chat-android-*/build/intermediates/javac/debug/*/classes
+            stream-chat-android-*/build/intermediates/javac/e2eDebug/*/classes
+            stream-chat-android-*/build/classes/java/main
+            stream-chat-android-*/build/classes/kotlin/main
