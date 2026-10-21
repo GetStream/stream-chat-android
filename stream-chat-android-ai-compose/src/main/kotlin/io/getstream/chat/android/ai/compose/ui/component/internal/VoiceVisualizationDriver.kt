@@ -157,7 +157,10 @@ internal class VoiceVisualizationDriver(input: Input) {
         val gentle = ease(GENTLE, dt)
         hoverAmount += ((if (isHovering) 1f else 0f) - hoverAmount) * gentle
         voice += ((if (input.audioLevel == null) 0f else 1f) - voice) * ease(VOICE, dt)
-        mic += ((input.audioLevel ?: 0f) - mic) * ease(MIC, dt)
+        // A meter's level jumps with every syllable, so it is followed like a VU meter: quickly
+        // up to a louder reading, slowly down from it, and the motion swells with the phrase.
+        val level = input.audioLevel ?: 0f
+        mic += (level - mic) * ease(if (level > mic) MIC_RISE else MIC_FALL, dt)
         val targets = slots(input.colors)
         for (index in colors.indices) colors[index] = ease(colors[index], targets[index], gentle)
         count += (input.colors.size - count) * gentle
@@ -172,7 +175,8 @@ internal class VoiceVisualizationDriver(input: Input) {
         private const val DRIVERS = 0.08f
         private const val GENTLE = 0.12f
         private const val VOICE = 0.1f
-        private const val MIC = 0.35f
+        private const val MIC_RISE = 0.16f
+        private const val MIC_FALL = 0.05f
 
         /** Expressivity scales amplitude and speed, each with a floor so the motion breathes at 0. */
         fun scales(expressivity: Float) =

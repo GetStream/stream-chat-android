@@ -181,6 +181,30 @@ internal class VoiceVisualizationDriverTest {
     }
 
     @Test
+    fun `a louder level is caught up with within a word`() {
+        val driver = VoiceVisualizationDriver(input(AIVoiceAgentState.Idle, audioLevel = 0f))
+        driver.run(1f)
+
+        driver.input = input(AIVoiceAgentState.Idle, audioLevel = 1f)
+        driver.run(0.1f)
+        assertTrue("mic was ${driver.mic}", driver.mic in 0.5f..0.8f)
+        driver.run(0.3f)
+        assertTrue("mic was ${driver.mic}", driver.mic > 0.95f)
+    }
+
+    @Test
+    fun `a quieter level falls away over a pause, not a syllable`() {
+        val driver = VoiceVisualizationDriver(input(AIVoiceAgentState.Idle, audioLevel = 1f))
+        driver.run(1f)
+
+        driver.input = input(AIVoiceAgentState.Idle, audioLevel = 0f)
+        driver.run(0.1f)
+        assertTrue("mic was ${driver.mic}", driver.mic > 0.7f)
+        driver.run(0.9f)
+        assertTrue("mic was ${driver.mic}", driver.mic < 0.1f)
+    }
+
+    @Test
     fun `a hue eases the short way round`() {
         val driver = VoiceVisualizationDriver(input(AIVoiceAgentState.Idle, colors = listOf(Hsv(0.95f, 1f, 1f))))
         driver.input = input(AIVoiceAgentState.Idle, colors = listOf(Hsv(0.05f, 1f, 1f)))
