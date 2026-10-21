@@ -84,6 +84,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -474,7 +475,7 @@ public class ChannelListViewModel internal constructor(
      */
     public fun refresh() {
         logger.d { "[refresh] no args" }
-        refreshFlow.value = System.currentTimeMillis()
+        refreshFlow.update { it + 1 }
     }
 
     /**
