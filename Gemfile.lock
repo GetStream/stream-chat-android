@@ -116,7 +116,7 @@ GEM
       xcodeproj (>= 1.13.0, < 2.0.0)
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
-    fastlane-plugin-stream_actions (0.3.74)
+    fastlane-plugin-stream_actions (0.4.15)
       xctest_list (= 1.2.1)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
@@ -282,7 +282,7 @@ PLATFORMS
 DEPENDENCIES
   eventmachine
   fastlane (= 2.225.0)
-  fastlane-plugin-stream_actions (= 0.3.74)
+  fastlane-plugin-stream_actions (= 0.4.15)
   faye-websocket
   json
   puma

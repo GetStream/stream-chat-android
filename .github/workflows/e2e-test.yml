@@ -52,6 +52,7 @@ jobs:
     name: Launch Allure TestOps
     runs-on: ubuntu-24.04
     needs: build-compose-apks
+    if: ${{ needs.build-compose-apks.outputs.e2e_batches != '[]' }}
     outputs:
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
@@ -71,9 +72,11 @@ jobs:
     needs:
       - build-compose-apks
       - allure_testops_launch
+    if: ${{ needs.build-compose-apks.outputs.e2e_batches != '[]' }}
     strategy:
       matrix:
-        batch: [0, 1, 2, 3, 4, 5, 6, 7]
+        # Only the batches the tests this pull request can affect need, see the select_e2e_tests lane.
+        batch: ${{ fromJson(needs.build-compose-apks.outputs.e2e_batches) }}
       fail-fast: false
     env:
       ANDROID_API_LEVEL: ${{ inputs.api_level || '36' }}
@@ -84,6 +87,10 @@ jobs:
         continue-on-error: true
         with:
           name: apks
+      - uses: actions/download-artifact@v8.0.2
+        with:
+          name: e2e-selection
+          path: fastlane/test_output
       - uses: GetStream/android-ci-actions/actions/setup-java@cb46e4f44d105a68738bfd2a1cfd156bb768665b
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main

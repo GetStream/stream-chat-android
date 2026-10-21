@@ -2,4 +2,4 @@
 #
 # Ensure this file is checked in to source control!
 
-gem 'fastlane-plugin-stream_actions', '0.3.74'
+gem 'fastlane-plugin-stream_actions', '0.4.15'
