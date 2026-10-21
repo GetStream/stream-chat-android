@@ -18,8 +18,11 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
@@ -37,4 +40,13 @@ public fun ClientState.userSessionEnds(): Flow<Unit> = flow {
         if (previousUserId != null) emit(Unit)
         previousUserId = userId
     }
+}
+
+/**
+ * Waits until the client is ready for a user and returns them, or `null` if they disconnected in the meantime.
+ */
+@InternalStreamChatApi
+public suspend fun ClientState.awaitConnectedUser(): User? {
+    initializationState.first { it == InitializationState.COMPLETE }
+    return user.value
 }

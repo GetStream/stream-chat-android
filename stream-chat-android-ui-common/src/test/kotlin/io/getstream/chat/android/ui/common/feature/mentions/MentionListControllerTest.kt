@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -55,6 +56,7 @@ import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -163,6 +165,39 @@ internal class MentionListControllerTest {
         testScheduler.runCurrent()
 
         assertEquals(1, sut.state.value.results.size)
+    }
+
+    @Test
+    fun `a result still being handled when the user logs out is dropped`() = runTest {
+        val channels = CompletableDeferred<List<Channel>>()
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannelsWhen(channels)
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult(messages = listOf(Message(cid = CID))))
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+
+        fixture.disconnectUser()
+        testScheduler.runCurrent()
+        channels.complete(emptyList())
+        testScheduler.runCurrent()
+
+        assertEquals(MentionListState(), sut.state.value)
+    }
+
+    @Test
+    fun `no user once the client is ready reports an error`() = runTest {
+        val fixture = Fixture()
+            .givenChannels(channels = emptyList())
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult(messages = listOf(Message(cid = CID))))
+        val sut = fixture.get(backgroundScope)
+
+        sut.events.test {
+            fixture.loseUserOnceReady()
+            testScheduler.runCurrent()
+            assertInstanceOf<MentionListEvent.Error>(awaitItem())
+        }
+        assertFalse(sut.state.value.isLoading)
     }
 
     @Test
@@ -470,6 +505,15 @@ private class Fixture {
                 result?.asCall() ?: error?.let { TestCall(Result.Failure(it)) }
             }
         }
+    }
+
+    suspend fun givenChannelsWhen(channels: CompletableDeferred<List<Channel>>) = apply {
+        whenever(repositoryFacade.selectChannels(channelCIDs = any())) doSuspendableAnswer { channels.await() }
+    }
+
+    fun loseUserOnceReady() {
+        userFlow.value = null
+        initializationState.value = InitializationState.COMPLETE
     }
 
     suspend fun givenChannels(channels: List<Channel>) = apply {
