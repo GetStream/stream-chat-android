@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.QueryMode
@@ -32,9 +33,9 @@ import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.Quer
  * Creates a channels view model factory.
  *
  * A [ChannelListViewModel] serves one user at a time: when the user disconnects or another user connects, it drops
- * the loaded channels and reloads once the next user is connected. The default filter follows the connected user,
- * but filters and filter values that contain a user id don't, so a different user needs a new factory and view model,
- * for example keyed by the user id.
+ * the loaded channels and reloads once the next user is connected. The default filter, and filters or filter values
+ * built from the user, follow the connected user. A fixed filter or filter values that contain a user id apply to
+ * that user only.
  *
  * @param limit How many channels to return.
  * @param memberLimit The number of members per channel. When `null`, the server-side default is used.
@@ -82,6 +83,31 @@ private constructor(
     )
 
     /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels by a filter built from the connected user.
+     *
+     * @param filter Builds the filter for the connected user, on the main thread. It's called again when another
+     * user connects.
+     * @param sort How to sort the channels, defaults to last_updated.
+     */
+    @JvmOverloads
+    public constructor(
+        filter: (User) -> FilterObject,
+        sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT,
+        limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        messageLimit: Int? = null,
+        memberLimit: Int? = null,
+        isDraftMessagesEnabled: Boolean = ChatUI.draftMessagesEnabled,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+    ) : this(
+        mode = QueryMode.Standard(initialFilter = null, initialSort = sort, filterForUser = filter),
+        limit = limit,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+        isDraftMessagesEnabled = isDraftMessagesEnabled,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+    )
+
+    /**
      * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
      * resolved by the server.
      *
@@ -104,6 +130,39 @@ private constructor(
             name = predefinedFilterName,
             filterValues = filterValues,
             sortValues = sortValues,
+        ),
+        limit = limit,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+        isDraftMessagesEnabled = isDraftMessagesEnabled,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+    )
+
+    /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
+     * resolved by the server, with filter values built from the connected user.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Builds the values interpolated into the predefined filter template for the connected
+     * user, on the main thread. It's called for every request, so another user gets their own values.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    @JvmOverloads
+    public constructor(
+        predefinedFilterName: String,
+        filterValues: (User) -> Map<String, Any>,
+        sortValues: Map<String, Any>? = null,
+        limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        messageLimit: Int? = null,
+        memberLimit: Int? = null,
+        isDraftMessagesEnabled: Boolean = ChatUI.draftMessagesEnabled,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
+    ) : this(
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = null,
+            sortValues = sortValues,
+            filterValuesForUser = filterValues,
         ),
         limit = limit,
         messageLimit = messageLimit,

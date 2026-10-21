@@ -498,6 +498,94 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Given filters built from the user When another user connects Should query with their filters`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+            .givenFilterForUser { user -> Filters.`in`("members", listOf(user.id)) }
+        fixture.get(this)
+
+        fixture.disconnectUser()
+        fixture.connectUser(otherUser)
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+        assertEquals(Filters.`in`("members", listOf(otherUser.id)), captor.lastValue.filter)
+        assertEquals(1, captor.allValues.count { it.filter == Filters.`in`("members", listOf(currentUserId)) })
+    }
+
+    @Test
+    fun `Given filters built from the user When the same user logs in again Should query with their filters`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenFilterForUser { user -> Filters.`in`("members", listOf(user.id)) }
+            fixture.get(this)
+
+            fixture.disconnectUser()
+            fixture.connectUser(User(id = currentUserId))
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            assertTrue(captor.allValues.all { it.filter == Filters.`in`("members", listOf(currentUserId)) })
+        }
+
+    @Test
+    fun `Given filters built from the user and filters set by the app When another user connects Should keep the app's filters`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenFilterForUser { user -> Filters.`in`("members", listOf(user.id)) }
+            val viewModel = fixture.get(this)
+            val appFilter = Filters.eq("type", "livestream")
+            viewModel.setFilters(appFilter)
+            advanceUntilIdle()
+
+            fixture.disconnectUser()
+            fixture.connectUser(otherUser)
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+            assertEquals(appFilter, captor.lastValue.filter)
+        }
+
+    @Test
+    fun `Given filter values built from the user When another user connects Should query with their values`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+                .givenPredefinedValuesForUser("vip_filter") { user -> mapOf("user_id" to user.id) }
+            fixture.get(this)
+
+            fixture.disconnectUser()
+            fixture.connectUser(otherUser)
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            assertEquals(mapOf("user_id" to currentUserId), captor.firstValue.filterValues)
+            assertEquals(mapOf("user_id" to otherUser.id), captor.secondValue.filterValues)
+        }
+
+    @Test
     fun `Given channel list in content state When deleting a channel Should delete the channel`() = runTest {
         val chatClient: ChatClient = mock()
         val channelClient: ChannelClient = mock()
@@ -1935,6 +2023,7 @@ internal class ChannelListViewModelTest {
         private var predefinedFilterValues: Map<String, Any>? = null
         private var predefinedSortValues: Map<String, Any>? = null
         private var searchDebounceMs: Long = ChannelListViewModel.SEARCH_DEBOUNCE_MS
+        private var queryMode: ChannelListViewModel.QueryMode? = null
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -2052,6 +2141,23 @@ internal class ChannelListViewModelTest {
             predefinedSortValues = sortValues
         }
 
+        fun givenFilterForUser(filterForUser: (User) -> FilterObject) = apply {
+            queryMode = ChannelListViewModel.QueryMode.Standard(
+                initialFilter = null,
+                initialSort = initialSort,
+                filterForUser = filterForUser,
+            )
+        }
+
+        fun givenPredefinedValuesForUser(name: String, filterValuesForUser: (User) -> Map<String, Any>) = apply {
+            queryMode = ChannelListViewModel.QueryMode.Predefined(
+                name = name,
+                filterValues = null,
+                sortValues = null,
+                filterValuesForUser = filterValuesForUser,
+            )
+        }
+
         fun givenSearchDebounceMs(searchDebounceMs: Long) = apply {
             this.searchDebounceMs = searchDebounceMs
         }
@@ -2095,7 +2201,21 @@ internal class ChannelListViewModelTest {
 
         fun get(testScope: TestScope, groupKey: String? = null): ChannelListViewModel {
             val name = predefinedFilterName
+            val mode = queryMode
             val channelListViewModel = when {
+                mode != null -> ChannelListViewModel(
+                    chatClient = chatClient,
+                    mode = mode,
+                    channelLimit = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+                    memberLimit = null,
+                    messageLimit = null,
+                    chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                    searchDebounceMs = searchDebounceMs,
+                    draftMessagesEnabled = false,
+                    messageSearchSort = messageSearchSort,
+                    globalState = MutableStateFlow(globalState),
+                )
+
                 groupKey != null -> ChannelListViewModel(
                     chatClient = chatClient,
                     groupKey = groupKey,

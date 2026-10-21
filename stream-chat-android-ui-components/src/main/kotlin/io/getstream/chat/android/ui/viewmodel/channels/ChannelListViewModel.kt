@@ -40,6 +40,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
@@ -252,6 +253,13 @@ public class ChannelListViewModel internal constructor(
     private var isFilterSetByApp = false
 
     /**
+     * Builds the filter for the connected user: the app's, or the default one when no filter was given.
+     */
+    private val userFilter: ((User) -> FilterObject)? = (mode as? QueryMode.Standard)?.let { standard ->
+        standard.filterForUser ?: DEFAULT_USER_FILTER.takeIf { standard.initialFilter == null }
+    }
+
+    /**
      * The in-flight request for the next page, if any.
      */
     private var loadMoreCall: Call<List<Channel>>? = null
@@ -259,10 +267,10 @@ public class ChannelListViewModel internal constructor(
     init {
         when (mode) {
             is QueryMode.Standard -> {
-                if (mode.initialFilter == null) {
+                userFilter?.let { buildFilter ->
                     viewModelScope.launch {
-                        val resolvedFilter = buildDefaultFilter().first()
-                        if (!isFilterSetByApp) this@ChannelListViewModel.filterLiveData.value = resolvedFilter
+                        val user = chatClient.clientState.user.filterNotNull().first()
+                        if (!isFilterSetByApp) this@ChannelListViewModel.filterLiveData.value = buildFilter(user)
                     }
                 }
                 stateMerger.addSource(filterLiveData) { filter ->
@@ -283,27 +291,16 @@ public class ChannelListViewModel internal constructor(
                 paginationStateMerger.value = PaginationState()
                 // Reload once the next user is ready; their query is built from scratch.
                 chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
-                if (followsDefaultFilter()) {
-                    // The default filter is built from the current user, and setting it reloads.
-                    filterLiveData.value = buildDefaultFilter().first()
+                val buildFilter = userFilter.takeUnless { isFilterSetByApp }
+                val user = chatClient.clientState.user.value
+                if (buildFilter != null && user != null) {
+                    // The filter is built from the current user, and setting it reloads.
+                    filterLiveData.value = buildFilter(user)
                 } else {
                     initData()
                 }
             }
         }
-    }
-
-    /**
-     * Whether the filter is the default one, built from the current user, rather than one the app provided.
-     */
-    private fun followsDefaultFilter(): Boolean =
-        mode is QueryMode.Standard && mode.initialFilter == null && !isFilterSetByApp
-
-    /**
-     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
-     */
-    private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**
@@ -494,8 +491,8 @@ public class ChannelListViewModel internal constructor(
     }
 
     /**
-     * Builds a [QueryChannelsRequest] for the current [mode]. Returns `null` in Standard mode when the
-     * filter has not yet been resolved (e.g. before [buildDefaultFilter] completes).
+     * Builds a [QueryChannelsRequest] for the current [mode]. Returns `null` when the filter or filter values
+     * depend on a user and none is connected yet.
      */
     private fun buildQueryChannelsRequest(): QueryChannelsRequest? = when (mode) {
         is QueryMode.Standard -> {
@@ -508,14 +505,20 @@ public class ChannelListViewModel internal constructor(
                 memberLimit = memberLimit,
             )
         }
-        is QueryMode.Predefined -> QueryChannelsRequest(
-            predefinedFilter = mode.name,
-            filterValues = mode.filterValues,
-            sortValues = mode.sortValues,
-            limit = limit,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-        )
+        is QueryMode.Predefined -> {
+            val filterValues = when (val buildFilterValues = mode.filterValuesForUser) {
+                null -> mode.filterValues
+                else -> buildFilterValues(chatClient.clientState.user.value ?: return null)
+            }
+            QueryChannelsRequest(
+                predefinedFilter = mode.name,
+                filterValues = filterValues,
+                sortValues = mode.sortValues,
+                limit = limit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+        }
     }
 
     /**
@@ -613,16 +616,22 @@ public class ChannelListViewModel internal constructor(
         data class Standard(
             val initialFilter: FilterObject?,
             val initialSort: QuerySorter<Channel>,
+            val filterForUser: ((User) -> FilterObject)? = null,
         ) : QueryMode
 
         data class Predefined(
             val name: String,
             val filterValues: Map<String, Any>?,
             val sortValues: Map<String, Any>?,
+            val filterValuesForUser: ((User) -> Map<String, Any>)? = null,
         ) : QueryMode
     }
 
     public companion object {
+
+        private val DEFAULT_USER_FILTER: (User) -> FilterObject = { user ->
+            checkNotNull(Filters.defaultChannelListFilter(user))
+        }
 
         /**
          * The default sorting option for queries.

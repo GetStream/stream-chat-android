@@ -27,6 +27,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 
@@ -35,9 +36,9 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * It currently provides the [ChannelListViewModel] using those dependencies.
  *
  * A [ChannelListViewModel] serves one user at a time: when the user disconnects or another user connects, it drops
- * the loaded channels and reloads once the next user is connected. The default filter follows the connected user,
- * but filters and filter values that contain a user id don't, so a different user needs a new factory and view model,
- * for example keyed by the user id.
+ * the loaded channels and reloads once the next user is connected. The default filter, and filters or filter values
+ * built from the user, follow the connected user. A fixed filter or filter values that contain a user id apply to
+ * that user only.
  *
  * @param chatClient The client used to fetch data.
  * @param channelLimit How many channels we fetch per page.
@@ -91,6 +92,35 @@ public class ChannelListViewModelFactory internal constructor(
     )
 
     /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels by a filter built from the connected user.
+     *
+     * @param querySort The sorting order for channels.
+     * @param filters Builds the filter for the connected user, on the main thread. It's called again when another
+     * user connects.
+     */
+    @JvmOverloads
+    public constructor(
+        chatClient: ChatClient = ChatClient.instance(),
+        querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+        filters: (User) -> FilterObject,
+        channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Standard(initialFilter = null, initialSort = querySort, filterForUser = filters),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+    )
+
+    /**
      * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
      * resolved by the server.
      *
@@ -116,6 +146,43 @@ public class ChannelListViewModelFactory internal constructor(
             name = predefinedFilterName,
             filterValues = filterValues,
             sortValues = sortValues,
+        ),
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        draftMessagesEnabled = draftMessagesEnabled,
+        messageSearchSort = messageSearchSort,
+    )
+
+    /**
+     * Builds a factory for a [ChannelListViewModel] that queries channels using a predefined filter
+     * resolved by the server, with filter values built from the connected user.
+     *
+     * @param predefinedFilterName The name of the predefined filter registered on the backend.
+     * @param filterValues Builds the values interpolated into the predefined filter template for the connected
+     * user, on the main thread. It's called for every request, so another user gets their own values.
+     * @param sortValues Optional values interpolated into the predefined sort template.
+     */
+    @JvmOverloads
+    public constructor(
+        chatClient: ChatClient = ChatClient.instance(),
+        predefinedFilterName: String,
+        filterValues: (User) -> Map<String, Any>,
+        sortValues: Map<String, Any>? = null,
+        channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+        memberLimit: Int? = null,
+        messageLimit: Int? = null,
+        chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
+        draftMessagesEnabled: Boolean = true,
+        messageSearchSort: QuerySorter<Message>? = null,
+    ) : this(
+        chatClient = chatClient,
+        mode = QueryMode.Predefined(
+            name = predefinedFilterName,
+            filterValues = null,
+            sortValues = sortValues,
+            filterValuesForUser = filterValues,
         ),
         channelLimit = channelLimit,
         memberLimit = memberLimit,
