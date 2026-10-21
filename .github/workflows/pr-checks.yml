@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
-    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@b7fed46e2cb963eb18c62693435bfdf3360e105a
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@7569373df3b2794433d78371ed6b395ba2e897a6 # v1.1.2
     secrets:
       BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
       BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@v1.1.1
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@7569373df3b2794433d78371ed6b395ba2e897a6 # v1.1.2
       - name: Detekt
         run: ./gradlew detekt
   rubocop:
