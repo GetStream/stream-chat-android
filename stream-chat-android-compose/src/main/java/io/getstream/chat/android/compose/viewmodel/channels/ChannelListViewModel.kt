@@ -1132,7 +1132,7 @@ public class ChannelListViewModel internal constructor(
             logger.v { "[loadMoreGroupedChannels] rejected (no current state)" }
             return
         }
-        val cursor = state.nextCursor.value
+        var cursor = state.nextCursor.value
         if (cursor == null) {
             logger.v { "[loadMoreGroupedChannels] rejected (no next cursor)" }
             return
@@ -1147,26 +1147,36 @@ public class ChannelListViewModel internal constructor(
         }
         val config = state.groupedQueryConfig.value
         channelsState = channelsState.copy(isLoadingMore = true)
-        val result = chatClient.queryGroupedChannelsInternal(
-            limit = config?.limit,
-            groups = mapOf(
-                groupKey to io.getstream.chat.android.models.GroupedChannelsGroupQuery(
-                    limit = config?.pageSize,
-                    next = cursor,
-                    filter = config?.filter,
+        var loadingError: Boolean
+        do {
+            val loadedCids = state.channels.value.orEmpty().map(Channel::cid).toSet()
+            val result = chatClient.queryGroupedChannelsInternal(
+                limit = config?.limit,
+                groups = mapOf(
+                    groupKey to io.getstream.chat.android.models.GroupedChannelsGroupQuery(
+                        limit = config?.pageSize,
+                        next = cursor,
+                        filter = config?.filter,
+                    ),
                 ),
-            ),
-            watch = config?.watch ?: true,
-            presence = config?.presence ?: false,
-            sort = config?.sort,
-        ).await()
-        if (result.isSuccess) {
-            logger.v { "[loadMoreGroupedChannels] completed (listener applied)" }
-            channelsState = channelsState.copy(isLoadingMore = false, loadingError = false)
-        } else {
-            logger.e { "[loadMoreGroupedChannels] failed: ${result.errorOrNull()}" }
-            channelsState = channelsState.copy(isLoadingMore = false, loadingError = true)
-        }
+                watch = config?.watch ?: true,
+                presence = config?.presence ?: false,
+                sort = config?.sort,
+            ).await()
+            loadingError = !result.isSuccess
+            if (result.isSuccess) {
+                logger.v { "[loadMoreGroupedChannels] completed (listener applied)" }
+            } else {
+                logger.e { "[loadMoreGroupedChannels] failed: ${result.errorOrNull()}" }
+            }
+            val pageCids = result.getOrNull()?.groups?.get(groupKey)?.channels?.map(Channel::cid)
+            val requestedCursor = cursor
+            cursor = state.nextCursor.value
+            // After a reconnect keeps the loaded pages, the next page can hold only loaded channels. The list does not
+            // grow then, so it would not ask for more again. An unchanged cursor would request the same page again.
+            val hasNewCursor = cursor != null && cursor != requestedCursor
+        } while (hasNewCursor && !pageCids.isNullOrEmpty() && loadedCids.containsAll(pageCids))
+        channelsState = channelsState.copy(isLoadingMore = false, loadingError = loadingError)
     }
 
     /**

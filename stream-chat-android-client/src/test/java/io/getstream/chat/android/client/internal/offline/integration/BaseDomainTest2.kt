@@ -146,7 +146,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
                     }
                 }
             }
-            on { getSyncHistory(any(), any<Date>()) } doReturn TestCall(eventResults)
+            on { getSyncHistoryInternal(any(), any<Date>(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
             on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsInternalResult)
             on { queryChannel(any(), any(), any(), any()) } doReturn TestCall(queryChannelResult)

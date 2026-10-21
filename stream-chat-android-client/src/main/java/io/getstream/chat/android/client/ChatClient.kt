@@ -4794,10 +4794,26 @@ internal constructor(
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: Date,
+    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false)
+
+    /**
+     * Variant of [getSyncHistory] that can also start watching the channels.
+     *
+     * @param channelsIds The list of channel CIDs. Cannot be empty.
+     * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
+     * @param watch Whether to start watching the channels the user is an active member of.
+     *
+     * @return Executable async [Call] responsible for obtaining missing events.
+     */
+    @CheckResult
+    internal fun getSyncHistoryInternal(
+        channelsIds: List<String>,
+        lastSyncAt: Date,
+        watch: Boolean,
     ): Call<List<ChatEvent>> {
         val stringDate = streamDateFormatter.format(lastSyncAt)
 
-        return api.getSyncHistory(channelsIds, stringDate)
+        return api.getSyncHistory(channelsIds, stringDate, watch)
             .withPrecondition(userScope) {
                 checkSyncHistoryPreconditions(channelsIds, lastSyncAt)
             }
@@ -4817,6 +4833,23 @@ internal constructor(
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: String,
+    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false)
+
+    /**
+     * Variant of [getSyncHistory] that can also start watching the channels. [lastSyncAt] is in
+     * _yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'_ format.
+     *
+     * @param channelsIds The list of channel CIDs. Cannot be empty.
+     * @param lastSyncAt The last time the user was online and in sync. Shouldn't be later than 30 days.
+     * @param watch Whether to start watching the channels the user is an active member of.
+     *
+     * @return Executable async [Call] responsible for obtaining missing events.
+     */
+    @CheckResult
+    internal fun getSyncHistoryInternal(
+        channelsIds: List<String>,
+        lastSyncAt: String,
+        watch: Boolean,
     ): Call<List<ChatEvent>> {
         val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
             userScope,
@@ -4825,7 +4858,7 @@ internal constructor(
             ),
         )
 
-        return api.getSyncHistory(channelsIds, lastSyncAt)
+        return api.getSyncHistory(channelsIds, lastSyncAt, watch)
             .withPrecondition(userScope) {
                 checkSyncHistoryPreconditions(channelsIds, parsedDate)
             }

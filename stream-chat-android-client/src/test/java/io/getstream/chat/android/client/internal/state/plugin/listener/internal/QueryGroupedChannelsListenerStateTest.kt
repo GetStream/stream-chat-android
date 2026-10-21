@@ -542,4 +542,47 @@ internal class QueryGroupedChannelsListenerStateTest {
         // then
         verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = false)
     }
+
+    @Test
+    fun `a reconnect refresh keeps the loaded pages only of the groups it names`() = runTest {
+        // given
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val groupSupport = GroupedChannelsGroup(groupKey = "support", channels = emptyList(), next = "cursor")
+        val groupDirect = GroupedChannelsGroup(groupKey = "direct", channels = emptyList(), next = "cursor")
+        val result = Result.Success(GroupedChannels(groups = mapOf("support" to groupSupport, "direct" to groupDirect)))
+        val groups = mapOf("support" to GroupedChannelsGroupQuery(), "direct" to GroupedChannelsGroupQuery())
+        // when
+        listener.onQueryGroupedChannelsResult(
+            result,
+            null,
+            ReconnectGroupQueries(groups, keysKeepingPages = setOf("support")),
+            true,
+            false,
+            null,
+        )
+        // then
+        verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = true, keepsLoadedPages = true)
+        verify(logicFor("direct")).applyGroupedResult(groupDirect, isFirstPage = true, keepsLoadedPages = false)
+    }
+
+    @Test
+    fun `an explicit query does not keep the loaded pages`() = runTest {
+        // given
+        whenever(globalState.rawGroupedUnreadChannels) doReturn emptyMap()
+        doNothing().`when`(globalState).setGroupedUnreadChannels(any())
+        val groupSupport = GroupedChannelsGroup(groupKey = "support", channels = emptyList(), next = "cursor")
+        val result = Result.Success(GroupedChannels(groups = mapOf("support" to groupSupport)))
+        // when
+        listener.onQueryGroupedChannelsResult(
+            result,
+            null,
+            mapOf("support" to GroupedChannelsGroupQuery()),
+            true,
+            false,
+            null,
+        )
+        // then
+        verify(logicFor("support")).applyGroupedResult(groupSupport, isFirstPage = true, keepsLoadedPages = false)
+    }
 }
