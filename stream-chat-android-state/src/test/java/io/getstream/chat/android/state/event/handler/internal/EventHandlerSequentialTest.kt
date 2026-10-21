@@ -317,6 +317,7 @@ internal class EventHandlerSequentialTest {
                 id = "channel-id",
                 type = "messaging",
                 extraData = mapOf("group" to "a"),
+                hidden = false,
                 read = listOf(randomChannelUserRead(user = currentUser, unreadMessages = 1)),
             )
             val repos: RepositoryFacade = mock()
@@ -890,6 +891,7 @@ internal class EventHandlerSequentialTest {
                 id = channelId,
                 type = channelType,
                 extraData = extraData,
+                hidden = false,
                 read = listOf(
                     io.getstream.chat.android.randomChannelUserRead(
                         user = currentUser,
