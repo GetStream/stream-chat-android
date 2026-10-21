@@ -31,6 +31,11 @@ import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.Quer
 /**
  * Creates a channels view model factory.
  *
+ * A [ChannelListViewModel] serves one user at a time: when the user disconnects or another user connects, it drops
+ * the loaded channels and reloads once the next user is connected. The default filter follows the connected user,
+ * but filters and filter values that contain a user id don't, so a different user needs a new factory and view model,
+ * for example keyed by the user id.
+ *
  * @param limit How many channels to return.
  * @param memberLimit The number of members per channel. When `null`, the server-side default is used.
  * @param messageLimit The number of messages to fetch for each channel. When `null`, the server-side default is used.
