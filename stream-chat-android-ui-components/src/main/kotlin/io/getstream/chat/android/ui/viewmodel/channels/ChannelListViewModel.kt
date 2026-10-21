@@ -51,7 +51,6 @@ import io.getstream.chat.android.ui.utils.extensions.isMuted
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
-import io.getstream.result.call.Call
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -251,11 +250,6 @@ public class ChannelListViewModel internal constructor(
      */
     private var isFilterSetByApp = false
 
-    /**
-     * The in-flight request for the next page, if any.
-     */
-    private var loadMoreCall: Call<List<Channel>>? = null
-
     init {
         when (mode) {
             is QueryMode.Standard -> {
@@ -277,7 +271,6 @@ public class ChannelListViewModel internal constructor(
             chatClient.clientState.userSessionEnds().collectLatest {
                 // Drop the previous user's channels and stop their queries.
                 queryJob?.cancel()
-                loadMoreCall?.cancel()
                 queryChannelsState = MutableStateFlow(null)
                 // The default filter names the previous user, so nothing may query with it until it's rebuilt.
                 if (followsDefaultFilter()) filterLiveData.value = null
@@ -464,9 +457,7 @@ public class ChannelListViewModel internal constructor(
         val queryChannelsState = queryChannelsState.value ?: return
         val nextPageRequest = queryChannelsState.nextPageRequest.value ?: return
         viewModelScope.launch {
-            // Repeating the request returns the call already in flight, so this tracks it either way.
-            loadMoreCall = chatClient.queryChannels(nextPageRequest)
-            loadMoreCall?.enqueue(
+            chatClient.queryChannels(nextPageRequest).enqueue(
                 onError = { streamError ->
                     logger.e {
                         "Could not load more channels. Error: ${streamError.message}. " +
