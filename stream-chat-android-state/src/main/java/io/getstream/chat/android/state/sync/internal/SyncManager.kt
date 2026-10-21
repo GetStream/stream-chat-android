@@ -532,10 +532,15 @@ internal class SyncManager(
             .toMap()
             .takeIf { it.isNotEmpty() }
             ?.let { groups ->
-                val keysKeepingPages = activeGroupedLogics
-                    .filter { syncedCids.containsAll(it.cids()) }
-                    .mapNotNull { it.groupKey() }
-                    .toSet()
+                // `/sync` does not subscribe to presence, so only pages fetched again would get presence events.
+                val keysKeepingPages = if (shared?.presence == true) {
+                    emptySet()
+                } else {
+                    activeGroupedLogics
+                        .filter { syncedCids.containsAll(it.cids()) }
+                        .mapNotNull { it.groupKey() }
+                        .toSet()
+                }
                 ReconnectGroupQueries(groups, keysKeepingPages)
             }
 

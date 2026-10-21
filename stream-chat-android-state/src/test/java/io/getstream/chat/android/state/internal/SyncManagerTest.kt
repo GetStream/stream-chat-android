@@ -1371,6 +1371,13 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `on reconnect a grouped list queried with presence is reset`() = runTest(testDispatcher) {
+        givenReconnect(listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a"), presence = true)))
+
+        assertEquals(emptySet<String>(), keysKeepingPages())
+    }
+
+    @Test
     fun `on reconnect a grouped list is reset when the sync reported too many events`() = runTest(testDispatcher) {
         givenReconnect(
             listOf(groupedQueryLogic(watch = true, cids = setOf("messaging:a"))),
@@ -1501,6 +1508,7 @@ internal class SyncManagerTest {
         watch: Boolean,
         cids: Set<String> = emptySet(),
         groupKey: String = "all",
+        presence: Boolean = false,
     ): QueryChannelsLogic = mock {
         on(it.groupKey()) doReturn groupKey
         on(it.currentRequest()) doReturn mock()
@@ -1510,7 +1518,7 @@ internal class SyncManagerTest {
             limit = null,
             pageSize = null,
             watch = watch,
-            presence = false,
+            presence = presence,
         )
     }
 
