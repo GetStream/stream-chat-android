@@ -592,5 +592,28 @@ internal class QueryChannelsLogicTest {
         assertEquals(request, logic.currentRequest())
     }
 
+    @Test
+    fun `addChannelFromEvent tracks a channel with active state`() = runTest {
+        val channel = randomChannel()
+        whenever(queryChannelsStateLogic.isActiveChannel(channel.cid)) doReturn true
+
+        logic.addChannelFromEvent(channel)
+
+        verify(queryChannelsStateLogic).trackChannel(channel)
+        verify(queryChannelsStateLogic, never()).addChannelsState(any())
+    }
+
+    @Test
+    fun `addChannelFromEvent adds and stores a channel without active state`() = runTest {
+        val channel = randomChannel()
+        whenever(queryChannelsStateLogic.isActiveChannel(channel.cid)) doReturn false
+
+        logic.addChannelFromEvent(channel)
+
+        verify(queryChannelsStateLogic).addChannelsState(listOf(channel))
+        verify(queryChannelsDatabaseLogic).insertQueryChannels(queryChannelsSpec)
+        verify(queryChannelsStateLogic, never()).trackChannel(any())
+    }
+
     // endregion
 }
