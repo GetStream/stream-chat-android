@@ -181,9 +181,8 @@ internal class VoiceVisualizationDriverTest {
     }
 
     @Test
-    fun `a louder level is caught up with within a word`() {
-        val driver = VoiceVisualizationDriver(input(AIVoiceAgentState.Idle, audioLevel = 0f))
-        driver.run(1f)
+    fun `a smooth response catches up with a louder level within a word`() {
+        val driver = settled(VoiceVisualizationDriver.LevelResponse.Smooth, audioLevel = 0f)
 
         driver.input = input(AIVoiceAgentState.Idle, audioLevel = 1f)
         driver.run(0.1f)
@@ -193,9 +192,8 @@ internal class VoiceVisualizationDriverTest {
     }
 
     @Test
-    fun `a quieter level falls away over a pause, not a syllable`() {
-        val driver = VoiceVisualizationDriver(input(AIVoiceAgentState.Idle, audioLevel = 1f))
-        driver.run(1f)
+    fun `a smooth response lets a quieter level fall away over a pause, not a syllable`() {
+        val driver = settled(VoiceVisualizationDriver.LevelResponse.Smooth, audioLevel = 1f)
 
         driver.input = input(AIVoiceAgentState.Idle, audioLevel = 0f)
         driver.run(0.1f)
@@ -203,6 +201,18 @@ internal class VoiceVisualizationDriverTest {
         driver.run(0.9f)
         assertTrue("mic was ${driver.mic}", driver.mic < 0.1f)
     }
+
+    @Test
+    fun `the steady response follows a quieter level within a syllable`() {
+        val driver = settled(VoiceVisualizationDriver.LevelResponse.Steady, audioLevel = 1f)
+
+        driver.input = input(AIVoiceAgentState.Idle, audioLevel = 0f)
+        driver.run(0.1f)
+        assertTrue("mic was ${driver.mic}", driver.mic < 0.1f)
+    }
+
+    private fun settled(response: VoiceVisualizationDriver.LevelResponse, audioLevel: Float) =
+        VoiceVisualizationDriver(input(AIVoiceAgentState.Idle, audioLevel = audioLevel), response).apply { run(1f) }
 
     @Test
     fun `a hue eases the short way round`() {

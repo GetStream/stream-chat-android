@@ -74,7 +74,7 @@ internal class AIVoiceVisualizationFrameTest {
     fun `a level that is not a number counts as no live audio`() {
         lateinit var visualization: VoiceVisualizationState
         compose.setContent {
-            visualization = rememberVoiceVisualization(AIVoiceAgentState.Speaking, listOf(Color.Red), 1f) { Float.NaN }
+            visualization = rememberVoiceVisualization(AIVoiceAgentState.Speaking, listOf(Color.Red), 1f, audioLevel = { Float.NaN })
         }
 
         repeat(FRAMES) { compose.mainClock.advanceTimeByFrame() }
