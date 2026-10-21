@@ -282,6 +282,25 @@ internal class SearchViewModelTest {
         verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
     }
 
+    @Test
+    fun `Given no user once the client is ready When searching Should report an error`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+            .givenRepositorySelectChannels()
+        val viewModel = fixture.get()
+        val states = viewModel.state.observeAll()
+        val errors = viewModel.errorEvents.observeAll()
+
+        fixture.loseUserOnceReady()
+        viewModel.setQuery("hello")
+
+        verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        assertFalse(states.last().isLoading)
+        assertEquals(1, errors.size)
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
     ) {
@@ -313,6 +332,11 @@ internal class SearchViewModelTest {
             user.value = null
             initializationState.value = InitializationState.INITIALIZING
             user.value = newUser
+        }
+
+        fun loseUserOnceReady() {
+            user.value = null
+            initializationState.value = InitializationState.COMPLETE
         }
 
         fun finishConnecting() {

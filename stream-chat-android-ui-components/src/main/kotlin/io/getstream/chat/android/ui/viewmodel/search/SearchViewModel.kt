@@ -185,7 +185,8 @@ public class SearchViewModel(
         logger.d { "Searching for \"$query\" with next: $next" }
         // A user who is still connecting, e.g. right after a switch, can't search yet.
         chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
-        val currentUser = requireNotNull(chatClient.clientState.user.value)
+        val currentUser = chatClient.clientState.user.value
+            ?: return Result.Failure(Error.GenericError("No user is connected"))
         return chatClient
             .searchMessages(
                 channelFilter = Filters.`in`("members", listOf(currentUser.id)),
