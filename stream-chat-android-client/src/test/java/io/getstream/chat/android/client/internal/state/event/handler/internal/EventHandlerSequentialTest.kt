@@ -990,6 +990,8 @@ internal class EventHandlerSequentialTest {
                 id = channelId,
                 type = channelType,
                 extraData = extraData,
+                hidden = false,
+                disabled = false,
                 read = listOf(
                     io.getstream.chat.android.randomChannelUserRead(
                         user = currentUser,
