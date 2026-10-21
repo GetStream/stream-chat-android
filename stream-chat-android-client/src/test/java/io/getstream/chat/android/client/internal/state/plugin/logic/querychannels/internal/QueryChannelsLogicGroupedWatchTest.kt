@@ -19,9 +19,11 @@ package io.getstream.chat.android.client.internal.state.plugin.logic.querychanne
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.NotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.internal.state.plugin.QueryChannelsIdentifier
+import io.getstream.chat.android.client.internal.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.client.test.randomNotificationChannelPartialUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.models.Channel
@@ -122,6 +124,47 @@ internal class QueryChannelsLogicGroupedWatchTest {
         val results = logic.parseChatEventResults(listOf(event))
 
         assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
+    }
+
+    @Test
+    fun `a partial update skips a channel without a local copy when the list was queried without watch`() = runTest {
+        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+        givenGroupedQueryWatch(watch = false)
+        val event = partialUpdate(createdAt = daysAgo(1))
+
+        val results = logic.parseChatEventResults(listOf(event))
+
+        assertEquals(listOf(EventHandlingResult.Skip), results)
+    }
+
+    @Test
+    fun `a partial update adds a stored channel without watching it when the list was queried without watch`() =
+        runTest {
+            givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+            givenGroupedQueryWatch(watch = false)
+            val event = partialUpdate(createdAt = daysAgo(1))
+            val stored = randomChannel(id = event.channelId, type = event.channelType, createdAt = daysAgo(1))
+            whenever(queryChannelsDatabaseLogic.selectChannels(listOf(event.cid))) doReturn listOf(stored)
+
+            val results = logic.parseChatEventResults(listOf(event))
+
+            assertEquals(listOf(EventHandlingResult.Add(stored.mergePartialUpdate(event.channel))), results)
+        }
+
+    @Test
+    fun `a partial update watches a channel without a local copy when the list was queried with watch`() = runTest {
+        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+        givenGroupedQueryWatch(watch = true)
+        val event = partialUpdate(createdAt = daysAgo(1))
+
+        val results = logic.parseChatEventResults(listOf(event))
+
+        assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
+    }
+
+    private fun givenGroupedQueryWatch(watch: Boolean) {
+        whenever(queryChannelsStateLogic.getGroupedQueryConfig()) doReturn
+            GroupedQueryConfig(limit = null, pageSize = null, watch = watch, presence = false)
     }
 
     private suspend fun givenLoadedChannels(lastLoadedAt: Date, endOfChannels: Boolean) {
