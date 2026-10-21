@@ -29,7 +29,9 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThread
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.job
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -223,6 +225,22 @@ internal class ThreadListControllerTest {
         threads.value = listOf(randomThread(), randomThread())
         testScheduler.runCurrent()
         assertTrue(sut.state.value.threads.isEmpty())
+    }
+
+    @Test
+    fun `close stops following the threads`() = runTest {
+        val threads = MutableStateFlow(listOf(randomThread()))
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenQueryThreadsState(threadsState(threads))
+        val sut = fixture.get(CoroutineScope(coroutineContext + SupervisorJob(coroutineContext.job)))
+        testScheduler.runCurrent()
+
+        sut.close()
+        threads.value = listOf(randomThread(), randomThread())
+        testScheduler.runCurrent()
+
+        assertEquals(1, sut.state.value.threads.size)
     }
 
     @Test

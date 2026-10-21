@@ -28,6 +28,8 @@ import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +44,8 @@ import kotlinx.coroutines.launch
  *
  * @param query The [QueryThreadsRequest] object containing the parameters for querying threads.
  * @param chatClient The [ChatClient] instance for retrieving the Threads related data.
- * @param scope The [CoroutineScope] on which coroutines should be launched.
+ * @param scope The [CoroutineScope] on which coroutines should be launched. The default one outlives user sessions, so
+ * the list can follow the next user, and runs one task at a time; [close] cancels it.
  * @param queryThreadsAsState Function that returns a [StateFlow] of [QueryThreadsState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,7 +53,7 @@ import kotlinx.coroutines.launch
 public class ThreadListController(
     private val query: QueryThreadsRequest,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val scope: CoroutineScope = chatClient.inheritScope { DispatcherProvider.IO },
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + DispatcherProvider.IO.limitedParallelism(1)),
     queryThreadsAsState: () -> StateFlow<QueryThreadsState?> = {
         chatClient.queryThreadsAsState(
             request = query,
@@ -103,6 +106,13 @@ public class ThreadListController(
             // Drops the previous user's threads; the query runs again once the next user is connected.
             chatClient.clientState.userSessionEnds().collect { _state.value = INITIAL_STATE }
         }
+    }
+
+    /**
+     * Cancels the work started by this controller.
+     */
+    public fun close() {
+        scope.cancel()
     }
 
     /**

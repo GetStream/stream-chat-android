@@ -62,4 +62,9 @@ public class ThreadListViewModel(private val controller: ThreadListController) :
     public fun loadNextPage() {
         controller.loadNextPage()
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        controller.close()
+    }
 }
