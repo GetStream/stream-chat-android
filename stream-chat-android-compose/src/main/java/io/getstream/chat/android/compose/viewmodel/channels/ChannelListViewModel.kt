@@ -422,9 +422,9 @@ public class ChannelListViewModel internal constructor(
     private var lastNextQuery: QueryChannelsRequest? = null
 
     /**
-     * Whether the filter was set through [setFilters], which a user change must not override.
+     * Whether the filter is the default one, built from the connected user, rather than one the app provided.
      */
-    private var isFilterSetByApp = false
+    private var followsDefaultFilter = mode is QueryMode.Standard && mode.initialFilter == null
 
     /**
      * Emits the effective query input to react to. Standard mode reacts to filter/sort changes
@@ -444,10 +444,10 @@ public class ChannelListViewModel internal constructor(
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
-        if (mode is QueryMode.Standard && mode.initialFilter == null) {
+        if (followsDefaultFilter) {
             viewModelScope.launch {
                 val filter = defaultChannelsFilter().first()
-                if (!isFilterSetByApp) this@ChannelListViewModel.filterFlow.value = filter
+                if (followsDefaultFilter) this@ChannelListViewModel.filterFlow.value = filter
             }
         }
 
@@ -460,7 +460,7 @@ public class ChannelListViewModel internal constructor(
                 clearUserState()
                 // Reload once the next user is ready; their queries and searches are built from scratch.
                 chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
-                if (followsDefaultFilter()) {
+                if (followsDefaultFilter) {
                     // The default filter is built from the current user, and setting it reloads.
                     filterFlow.value = defaultChannelsFilter().first()
                 } else {
@@ -524,7 +524,7 @@ public class ChannelListViewModel internal constructor(
             }
             is QueryMode.Standard -> Unit
         }
-        isFilterSetByApp = true
+        followsDefaultFilter = false
         this.filterFlow.tryEmit(value = newFilters)
     }
 
@@ -960,12 +960,6 @@ public class ChannelListViewModel internal constructor(
         }
 
     /**
-     * Whether the filter is the default one, built from the current user, rather than one the app provided.
-     */
-    private fun followsDefaultFilter(): Boolean =
-        mode is QueryMode.Standard && mode.initialFilter == null && !isFilterSetByApp
-
-    /**
      * Drops the channels, search results and selection loaded for the previous user, and stops their queries.
      */
     private fun clearUserState() {
@@ -974,11 +968,10 @@ public class ChannelListViewModel internal constructor(
         searchScope.coroutineContext.cancelChildren()
         queryChannelsState = MutableStateFlow(null)
         // The default filter names the previous user, so nothing may query with it until it's rebuilt.
-        if (followsDefaultFilter()) filterFlow.value = null
+        if (followsDefaultFilter) filterFlow.value = null
         searchMessageState.value = null
         lastNextQuery = null
-        selectedChannel.value = null
-        activeChannelAction = null
+        dismissChannelAction()
         channelsState = ChannelsState(searchQuery = _searchQuery.value)
     }
 

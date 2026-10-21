@@ -38,7 +38,6 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -246,18 +245,15 @@ public class ChannelListViewModel internal constructor(
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
     /**
-     * Whether the filter was set through [setFilters], which a user change must not override.
+     * Whether the filter is the default one, built from the connected user, rather than one the app provided.
      */
-    private var isFilterSetByApp = false
+    private var followsDefaultFilter = mode is QueryMode.Standard && mode.initialFilter == null
 
     init {
         when (mode) {
             is QueryMode.Standard -> {
-                if (mode.initialFilter == null) {
-                    viewModelScope.launch {
-                        val resolvedFilter = buildDefaultFilter().first()
-                        if (!isFilterSetByApp) this@ChannelListViewModel.filterLiveData.value = resolvedFilter
-                    }
+                if (followsDefaultFilter) {
+                    viewModelScope.launch { applyDefaultFilter() }
                 }
                 stateMerger.addSource(filterLiveData) { filter ->
                     if (filter != null) {
@@ -272,15 +268,13 @@ public class ChannelListViewModel internal constructor(
                 // Drop the previous user's channels and stop their queries.
                 queryJob?.cancel()
                 queryChannelsState = MutableStateFlow(null)
-                // The default filter names the previous user, so nothing may query with it until it's rebuilt.
-                if (followsDefaultFilter()) filterLiveData.value = null
                 stateMerger.value = INITIAL_STATE
                 paginationStateMerger.value = PaginationState()
-                // Reload once the next user is ready; their query is built from scratch.
-                chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
-                if (followsDefaultFilter()) {
-                    // The default filter is built from the current user, and setting it reloads.
-                    filterLiveData.value = buildDefaultFilter().first()
+                // Reload for the next user; the query itself waits until they're ready.
+                if (followsDefaultFilter) {
+                    // The default filter names the previous user, so nothing may query with it until it's rebuilt.
+                    filterLiveData.value = null
+                    applyDefaultFilter()
                 } else {
                     initData()
                 }
@@ -289,10 +283,12 @@ public class ChannelListViewModel internal constructor(
     }
 
     /**
-     * Whether the filter is the default one, built from the current user, rather than one the app provided.
+     * Sets the default filter for the connected user, waiting for one if needed, unless the app has set its own.
      */
-    private fun followsDefaultFilter(): Boolean =
-        mode is QueryMode.Standard && mode.initialFilter == null && !isFilterSetByApp
+    private suspend fun applyDefaultFilter() {
+        val filter = buildDefaultFilter().first()
+        if (followsDefaultFilter) filterLiveData.value = filter
+    }
 
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
@@ -484,7 +480,7 @@ public class ChannelListViewModel internal constructor(
             return
         }
         logger.d { "[setFilters] filterObject: $filterObject" }
-        isFilterSetByApp = true
+        followsDefaultFilter = false
         this.filterLiveData.value = filterObject
     }
 

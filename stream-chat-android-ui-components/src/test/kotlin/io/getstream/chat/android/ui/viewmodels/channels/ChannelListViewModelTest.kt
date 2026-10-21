@@ -290,6 +290,71 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
+    fun `Given no initial filter When another user is still connecting Should query only once they are ready`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient, initialFilters = null)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+            val viewModel = fixture.get()
+            viewModel.state.observeAll()
+            val otherUser = User(id = "other")
+
+            fixture.disconnectUser()
+            fixture.startConnectingUser(otherUser)
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(1)).queryChannels(captor.capture())
+
+            fixture.connectUser(otherUser)
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            captor.lastValue.filter shouldBeEqualTo Filters.defaultChannelListFilter(otherUser)
+        }
+
+    @Test
+    fun `Given no initial filter When the app sets filters before another user connects Should query with the app's filters`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient, initialFilters = null)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+            val viewModel = fixture.get()
+            viewModel.state.observeAll()
+            val appFilter = Filters.eq("type", "livestream")
+
+            fixture.disconnectUser()
+            viewModel.setFilters(appFilter)
+            fixture.startConnectingUser(User(id = "other"))
+            fixture.connectUser(User(id = "other"))
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            captor.lastValue.filter shouldBeEqualTo appFilter
+        }
+
+    @Test
+    fun `Given an app filter When another user logs in Should query once they are ready`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+        val viewModel = fixture.get()
+        viewModel.state.observeAll()
+
+        fixture.disconnectUser()
+        fixture.startConnectingUser(User(id = "other"))
+        verify(chatClient, times(1)).queryChannels(any())
+
+        fixture.connectUser(User(id = "other"))
+        verify(chatClient, times(2)).queryChannels(any())
+    }
+
+    @Test
     fun `Given channel list in content state When leaving a channel Should leave the channel`() = runTest {
         val chatClient: ChatClient = mock()
         val channelClient: ChannelClient = mock()

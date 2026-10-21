@@ -111,7 +111,6 @@ public class SearchViewModel(
     public fun loadMore() {
         val currentState = _state.value!!
         if (currentState.canLoadMore && !currentState.isLoading && !currentState.isLoadingMore) {
-            job?.cancel()
             _state.value = currentState.copy(isLoadingMore = true)
             searchMessages()
         }

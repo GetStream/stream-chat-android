@@ -542,6 +542,31 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Given no initial filter When the app sets filters before another user connects Should query with the app's filters`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient, initialFilters = null)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+            val viewModel = fixture.get(this)
+            val appFilter = Filters.eq("type", "livestream")
+
+            fixture.disconnectUser()
+            viewModel.setFilters(appFilter)
+            fixture.startConnectingUser(otherUser)
+            advanceUntilIdle()
+            fixture.connectUser(otherUser)
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+            assertEquals(appFilter, captor.lastValue.filter)
+            assertEquals(0, captor.allValues.count { it.filter == Filters.defaultChannelListFilter(otherUser) })
+        }
+
+    @Test
     fun `Given channel list in content state When deleting a channel Should delete the channel`() = runTest {
         val chatClient: ChatClient = mock()
         val channelClient: ChannelClient = mock()
