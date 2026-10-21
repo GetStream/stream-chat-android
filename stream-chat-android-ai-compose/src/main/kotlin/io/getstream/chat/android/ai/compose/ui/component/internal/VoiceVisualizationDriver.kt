@@ -29,8 +29,27 @@ import kotlin.math.pow
  * Each value eases toward the state's motion by a fixed share per frame at 60 Hz, converted to
  * time, so it moves the same at any refresh rate. The shaders and the Canvas drawing read the same
  * values, so the two renderers move alike.
+ *
+ * @param levelResponse How quickly [mic] follows the audio level up and down.
  */
-internal class VoiceVisualizationDriver(input: Input) {
+internal class VoiceVisualizationDriver(
+    input: Input,
+    private val levelResponse: LevelResponse = LevelResponse.Steady,
+) {
+
+    /** The share of the way [mic] moves each frame at 60 Hz, toward a louder or a quieter level. */
+    internal data class LevelResponse(val rise: Float, val fall: Float) {
+        companion object {
+            /** Follows the level closely, both ways. */
+            val Steady = LevelResponse(rise = 0.35f, fall = 0.35f)
+
+            /**
+             * Follows the level like a VU meter: about 0.1 s up to a louder reading, about 0.3 s down
+             * from it, so a meter's per-syllable jumps swell with the phrase instead.
+             */
+            val Smooth = LevelResponse(rise = 0.16f, fall = 0.05f)
+        }
+    }
 
     internal data class Input(
         val state: AIVoiceAgentState,
@@ -157,7 +176,8 @@ internal class VoiceVisualizationDriver(input: Input) {
         val gentle = ease(GENTLE, dt)
         hoverAmount += ((if (isHovering) 1f else 0f) - hoverAmount) * gentle
         voice += ((if (input.audioLevel == null) 0f else 1f) - voice) * ease(VOICE, dt)
-        mic += ((input.audioLevel ?: 0f) - mic) * ease(MIC, dt)
+        val level = input.audioLevel ?: 0f
+        mic += (level - mic) * ease(if (level > mic) levelResponse.rise else levelResponse.fall, dt)
         val targets = slots(input.colors)
         for (index in colors.indices) colors[index] = ease(colors[index], targets[index], gentle)
         count += (input.colors.size - count) * gentle
@@ -172,7 +192,6 @@ internal class VoiceVisualizationDriver(input: Input) {
         private const val DRIVERS = 0.08f
         private const val GENTLE = 0.12f
         private const val VOICE = 0.1f
-        private const val MIC = 0.35f
 
         /** Expressivity scales amplitude and speed, each with a floor so the motion breathes at 0. */
         fun scales(expressivity: Float) =

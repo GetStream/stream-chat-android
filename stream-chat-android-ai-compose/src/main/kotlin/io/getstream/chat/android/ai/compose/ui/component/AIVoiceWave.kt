@@ -67,7 +67,15 @@ public fun AIVoiceWave(
     expressivity: Float = 1f,
     audioLevel: (() -> Float?)? = null,
 ) {
-    val visualization = rememberVoiceVisualization(state, colors, expressivity, audioLevel)
+    // The wave's height tracks the level directly, so it follows it smoothly; per-syllable jumps
+    // would make it jitter.
+    val visualization = rememberVoiceVisualization(
+        state,
+        colors,
+        expressivity,
+        audioLevel,
+        levelResponse = VoiceVisualizationDriver.LevelResponse.Smooth,
+    )
     val dark = MaterialTheme.colorScheme.surface.isDark()
     val wave = remember { WaveDrawing() }
     Canvas(

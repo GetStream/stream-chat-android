@@ -67,6 +67,7 @@ internal fun rememberVoiceVisualization(
     colors: List<Color>,
     expressivity: Float,
     audioLevel: (() -> Float?)?,
+    levelResponse: VoiceVisualizationDriver.LevelResponse = VoiceVisualizationDriver.LevelResponse.Steady,
 ): VoiceVisualizationState {
     val reduceMotion by rememberAnimationsOff()
     val fallback = AIVoiceVisualizationDefaults.colors()
@@ -78,7 +79,7 @@ internal fun rememberVoiceVisualization(
         audioLevel = audioLevelInput(level),
         reduceMotion = reduceMotion,
     )
-    val driver = remember { VoiceVisualizationDriver(input(audioLevel?.invoke())) }
+    val driver = remember { VoiceVisualizationDriver(input(audioLevel?.invoke()), levelResponse) }
     val level = rememberUpdatedState(audioLevel)
     val frame = remember { mutableLongStateOf(0L) }
     SideEffect { driver.input = input(driver.input.audioLevel) }
