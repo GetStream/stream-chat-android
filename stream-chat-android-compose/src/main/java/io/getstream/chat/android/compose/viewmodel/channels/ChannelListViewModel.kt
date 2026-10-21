@@ -460,10 +460,11 @@ public class ChannelListViewModel internal constructor(
                 // Reload once the next user is ready; their queries and searches are built from scratch.
                 chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
                 if (followsDefaultFilter()) {
-                    // The default filter is built from the current user.
+                    // The default filter is built from the current user, and setting it reloads.
                     filterFlow.value = defaultChannelsFilter().first()
+                } else {
+                    refresh()
                 }
-                refresh()
             }
         }
     }
@@ -969,6 +970,8 @@ public class ChannelListViewModel internal constructor(
         chListScope.coroutineContext.cancelChildren()
         searchScope.coroutineContext.cancelChildren()
         queryChannelsState = MutableStateFlow(null)
+        // The default filter names the previous user, so nothing may query with it until it's rebuilt.
+        if (followsDefaultFilter()) filterFlow.value = null
         searchMessageState.value = null
         lastNextQuery = null
         selectedChannel.value = null

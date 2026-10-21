@@ -498,6 +498,50 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Given no initial filter When the sort changes while another user connects Should not query with the previous user's filter`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient, initialFilters = null)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+            val viewModel = fixture.get(this)
+
+            fixture.disconnectUser()
+            fixture.startConnectingUser(otherUser)
+            viewModel.setQuerySort(QuerySortByField.descByName("created_at"))
+            advanceUntilIdle()
+            fixture.connectUser(otherUser)
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+            val previousUserFilter = Filters.defaultChannelListFilter(User(id = currentUserId))
+            assertEquals(1, captor.allValues.count { it.filter == previousUserFilter })
+            assertEquals(Filters.defaultChannelListFilter(otherUser), captor.lastValue.filter)
+        }
+
+    @Test
+    fun `Given no initial filter When the same user logs in again Should query with their default filter`() = runTest {
+        val chatClient: ChatClient = mock()
+        val fixture = Fixture(chatClient, initialFilters = null)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+            .givenChannelMutes()
+        fixture.get(this)
+
+        fixture.disconnectUser()
+        fixture.connectUser(User(id = currentUserId))
+        advanceUntilIdle()
+
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, times(2)).queryChannels(captor.capture())
+        assertTrue(captor.allValues.all { it.filter == Filters.defaultChannelListFilter(User(id = currentUserId)) })
+    }
+
+    @Test
     fun `Given channel list in content state When deleting a channel Should delete the channel`() = runTest {
         val chatClient: ChatClient = mock()
         val channelClient: ChannelClient = mock()

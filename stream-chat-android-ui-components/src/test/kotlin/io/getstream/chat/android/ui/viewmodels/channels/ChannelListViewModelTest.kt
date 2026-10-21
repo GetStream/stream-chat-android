@@ -272,50 +272,24 @@ internal class ChannelListViewModelTest {
         }
 
     @Test
-    fun `Given a next page loading When reaching the end again Should not cancel it`() = runTest {
-        val chatClient: ChatClient = mock()
-        val nextPageRequest = QueryChannelsRequest(filter = queryFilter, querySort = querySort, offset = 30, limit = 30)
-        val nextPageCall: Call<List<Channel>> = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                nextPageRequest = nextPageRequest,
-            )
-            .givenChannelMutes()
-        whenever(chatClient.queryChannels(nextPageRequest)) doReturn nextPageCall
-        val viewModel = fixture.get()
-        viewModel.state.observeAll()
+    fun `Given no initial filter When the same user logs in again Should query with their default filter`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val fixture = Fixture(chatClient, initialFilters = null)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
+                .givenChannelMutes()
+            val viewModel = fixture.get()
+            viewModel.state.observeAll()
 
-        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
-        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
+            fixture.disconnectUser()
+            fixture.connectUser(User(id = "Jc"))
 
-        verify(nextPageCall, never()).cancel()
-    }
-
-    @Test
-    fun `Given a next page loading When another user connects Should cancel it`() = runTest {
-        val chatClient: ChatClient = mock()
-        val nextPageRequest = QueryChannelsRequest(filter = queryFilter, querySort = querySort, offset = 30, limit = 30)
-        val nextPageCall: Call<List<Channel>> = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                nextPageRequest = nextPageRequest,
-            )
-            .givenChannelMutes()
-        whenever(chatClient.queryChannels(nextPageRequest)) doReturn nextPageCall
-        val viewModel = fixture.get()
-        viewModel.state.observeAll()
-        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
-
-        fixture.startConnectingUser(User(id = "other"))
-
-        verify(nextPageCall).cancel()
-    }
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            captor.allValues.all { it.filter == Filters.defaultChannelListFilter(User(id = "Jc")) } shouldBeEqualTo true
+        }
 
     @Test
     fun `Given channel list in content state When leaving a channel Should leave the channel`() = runTest {

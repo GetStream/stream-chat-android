@@ -279,6 +279,8 @@ public class ChannelListViewModel internal constructor(
                 queryJob?.cancel()
                 loadMoreCall?.cancel()
                 queryChannelsState = MutableStateFlow(null)
+                // The default filter names the previous user, so nothing may query with it until it's rebuilt.
+                if (followsDefaultFilter()) filterLiveData.value = null
                 stateMerger.value = INITIAL_STATE
                 paginationStateMerger.value = PaginationState()
                 // Reload once the next user is ready; their query is built from scratch.
