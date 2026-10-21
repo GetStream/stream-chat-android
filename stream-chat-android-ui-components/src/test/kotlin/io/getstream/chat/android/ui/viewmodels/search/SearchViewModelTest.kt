@@ -159,55 +159,34 @@ internal class SearchViewModelTest {
     }
 
     @Test
-    fun `Given search results When another user connects Should clear the results`() = runTest {
-        val fixture = Fixture()
-            .givenCurrentUser()
-            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-            .givenRepositorySelectChannels()
-        val viewModel = fixture.get()
-        val states = viewModel.state.observeAll()
-        viewModel.setQuery("hello")
+    fun `Given search results When another user connects Should clear the results and search again as that user`() =
+        runTest {
+            val fixture = givenSearchResultsFixture()
+            val viewModel = fixture.get()
+            val states = viewModel.state.observeAll()
+            viewModel.setQuery("hello")
 
-        fixture.startConnectingUser(User(id = "other"))
+            fixture.startConnectingUser(User(id = "other"))
+            assertEquals(SearchViewModel.State(query = "hello", isLoading = true), states.last())
+            fixture.finishConnecting()
 
-        assertEquals(SearchViewModel.State(query = "hello", isLoading = true), states.last())
-    }
-
-    @Test
-    fun `Given search results When another user connects Should search again as that user`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-            .givenRepositorySelectChannels()
-        val viewModel = fixture.get()
-        viewModel.state.observeAll()
-        viewModel.setQuery("hello")
-
-        fixture.startConnectingUser(User(id = "other"))
-        fixture.finishConnecting()
-
-        val captor = argumentCaptor<FilterObject>()
-        verify(chatClient, times(2)).searchMessages(
-            captor.capture(),
-            any(),
-            anyOrNull(),
-            anyOrNull(),
-            anyOrNull(),
-            anyOrNull(),
-        )
-        assertEquals(Filters.`in`("members", listOf("other")), captor.lastValue)
-        assertEquals(1, viewModel.state.value!!.results.size)
-    }
+            val captor = argumentCaptor<FilterObject>()
+            verify(fixture.chatClient, times(2)).searchMessages(
+                captor.capture(),
+                any(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+            )
+            assertEquals(Filters.`in`("members", listOf("other")), captor.lastValue)
+            assertEquals(1, viewModel.state.value!!.results.size)
+        }
 
     @Test
     fun `Given a user switch When a new query is typed before the user is ready Should keep the new query`() =
         runTest {
-            val chatClient: ChatClient = mock()
-            val fixture = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-                .givenRepositorySelectChannels()
+            val fixture = givenSearchResultsFixture()
             val viewModel = fixture.get()
             viewModel.state.observeAll()
             viewModel.setQuery("hello")
@@ -217,7 +196,7 @@ internal class SearchViewModelTest {
             fixture.finishConnecting()
 
             val captor = argumentCaptor<FilterObject>()
-            verify(chatClient, times(2)).searchMessages(
+            verify(fixture.chatClient, times(2)).searchMessages(
                 any(),
                 captor.capture(),
                 anyOrNull(),
@@ -231,10 +210,7 @@ internal class SearchViewModelTest {
 
     @Test
     fun `Given search results When the user disconnects Should clear the results`() = runTest {
-        val fixture = Fixture()
-            .givenCurrentUser()
-            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-            .givenRepositorySelectChannels()
+        val fixture = givenSearchResultsFixture()
         val viewModel = fixture.get()
         val states = viewModel.state.observeAll()
         viewModel.setQuery("hello")
@@ -246,11 +222,7 @@ internal class SearchViewModelTest {
 
     @Test
     fun `Given a search waiting for the next user When loading more Should keep the search`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-            .givenRepositorySelectChannels()
+        val fixture = givenSearchResultsFixture()
         val viewModel = fixture.get()
         viewModel.state.observeAll()
         viewModel.setQuery("hello")
@@ -259,36 +231,30 @@ internal class SearchViewModelTest {
         viewModel.loadMore()
         fixture.finishConnecting()
 
-        verify(chatClient, times(2)).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        verify(fixture.chatClient, times(2))
+            .searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         assertEquals(1, viewModel.state.value!!.results.size)
         assertFalse(viewModel.state.value!!.isLoading)
     }
 
     @Test
     fun `Given a user still connecting When searching Should wait until they are ready`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-            .givenRepositorySelectChannels()
+        val fixture = givenSearchResultsFixture()
         val viewModel = fixture.get()
         viewModel.state.observeAll()
 
         fixture.startConnectingUser(User(id = "other"))
         viewModel.setQuery("hello")
-        verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        verify(fixture.chatClient, never())
+            .searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
 
         fixture.finishConnecting()
-        verify(chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        verify(fixture.chatClient).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
     }
 
     @Test
     fun `Given no user once the client is ready When searching Should report an error`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
-            .givenRepositorySelectChannels()
+        val fixture = givenSearchResultsFixture()
         val viewModel = fixture.get()
         val states = viewModel.state.observeAll()
         val errors = viewModel.errorEvents.observeAll()
@@ -296,13 +262,19 @@ internal class SearchViewModelTest {
         fixture.loseUserOnceReady()
         viewModel.setQuery("hello")
 
-        verify(chatClient, never()).searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
+        verify(fixture.chatClient, never())
+            .searchMessages(any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
         assertFalse(states.last().isLoading)
         assertEquals(1, errors.size)
     }
 
+    private suspend fun givenSearchResultsFixture() = Fixture()
+        .givenCurrentUser()
+        .givenSearchMessagesResult(SearchMessagesResult(messages = listOf(randomMessage(cid = "messaging:ch1"))))
+        .givenRepositorySelectChannels()
+
     private class Fixture(
-        private val chatClient: ChatClient = mock(),
+        val chatClient: ChatClient = mock(),
     ) {
         private val clientState: ClientState = mock()
         private val repositoryFacade: RepositoryFacade = mock()

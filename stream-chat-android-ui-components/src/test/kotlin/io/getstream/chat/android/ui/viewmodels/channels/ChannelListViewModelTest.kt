@@ -106,15 +106,7 @@ internal class ChannelListViewModelTest {
 
     @Test
     fun `Given channel list in content state When another user connects Should clear the channels`() = runTest {
-        val fixture = Fixture()
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false,
-                endOfChannels = true,
-            )
-            .givenChannelMutes()
+        val fixture = fixtureWithChannels(initialFilters = queryFilter, endOfChannels = true).givenCurrentUser()
         val viewModel = fixture.get()
         val state = viewModel.state.observeAll()
         val paginationState = viewModel.paginationState.observeAll()
@@ -129,33 +121,20 @@ internal class ChannelListViewModelTest {
     @Test
     fun `Given channel list in content state When another user connects mid-disconnect Should clear the channels`() =
         runTest {
-            val fixture = Fixture()
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                    loading = false,
-                )
-                .givenChannelMutes()
+            val fixture = fixtureWithChannels(initialFilters = queryFilter, endOfChannels = true).givenCurrentUser()
             val viewModel = fixture.get()
             val state = viewModel.state.observeAll()
+            val paginationState = viewModel.paginationState.observeAll()
 
             fixture.startConnectingUser(User(id = "other"))
 
             state.last() shouldBeEqualTo ChannelListViewModel.State(isLoading = true, channels = emptyList())
+            paginationState.last() shouldBeEqualTo ChannelListViewModel.PaginationState()
         }
 
     @Test
     fun `Given channel list in content state When the user disconnects Should clear the channels`() = runTest {
-        val fixture = Fixture()
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false,
-                endOfChannels = true,
-            )
-            .givenChannelMutes()
+        val fixture = fixtureWithChannels(initialFilters = queryFilter, endOfChannels = true).givenCurrentUser()
         val viewModel = fixture.get()
         val state = viewModel.state.observeAll()
         val paginationState = viewModel.paginationState.observeAll()
@@ -167,36 +146,8 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Given no initial filter When another user connects Should not re-send the previous user's query`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient, initialFilters = null)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-            .givenChannelMutes()
-        val viewModel = fixture.get()
-        viewModel.state.observeAll()
-
-        fixture.disconnectUser()
-        fixture.connectUser(User(id = "other"))
-
-        val captor = argumentCaptor<QueryChannelsRequest>()
-        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
-        val previousUserFilter = Filters.defaultChannelListFilter(User(id = "Jc"))
-        captor.allValues.count { it.filter == previousUserFilter } shouldBeEqualTo 1
-    }
-
-    @Test
     fun `Given channel list in content state When the same user connects again Should keep the channels`() = runTest {
-        val fixture = Fixture()
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(
-                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false,
-                endOfChannels = true,
-            )
-            .givenChannelMutes()
+        val fixture = fixtureWithChannels(initialFilters = queryFilter, endOfChannels = true).givenCurrentUser()
         val viewModel = fixture.get()
         val state = viewModel.state.observeAll()
         val emittedBefore = state.size
@@ -208,33 +159,25 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Given no initial filter When another user connects Should query with their default filter`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient, initialFilters = null)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-            .givenChannelMutes()
-        val viewModel = fixture.get()
-        viewModel.state.observeAll()
-        val otherUser = User(id = "other")
+    fun `Given no initial filter When another user connects Should query with their default filter instead of the previous user's`() =
+        runTest {
+            val fixture = fixtureWithChannels().givenCurrentUser()
+            fixture.get().state.observeAll()
+            val otherUser = User(id = "other")
 
-        fixture.disconnectUser()
-        fixture.connectUser(otherUser)
+            fixture.disconnectUser()
+            fixture.connectUser(otherUser)
 
-        val captor = argumentCaptor<QueryChannelsRequest>()
-        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
-        captor.lastValue.filter shouldBeEqualTo Filters.defaultChannelListFilter(otherUser)
-    }
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(fixture.chatClient, atLeastOnce()).queryChannels(captor.capture())
+            val previousUserFilter = Filters.defaultChannelListFilter(User(id = "Jc"))
+            captor.allValues.count { it.filter == previousUserFilter } shouldBeEqualTo 1
+            captor.lastValue.filter shouldBeEqualTo Filters.defaultChannelListFilter(otherUser)
+        }
 
     @Test
     fun `Given filters set by the app When another user connects Should keep querying with them`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient, initialFilters = null)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-            .givenChannelMutes()
+        val fixture = fixtureWithChannels().givenCurrentUser()
         val viewModel = fixture.get()
         viewModel.state.observeAll()
         val appFilter = Filters.eq("type", "livestream")
@@ -244,19 +187,14 @@ internal class ChannelListViewModelTest {
         fixture.connectUser(User(id = "other"))
 
         val captor = argumentCaptor<QueryChannelsRequest>()
-        verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+        verify(fixture.chatClient, atLeastOnce()).queryChannels(captor.capture())
         captor.lastValue.filter shouldBeEqualTo appFilter
     }
 
     @Test
     fun `Given filters set before the first user connects When they connect Should query with those filters`() =
         runTest {
-            val chatClient: ChatClient = mock()
-            val fixture = Fixture(chatClient, initialFilters = null)
-                .givenNoUserYet()
-                .givenChannelsQuery()
-                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-                .givenChannelMutes()
+            val fixture = fixtureWithChannels()
             val viewModel = fixture.get()
             viewModel.state.observeAll()
             val appFilter = Filters.eq("type", "livestream")
@@ -265,62 +203,45 @@ internal class ChannelListViewModelTest {
             fixture.connectUser(User(id = "Jc"))
 
             val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, atLeastOnce()).queryChannels(captor.capture())
+            verify(fixture.chatClient, atLeastOnce()).queryChannels(captor.capture())
             captor.lastValue.filter shouldBeEqualTo appFilter
         }
 
     @Test
     fun `Given no initial filter When the same user logs in again Should query with their default filter`() =
         runTest {
-            val chatClient: ChatClient = mock()
-            val fixture = Fixture(chatClient, initialFilters = null)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-                .givenChannelMutes()
-            val viewModel = fixture.get()
-            viewModel.state.observeAll()
+            val fixture = fixtureWithChannels().givenCurrentUser()
+            fixture.get().state.observeAll()
 
             fixture.disconnectUser()
             fixture.connectUser(User(id = "Jc"))
 
             val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, times(2)).queryChannels(captor.capture())
+            verify(fixture.chatClient, times(2)).queryChannels(captor.capture())
             captor.allValues.all { it.filter == Filters.defaultChannelListFilter(User(id = "Jc")) } shouldBeEqualTo true
         }
 
     @Test
     fun `Given no initial filter When another user is still connecting Should query only once they are ready`() =
         runTest {
-            val chatClient: ChatClient = mock()
-            val fixture = Fixture(chatClient, initialFilters = null)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-                .givenChannelMutes()
-            val viewModel = fixture.get()
-            viewModel.state.observeAll()
+            val fixture = fixtureWithChannels().givenCurrentUser()
+            fixture.get().state.observeAll()
             val otherUser = User(id = "other")
 
             fixture.disconnectUser()
             fixture.startConnectingUser(otherUser)
             val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, times(1)).queryChannels(captor.capture())
+            verify(fixture.chatClient, times(1)).queryChannels(captor.capture())
 
             fixture.connectUser(otherUser)
-            verify(chatClient, times(2)).queryChannels(captor.capture())
+            verify(fixture.chatClient, times(2)).queryChannels(captor.capture())
             captor.lastValue.filter shouldBeEqualTo Filters.defaultChannelListFilter(otherUser)
         }
 
     @Test
     fun `Given no initial filter When the app sets filters before another user connects Should query with the app's filters`() =
         runTest {
-            val chatClient: ChatClient = mock()
-            val fixture = Fixture(chatClient, initialFilters = null)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-                .givenChannelMutes()
+            val fixture = fixtureWithChannels().givenCurrentUser()
             val viewModel = fixture.get()
             viewModel.state.observeAll()
             val appFilter = Filters.eq("type", "livestream")
@@ -331,27 +252,21 @@ internal class ChannelListViewModelTest {
             fixture.connectUser(User(id = "other"))
 
             val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, times(2)).queryChannels(captor.capture())
+            verify(fixture.chatClient, times(2)).queryChannels(captor.capture())
             captor.lastValue.filter shouldBeEqualTo appFilter
         }
 
     @Test
     fun `Given an app filter When another user logs in Should query once they are ready`() = runTest {
-        val chatClient: ChatClient = mock()
-        val fixture = Fixture(chatClient)
-            .givenCurrentUser()
-            .givenChannelsQuery()
-            .givenChannelsState(channelsStateData = ChannelsStateData.Result(listOf(channel1)))
-            .givenChannelMutes()
-        val viewModel = fixture.get()
-        viewModel.state.observeAll()
+        val fixture = fixtureWithChannels(initialFilters = queryFilter).givenCurrentUser()
+        fixture.get().state.observeAll()
 
         fixture.disconnectUser()
         fixture.startConnectingUser(User(id = "other"))
-        verify(chatClient, times(1)).queryChannels(any())
+        verify(fixture.chatClient, times(1)).queryChannels(any())
 
         fixture.connectUser(User(id = "other"))
-        verify(chatClient, times(2)).queryChannels(any())
+        verify(fixture.chatClient, times(2)).queryChannels(any())
     }
 
     @Test
@@ -505,8 +420,19 @@ internal class ChannelListViewModelTest {
         verify(chatClient, times(1)).queryChannels(any())
     }
 
+    private fun fixtureWithChannels(
+        initialFilters: FilterObject? = null,
+        endOfChannels: Boolean = false,
+    ) = Fixture(initialFilters = initialFilters)
+        .givenChannelsQuery()
+        .givenChannelsState(
+            channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+            endOfChannels = endOfChannels,
+        )
+        .givenChannelMutes()
+
     private class Fixture(
-        private val chatClient: ChatClient = mock(),
+        val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
         private val initialSort: QuerySortByField<Channel> = querySort,
         private val initialFilters: FilterObject? = queryFilter,
@@ -528,22 +454,16 @@ internal class ChannelListViewModelTest {
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
-            whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
-        }
-
-        fun givenNoUserYet() = apply {
             whenever(clientState.user) doReturn user
             whenever(clientState.initializationState) doReturn initializationState
             whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
+            whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
             user.value = currentUser
             initializationState.value = InitializationState.COMPLETE
-            whenever(clientState.user) doReturn user
-            whenever(clientState.initializationState) doReturn initializationState
             whenever(chatClient.getCurrentUser()) doReturn currentUser
-            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
         }
 
         fun reconnectSameUser() {
