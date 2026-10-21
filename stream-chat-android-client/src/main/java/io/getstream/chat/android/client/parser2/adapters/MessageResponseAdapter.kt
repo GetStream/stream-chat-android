@@ -21,6 +21,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
+import io.getstream.chat.android.client.api2.mapping.MENTIONED_GROUP_IDS_KEY
 import io.getstream.chat.android.network.models.MessageResponse
 
 /**
@@ -30,7 +31,7 @@ import io.getstream.chat.android.network.models.MessageResponse
 internal val GENERATED_MESSAGE_EXTRA_DATA_KEYS = setOf(
     "draft",
     "image_labels",
-    "mentioned_group_ids",
+    MENTIONED_GROUP_IDS_KEY,
     "mml",
     "poll_id",
     "restricted_visibility",

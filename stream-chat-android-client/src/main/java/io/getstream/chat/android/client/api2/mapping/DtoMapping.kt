@@ -340,7 +340,8 @@ internal class DtoMapping(
                 // Responses also copy these declared fields into extraData (see DomainMapping.withDeclared), so a
                 // message sent back carries them. They go back to their typed fields, taking precedence as they did
                 // when v1 flattened extraData over the root. The response-only ones are dropped, since the backend
-                // would store them as custom data on either version.
+                // would store them as custom data on either version. So are the group ids: mentionedGroups holds the
+                // current ones, and the copy would undo an edit of the mentions.
                 val custom = extraData.toMutableMap()
                 custom.keys.removeAll(RESPONSE_ONLY_MESSAGE_KEYS)
                 MessageRequest(
@@ -351,8 +352,7 @@ internal class DtoMapping(
                     mentionedUsers = mentionedUsersIds,
                     mentionedHere = mentionedHere,
                     mentionedChannel = mentionedChannel,
-                    mentionedGroupIds = custom.takeStrings(MENTIONED_GROUP_IDS_KEY)
-                        ?: mentionedGroups.map(UserGroup::id),
+                    mentionedGroupIds = mentionedGroups.map(UserGroup::id),
                     mentionedRoles = mentionedRoles,
                     mml = custom.takeString(MML_KEY),
                     pollId = custom.takeString(POLL_ID_KEY),
@@ -477,18 +477,18 @@ internal class DtoMapping(
     )
 }
 
-private const val MENTIONED_GROUP_IDS_KEY = "mentioned_group_ids"
 private const val MML_KEY = "mml"
 private const val POLL_ID_KEY = "poll_id"
 private const val RESTRICTED_VISIBILITY_KEY = "restricted_visibility"
 
 /** The declared message fields responses copy into extraData that a message request sends back as typed fields. */
-internal val SENT_BACK_MESSAGE_KEYS = setOf(MENTIONED_GROUP_IDS_KEY, MML_KEY, POLL_ID_KEY, RESTRICTED_VISIBILITY_KEY)
+internal val SENT_BACK_MESSAGE_KEYS = setOf(MML_KEY, POLL_ID_KEY, RESTRICTED_VISIBILITY_KEY)
 
 /**
- * Declared message fields that responses also copy into extraData but a message request doesn't carry. Sent back, the
- * backend stores them as custom data: hidden from v1 readers, where the name clashes with the field, and shown to v2
- * readers under `custom`. Derived, so a field added to the copied ones is dropped until a request carries it.
+ * Declared message fields that responses also copy into extraData but a message request doesn't take from there. Most
+ * aren't carried by a request: sent back, the backend stores them as custom data, hidden from v1 readers, where the
+ * name clashes with the field, and shown to v2 readers under `custom`. The group ids are carried, but set from
+ * `mentionedGroups`. Derived, so a field added to the copied ones is dropped until a request takes it.
  */
 private val RESPONSE_ONLY_MESSAGE_KEYS = GENERATED_MESSAGE_EXTRA_DATA_KEYS - SENT_BACK_MESSAGE_KEYS
 

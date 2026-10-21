@@ -23,6 +23,7 @@ import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_CHANNEL_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_FULL_USER_EXTRA_DATA_KEYS
 import io.getstream.chat.android.client.parser2.adapters.GENERATED_MEMBER_EXTRA_DATA_KEYS
@@ -383,13 +384,11 @@ internal class DtoMappingTest {
                 "poll_id" to "poll",
                 "mml" to "<mml/>",
                 "restricted_visibility" to listOf("amit"),
-                "mentioned_group_ids" to listOf("group"),
                 "draft" to mapOf("channel_cid" to "messaging:a"),
                 "image_labels" to mapOf("i" to listOf("cat")),
                 "messageKey" to "messageValue",
             ),
             restrictedVisibility = emptyList(),
-            mentionedGroups = emptyList(),
         )
         val mapping = Fixture().get()
 
@@ -398,9 +397,37 @@ internal class DtoMappingTest {
         request.pollId shouldBeEqualTo "poll"
         request.mml shouldBeEqualTo "<mml/>"
         request.restrictedVisibility shouldBeEqualTo listOf("amit")
-        request.mentionedGroupIds shouldBeEqualTo listOf("group")
         // The response-only ones are not sent, so they are not stored as custom data.
         request.custom shouldBeEqualTo mapOf("messageKey" to "messageValue")
+    }
+
+    @Test
+    fun `Message toMessageRequest sends the current group mentions, not the ids kept in extraData`() {
+        val newGroup = randomUserGroup()
+        val message = randomMessage(
+            extraData = mutableMapOf("messageKey" to "messageValue", MENTIONED_GROUP_IDS_KEY to listOf("oldGroup")),
+            mentionedGroups = listOf(newGroup),
+        )
+        val mapping = Fixture().get()
+
+        val request = with(mapping) { message.toMessageRequest() }
+
+        request.mentionedGroupIds shouldBeEqualTo listOf(newGroup.id)
+        request.custom shouldBeEqualTo mapOf("messageKey" to "messageValue")
+    }
+
+    @Test
+    fun `Message request body clears the group mentions when an edit removes them all`() {
+        val message = randomMessage(
+            extraData = mutableMapOf(MENTIONED_GROUP_IDS_KEY to listOf("oldGroup")),
+            mentionedGroups = emptyList(),
+        )
+        val mapping = Fixture().get()
+        val parser = ParserFactory.createMoshiChatParser()
+
+        val json = parser.toJson(with(mapping) { message.toMessageRequest() })
+
+        parser.fromJson(json, Map::class.java)["mentioned_group_ids"] shouldBeEqualTo emptyList<String>()
     }
 
     @ParameterizedTest
