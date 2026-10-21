@@ -384,13 +384,11 @@ internal class DtoMappingTest {
                 "poll_id" to "poll",
                 "mml" to "<mml/>",
                 "restricted_visibility" to listOf("amit"),
-                "mentioned_group_ids" to listOf("group"),
                 "draft" to mapOf("channel_cid" to "messaging:a"),
                 "image_labels" to mapOf("i" to listOf("cat")),
                 "messageKey" to "messageValue",
             ),
             restrictedVisibility = emptyList(),
-            mentionedGroups = emptyList(),
         )
         val mapping = Fixture().get()
 
@@ -399,8 +397,6 @@ internal class DtoMappingTest {
         request.pollId shouldBeEqualTo "poll"
         request.mml shouldBeEqualTo "<mml/>"
         request.restrictedVisibility shouldBeEqualTo listOf("amit")
-        // The group ids come from mentionedGroups only, so an edit of the mentions is not undone by the copy.
-        request.mentionedGroupIds shouldBeEqualTo emptyList()
         // The response-only ones are not sent, so they are not stored as custom data.
         request.custom shouldBeEqualTo mapOf("messageKey" to "messageValue")
     }
