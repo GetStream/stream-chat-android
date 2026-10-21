@@ -107,7 +107,7 @@ internal class ChannelStateLogicTest {
             lastRead = Date(Long.MIN_VALUE),
             lastReadMessageId = randomString(),
         )
-        _channelData.value = randomChannel().toChannelData()
+        _channelData.value = randomChannel(blocked = false).toChannelData()
         _reads = emptyMap()
         _insideSearch.value = false
         _watcherCount.value = 0
@@ -473,6 +473,36 @@ internal class ChannelStateLogicTest {
         channelStateLogic.deletePoll(poll)
         // then
         channelStateLogic.getPoll(poll.id) `should be equal to` null
+    }
+
+    @Test
+    fun `Given a regular message, When calling unhideFor, Then the channel is shown`() {
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false, extraData = emptyMap())
+
+        channelStateLogic.unhideFor(message)
+
+        verify(mutableState).setHidden(false)
+    }
+
+    @Test
+    fun `Given a message from a blocked user, When calling unhideFor, Then the channel stays hidden`() {
+        val sender = randomUser()
+        spyMutableGlobalState.setBlockedUserIds(listOf(sender.id))
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false, extraData = emptyMap(), user = sender)
+
+        channelStateLogic.unhideFor(message)
+
+        verify(mutableState, never()).setHidden(any())
+    }
+
+    @Test
+    fun `Given a blocked channel, When calling unhideFor, Then the channel stays hidden`() {
+        _channelData.value = randomChannel(blocked = true).toChannelData()
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false, extraData = emptyMap())
+
+        channelStateLogic.unhideFor(message)
+
+        verify(mutableState, never()).setHidden(any())
     }
 
     @Test

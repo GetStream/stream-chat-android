@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.MarkReadResult
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.internal.state.utils.internal.unhidesChannel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -58,7 +59,7 @@ import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LargeClass")
 /**
  * The logic of the state of a channel. This class contains the logic of how to
  * update the state of the channel in the SDK.
@@ -619,6 +620,18 @@ internal class ChannelStateLogic(
      */
     fun setHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
+    }
+
+    /**
+     * Shows the channel again when the new [message] makes the server show it.
+     *
+     * @param message The new message of the channel.
+     */
+    fun unhideFor(message: Message) {
+        val channelBlocked = mutableState.channelData.value.blocked
+        if (message.unhidesChannel(channelBlocked, globalMutableState.blockedUserIds.value)) {
+            setHidden(false)
+        }
     }
 
     /**
