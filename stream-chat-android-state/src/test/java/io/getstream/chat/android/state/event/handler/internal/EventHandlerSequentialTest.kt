@@ -95,6 +95,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("LargeClass")
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class EventHandlerSequentialTest {
 
@@ -418,6 +419,33 @@ internal class EventHandlerSequentialTest {
 
             storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` false
         }
+
+    @Test
+    fun `When handling ChannelUpdatedEvent, The stored hidden and blocked state should be kept`() = runTest {
+        val storedChannel = randomChannel(hidden = true, extraData = mapOf("blocked" to true, "group" to "a"))
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+        // Like the backend's, the event's channel carries no state of the current user.
+        val eventChannel = randomChannel(
+            id = storedChannel.id,
+            type = storedChannel.type,
+            hidden = null,
+            extraData = mapOf("group" to "b"),
+        )
+
+        handler.handleEvents(randomChannelUpdatedEvent(cid = storedChannel.cid, channel = eventChannel))
+
+        val inserted = argumentCaptor<Collection<Channel>>()
+        verify(repos).insertChannels(inserted.capture())
+        val result = inserted.firstValue.single()
+        result.hidden `should be equal to` true
+        result.extraData `should be equal to` mapOf("blocked" to true, "group" to "b")
+    }
 
     /** A `notification.message_new` event whose channel, like the backend's, carries no state of the current user. */
     private fun notificationMessageNewIn(channel: Channel, message: Message): ChatEvent =
