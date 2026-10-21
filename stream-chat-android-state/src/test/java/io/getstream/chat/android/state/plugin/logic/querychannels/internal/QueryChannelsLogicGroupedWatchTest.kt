@@ -27,7 +27,9 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.plugin.state.querychannels.GroupedQueryConfig
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -124,6 +126,57 @@ internal class QueryChannelsLogicGroupedWatchTest {
         assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
     }
 
+    @Test
+    fun `a partial update skips a channel without a local copy when the list was queried without watch`() = runTest {
+        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+        givenGroupedQueryWatch(watch = false)
+        val event = partialUpdate(createdAt = daysAgo(1))
+
+        val results = logic.parseChatEventResults(listOf(event))
+
+        assertEquals(listOf(EventHandlingResult.Skip), results)
+    }
+
+    @Test
+    fun `a partial update adds a stored channel without watching it when the list was queried without watch`() =
+        runTest {
+            givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+            givenGroupedQueryWatch(watch = false)
+            val event = partialUpdate(createdAt = daysAgo(1))
+            val stored = randomChannel(id = event.channelId, type = event.channelType, createdAt = daysAgo(1))
+            whenever(queryChannelsDatabaseLogic.selectChannels(listOf(event.cid))) doReturn listOf(stored)
+
+            val results = logic.parseChatEventResults(listOf(event))
+
+            assertEquals(listOf(EventHandlingResult.Add(stored.mergePartialUpdate(event.channel))), results)
+        }
+
+    @Test
+    fun `a partial update places a channel without a local copy by the last message time of the event`() = runTest {
+        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+        val event = partialUpdate(createdAt = daysAgo(30), lastMessageAt = daysAgo(1))
+
+        val results = logic.parseChatEventResults(listOf(event))
+
+        assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
+    }
+
+    @Test
+    fun `a partial update watches a channel without a local copy when the list was queried with watch`() = runTest {
+        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+        givenGroupedQueryWatch(watch = true)
+        val event = partialUpdate(createdAt = daysAgo(1))
+
+        val results = logic.parseChatEventResults(listOf(event))
+
+        assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
+    }
+
+    private fun givenGroupedQueryWatch(watch: Boolean) {
+        whenever(queryChannelsStateLogic.getGroupedQueryConfig()) doReturn
+            GroupedQueryConfig(limit = null, pageSize = null, watch = watch, presence = false)
+    }
+
     private suspend fun givenLoadedChannels(lastLoadedAt: Date, endOfChannels: Boolean) {
         val loaded = listOf(
             randomChannel(createdAt = lastLoadedAt, lastMessageAt = null),
@@ -136,8 +189,13 @@ internal class QueryChannelsLogicGroupedWatchTest {
     }
 
     /** A partial update the group's handler resolved to a watch, carrying only the slim channel. */
-    private fun partialUpdate(createdAt: Date): NotificationChannelPartialUpdatedEvent {
-        val slim = Channel(id = randomString(), type = "messaging", createdAt = createdAt)
+    private fun partialUpdate(createdAt: Date, lastMessageAt: Date? = null): NotificationChannelPartialUpdatedEvent {
+        val slim = Channel(
+            id = randomString(),
+            type = "messaging",
+            createdAt = createdAt,
+            lastMessageAt = lastMessageAt,
+        )
         val event = randomNotificationChannelPartialUpdatedEvent(
             cid = slim.cid,
             channelType = slim.type,

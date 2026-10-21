@@ -307,6 +307,28 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `Partially updated channel keeps the last message time of the event`() {
+        val lastMessageAt = randomDate()
+        val dto = DownstreamChannelPartialUpdateDto(
+            cid = "messaging:123",
+            id = "123",
+            type = "messaging",
+            name = null,
+            image = null,
+            created_at = null,
+            updated_at = null,
+            last_message_at = lastMessageAt,
+            frozen = false,
+            disabled = false,
+            extraData = emptyMap(),
+        )
+
+        val result = with(Fixture().get()) { dto.toDomain() }
+
+        assertEquals(lastMessageAt, result.lastMessageAt)
+    }
+
+    @Test
     fun `DownstreamChannelDto is correctly mapped to Channel`() {
         val downstreamChannelDto = randomDownstreamChannelDto()
         val sut = Fixture().get()

@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
@@ -181,6 +182,55 @@ internal class EventHandlerSequentialHiddenChannelTest {
         groupedState.rawChannels.orEmpty().keys `should contain` CID
     }
 
+    @Test
+    fun `a campaign message does not bring a hidden channel back to a grouped query`() = runTest {
+        val fixture = Fixture()
+        fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, randomMember(user = fixture.currentUser))
+        val groupedState = fixture.withLoadedGroupedQuery(groupKey = "all")
+        val eventHandler = fixture.get()
+
+        eventHandler.handleEvents(hiddenEvent(fixture.currentUser))
+        eventHandler.handleEvents(
+            newMessageEvent(
+                randomMessage(
+                    type = "regular",
+                    shadowed = false,
+                    extraData = mapOf("created_by_campaign_id" to "campaign-id"),
+                ),
+            ),
+        )
+
+        groupedState.rawChannels.orEmpty().keys `should not contain` CID
+    }
+
+    @Test
+    fun `a regular message brings a hidden channel back to a grouped query`() = runTest {
+        val fixture = Fixture()
+        fixture.withActiveChannel(CHANNEL_TYPE, CHANNEL_ID, randomMember(user = fixture.currentUser))
+        val groupedState = fixture.withLoadedGroupedQuery(groupKey = "all")
+        val eventHandler = fixture.get()
+
+        eventHandler.handleEvents(hiddenEvent(fixture.currentUser))
+        eventHandler.handleEvents(newMessageEvent(randomMessage(type = "regular", shadowed = false)))
+
+        groupedState.rawChannels.orEmpty().keys `should contain` CID
+    }
+
+    private fun hiddenEvent(user: User) = randomChannelHiddenEvent(
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        user = user,
+        clearHistory = false,
+    )
+
+    private fun newMessageEvent(message: Message) = randomNewMessageEvent(
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        message = message,
+    )
+
     private fun updatedChannel(): Channel = randomChannel(
         id = CHANNEL_ID,
         type = CHANNEL_TYPE,
@@ -242,6 +292,13 @@ internal class EventHandlerSequentialHiddenChannelTest {
         fun withGroupedQuery(groupKey: String): QueryChannelsMutableState {
             val identifier = QueryChannelsIdentifier.Grouped(groupKey)
             logicRegistry.queryChannels(identifier)
+            return stateRegistry.queryChannels(identifier).toMutableState()
+        }
+
+        /** Registers a grouped query with a loaded page that holds another channel. */
+        suspend fun withLoadedGroupedQuery(groupKey: String): QueryChannelsMutableState {
+            val identifier = QueryChannelsIdentifier.Grouped(groupKey)
+            logicRegistry.queryChannels(identifier).addChannel(randomChannel(hidden = false))
             return stateRegistry.queryChannels(identifier).toMutableState()
         }
 

@@ -61,7 +61,7 @@ internal fun Channel.isUnreadInGroupFor(userId: String): Boolean =
     hidden != true && !isDisabled && currentUserUnreadCount(userId) > 0
 
 // The model has no field for it, so the server's `disabled` flag arrives in the extra data.
-private val Channel.isDisabled: Boolean
+internal val Channel.isDisabled: Boolean
     get() = extraData[DISABLED_FIELD_NAME] == true
 
 private val queryTimestampDescSort = QuerySortByField.descByName<Channel>(QUERY_TIMESTAMP_FIELD_NAME)

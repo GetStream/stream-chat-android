@@ -158,23 +158,13 @@ internal class ChannelEventHandlerTest {
     }
 
     @Test
-    fun `When NewMessageEvent with non-shadowed message is handled, Then channel is unhidden`() {
-        val message = randomMessage(shadowed = false)
+    fun `When NewMessageEvent is handled, Then the message decides whether the channel is shown again`() {
+        val message = randomMessage()
         val event = randomNewMessageEvent(cid = cid, message = message)
 
         handler.handle(event)
 
-        verify(stateLogic).setHidden(false)
-    }
-
-    @Test
-    fun `When NewMessageEvent with shadowed message is handled, Then channel is not unhidden`() {
-        val message = randomMessage(shadowed = true)
-        val event = randomNewMessageEvent(cid = cid, message = message)
-
-        handler.handle(event)
-
-        verify(stateLogic, never()).setHidden(false)
+        verify(stateLogic).unhideFor(message)
     }
 
     @Test
@@ -316,7 +306,7 @@ internal class ChannelEventHandlerTest {
 
         verify(stateLogic).upsertMessage(message)
         verify(stateLogic).updateCurrentUserRead(event.createdAt, message)
-        verify(stateLogic).setHidden(false)
+        verify(stateLogic).unhideFor(message)
     }
 
     @Test
@@ -329,7 +319,7 @@ internal class ChannelEventHandlerTest {
 
         verify(stateLogic, never()).upsertMessage(message)
         verify(stateLogic).updateCurrentUserRead(event.createdAt, message)
-        verify(stateLogic).setHidden(false)
+        verify(stateLogic).unhideFor(message)
     }
 
     // NotificationThreadMessageNewEvent tests

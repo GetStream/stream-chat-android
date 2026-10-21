@@ -22,6 +22,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -34,6 +35,7 @@ internal class GroupAwareChatEventHandlerFactory(
     private val groupKey: String,
     private val resolver: ChannelGroupResolver = DefaultChannelGroupResolver(),
     private val clientState: ClientState = ChatClient.instance().clientState,
+    private val blockedUserIds: () -> Collection<String> = { ChatClient.instance().globalState.blockedUserIds.value },
 ) : ChatEventHandlerFactory(clientState) {
 
     override fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler =
@@ -42,6 +44,7 @@ internal class GroupAwareChatEventHandlerFactory(
             resolver = resolver,
             channels = channels,
             clientState = clientState,
+            blockedUserIds = blockedUserIds,
         )
 }
 

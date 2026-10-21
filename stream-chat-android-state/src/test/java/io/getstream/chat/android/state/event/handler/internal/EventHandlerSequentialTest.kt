@@ -44,6 +44,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
@@ -51,6 +52,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
@@ -71,6 +73,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -92,6 +95,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.concurrent.atomic.AtomicReference
 
+@Suppress("LargeClass")
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 internal class EventHandlerSequentialTest {
 
@@ -308,6 +312,36 @@ internal class EventHandlerSequentialTest {
     }
 
     @Test
+    fun `NotificationChannelPartialUpdatedEvent migrates grouped unread count of a stored channel that is not active`() =
+        runTest {
+            val stored = randomChannel(
+                id = "channel-id",
+                type = "messaging",
+                extraData = mapOf("group" to "a"),
+                hidden = false,
+                read = listOf(randomChannelUserRead(user = currentUser, unreadMessages = 1)),
+            )
+            val repos: RepositoryFacade = mock()
+            whenever(repos.selectMessages(any())) doReturn emptyList()
+            whenever(repos.selectChannels(any())) doReturn listOf(stored)
+            whenever(repos.selectThreads(any())) doReturn emptyList()
+            whenever(repos.selectChannel(stored.cid)) doReturn stored
+            val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
+                setGroupedUnreadChannels(mapOf("a" to 1, "b" to 0))
+            }
+            val partialChannel = Channel(id = "channel-id", type = "messaging", extraData = mapOf("group" to "b"))
+            val handler = Fixture()
+                .withCurrentUser(currentUser)
+                .withRepositoryFacade(repos)
+                .withMutableGlobalState(mutableGlobalState)
+                .get(this)
+
+            handler.handleEvents(randomNotificationChannelPartialUpdatedEvent(cid = stored.cid, channel = partialChannel))
+
+            mutableGlobalState.groupedUnreadChannels.value `should be equal to` mapOf("a" to 0, "b" to 1)
+        }
+
+    @Test
     fun `When handling NotificationChannelPartialUpdatedEvent, The stored channel should get the partial update`() =
         runTest {
             val storedChannel = randomChannel(members = listOf(randomMember()), extraData = mapOf("group" to "a"))
@@ -334,6 +368,117 @@ internal class EventHandlerSequentialTest {
             storedResult.members `should be equal to` storedChannel.members
             storedResult.extraData `should be equal to` mapOf("group" to "b")
         }
+
+    @Test
+    fun `When handling NewMessageEvent with a campaign message, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(
+                type = "regular",
+                shadowed = false,
+                extraData = mapOf("created_by_campaign_id" to "campaign-id"),
+            )
+
+            storedHiddenChannelAfter(message).hidden `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NewMessageEvent with a regular message, The stored hidden channel should be shown`() = runTest {
+        val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+
+        storedHiddenChannelAfter(message).hidden `should be equal to` false
+    }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent with a campaign message, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(
+                type = "regular",
+                shadowed = false,
+                extraData = mapOf("created_by_campaign_id" to "campaign-id"),
+            )
+
+            storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent in a blocked channel, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+            val storedChannel = randomChannel(hidden = true, extraData = mapOf("blocked" to true))
+
+            val result = storedHiddenChannelAfter(message, ::notificationMessageNewIn, storedChannel)
+
+            result.hidden `should be equal to` true
+            result.extraData["blocked"] `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent with a regular message, The stored hidden channel should be shown`() =
+        runTest {
+            val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+
+            storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` false
+        }
+
+    @Test
+    fun `When handling ChannelUpdatedEvent, The stored hidden and blocked state should be kept`() = runTest {
+        val storedChannel = randomChannel(hidden = true, extraData = mapOf("blocked" to true, "group" to "a"))
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+        // Like the backend's, the event's channel carries no state of the current user.
+        val eventChannel = randomChannel(
+            id = storedChannel.id,
+            type = storedChannel.type,
+            hidden = null,
+            extraData = mapOf("group" to "b"),
+        )
+
+        handler.handleEvents(randomChannelUpdatedEvent(cid = storedChannel.cid, channel = eventChannel))
+
+        val inserted = argumentCaptor<Collection<Channel>>()
+        verify(repos).insertChannels(inserted.capture())
+        val result = inserted.firstValue.single()
+        result.hidden `should be equal to` true
+        result.extraData `should be equal to` mapOf("blocked" to true, "group" to "b")
+    }
+
+    /** A `notification.message_new` event whose channel, like the backend's, carries no state of the current user. */
+    private fun notificationMessageNewIn(channel: Channel, message: Message): ChatEvent =
+        randomNotificationMessageNewEvent(
+            cid = channel.cid,
+            channel = Channel(id = channel.id, type = channel.type),
+            message = message,
+        )
+
+    private fun newMessageIn(channel: Channel, message: Message): ChatEvent =
+        randomNewMessageEvent(cid = channel.cid, message = message)
+
+    /** Handles a new [message] in a stored hidden channel and returns the channel as it is stored again. */
+    private suspend fun TestScope.storedHiddenChannelAfter(
+        message: Message,
+        eventIn: (Channel, Message) -> ChatEvent = ::newMessageIn,
+        storedChannel: Channel = randomChannel(hidden = true, extraData = emptyMap()),
+    ): Channel {
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        whenever(repos.selectChannel(storedChannel.cid)) doReturn storedChannel
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+
+        handler.handleEvents(eventIn(storedChannel, message))
+
+        val inserted = argumentCaptor<Collection<Channel>>()
+        verify(repos).insertChannels(inserted.capture())
+        return inserted.firstValue.single()
+    }
 
     @Test
     fun `When handling NotificationChannelPartialUpdatedEvent, A channel that is not stored should not be inserted`() =
@@ -774,6 +919,7 @@ internal class EventHandlerSequentialTest {
                 id = channelId,
                 type = channelType,
                 extraData = extraData,
+                hidden = false,
                 read = listOf(
                     io.getstream.chat.android.randomChannelUserRead(
                         user = currentUser,

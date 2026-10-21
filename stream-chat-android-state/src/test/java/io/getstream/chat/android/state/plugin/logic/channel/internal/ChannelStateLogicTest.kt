@@ -462,6 +462,26 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given a regular message, When calling unhideFor, Then the channel is shown`() {
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false, extraData = emptyMap())
+
+        channelStateLogic.unhideFor(message)
+
+        verify(mutableState).setHidden(false)
+    }
+
+    @Test
+    fun `Given a message from a blocked user, When calling unhideFor, Then the channel stays hidden`() {
+        val sender = randomUser()
+        spyMutableGlobalState.setBlockedUserIds(listOf(sender.id))
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false, extraData = emptyMap(), user = sender)
+
+        channelStateLogic.unhideFor(message)
+
+        verify(mutableState, never()).setHidden(any())
+    }
+
+    @Test
     fun `Given user has no messages, When calling deleteMessagesFromUser, Then no action is taken`() {
         // given
         val userId = randomString()

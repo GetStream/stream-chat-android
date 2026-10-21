@@ -102,6 +102,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -125,6 +126,8 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.chat.android.state.utils.internal.mergePartialUpdate
+import io.getstream.chat.android.state.utils.internal.unhidesChannel
+import io.getstream.chat.android.state.utils.internal.withUserStateOf
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -312,12 +315,9 @@ internal class EventHandlerSequential(
         queryChannelsLogic.parseChatEventResults(batchEvent.sortedEvents).forEach { result ->
             when (result) {
                 is EventHandlingResult.Add -> {
-                    // Use trackChannel instead of addChannel to avoid overwriting the shared
-                    // per-channel state with a potentially stale DB-cached channel.
-                    // Channel events have already updated per-channel state (e.g., lastMessageAt)
-                    // before this method runs, and refreshChannelsState below will reconcile
-                    // the query map with the live per-channel data.
-                    queryChannelsLogic.trackChannel(result.channel)
+                    // Channel events have already updated the state of active channels before this method runs, and
+                    // refreshChannelsState below reconciles the query map with it.
+                    queryChannelsLogic.addChannelFromEvent(result.channel)
                 }
                 is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(result.cid)
                 is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(result.cid)
@@ -455,7 +455,7 @@ internal class EventHandlerSequential(
             }
             (event as? NotificationChannelPartialUpdatedEvent)?.let { e ->
                 groupedUnreadChannels = groupedUnreadChannelsUpdater
-                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e)
+                    .calculateUpdatedCounts(groupedUnreadChannels, batchEvent.id, e) { repos.selectChannel(e.cid) }
             }
             (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
             (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
@@ -649,7 +649,7 @@ internal class EventHandlerSequential(
                         skipLastMsgUpdateForSystemMsgs = channel.config.skipLastMsgUpdateForSystemMsgs,
                     )
                     val updatedChannel = channel.copy(
-                        hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
+                        hidden = channel.hiddenAfter(enrichedMessage),
                         messages = channel.messages + listOf(enrichedMessage),
                         messageCount = event.channelMessageCount ?: channel.messageCount,
                         lastMessageAt = newLastMessageAt,
@@ -689,8 +689,8 @@ internal class EventHandlerSequential(
                 is NotificationMessageNewEvent -> {
                     batch.addMessageData(event.createdAt, event.cid, event.message)
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
-                    batch.addChannel(channel.copy(hidden = false))
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
+                    batch.addChannel(channel.copy(hidden = channel.hiddenAfter(event.message)))
                 }
                 is NotificationAddedToChannelEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
@@ -804,12 +804,12 @@ internal class EventHandlerSequential(
                 }
                 is ChannelUpdatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
                 is ChannelUpdatedByUserEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
                 is NotificationChannelPartialUpdatedEvent -> {
@@ -825,7 +825,7 @@ internal class EventHandlerSequential(
                 }
                 is ChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
                 is NotificationChannelDeletedEvent -> {
@@ -835,7 +835,7 @@ internal class EventHandlerSequential(
                 }
                 is NotificationChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
 
@@ -957,6 +957,17 @@ internal class EventHandlerSequential(
 
         logger.v { "[updateOfflineStorage] completed batchId: ${batchEvent.id}" }
     }
+
+    /**
+     * This stored channel with the channel of an event applied. The event's channel is shared by all members, so the
+     * current user's `hidden` and `blocked` state is kept from this channel.
+     */
+    private fun Channel.mergeSharedEventChannel(eventChannel: Channel): Channel =
+        mergeChannelFromEvent(eventChannel).withUserStateOf(this)
+
+    /** The hidden state of this channel after the new [message]. */
+    private fun Channel.hiddenAfter(message: Message): Boolean? =
+        if (message.unhidesChannel(extraData, mutableGlobalState.blockedUserIds.value)) false else hidden
 
     private fun List<ChatEvent>.extractMessageIds() = mapNotNull { event ->
         (event as? HasMessage)?.message?.id

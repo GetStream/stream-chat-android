@@ -122,6 +122,7 @@ internal class LogicRegistry internal constructor(
             mutableState.chatEventHandlerFactory = GroupAwareChatEventHandlerFactory(
                 groupKey = identifier.groupKey,
                 clientState = clientState,
+                blockedUserIds = { mutableGlobalState.blockedUserIds.value },
             )
         }
         val queryChannelsStateLogic = QueryChannelsStateLogic(

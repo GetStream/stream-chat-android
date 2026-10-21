@@ -47,6 +47,7 @@ import io.getstream.chat.android.state.message.attachments.internal.AttachmentUr
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
+import io.getstream.chat.android.state.utils.internal.unhidesChannel
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -586,6 +587,18 @@ internal class ChannelStateLogic(
      */
     fun setHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
+    }
+
+    /**
+     * Shows the channel again when the new [message] makes the server show it.
+     *
+     * @param message The new message of the channel.
+     */
+    fun unhideFor(message: Message) {
+        val extraData = mutableState.channelData.value.extraData
+        if (message.unhidesChannel(extraData, globalMutableState.blockedUserIds.value)) {
+            setHidden(false)
+        }
     }
 
     /**
