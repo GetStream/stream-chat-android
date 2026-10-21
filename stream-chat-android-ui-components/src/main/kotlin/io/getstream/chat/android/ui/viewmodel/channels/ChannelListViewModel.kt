@@ -474,6 +474,8 @@ public class ChannelListViewModel internal constructor(
      * Has no effect on view models constructed for a predefined-filter query — the predefined identity
      * is fixed at construction. A warning is logged in that case.
      *
+     * After a user disconnects, setting the next user's filter before they finish connecting makes the reload use it.
+     *
      * @param filterObject The new filter to be applied to the query which lets us fetch different data.
      */
     public fun setFilters(filterObject: FilterObject) {

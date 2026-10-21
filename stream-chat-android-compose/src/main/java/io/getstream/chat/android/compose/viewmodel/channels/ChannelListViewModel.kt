@@ -508,6 +508,8 @@ public class ChannelListViewModel internal constructor(
      * Has no effect on view models constructed for a predefined-filter query (predefined identity is
      * fixed at construction) or for a grouped query (the group's filter is server-owned).
      *
+     * After a user disconnects, setting the next user's filter before they finish connecting makes the reload use it.
+     *
      * @param newFilters The new filters to be used as a baseline for filtering channels.
      */
     public fun setFilters(newFilters: FilterObject) {
