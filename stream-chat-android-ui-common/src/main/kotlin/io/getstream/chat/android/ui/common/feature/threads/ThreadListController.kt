@@ -25,13 +25,14 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
@@ -80,21 +81,27 @@ public class ThreadListController(
     init {
         scope.launch {
             queryThreadsState
-                .filterNotNull()
-                .flatMapLatest {
-                    combine(
-                        it.threads,
-                        it.loading,
-                        it.loadingMore,
-                        it.unseenThreadIds,
-                        it.loadingError,
-                    ) { threads, loading, loadingMore, unseenThreadIds, loadingError ->
-                        ThreadListState(threads, loading, loadingMore, unseenThreadIds.size, loadingError)
-                    }
+                // Null while no user is connected: stop following the previous state.
+                .flatMapLatest { state ->
+                    state?.let {
+                        combine(
+                            it.threads,
+                            it.loading,
+                            it.loadingMore,
+                            it.unseenThreadIds,
+                            it.loadingError,
+                        ) { threads, loading, loadingMore, unseenThreadIds, loadingError ->
+                            ThreadListState(threads, loading, loadingMore, unseenThreadIds.size, loadingError)
+                        }
+                    } ?: emptyFlow()
                 }
                 .collectLatest {
                     _state.value = it
                 }
+        }
+        scope.launch {
+            // Drops the previous user's threads; the query runs again once the next user is connected.
+            chatClient.clientState.userSessionEnds().collect { _state.value = INITIAL_STATE }
         }
     }
 

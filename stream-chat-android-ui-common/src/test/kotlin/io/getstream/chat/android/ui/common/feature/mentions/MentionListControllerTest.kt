@@ -19,7 +19,11 @@ package io.getstream.chat.android.ui.common.feature.mentions
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.User
@@ -29,11 +33,13 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
+import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -46,10 +52,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertInstanceOf
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class MentionListControllerTest {
@@ -97,6 +106,63 @@ internal class MentionListControllerTest {
             assertFalse(actual.isLoadingMore)
             assertFalse(actual.isRefreshing)
         }
+    }
+
+    @Test
+    fun `logout clears the mentions`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannels(channels = emptyList())
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult(messages = listOf(Message(cid = CID))))
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+        assertEquals(1, sut.state.value.results.size)
+
+        fixture.disconnectUser()
+        testScheduler.runCurrent()
+
+        assertEquals(MentionListState(), sut.state.value)
+    }
+
+    @Test
+    fun `another user connecting loads their mentions`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenChannels(channels = emptyList())
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult(messages = listOf(Message(cid = CID))))
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+
+        fixture.disconnectUser()
+        fixture.connectUser(User(id = "other"))
+        testScheduler.runCurrent()
+
+        val captor = argumentCaptor<FilterObject>()
+        verify(fixture.chatClient, times(2)).searchMessages(
+            channelFilter = captor.capture(),
+            messageFilter = any(),
+            offset = anyOrNull(),
+            limit = anyOrNull(),
+            next = anyOrNull(),
+            sort = anyOrNull(),
+        )
+        assertEquals(Filters.`in`("members", listOf("other")), captor.lastValue)
+        assertEquals(1, sut.state.value.results.size)
+    }
+
+    @Test
+    fun `no user connected yet waits for one`() = runTest {
+        val fixture = Fixture()
+            .givenChannels(channels = emptyList())
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult(messages = listOf(Message(cid = CID))))
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+        assertTrue(sut.state.value.isLoading)
+
+        fixture.connectUser(User)
+        testScheduler.runCurrent()
+
+        assertEquals(1, sut.state.value.results.size)
     }
 
     @Test
@@ -351,12 +417,30 @@ private class Fixture {
 
     private val sort: QuerySorter<Message> = mock()
     private val repositoryFacade: RepositoryFacade = mock()
-    private val chatClient: ChatClient = mock {
+    private val userFlow = MutableStateFlow<User?>(null)
+    private val initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
+    private val clientState: ClientState = mock {
+        on { user } doReturn userFlow
+        on { initializationState } doReturn initializationState
+    }
+    val chatClient: ChatClient = mock {
         whenever(mock.repositoryFacade) doReturn repositoryFacade
+        whenever(mock.clientState) doReturn clientState
+        whenever(mock.getCurrentUser()) doAnswer { userFlow.value }
     }
 
     fun givenCurrentUser(currentUser: User = User) = apply {
-        whenever(chatClient.getCurrentUser()) doReturn currentUser
+        connectUser(currentUser)
+    }
+
+    fun connectUser(currentUser: User) {
+        userFlow.value = currentUser
+        initializationState.value = InitializationState.COMPLETE
+    }
+
+    fun disconnectUser() {
+        initializationState.value = InitializationState.NOT_INITIALIZED
+        userFlow.value = null
     }
 
     fun givenSearchMessagesResult(

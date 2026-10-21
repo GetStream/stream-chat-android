@@ -19,12 +19,14 @@ package io.getstream.chat.android.ui.common.feature.mentions
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -35,6 +37,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -83,6 +86,13 @@ public class MentionListController(
                 }
             }
             .launchIn(scope)
+        chatClient.clientState.userSessionEnds()
+            .onEach {
+                // Drops the previous user's mentions and loads the next user's once they're connected.
+                _state.value = MentionListState()
+                loadRequests.tryEmit(Unit)
+            }
+            .launchIn(scope)
     }
 
     /**
@@ -125,6 +135,8 @@ public class MentionListController(
     }
 
     private suspend fun searchMentions(): Result<SearchMessagesResult> {
+        // A user who is still connecting, e.g. right after a switch, can't search yet.
+        chatClient.clientState.initializationState.first { it == InitializationState.COMPLETE }
         val currentUser = requireNotNull(chatClient.getCurrentUser())
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)

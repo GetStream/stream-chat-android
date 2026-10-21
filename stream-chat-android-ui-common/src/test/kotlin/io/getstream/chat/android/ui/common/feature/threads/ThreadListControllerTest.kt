@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.api.state.QueryThreadsState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.QueryThreadsResult
+import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThread
 import io.getstream.result.call.Call
@@ -203,13 +205,58 @@ internal class ThreadListControllerTest {
         }
     }
 
+    @Test
+    fun `logout clears the threads`() = runTest {
+        val threads = MutableStateFlow(listOf(randomThread()))
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenQueryThreadsState(threadsState(threads))
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+        assertEquals(1, sut.state.value.threads.size)
+
+        fixture.disconnectUser()
+        testScheduler.runCurrent()
+        assertTrue(sut.state.value.threads.isEmpty())
+        assertTrue(sut.state.value.isLoading)
+
+        threads.value = listOf(randomThread(), randomThread())
+        testScheduler.runCurrent()
+        assertTrue(sut.state.value.threads.isEmpty())
+    }
+
+    @Test
+    fun `the same user connecting again keeps the threads`() = runTest {
+        val state = threadsState(MutableStateFlow(listOf(randomThread())))
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenQueryThreadsState(state)
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+
+        fixture.reconnect(state)
+        testScheduler.runCurrent()
+
+        assertEquals(1, sut.state.value.threads.size)
+        assertFalse(sut.state.value.isLoading)
+    }
+
+    private fun threadsState(threads: MutableStateFlow<List<Thread>>): QueryThreadsState = mock {
+        on { it.threads } doReturn threads
+        on { loading } doReturn MutableStateFlow(false)
+        on { loadingMore } doReturn MutableStateFlow(false)
+        on { unseenThreadIds } doReturn MutableStateFlow(emptySet())
+        on { loadingError } doReturn MutableStateFlow(false)
+    }
+
     private class Fixture {
 
         private val queryThreadsStateFlow = MutableStateFlow<QueryThreadsState?>(null)
+        private val userFlow = MutableStateFlow<User?>(null)
 
         private val mockClientState: ClientState = mock {
             on { connectionState } doReturn MutableStateFlow(ConnectionState.Connected)
-            on { user } doReturn MutableStateFlow(null)
+            on { user } doReturn userFlow
         }
 
         private val mockChatClient: ChatClient = mock {
@@ -217,6 +264,21 @@ internal class ThreadListControllerTest {
         }
 
         fun givenQueryThreadsState(state: QueryThreadsState) = apply {
+            queryThreadsStateFlow.value = state
+        }
+
+        fun givenCurrentUser(currentUser: User = User(id = "user")) = apply {
+            userFlow.value = currentUser
+        }
+
+        fun disconnectUser() {
+            // Same order as ChatClient: the query state goes null before the user does.
+            queryThreadsStateFlow.value = null
+            userFlow.value = null
+        }
+
+        fun reconnect(state: QueryThreadsState) {
+            queryThreadsStateFlow.value = null
             queryThreadsStateFlow.value = state
         }
 
