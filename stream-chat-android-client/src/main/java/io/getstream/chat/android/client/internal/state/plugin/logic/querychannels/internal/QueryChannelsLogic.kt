@@ -292,6 +292,17 @@ internal class QueryChannelsLogic(
     }
 
     /**
+     * Adds [channel], resolved from an event, to the query. A channel with active state is only tracked, so its live
+     * state is not replaced by a possibly stale copy. Any other channel is added like a channel from a query result,
+     * which creates its state and stores the query.
+     *
+     * @param channel The channel to add.
+     */
+    internal suspend fun addChannelFromEvent(channel: Channel) {
+        if (queryChannelsStateLogic.isActiveChannel(channel.cid)) trackChannel(channel) else addChannel(channel)
+    }
+
+    /**
      * Calls watch channel and adds result to the query. A grouped query does not add the channel when it is hidden.
      *
      * @param cid cid of the channel.

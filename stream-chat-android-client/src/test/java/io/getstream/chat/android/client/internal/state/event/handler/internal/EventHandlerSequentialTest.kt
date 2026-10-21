@@ -20,6 +20,7 @@ import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.MessageBufferConfig
 import io.getstream.chat.android.client.api.MessageBufferOverflow
+import io.getstream.chat.android.client.api.event.EventHandlingResult
 import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
@@ -315,6 +316,21 @@ internal class EventHandlerSequentialTest {
         handler.handleEvents(randomMarkAllReadEvent(user = currentUser))
 
         verify(queryChannelsLogic).handleMarkAllRead()
+    }
+
+    @Test
+    fun `An event that adds a channel to a query adds it as a channel from an event`() = runTest {
+        val channel = randomChannel()
+        val queryChannelsLogic: QueryChannelsLogic = mock {
+            onBlocking { parseChatEventResults(any()) } doReturn listOf(EventHandlingResult.Add(channel))
+        }
+        val handler = Fixture()
+            .withActiveQueryChannelsLogic(queryChannelsLogic)
+            .get(this)
+
+        handler.handleEvents(randomChannelUpdatedEvent(cid = channel.cid, channel = channel))
+
+        verify(queryChannelsLogic).addChannelFromEvent(channel)
     }
 
     @Test
