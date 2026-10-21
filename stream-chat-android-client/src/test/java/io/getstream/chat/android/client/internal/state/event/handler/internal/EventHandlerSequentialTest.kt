@@ -28,6 +28,8 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomChannelTruncatedEvent
+import io.getstream.chat.android.client.test.randomChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.test.randomDraftMessageDeletedEvent
@@ -768,7 +770,9 @@ internal class EventHandlerSequentialTest {
         runTest {
             val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
 
-            storedHiddenChannelAfter(message, blocked = true).hidden `should be equal to` true
+            val storedChannel = randomChannel(hidden = true, blocked = true, extraData = emptyMap())
+
+            storedHiddenChannelAfter(message, storedChannel = storedChannel).hidden `should be equal to` true
         }
 
     @Test
@@ -778,9 +782,82 @@ internal class EventHandlerSequentialTest {
         storedHiddenChannelAfter(message).hidden `should be equal to` false
     }
 
+    @Test
+    fun `When handling NotificationMessageNewEvent with a campaign message, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(
+                type = "regular",
+                shadowed = false,
+                extraData = mapOf("created_by_campaign_id" to "campaign-id"),
+            )
+
+            storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent in a blocked channel, The stored hidden channel should stay hidden`() =
+        runTest {
+            val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+            val storedChannel = randomChannel(hidden = true, blocked = true, extraData = emptyMap())
+
+            val result = storedHiddenChannelAfter(message, ::notificationMessageNewIn, storedChannel)
+
+            result.hidden `should be equal to` true
+            result.blocked `should be equal to` true
+        }
+
+    @Test
+    fun `When handling NotificationMessageNewEvent with a regular message, The stored hidden channel should be shown`() =
+        runTest {
+            val message = randomMessage(type = "regular", shadowed = false, extraData = emptyMap())
+
+            storedHiddenChannelAfter(message, ::notificationMessageNewIn).hidden `should be equal to` false
+        }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("sharedChannelEventArguments")
+    fun `When handling an event with a shared channel, The stored hidden and blocked state should be kept`(
+        eventType: String,
+        eventOf: (cid: String, channel: Channel) -> ChatEvent,
+    ) = runTest {
+        val storedChannel = randomChannel(hidden = true, blocked = true, extraData = mapOf("group" to "a"))
+
+        val result = storedChannelAfter(storedChannel, eventOf(storedChannel.cid, sharedEventChannelOf(storedChannel)))
+
+        result.hidden `should be equal to` true
+        result.blocked `should be equal to` true
+        result.extraData `should be equal to` mapOf("group" to "b")
+    }
+
+    /** The channel of an event as the backend sends it: shared by all members, so with no state of the current user. */
+    private fun sharedEventChannelOf(storedChannel: Channel): Channel = randomChannel(
+        id = storedChannel.id,
+        type = storedChannel.type,
+        hidden = null,
+        blocked = null,
+        extraData = mapOf("group" to "b"),
+    )
+
+    /** A `notification.message_new` event whose channel, like the backend's, carries no state of the current user. */
+    private fun notificationMessageNewIn(channel: Channel, message: Message): ChatEvent =
+        randomNotificationMessageNewEvent(
+            cid = channel.cid,
+            channel = Channel(id = channel.id, type = channel.type),
+            message = message,
+        )
+
+    private fun newMessageIn(channel: Channel, message: Message): ChatEvent =
+        randomNewMessageEvent(cid = channel.cid, message = message)
+
     /** Handles a new [message] in a stored hidden channel and returns the channel as it is stored again. */
-    private suspend fun TestScope.storedHiddenChannelAfter(message: Message, blocked: Boolean = false): Channel {
-        val storedChannel = randomChannel(hidden = true, blocked = blocked, extraData = emptyMap())
+    private suspend fun TestScope.storedHiddenChannelAfter(
+        message: Message,
+        eventIn: (Channel, Message) -> ChatEvent = ::newMessageIn,
+        storedChannel: Channel = randomChannel(hidden = true, blocked = false, extraData = emptyMap()),
+    ): Channel = storedChannelAfter(storedChannel, eventIn(storedChannel, message))
+
+    /** Handles [event] for [storedChannel] and returns the channel as it is stored again. */
+    private suspend fun TestScope.storedChannelAfter(storedChannel: Channel, event: ChatEvent): Channel {
         val repos: RepositoryFacade = mock()
         whenever(repos.selectMessages(any())) doReturn emptyList()
         whenever(repos.selectChannels(any())) doReturn listOf(storedChannel)
@@ -790,7 +867,7 @@ internal class EventHandlerSequentialTest {
             .withRepositoryFacade(repos)
             .get(this)
 
-        handler.handleEvents(randomNewMessageEvent(cid = storedChannel.cid, message = message))
+        handler.handleEvents(event)
 
         val inserted = argumentCaptor<Collection<Channel>>()
         verify(repos).insertChannels(inserted.capture())
@@ -1102,6 +1179,28 @@ internal class EventHandlerSequentialTest {
                 ),
             )
         }
+
+        @JvmStatic
+        fun sharedChannelEventArguments() = listOf<Arguments>(
+            Arguments.of(
+                "channel.updated",
+                { cid: String, channel: Channel -> randomChannelUpdatedEvent(cid = cid, channel = channel) },
+            ),
+            Arguments.of(
+                "channel.updated_by_user",
+                { cid: String, channel: Channel -> randomChannelUpdatedByUserEvent(cid = cid, channel = channel) },
+            ),
+            Arguments.of(
+                "channel.truncated",
+                { cid: String, channel: Channel -> randomChannelTruncatedEvent(cid = cid, channel = channel) },
+            ),
+            Arguments.of(
+                "notification.channel_truncated",
+                { cid: String, channel: Channel ->
+                    randomNotificationChannelTruncatedEvent(cid = cid, channel = channel)
+                },
+            ),
+        )
 
         @JvmStatic
         fun sharedLocationArguments() = listOf(

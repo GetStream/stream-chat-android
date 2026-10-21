@@ -703,7 +703,7 @@ internal class EventHandlerSequential(
                 is NotificationMessageNewEvent -> {
                     batch.addMessageData(event.createdAt, event.cid, event.message)
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel.copy(hidden = channel.hiddenAfter(event.message)))
                 }
                 is NotificationAddedToChannelEvent -> {
@@ -818,12 +818,12 @@ internal class EventHandlerSequential(
                 }
                 is ChannelUpdatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
                 is ChannelUpdatedByUserEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
                 is NotificationChannelPartialUpdatedEvent -> {
@@ -839,7 +839,7 @@ internal class EventHandlerSequential(
                 }
                 is ChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
                 is NotificationChannelDeletedEvent -> {
@@ -849,7 +849,7 @@ internal class EventHandlerSequential(
                 }
                 is NotificationChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
-                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                        ?.mergeSharedEventChannel(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
 
@@ -988,6 +988,13 @@ internal class EventHandlerSequential(
 
         logger.v { "[updateOfflineStorage] completed batchId: ${batchEvent.id}" }
     }
+
+    /**
+     * This stored channel with the channel of an event applied. The event's channel is shared by all members, so it
+     * carries no `hidden` value of the current user, and the stored one is kept.
+     */
+    private fun Channel.mergeSharedEventChannel(eventChannel: Channel): Channel =
+        mergeChannelFromEvent(eventChannel).copy(hidden = eventChannel.hidden ?: hidden)
 
     /** The hidden state of this channel after the new [message]. */
     private fun Channel.hiddenAfter(message: Message): Boolean? =
