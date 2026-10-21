@@ -138,14 +138,14 @@ internal class GroupAwareChatEventHandler(
 
     /**
      * Same checks as [routeByGroup], against [cachedChannel] with the partial update applied. The event's channel
-     * lacks data such as members and the last message time, so a channel that is not in the list yet is watched to
-     * get its full data instead of being added from the event.
+     * lacks data such as members, so a channel that is not in the list yet is watched to get its full data instead of
+     * being added from the event.
      *
-     * The cutoff is checked only for a channel in the list, whose last activity is up to date. For any other
-     * channel only the group is checked: without [cachedChannel] the last activity is unknown, and a stored copy can
-     * be stale, so the cutoff is left to the list, which checks the watched channel before showing it. The event is
-     * only sent to members, and a hidden channel is dropped after the watch. The query skips the watch when the
-     * channel sorts below its loaded pages, and does not watch it when the list was not queried with `watch`.
+     * The cutoff is checked when the channel's last activity is known: the channel is in the list, or it has a local
+     * copy and the event carries its last message time. For any other channel only the group is checked, and the
+     * cutoff is left to the list, which checks the watched channel before showing it. The event is only sent to
+     * members, and a hidden channel is dropped after the watch. The query skips the watch when the channel sorts below
+     * its loaded pages, and does not watch it when the list was not queried with `watch`.
      */
     private fun routePartialUpdate(
         event: NotificationChannelPartialUpdatedEvent,
@@ -154,7 +154,9 @@ internal class GroupAwareChatEventHandler(
     ): EventHandlingResult {
         val channel = cachedChannel?.mergePartialUpdate(event.channel) ?: event.channel
         val isInList = channels.value?.containsKey(event.cid) == true
-        val matches = if (isInList) channelBelongsHere(channel, filter) else groupMatches(channel, filter)
+        // A stored copy can miss recent messages, so its last activity is known only with the event's value.
+        val isLastActivityKnown = isInList || (cachedChannel != null && event.channel.lastMessageAt != null)
+        val matches = if (isLastActivityKnown) channelBelongsHere(channel, filter) else groupMatches(channel, filter)
         val belongsHere = matches &&
             (cachedChannel == null || (isCurrentUserMember(cachedChannel) && cachedChannel.hidden != true))
         return when {

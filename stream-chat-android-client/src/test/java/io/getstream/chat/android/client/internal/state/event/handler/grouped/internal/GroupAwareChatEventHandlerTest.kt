@@ -760,6 +760,44 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     @Test
+    fun `Given a stale copy not in the list When a partial update carries a recent last message time Should watch and add`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            disabled = false,
+            blocked = false,
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+            extraData = mapOf("group" to "other"),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"), lastMessageAt = daysAgo(1))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.WatchAndAdd(channel.cid), result)
+    }
+
+    @Test
+    fun `Given a cached channel not in the list When a partial update carries a last message time past the cutoff Should skip`() {
+        val currentUser = randomUser()
+        val channel = randomChannel(
+            disabled = false,
+            blocked = false,
+            createdAt = daysAgo(30),
+            lastMessageAt = daysAgo(20),
+            extraData = mapOf("group" to "other"),
+        )
+        val cachedChannel = channel.copy(membership = randomMember(user = currentUser), hidden = false)
+        val handler = handlerFor(groupKey = "vip", cachedChannels = emptyMap(), currentUser = currentUser)
+        val event = partialUpdateOf(channel, custom = mapOf("group" to "vip"), lastMessageAt = daysAgo(20))
+
+        val result = handler.handleChatEvent(event, cutoff14Days, cachedChannel = cachedChannel)
+
+        assertEquals(EventHandlingResult.Skip, result)
+    }
+
+    @Test
     fun `Given a cached channel not in the list When a partial update moves it into the group Should watch and add`() {
         val currentUser = randomUser()
         val channel = randomChannel(disabled = false, blocked = false, extraData = mapOf("group" to "other"))
@@ -890,7 +928,12 @@ internal class GroupAwareChatEventHandlerTest {
     }
 
     /** The event as the backend sends it: only the channel's basic fields and its custom data. */
-    private fun partialUpdateOf(channel: Channel, custom: Map<String, Any>, disabled: Boolean = false) =
+    private fun partialUpdateOf(
+        channel: Channel,
+        custom: Map<String, Any>,
+        disabled: Boolean = false,
+        lastMessageAt: Date? = null,
+    ) =
         randomNotificationChannelPartialUpdatedEvent(
             cid = channel.cid,
             channelType = channel.type,
@@ -900,6 +943,7 @@ internal class GroupAwareChatEventHandlerTest {
                 type = channel.type,
                 createdAt = channel.createdAt,
                 updatedAt = channel.updatedAt,
+                lastMessageAt = lastMessageAt,
                 disabled = disabled,
                 extraData = custom + ("disabled" to disabled),
             ),

@@ -152,6 +152,16 @@ internal class QueryChannelsLogicGroupedWatchTest {
         }
 
     @Test
+    fun `a partial update places a channel without a local copy by the last message time of the event`() = runTest {
+        givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
+        val event = partialUpdate(createdAt = daysAgo(30), lastMessageAt = daysAgo(1))
+
+        val results = logic.parseChatEventResults(listOf(event))
+
+        assertEquals(listOf(EventHandlingResult.WatchAndAdd(event.cid)), results)
+    }
+
+    @Test
     fun `a partial update watches a channel without a local copy when the list was queried with watch`() = runTest {
         givenLoadedChannels(lastLoadedAt = daysAgo(5), endOfChannels = false)
         givenGroupedQueryWatch(watch = true)
@@ -179,8 +189,13 @@ internal class QueryChannelsLogicGroupedWatchTest {
     }
 
     /** A partial update the group's handler resolved to a watch, carrying only the slim channel. */
-    private fun partialUpdate(createdAt: Date): NotificationChannelPartialUpdatedEvent {
-        val slim = Channel(id = randomString(), type = "messaging", createdAt = createdAt)
+    private fun partialUpdate(createdAt: Date, lastMessageAt: Date? = null): NotificationChannelPartialUpdatedEvent {
+        val slim = Channel(
+            id = randomString(),
+            type = "messaging",
+            createdAt = createdAt,
+            lastMessageAt = lastMessageAt,
+        )
         val event = randomNotificationChannelPartialUpdatedEvent(
             cid = slim.cid,
             channelType = slim.type,
