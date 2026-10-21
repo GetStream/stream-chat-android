@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.state.QueryThreadsState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Thread
@@ -30,13 +31,17 @@ import io.getstream.chat.android.randomThread
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -233,7 +238,8 @@ internal class ThreadListControllerTest {
         val fixture = Fixture()
             .givenCurrentUser()
             .givenQueryThreadsState(threadsState(threads))
-        val sut = fixture.get(CoroutineScope(coroutineContext + SupervisorJob(coroutineContext.job)))
+        val callerScope = CoroutineScope(coroutineContext + SupervisorJob(coroutineContext.job))
+        val sut = fixture.get(callerScope)
         testScheduler.runCurrent()
 
         sut.close()
@@ -241,6 +247,48 @@ internal class ThreadListControllerTest {
         testScheduler.runCurrent()
 
         assertEquals(1, sut.state.value.threads.size)
+        assertTrue(callerScope.isActive)
+        callerScope.cancel()
+    }
+
+    @Test
+    fun `another user connecting loads their threads`() = runTest {
+        val fixture = Fixture()
+            .givenCurrentUser()
+            .givenQueryThreadsState(threadsState(MutableStateFlow(listOf(randomThread()))))
+        val sut = fixture.get(backgroundScope)
+        testScheduler.runCurrent()
+
+        fixture.disconnectUser()
+        testScheduler.runCurrent()
+        fixture.connectUser(User(id = "other"), threadsState(MutableStateFlow(listOf(randomThread(), randomThread()))))
+        testScheduler.runCurrent()
+
+        assertEquals(2, sut.state.value.threads.size)
+        assertFalse(sut.state.value.isLoading)
+    }
+
+    @Test
+    fun `with the default scope another user connecting loads their threads`() = runTest {
+        val testDispatcher = StandardTestDispatcher(testScheduler)
+        DispatcherProvider.set(testDispatcher, testDispatcher)
+        try {
+            val fixture = Fixture()
+                .givenCurrentUser()
+                .givenQueryThreadsState(threadsState(MutableStateFlow(listOf(randomThread()))))
+            val sut = fixture.getWithDefaultScope()
+            testScheduler.runCurrent()
+
+            fixture.disconnectUser()
+            testScheduler.runCurrent()
+            fixture.connectUser(User(id = "other"), threadsState(MutableStateFlow(listOf(randomThread(), randomThread()))))
+            testScheduler.runCurrent()
+
+            assertEquals(2, sut.state.value.threads.size)
+            sut.close()
+        } finally {
+            DispatcherProvider.reset()
+        }
     }
 
     @Test
@@ -252,7 +300,13 @@ internal class ThreadListControllerTest {
         val sut = fixture.get(backgroundScope)
         testScheduler.runCurrent()
 
-        fixture.reconnect(state)
+        // The client's state goes null and back while the same user connects again; the user may be re-emitted.
+        fixture.publishQueryState(null)
+        testScheduler.runCurrent()
+        assertEquals(1, sut.state.value.threads.size)
+        assertFalse(sut.state.value.isLoading)
+        fixture.givenCurrentUser(User(id = "user", name = "renamed"))
+        fixture.publishQueryState(state)
         testScheduler.runCurrent()
 
         assertEquals(1, sut.state.value.threads.size)
@@ -277,8 +331,12 @@ internal class ThreadListControllerTest {
             on { user } doReturn userFlow
         }
 
+        // Stands in for the client's per-user scope, which disconnect cancels.
+        private val userSessionScope = CoroutineScope(SupervisorJob())
+
         private val mockChatClient: ChatClient = mock {
             on { clientState } doReturn mockClientState
+            on { inheritScope(any()) } doReturn userSessionScope
         }
 
         fun givenQueryThreadsState(state: QueryThreadsState) = apply {
@@ -290,13 +348,18 @@ internal class ThreadListControllerTest {
         }
 
         fun disconnectUser() {
-            // Same order as ChatClient: the query state goes null before the user does.
+            // Same order as ChatClient: the query state goes null, the user's scope is cancelled, then the user goes.
             queryThreadsStateFlow.value = null
+            userSessionScope.cancel()
             userFlow.value = null
         }
 
-        fun reconnect(state: QueryThreadsState) {
-            queryThreadsStateFlow.value = null
+        fun connectUser(newUser: User, state: QueryThreadsState) {
+            userFlow.value = newUser
+            queryThreadsStateFlow.value = state
+        }
+
+        fun publishQueryState(state: QueryThreadsState?) {
             queryThreadsStateFlow.value = state
         }
 
@@ -320,6 +383,12 @@ internal class ThreadListControllerTest {
             query = query,
             chatClient = mockChatClient,
             scope = scope,
+            queryThreadsAsState = { queryThreadsStateFlow },
+        )
+
+        fun getWithDefaultScope() = ThreadListController(
+            query = QueryThreadsRequest(),
+            chatClient = mockChatClient,
             queryThreadsAsState = { queryThreadsStateFlow },
         )
     }

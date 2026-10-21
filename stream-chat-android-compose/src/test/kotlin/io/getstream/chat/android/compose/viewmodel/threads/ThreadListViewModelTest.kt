@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.viewmodel.threads
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import app.cash.turbine.test
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomInt
@@ -71,6 +74,17 @@ internal class ThreadListViewModelTest {
         fixture.verifyLoadNextPage()
     }
 
+    @Test
+    fun `clearing the view model closes the controller`() {
+        val fixture = Fixture()
+        val store = ViewModelStore()
+        ViewModelProvider(store, fixture.factory())[ThreadListViewModel::class.java]
+
+        store.clear()
+
+        fixture.verifyClose()
+    }
+
     private class Fixture {
         private val mockController: ThreadListController = mock()
 
@@ -84,6 +98,15 @@ internal class ThreadListViewModelTest {
 
         fun verifyLoadNextPage() = apply {
             verify(mockController).loadNextPage()
+        }
+
+        fun verifyClose() = apply {
+            verify(mockController).close()
+        }
+
+        fun factory() = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T = get() as T
         }
 
         fun get() = ThreadListViewModel(
