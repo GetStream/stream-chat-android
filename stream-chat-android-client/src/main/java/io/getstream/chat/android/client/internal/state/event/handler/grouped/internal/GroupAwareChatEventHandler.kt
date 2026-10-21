@@ -152,14 +152,17 @@ internal class GroupAwareChatEventHandler(
         }
     }
 
+    /** Whether [channel] belongs in this group. A disabled channel never does, since the backend leaves it out. */
     private fun channelBelongsHere(channel: Channel, filter: FilterObject): Boolean =
-        resolver.resolve(channel).contains(groupKey) &&
+        !channel.disabled &&
+            resolver.resolve(channel).contains(groupKey) &&
             filter.matchesGroupedChannel(group = channel.group, queryTimestamp = channel.queryTimestamp, now = now())
 
     /** [channelBelongsHere] with the cutoff passed, for a channel whose last activity is unknown or may be stale. */
     private fun groupMatches(channel: Channel, filter: FilterObject): Boolean {
         val checkedAt = now()
-        return resolver.resolve(channel).contains(groupKey) &&
+        return !channel.disabled &&
+            resolver.resolve(channel).contains(groupKey) &&
             filter.matchesGroupedChannel(group = channel.group, queryTimestamp = checkedAt, now = checkedAt)
     }
 

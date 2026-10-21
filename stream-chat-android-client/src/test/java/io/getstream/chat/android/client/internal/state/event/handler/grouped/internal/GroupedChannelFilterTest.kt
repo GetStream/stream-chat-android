@@ -124,14 +124,13 @@ internal class GroupedChannelFilterTest {
         val user = randomUser()
         val unread = randomChannel(
             hidden = false,
-            extraData = mapOf("disabled" to false),
+            disabled = false,
             read = listOf(randomChannelUserRead(user = user, unreadMessages = 2)),
         )
 
         assertTrue(unread.isUnreadInGroupFor(user.id))
-        assertTrue(unread.copy(extraData = emptyMap()).isUnreadInGroupFor(user.id))
         assertFalse(unread.copy(hidden = true).isUnreadInGroupFor(user.id))
-        assertFalse(unread.copy(extraData = mapOf("disabled" to true)).isUnreadInGroupFor(user.id))
+        assertFalse(unread.copy(disabled = true).isUnreadInGroupFor(user.id))
         assertFalse(
             unread.copy(read = listOf(randomChannelUserRead(user = user, unreadMessages = 0))).isUnreadInGroupFor(user.id),
         )

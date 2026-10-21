@@ -195,6 +195,7 @@ internal class EventHandlerSequentialHiddenChannelTest {
     private fun updatedChannel(): Channel = randomChannel(
         id = CHANNEL_ID,
         type = CHANNEL_TYPE,
+        disabled = false,
         extraData = mapOf("group" to "ended"),
     )
 
