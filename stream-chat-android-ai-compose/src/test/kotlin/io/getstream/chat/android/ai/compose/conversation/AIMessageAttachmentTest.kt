@@ -71,6 +71,49 @@ internal class AIMessageAttachmentTest {
     }
 
     @Test
+    fun `an attachment from an image file is an image`() {
+        val photo = AIMessageAttachment.from("file:///tmp/photo.HEIC".toUri(), size = 1_200_000)
+
+        assertEquals(AIMessageAttachment.Kind.Image, photo.kind)
+        assertEquals("file:///tmp/photo.HEIC".toUri(), photo.uri)
+        assertEquals(1_200_000L, photo.size)
+        listOf("a.jpg", "a.jpeg", "a.png", "a.webp", "a.gif", "a.bmp", "a.heif", "a.avif").forEach { name ->
+            assertEquals(name, AIMessageAttachment.Kind.Image, AIMessageAttachment.from(uri, name = name).kind)
+        }
+    }
+
+    @Test
+    fun `an attachment from any other file is a file`() {
+        val file = AIMessageAttachment.from(uri, name = "Itinerary.pdf", size = 2_400_000, mimeType = "application/pdf")
+
+        assertEquals(AIMessageAttachment.Kind.File, file.kind)
+        assertEquals(AIMessageAttachment.file(uri, "Itinerary.pdf", 2_400_000, "application/pdf"), file)
+        assertEquals(
+            "images load as bitmaps, which a vector image is not",
+            AIMessageAttachment.Kind.File,
+            AIMessageAttachment.from("file:///tmp/logo.svg".toUri()).kind,
+        )
+        assertEquals(AIMessageAttachment.Kind.File, AIMessageAttachment.from("https://example.com/uploads/7f3a".toUri()).kind)
+    }
+
+    @Test
+    fun `an attachment from a file reads the media type over the extension`() {
+        val upload = "https://example.com/uploads/7f3a".toUri()
+
+        assertEquals(AIMessageAttachment.Kind.Image, AIMessageAttachment.from(upload, mimeType = "image/png").kind)
+        assertEquals(AIMessageAttachment.Kind.Image, AIMessageAttachment.from(upload, mimeType = "IMAGE/JPEG").kind)
+        assertEquals(
+            AIMessageAttachment.Kind.File,
+            AIMessageAttachment.from(uri, name = "photo.jpg", mimeType = "application/octet-stream").kind,
+        )
+        assertEquals(
+            "the name's extension before the uri's",
+            AIMessageAttachment.Kind.Image,
+            AIMessageAttachment.from(uri, name = "Scan.png").kind,
+        )
+    }
+
+    @Test
     fun `attachments with the same values are equal`() {
         val extra = mapOf("pages" to 3)
         val one = AIMessageAttachment(AIMessageAttachment.Kind.File, uri, null, "a.pdf", 10, "application/pdf", extra)

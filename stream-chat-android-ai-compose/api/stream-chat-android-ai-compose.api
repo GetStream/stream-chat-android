@@ -35,6 +35,8 @@ public final class io/getstream/chat/android/ai/compose/conversation/AIMessageAt
 public final class io/getstream/chat/android/ai/compose/conversation/AIMessageAttachment$Companion {
 	public final fun file (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;
 	public static synthetic fun file$default (Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment$Companion;Landroid/net/Uri;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;
+	public final fun from (Landroid/net/Uri;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;
+	public static synthetic fun from$default (Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment$Companion;Landroid/net/Uri;Ljava/lang/String;Ljava/lang/Long;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;
 	public final fun image (Landroid/net/Uri;Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;
 	public final fun image (Landroidx/compose/ui/graphics/ImageBitmap;Ljava/lang/String;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;
 	public static synthetic fun image$default (Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment$Companion;Landroid/net/Uri;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ai/compose/conversation/AIMessageAttachment;

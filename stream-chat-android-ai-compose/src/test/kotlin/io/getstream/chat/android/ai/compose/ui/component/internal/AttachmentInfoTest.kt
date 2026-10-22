@@ -28,7 +28,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -156,6 +158,19 @@ internal class AttachmentInfoTest {
     fun `without a media type or extension the icon follows the kind`() {
         assertEquals(AttachmentFileType.Image, AIMessageAttachment.image(upload).fileType())
         assertEquals(AttachmentFileType.File, AIMessageAttachment.file(upload).fileType())
+    }
+
+    @Test
+    fun `images decode on the android versions that read their format`() {
+        assertTrue(isDecodableImage(mimeType = "image/jpeg", extension = null, sdkInt = 23))
+        assertTrue(isDecodableImage(mimeType = null, extension = "webp", sdkInt = 23))
+        assertFalse(isDecodableImage(mimeType = "image/heic", extension = null, sdkInt = 27))
+        assertTrue(isDecodableImage(mimeType = "image/heic", extension = null, sdkInt = 28))
+        assertFalse(isDecodableImage(mimeType = null, extension = "heif", sdkInt = 27))
+        assertFalse(isDecodableImage(mimeType = "image/avif", extension = null, sdkInt = 30))
+        assertTrue(isDecodableImage(mimeType = null, extension = "AVIF", sdkInt = 31))
+        assertFalse(isDecodableImage(mimeType = "image/svg+xml", extension = "png", sdkInt = 33))
+        assertFalse(isDecodableImage(mimeType = null, extension = null, sdkInt = 33))
     }
 
     @Test
