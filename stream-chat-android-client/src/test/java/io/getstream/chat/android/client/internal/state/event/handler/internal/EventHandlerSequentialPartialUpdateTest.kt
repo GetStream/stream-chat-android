@@ -69,6 +69,8 @@ internal class EventHandlerSequentialPartialUpdateTest {
                 id = "channel-id",
                 type = "messaging",
                 extraData = mapOf("group" to "a"),
+                hidden = false,
+                disabled = false,
                 read = listOf(randomChannelUserRead(user = currentUser, unreadMessages = 1)),
             )
             val repos: RepositoryFacade = mock()

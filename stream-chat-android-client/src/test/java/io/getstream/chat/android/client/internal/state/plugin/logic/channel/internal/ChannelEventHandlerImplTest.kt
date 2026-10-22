@@ -78,6 +78,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.TypingUser
 import io.getstream.chat.android.models.toChannelData
@@ -132,8 +133,11 @@ internal class ChannelEventHandlerImplTest {
         state = mock {
             on(it.cid) doReturn cid
             on(it.insideSearch) doReturn MutableStateFlow(false)
+            on(it.channelData) doReturn MutableStateFlow(randomChannel(blocked = false).toChannelData())
         }
-        globalState = mock()
+        globalState = mock {
+            on(it.blockedUserIds) doReturn MutableStateFlow(emptyList())
+        }
         getCurrentUserId = { currentUserId }
         handler = ChannelEventHandlerImpl(
             cid = cid,
@@ -173,7 +177,7 @@ internal class ChannelEventHandlerImplTest {
 
     @Test
     fun `When NewMessageEvent with non-shadowed message is handled, Then channel is unhidden`() {
-        val message = randomMessage(shadowed = false)
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false)
         val event = randomNewMessageEvent(cid = cid, message = message)
 
         handler.handle(event)
@@ -246,11 +250,44 @@ internal class ChannelEventHandlerImplTest {
 
     // endregion
 
+    @Test
+    fun `When NewMessageEvent with a system message is handled, Then channel is not unhidden`() {
+        val message = randomMessage(type = MessageType.SYSTEM, shadowed = false)
+        val event = randomNewMessageEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(state, never()).setHidden(any())
+    }
+
+    @Test
+    fun `When NewMessageEvent is handled in a blocked channel, Then channel is not unhidden`() {
+        whenever(state.channelData).thenReturn(MutableStateFlow(randomChannel(blocked = true).toChannelData()))
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false)
+        val event = randomNewMessageEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(state, never()).setHidden(any())
+    }
+
+    @Test
+    fun `When NotificationMessageNewEvent from a blocked user is handled, Then channel is not unhidden`() {
+        val sender = randomUser()
+        whenever(globalState.blockedUserIds).thenReturn(MutableStateFlow(listOf(sender.id)))
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false, user = sender)
+        val event = randomNotificationMessageNewEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(state, never()).setHidden(any())
+    }
+
     // region NotificationMessageNewEvent tests
 
     @Test
     fun `When NotificationMessageNewEvent is handled and not inside search, Then message is upserted`() {
-        val message = randomMessage()
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false)
         whenever(state.insideSearch).thenReturn(MutableStateFlow(false))
         val event = randomNotificationMessageNewEvent(cid = cid, message = message)
 
@@ -263,7 +300,7 @@ internal class ChannelEventHandlerImplTest {
 
     @Test
     fun `When NotificationMessageNewEvent is handled and inside search, Then message is upserted to cached messages`() {
-        val message = randomMessage()
+        val message = randomMessage(type = MessageType.REGULAR, shadowed = false)
         whenever(state.insideSearch).thenReturn(MutableStateFlow(true))
         val event = randomNotificationMessageNewEvent(cid = cid, message = message)
 
@@ -499,7 +536,7 @@ internal class ChannelEventHandlerImplTest {
 
     @Test
     fun `When NotificationThreadMessageNewEvent is handled with showInChannel, Then message is upserted`() {
-        val message = randomMessage(showInChannel = true, shadowed = false)
+        val message = randomMessage(type = MessageType.REPLY, showInChannel = true, shadowed = false)
         val event = NotificationThreadMessageNewEvent(
             type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
             createdAt = randomDate(),
@@ -543,7 +580,7 @@ internal class ChannelEventHandlerImplTest {
 
     @Test
     fun `When NotificationThreadMessageNewEvent is handled and inside search, Then message is upserted to cached`() {
-        val message = randomMessage(showInChannel = true, shadowed = false)
+        val message = randomMessage(type = MessageType.REPLY, showInChannel = true, shadowed = false)
         whenever(state.insideSearch).thenReturn(MutableStateFlow(true))
         val event = NotificationThreadMessageNewEvent(
             type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
