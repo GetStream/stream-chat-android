@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -65,15 +66,17 @@ import kotlinx.coroutines.launch
  * @param text The reply's text, which copying and sharing hand on.
  * @param actions What else the person can do with the reply.
  * @param modifier Modifier to be applied to the row.
+ * @param colors The palette of the buttons.
  */
 @Composable
 public fun AIReplyActionsRow(
     text: String,
     actions: AIReplyActions,
     modifier: Modifier = Modifier,
+    colors: AIReplyActionsColors = AIReplyActionsDefaults.colors(),
 ) {
     val context = LocalContext.current
-    val tint = MaterialTheme.colorScheme.onSurfaceVariant
+    val tint = colors.icon
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         CopyButton(text = text, tint = tint)
         ActionButton(
@@ -183,6 +186,30 @@ private fun shareText(context: Context, text: String) {
     // Outside an activity the share sheet needs a task of its own.
     if (context.findActivity() == null) chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(chooser)
+}
+
+/**
+ * The palette of [AIReplyActionsRow].
+ *
+ * @param icon Color of the buttons' icons.
+ */
+@Immutable
+public data class AIReplyActionsColors(
+    val icon: Color,
+)
+
+/** Defaults of [AIReplyActionsRow]. */
+public object AIReplyActionsDefaults {
+
+    /**
+     * The default palette, from the current [MaterialTheme].
+     *
+     * @param icon Color of the buttons' icons.
+     */
+    @Composable
+    public fun colors(
+        icon: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    ): AIReplyActionsColors = AIReplyActionsColors(icon = icon)
 }
 
 @Composable

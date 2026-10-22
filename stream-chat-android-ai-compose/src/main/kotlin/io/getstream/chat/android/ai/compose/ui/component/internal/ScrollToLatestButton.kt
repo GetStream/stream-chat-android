@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -34,18 +33,23 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
+import io.getstream.chat.android.ai.compose.ui.component.AIConversationColors
 
 /** A round button over the bottom of the conversation that brings its end back into view. */
 @Composable
-internal fun ScrollToLatestButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun ScrollToLatestButton(
+    onClick: () -> Unit,
+    colors: AIConversationColors,
+    modifier: Modifier = Modifier,
+) {
     Box(modifier = modifier.minimumInteractiveComponentSize(), contentAlignment = Alignment.Center) {
         Surface(
             onClick = onClick,
             modifier = Modifier.size(40.dp),
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            color = colors.scrollButtonBackground,
+            contentColor = colors.scrollButtonIcon,
+            border = BorderStroke(1.dp, colors.scrollButtonBorder),
             shadowElevation = 2.dp,
         ) {
             Box(contentAlignment = Alignment.Center) {
