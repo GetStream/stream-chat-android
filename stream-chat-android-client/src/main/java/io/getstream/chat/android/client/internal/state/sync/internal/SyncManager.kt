@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.internal.state.plugin.listener.internal.
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -371,7 +372,6 @@ internal class SyncManager(
             return SyncOutcome()
         }
         val cappedCids = cids.take(SYNC_MAX_CIDS)
-        val syncedCids = if (syncState?.lastSyncedAt == null) emptySet() else cappedCids.toSet()
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistoryInternal(cappedCids, rawLastSyncAt, watch).await()
         } else {
@@ -388,8 +388,9 @@ internal class SyncManager(
             logger.e { "[performSync] failed($result)" }
             return SyncOutcome()
         }
-        val sortedEvents = result.value.sortedBy { it.createdAt }
+        val sortedEvents = result.value.events.sortedBy { it.createdAt }
         logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
+        val syncedCids = syncedCids(cappedCids, result.value, hasCursor = syncState?.lastSyncedAt != null)
 
         if (sortedEvents.size > eventReplayMaxCount) {
             return SyncOutcome(refreshedCids = skipEventReplay(sortedEvents, cappedCids))
@@ -1125,7 +1126,7 @@ internal class SyncManager(
      *
      * @return True if the error is related to too many events to sync, false otherwise.
      */
-    private fun Result<List<ChatEvent>>.isTooManyEventsToSyncError(): Boolean {
+    private fun Result<SyncedEvents>.isTooManyEventsToSyncError(): Boolean {
         val error = errorOrNull()
         return error is Error.NetworkError &&
             error.isStatusBadRequest() &&
@@ -1164,6 +1165,23 @@ internal class SyncManager(
      * keeps its loaded pages after a reconnect only when they are all here.
      * @param refreshedCids The cids refreshed with `queryChannels` because the events could not be replayed.
      */
+    /**
+     * The channels whose events the sync replayed in full. A skipped event's update is lost, so its channel is left
+     * out, and when the channel of one isn't known, none is.
+     */
+    private fun syncedCids(cids: List<String>, synced: SyncedEvents, hasCursor: Boolean): Set<String> {
+        if (synced.hasSkippedWithoutCid || synced.skippedCids.isNotEmpty()) {
+            logger.w {
+                "[syncedCids] not synced in full: ${synced.skippedCids}" +
+                    if (synced.hasSkippedWithoutCid) ", and a skipped event of an unknown channel" else ""
+            }
+        }
+        return when {
+            !hasCursor || synced.hasSkippedWithoutCid -> emptySet()
+            else -> cids.toSet() - synced.skippedCids
+        }
+    }
+
     internal data class SyncOutcome(
         val syncedCids: Set<String> = emptySet(),
         val refreshedCids: Set<String> = emptySet(),

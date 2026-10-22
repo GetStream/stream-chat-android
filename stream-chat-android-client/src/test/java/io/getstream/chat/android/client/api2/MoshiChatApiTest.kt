@@ -2963,7 +2963,7 @@ internal class MoshiChatApiTest {
 
         val result = sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z", watch = false).await()
 
-        val event = (result as Result.Success).value.single() as UnknownEvent
+        val event = (result as Result.Success).value.events.single() as UnknownEvent
         event.type `should be equal to` "friendship_request"
         event.rawData["text"] `should be equal to` "hi"
         event.rawCreatedAt `should be equal to` "2026-10-14T11:13:25.614650759Z"
@@ -2978,7 +2978,7 @@ internal class MoshiChatApiTest {
 
         val result = sut.getSyncHistory(listOf("messaging:general"), "2026-10-14T11:13:25.614650759Z", watch = false).await()
 
-        val event = (result as Result.Success).value.single() as UnknownEvent
+        val event = (result as Result.Success).value.events.single() as UnknownEvent
         event.type `should be equal to` "friendship_request"
     }
 

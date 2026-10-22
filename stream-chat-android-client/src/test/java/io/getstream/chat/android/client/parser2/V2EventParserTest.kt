@@ -62,7 +62,7 @@ internal class V2EventParserTest {
 
     private fun v2(frame: Frame.() -> Map<String, Any?>): ChatEvent? = v2Parser.parse(Frame(Wire.V2).frame().toJson())
 
-    private fun sync(body: String): List<ChatEvent> = v2Parser.parseSyncEvents(Buffer().writeUtf8(body))
+    private fun sync(body: String): List<ChatEvent> = v2Parser.parseSyncEvents(Buffer().writeUtf8(body)).events
 
     private fun synced(event: Map<String, Any?>): List<ChatEvent> = sync(mapOf("events" to listOf(event)).toJson())
 
@@ -339,6 +339,23 @@ internal class V2EventParserTest {
         val body = mapOf("events" to listOf(unreadable, Frame(Wire.V2).typing())).toJson()
 
         sync(body) shouldBeEqualTo listOf(v2(typing))
+    }
+
+    @Test
+    fun `A sync reports the channels of the events it skipped, and when one's channel can't be told`() {
+        val typing = with(Frame(Wire.V2)) { event("typing.start", "cid" to CID, "user" to user()) }
+        val unreadable = Frame(Wire.V2).event("channel.hidden", "cid" to CID)
+        val unreadableWithoutCid = Frame(Wire.V2).event("user.updated")
+
+        val withCid = v2Parser.parseSyncEvents(Buffer().writeUtf8(mapOf("events" to listOf(unreadable, typing)).toJson()))
+        val withoutCid = v2Parser.parseSyncEvents(
+            Buffer().writeUtf8(mapOf("events" to listOf(unreadableWithoutCid, typing)).toJson()),
+        )
+
+        withCid.skippedCids shouldBeEqualTo setOf(CID)
+        withCid.hasSkippedWithoutCid shouldBeEqualTo false
+        withoutCid.skippedCids.shouldBeEmpty()
+        withoutCid.hasSkippedWithoutCid shouldBeEqualTo true
     }
 
     @Test

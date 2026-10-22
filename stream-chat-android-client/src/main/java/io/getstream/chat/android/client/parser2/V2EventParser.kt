@@ -129,7 +129,7 @@ internal class V2EventParser(
      * sync cursor where it is, so every later sync would ask for the same events and fail on the same one. A response
      * whose envelope can't be read, or of whose events none can be read, still fails.
      */
-    fun parseSyncEvents(body: BufferedSource): List<ChatEvent> {
+    fun parseSyncEvents(body: BufferedSource): SyncedEvents {
         val parsed = mutableListOf<ChatEvent>()
         val skipped = mutableListOf<SkippedEvent>()
         var read = 0
@@ -138,9 +138,14 @@ internal class V2EventParser(
             val cause = skipped.first().cause
             // With nothing read, the failure is likely not one event's, and the cursor must not move past them all.
             if (read == 0) throw JsonDataException("None of the ${skipped.size} synced events could be read", cause)
-            logger.e(cause) { "[parseSyncEvents] skipped ${skipped.size} event(s): ${skipped.map { it.type }}" }
+            val events = skipped.map { "${it.type}@${it.cid}" }
+            logger.e(cause) { "[parseSyncEvents] skipped ${skipped.size} event(s): $events" }
         }
-        return parsed
+        return SyncedEvents(
+            events = parsed,
+            skippedCids = skipped.mapNotNullTo(mutableSetOf()) { it.cid },
+            hasSkippedWithoutCid = skipped.any { it.cid == null },
+        )
     }
 
     /** Calls [action] with the raw JSON of each event in a `/sync` response's `events`. */
@@ -170,11 +175,29 @@ internal class V2EventParser(
         true
     } catch (e: Exception) {
         // Any failure to read one event skips it; an Error, such as running out of memory, still fails the sync.
-        skipped += SkippedEvent(runCatching { readHead(raw).type }.getOrNull() ?: "unknown", e)
+        val head = runCatching { readTypeAndCid(raw) }.getOrNull()
+        skipped += SkippedEvent(head?.first ?: "unknown", head?.second, e)
         false
     }
 
-    private class SkippedEvent(val type: String, val cause: Exception)
+    private class SkippedEvent(val type: String, val cid: String?, val cause: Exception)
+
+    /** The type and `cid` at the root of [raw], read without parsing the rest of it. */
+    private fun readTypeAndCid(raw: String): Pair<String?, String?> {
+        var type: String? = null
+        var cid: String? = null
+        reader(raw).use { reader ->
+            reader.beginObject()
+            while (reader.hasNext()) {
+                when (reader.nextName()) {
+                    "type" -> type = valueAdapter.fromJson(reader) as? String
+                    "cid" -> cid = valueAdapter.fromJson(reader) as? String
+                    else -> reader.skipValue()
+                }
+            }
+        }
+        return type to cid
+    }
 
     private fun withCustomAtRoot(event: String): String {
         val fields = rawFields(event)
@@ -271,6 +294,17 @@ internal class V2EventParser(
         private val ENVELOPE_DATE_KEYS = setOf("created_at", "channel_last_message_at")
     }
 }
+
+/**
+ * The events a `/sync` response replays, and the channels of the ones skipped as unreadable, whose updates are lost.
+ * [hasSkippedWithoutCid] is set when a skipped event's channel couldn't be read, so no channel can be trusted as
+ * synced.
+ */
+internal data class SyncedEvents(
+    val events: List<ChatEvent>,
+    val skippedCids: Set<String> = emptySet(),
+    val hasSkippedWithoutCid: Boolean = false,
+)
 
 /**
  * Gives an unknown event's raw data the v1 shape apps read their custom event fields from: the `custom` entries at

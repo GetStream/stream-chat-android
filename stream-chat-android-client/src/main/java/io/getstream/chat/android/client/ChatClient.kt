@@ -126,6 +126,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.parser2.SyncedEvents
 import io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -4805,7 +4806,7 @@ internal constructor(
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: Date,
-    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false)
+    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false).map { it.events }
 
     /**
      * Variant of [getSyncHistory] that can also start watching the channels.
@@ -4821,7 +4822,7 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: Date,
         watch: Boolean,
-    ): Call<List<ChatEvent>> {
+    ): Call<SyncedEvents> {
         val stringDate = streamDateFormatter.format(lastSyncAt)
 
         return api.getSyncHistory(channelsIds, stringDate, watch)
@@ -4844,7 +4845,7 @@ internal constructor(
     public fun getSyncHistory(
         channelsIds: List<String>,
         lastSyncAt: String,
-    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false)
+    ): Call<List<ChatEvent>> = getSyncHistoryInternal(channelsIds, lastSyncAt, watch = false).map { it.events }
 
     /**
      * Variant of [getSyncHistory] that can also start watching the channels. [lastSyncAt] is in
@@ -4861,7 +4862,7 @@ internal constructor(
         channelsIds: List<String>,
         lastSyncAt: String,
         watch: Boolean,
-    ): Call<List<ChatEvent>> {
+    ): Call<SyncedEvents> {
         val parsedDate = streamDateFormatter.parse(lastSyncAt) ?: return ErrorCall(
             userScope,
             Error.GenericError(
