@@ -17,9 +17,12 @@
 package io.getstream.chat.android.ai.compose.ui.component.internal
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.text.format.Formatter
 import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
+import androidx.exifinterface.media.ExifInterface
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
@@ -32,6 +35,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 internal class AttachmentInfoTest {
@@ -108,4 +113,56 @@ internal class AttachmentInfoTest {
         assertEquals(8, sampleSize(width = 4_000, height = 3_000, targetSizePx = 300))
         assertEquals(1, sampleSize(width = 4_000, height = 3_000, targetSizePx = 0))
     }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun `a downloaded image is turned as its EXIF orientation says`() {
+        // The color at the top-left and bottom-right of the shown image, for an image whose left
+        // half is red and right half is blue as stored.
+        val expected = mapOf(
+            ExifInterface.ORIENTATION_NORMAL to (Color.RED to Color.BLUE),
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL to (Color.BLUE to Color.RED),
+            ExifInterface.ORIENTATION_ROTATE_180 to (Color.BLUE to Color.RED),
+            ExifInterface.ORIENTATION_FLIP_VERTICAL to (Color.RED to Color.BLUE),
+            ExifInterface.ORIENTATION_TRANSPOSE to (Color.RED to Color.BLUE),
+            ExifInterface.ORIENTATION_ROTATE_90 to (Color.RED to Color.BLUE),
+            ExifInterface.ORIENTATION_TRANSVERSE to (Color.BLUE to Color.RED),
+            ExifInterface.ORIENTATION_ROTATE_270 to (Color.BLUE to Color.RED),
+        )
+        val quarterTurns = setOf(
+            ExifInterface.ORIENTATION_TRANSPOSE,
+            ExifInterface.ORIENTATION_ROTATE_90,
+            ExifInterface.ORIENTATION_TRANSVERSE,
+            ExifInterface.ORIENTATION_ROTATE_270,
+        )
+
+        expected.forEach { (orientation, colors) ->
+            val bitmap = decodeSampledBitmap(jpeg(orientation), targetSizePx = 100)!!
+            val upright = orientation in quarterTurns
+
+            assertEquals("width for $orientation", if (upright) 30 else 60, bitmap.width)
+            assertEquals("height for $orientation", if (upright) 60 else 30, bitmap.height)
+            val topLeft = bitmap.getPixel(bitmap.width / 4, bitmap.height / 4)
+            val bottomRight = bitmap.getPixel(bitmap.width * 3 / 4, bitmap.height * 3 / 4)
+            assertEquals("top-left for $orientation", colors.first, nearest(topLeft))
+            assertEquals("bottom-right for $orientation", colors.second, nearest(bottomRight))
+        }
+    }
+
+    // A 60x30 JPEG, red on its left half and blue on its right, with an EXIF orientation.
+    private fun jpeg(orientation: Int): ByteArray {
+        val source = Bitmap.createBitmap(60, 30, Bitmap.Config.ARGB_8888)
+        for (x in 0 until 60) {
+            for (y in 0 until 30) source.setPixel(x, y, if (x < 30) Color.RED else Color.BLUE)
+        }
+        val file = File.createTempFile("image", ".jpg", context.cacheDir)
+        file.outputStream().use { source.compress(Bitmap.CompressFormat.JPEG, 100, it) }
+        ExifInterface(file).apply {
+            setAttribute(ExifInterface.TAG_ORIENTATION, orientation.toString())
+            saveAttributes()
+        }
+        return file.readBytes()
+    }
+
+    private fun nearest(pixel: Int): Int = if (Color.red(pixel) > Color.blue(pixel)) Color.RED else Color.BLUE
 }
