@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasScrollToIndexAction
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
@@ -234,6 +235,20 @@ internal class AIConversationLayoutTest {
         rule.waitForIdle()
 
         assertNear(shown, top("r1"))
+    }
+
+    @Test
+    fun `a restored list stays where the reader left it`() {
+        messages = listOf(question("q1"), reply("a1"), question("q2"), reply("a2"))
+        val restoration = StateRestorationTester(rule)
+        restoration.setContent { Conversation() }
+        scrollToStart()
+        val shown = top("q1")
+
+        restoration.emulateSavedInstanceStateRestore()
+        rule.waitForIdle()
+
+        assertNear(shown, top("q1"))
     }
 
     private fun top(text: String, substring: Boolean): Dp =

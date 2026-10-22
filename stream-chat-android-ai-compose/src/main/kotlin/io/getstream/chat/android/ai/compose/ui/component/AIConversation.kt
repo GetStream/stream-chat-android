@@ -42,11 +42,13 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -129,7 +131,7 @@ public fun <T> AIConversation(
     val firstTurnId = turns.firstOrNull()?.id
     SideEffect { firstTurnId?.let { turnStarts += it } }
     val lastTurn = turns.lastOrNull()
-    val clock = remember { AIThinkingClock() }
+    val clock = rememberSaveable(saver = AIThinkingClock.Saver) { AIThinkingClock() }
     // Repeats harmlessly on every composition: a turn's thinking starts and ends once.
     clock.update(
         latestTurn = lastTurn?.id,
@@ -243,11 +245,12 @@ private fun KeepsTurnsInPlace(
  */
 @Composable
 private fun ScrollsOnNewLastTurn(listState: LazyListState, turns: List<AIMessageTurn<*>>, turnsStart: Int) {
-    val shown = remember { LastTurn() }
+    // Saved with the list's position, which a restored list keeps rather than showing its end.
+    var shownId by rememberSaveable { mutableStateOf<Any?>(null) }
     val lastTurnId = turns.lastOrNull()?.id
     LaunchedEffect(listState, lastTurnId) {
-        val scroll = conversationScroll(shown.id, turns.map { it.id })
-        shown.id = lastTurnId
+        val scroll = conversationScroll(shownId, turns.map { it.id })
+        shownId = lastTurnId
         if (scroll == AIConversationScroll.None) return@LaunchedEffect
         // Scrolls once the list has laid out the new turns, the latest at least as tall as the list.
         val itemCount = turnsStart + turns.size
@@ -293,9 +296,6 @@ private fun LoadsOlderMessages(
 
 /** What was above the turns when the list last laid them out. */
 private class AboveTurns(var firstTurnId: Any?, var loadsOlder: Boolean)
-
-/** The last turn the list scrolled for. */
-private class LastTurn(var id: Any? = null)
 
 /** Saves the keys of the messages that start a turn whoever sent them. */
 private val TurnStartsSaver = listSaver<MutableSet<Any>, Any>(
