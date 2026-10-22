@@ -847,6 +847,35 @@ internal class SyncManagerTest {
     }
 
     @Test
+    fun `start should skip entities in progress that are gone before the rescue reads them`() =
+        runTest(testDispatcher) {
+            whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn listOf(randomCID())
+            whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.IN_PROGRESS)) doReturn listOf(randomString())
+            whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.IN_PROGRESS)) doReturn listOf(1)
+            whenever(chatClient.subscribe(any())).thenReturn(mock())
+
+            val sut = buildSyncManager()
+            sut.start()
+
+            verify(repositoryFacade, never()).insertChannel(any())
+            verify(repositoryFacade, never()).insertMessage(any())
+            verify(repositoryFacade, never()).insertReaction(any())
+        }
+
+    @Test
+    fun `start should still subscribe when the rescue of entities in progress fails`() = runTest(testDispatcher) {
+        whenever(repositoryFacade.selectChannelCidsBySyncStatus(SyncStatus.IN_PROGRESS))
+            .thenThrow(IllegalStateException("database closed"))
+        whenever(chatClient.subscribe(any())).thenReturn(mock())
+
+        val sut = buildSyncManager()
+        sut.start()
+
+        verify(chatClient).subscribe(any())
+        verify(repositoryFacade, never()).insertChannel(any())
+    }
+
+    @Test
     fun `a disconnect while connecting should not cancel the rescue of messages in progress`() =
         runTest(testDispatcher) {
             val message = localRandomMessage().copy(syncStatus = SyncStatus.IN_PROGRESS)
