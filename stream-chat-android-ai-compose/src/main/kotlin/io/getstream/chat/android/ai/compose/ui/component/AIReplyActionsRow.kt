@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.compose.ui.component
 import android.app.Activity
 import android.content.ClipData
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
@@ -181,8 +182,14 @@ private fun shareText(context: Context, text: String) {
     }
     val chooser = Intent.createChooser(send, null)
     // Outside an activity the share sheet needs a task of its own.
-    if (context !is Activity) chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    if (context.findActivity() == null) chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(chooser)
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
 
 @Composable

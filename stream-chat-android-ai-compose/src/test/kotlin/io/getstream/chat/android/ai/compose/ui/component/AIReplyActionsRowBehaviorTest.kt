@@ -19,10 +19,13 @@ package io.getstream.chat.android.ai.compose.ui.component
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.view.ContextThemeWrapper
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -35,6 +38,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRating
 import io.getstream.chat.android.ai.compose.conversation.AIReplyActions
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
@@ -142,6 +146,21 @@ internal class AIReplyActionsRowBehaviorTest {
         assertEquals("text/plain", send.type)
         assertEquals(TEXT, send.getStringExtra(Intent.EXTRA_TEXT))
         assertNull(shadowOf(compose.activity).nextStartedActivity)
+    }
+
+    @Test
+    fun `share from a context that wraps the activity opens the share sheet in the activity's task`() {
+        compose.setContent {
+            CompositionLocalProvider(LocalContext provides ContextThemeWrapper(compose.activity, 0)) {
+                AIReplyActionsRow(text = TEXT, actions = AIReplyActions())
+            }
+        }
+
+        compose.onNodeWithContentDescription("Share").performClick()
+
+        val started = shadowOf(compose.activity).nextStartedActivity
+        assertEquals(Intent.ACTION_CHOOSER, started.action)
+        assertFalse(started.flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0)
     }
 
     private fun isShown(description: String) =
