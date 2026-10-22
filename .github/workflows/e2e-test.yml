@@ -21,7 +21,7 @@ on:
         type: string
         required: false
       api_version:
-        description: 'API version the mock serves and the app connects with (v2 needs a mock branch with the v2 routes)'
+        description: 'API version the mock serves and the app connects with'
         type: choice
         options: [v1, v2]
         default: v1
