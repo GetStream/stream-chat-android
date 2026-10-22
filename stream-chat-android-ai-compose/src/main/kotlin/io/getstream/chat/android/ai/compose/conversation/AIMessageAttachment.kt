@@ -18,8 +18,8 @@ package io.getstream.chat.android.ai.compose.conversation
 
 import android.net.Uri
 import androidx.compose.ui.graphics.ImageBitmap
-import io.getstream.chat.android.ai.compose.ui.component.internal.isDecodableImage
-import io.getstream.chat.android.ai.compose.ui.component.internal.pathExtension
+import io.getstream.chat.android.ai.compose.util.internal.isDecodableImage
+import io.getstream.chat.android.ai.compose.util.internal.pathExtension
 
 /**
  * Something a message carries besides its text, such as an image or a file.
@@ -114,7 +114,11 @@ public class AIMessageAttachment(
          * An attachment of the file at [uri], of the kind its type says: an image for an image
          * this device can show, and a file otherwise. Such as for the files the person picked.
          *
-         * The type is [mimeType], else the extension of [name] or of the file [uri] ends in. JPEG,
+         * The type is [mimeType], else the extension of [name] or of the file [uri] ends in. A
+         * photo picker or MediaStore `content://` URI has no extension, so pass
+         * `contentResolver.getType(uri)` as [mimeType] for it, or it is a file. A [mimeType] that
+         * only says the type is unknown, such as `application/octet-stream`, leaves it to the
+         * extension. JPEG,
          * PNG, WebP, GIF and BMP images show on every Android version, HEIF and HEIC from Android
          * 9, and AVIF from Android 12. Other images, such as SVG, are files.
          *

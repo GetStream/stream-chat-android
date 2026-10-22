@@ -97,15 +97,26 @@ internal class AIMessageAttachmentTest {
     }
 
     @Test
+    fun `a picked photo with no extension is an image when its type is passed`() {
+        val picked = "content://media/picker/0/com.android.providers.media.photopicker/media/1000000034".toUri()
+
+        assertEquals(AIMessageAttachment.Kind.File, AIMessageAttachment.from(picked).kind)
+        assertEquals(AIMessageAttachment.Kind.Image, AIMessageAttachment.from(picked, mimeType = "image/jpeg").kind)
+    }
+
+    @Test
     fun `an attachment from a file reads the media type over the extension`() {
         val upload = "https://example.com/uploads/7f3a".toUri()
 
         assertEquals(AIMessageAttachment.Kind.Image, AIMessageAttachment.from(upload, mimeType = "image/png").kind)
         assertEquals(AIMessageAttachment.Kind.Image, AIMessageAttachment.from(upload, mimeType = "IMAGE/JPEG").kind)
         assertEquals(
-            AIMessageAttachment.Kind.File,
+            "a type that only says it is unknown leaves it to the extension",
+            AIMessageAttachment.Kind.Image,
             AIMessageAttachment.from(uri, name = "photo.jpg", mimeType = "application/octet-stream").kind,
         )
+        assertEquals(AIMessageAttachment.Kind.Image, AIMessageAttachment.from(uri, name = "photo.jpg", mimeType = "image/*").kind)
+        assertEquals(AIMessageAttachment.Kind.File, AIMessageAttachment.from(upload, mimeType = "application/octet-stream").kind)
         assertEquals(
             "the name's extension before the uri's",
             AIMessageAttachment.Kind.Image,

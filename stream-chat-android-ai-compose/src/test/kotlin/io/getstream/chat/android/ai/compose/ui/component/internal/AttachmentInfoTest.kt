@@ -26,6 +26,7 @@ import androidx.exifinterface.media.ExifInterface
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
+import io.getstream.chat.android.ai.compose.util.internal.isDecodableImage
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -114,10 +115,21 @@ internal class AttachmentInfoTest {
             "APPLICATION/X-TAR" to AttachmentFileType.Archive,
             "text/plain" to AttachmentFileType.File,
             "application/octet-stream" to AttachmentFileType.File,
+            "image/*" to AttachmentFileType.Image,
         )
         expected.forEach { (mimeType, type) ->
             assertEquals(mimeType, type, AIMessageAttachment.file(upload, mimeType = mimeType).fileType())
         }
+    }
+
+    @Test
+    fun `a type that only says it is unknown leaves the icon to the extension`() {
+        assertEquals(
+            AttachmentFileType.Pdf,
+            AIMessageAttachment.file(pdf, mimeType = "application/octet-stream").fileType(),
+        )
+        assertEquals(AttachmentFileType.Pdf, AIMessageAttachment.file(pdf, mimeType = "*/*").fileType())
+        assertEquals(AttachmentFileType.Pdf, AIMessageAttachment.file(pdf, mimeType = "video/*").fileType())
     }
 
     @Test

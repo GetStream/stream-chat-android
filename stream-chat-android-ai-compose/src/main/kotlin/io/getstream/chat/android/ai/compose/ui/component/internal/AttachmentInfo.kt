@@ -20,13 +20,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.text.format.Formatter
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
+import io.getstream.chat.android.ai.compose.util.internal.fileName
+import io.getstream.chat.android.ai.compose.util.internal.knownMimeType
+import io.getstream.chat.android.ai.compose.util.internal.pathExtension
 import java.util.Locale
 
 /**
@@ -35,7 +36,7 @@ import java.util.Locale
  */
 internal fun AIMessageAttachment.displayName(context: Context): String {
     name?.takeIf { it.isNotEmpty() }?.let { return it }
-    fileName()?.let { return it }
+    fileName(uri)?.let { return it }
     return context.getString(
         if (kind == AIMessageAttachment.Kind.Image) {
             R.string.stream_ai_compose_conversation_attachment_image
@@ -63,8 +64,9 @@ internal fun AIMessageAttachment.typeLabel(): String? =
 
 /** An attachment's media type: the one it has, else the one its extension says. */
 internal fun AIMessageAttachment.resolvedMimeType(): String? =
-    mimeType?.takeIf { it.isNotEmpty() }
+    knownMimeType(mimeType)
         ?: pathExtension()?.let { MimeTypeMap.getSingleton().getMimeTypeFromExtension(it.lowercase(Locale.ROOT)) }
+        ?: mimeType?.takeIf { it.isNotEmpty() }
 
 /** The types of file that have an icon of their own. */
 internal enum class AttachmentFileType { File, Pdf, Image, Audio, Video, Archive }
@@ -74,14 +76,17 @@ internal enum class AttachmentFileType { File, Pdf, Image, Audio, Video, Archive
  * its kind. A type without an icon of its own is a plain [AttachmentFileType.File].
  */
 internal fun AIMessageAttachment.fileType(): AttachmentFileType {
-    val declared = mimeType?.takeIf { it.isNotEmpty() }
+    val declared = knownMimeType(mimeType)
     if (declared != null) return fileTypeOfMimeType(declared)
     val extension = pathExtension()?.lowercase(Locale.ROOT)
     val fromExtension = extension?.let { ext ->
         ExtensionFileTypes[ext] ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)?.let(::fileTypeOfMimeType)
     }
+    // A wildcard such as `image/*` says no more than the family, which still picks an icon.
+    val fromFamily = mimeType?.let(::fileTypeOfMimeType)?.takeIf { it != AttachmentFileType.File }
     return when {
         fromExtension != null -> fromExtension
+        fromFamily != null -> fromFamily
         kind == AIMessageAttachment.Kind.Image -> AttachmentFileType.Image
         else -> AttachmentFileType.File
     }
@@ -126,69 +131,6 @@ private val ExtensionFileTypes: Map<String, AttachmentFileType> = buildMap {
 
 /** The extension of its name, else of the file its URI ends in. */
 internal fun AIMessageAttachment.pathExtension(): String? = pathExtension(name, uri)
-
-/** The extension of [name], else of the file [uri] ends in. */
-internal fun pathExtension(name: String?, uri: Uri?): String? =
-    listOfNotNull(name, fileName(uri))
-        .map { it.substringAfterLast('.', missingDelimiterValue = "") }
-        .firstOrNull { it.isNotEmpty() && !it.contains('/') }
-
-private fun AIMessageAttachment.fileName(): String? = fileName(uri)
-
-private fun fileName(uri: Uri?): String? =
-    uri?.lastPathSegment?.takeIf { it.isNotEmpty() && it != "/" }
-
-/**
- * Whether an image of this media type, else of this extension, is one the platform decodes on
- * [sdkInt]: JPEG, PNG, WebP, GIF and BMP everywhere, HEIF from Android 9, and AVIF from Android 12.
- * A media type, when there is one, decides on its own.
- */
-internal fun isDecodableImage(
-    mimeType: String?,
-    extension: String?,
-    sdkInt: Int = Build.VERSION.SDK_INT,
-): Boolean {
-    val type = mimeType?.substringBefore(';')?.trim()?.lowercase(Locale.ROOT)?.takeIf { it.isNotEmpty() }
-    val format = if (type != null) {
-        DecodableMimeTypes[type]
-    } else {
-        extension?.lowercase(Locale.ROOT)?.let(DecodableExtensions::get)
-    }
-    return format != null && sdkInt >= format.minSdk
-}
-
-/** The image formats the platform decodes, and the Android version each needs. */
-private enum class DecodableFormat(val minSdk: Int) {
-    Everywhere(minSdk = 1),
-    Heif(minSdk = Build.VERSION_CODES.P),
-    Avif(minSdk = Build.VERSION_CODES.S),
-}
-
-private val DecodableMimeTypes = mapOf(
-    "image/jpeg" to DecodableFormat.Everywhere,
-    "image/jpg" to DecodableFormat.Everywhere,
-    "image/pjpeg" to DecodableFormat.Everywhere,
-    "image/png" to DecodableFormat.Everywhere,
-    "image/webp" to DecodableFormat.Everywhere,
-    "image/gif" to DecodableFormat.Everywhere,
-    "image/bmp" to DecodableFormat.Everywhere,
-    "image/x-ms-bmp" to DecodableFormat.Everywhere,
-    "image/heif" to DecodableFormat.Heif,
-    "image/heic" to DecodableFormat.Heif,
-    "image/avif" to DecodableFormat.Avif,
-)
-
-private val DecodableExtensions = mapOf(
-    "jpg" to DecodableFormat.Everywhere,
-    "jpeg" to DecodableFormat.Everywhere,
-    "png" to DecodableFormat.Everywhere,
-    "webp" to DecodableFormat.Everywhere,
-    "gif" to DecodableFormat.Everywhere,
-    "bmp" to DecodableFormat.Everywhere,
-    "heif" to DecodableFormat.Heif,
-    "heic" to DecodableFormat.Heif,
-    "avif" to DecodableFormat.Avif,
-)
 
 /**
  * Opens an attachment's file in an app that shows it: a page on the web in the browser, and a
