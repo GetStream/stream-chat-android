@@ -68,5 +68,18 @@ internal class AIMessageTurnTest {
         assertEquals(listOf(listOf("q1"), listOf("q2", "a2")), turns.ids())
     }
 
+    @Test
+    fun `a message in turnStarts starts a turn whoever sent it`() {
+        val messages = listOf(
+            Message("q1", isFromUser = true),
+            Message("a1", isFromUser = false),
+            Message("a1-more", isFromUser = false),
+        )
+
+        val turns = messageTurns(messages, Message::id, Message::isFromUser, turnStarts = setOf("a1"))
+
+        assertEquals(listOf(listOf("q1"), listOf("a1", "a1-more")), turns.ids())
+    }
+
     private fun List<AIMessageTurn<Message>>.ids() = map { turn -> turn.messages.map { it.id } }
 }

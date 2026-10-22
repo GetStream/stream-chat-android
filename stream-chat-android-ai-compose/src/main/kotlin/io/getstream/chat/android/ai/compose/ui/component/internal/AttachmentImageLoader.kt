@@ -19,11 +19,14 @@ package io.getstream.chat.android.ai.compose.ui.component.internal
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.util.LruCache
+import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -107,14 +110,25 @@ internal fun InputStream.readAtMost(limit: Int): ByteArray? {
     return out.toByteArray()
 }
 
-/** Decodes an encoded image, downsampled to about [targetSizePx] on its shorter side. */
+/**
+ * Decodes an encoded image, downsampled to about [targetSizePx] on its shorter side and turned
+ * upright as its EXIF orientation says.
+ */
 internal fun decodeSampledBitmap(bytes: ByteArray, targetSizePx: Int): Bitmap? {
     val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
     BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
     if (options.outWidth <= 0 || options.outHeight <= 0) return null
     options.inSampleSize = sampleSize(options.outWidth, options.outHeight, targetSizePx)
     options.inJustDecodeBounds = false
-    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options) ?: return null
+    val exif = ExifInterface(ByteArrayInputStream(bytes))
+    if (exif.rotationDegrees == 0 && !exif.isFlipped) return bitmap
+    // A flipped image is mirrored first, then turned.
+    val matrix = Matrix().apply {
+        if (exif.isFlipped) postScale(-1f, 1f)
+        postRotate(exif.rotationDegrees.toFloat())
+    }
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 
 /** The largest power of two to divide an image by that keeps both its sides at least [targetSizePx]. */
