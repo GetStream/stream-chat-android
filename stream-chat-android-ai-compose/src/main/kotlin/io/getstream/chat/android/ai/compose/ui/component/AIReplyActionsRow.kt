@@ -16,10 +16,8 @@
 
 package io.getstream.chat.android.ai.compose.ui.component
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
@@ -51,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRating
 import io.getstream.chat.android.ai.compose.conversation.AIReplyActions
+import io.getstream.chat.android.ai.compose.ui.component.internal.findActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -184,12 +183,6 @@ private fun shareText(context: Context, text: String) {
     // Outside an activity the share sheet needs a task of its own.
     if (context.findActivity() == null) chooser.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(chooser)
-}
-
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
 }
 
 @Composable
