@@ -21,10 +21,15 @@ import android.content.Context
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.core.net.toUri
 import androidx.test.core.app.ApplicationProvider
@@ -78,6 +83,27 @@ internal class AIUserMessageTest {
 
         rule.runOnIdle { assertEquals(1, edits) }
         rule.onNodeWithText("Edit").assertDoesNotExist()
+    }
+
+    @Test
+    fun `accessibility services open the menu with a labelled long click`() {
+        rule.setContent { AIUserMessage(text = text) }
+
+        rule.onNodeWithText(text)
+            .assert(SemanticsMatcher("is labelled") { it.config[SemanticsActions.OnLongClick].label == "Message actions" })
+            .performSemanticsAction(SemanticsActions.OnLongClick)
+
+        rule.onNodeWithText("Copy").assertExists()
+    }
+
+    @Test
+    fun `a message of only attachments has no bubble`() {
+        rule.setContent {
+            AIUserMessage(text = "", attachments = listOf(AIMessageAttachment.file("https://example.com/a.pdf".toUri())))
+        }
+
+        rule.onNodeWithText("a.pdf").assertExists()
+        rule.onAllNodes(SemanticsMatcher.keyIsDefined(SemanticsActions.OnLongClick)).assertCountEquals(0)
     }
 
     @Test
