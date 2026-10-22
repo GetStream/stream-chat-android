@@ -63,4 +63,9 @@
     <string name="stream_ai_compose_conversation_message_actions">Message actions</string>
     <string name="stream_ai_compose_conversation_message_edit">Edit</string>
     <string name="stream_ai_compose_conversation_copy">Copy</string>
+    <string name="stream_ai_compose_conversation_copied">Copied</string>
+    <string name="stream_ai_compose_conversation_share">Share</string>
+    <string name="stream_ai_compose_conversation_regenerate">Regenerate</string>
+    <string name="stream_ai_compose_conversation_rate_positive">Good response</string>
+    <string name="stream_ai_compose_conversation_rate_negative">Bad response</string>
 </resources>

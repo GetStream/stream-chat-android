@@ -175,6 +175,22 @@ public data class AIConversationAssistantMessageParams(
 )
 
 /**
+ * Parameters for [ChatAiComponentFactory.AIConversationReplyActions].
+ *
+ * @param message The reply, which is one of the app's own messages: cast it to act on it.
+ * @param text The reply's text, in Markdown.
+ * @param isLatestReply Whether it is the latest reply in the conversation, such as the only one an
+ * app offers to regenerate.
+ * @param modifier The modifier to apply.
+ */
+public data class AIConversationReplyActionsParams(
+    val message: AIMessage,
+    val text: String,
+    val isLatestReply: Boolean,
+    val modifier: Modifier = Modifier,
+)
+
+/**
  * Parameters for [ChatAiComponentFactory.AIConversationAttachment].
  *
  * @param attachment The attachment.

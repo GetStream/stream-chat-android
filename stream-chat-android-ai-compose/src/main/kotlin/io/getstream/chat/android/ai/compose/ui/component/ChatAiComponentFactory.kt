@@ -184,6 +184,20 @@ public interface ChatAiComponentFactory {
     }
 
     /**
+     * What the person can do with a finished reply, shown under it in [AIConversation] once its
+     * answer is written out.
+     *
+     * Empty by default. [AIReplyActionsRow] is a row of buttons to render here.
+     *
+     * @param params The parameters for the actions.
+     */
+    @Suppress("EmptyFunctionBlock")
+    @Composable
+    public fun AIConversationReplyActions(params: AIConversationReplyActionsParams) {
+        // No actions unless the app chooses some, such as with AIReplyActionsRow.
+    }
+
+    /**
      * One of a message's attachments, in the default message views of [AIConversation].
      *
      * The default renders [AIMessageAttachmentItem], which shows images as thumbnails and every
