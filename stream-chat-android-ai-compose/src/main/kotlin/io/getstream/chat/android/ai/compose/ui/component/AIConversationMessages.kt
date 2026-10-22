@@ -59,8 +59,10 @@ public fun AIConversation(
     emptyContent: @Composable () -> Unit = {},
 ) {
     val tracker = remember { AIPendingMessageTracker() }
-    val (entries, isAwaitingReply) = remember(tracker, messages, pendingMessage) {
-        tracker.entries(messages, pendingMessage) to tracker.isAwaitingReply(messages, pendingMessage)
+    // A copy, so a list changed in place still counts as changed.
+    val shown = messages.toList()
+    val (entries, isAwaitingReply) = remember(tracker, shown, pendingMessage) {
+        tracker.entries(shown, pendingMessage) to tracker.isAwaitingReply(shown, pendingMessage)
     }
     AIConversation(
         messages = entries,
