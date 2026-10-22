@@ -126,7 +126,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
                 userStartWatchingEvent.createdAt,
                 userStartWatchingEvent.message,
             )
-            verify(channelStateLogic).setHidden(false)
+            verify(channelStateLogic).unhideFor(userStartWatchingEvent.message)
         }
 
     // Message update

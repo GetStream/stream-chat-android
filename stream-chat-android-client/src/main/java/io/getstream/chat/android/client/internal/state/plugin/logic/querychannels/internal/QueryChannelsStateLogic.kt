@@ -306,6 +306,10 @@ internal class QueryChannelsStateLogic(
         mutableState.setChannels(newChannels)
     }
 
+    /** Whether the channel with [cid] has active in-memory state. */
+    internal fun isActiveChannel(cid: String): Boolean =
+        ChannelId.fromCid(cid)?.let(stateRegistry::isActiveChannel) == true
+
     /**
      * Returns the current [Channel] snapshot from the in-memory per-channel state if the
      * channel is active, or `null` otherwise.

@@ -721,6 +721,16 @@ internal class DomainMappingTest {
         assertEquals("", result.team)
     }
 
+    @Test
+    fun `ChannelPartialUpdateResponse keeps the last message time of the event`() {
+        val lastMessageAt = randomDate()
+        val sut = Fixture().get()
+
+        val result = with(sut) { channelPartialUpdateResponse().copy(lastMessageAt = lastMessageAt).toDomain() }
+
+        assertEquals(lastMessageAt, result.lastMessageAt)
+    }
+
     private fun channelPartialUpdateResponse() = ChannelPartialUpdateResponse(
         cid = "messaging:123",
         createdAt = Date(),

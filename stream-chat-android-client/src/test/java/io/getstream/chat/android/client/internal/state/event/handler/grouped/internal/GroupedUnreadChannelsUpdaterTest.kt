@@ -232,6 +232,36 @@ internal class GroupedUnreadChannelsUpdaterTest {
         }
 
     @Test
+    fun `NotificationChannelPartialUpdatedEvent for a hidden stored channel returns current map unchanged`() =
+        runTest {
+            val stored = channel(group = "a").copy(
+                hidden = true,
+                read = listOf(randomChannelUserRead(user = User(id = CURRENT_USER_ID), unreadMessages = 2)),
+            )
+            val current = mapOf("a" to 3, "b" to 1)
+            val partialChannel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE, extraData = mapOf("group" to "b"))
+
+            val next = updater.calculateUpdatedCounts(current, BATCH_ID, partialUpdatedEvent(partialChannel)) { stored }
+
+            assertSame(current, next)
+        }
+
+    @Test
+    fun `NotificationChannelPartialUpdatedEvent for a disabled stored channel returns current map unchanged`() =
+        runTest {
+            val stored = channel(group = "a").copy(
+                disabled = true,
+                read = listOf(randomChannelUserRead(user = User(id = CURRENT_USER_ID), unreadMessages = 2)),
+            )
+            val current = mapOf("a" to 3, "b" to 1)
+            val partialChannel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE, extraData = mapOf("group" to "b"))
+
+            val next = updater.calculateUpdatedCounts(current, BATCH_ID, partialUpdatedEvent(partialChannel)) { stored }
+
+            assertSame(current, next)
+        }
+
+    @Test
     fun `NotificationChannelPartialUpdatedEvent for a channel with no local copy returns current map unchanged`() =
         runTest {
             val current = mapOf("a" to 3, "b" to 1)
@@ -523,6 +553,8 @@ internal class GroupedUnreadChannelsUpdaterTest {
         type = CHANNEL_TYPE,
         extraData = group?.let { mapOf("group" to it) } ?: emptyMap(),
         read = emptyList(),
+        hidden = false,
+        disabled = false,
     )
 
     private fun channelUpdatedEvent(newChannel: Channel): ChannelUpdatedEvent = ChannelUpdatedEvent(

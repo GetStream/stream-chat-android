@@ -42,6 +42,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
+import io.getstream.chat.android.ui.common.utils.extensions.userSessionEnds
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
@@ -65,6 +66,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 
 /**
  * ViewModel class for [ChannelListView].
@@ -242,14 +244,16 @@ public class ChannelListViewModel internal constructor(
      */
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
+    /**
+     * Whether the filter is the default one, built from the connected user, rather than one the app provided.
+     */
+    private var followsDefaultFilter = mode is QueryMode.Standard && mode.initialFilter == null
+
     init {
         when (mode) {
             is QueryMode.Standard -> {
-                if (mode.initialFilter == null) {
-                    viewModelScope.launch {
-                        val resolvedFilter = buildDefaultFilter().first()
-                        this@ChannelListViewModel.filterLiveData.value = resolvedFilter
-                    }
+                if (followsDefaultFilter) {
+                    viewModelScope.launch { applyDefaultFilter() }
                 }
                 stateMerger.addSource(filterLiveData) { filter ->
                     if (filter != null) {
@@ -259,6 +263,31 @@ public class ChannelListViewModel internal constructor(
             }
             is QueryMode.Predefined -> initData()
         }
+        viewModelScope.launch {
+            chatClient.clientState.userSessionEnds().collectLatest {
+                // Drop the previous user's channels and stop their queries.
+                queryJob?.cancel()
+                queryChannelsState = MutableStateFlow(null)
+                stateMerger.value = INITIAL_STATE
+                paginationStateMerger.value = PaginationState()
+                // Reload for the next user; the query itself waits until they're ready.
+                if (followsDefaultFilter) {
+                    // The default filter names the previous user, so nothing may query with it until it's rebuilt.
+                    filterLiveData.value = null
+                    applyDefaultFilter()
+                } else {
+                    initData()
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the default filter for the connected user, waiting for one if needed, unless the app has set its own.
+     */
+    private suspend fun applyDefaultFilter() {
+        val filter = buildDefaultFilter().first()
+        if (followsDefaultFilter) filterLiveData.value = filter
     }
 
     /**
@@ -285,9 +314,6 @@ public class ChannelListViewModel internal constructor(
             logger.v { "[init] rejected (filter not yet initialized)" }
             return
         }
-        queryChannelsState =
-            chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope)
-
         /**
          * We clean up any previous loads to make sure the current one is the only one running.
          */
@@ -295,6 +321,9 @@ public class ChannelListViewModel internal constructor(
         val queryJob = Job(viewModelScope.coroutineContext.job).also {
             this.queryJob = it
         }
+        // Tied to the query job, so a replaced query stops instead of re-running for later users.
+        queryChannelsState =
+            chatClient.queryChannelsAsState(queryChannelsRequest, chatEventHandlerFactory, viewModelScope + queryJob)
 
         viewModelScope.launch(queryJob) {
             queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
@@ -441,6 +470,8 @@ public class ChannelListViewModel internal constructor(
      * Has no effect on view models constructed for a predefined-filter query — the predefined identity
      * is fixed at construction. A warning is logged in that case.
      *
+     * After a user disconnects, setting the next user's filter before they finish connecting makes the reload use it.
+     *
      * @param filterObject The new filter to be applied to the query which lets us fetch different data.
      */
     public fun setFilters(filterObject: FilterObject) {
@@ -449,6 +480,7 @@ public class ChannelListViewModel internal constructor(
             return
         }
         logger.d { "[setFilters] filterObject: $filterObject" }
+        followsDefaultFilter = false
         this.filterLiveData.value = filterObject
     }
 

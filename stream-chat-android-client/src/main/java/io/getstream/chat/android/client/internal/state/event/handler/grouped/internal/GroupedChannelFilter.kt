@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit
 
 private const val QUERY_TIMESTAMP_FIELD_NAME = "query_timestamp"
 private const val TOUCHED_AT_FIELD_NAME = "touched_at"
-private const val DISABLED_FIELD_NAME = "disabled"
 private const val RELATIVE_DATE_PREFIX = "now-"
 private const val RELATIVE_DATE_DAYS_SUFFIX = "d"
 
@@ -58,11 +57,7 @@ private val Channel.touchedAt: Date?
  * messages, as the backend counts it.
  */
 internal fun Channel.isUnreadInGroupFor(userId: String): Boolean =
-    hidden != true && !isDisabled && currentUserUnreadCount(userId) > 0
-
-// The model has no field for it, so the server's `disabled` flag arrives in the extra data.
-private val Channel.isDisabled: Boolean
-    get() = extraData[DISABLED_FIELD_NAME] == true
+    hidden != true && !disabled && currentUserUnreadCount(userId) > 0
 
 private val queryTimestampDescSort = QuerySortByField.descByName<Channel>(QUERY_TIMESTAMP_FIELD_NAME)
 

@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -236,6 +237,21 @@ internal class QueryChannelsStateLogicTest {
     @Test
     fun `getActiveChannelState should return null when cid is malformed`() {
         assertNull(queryChannelsStateLogic.getActiveChannelState("not-a-cid"))
+    }
+
+    @Test
+    fun `isActiveChannel reads the active state from the state registry`() {
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn true
+
+        assertTrue(queryChannelsStateLogic.isActiveChannel(testCid))
+    }
+
+    @Test
+    fun `isActiveChannel is false for a channel without active state or a malformed cid`() {
+        whenever(stateRegistry.isActiveChannel(testChannelId)) doReturn false
+
+        assertFalse(queryChannelsStateLogic.isActiveChannel(testCid))
+        assertFalse(queryChannelsStateLogic.isActiveChannel("not-a-cid"))
     }
 
     @Test

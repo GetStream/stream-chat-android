@@ -215,6 +215,7 @@ internal class QueryChannelsLogicGroupedUnreadBaseTest {
 
     private fun channelWithUnread(user: User, unreadMessages: Int) = randomChannel(
         hidden = false,
+        disabled = false,
         read = listOf(randomChannelUserRead(user = user, unreadMessages = unreadMessages)),
     )
 

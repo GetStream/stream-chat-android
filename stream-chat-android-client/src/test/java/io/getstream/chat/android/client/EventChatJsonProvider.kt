@@ -280,6 +280,7 @@ internal fun createNotificationChannelPartialUpdatedEventStringJson() =
                 "cid": "channelType:channelId",
                 "created_at": "2020-06-29T06:14:28.000Z",
                 "updated_at": "2020-06-29T06:14:28.000Z",
+                "last_message_at": "2020-06-29T06:14:28.000Z",
                 "frozen": true,
                 "disabled": false,
                 "team": "team1",
