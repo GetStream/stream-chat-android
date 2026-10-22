@@ -32,11 +32,9 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -77,12 +75,6 @@ internal class QueryChannelsMutableStateTest {
     @BeforeEach
     fun setUp() {
         state = newState(identifier)
-    }
-
-    // Grouped states re-check their filter in an endless loop on the scheduler that every test in this class shares.
-    @AfterEach
-    fun tearDown() {
-        testCoroutines.scope.cancel()
     }
 
     // region Setters
