@@ -16,19 +16,31 @@
 
 package io.getstream.chat.android.ai.compose.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.conversation.AIMessage
 import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
 import io.getstream.chat.android.ai.compose.conversation.AIPendingMessage
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationEntry
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIPendingMessageTracker
+import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWriting
 
 /**
  * Shows [AIMessage]s with the views of [LocalChatAiComponentFactory]: each message the person sent
- * with [ChatAiComponentFactory.AIConversationUserMessage] and each reply with
- * [ChatAiComponentFactory.AIConversationAssistantMessage].
+ * with [ChatAiComponentFactory.AIConversationUserMessage], each reply with
+ * [ChatAiComponentFactory.AIConversationAssistantMessage], and under a finished reply, once its
+ * answer is written out, [ChatAiComponentFactory.AIConversationReplyActions].
  *
  * A reply joins the list once it shows something; until then the list shows the agent thinking.
  *
@@ -97,23 +109,46 @@ private fun AIConversationEntryContent(entry: AIConversationEntry, approver: AIT
                 ),
             )
         }
-        else -> AIConversationReply(message = message, approver = approver)
+        else -> AIConversationReply(message = message, isLatestReply = entry.isLatestReply, approver = approver)
     }
 }
 
 @Composable
-private fun AIConversationReply(message: AIMessage, approver: AIToolApprover?) {
-    with(LocalChatAiComponentFactory.current) {
-        AIConversationAssistantMessage(
-            AIConversationAssistantMessageParams(
-                message = message,
-                text = message.text,
-                isGenerating = message.isGenerating,
-                parts = message.parts,
-                attachments = message.attachments,
-                reasoningText = message::reasoningText,
-                approver = approver,
-            ),
-        )
+private fun AIConversationReply(message: AIMessage, isLatestReply: Boolean, approver: AIToolApprover?) {
+    val factory = LocalChatAiComponentFactory.current
+    // Whether the reply's answer is still being written out, which its actions wait for so they
+    // do not move down with it. Null while its view has not said.
+    var isWriting by remember { mutableStateOf<Boolean?>(null) }
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        CompositionLocalProvider(LocalAnswerWriting provides { isWriting = it }) {
+            with(factory) {
+                AIConversationAssistantMessage(
+                    AIConversationAssistantMessageParams(
+                        message = message,
+                        text = message.text,
+                        isGenerating = message.isGenerating,
+                        parts = message.parts,
+                        attachments = message.attachments,
+                        reasoningText = message::reasoningText,
+                        approver = approver,
+                    ),
+                )
+            }
+        }
+        AnimatedVisibility(
+            visible = !message.isGenerating && message.text.isNotEmpty() && isWriting != true,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            with(factory) {
+                AIConversationReplyActions(
+                    AIConversationReplyActionsParams(
+                        message = message,
+                        text = message.text,
+                        isLatestReply = isLatestReply,
+                    ),
+                )
+            }
+        }
     }
 }

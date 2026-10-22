@@ -18,6 +18,8 @@ package io.getstream.chat.android.ai.compose.ui.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -51,10 +53,20 @@ internal class AIConversationMessagesTest {
     private var messages by mutableStateOf(emptyList<AIMessage>())
     private var pending by mutableStateOf<AIPendingMessage?>(null)
 
+    // Reply actions that name the reply they belong to, so a test can see when they appear.
+    private val factory = object : ChatAiComponentFactory {
+        @Composable
+        override fun AIConversationReplyActions(params: AIConversationReplyActionsParams) {
+            Text("actions for ${params.message.id}, latest ${params.isLatestReply}")
+        }
+    }
+
     private fun setContent() {
         rule.setContent {
-            Box(modifier = Modifier.size(width = 300.dp, height = 600.dp)) {
-                AIConversation(messages = messages, pendingMessage = pending)
+            CompoundChatAiComponentFactory(factory = { factory }) {
+                Box(modifier = Modifier.size(width = 300.dp, height = 600.dp)) {
+                    AIConversation(messages = messages, pendingMessage = pending)
+                }
             }
         }
     }
@@ -91,5 +103,28 @@ internal class AIConversationMessagesTest {
         setContent()
 
         rule.onNodeWithText("Thinking", substring = true, useUnmergedTree = true).assertExists()
+        rule.onNodeWithText("actions for m2", substring = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun `a reply's actions show once it is finished and written out, and know the latest reply`() {
+        messages = listOf(
+            Message("m1", AIMessageRole.User, "Hi"),
+            Message("m2", AIMessageRole.Assistant, "Hello", isGenerating = true),
+        )
+        setContent()
+
+        rule.onNodeWithText("actions for m2", substring = true).assertDoesNotExist()
+
+        messages = listOf(
+            Message("m1", AIMessageRole.User, "Hi"),
+            Message("m2", AIMessageRole.Assistant, "Hello"),
+            Message("m3", AIMessageRole.User, "Again"),
+            Message("m4", AIMessageRole.Assistant, "Hello again"),
+        )
+        rule.mainClock.advanceTimeBy(2_000)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("actions for m4, latest true").assertExists()
     }
 }
