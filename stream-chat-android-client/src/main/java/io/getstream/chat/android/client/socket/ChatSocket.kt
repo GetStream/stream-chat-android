@@ -65,7 +65,7 @@ internal open class ChatSocket(
         userScope = userScope,
         checkCallback = {
             (chatSocketStateService.currentState as? State.Connected)?.event?.let {
-                if (sendEvent(it)) {
+                if (streamWebSocket?.sendKeepAlive(it) == true) {
                     serverClockOffset.onHealthCheckSent()
                 }
             }
@@ -275,8 +275,6 @@ internal open class ChatSocket(
      *
      * @see [okhttp3.WebSocket.send]
      */
-    internal fun sendEvent(event: ChatEvent): Boolean = streamWebSocket?.send(event) ?: false
-
     internal fun isConnected(): Boolean = chatSocketStateService.currentState is State.Connected
 
     /**
