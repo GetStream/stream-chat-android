@@ -230,10 +230,15 @@ internal class MarkdownRendererTest {
 
     @Test
     fun `falls back to plain text when a document cannot be rendered`() {
-        // Nesting this deep exhausts the stack while parsing.
+        // Nesting this deep exhausts the stack while parsing. The small stack makes it run out on
+        // every JVM, since how deep the default stack goes depends on JIT state and coverage agents.
         val source = ">".repeat(2000) + " x"
+        var result: AnnotatedString? = null
+        val thread = Thread(null, { result = renderer.render(source) }, "small-stack", 128L * 1024)
+        thread.start()
+        thread.join()
 
-        renderer.render(source).text shouldBeEqualTo source
+        result?.text shouldBeEqualTo source
     }
 
     @Test
