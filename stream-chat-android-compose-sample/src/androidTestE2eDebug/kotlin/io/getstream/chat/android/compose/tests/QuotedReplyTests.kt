@@ -427,8 +427,9 @@ class QuotedReplyTests : StreamTestCase() {
         val nextReply = "Next reply"
         jumpToTheFirstReplyInLongThread()
         step("THEN the replies after the quote follow without a gap") {
+            // "31" ends the jumped-to page and stops the scroll; the newer page loads below the viewport.
             userRobot
-                .scrollMessageListDownToMessage("31")
+                .scrollMessageListDownToMessage("32", maxScrolls = 15)
                 .assertMessage("32")
         }
         step("WHEN participant sends a new reply and user taps on the scroll to bottom button") {
