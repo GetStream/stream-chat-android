@@ -35,8 +35,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
@@ -52,8 +54,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIConversationScroll
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIMessageTurn
 import io.getstream.chat.android.ai.compose.ui.component.internal.AIThinkingClock
@@ -109,9 +115,12 @@ import kotlinx.coroutines.launch
  * @param footer Content under the latest turn's messages, such as what the agent is doing, or an
  * error with a way to retry.
  * @param emptyContent What the list shows while there are no messages, centered in it.
+ * @param colors The palette of the list's own views: the button that brings the end back into view,
+ * and the spinner while older messages load.
+ * @param icons The icons of the list's own views.
  * @param messageContent The view of a message.
  */
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 public fun <T> AIConversation(
     messages: List<T>,
@@ -122,6 +131,8 @@ public fun <T> AIConversation(
     loadOlderMessages: (suspend () -> Unit)? = null,
     footer: @Composable () -> Unit = {},
     emptyContent: @Composable () -> Unit = {},
+    colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
     messageContent: @Composable (T) -> Unit,
 ) {
     // The first message keeps starting a turn as older messages arrive above it, so the turns on
@@ -171,7 +182,10 @@ public fun <T> AIConversation(
             } else {
                 if (loadsOlder) {
                     item(key = OlderMessagesKey, contentType = OlderMessagesKey) {
-                        OlderMessagesLoading(modifier = Modifier.padding(horizontal = 16.dp))
+                        OlderMessagesLoading(
+                            color = colors.loadingIndicator,
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                        )
                     }
                 }
                 items(items = turns, key = { it.id }, contentType = { TurnContentType }) { turn ->
@@ -205,9 +219,77 @@ public fun <T> AIConversation(
             enter = fadeIn(tween(ButtonFadeMillis)) + scaleIn(tween(ButtonFadeMillis), initialScale = 0.8f),
             exit = fadeOut(tween(ButtonFadeMillis)) + scaleOut(tween(ButtonFadeMillis), targetScale = 0.8f),
         ) {
-            ScrollToLatestButton(onClick = { scope.launch { listState.scrollToEnd(animated = true) } })
+            ScrollToLatestButton(
+                onClick = { scope.launch { listState.scrollToEnd(animated = true) } },
+                colors = colors,
+                icon = icons.scrollToLatest,
+            )
         }
     }
+}
+
+/**
+ * The palette of [AIConversation]'s own views.
+ *
+ * @param scrollButtonBackground Color of the button that brings the end of the conversation back
+ * into view.
+ * @param scrollButtonBorder Color of the outline of that button.
+ * @param scrollButtonIcon Color of that button's arrow.
+ * @param loadingIndicator Color of the spinner while older messages load.
+ */
+@Immutable
+public data class AIConversationColors(
+    val scrollButtonBackground: Color,
+    val scrollButtonBorder: Color,
+    val scrollButtonIcon: Color,
+    val loadingIndicator: Color,
+)
+
+/**
+ * The icons of [AIConversation]'s own views.
+ *
+ * @param scrollToLatest Icon of the button that brings the end of the conversation back into view.
+ */
+@Immutable
+public data class AIConversationIcons(
+    val scrollToLatest: Painter,
+)
+
+/** Defaults of [AIConversation]. */
+public object AIConversationDefaults {
+
+    /**
+     * The default palette, from the current [MaterialTheme].
+     *
+     * @param scrollButtonBackground Color of the button that brings the end of the conversation
+     * back into view.
+     * @param scrollButtonBorder Color of the outline of that button.
+     * @param scrollButtonIcon Color of that button's arrow.
+     * @param loadingIndicator Color of the spinner while older messages load.
+     */
+    @Composable
+    public fun colors(
+        scrollButtonBackground: Color = MaterialTheme.colorScheme.surface,
+        scrollButtonBorder: Color = MaterialTheme.colorScheme.outlineVariant,
+        scrollButtonIcon: Color = MaterialTheme.colorScheme.onSurface,
+        loadingIndicator: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    ): AIConversationColors = AIConversationColors(
+        scrollButtonBackground = scrollButtonBackground,
+        scrollButtonBorder = scrollButtonBorder,
+        scrollButtonIcon = scrollButtonIcon,
+        loadingIndicator = loadingIndicator,
+    )
+
+    /**
+     * The default icons.
+     *
+     * @param scrollToLatest Icon of the button that brings the end of the conversation back into
+     * view.
+     */
+    @Composable
+    public fun icons(
+        scrollToLatest: Painter = painterResource(R.drawable.stream_ai_compose_ic_arrow_down),
+    ): AIConversationIcons = AIConversationIcons(scrollToLatest = scrollToLatest)
 }
 
 /**

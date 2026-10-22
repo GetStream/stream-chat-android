@@ -21,15 +21,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /** A spinner above the first turn while older messages can still load. */
 @Composable
-internal fun OlderMessagesLoading(modifier: Modifier = Modifier) {
+internal fun OlderMessagesLoading(color: Color, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -38,7 +38,7 @@ internal fun OlderMessagesLoading(modifier: Modifier = Modifier) {
     ) {
         CircularProgressIndicator(
             modifier = Modifier.size(20.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = color,
             strokeWidth = 2.dp,
         )
     }

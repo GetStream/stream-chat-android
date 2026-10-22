@@ -58,7 +58,11 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAnswerWri
  * @param footer A view under the latest turn's messages, such as what the agent is doing, or an
  * error with a way to retry.
  * @param emptyContent What the list shows while there are no messages, centered in it.
+ * @param colors The palette of the list's own views: the button that brings the end back into view,
+ * and the spinner while older messages load.
+ * @param icons The icons of the list's own views.
  */
+@Suppress("LongParameterList")
 @Composable
 public fun AIConversation(
     messages: List<AIMessage>,
@@ -69,6 +73,8 @@ public fun AIConversation(
     loadOlderMessages: (suspend () -> Unit)? = null,
     footer: @Composable () -> Unit = {},
     emptyContent: @Composable () -> Unit = {},
+    colors: AIConversationColors = AIConversationDefaults.colors(),
+    icons: AIConversationIcons = AIConversationDefaults.icons(),
 ) {
     val tracker = remember { AIPendingMessageTracker() }
     // A copy, so a list changed in place still counts as changed.
@@ -85,6 +91,8 @@ public fun AIConversation(
         loadOlderMessages = loadOlderMessages,
         footer = footer,
         emptyContent = emptyContent,
+        colors = colors,
+        icons = icons,
     ) { entry ->
         AIConversationEntryContent(entry = entry, approver = approver)
     }

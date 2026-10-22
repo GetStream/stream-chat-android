@@ -30,6 +30,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ClipEntry
@@ -45,6 +47,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onLongClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
@@ -67,6 +70,8 @@ import kotlinx.coroutines.launch
  * @param attachments What they sent with it, such as images and files.
  * @param onEdit Edits the message, such as by putting its text back in the composer. Without it,
  * the menu offers only to copy.
+ * @param textStyle The style of the text.
+ * @param colors The palette of the bubble.
  */
 @Composable
 public fun AIUserMessage(
@@ -74,6 +79,8 @@ public fun AIUserMessage(
     modifier: Modifier = Modifier,
     attachments: List<AIMessageAttachment> = emptyList(),
     onEdit: (() -> Unit)? = null,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
+    colors: AIUserMessageColors = AIUserMessageDefaults.colors(),
 ) {
     Column(
         modifier = modifier
@@ -89,13 +96,18 @@ public fun AIUserMessage(
             }
         }
         if (text.isNotEmpty()) {
-            UserMessageBubble(text = text, onEdit = onEdit)
+            UserMessageBubble(text = text, onEdit = onEdit, textStyle = textStyle, colors = colors)
         }
     }
 }
 
 @Composable
-private fun UserMessageBubble(text: String, onEdit: (() -> Unit)?) {
+private fun UserMessageBubble(
+    text: String,
+    onEdit: (() -> Unit)?,
+    textStyle: TextStyle,
+    colors: AIUserMessageColors,
+) {
     var menuShown by remember { mutableStateOf(false) }
     val haptics = LocalHapticFeedback.current
     val clipboard = LocalClipboard.current
@@ -104,10 +116,10 @@ private fun UserMessageBubble(text: String, onEdit: (() -> Unit)?) {
     Box {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = textStyle,
+            color = colors.text,
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh, BubbleShape)
+                .background(colors.background, BubbleShape)
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onLongPress = {
@@ -143,6 +155,34 @@ private fun UserMessageBubble(text: String, onEdit: (() -> Unit)?) {
             }
         }
     }
+}
+
+/**
+ * The palette of [AIUserMessage].
+ *
+ * @param background Color of the bubble.
+ * @param text Color of the text in the bubble.
+ */
+@Immutable
+public data class AIUserMessageColors(
+    val background: Color,
+    val text: Color,
+)
+
+/** Defaults of [AIUserMessage]. */
+public object AIUserMessageDefaults {
+
+    /**
+     * The default palette, from the current [MaterialTheme].
+     *
+     * @param background Color of the bubble.
+     * @param text Color of the text in the bubble.
+     */
+    @Composable
+    public fun colors(
+        background: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        text: Color = MaterialTheme.colorScheme.onSurface,
+    ): AIUserMessageColors = AIUserMessageColors(background = background, text = text)
 }
 
 /** Keeps the person's messages off the start of the row, so they read as theirs. */

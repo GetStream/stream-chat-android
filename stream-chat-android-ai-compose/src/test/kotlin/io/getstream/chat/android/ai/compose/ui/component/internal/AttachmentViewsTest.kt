@@ -63,7 +63,7 @@ internal class AttachmentViewsTest {
     @Test
     fun `tapping a file opens it`() {
         val uri = "https://example.com/files/itinerary.pdf".toUri()
-        rule.setContent { FileAttachmentCard(AIMessageAttachment.file(uri, size = 2_400_000)) }
+        rule.setContent { AIMessageAttachmentItem(AIMessageAttachment.file(uri, size = 2_400_000)) }
 
         rule.onNodeWithText("itinerary.pdf")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
@@ -78,7 +78,7 @@ internal class AttachmentViewsTest {
     @Test
     fun `a file shows its type and size`() {
         rule.setContent {
-            FileAttachmentCard(AIMessageAttachment.file("https://example.com/a".toUri(), name = "Notes.pdf", size = 1))
+            AIMessageAttachmentItem(AIMessageAttachment.file("https://example.com/a".toUri(), name = "Notes.pdf", size = 1))
         }
 
         rule.onNodeWithText("Notes.pdf").assertExists()
@@ -87,7 +87,7 @@ internal class AttachmentViewsTest {
 
     @Test
     fun `a file without a uri can't be tapped`() {
-        rule.setContent { FileAttachmentCard(AIMessageAttachment(kind = AIMessageAttachment.Kind.File, name = "Notes")) }
+        rule.setContent { AIMessageAttachmentItem(AIMessageAttachment(kind = AIMessageAttachment.Kind.File, name = "Notes")) }
 
         rule.onNodeWithText("Notes").assertHasNoClickAction()
         assertNull(shadowOf(rule.activity).nextStartedActivity)
@@ -154,7 +154,7 @@ internal class AttachmentViewsTest {
     @Test
     fun `an image as a file can be tapped to open it`() {
         rule.setContent {
-            FileAttachmentCard(AIMessageAttachment.file("content://com.example/photo.jpg".toUri(), mimeType = "image/jpeg"))
+            AIMessageAttachmentItem(AIMessageAttachment.file("content://com.example/photo.jpg".toUri(), mimeType = "image/jpeg"))
         }
 
         rule.onNodeWithText("photo.jpg").assertHasClickAction()

@@ -21,36 +21,38 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.addPathNodes
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
+import io.getstream.chat.android.ai.compose.ui.component.AIConversationColors
 
 /** A round button over the bottom of the conversation that brings its end back into view. */
 @Composable
-internal fun ScrollToLatestButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun ScrollToLatestButton(
+    onClick: () -> Unit,
+    colors: AIConversationColors,
+    icon: Painter,
+    modifier: Modifier = Modifier,
+) {
     Box(modifier = modifier.minimumInteractiveComponentSize(), contentAlignment = Alignment.Center) {
         Surface(
             onClick = onClick,
             modifier = Modifier.size(40.dp),
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            color = colors.scrollButtonBackground,
+            contentColor = colors.scrollButtonIcon,
+            border = BorderStroke(1.dp, colors.scrollButtonBorder),
             shadowElevation = 2.dp,
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    imageVector = ArrowDown,
+                    painter = icon,
                     contentDescription = stringResource(R.string.stream_ai_compose_conversation_scroll_to_latest),
                     modifier = Modifier.size(20.dp),
                 )
@@ -58,14 +60,3 @@ internal fun ScrollToLatestButton(onClick: () -> Unit, modifier: Modifier = Modi
         }
     }
 }
-
-private val ArrowDown: ImageVector = ImageVector.Builder(
-    name = "ArrowDown",
-    defaultWidth = 24.dp,
-    defaultHeight = 24.dp,
-    viewportWidth = 24f,
-    viewportHeight = 24f,
-).addPath(
-    pathData = addPathNodes("M20,12l-1.41,-1.41L13,16.17V4h-2v12.17l-5.58,-5.59L4,12l8,8 8,-8z"),
-    fill = SolidColor(Color.Black),
-).build()

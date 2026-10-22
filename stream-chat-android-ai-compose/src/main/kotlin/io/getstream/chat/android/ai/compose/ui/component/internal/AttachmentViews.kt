@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,22 +44,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
+import io.getstream.chat.android.ai.compose.ui.component.AIMessageAttachmentColors
+import io.getstream.chat.android.ai.compose.ui.component.AIMessageAttachmentIcons
 
 private val ImageShape = RoundedCornerShape(16.dp)
 private val CardShape = RoundedCornerShape(16.dp)
@@ -75,6 +77,7 @@ private val CardMaxWidth = 280.dp
 internal fun AttachmentImage(
     attachment: AIMessageAttachment,
     size: Dp,
+    colors: AIMessageAttachmentColors,
     modifier: Modifier = Modifier,
 ) {
     val description = rememberDisplayName(attachment)
@@ -82,7 +85,7 @@ internal fun AttachmentImage(
         modifier = modifier
             .size(size)
             .clip(ImageShape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+            .background(colors.imagePlaceholder)
             .semantics {
                 contentDescription = description
                 role = Role.Image
@@ -133,20 +136,23 @@ private fun BoxScope.FilledImage(image: ImageBitmap) {
 @Composable
 internal fun FileAttachmentCard(
     attachment: AIMessageAttachment,
+    nameTextStyle: TextStyle,
+    detailsTextStyle: TextStyle,
+    colors: AIMessageAttachmentColors,
+    icons: AIMessageAttachmentIcons,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val name = rememberDisplayName(attachment)
     val details = remember(attachment, LocalConfiguration.current) { attachment.details(context) }
     val openLabel = stringResource(R.string.stream_ai_compose_conversation_attachment_open)
-    val colors = MaterialTheme.colorScheme
     val opens = attachment.uri != null
     Row(
         modifier = modifier
             .widthIn(max = CardMaxWidth)
             .clip(CardShape)
-            .background(colors.surfaceContainerLow)
-            .border(1.dp, colors.outlineVariant, CardShape)
+            .background(colors.background)
+            .border(1.dp, colors.border, CardShape)
             .then(
                 if (opens) {
                     Modifier.clickable(onClickLabel = openLabel, role = Role.Button) {
@@ -161,20 +167,20 @@ internal fun FileAttachmentCard(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FileTypeIcon(isImage = attachment.looksLikeImage())
+        FileTypeIcon(icon = icons.of(attachment.fileType()), colors = colors)
         Column(modifier = Modifier.weight(1f, fill = false)) {
             Text(
                 text = name,
-                style = MaterialTheme.typography.labelLarge,
-                color = colors.onSurface,
+                style = nameTextStyle,
+                color = colors.name,
                 maxLines = 1,
                 overflow = TextOverflow.MiddleEllipsis,
             )
             if (details.isNotEmpty()) {
                 Text(
                     text = details,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = colors.onSurfaceVariant,
+                    style = detailsTextStyle,
+                    color = colors.details,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -184,26 +190,30 @@ internal fun FileAttachmentCard(
 }
 
 @Composable
-private fun FileTypeIcon(isImage: Boolean) {
+private fun FileTypeIcon(icon: Painter, colors: AIMessageAttachmentColors) {
     Box(
         modifier = Modifier
             .size(36.dp)
-            .background(MaterialTheme.colorScheme.primary, IconShape),
+            .background(colors.iconBackground, IconShape),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(
-                if (isImage) {
-                    R.drawable.stream_ai_compose_ic_image_placeholder
-                } else {
-                    R.drawable.stream_ai_compose_ic_conversation_file
-                },
-            ),
+            painter = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onPrimary,
+            tint = colors.icon,
             modifier = Modifier.size(20.dp),
         )
     }
+}
+
+/** The icon of a type of file. */
+private fun AIMessageAttachmentIcons.of(type: AttachmentFileType): Painter = when (type) {
+    AttachmentFileType.File -> file
+    AttachmentFileType.Pdf -> pdf
+    AttachmentFileType.Image -> image
+    AttachmentFileType.Audio -> audio
+    AttachmentFileType.Video -> video
+    AttachmentFileType.Archive -> archive
 }
 
 @Composable
