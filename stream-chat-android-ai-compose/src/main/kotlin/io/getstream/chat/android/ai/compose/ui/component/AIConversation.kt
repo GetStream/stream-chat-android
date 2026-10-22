@@ -45,6 +45,8 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,7 +102,8 @@ import kotlinx.coroutines.launch
  * yet. Meanwhile the latest turn ends with [AIThinking].
  * @param loadOlderMessages Loads the messages before the first one, which the list asks for as the
  * person scrolls to its start. It shows a spinner meanwhile, and what is on screen stays in place
- * as they arrive. Pass `null` once there are none left.
+ * as they arrive: the message that was first keeps starting a turn, even when the person's message
+ * before it arrives. Pass `null` once there are none left.
  * @param footer Content under the latest turn's messages, such as what the agent is doing, or an
  * error with a way to retry.
  * @param emptyContent What the list shows while there are no messages, centered in it.
@@ -119,8 +122,12 @@ public fun <T> AIConversation(
     emptyContent: @Composable () -> Unit = {},
     messageContent: @Composable (T) -> Unit,
 ) {
-    val turns = remember(messages, key, isFromUser) { messageTurns(messages, key, isFromUser) }
+    // The first message keeps starting a turn as older messages arrive above it, so the turns on
+    // screen keep their keys and stay in place.
+    val turnStarts = rememberSaveable(saver = TurnStartsSaver) { mutableSetOf() }
+    val turns = remember(messages, key, isFromUser) { messageTurns(messages, key, isFromUser, turnStarts) }
     val firstTurnId = turns.firstOrNull()?.id
+    SideEffect { firstTurnId?.let { turnStarts += it } }
     val lastTurn = turns.lastOrNull()
     val clock = remember { AIThinkingClock() }
     // Repeats harmlessly on every composition: a turn's thinking starts and ends once.
@@ -289,6 +296,12 @@ private class AboveTurns(var firstTurnId: Any?, var loadsOlder: Boolean)
 
 /** The last turn the list scrolled for. */
 private class LastTurn(var id: Any? = null)
+
+/** Saves the keys of the messages that start a turn whoever sent them. */
+private val TurnStartsSaver = listSaver<MutableSet<Any>, Any>(
+    save = { it.toList() },
+    restore = { it.toMutableSet() },
+)
 
 // Keys of the list's own items, unlikely to match a message's key, and saveable in a Bundle.
 private const val OlderMessagesKey = "io.getstream.chat.android.ai.compose.AIConversation.older"
