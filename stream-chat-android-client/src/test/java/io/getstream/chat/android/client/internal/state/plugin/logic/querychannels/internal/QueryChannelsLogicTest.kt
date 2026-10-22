@@ -32,11 +32,9 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.asCall
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -49,9 +47,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class QueryChannelsLogicTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private lateinit var filter: FilterObject
     private lateinit var sort: QuerySortByField<Channel>

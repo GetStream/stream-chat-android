@@ -18,23 +18,19 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.sdk.chat.audio.recording.RecordedMedia
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -44,11 +40,13 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class AudioRecordingControllerTest {
 
-    @get:Rule
-    val testCoroutineRule = TestCoroutineRule()
+    private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private lateinit var mockAudioPlayer: AudioPlayer
     private lateinit var mockMediaRecorder: StreamMediaRecorder
@@ -64,7 +62,7 @@ internal class AudioRecordingControllerTest {
             audioPlayer = mockAudioPlayer,
             mediaRecorder = mockMediaRecorder,
             fileToUri = fileToUri,
-            scope = testCoroutineRule.scope,
+            scope = testCoroutines.scope,
         )
     }
 
@@ -516,7 +514,6 @@ internal class AudioRecordingControllerTest {
     @Test
     fun `Given Overview state When completeRecording is called Then state transitions through Complete to Idle`() = runTest {
         // Given
-        Dispatchers.setMain(testCoroutineRule.testDispatcher)
         val attachment = Attachment(upload = mockFile)
         val playingId = 12345
         controller.recordingState.value = RecordingState.Overview(
@@ -530,14 +527,11 @@ internal class AudioRecordingControllerTest {
         // Then
         assertTrue(controller.recordingState.value is RecordingState.Idle)
         verify(mockAudioPlayer).resetAudio(playingId)
-
-        Dispatchers.resetMain()
     }
 
     @Test
     fun `Given Hold state When completeRecording succeeds Then state transitions through Complete to Idle`() = runTest {
         // Given
-        Dispatchers.setMain(testCoroutineRule.testDispatcher)
         val attachment = Attachment(upload = mockFile)
         val recordedMedia = RecordedMedia(durationInMs = 5000, attachment = attachment)
         whenever(mockMediaRecorder.stopRecording()) doReturn Result.Success(recordedMedia)
@@ -549,8 +543,6 @@ internal class AudioRecordingControllerTest {
         // Then
         assertTrue(controller.recordingState.value is RecordingState.Idle)
         verify(mockMediaRecorder).stopRecording()
-
-        Dispatchers.resetMain()
     }
 
     @Test
