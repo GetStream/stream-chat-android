@@ -19,6 +19,11 @@ package io.getstream.chat.android.ai.compose.ui.component
 import android.net.Uri
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import io.getstream.chat.android.ai.compose.conversation.AIMessage
+import io.getstream.chat.android.ai.compose.conversation.AIMessageAttachment
+import io.getstream.chat.android.ai.compose.conversation.AIMessageRole
+import io.getstream.chat.android.ai.compose.parts.AIMessagePart
+import io.getstream.chat.android.ai.compose.parts.AIReasoningPart
 
 /**
  * Parameters for [ChatAiComponentFactory.ComposerLeadingContent].
@@ -127,4 +132,57 @@ public data class SpeechToTextButtonRecordingContentParams(
 public data class AISuggestionsChipParams(
     val text: String,
     val onClick: () -> Unit,
+)
+
+/**
+ * Parameters for [ChatAiComponentFactory.AIConversationUserMessage].
+ *
+ * @param message The message, which is one of the app's own: cast it to read what else it holds.
+ * Null while the message is on its way.
+ * @param text What the person wrote.
+ * @param attachments What they sent with it, such as images and files.
+ * @param modifier The modifier to apply.
+ */
+public data class AIConversationUserMessageParams(
+    val message: AIMessage?,
+    val text: String,
+    val attachments: List<AIMessageAttachment>,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatAiComponentFactory.AIConversationAssistantMessage].
+ *
+ * @param message The reply, which is one of the app's own messages: cast it to read what else it
+ * holds.
+ * @param text The answer, in Markdown.
+ * @param isGenerating Whether the agent is still writing it.
+ * @param parts The steps the agent took, in order.
+ * @param attachments What the agent sent with it, such as images and files.
+ * @param reasoningText The whole of a reasoning step's thinking, when the app has it.
+ * @param approver Who answers tool calls' questions on this device.
+ * @param modifier The modifier to apply.
+ */
+public data class AIConversationAssistantMessageParams(
+    val message: AIMessage,
+    val text: String,
+    val isGenerating: Boolean,
+    val parts: List<AIMessagePart>,
+    val attachments: List<AIMessageAttachment>,
+    val reasoningText: (AIReasoningPart) -> String?,
+    val approver: AIToolApprover?,
+    val modifier: Modifier = Modifier,
+)
+
+/**
+ * Parameters for [ChatAiComponentFactory.AIConversationAttachment].
+ *
+ * @param attachment The attachment.
+ * @param role Who sent the message that carries it.
+ * @param modifier The modifier to apply.
+ */
+public data class AIConversationAttachmentParams(
+    val attachment: AIMessageAttachment,
+    val role: AIMessageRole,
+    val modifier: Modifier = Modifier,
 )

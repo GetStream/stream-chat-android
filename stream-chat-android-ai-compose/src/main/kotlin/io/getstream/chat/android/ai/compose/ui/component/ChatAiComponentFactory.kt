@@ -34,7 +34,7 @@ import io.getstream.chat.android.ai.compose.ui.component.internal.DefaultCompose
  * composition. When no factory is provided, components fall back to
  * [DefaultChatAiComponentFactory], so they work without any setup.
  */
-@Suppress("ComplexInterface") // One slot per customizable part; it grows with the components.
+@Suppress("ComplexInterface", "TooManyFunctions") // One slot per customizable part; it grows with the components.
 public interface ChatAiComponentFactory {
 
     /**
@@ -149,6 +149,51 @@ public interface ChatAiComponentFactory {
     @Composable
     public fun AISuggestionsChip(params: AISuggestionsChipParams) {
         DefaultAISuggestionsChip(params)
+    }
+
+    /**
+     * A message the person sent, in [AIConversation].
+     *
+     * The default renders [AIUserMessage].
+     *
+     * @param params The parameters for the message.
+     */
+    @Composable
+    public fun AIConversationUserMessage(params: AIConversationUserMessageParams) {
+        AIUserMessage(text = params.text, attachments = params.attachments, modifier = params.modifier)
+    }
+
+    /**
+     * A reply from the agent, in [AIConversation].
+     *
+     * The default renders [AIAssistantMessage].
+     *
+     * @param params The parameters for the reply.
+     */
+    @Composable
+    public fun AIConversationAssistantMessage(params: AIConversationAssistantMessageParams) {
+        AIAssistantMessage(
+            text = params.text,
+            isGenerating = params.isGenerating,
+            parts = params.parts,
+            attachments = params.attachments,
+            approver = params.approver,
+            reasoningText = params.reasoningText,
+            modifier = params.modifier,
+        )
+    }
+
+    /**
+     * One of a message's attachments, in the default message views of [AIConversation].
+     *
+     * The default renders [AIMessageAttachmentItem], which shows images as thumbnails and every
+     * other kind as a file. Render your own for kinds of your own, and the default for the rest.
+     *
+     * @param params The parameters for the attachment.
+     */
+    @Composable
+    public fun AIConversationAttachment(params: AIConversationAttachmentParams) {
+        AIMessageAttachmentItem(attachment = params.attachment, modifier = params.modifier)
     }
 }
 
