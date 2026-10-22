@@ -23,13 +23,13 @@ import io.getstream.chat.android.client.internal.state.plugin.state.querychannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.GroupedChannelsGroup
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -40,9 +40,6 @@ import org.mockito.kotlin.whenever
 
 /** A first page applied by the reconnect refresh, which keeps the pages the group has loaded. */
 internal class QueryChannelsLogicGroupedReconnectTest {
-
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
 
     private val client: ChatClient = mock()
     private val queryChannelsStateLogic: QueryChannelsStateLogic = mock()
@@ -163,6 +160,10 @@ internal class QueryChannelsLogicGroupedReconnectTest {
         GroupedChannelsGroup(groupKey = GROUP_KEY, channels = channels, next = next, prev = null)
 
     private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
         private const val GROUP_KEY = "test-group"
     }
 }

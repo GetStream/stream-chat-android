@@ -24,12 +24,12 @@ import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomDraftMessageOrNull
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -45,8 +45,6 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class ChannelRepositoryImplTest {
-    @get:Rule
-    val testCoroutines: TestCoroutineRule = TestCoroutineRule()
     private val chatClient: ChatClient = MockChatClientBuilder {
         Mockito.mock<ChatClient>().also {
             whenever(it.getCurrentUser()) doReturn randomUser()
@@ -54,8 +52,12 @@ internal class ChannelRepositoryImplTest {
     }.build()
 
     private val channelDao: ChannelDao = mock()
-    private val channelRepository: DatabaseChannelRepository =
-        DatabaseChannelRepository(
+    private lateinit var channelRepository: DatabaseChannelRepository
+
+    @BeforeEach
+    fun setup() {
+        reset(channelDao)
+        channelRepository = DatabaseChannelRepository(
             testCoroutines.scope,
             channelDao,
             { randomUser() },
@@ -63,10 +65,6 @@ internal class ChannelRepositoryImplTest {
             { randomDraftMessageOrNull() },
             "current-user",
         )
-
-    @BeforeEach
-    fun setup() {
-        reset(channelDao)
     }
 
     @Test
@@ -249,6 +247,9 @@ internal class ChannelRepositoryImplTest {
     }
 
     companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
 
         @JvmStatic
         fun currentUserReadMergeInput() = listOf(

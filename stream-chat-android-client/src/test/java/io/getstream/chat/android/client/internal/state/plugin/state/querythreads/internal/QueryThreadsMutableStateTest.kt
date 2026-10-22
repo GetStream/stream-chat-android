@@ -22,17 +22,12 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomThreadParticipant
-import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.util.Date
 
 internal class QueryThreadsMutableStateTest {
-
-    @get:Rule
-    val testCoroutineRule = TestCoroutineRule()
 
     private val threadList1 = listOf(
         Thread(

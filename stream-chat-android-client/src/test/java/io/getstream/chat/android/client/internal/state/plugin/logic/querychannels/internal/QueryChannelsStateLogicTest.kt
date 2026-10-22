@@ -37,14 +37,15 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
@@ -57,8 +58,11 @@ import java.util.Date
 
 internal class QueryChannelsStateLogicTest {
 
-    @get:Rule
-    val testCoroutines = TestCoroutineRule()
+    private companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+    }
 
     private val type = randomString()
     private val id = randomString()
@@ -78,13 +82,18 @@ internal class QueryChannelsStateLogicTest {
         on(it.channel(any<ChannelId>())) doReturn mock()
     }
 
-    private val queryChannelsStateLogic = QueryChannelsStateLogic(
-        mutableState,
-        stateRegistry,
-        logicRegistry,
-        testCoroutines.scope,
-        isLocalUnreadCountEnabled = false,
-    )
+    private lateinit var queryChannelsStateLogic: QueryChannelsStateLogic
+
+    @BeforeEach
+    fun setUp() {
+        queryChannelsStateLogic = QueryChannelsStateLogic(
+            mutableState,
+            stateRegistry,
+            logicRegistry,
+            testCoroutines.scope,
+            isLocalUnreadCountEnabled = false,
+        )
+    }
 
     @Test
     fun `when a channel is inside the query spec and it is refreshed, it should be added`() {
