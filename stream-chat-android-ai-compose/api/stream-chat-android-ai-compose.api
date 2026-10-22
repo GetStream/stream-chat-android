@@ -258,6 +258,10 @@ public final class io/getstream/chat/android/ai/compose/parts/AIToolCallPart$Sta
 	public final fun getRunning-YhSBUpE ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ai/compose/ui/component/AIConversationKt {
+	public static final fun AIConversation (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/ai/compose/ui/component/AIMessagePartsKt {
 	public static final fun AIMessagePartItem (Lio/getstream/chat/android/ai/compose/parts/AIMessagePart;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/ai/compose/ui/component/StreamingReasoningColors;Lio/getstream/chat/android/ai/compose/ui/component/AIToolCallColors;Lio/getstream/chat/android/ai/compose/ui/component/AIToolApprovalColors;Landroidx/compose/runtime/Composer;II)V
 	public static final fun AIMessageParts (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/ui/component/AIToolApprover;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/ai/compose/ui/component/StreamingReasoningColors;Lio/getstream/chat/android/ai/compose/ui/component/AIToolCallColors;Lio/getstream/chat/android/ai/compose/ui/component/AIToolApprovalColors;Landroidx/compose/runtime/Composer;II)V
@@ -280,6 +284,10 @@ public final class io/getstream/chat/android/ai/compose/ui/component/AISuggestio
 
 public final class io/getstream/chat/android/ai/compose/ui/component/AISuggestionsKt {
 	public static final fun AISuggestions-hGBTI10 (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;FLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/ai/compose/ui/component/AIThinkingKt {
+	public static final fun AIThinking (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/AIToolApprovalColors {
@@ -466,6 +474,14 @@ public final class io/getstream/chat/android/ai/compose/ui/component/ChatCompose
 	public static final fun ChatComposer (Lio/getstream/chat/android/ai/compose/ui/component/MessageData;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ZLandroidx/compose/ui/Modifier;Landroidx/compose/ui/focus/FocusRequester;Landroidx/compose/runtime/Composer;II)V
 	public static final synthetic fun ChatComposer (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ZLandroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/ui/component/MessageData;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ChatComposer (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ZLandroidx/compose/ui/Modifier;Lio/getstream/chat/android/ai/compose/ui/component/MessageData;Landroidx/compose/ui/focus/FocusRequester;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationKt {
+	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIConversationKt;
+	public fun <init> ()V
+	public final fun getLambda$-1695126667$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-489304059$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1254487156$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/ai/compose/ui/component/ComposableSingletons$AIToolApprovalPromptKt {
@@ -700,5 +716,11 @@ public final class io/getstream/chat/android/ai/compose/ui/component/internal/Co
 	public final fun getLambda$-1485754247$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function4;
 	public final fun getLambda$1811339457$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$1855231261$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class io/getstream/chat/android/ai/compose/ui/component/internal/ComposableSingletons$ScrollToLatestButtonKt {
+	public static final field INSTANCE Lio/getstream/chat/android/ai/compose/ui/component/internal/ComposableSingletons$ScrollToLatestButtonKt;
+	public fun <init> ()V
+	public final fun getLambda$185698433$stream_chat_android_ai_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 

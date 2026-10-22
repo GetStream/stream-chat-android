@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.ai.compose.R
 import io.getstream.chat.android.ai.compose.parts.AIReasoningPart
+import io.getstream.chat.android.ai.compose.ui.component.internal.LocalAIThinkingTurn
 import io.getstream.chat.android.ai.compose.ui.component.internal.ReasoningFoldState
 import io.getstream.chat.android.ai.compose.ui.component.internal.ReasoningPanel
 import io.getstream.chat.android.ai.compose.ui.component.internal.ReasoningStrings
@@ -124,6 +125,49 @@ public fun StreamingReasoning(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     colors: StreamingReasoningColors = StreamingReasoningDefaults.colors(),
 ) {
+    ReasoningView(
+        text = text,
+        isThinking = isThinking,
+        modifier = modifier,
+        durationSeconds = durationSeconds,
+        summary = summary,
+        footnote = footnote,
+        initiallyExpanded = initiallyExpanded,
+        showsLiveReasoning = showsLiveReasoning,
+        maxExpandedHeight = maxExpandedHeight,
+        textStyle = textStyle,
+        colors = colors,
+    )
+}
+
+/**
+ * [StreamingReasoning], with what a conversation adds: the reasoning step shown, which takes over
+ * from its turn's thinking when it is the turn's first, and when the thinking began.
+ *
+ * @param stepId The reasoning step shown, or `null` for reasoning that is not a step.
+ * @param thinkingSince When the thinking began, on the clock of [LocalAIThinkingTurn], for a header
+ * that counts from earlier than this view appeared.
+ */
+@Suppress("LongParameterList")
+@Composable
+internal fun ReasoningView(
+    text: String,
+    isThinking: Boolean,
+    modifier: Modifier = Modifier,
+    durationSeconds: Double? = null,
+    summary: String? = null,
+    footnote: String? = null,
+    initiallyExpanded: Boolean = false,
+    showsLiveReasoning: Boolean = true,
+    maxExpandedHeight: Dp = 260.dp,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    colors: StreamingReasoningColors = StreamingReasoningDefaults.colors(),
+    stepId: String? = null,
+    thinkingSince: Long? = null,
+) {
+    val turn = LocalAIThinkingTurn.current
+    // The turn whose thinking this step takes over, when it is the turn's first step.
+    val thinkingTurn = turn?.takeIf { stepId != null && it.clock.isFirstStep(stepId, it.turn) }
     // Previews show live reasoning open at once rather than unfolding.
     val inspecting = LocalInspectionMode.current
     val state = remember {
@@ -133,23 +177,32 @@ public fun StreamingReasoning(
     LaunchedEffect(isThinking) {
         state.thinkingChanged(isThinking, durationSeconds, showsLiveReasoning, initiallyExpanded)
     }
+    // A conversation's first step that arrived done, with the answer, shows its reasoning before
+    // it folds: the model sent none of it while it thought.
+    val showsFinished = remember {
+        !isThinking && text.isNotEmpty() && thinkingTurn?.let { it.clock.showsFirstStep(it.turn) } == true
+    }
+    LaunchedEffect(Unit) {
+        if (showsFinished) state.showFinished()
+    }
+    if (isThinking) thinkingTurn?.let { it.clock.firstStepIsStreaming(it.turn) }
+    val measured = thinkingTurn?.takeIf { !isThinking }?.let { it.clock.durationOfFirstStep(it.turn, durationSeconds) }
+    // Live reasoning is open before any of it arrives, so it unfolds as it does, but there is
+    // nothing to see until then.
+    val isExpanded = state.open && text.isNotEmpty()
 
     Column(
         modifier = modifier
-            .drawBehind {
-                val width = RULE_WIDTH.toPx()
-                drawRoundRect(
-                    color = if (isThinking) colors.shimmer else colors.rule,
-                    size = Size(width, size.height),
-                    cornerRadius = CornerRadius(width / 2),
-                )
-            }
+            .leadingRule(if (isThinking) colors.shimmer else colors.rule)
             .padding(start = 12.dp),
     ) {
         ReasoningHeader(
-            state = state,
+            isOpen = isExpanded,
+            onToggle = { state.toggle(isExpanded) },
             isThinking = isThinking,
-            durationSeconds = durationSeconds ?: state.thoughtFor,
+            durationSeconds = measured ?: durationSeconds ?: state.thoughtFor,
+            thinkingSince = thinkingSince ?: thinkingTurn?.let { it.clock.startedAt(it.turn) },
+            now = turn?.clock?.now ?: SystemClock::elapsedRealtime,
             summary = summary,
             textStyle = textStyle,
             colors = colors,
@@ -175,6 +228,12 @@ public fun StreamingReasoning(
             }
         }
     }
+}
+
+/** The rule along the reasoning's leading edge. */
+private fun Modifier.leadingRule(color: Color): Modifier = drawBehind {
+    val width = RULE_WIDTH.toPx()
+    drawRoundRect(color = color, size = Size(width, size.height), cornerRadius = CornerRadius(width / 2))
 }
 
 @Suppress("LongParameterList")
@@ -212,6 +271,10 @@ private fun ReasoningBody(
  * Shows a reasoning step: its live [text] when the app has it, otherwise the step's preview, with
  * its summary beside "Thought for 12s" once it is done.
  *
+ * In an [AIConversation] told the agent is thinking, the first step of the reply takes over from
+ * that thinking: its seconds count from when the question was asked. A first step that arrives
+ * already done, with the answer, opens to show its reasoning, then folds before the answer starts.
+ *
  * @param part The reasoning step.
  * @param modifier The modifier to apply to the view.
  * @param text The step's whole reasoning, when the app watched it live.
@@ -228,7 +291,7 @@ public fun StreamingReasoning(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     colors: StreamingReasoningColors = StreamingReasoningDefaults.colors(),
 ) {
-    StreamingReasoning(
+    ReasoningView(
         text = text ?: part.preview ?: part.summary.orEmpty(),
         isThinking = part.isStreaming,
         modifier = modifier,
@@ -237,6 +300,7 @@ public fun StreamingReasoning(
         footnote = footnote,
         textStyle = textStyle,
         colors = colors,
+        stepId = part.id,
     )
 }
 
@@ -304,15 +368,16 @@ public object StreamingReasoningDefaults {
 @Suppress("LongParameterList")
 @Composable
 private fun ReasoningHeader(
-    state: ReasoningFoldState,
+    isOpen: Boolean,
+    onToggle: () -> Unit,
     isThinking: Boolean,
     durationSeconds: Double?,
+    thinkingSince: Long?,
+    now: () -> Long,
     summary: String?,
     textStyle: TextStyle,
     colors: StreamingReasoningColors,
 ) {
-    val isOpen = state.open
-    val onToggle = state::toggle
     val strings = rememberReasoningStrings()
     val title = reasoningTitle(isThinking, durationSeconds, strings)
     val hint = stringResource(
@@ -348,7 +413,7 @@ private fun ReasoningHeader(
                 .size(16.dp)
                 .pulse(isThinking),
         )
-        HeaderTitle(isThinking, title, durationSeconds, strings, headerStyle, colors)
+        HeaderTitle(isThinking, title, durationSeconds, thinkingSince, now, strings, headerStyle, colors)
         if (summary != null && !isThinking && !isOpen) {
             Text(
                 text = summary,
@@ -376,13 +441,15 @@ private fun HeaderTitle(
     isThinking: Boolean,
     title: String,
     durationSeconds: Double?,
+    thinkingSince: Long?,
+    now: () -> Long,
     strings: ReasoningStrings,
     style: TextStyle,
     colors: StreamingReasoningColors,
 ) {
     val modifier = Modifier.shimmer(isThinking, colors.shimmer)
     if (isThinking) {
-        ThinkingTitle(durationSeconds, strings, style, modifier)
+        ThinkingTitle(durationSeconds, thinkingSince, now, strings, style, modifier)
     } else {
         Text(text = title, style = style, modifier = modifier, maxLines = 1)
     }
@@ -390,24 +457,28 @@ private fun HeaderTitle(
 
 /**
  * The header while the model thinks, counting the seconds. A view opened midway counts from how
- * long the model had already thought.
+ * long the model had already thought, or from [thinkingSince], when the thinking began.
  */
+@Suppress("LongParameterList")
 @Composable
 private fun ThinkingTitle(
     durationSeconds: Double?,
+    thinkingSince: Long?,
+    time: () -> Long,
     strings: ReasoningStrings,
     style: TextStyle,
     modifier: Modifier,
 ) {
-    val appeared = remember { SystemClock.elapsedRealtime() }
+    val appeared = remember { time() }
+    val start = thinkingSince ?: appeared
     var now by remember { mutableLongStateOf(appeared) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(start) {
         while (true) {
-            delay(SECOND - (now - appeared) % SECOND)
-            now = SystemClock.elapsedRealtime()
+            delay(SECOND - (now - start).mod(SECOND))
+            now = time()
         }
     }
-    val elapsed = max(durationSeconds ?: 0.0, (now - appeared) / MILLIS)
+    val elapsed = max(durationSeconds ?: 0.0, (now - start) / MILLIS)
     Text(
         text = thinkingTitle(elapsed, strings),
         style = style.copy(fontFeatureSettings = "tnum"),
